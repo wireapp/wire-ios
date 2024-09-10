@@ -302,7 +302,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             let mls = Feature.MLS(status: .disabled, config: .init())
             self.featureRepository.storeMLS(mls)
 
-            let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: MockJSON.mlsWithDefaultProtocolProteus) as? NSDictionary)
+            let payload = try XCTUnwrap(
+                JSONSerialization
+                    .jsonObject(with: MockJSON.mlsWithDefaultProtocolProteus) as? NSDictionary
+            )
             let event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil))
 
             // When
@@ -322,7 +325,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
             XCTAssertEqual(mls.config.defaultCipherSuite, .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
             XCTAssertEqual(mls.config.defaultProtocol, .proteus)
-            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")])
+            XCTAssertEqual(
+                mls.config.protocolToggleUsers,
+                [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")]
+            )
             XCTAssertEqual(mls.config.supportedProtocols, [.proteus, .mls, .mixed])
         }
 
@@ -335,7 +341,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             let mls = Feature.MLS(status: .disabled, config: .init())
             self.featureRepository.storeMLS(mls)
 
-            let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: MockJSON.mlsWithDefaultProtocolMLS) as? NSDictionary)
+            let payload = try XCTUnwrap(
+                JSONSerialization
+                    .jsonObject(with: MockJSON.mlsWithDefaultProtocolMLS) as? NSDictionary
+            )
             let event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil))
 
             // When
@@ -355,7 +364,10 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(mls.config.allowedCipherSuites, [.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519])
             XCTAssertEqual(mls.config.defaultCipherSuite, .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
             XCTAssertEqual(mls.config.defaultProtocol, .mls)
-            XCTAssertEqual(mls.config.protocolToggleUsers, [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")])
+            XCTAssertEqual(
+                mls.config.protocolToggleUsers,
+                [UUID(transportString: "3B5667D3-F4F9-4BFF-AB34-A6FFE8B93E07")]
+            )
             XCTAssertEqual(mls.config.supportedProtocols, [.proteus, .mls, .mixed])
         }
 

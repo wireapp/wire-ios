@@ -25,7 +25,8 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let conversationId = UUID()
     private let domain = "example.com"
-    private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_ConversationUniqueness/")
+    private let tmpStoreURL =
+        URL(fileURLWithPath: "\(NSTemporaryDirectory())DatabaseMigrationTests_ConversationUniqueness/")
     private let helper = DatabaseMigrationHelper()
 
     override func setUpWithError() throws {
@@ -49,7 +50,11 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
             sourceVersion: initialVersion,
             preMigrationAction: { context in
                 insertDuplicateConversations(with: conversationId, domain: domain, in: context)
-                insertDuplicateConversations(with: otherDuplicateConversations.0, domain: otherDuplicateConversations.1, in: context)
+                insertDuplicateConversations(
+                    with: otherDuplicateConversations.0,
+                    domain: otherDuplicateConversations.1,
+                    in: context
+                )
                 _ = context.performGroupedAndWait {
                     let conversation = ZMConversation(context: context)
                     conversation.remoteIdentifier = uniqueConversation1.0
@@ -73,16 +78,32 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
                 // we need to use syncContext here because of `setInternalEstimatedUnreadCount` being tiggered on save
                 try context.performGroupedAndWait {
                     // verify it deleted duplicates
-                    var conversations = try self.fetchConversations(with: self.conversationId, domain: self.domain, in: context)
+                    var conversations = try self.fetchConversations(
+                        with: self.conversationId,
+                        domain: self.domain,
+                        in: context
+                    )
                     XCTAssertEqual(conversations.count, 1)
 
-                    conversations = try self.fetchConversations(with: uniqueConversation1.0, domain: uniqueConversation1.1, in: context)
+                    conversations = try self.fetchConversations(
+                        with: uniqueConversation1.0,
+                        domain: uniqueConversation1.1,
+                        in: context
+                    )
                     XCTAssertEqual(conversations.count, 1)
 
-                    conversations = try self.fetchConversations(with: uniqueConversation2.0, domain: uniqueConversation2.1, in: context)
+                    conversations = try self.fetchConversations(
+                        with: uniqueConversation2.0,
+                        domain: uniqueConversation2.1,
+                        in: context
+                    )
                     XCTAssertEqual(conversations.count, 1)
 
-                    conversations = try self.fetchConversations(with: otherDuplicateConversations.0, domain: otherDuplicateConversations.1, in: context)
+                    conversations = try self.fetchConversations(
+                        with: otherDuplicateConversations.0,
+                        domain: otherDuplicateConversations.1,
+                        in: context
+                    )
                     XCTAssertEqual(conversations.count, 1)
 
                     // verify we can't insert duplicates
@@ -90,7 +111,11 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
                     self.insertDuplicateConversations(with: self.conversationId, domain: self.domain, in: context)
                     try context.save()
 
-                    conversations = try self.fetchConversations(with: self.conversationId, domain: self.domain, in: context)
+                    conversations = try self.fetchConversations(
+                        with: self.conversationId,
+                        domain: self.domain,
+                        in: context
+                    )
                     XCTAssertEqual(conversations.count, 1)
                 }
             },
@@ -152,7 +177,11 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
 
         if let identifier {
             predicates.append(
-                NSPredicate(format: "%K == %@", ZMConversation.remoteIdentifierDataKey(), identifier.uuidData as CVarArg)
+                NSPredicate(
+                    format: "%K == %@",
+                    ZMConversation.remoteIdentifierDataKey(),
+                    identifier.uuidData as CVarArg
+                )
             )
         }
 

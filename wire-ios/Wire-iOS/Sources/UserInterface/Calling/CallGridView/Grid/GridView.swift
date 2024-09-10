@@ -189,7 +189,11 @@ extension GridView {
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension GridView: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         sizeForNewUIItem(withIndexPath: indexPath, collectionView: collectionView)
     }
 
@@ -208,7 +212,10 @@ extension GridView: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
 
-    func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint
+    ) -> CGPoint {
         guard
             let indexPath = firstIndexPath(forPage: currentPage),
             let attributes = layoutAttributesForItem(at: indexPath)
@@ -220,28 +227,32 @@ extension GridView: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int) -> UIEdgeInsets {
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         .zero
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
         1.0
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
         1.0
     }
 
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForHeaderInSection section: Int) -> CGSize {
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         .zero
     }
 }

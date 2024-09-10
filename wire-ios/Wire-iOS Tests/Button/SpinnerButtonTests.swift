@@ -27,7 +27,10 @@ final class SpinnerButtonTests: XCTestCase {
         sut = nil
     }
 
-    func createSut(title: String = "Deutsches Ipsum Dolor deserunt Schnaps has schnell Tollit Zauberer ius Polizei Saepe Schnaps elaboraret Ich habe fertig ne") {
+    func createSut(
+        title: String =
+            "Deutsches Ipsum Dolor deserunt Schnaps has schnell Tollit Zauberer ius Polizei Saepe Schnaps elaboraret Ich habe fertig ne"
+    ) {
         sut = SpinnerButton.alarmButton()
         sut.setTitle(title, for: .normal)
     }
@@ -51,9 +54,12 @@ final class SpinnerButtonTests: XCTestCase {
         sut.isLoading = true
 
         // THEN
-        verifyInWidths(matching: sut,
-                       widths: Set([300]),
-                       snapshotBackgroundColor: UIColor.from(scheme: .contentBackground).withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha))
+        verifyInWidths(
+            matching: sut,
+            widths: Set([300]),
+            snapshotBackgroundColor: UIColor.from(scheme: .contentBackground)
+                .withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
+        )
     }
 
     func testForSpinnerIsHidden() {
@@ -77,15 +83,19 @@ final class SpinnerButtonTests: XCTestCase {
         createSut()
         sut.isLoading = true
 
-        verifyInAllPhoneWidths(matching: sut,
-                               snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
-                               named: "dark")
+        verifyInAllPhoneWidths(
+            matching: sut,
+            snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
+            named: "dark"
+        )
 
         ColorScheme.default.variant = .light
         createSut()
         sut.isLoading = true
-        verifyInAllPhoneWidths(matching: sut,
-                               snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
-                               named: "light")
+        verifyInAllPhoneWidths(
+            matching: sut,
+            snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
+            named: "light"
+        )
     }
 }

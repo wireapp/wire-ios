@@ -58,7 +58,8 @@ extension ZMAssetClientMessage {
             do {
                 _ = try createNewGenericMessageData(with: obfuscatedMessage)
             } catch {
-                Logging.messageProcessing.warn("Failed to process obfuscated message. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to process obfuscated message. Reason: \(error.localizedDescription)")
             }
         }
     }

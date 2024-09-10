@@ -32,7 +32,10 @@ final class RandomHandleGeneratorTests: XCTestCase {
         XCTAssertEqual("μήλο".normalizedForUserHandle, "melo")
         XCTAssertEqual("Яблоко".normalizedForUserHandle, "abloko")
         XCTAssertEqual("خطای سطح دسترسی".normalizedForUserHandle, "khtaysthdstrsy")
-        XCTAssertEqual("ᑭᒻᒥᓇᐅᔭᖅ".normalizedForUserHandle, "") // unfortunately, Apple's string library can't handle inuktitut
+        XCTAssertEqual(
+            "ᑭᒻᒥᓇᐅᔭᖅ".normalizedForUserHandle,
+            ""
+        ) // unfortunately, Apple's string library can't handle inuktitut
         XCTAssertEqual("    Maria LaRochelle Von Schwerigstein ".normalizedForUserHandle, "marialarochellevonsch")
         XCTAssertEqual(" \n\t Maria LaRochelle Von Schwerigstein ".normalizedForUserHandle, "marialarochellevonsch")
         XCTAssertEqual("🐙☀️".normalizedForUserHandle, "")
@@ -64,21 +67,30 @@ final class RandomHandleGeneratorTests: XCTestCase {
         }
 
         // then 4 with two digits
-        let twoDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 19))[0-9]{2}$", options: [])
+        let twoDigits = try! NSRegularExpression(
+            pattern: "^\(expectedNormalized.truncated(at: 19))[0-9]{2}$",
+            options: []
+        )
         for _ in 0 ..< 4 {
             let handle = handles.popLast()
             XCTAssertTrue(twoDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // then 4 with three digits
-        let threeDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 18))[0-9]{3}$", options: [])
+        let threeDigits = try! NSRegularExpression(
+            pattern: "^\(expectedNormalized.truncated(at: 18))[0-9]{3}$",
+            options: []
+        )
         for _ in 0 ..< 4 {
             let handle = handles.popLast()
             XCTAssertTrue(threeDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // then 6 with four digits
-        let sixDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 17))[0-9]{4}$", options: [])
+        let sixDigits = try! NSRegularExpression(
+            pattern: "^\(expectedNormalized.truncated(at: 17))[0-9]{4}$",
+            options: []
+        )
         for _ in 0 ..< 6 {
             let handle = handles.popLast()
             XCTAssertTrue(sixDigits.matches(handle), "\(String(describing: handle)) does not match")
@@ -96,7 +108,10 @@ final class RandomHandleGeneratorTests: XCTestCase {
         let expectedFirstNormalized = "po"
 
         // WHEN
-        let handles: [String] = WireSyncEngine.RandomHandleGenerator.generatePossibleHandles(displayName: "Po", alternativeNames: 0)
+        let handles: [String] = WireSyncEngine.RandomHandleGenerator.generatePossibleHandles(
+            displayName: "Po",
+            alternativeNames: 0
+        )
 
         // THEN
         XCTAssertEqual(handles.first, expectedFirstNormalized)
@@ -104,7 +119,10 @@ final class RandomHandleGeneratorTests: XCTestCase {
 
     func testThatItDoesNotSuggestsHandlesWithOneCharacters() {
         // WHEN
-        let handles: [String] = WireSyncEngine.RandomHandleGenerator.generatePossibleHandles(displayName: "P", alternativeNames: 0)
+        let handles: [String] = WireSyncEngine.RandomHandleGenerator.generatePossibleHandles(
+            displayName: "P",
+            alternativeNames: 0
+        )
 
         // THEN
         guard let handle = handles.first else { XCTFail(); return }

@@ -30,7 +30,11 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
 
     public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
         self.managedObjectContext = managedObjectContext
-        self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
+        self
+            .insertedObjectSync = InsertedObjectSync(
+                insertPredicate: Self
+                    .shouldBeSentPredicate(context: managedObjectContext)
+            )
         self.messageSender = messageSender
 
         super.init()
@@ -48,7 +52,13 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            notDelivered,
+            notExpired,
+            isAssetV3,
+            isUploaded,
+            fromSelf,
+        ])
     }
 }
 

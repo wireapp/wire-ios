@@ -35,24 +35,32 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
 
     let actionSync: EntityActionSync
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncProgress: SyncProgress) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncProgress: SyncProgress
+    ) {
         self.syncProgress = syncProgress
         self.userProfileByIDTranscoder = UserProfileByIDTranscoder(context: managedObjectContext)
         self.userProfileByQualifiedIDTranscoder = UserProfileByQualifiedIDTranscoder(context: managedObjectContext)
 
-        self.userProfileByID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
-                                                    transcoder: userProfileByIDTranscoder)
-        self.userProfileByQualifiedID = IdentifierObjectSync(managedObjectContext: managedObjectContext,
-                                                             transcoder: userProfileByQualifiedIDTranscoder)
+        self.userProfileByID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userProfileByIDTranscoder
+        )
+        self.userProfileByQualifiedID = IdentifierObjectSync(
+            managedObjectContext: managedObjectContext,
+            transcoder: userProfileByQualifiedIDTranscoder
+        )
 
         self.actionSync = EntityActionSync(actionHandlers: [SyncUsersActionHandler(context: managedObjectContext)])
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringSlowSync]
+        self.configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringSlowSync,
+        ]
         self.userProfileByID.delegate = self
         self.userProfileByQualifiedID.delegate = self
         self.userProfileByQualifiedIDTranscoder.contextChangedTracker = self
@@ -238,7 +246,11 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
         return ZMTransportRequest(getFromPath: "/users?ids=\(userIDs)", apiVersion: apiVersion.rawValue)
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<UUID>,
+        completionHandler: @escaping () -> Void
+    ) {
         defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
@@ -292,7 +304,8 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             apiVersion > .v0,
-            let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers)).payloadData(encoder: encoder),
+            let payloadData = Payload.QualifiedUserIDList(qualifiedIDs: Array(identifiers))
+            .payloadData(encoder: encoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil
@@ -300,10 +313,19 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
         // POST /list-users
         let path = NSString.path(withComponents: ["/list-users"])
-        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData?, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
+    func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<QualifiedID>,
+        completionHandler: @escaping () -> Void
+    ) {
         defer { completionHandler() }
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {

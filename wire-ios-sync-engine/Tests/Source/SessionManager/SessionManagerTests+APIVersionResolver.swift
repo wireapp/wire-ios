@@ -79,7 +79,11 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
         }
 
         newSession.syncContext.performAndWait {
-            let migratedConversation = ZMConversation.fetch(with: conversationRemoteIdentifier, domain: domain, in: newSession.syncContext)
+            let migratedConversation = ZMConversation.fetch(
+                with: conversationRemoteIdentifier,
+                domain: domain,
+                in: newSession.syncContext
+            )
             XCTAssertNotNil(migratedConversation)
             XCTAssertEqual(migratedConversation?.domain, domain)
         }
@@ -120,7 +124,11 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
         // no op
     }
 
-    func sessionManagerWillOpenAccount(_ account: Account, from selectedAccount: Account?, userSessionCanBeTornDown: @escaping () -> Void) {
+    func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    ) {
         userSessionCanBeTornDown()
     }
 

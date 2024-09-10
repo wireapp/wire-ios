@@ -89,28 +89,42 @@ final class SearchResultLabel: UILabel, Copyable {
         self.queries = queries
 
         let currentFont = isObfuscated ? redactedFont.withSize(font.pointSize) : font
-        let attributedText = NSMutableAttributedString(string: text, attributes: [.font: currentFont, .foregroundColor: color])
+        let attributedText = NSMutableAttributedString(
+            string: text,
+            attributes: [.font: currentFont, .foregroundColor: color]
+        )
 
-        let currentRange = text.range(of: queries,
-                                      options: [.diacriticInsensitive, .caseInsensitive])
+        let currentRange = text.range(
+            of: queries,
+            options: [.diacriticInsensitive, .caseInsensitive]
+        )
 
         if let range = currentRange {
             let nsRange = text.nsRange(from: range)
 
-            let highlightedAttributes = [NSAttributedString.Key.font: font,
-                                         .backgroundColor: UIColor.accentDarken]
+            let highlightedAttributes = [
+                NSAttributedString.Key.font: font,
+                .backgroundColor: UIColor.accentDarken,
+            ]
 
             if self.fits(attributedText: attributedText, fromRange: nsRange) {
-                self.attributedText = attributedText.highlightingAppearances(of: queries,
-                                                                             with: highlightedAttributes,
-                                                                             upToWidth: self.bounds.width,
-                                                                             totalMatches: &estimatedMatchesCount)
+                self.attributedText = attributedText.highlightingAppearances(
+                    of: queries,
+                    with: highlightedAttributes,
+                    upToWidth: self.bounds.width,
+                    totalMatches: &estimatedMatchesCount
+                )
             } else {
-                self.attributedText = attributedText.cutAndPrefixedWithEllipsis(from: nsRange.location, fittingIntoWidth: self.bounds.width)
-                    .highlightingAppearances(of: queries,
-                                             with: highlightedAttributes,
-                                             upToWidth: self.bounds.width,
-                                             totalMatches: &estimatedMatchesCount)
+                self.attributedText = attributedText.cutAndPrefixedWithEllipsis(
+                    from: nsRange.location,
+                    fittingIntoWidth: self.bounds.width
+                )
+                .highlightingAppearances(
+                    of: queries,
+                    with: highlightedAttributes,
+                    upToWidth: self.bounds.width,
+                    totalMatches: &estimatedMatchesCount
+                )
             }
         } else {
             self.attributedText = attributedText
@@ -126,7 +140,11 @@ final class SearchResultLabel: UILabel, Copyable {
     }
 
     fileprivate func fits(attributedText: NSAttributedString, fromRange: NSRange) -> Bool {
-        let textCutToRange = attributedText.attributedSubstring(from: NSRange(location: 0, length: fromRange.location + fromRange.length))
+        let textCutToRange = attributedText.attributedSubstring(from: NSRange(
+            location: 0,
+            length: fromRange.location + fromRange
+                .length
+        ))
 
         let labelSize = textCutToRange.layoutSize()
 

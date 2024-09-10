@@ -21,8 +21,12 @@ import Foundation
 enum InvalidGenericMessageDataRemoval {
     static func removeInvalid(in moc: NSManagedObjectContext) {
         do {
-            try moc.batchDeleteEntities(named: ZMGenericMessageData.entityName(),
-                                        matching: NSPredicate(format: "\(ZMGenericMessageData.assetKey) == nil AND \(ZMGenericMessageData.messageKey) == nil"))
+            try moc.batchDeleteEntities(
+                named: ZMGenericMessageData.entityName(),
+                matching: NSPredicate(
+                    format: "\(ZMGenericMessageData.assetKey) == nil AND \(ZMGenericMessageData.messageKey) == nil"
+                )
+            )
         } catch {
             fatalError("Failed to perform batch update: \(error)")
         }

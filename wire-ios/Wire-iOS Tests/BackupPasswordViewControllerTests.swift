@@ -82,8 +82,16 @@ final class BackupPasswordViewControllerTests: XCTestCase {
         }
 
         // WHEN
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "              "))
-        XCTAssertFalse(sut.textField(UITextField(), shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "\n"))
+        XCTAssertFalse(sut.textField(
+            UITextField(),
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "              "
+        ))
+        XCTAssertFalse(sut.textField(
+            UITextField(),
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "\n"
+        ))
     }
 
     // MARK: - Helpers

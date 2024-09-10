@@ -33,7 +33,8 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     init(
         userClientAPI: UserClientAPI,
-        syncContext: NSManagedObjectContext) {
+        syncContext: NSManagedObjectContext
+    ) {
         self.userClientAPI = userClientAPI
         self.syncContext = syncContext
     }
@@ -63,7 +64,8 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         await userClient.deleteClientAndEndSession()
         await ZMClientUpdateNotification.notifyDeletionCompleted(
             remainingClients: selfUserClientsExcludingSelfClient,
-            context: syncContext)
+            context: syncContext
+        )
     }
 
     private var selfUserClientsExcludingSelfClient: [UserClient] {

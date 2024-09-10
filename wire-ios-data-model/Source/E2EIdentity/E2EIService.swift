@@ -115,9 +115,11 @@ public final class E2EIService: E2EIServiceInterface {
     }
 
     public func getNewOidcChallengeRequest(idToken: String, refreshToken: String, nonce: String) async throws -> Data {
-        try await e2eIdentity.newOidcChallengeRequest(idToken: idToken,
-                                                      refreshToken: refreshToken,
-                                                      previousNonce: nonce)
+        try await e2eIdentity.newOidcChallengeRequest(
+            idToken: idToken,
+            refreshToken: refreshToken,
+            previousNonce: nonce
+        )
     }
 
     public func setDPoPChallengeResponse(challenge: Data) async throws {

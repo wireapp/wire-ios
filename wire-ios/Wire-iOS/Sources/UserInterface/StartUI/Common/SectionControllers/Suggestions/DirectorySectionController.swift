@@ -48,9 +48,15 @@ final class DirectorySectionController: SearchSectionController {
         suggestions.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let user = suggestions[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
                 user: user,

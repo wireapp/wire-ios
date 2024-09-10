@@ -99,7 +99,10 @@ import WireUtilities
      */
 
     @objc(startBackgroundActivityWithName:expirationHandler:)
-    public func startBackgroundActivity(name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
+    public func startBackgroundActivity(
+        name: String,
+        expirationHandler: @escaping (() -> Void)
+    ) -> BackgroundActivity? {
         startActivityIfPossible(name, expirationHandler)
     }
 
@@ -244,12 +247,22 @@ import WireUtilities
 
     /// Register for change in application state: didEnterBackground
     func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
     /// Register for change in application state: willEnterForeground
     func registerObserverForWillEnterForeground(_ object: NSObject, selector: Selector) {
-        NotificationCenter.default.addObserver(object, selector: selector, name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            object,
+            selector: selector,
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
     private func registerForNotifications() {

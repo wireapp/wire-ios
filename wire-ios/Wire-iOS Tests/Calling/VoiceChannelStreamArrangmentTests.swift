@@ -76,7 +76,12 @@ class VoiceChannelStreamArrangementTests: XCTestCase {
 
     private func participantStub(for user: ZMUser, videoEnabled: Bool) -> CallParticipant {
         let state: VideoState = videoEnabled ? .started : .stopped
-        return CallParticipant(user: user, clientId: UUID().transportString(), state: .connected(videoState: state, microphoneState: .unmuted), activeSpeakerState: .inactive)
+        return CallParticipant(
+            user: user,
+            clientId: UUID().transportString(),
+            state: .connected(videoState: state, microphoneState: .unmuted),
+            activeSpeakerState: .inactive
+        )
     }
 
     // MARK: - activeVideoStreams(from participants:)

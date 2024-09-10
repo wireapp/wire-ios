@@ -33,9 +33,11 @@ public final class CallStateObserver: NSObject {
     fileprivate var missedCalltoken: Any?
     fileprivate let systemMessageGenerator = CallSystemMessageGenerator()
 
-    @objc public init(localNotificationDispatcher: LocalNotificationDispatcher,
-                      contextProvider: ContextProvider,
-                      callNotificationStyleProvider: CallNotificationStyleProvider) {
+    @objc public init(
+        localNotificationDispatcher: LocalNotificationDispatcher,
+        contextProvider: ContextProvider,
+        callNotificationStyleProvider: CallNotificationStyleProvider
+    ) {
         self.uiContext = contextProvider.viewContext
         self.syncContext = contextProvider.syncContext
         self.notificationStyleProvider = callNotificationStyleProvider
@@ -51,9 +53,11 @@ public final class CallStateObserver: NSObject {
         didSet {
             if callInProgress != oldValue {
                 syncContext.performGroupedBlock {
-                    NotificationInContext(name: CallStateObserver.CallInProgressNotification,
-                                          context: self.syncContext.notificationContext,
-                                          userInfo: [CallStateObserver.CallInProgressKey: self.callInProgress]).post()
+                    NotificationInContext(
+                        name: CallStateObserver.CallInProgressNotification,
+                        context: self.syncContext.notificationContext,
+                        userInfo: [CallStateObserver.CallInProgressKey: self.callInProgress]
+                    ).post()
                 }
             }
         }
@@ -61,7 +65,13 @@ public final class CallStateObserver: NSObject {
 }
 
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
-    public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    public func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         let callerId = caller.remoteIdentifier
         let callerDomain = caller.domain
         let conversationId = conversation.remoteIdentifier
@@ -86,7 +96,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             self.updateConversation(conversation, with: callState, timestamp: timestamp)
 
             // CallKit depends on a fetched conversation & and is not used for muted conversations
-            let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation.mutedMessageTypesIncludingAvailability != .none
+            let skipCallKit = conversation.needsToBeUpdatedFromBackend || conversation
+                .mutedMessageTypesIncludingAvailability != .none
             let notificationStyle = self.notificationStyleProvider?.callNotificationStyle ?? .callKit
 
             if notificationStyle == .pushNotifications || skipCallKit {
@@ -95,7 +106,13 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
             self.updateConversationListIndicator(convObjectID: conversation.objectID, callState: callState)
 
-            if let systemMessage = self.systemMessageGenerator.appendSystemMessageIfNeeded(callState: callState, conversation: conversation, caller: caller, timestamp: timestamp, previousCallState: previousCallState) {
+            if let systemMessage = self.systemMessageGenerator.appendSystemMessageIfNeeded(
+                callState: callState,
+                conversation: conversation,
+                caller: caller,
+                timestamp: timestamp,
+                previousCallState: previousCallState
+            ) {
                 switch (systemMessage.systemMessageType, callState, conversation.conversationType) {
                 case (.missedCall, .terminating(reason: .normal), .group),
                      (.missedCall, .terminating(reason: .canceled), _):
@@ -114,7 +131,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
     public func updateConversationListIndicator(convObjectID: NSManagedObjectID, callState: CallState) {
         // We need to switch to the uiContext here because we are making changes that need to be present on the UI when the change notification fires
         uiContext.performGroupedBlock {
-            guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation else { return }
+            guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation
+            else { return }
 
             switch callState {
             case .incoming(video: _, shouldRing: let shouldRing, degraded: _):
@@ -130,9 +148,11 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             }
 
             if self.uiContext.zm_hasChanges {
-                NotificationDispatcher.notifyNonCoreDataChanges(objectID: convObjectID,
-                                                                changedKeys: [ZMConversationListIndicatorKey],
-                                                                uiContext: self.uiContext)
+                NotificationDispatcher.notifyNonCoreDataChanges(
+                    objectID: convObjectID,
+                    changedKeys: [ZMConversationListIndicatorKey],
+                    uiContext: self.uiContext
+                )
             }
         }
     }

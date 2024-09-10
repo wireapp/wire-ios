@@ -75,17 +75,18 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
 
     func testExpiredCertificateForSelfUserResultsInFalse() async throws {
         // Given
-        mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
-            XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
-            // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
-            XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
-            return [
-                userIDs[0]: [
-                    .with(clientID: clientIDs![0].rawValue, status: .valid),
-                    .with(clientID: clientIDs![1].rawValue, status: .expired),
-                ],
-            ]
-        }
+        mockSafeCoreCrypto.coreCrypto
+            .getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] conversationID, userIDs in
+                XCTAssertEqual(conversationID, .init(base64Encoded: "qE4EdglNFI53Cm4soIFZ/rUMVL4JfCgcE4eo86QVxSc=")!)
+                // eventually a userID will have the suffix "@example.com", but it's low prio on the Core Crypto team
+                XCTAssertEqual(userIDs, ["36dfe52f-157d-452b-a9c1-98f7d9c1815d"])
+                return [
+                    userIDs[0]: [
+                        .with(clientID: clientIDs![0].rawValue, status: .valid),
+                        .with(clientID: clientIDs![1].rawValue, status: .expired),
+                    ],
+                ]
+            }
 
         // When
         let isCertified = try await sut.invoke(

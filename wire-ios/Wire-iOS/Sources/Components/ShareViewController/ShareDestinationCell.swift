@@ -115,7 +115,15 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
 
         stackView.addArrangedSubview(avatarViewContainer)
 
-        for item in [avatarViewContainer, shieldView, guestUserIcon, legalHoldIcon, stackView, titleLabel, checkImageView] {
+        for item in [
+            avatarViewContainer,
+            shieldView,
+            guestUserIcon,
+            legalHoldIcon,
+            stackView,
+            titleLabel,
+            checkImageView,
+        ] {
             item.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -176,9 +184,12 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        checkImageView.image = selected ? StyleKitIcon.checkmark.makeImage(size: 12, color: .white).withRenderingMode(.alwaysTemplate) : nil
+        checkImageView.image = selected ? StyleKitIcon.checkmark.makeImage(size: 12, color: .white)
+            .withRenderingMode(.alwaysTemplate) : nil
         checkImageView.tintColor = selected ? SemanticColors.Icon.foregroundCheckMarkSelected : .clear
-        checkImageView.backgroundColor = selected ? SemanticColors.Icon.backgroundCheckMarkSelected : SemanticColors.Icon.backgroundCheckMark
-        checkImageView.layer.borderColor = selected ? UIColor.clear.cgColor : SemanticColors.Icon.borderCheckMark.cgColor
+        checkImageView.backgroundColor = selected ? SemanticColors.Icon.backgroundCheckMarkSelected : SemanticColors
+            .Icon.backgroundCheckMark
+        checkImageView.layer.borderColor = selected ? UIColor.clear.cgColor : SemanticColors.Icon.borderCheckMark
+            .cgColor
     }
 }

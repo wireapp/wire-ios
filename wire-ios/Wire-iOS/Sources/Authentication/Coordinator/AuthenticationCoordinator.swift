@@ -205,7 +205,11 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
             if let rewindedController {
-                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
+                viewControllers = [
+                    viewControllers.prefix { !milestone.shouldRewind(to: $0) },
+                    [rewindedController],
+                    [stepViewController],
+                ].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)
@@ -227,9 +231,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
     }
 
     func addBackendSwitchObserver() {
-        NotificationCenter.default.addObserver(forName: BackendEnvironment.backendSwitchNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: BackendEnvironment.backendSwitchNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.startAuthentication(with: nil, numberOfAccounts: SessionManager.numberOfAccounts)
         }
     }
@@ -473,9 +479,11 @@ extension AuthenticationCoordinator {
                 style: .destructive
             )
 
-            let alertModel = AuthenticationCoordinatorAlert(title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                                                            message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
-                                                            actions: [.cancel, signOutAction])
+            let alertModel = AuthenticationCoordinatorAlert(
+                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
+                message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
+                actions: [.cancel, signOutAction]
+            )
 
             presentAlert(for: alertModel)
         } else {
@@ -552,7 +560,8 @@ extension AuthenticationCoordinator {
      */
 
     private func startRegistration(_ unverifiedEmail: String) {
-        guard case let .createCredentials(unregisteredUser) = stateController.currentStep, let presenter = self.presenter else {
+        guard case let .createCredentials(unregisteredUser) = stateController.currentStep,
+              let presenter = self.presenter else {
             log.error("Cannot start phone registration outside of registration flow.")
             return
         }
@@ -569,7 +578,11 @@ extension AuthenticationCoordinator {
     /// Sends the registration activation code.
     private func sendActivationCode(_ unverifiedEmail: String, _ user: UnregisteredUser, isResend: Bool) {
         startActivityIndicator()
-        stateController.transition(to: .sendActivationCode(unverifiedEmail: unverifiedEmail, user: user, isResend: isResend))
+        stateController.transition(to: .sendActivationCode(
+            unverifiedEmail: unverifiedEmail,
+            user: user,
+            isResend: isResend
+        ))
         registrationStatus.sendActivationCode(to: unverifiedEmail)
     }
 
@@ -647,7 +660,10 @@ extension AuthenticationCoordinator {
     // MARK: - Login
 
     /// Starts the login flow with the specified request.
-    private func startLoginFlow(request: AuthenticationLoginRequest, proxyCredentials: AuthenticationProxyCredentialsInput?) {
+    private func startLoginFlow(
+        request: AuthenticationLoginRequest,
+        proxyCredentials: AuthenticationProxyCredentialsInput?
+    ) {
         let action = { [weak self] in
 
             switch request {
@@ -660,8 +676,10 @@ extension AuthenticationCoordinator {
         }
 
         if let proxyCredentials {
-            sessionManager.saveProxyCredentials(username: proxyCredentials.username,
-                                                password: proxyCredentials.password)
+            sessionManager.saveProxyCredentials(
+                username: proxyCredentials.username,
+                password: proxyCredentials.password
+            )
         }
 
         activateNetworkSessions { [weak self] error in
@@ -677,7 +695,11 @@ extension AuthenticationCoordinator {
     // Sends the login verification code to the email address
     private func requestEmailVerificationCode(email: String, password: String, isResend: Bool) {
         if !isResend {
-            let nextStep = AuthenticationFlowStep.enterEmailVerificationCode(email: email, password: password, isResend: isResend)
+            let nextStep = AuthenticationFlowStep.enterEmailVerificationCode(
+                email: email,
+                password: password,
+                isResend: isResend
+            )
             stateController.transition(to: nextStep)
         }
         unauthenticatedSession.requestEmailVerificationCodeForLogin(email: email)
@@ -737,7 +759,8 @@ extension AuthenticationCoordinator {
         stateController.transition(to: .registerEmailCredentials(credentials, isResend: false))
         startActivityIndicator()
 
-        let result = setCredentialsWithProfile(profile, credentials: credentials) && sessionManager.update(credentials: credentials) == true
+        let result = setCredentialsWithProfile(profile, credentials: credentials) && sessionManager
+            .update(credentials: credentials) == true
 
         if !result {
             let error = NSError(userSessionErrorCode: .invalidEmail, userInfo: nil)
@@ -828,9 +851,12 @@ extension AuthenticationCoordinator {
                 executeActions([
                     .hideLoadingView,
                     .presentAlert(
-                        .init(title: E2ei.Error.Alert.title,
-                              message: E2ei.Error.Alert.message,
-                              actions: [.ok])),
+                        .init(
+                            title: E2ei.Error.Alert.title,
+                            message: E2ei.Error.Alert.message,
+                            actions: [.ok]
+                        )
+                    ),
                 ])
             }
         }
@@ -846,9 +872,11 @@ extension AuthenticationCoordinator {
         typealias Alert = L10n.Localizable.SystemStatusBar.NoInternet
 
         executeActions(
-            [.presentAlert(.init(title: Alert.title,
-                                 message: Alert.explanation,
-                                 actions: [.ok]))]
+            [.presentAlert(.init(
+                title: Alert.title,
+                message: Alert.explanation,
+                actions: [.ok]
+            ))]
         )
     }
 
@@ -878,13 +906,17 @@ extension AuthenticationCoordinator {
                 await MainActor.run {
                     let alert = switch error {
                     case .taken:
-                        AuthenticationCoordinatorAlert(title: AlreadyTakenError.title,
-                                                       message: AlreadyTakenError.message,
-                                                       actions: [.ok])
+                        AuthenticationCoordinatorAlert(
+                            title: AlreadyTakenError.title,
+                            message: AlreadyTakenError.message,
+                            actions: [.ok]
+                        )
                     case .unknown:
-                        AuthenticationCoordinatorAlert(title: UnknownError.title,
-                                                       message: UnknownError.message,
-                                                       actions: [.ok])
+                        AuthenticationCoordinatorAlert(
+                            title: UnknownError.title,
+                            message: UnknownError.message,
+                            actions: [.ok]
+                        )
                     }
                     executeAction(.presentAlert(alert))
                 }

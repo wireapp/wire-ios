@@ -60,15 +60,21 @@ import UIKit
         let setInvalid = {
             let description = "The email address is invalid."
             let userInfo = [NSLocalizedDescriptionKey: description]
-            let error = NSError(domain: ZMObjectValidationErrorDomain, code: ZMManagedObjectValidationErrorCode.emailAddressIsInvalid.rawValue, userInfo: userInfo)
+            let error = NSError(
+                domain: ZMObjectValidationErrorDomain,
+                code: ZMManagedObjectValidationErrorCode.emailAddressIsInvalid.rawValue,
+                userInfo: userInfo
+            )
             throw error
         }
 
         do {
-            try StringLengthValidator.validateStringValue(&ioValue,
-                                                          minimumStringLength: 0,
-                                                          maximumStringLength: 120,
-                                                          maximumByteLength: 120)
+            try StringLengthValidator.validateStringValue(
+                &ioValue,
+                minimumStringLength: 0,
+                maximumStringLength: 120,
+                maximumByteLength: 120
+            )
         } catch {
             try setInvalid()
             return false
@@ -136,7 +142,8 @@ import UIKit
                     if c.hasPrefix("\""), c.hasSuffix("\"") {
                         // Allow this regardless of what
                         let quoted = c.substring(with: NSRange(location: 1, length: c.length - 2)) as NSString
-                        if quoted.length < 1 || quoted.rangeOfCharacter(from: invalidQuotedSet, options: .literal).location != NSNotFound {
+                        if quoted.length < 1 || quoted.rangeOfCharacter(from: invalidQuotedSet, options: .literal)
+                            .location != NSNotFound {
                             try setInvalid()
                             return false
                         }

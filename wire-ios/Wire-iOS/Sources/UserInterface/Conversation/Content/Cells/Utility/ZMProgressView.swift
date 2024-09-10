@@ -87,11 +87,22 @@ final class ZMProgressView: UIView {
         let progress = (self.deterministic ?? false) ? self.progress : 1
 
         let setBlock = {
-            self.progressView.frame = CGRect(x: 0, y: 0, width: CGFloat(progress) * self.bounds.size.width, height: self.bounds.size.height)
+            self.progressView.frame = CGRect(
+                x: 0,
+                y: 0,
+                width: CGFloat(progress) * self.bounds.size.width,
+                height: self.bounds.size.height
+            )
         }
 
         if animated {
-            UIView.animate(withDuration: 0.35, delay: 0.0, options: [.beginFromCurrentState], animations: setBlock, completion: .none)
+            UIView.animate(
+                withDuration: 0.35,
+                delay: 0.0,
+                options: [.beginFromCurrentState],
+                animations: setBlock,
+                completion: .none
+            )
         } else {
             setBlock()
         }

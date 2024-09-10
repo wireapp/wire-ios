@@ -29,7 +29,8 @@ extension CLPlacemark {
     func formattedAddress(_ includeCountry: Bool) -> String? {
         let lines: [String]?
 
-        lines = [subThoroughfare, thoroughfare, locality, subLocality, administrativeArea, postalCode, country].compactMap { $0 }
+        lines = [subThoroughfare, thoroughfare, locality, subLocality, administrativeArea, postalCode, country]
+            .compactMap { $0 }
 
         return includeCountry ? lines?.joined(separator: ", ") : lines?.dropLast().joined(separator: ", ")
     }
@@ -51,7 +52,10 @@ extension MKMapView {
 
     func setCenterCoordinate(_ coordinate: CLLocationCoordinate2D, zoomLevel: Int, animated: Bool = false) {
         guard CLLocationCoordinate2DIsValid(coordinate) else { return }
-        let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(zoomLevel: zoomLevel, viewSize: Float(frame.height)))
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(zoomLevel: zoomLevel, viewSize: Float(frame.height))
+        )
         setRegion(region, animated: animated)
     }
 }

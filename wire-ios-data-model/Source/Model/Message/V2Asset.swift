@@ -90,7 +90,8 @@ public class V2Asset: NSObject, ZMImageMessageData {
     }
 
     public var imageMessageData: ZMImageMessageData? {
-        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil else { return nil }
+        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil
+        else { return nil }
 
         return self
     }
@@ -226,16 +227,28 @@ extension V2Asset: AssetProxyType {
         guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
 
         if assetClientMessage.imageMessageData != nil {
-            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.imageDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         } else {
-            NotificationInContext(name: ZMAssetClientMessage.assetDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.assetDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         }
     }
 
     public func requestPreviewDownload() {
         guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
         if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
-            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+            NotificationInContext(
+                name: ZMAssetClientMessage.imageDownloadNotificationName,
+                context: moc.notificationContext,
+                object: assetClientMessage.objectID
+            ).post()
         }
     }
 }

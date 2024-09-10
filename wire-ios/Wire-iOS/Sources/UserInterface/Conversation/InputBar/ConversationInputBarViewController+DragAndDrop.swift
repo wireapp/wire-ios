@@ -36,24 +36,27 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
             } else if itemProvider.canLoadObject(ofClass: UIImage.self) {
                 itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { object, error in
 
-                    guard error == nil else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
+                    guard error == nil
+                    else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
                     guard let draggedImage = object as? UIImage else { return }
 
                     DispatchQueue.main.async {
-                        let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: draggedImage),
-                                                                         onConfirm: { [unowned self] _ in
-                                                                             self.dismiss(animated: true) {
-                                                                                 if let draggedImageData = draggedImage.pngData() {
-                                                                                     self.sendController.sendMessage(
-                                                                                         withImageData: draggedImageData,
-                                                                                         userSession: self.userSession
-                                                                                     )
-                                                                                 }
-                                                                             }
-                                                                         },
-                                                                         onCancel: { [unowned self] in
-                                                                             self.dismiss(animated: true)
-                                                                         }
+                        let context = ConfirmAssetViewController.Context(
+                            asset: .image(mediaAsset: draggedImage),
+                            onConfirm: { [unowned self] _ in
+                                self.dismiss(animated: true) {
+                                    if let draggedImageData = draggedImage
+                                        .pngData() {
+                                        self.sendController.sendMessage(
+                                            withImageData: draggedImageData,
+                                            userSession: self.userSession
+                                        )
+                                    }
+                                }
+                            },
+                            onCancel: { [unowned self] in
+                                self.dismiss(animated: true)
+                            }
                         )
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)
@@ -69,7 +72,10 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
     }
 
     func dropInteraction(_ interaction: UIDropInteraction, sessionDidUpdate session: UIDropSession) -> UIDropProposal {
-        dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()))
+        dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager(
+            sessionRestriction: ZMUserSession
+                .shared()
+        ))
     }
 
     func dropProposal(mediaShareRestrictionManager: MediaShareRestrictionManager) -> UIDropProposal {

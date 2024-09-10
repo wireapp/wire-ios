@@ -120,10 +120,22 @@ public final class AccountImageView: UIView {
         constraints = [
             accountImageView.widthAnchor.constraint(equalToConstant: accountImageHeight), // fallback, lower priority
             accountImageView.heightAnchor.constraint(equalToConstant: accountImageHeight), // fallback, lower priority
-            accountImageView.leadingAnchor.constraint(equalTo: accountImageViewWrapper.leadingAnchor, constant: accountImageBorderWidth),
-            accountImageView.topAnchor.constraint(equalTo: accountImageViewWrapper.topAnchor, constant: accountImageBorderWidth),
-            accountImageViewWrapper.trailingAnchor.constraint(equalTo: accountImageView.trailingAnchor, constant: accountImageBorderWidth),
-            accountImageViewWrapper.bottomAnchor.constraint(equalTo: accountImageView.bottomAnchor, constant: accountImageBorderWidth),
+            accountImageView.leadingAnchor.constraint(
+                equalTo: accountImageViewWrapper.leadingAnchor,
+                constant: accountImageBorderWidth
+            ),
+            accountImageView.topAnchor.constraint(
+                equalTo: accountImageViewWrapper.topAnchor,
+                constant: accountImageBorderWidth
+            ),
+            accountImageViewWrapper.trailingAnchor.constraint(
+                equalTo: accountImageView.trailingAnchor,
+                constant: accountImageBorderWidth
+            ),
+            accountImageViewWrapper.bottomAnchor.constraint(
+                equalTo: accountImageView.bottomAnchor,
+                constant: accountImageBorderWidth
+            ),
         ]
         constraints[0 ... 1].forEach { $0.priority = .defaultLow }
         NSLayoutConstraint.activate(constraints)
@@ -132,8 +144,14 @@ public final class AccountImageView: UIView {
         availabilityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(availabilityIndicatorView)
         NSLayoutConstraint.activate([
-            availabilityIndicatorView.widthAnchor.constraint(equalTo: accountImageViewWrapper.widthAnchor, multiplier: availabilityIndicatorDiameterFraction),
-            availabilityIndicatorView.heightAnchor.constraint(equalTo: accountImageViewWrapper.heightAnchor, multiplier: availabilityIndicatorDiameterFraction),
+            availabilityIndicatorView.widthAnchor.constraint(
+                equalTo: accountImageViewWrapper.widthAnchor,
+                multiplier: availabilityIndicatorDiameterFraction
+            ),
+            availabilityIndicatorView.heightAnchor.constraint(
+                equalTo: accountImageViewWrapper.heightAnchor,
+                multiplier: availabilityIndicatorDiameterFraction
+            ),
             accountImageViewWrapper.trailingAnchor.constraint(equalTo: availabilityIndicatorView.trailingAnchor),
             accountImageViewWrapper.bottomAnchor.constraint(equalTo: availabilityIndicatorView.bottomAnchor),
         ])

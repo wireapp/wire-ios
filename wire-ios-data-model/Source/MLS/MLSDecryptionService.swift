@@ -141,7 +141,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         for groupID: MLSGroupID,
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult] {
-        WireLogger.mls.debug("decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))")
+        WireLogger.mls
+            .debug(
+                "decrypting message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType)))"
+            )
 
         guard let messageData = message.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
@@ -177,7 +180,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
             return results
         } catch let CoreCryptoError.CryptoError(error) {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
+            WireLogger.mls
+                .error(
+                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
+                )
 
             switch error {
             // Received messages targeting a future epoch, we might have lost messages.
@@ -205,7 +211,10 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
         } catch {
-            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
+            WireLogger.mls
+                .error(
+                    "failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)"
+                )
 
             throw MLSMessageDecryptionError.failedToDecryptMessage
         }

@@ -22,7 +22,8 @@ import WireDataModel
 import WireRequestStrategy
 
 @objcMembers
-public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
+public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker,
+    ZMContextChangeTrackerSource, ZMEventConsumer {
     // MARK: - Private Properties
 
     private static let logger = Logger(subsystem: "VoIP Push", category: "CallingRequestStrategy")
@@ -68,9 +69,11 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        configuration = [.allowsRequestsWhileInBackground,
-                         .allowsRequestsWhileOnline,
-                         .allowsRequestsWhileWaitingForWebsocket]
+        configuration = [
+            .allowsRequestsWhileInBackground,
+            .allowsRequestsWhileOnline,
+            .allowsRequestsWhileWaitingForWebsocket,
+        ]
 
         callConfigRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
         clientDiscoverySync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
@@ -79,12 +82,14 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
         if let clientId = selfUser.selfClient()?.remoteIdentifier {
             zmLog.debug("Creating callCenter from init")
-            callCenter = WireCallCenterV3Factory.callCenter(withUserId: selfUser.avsIdentifier,
-                                                            clientId: clientId,
-                                                            uiMOC: managedObjectContext.zm_userInterface,
-                                                            flowManager: flowManager,
-                                                            analytics: managedObjectContext.analytics,
-                                                            transport: self)
+            callCenter = WireCallCenterV3Factory.callCenter(
+                withUserId: selfUser.avsIdentifier,
+                clientId: clientId,
+                uiMOC: managedObjectContext.zm_userInterface,
+                flowManager: flowManager,
+                analytics: managedObjectContext.analytics,
+                transport: self
+            )
         }
 
         setupEventProcessingNotifications()
@@ -120,13 +125,15 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         case callConfigRequestSync:
             zmLog.debug("Scheduling request to '/calls/config/v2'")
 
-            return ZMTransportRequest(path: "/calls/config/v2",
-                                      method: .get,
-                                      binaryData: nil,
-                                      type: "application/json",
-                                      contentDisposition: nil,
-                                      shouldCompress: true,
-                                      apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/calls/config/v2",
+                method: .get,
+                binaryData: nil,
+                type: "application/json",
+                contentDisposition: nil,
+                shouldCompress: true,
+                apiVersion: apiVersion.rawValue
+            )
 
         case clientDiscoverySync:
             guard
@@ -158,7 +165,10 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             zmLog.debug("Received call config response for \(self): \(response)")
             if response.httpStatus == 200 {
                 var payloadAsString: String?
-                if let payload = response.payload, let data = try? JSONSerialization.data(withJSONObject: payload, options: []) {
+                if let payload = response.payload, let data = try? JSONSerialization.data(
+                    withJSONObject: payload,
+                    options: []
+                ) {
                     payloadAsString = String(decoding: data, as: UTF8.self)
                 }
                 zmLog.debug("Callback: \(String(describing: self.callConfigCompletion))")
@@ -213,17 +223,20 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         guard callCenter == nil else { return }
 
         for object in objects {
-            if let userClient = object as? UserClient, userClient.isSelfClient(), let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
+            if let userClient = object as? UserClient, userClient.isSelfClient(),
+               let clientId = userClient.remoteIdentifier, let userId = userClient.user?.avsIdentifier {
                 zmLog.debug("Creating callCenter")
                 let uiContext = managedObjectContext.zm_userInterface!
                 let analytics = managedObjectContext.analytics
                 uiContext.performGroupedBlock {
-                    self.callCenter = WireCallCenterV3Factory.callCenter(withUserId: userId,
-                                                                         clientId: clientId,
-                                                                         uiMOC: uiContext.zm_userInterface,
-                                                                         flowManager: self.flowManager,
-                                                                         analytics: analytics,
-                                                                         transport: self)
+                    self.callCenter = WireCallCenterV3Factory.callCenter(
+                        withUserId: userId,
+                        clientId: clientId,
+                        uiMOC: uiContext.zm_userInterface,
+                        flowManager: self.flowManager,
+                        analytics: analytics,
+                        transport: self
+                    )
                 }
                 break
             }
@@ -254,7 +267,8 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            self.zmLog.debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
+            self.zmLog
+                .debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
                 callCenter?.isMuted = true
@@ -285,8 +299,10 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         senderDomain: String?,
         payload: Data,
         currentTimestamp: TimeInterval,
-        eventTimestamp: Date) {
-        let identifier = !callingConversationId.id.isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
+        eventTimestamp: Date
+    ) {
+        let identifier = !callingConversationId.id
+            .isEmpty ? UUID(uuidString: callingConversationId.id)! : conversationUUID
         let domain = !callingConversationId.domain.isEmpty ? callingConversationId.domain : conversationDomain
 
         let conversationId = AVSIdentifier(
@@ -344,12 +360,14 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
             self.zmLog.debug("schedule calling message")
 
-            let recipients = targets.map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
+            let recipients = targets
+                .map { self.recipients(for: $0, in: self.managedObjectContext) } ?? .conversationParticipants
 
             let message: GenericMessageEntity
 
             if overMLSSelfConversation, conversation.messageProtocol == .mls {
-                guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext) else {
+                guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.managedObjectContext)
+                else {
                     WireLogger.mls.error("missing self conversation for sending message to own clients")
                     completionHandler(500)
                     return
@@ -474,7 +492,8 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                         completionHandler(avsClients)
 
                     } catch {
-                        WireLogger.mls.error("Failed to fetch client list for MLS conference: \(String(describing: error))")
+                        WireLogger.mls
+                            .error("Failed to fetch client list for MLS conference: \(String(describing: error))")
                     }
                 }
             }
@@ -498,7 +517,10 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         }
     }
 
-    private func recipients(for targets: [AVSClient], in managedObjectContext: NSManagedObjectContext) -> GenericMessageEntity.Recipients {
+    private func recipients(
+        for targets: [AVSClient],
+        in managedObjectContext: NSManagedObjectContext
+    ) -> GenericMessageEntity.Recipients {
         let clientsByUser = targets
             .compactMap { UserClient.fetchExistingUserClient(with: $0.clientId, in: managedObjectContext) }
             .partition(by: \.user)
@@ -560,24 +582,25 @@ extension CallingRequestStrategy {
             let nestedContainer = try container.nestedContainer(keyedBy: DynamicKey.self, forKey: .missing)
 
             // define the block used below to extract the clients from a container
-            let extractClientsFromContainer = { (container: KeyedDecodingContainer<DynamicKey>, domain: String?) -> [AVSClient] in
-                var clients = [AVSClient]()
+            let extractClientsFromContainer =
+                { (container: KeyedDecodingContainer<DynamicKey>, domain: String?) -> [AVSClient] in
+                    var clients = [AVSClient]()
 
-                try container.allKeys.forEach { userIdKey in
-                    let clientIds = try container.decode([String].self, forKey: userIdKey)
+                    try container.allKeys.forEach { userIdKey in
+                        let clientIds = try container.decode([String].self, forKey: userIdKey)
 
-                    let identifier = AVSIdentifier(
-                        identifier: UUID(uuidString: userIdKey.stringValue)!,
-                        domain: domain
-                    )
+                        let identifier = AVSIdentifier(
+                            identifier: UUID(uuidString: userIdKey.stringValue)!,
+                            domain: domain
+                        )
 
-                    clients += clientIds.compactMap {
-                        AVSClient(userId: identifier, clientId: $0)
+                        clients += clientIds.compactMap {
+                            AVSClient(userId: identifier, clientId: $0)
+                        }
                     }
-                }
 
-                return clients
-            }
+                    return clients
+                }
 
             var allClients = [AVSClient]()
 
@@ -589,7 +612,10 @@ extension CallingRequestStrategy {
                 // `nestedContainer` has further nested containers each dynamically keyed by a domain name.
                 // we need to loop over each container to extract the clients.
                 try nestedContainer.allKeys.forEach { domainKey in
-                    let usersContainer = try nestedContainer.nestedContainer(keyedBy: DynamicKey.self, forKey: domainKey)
+                    let usersContainer = try nestedContainer.nestedContainer(
+                        keyedBy: DynamicKey.self,
+                        forKey: domainKey
+                    )
                     allClients += try extractClientsFromContainer(usersContainer, domainKey.stringValue)
                 }
             }

@@ -102,8 +102,10 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         // given
         let remoteID = UUID()
         let searchUser = makeSearchUser(name: "Hans", remoteIdentifier: remoteID)
-        let actionHandler = MockActionHandler<ConnectToUserAction>(result: .success(()),
-                                                                   context: uiMOC.notificationContext)
+        let actionHandler = MockActionHandler<ConnectToUserAction>(
+            result: .success(()),
+            context: uiMOC.notificationContext
+        )
 
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)

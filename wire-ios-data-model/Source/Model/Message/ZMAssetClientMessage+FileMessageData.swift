@@ -105,7 +105,8 @@ import MobileCoreServices
 
 extension ZMAssetClientMessage: ZMFileMessageData {
     /// Notification name for canceled file upload
-    public static let didCancelFileDownloadNotificationName = Notification.Name(rawValue: "ZMAssetClientMessageDidCancelFileDownloadNotification")
+    public static let didCancelFileDownloadNotificationName = Notification
+        .Name(rawValue: "ZMAssetClientMessageDidCancelFileDownloadNotification")
 
     // MIME type of the file being transfered (implied from file extension)
     public var mimeType: String? {
@@ -166,7 +167,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
 
         do {
-            try FileManager.default.createDirectory(at: temporaryFileURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(
+                at: temporaryFileURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
             try FileManager.default.linkItem(at: assetURL, to: temporaryFileURL)
         } catch {
             return nil
@@ -223,7 +228,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 message.update(asset: assetData)
                 try replaceGenericMessageForThumbnail(with: message)
             } catch {
-                Logging.messageProcessing.warn("Failed to set thumbnail asset id. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to set thumbnail asset id. Reason: \(error.localizedDescription)")
             }
         }
     }
@@ -317,14 +323,18 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             return nil
         }
 
-        let token = SignatureStatus.addObserver(observer,
-                                                context: managedObjectContext)
+        let token = SignatureStatus.addObserver(
+            observer,
+            context: managedObjectContext
+        )
 
         let asset = underlyingMessage?.assetData
         syncContext.performGroupedBlock {
-            let status = SignatureStatus(asset: asset,
-                                         data: PDFData,
-                                         managedObjectContext: syncContext)
+            let status = SignatureStatus(
+                asset: asset,
+                data: PDFData,
+                managedObjectContext: syncContext
+            )
             status.store()
             status.signDocument()
         }

@@ -34,7 +34,8 @@ extension UITableViewCell {
     }
 }
 
-class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
+class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView,
+    HighlightableView, ConversationMessageCellMenuPresenter {
     var cellView: C.View
     var ephemeralCountdownView: EphemeralCountdownView
 
@@ -177,18 +178,23 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     }
 
     func showSecuredMenu() {
-        let actions = [MessageAction.visitLink,
-                       MessageAction.reply,
-                       MessageAction.edit,
-                       MessageAction.openDetails,
-                       MessageAction.delete,
-                       MessageAction.cancel]
+        let actions = [
+            MessageAction.visitLink,
+            MessageAction.reply,
+            MessageAction.edit,
+            MessageAction.openDetails,
+            MessageAction.delete,
+            MessageAction.cancel,
+        ]
         guard let controller = messageActionsMenuController(with: actions) else { return }
         display(messageActionsController: controller)
     }
 
     func display(messageActionsController: MessageActionsViewController) {
-        cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: messageActionsController)
+        cellView.delegate?.conversationMessageWantsToShowActionsController(
+            cellView,
+            actionsController: messageActionsController
+        )
     }
 
     @objc
@@ -198,9 +204,15 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    func messageActionsMenuController(with actions: [MessageAction] = MessageAction.allCases) -> MessageActionsViewController? {
+    func messageActionsMenuController(
+        with actions: [MessageAction] = MessageAction
+            .allCases
+    ) -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
-        let actionsMenuController = MessageActionsViewController.controller(withActions: actions, actionController: actionController)
+        let actionsMenuController = MessageActionsViewController.controller(
+            withActions: actions,
+            actionController: actionController
+        )
 
         if let popoverPresentationController = actionsMenuController.popoverPresentationController {
             popoverPresentationController.sourceView = cellView
@@ -256,7 +268,8 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     }
 
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer == singleTapGesture else { return super.gestureRecognizerShouldBegin(gestureRecognizer) }
+        guard gestureRecognizer == singleTapGesture
+        else { return super.gestureRecognizerShouldBegin(gestureRecognizer) }
 
         // We fail the single tap gesture recognizer if there's no single tap action to perform, which gives
         // other gesture recognizers the opportunity to fire.
@@ -268,9 +281,21 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         cellView.prepareForReuse()
     }
 
-    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
-        _ = cellView.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
-        return super.systemLayoutSizeFitting(targetSize, withHorizontalFittingPriority: horizontalFittingPriority, verticalFittingPriority: verticalFittingPriority)
+    override func systemLayoutSizeFitting(
+        _ targetSize: CGSize,
+        withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
+        verticalFittingPriority: UILayoutPriority
+    ) -> CGSize {
+        _ = cellView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
+        return super.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: horizontalFittingPriority,
+            verticalFittingPriority: verticalFittingPriority
+        )
     }
 }
 
@@ -280,13 +305,24 @@ extension UITableView {
         register(ConversationMessageCellTableViewAdapter<C>.self, forCellReuseIdentifier: reuseIdentifier)
     }
 
-    func dequeueConversationCell<C: ConversationMessageCellDescription>(with description: C, for indexPath: IndexPath) -> ConversationMessageCellTableViewAdapter<C> {
+    func dequeueConversationCell<C: ConversationMessageCellDescription>(
+        with description: C,
+        for indexPath: IndexPath
+    )
+        -> ConversationMessageCellTableViewAdapter<C> {
         let reuseIdentifier = String(describing: C.self)
 
-        let cell = dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as Any as! ConversationMessageCellTableViewAdapter<C>
+        let cell = dequeueReusableCell(
+            withIdentifier: reuseIdentifier,
+            for: indexPath
+        ) as Any as! ConversationMessageCellTableViewAdapter<C>
 
         cell.cellDescription = description
-        cell.configure(with: description.configuration, fullWidth: description.isFullWidth, topMargin: description.topMargin)
+        cell.configure(
+            with: description.configuration,
+            fullWidth: description.isFullWidth,
+            topMargin: description.topMargin
+        )
 
         return cell
     }

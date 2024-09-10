@@ -45,7 +45,10 @@ extension ZMUser {
     ///     - context: The context to search in.
     ///     - maxCount: The maximum number of recipients to return.
 
-    public static func recipientsForAvailabilityStatusBroadcast(in context: NSManagedObjectContext, maxCount: Int) -> Set<ZMUser> {
+    public static func recipientsForAvailabilityStatusBroadcast(
+        in context: NSManagedObjectContext,
+        maxCount: Int
+    ) -> Set<ZMUser> {
         var recipients: Set = [selfUser(in: context)]
         var remainingSlots = maxCount - recipients.count
 
@@ -93,7 +96,8 @@ extension ZMUser {
     /// The set of all users from another team who are connected with the self user.
 
     static func knownTeamUsers(in context: NSManagedObjectContext) -> Set<ZMUser> {
-        let connectedPredicate = ZMUser.predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        let connectedPredicate = ZMUser
+            .predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
         let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
         request.predicate = connectedPredicate
 
@@ -134,11 +138,16 @@ extension ZMUser {
     /// Returns an option set describing how we should notify the user about the change in behaviour for the availability feature
     public var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
         get {
-            guard let rawValue = managedObjectContext?.persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int else { return [] }
+            guard let rawValue = managedObjectContext?
+                .persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int
+            else { return [] }
             return NotificationMethod(rawValue: rawValue)
         }
         set {
-            managedObjectContext?.setPersistentStoreMetadata(newValue.rawValue, key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey)
+            managedObjectContext?.setPersistentStoreMetadata(
+                newValue.rawValue,
+                key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey
+            )
         }
     }
 }

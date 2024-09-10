@@ -19,7 +19,15 @@
 import Foundation
 
 extension LinkPreviewAssetUploadRequestStrategy {
-    public static func create(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) -> LinkPreviewAssetUploadRequestStrategy {
-        LinkPreviewAssetUploadRequestStrategy(managedObjectContext: managedObjectContext, applicationStatus: applicationStatus, linkPreviewPreprocessor: nil, previewImagePreprocessor: nil)
+    public static func create(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) -> LinkPreviewAssetUploadRequestStrategy {
+        LinkPreviewAssetUploadRequestStrategy(
+            managedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus,
+            linkPreviewPreprocessor: nil,
+            previewImagePreprocessor: nil
+        )
     }
 }

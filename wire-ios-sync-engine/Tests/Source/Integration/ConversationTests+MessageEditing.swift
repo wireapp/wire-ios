@@ -52,7 +52,10 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         }
 
         // WHEN
-        let editMessage = GenericMessage(content: MessageEdit(replacingMessageID: messageNonce, text: Text(content: "Bar")), nonce: .create())
+        let editMessage = GenericMessage(
+            content: MessageEdit(replacingMessageID: messageNonce, text: Text(content: "Bar")),
+            nonce: .create()
+        )
         guard let editedData = try? editMessage.serializedData() else {
             return XCTFail()
         }
@@ -96,14 +99,21 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         let lastModifiedDate = conversation?.lastModifiedDate
 
         // WHEN
-        let editMessage = GenericMessage(content: MessageEdit(replacingMessageID: messageNonce!, text: Text(content: "Bar")), nonce: .create())
+        let editMessage = GenericMessage(
+            content: MessageEdit(replacingMessageID: messageNonce!, text: Text(content: "Bar")),
+            nonce: .create()
+        )
         guard let editedData = try? editMessage.serializedData() else {
             return XCTFail()
         }
         var editEvent: MockEvent?
 
         mockTransportSession.performRemoteChanges { _ in
-            editEvent = self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: editedData)
+            editEvent = self.selfToUser1Conversation.encryptAndInsertData(
+                from: fromClient,
+                to: toClient,
+                data: editedData
+            )
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 

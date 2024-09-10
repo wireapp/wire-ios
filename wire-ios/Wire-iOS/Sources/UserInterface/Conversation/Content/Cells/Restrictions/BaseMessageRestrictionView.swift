@@ -91,7 +91,8 @@ class BaseMessageRestrictionView: UIView {
         iconView.setTemplateIcon(messageType.icon, size: messageType.iconSize)
 
         let titleString = messageType.title.localizedUppercase && .smallSemiboldFont && SemanticColors.Label.textDefault
-        let subtitleString = messageType.subtitle.localizedUppercase && .smallLightFont && SemanticColors.Label.textCollectionSecondary
+        let subtitleString = messageType.subtitle.localizedUppercase && .smallLightFont && SemanticColors.Label
+            .textCollectionSecondary
         topLabel.attributedText = titleString
         bottomLabel.attributedText = subtitleString
     }

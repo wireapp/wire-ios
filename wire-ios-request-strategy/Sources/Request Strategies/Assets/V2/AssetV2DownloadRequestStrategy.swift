@@ -19,11 +19,15 @@
 import WireImages
 import WireTransport
 
-@objcMembers public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
+@objcMembers public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder,
+    ZMContextChangeTrackerSource {
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationTokens: [Any] = []
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsWhileOnline]
@@ -35,31 +39,37 @@ import WireTransport
             return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading
         }
 
-        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                                        entityName: ZMAssetClientMessage.entityName(),
-                                                                        predicateForObjectsToDownload: downloadPredicate,
-                                                                        managedObjectContext: managedObjectContext)
+        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: ZMAssetClientMessage.entityName(),
+            predicateForObjectsToDownload: downloadPredicate,
+            managedObjectContext: managedObjectContext
+        )
 
         registerForCancellationNotification()
         registerForWhitelistingNotification()
     }
 
     func registerForCancellationNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-                                                                    context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) { [weak self] note in
-                guard let objectID = note.object as? NSManagedObjectID else { return }
-                self?.cancelOngoingRequestForAssetClientMessage(objectID)
-            })
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+            context: self.managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.cancelOngoingRequestForAssetClientMessage(objectID)
+        })
     }
 
     func registerForWhitelistingNotification() {
-        notificationTokens.append(NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
-                                                                    context: self.managedObjectContext.notificationContext,
-                                                                    object: nil) { [weak self] note in
-                guard let objectID = note.object as? NSManagedObjectID else { return }
-                self?.didRequestToDownloadAsset(objectID)
-            })
+        notificationTokens.append(NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.assetDownloadNotificationName,
+            context: self.managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.didRequestToDownloadAsset(objectID)
+        })
     }
 
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
@@ -76,7 +86,8 @@ import WireTransport
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
+            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
+            else { return }
             guard message.version < 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
             self.applicationStatus?.requestCancellation.cancelTask(with: identifier)
@@ -88,7 +99,10 @@ import WireTransport
         self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
-    fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
+    fileprivate func handleResponse(
+        _ response: ZMTransportResponse,
+        forMessage assetClientMessage: ZMAssetClientMessage
+    ) {
         assetClientMessage.isDownloading = false
 
         guard response.result == .success else {
@@ -140,7 +154,11 @@ import WireTransport
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest? {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0, .v1:
             if let assetClientMessage = object as? ZMAssetClientMessage {
@@ -157,7 +175,10 @@ import WireTransport
                     self.managedObjectContext.enqueueDelayedSave()
                 }
 
-                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(assetClientMessage, apiVersion: apiVersion) {
+                if let request = ClientMessageRequestFactory().downstreamRequestForEcryptedOriginalFileMessage(
+                    assetClientMessage,
+                    apiVersion: apiVersion
+                ) {
                     request.add(taskCreationHandler)
                     request.add(completionHandler)
                     request.add(progressHandler)

@@ -174,13 +174,15 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         defer {
             saveEnabledLogs(userSession: userSession)
         }
 
         if arguments.first == "list" {
-            return onComplete(.success(info:
+            return onComplete(.success(
+                info:
                 "Enabled:\n" +
                     self.currentlyEnabledLogs
                     .map(\.rawValue)
@@ -262,7 +264,8 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         guard
             let client = userSession.selfUserClient,
             let user = userSession.providedSelfUser as? ZMUser
@@ -271,7 +274,8 @@ private class DebugCommandShowIdentifiers: DebugCommandMixin {
             return
         }
 
-        onComplete(.success(info:
+        onComplete(.success(
+            info:
             "User: \(user.remoteIdentifier.uuidString)\n" +
                 "Client: \(client.remoteIdentifier ?? "-")\n" +
                 "Session: \(client.sessionIdentifier?.rawValue ?? "-")"
@@ -289,7 +293,8 @@ private class DebugCommandHelp: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         let output = userSession.debugCommands.keys.sorted().joined(separator: "\n")
         onComplete(.success(info: output))
     }
@@ -305,14 +310,14 @@ private class DebugCommandVariables: DebugCommandMixin {
         arguments: [String],
         userSession: ZMUserSession,
         state: [String: Any],
-        onComplete: @escaping ((DebugCommandResult) -> Void)) {
+        onComplete: @escaping ((DebugCommandResult) -> Void)
+    ) {
         var newState = state
         switch arguments.first {
         case "list":
             return onComplete(.success(info: state.map { v in
                 "\(v.key) => \(v.value)"
-            }.joined(separator: "\n")
-            ))
+            }.joined(separator: "\n")))
         case "set":
             guard arguments.count == 2 || arguments.count == 3 else {
                 return onComplete(.failure(error: "Usage: set <name> [<value>]"))

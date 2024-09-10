@@ -26,12 +26,14 @@ extension FileManager {
     @objc public func moveFolderRecursively(
         from source: URL,
         to destination: URL,
-        overwriteExistingFiles: Bool) throws {
+        overwriteExistingFiles: Bool
+    ) throws {
         try self.moveOrCopyFolderRecursively(
             operation: .move,
             from: source,
             to: destination,
-            overwriteExistingFiles: overwriteExistingFiles)
+            overwriteExistingFiles: overwriteExistingFiles
+        )
 
         // we moved everything, now we can delete
         try self.removeItem(at: source)
@@ -42,12 +44,14 @@ extension FileManager {
     @objc public func copyFolderRecursively(
         from source: URL,
         to destination: URL,
-        overwriteExistingFiles: Bool) throws {
+        overwriteExistingFiles: Bool
+    ) throws {
         try self.moveOrCopyFolderRecursively(
             operation: .copy,
             from: source,
             to: destination,
-            overwriteExistingFiles: overwriteExistingFiles)
+            overwriteExistingFiles: overwriteExistingFiles
+        )
     }
 
     private enum FileOperation {

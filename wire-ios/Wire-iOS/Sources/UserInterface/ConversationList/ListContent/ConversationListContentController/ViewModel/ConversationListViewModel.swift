@@ -103,7 +103,10 @@ final class ConversationListViewModel: NSObject {
                 }
             }
 
-            static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
+            static func == (
+                lhs: ConversationListViewModel.Section.Kind,
+                rhs: ConversationListViewModel.Section.Kind
+            ) -> Bool {
                 switch (lhs, rhs) {
                 case (.conversations, .conversations):
                     true
@@ -153,9 +156,11 @@ final class ConversationListViewModel: NSObject {
             items = Array(elements)
         }
 
-        init(kind: Kind,
-             conversationDirectory: ConversationDirectoryType,
-             collapsed: Bool) {
+        init(
+            kind: Kind,
+            conversationDirectory: ConversationDirectoryType,
+            collapsed: Bool
+        ) {
             items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
             self.collapsed = collapsed
@@ -360,12 +365,18 @@ final class ConversationListViewModel: NSObject {
         return nil
     }
 
-    private static func newList(for kind: Section.Kind, conversationDirectory: ConversationDirectoryType) -> [SectionItem] {
+    private static func newList(
+        for kind: Section.Kind,
+        conversationDirectory: ConversationDirectoryType
+    ) -> [SectionItem] {
         let conversationListType: ConversationListType
         switch kind {
         case .contactRequests:
             conversationListType = .pending
-            return conversationDirectory.conversations(by: conversationListType).isEmpty ? [] : [SectionItem(item: contactRequestsItem, kind: kind)]
+            return conversationDirectory.conversations(by: conversationListType).isEmpty ? [] : [SectionItem(
+                item: contactRequestsItem,
+                kind: kind
+            )]
         case .conversations:
             conversationListType = .unarchived
         case .contacts:
@@ -378,7 +389,11 @@ final class ConversationListViewModel: NSObject {
             conversationListType = .folder(label)
         }
 
-        return conversationDirectory.conversations(by: conversationListType).filter { !$0.hasIncompleteMetadata }.map { SectionItem(item: $0, kind: kind) }
+        return conversationDirectory.conversations(by: conversationListType).filter { !$0.hasIncompleteMetadata }
+            .map { SectionItem(
+                item: $0,
+                kind: kind
+            ) }
     }
 
     private func updateAllSections() {
@@ -391,19 +406,27 @@ final class ConversationListViewModel: NSObject {
 
         var kinds: [Section.Kind]
         if folderEnabled {
-            kinds = [.contactRequests,
-                     .favorites,
-                     .groups,
-                     .contacts]
+            kinds = [
+                .contactRequests,
+                .favorites,
+                .groups,
+                .contacts,
+            ]
 
             let folders: [Section.Kind] = conversationDirectory.allFolders.map { .folder(label: $0) }
             kinds.append(contentsOf: folders)
         } else {
-            kinds = [.contactRequests,
-                     .conversations]
+            kinds = [
+                .contactRequests,
+                .conversations,
+            ]
         }
 
-        return kinds.map { Section(kind: $0, conversationDirectory: conversationDirectory, collapsed: state.collapsed.contains($0.identifier)) }
+        return kinds.map { Section(
+            kind: $0,
+            conversationDirectory: conversationDirectory,
+            collapsed: state.collapsed.contains($0.identifier)
+        ) }
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
@@ -516,9 +539,11 @@ final class ConversationListViewModel: NSObject {
     ///   - sectionIndex: section to update
     ///   - collapsed: collapsed or expanded
     ///   - batchUpdate: true for update with difference kit comparison, false for reload the section animated
-    func setCollapsed(sectionIndex: Int,
-                      collapsed: Bool,
-                      batchUpdate: Bool = true) {
+    func setCollapsed(
+        sectionIndex: Int,
+        collapsed: Bool,
+        batchUpdate: Bool = true
+    ) {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
         guard let kind = self.kind(of: sectionIndex) else { return }
         guard self.collapsed(at: sectionIndex) != collapsed else { return }
@@ -531,7 +556,11 @@ final class ConversationListViewModel: NSObject {
         }
 
         var newValue = sections
-        newValue[sectionNumber] = Section(kind: kind, conversationDirectory: conversationDirectory, collapsed: collapsed)
+        newValue[sectionNumber] = Section(
+            kind: kind,
+            conversationDirectory: conversationDirectory,
+            collapsed: collapsed
+        )
 
         if batchUpdate {
             let changeset = StagedChangeset(source: sections, target: newValue)
@@ -587,7 +616,11 @@ final class ConversationListViewModel: NSObject {
         try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
-            try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)
+            try jsonString.write(
+                to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename),
+                atomically: true,
+                encoding: .utf8
+            )
         } catch {
             log.error("error writing ConversationListViewModel to \(directoryURL): \(error)")
         }
@@ -607,7 +640,8 @@ final class ConversationListViewModel: NSObject {
     static var persistentURL: URL? {
         guard let persistentDirectory else { return nil }
 
-        return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
+        return URL.directoryURL(persistentDirectory)?
+            .appendingPathComponent(ConversationListViewModel.persistentFilename)
     }
 }
 

@@ -81,7 +81,10 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        sut = VerifyLegalHoldRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus)
+        sut = VerifyLegalHoldRequestStrategy(
+            withManagedObjectContext: self.syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
     }
 
     override func tearDown() {
@@ -132,7 +135,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: .v0)
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: [:] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -171,13 +179,22 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: transportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
         syncMOC.performGroupedAndWait {
-            guard let client = UserClient.fetchUserClient(withRemoteId: clientID, forUser: self.otherUser, createIfNeeded: false) else { return XCTFail("Failed to fetch client") }
+            guard let client = UserClient.fetchUserClient(
+                withRemoteId: clientID,
+                forUser: self.otherUser,
+                createIfNeeded: false
+            ) else { return XCTFail("Failed to fetch client") }
 
             XCTAssertEqual(client.remoteIdentifier, clientID)
         }
@@ -194,8 +211,16 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         let existingClientID = "client2"
         syncMOC.performGroupedAndWait {
             // GIVEN
-            XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: true))
-            XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: self.otherUser, createIfNeeded: true))
+            XCTAssertNotNil(UserClient.fetchUserClient(
+                withRemoteId: deletedClientID,
+                forUser: self.otherUser,
+                createIfNeeded: true
+            ))
+            XCTAssertNotNil(UserClient.fetchUserClient(
+                withRemoteId: existingClientID,
+                forUser: self.otherUser,
+                createIfNeeded: true
+            ))
 
             conversation = self.createGroupConversation(with: self.otherUser)
             let conversationSet: Set<NSManagedObject> = [conversation]
@@ -215,15 +240,28 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: transportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
         syncMOC.performGroupedAndWait {
-            guard let existingClient = UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: self.otherUser, createIfNeeded: false) else { return XCTFail("Failed to fetch existing client") }
+            guard let existingClient = UserClient.fetchUserClient(
+                withRemoteId: existingClientID,
+                forUser: self.otherUser,
+                createIfNeeded: false
+            ) else { return XCTFail("Failed to fetch existing client") }
 
-            XCTAssertNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: false))
+            XCTAssertNil(UserClient.fetchUserClient(
+                withRemoteId: deletedClientID,
+                forUser: self.otherUser,
+                createIfNeeded: false
+            ))
             XCTAssertEqual(existingClient.remoteIdentifier, existingClientID)
         }
     }
@@ -238,7 +276,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         let deletedClientID = "client1"
         syncMOC.performGroupedAndWait {
             // GIVEN
-            XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: true))
+            XCTAssertNotNil(UserClient.fetchUserClient(
+                withRemoteId: deletedClientID,
+                forUser: self.otherUser,
+                createIfNeeded: true
+            ))
 
             conversation = self.createGroupConversation(with: self.otherUser)
             let conversationSet: Set<NSManagedObject> = [conversation]
@@ -257,13 +299,22 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: transportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
         syncMOC.performGroupedAndWait {
-            XCTAssertNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: self.otherUser, createIfNeeded: false))
+            XCTAssertNil(UserClient.fetchUserClient(
+                withRemoteId: deletedClientID,
+                forUser: self.otherUser,
+                createIfNeeded: false
+            ))
         }
     }
 
@@ -298,7 +349,12 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             }
 
             // WHEN
-            request?.complete(with: ZMTransportResponse(payload: transportData, httpStatus: 412, transportSessionError: nil, apiVersion: apiVersion.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: transportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 

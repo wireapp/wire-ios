@@ -35,8 +35,10 @@ final class LinkInteractionTextView: UITextView {
     // URLs with these schemes should be handled by the os.
     fileprivate let dataDetectedURLSchemes = ["x-apple-data-detectors", "tel", "mailto"]
 
-    override init(frame: CGRect,
-                  textContainer: NSTextContainer?) {
+    override init(
+        frame: CGRect,
+        textContainer: NSTextContainer?
+    ) {
         super.init(frame: frame, textContainer: textContainer)
         delegate = self
 
@@ -97,19 +99,23 @@ final class LinkInteractionTextView: UITextView {
 }
 
 extension LinkInteractionTextView: UITextViewDelegate {
-    func textView(_ textView: UITextView,
-                  shouldInteractWith textAttachment: NSTextAttachment,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith textAttachment: NSTextAttachment,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         guard interaction == .presentActions else { return true }
         interactionDelegate?.textViewDidLongPress(self)
         return false
     }
 
-    func textView(_ textView: UITextView,
-                  shouldInteractWith URL: URL,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith URL: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         // present system context preview
         if  UIApplication.shared.canOpenURL(URL),
             interaction == .presentActions,
@@ -130,7 +136,8 @@ extension LinkInteractionTextView: UITextViewDelegate {
                 if self.showAlertIfNeeded(for: URL, in: characterRange) { return false }
 
                 // data detector links should be handle by the system
-                return self.dataDetectedURLSchemes.contains(URL.scheme ?? "") || !(self.interactionDelegate?.textView(self, open: URL) ?? false)
+                return self.dataDetectedURLSchemes
+                    .contains(URL.scheme ?? "") || !(self.interactionDelegate?.textView(self, open: URL) ?? false)
             }
 
             return performLinkInteraction()
@@ -151,9 +158,13 @@ extension LinkInteractionTextView: UITextViewDelegate {
 // MARK: - UITextDragDelegate
 
 extension LinkInteractionTextView: UITextDragDelegate {
-    func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
+    func textDraggableView(
+        _ textDraggableView: UIView & UITextDraggable,
+        itemsForDrag dragRequest: UITextDragRequest
+    ) -> [UIDragItem] {
         func isMentionLink(_ attributeTuple: (NSAttributedString.Key, Any)) -> Bool {
-            attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention.mentionScheme
+            attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention
+                .mentionScheme
         }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {

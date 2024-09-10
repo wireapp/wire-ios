@@ -47,7 +47,10 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
 
         tokenRenewer.setAccessTokenRenewalObserver(self)
 
-        try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Swift.Error>) in
+        try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<
+            Void,
+            Swift.Error
+        >) in
             self?.continuation = continuation
             tokenRenewer.renewAccessToken(with: clientID)
         }

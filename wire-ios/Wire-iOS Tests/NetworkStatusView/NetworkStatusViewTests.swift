@@ -33,7 +33,10 @@ final class NetworkStatusViewTests: XCTestCase {
 
         sut = .init()
         sut.delegate = mockContainer
-        let rootView = try XCTUnwrap((UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?.rootViewController?.view)
+        let rootView = try XCTUnwrap(
+            (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.keyWindow?
+                .rootViewController?.view
+        )
         sut.translatesAutoresizingMaskIntoConstraints = false
         rootView.addSubview(sut)
         NSLayoutConstraint.activate([
@@ -53,7 +56,11 @@ final class NetworkStatusViewTests: XCTestCase {
     func testThatSyncBarChangesToHiddenWhenTheAppGoesToBackground() throws {
         // GIVEN
         sut.state = .onlineSynchronizing
-        XCTAssertEqual(sut.connectingView.heightConstraint.constant, CGFloat.SyncBar.height, "NetworkStatusView should not be zero height")
+        XCTAssertEqual(
+            sut.connectingView.heightConstraint.constant,
+            CGFloat.SyncBar.height,
+            "NetworkStatusView should not be zero height"
+        )
 
         // ... the activation state of the scene returns `.background`
         let getterSelector = #selector(getter: UIScene.activationState)

@@ -43,9 +43,19 @@ import Foundation
 
     public static var entityName = "Service"
 
-    public static func existingService(with identifier: String, provider: String, managedObjectContext: NSManagedObjectContext) -> MockService? {
+    public static func existingService(
+        with identifier: String,
+        provider: String,
+        managedObjectContext: NSManagedObjectContext
+    ) -> MockService? {
         // Fetch service
-        let predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(MockService.identifier), identifier, #keyPath(MockService.provider), provider)
+        let predicate = NSPredicate(
+            format: "%K == %@ AND %K == %@",
+            #keyPath(MockService.identifier),
+            identifier,
+            #keyPath(MockService.provider),
+            provider
+        )
         let result: [MockService] = MockService.fetchAll(in: managedObjectContext, withPredicate: predicate)
 
         return result.first
@@ -61,9 +71,11 @@ import Foundation
             "summary": summary ?? "",
             "tag": tag ?? "",
             "assets": (self.assets ?? Set()).map {
-                ["type": "image",
-                 "size": "preview",
-                 "key": $0.identifier] as [String: String]
+                [
+                    "type": "image",
+                    "size": "preview",
+                    "key": $0.identifier,
+                ] as [String: String]
             },
         ]
     }

@@ -45,7 +45,12 @@ public final class StoredUpdateEvent: NSManagedObject {
     ///   - index: the passed in `index` is used to enumerate events to be able to fetch and sort them later on in the order they were received
     ///   - publicKey: the publicKey which will be used to encrypt update events
     /// - Returns: storedEvent which will be persisted in a database
-    public static func encryptAndCreate(_ event: ZMUpdateEvent, managedObjectContext: NSManagedObjectContext, index: Int64, publicKey: SecKey? = nil) -> StoredUpdateEvent? {
+    public static func encryptAndCreate(
+        _ event: ZMUpdateEvent,
+        managedObjectContext: NSManagedObjectContext,
+        index: Int64,
+        publicKey: SecKey? = nil
+    ) -> StoredUpdateEvent? {
         guard let storedEvent = StoredUpdateEvent.insertNewObject(managedObjectContext) else { return nil }
         storedEvent.debugInformation = event.debugInformation
         storedEvent.isTransient = event.isTransient
@@ -68,10 +73,12 @@ public final class StoredUpdateEvent: NSManagedObject {
             return eventPayload
         }
         guard let data = try? JSONSerialization.data(withJSONObject: eventPayload, options: []),
-              let encryptedData = SecKeyCreateEncryptedData(key,
-                                                            .eciesEncryptionCofactorX963SHA256AESGCM,
-                                                            data as CFData,
-                                                            nil) else {
+              let encryptedData = SecKeyCreateEncryptedData(
+                  key,
+                  .eciesEncryptionCofactorX963SHA256AESGCM,
+                  data as CFData,
+                  nil
+              ) else {
             return nil
         }
         return NSDictionary(dictionary: [encryptedPayloadKey: encryptedData])
@@ -98,7 +105,10 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     /// Maps passed in objects of type `StoredUpdateEvent` to `ZMUpdateEvent`
-    public static func eventsFromStoredEvents(_ storedEvents: [StoredUpdateEvent], encryptionKeys: EncryptionKeys? = nil) -> [ZMUpdateEvent] {
+    public static func eventsFromStoredEvents(
+        _ storedEvents: [StoredUpdateEvent],
+        encryptionKeys: EncryptionKeys? = nil
+    ) -> [ZMUpdateEvent] {
         let events: [ZMUpdateEvent] = storedEvents.compactMap {
             var eventUUID: UUID?
             if let uuid = $0.uuidString {
@@ -108,7 +118,15 @@ public final class StoredUpdateEvent: NSManagedObject {
             guard let payload = decryptPayloadIfNeeded(storedEvent: $0, encryptionKeys: encryptionKeys) else {
                 return nil
             }
-            let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: payload, uuid: eventUUID, transient: $0.isTransient, source: ZMUpdateEventSource(rawValue: Int($0.source))!)
+            let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
+                fromEventStreamPayload: payload,
+                uuid: eventUUID,
+                transient: $0.isTransient,
+                source: ZMUpdateEventSource(rawValue: Int(
+                    $0
+                        .source
+                ))!
+            )
             if let debugInfo = $0.debugInformation {
                 decryptedEvent?.appendDebugInformation(debugInfo)
             }
@@ -122,17 +140,22 @@ public final class StoredUpdateEvent: NSManagedObject {
     ///   - storedEvent: the stored event
     ///   - encryptionKeys: keys to be used to decrypt the stored event payload
     /// - Returns: a dictionary which contains decrypted payload
-    private static func decryptPayloadIfNeeded(storedEvent: StoredUpdateEvent, encryptionKeys: EncryptionKeys?) -> NSDictionary? {
+    private static func decryptPayloadIfNeeded(
+        storedEvent: StoredUpdateEvent,
+        encryptionKeys: EncryptionKeys?
+    ) -> NSDictionary? {
         if !storedEvent.isEncrypted {
             return storedEvent.payload
         }
 
         guard let keys = encryptionKeys,
               let encryptedPayload = storedEvent.payload?[encryptedPayloadKey] as? Data,
-              let decryptedData = SecKeyCreateDecryptedData(keys.privateKey,
-                                                            .eciesEncryptionCofactorX963SHA256AESGCM,
-                                                            encryptedPayload as CFData,
-                                                            nil) else {
+              let decryptedData = SecKeyCreateDecryptedData(
+                  keys.privateKey,
+                  .eciesEncryptionCofactorX963SHA256AESGCM,
+                  encryptedPayload as CFData,
+                  nil
+              ) else {
             return nil
         }
 

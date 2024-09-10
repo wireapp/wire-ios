@@ -61,7 +61,8 @@ final class ExplicitChangeDetector: ChangeDetector {
     func detectChanges(for objects: ModifiedObjects) {
         snapshotCenter.createSnapshots(for: objects.inserted)
 
-        merge(changes:
+        merge(
+            changes:
             observableChanges(for: objects.updatedAndRefreshed),
             observableChangesCausedByInsertionOrDeletion(for: objects.inserted),
             observableChangesCausedByInsertionOrDeletion(for: objects.deleted)
@@ -130,7 +131,10 @@ final class ExplicitChangeDetector: ChangeDetector {
         }
 
         if let sideEffectSource = object as? SideEffectSource {
-            let affectedKeysOfOtherObjects = sideEffectSource.affectedObjectsAndKeys(keyStore: dependencyKeyStore, knownKeys: changedKeys)
+            let affectedKeysOfOtherObjects = sideEffectSource.affectedObjectsAndKeys(
+                keyStore: dependencyKeyStore,
+                knownKeys: changedKeys
+            )
             result = result.merged(with: affectedKeysOfOtherObjects)
         }
 
@@ -148,7 +152,8 @@ final class ExplicitChangeDetector: ChangeDetector {
     /// - Returns:
     ///     All objects and their observable keys that have changed.
 
-    private func observableChangesCausedByInsertionOrDeletion(for objects: Set<ZMManagedObject>) -> ObservableChangesByObject {
+    private func observableChangesCausedByInsertionOrDeletion(for objects: Set<ZMManagedObject>)
+        -> ObservableChangesByObject {
         objects
             .lazy
             .compactMap { $0 as? SideEffectSource }

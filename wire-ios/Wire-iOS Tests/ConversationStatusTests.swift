@@ -81,7 +81,13 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
     func testThatItReturnsStatusForConversationWithUnreadOneImage() {
         // GIVEN
         let sut = self.otherUserConversation!
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: self.image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = self.otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -99,7 +105,13 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
         let sut = self.otherUserConversation!
         try (sut.appendKnock() as! ZMMessage).sender = self.otherUser
         (try! sut.appendText(content: "test") as! ZMMessage).sender = self.otherUser
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: self.image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = self.otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN
@@ -154,9 +166,27 @@ final class ConversationStatusTests: CoreDataSnapshotTestCase {
     func testThatItReturnsStatusForConversationWithUnreadManyImages() {
         // GIVEN
         let sut = self.otherUserConversation!
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
-        (try! sut.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: self.image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = self.otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: self.image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = self.otherUser
+        (
+            try! sut
+                .appendImage(
+                    from: self.image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = self.otherUser
         markAllMessagesAsUnread(in: sut)
 
         // WHEN

@@ -31,7 +31,10 @@ final class PinnableThumbnailViewController: UIViewController {
     private var hasDoneInitialLayout = false
     private var hasEnabledPinningBehavior = false
 
-    private lazy var pinningBehavior = ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
+    private lazy var pinningBehavior = ThumbnailCornerPinningBehavior(
+        item: self.thumbnailView,
+        edgeInsets: self.edgeInsets
+    )
 
     private lazy var animator = UIDynamicAnimator(referenceView: self.thumbnailContainerView)
 
@@ -76,7 +79,12 @@ final class PinnableThumbnailViewController: UIViewController {
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture))
         thumbnailView.addGestureRecognizer(panGestureRecognizer)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(orientationDidChange),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -142,8 +150,10 @@ final class PinnableThumbnailViewController: UIViewController {
 
         let insets = view.safeAreaInsetsOrFallback
 
-        let safeSize = CGSize(width: size.width - insets.left - insets.right,
-                              height: size.height - insets.top - insets.bottom)
+        let safeSize = CGSize(
+            width: size.width - insets.left - insets.right,
+            height: size.height - insets.top - insets.bottom
+        )
 
         let bounds = CGRect(origin: CGPoint.zero, size: safeSize)
         pinningBehavior.updateFields(in: bounds)
@@ -201,8 +211,12 @@ final class PinnableThumbnailViewController: UIViewController {
         }
 
         let frame = if UIApplication.isLeftToRightLayout {
-            CGRect(x: parentSize.width - size.width - edgeInsets.x, y: edgeInsets.y,
-                   width: size.width, height: size.height)
+            CGRect(
+                x: parentSize.width - size.width - edgeInsets.x,
+                y: edgeInsets.y,
+                width: size.width,
+                height: size.height
+            )
         } else {
             CGRect(x: edgeInsets.x, y: edgeInsets.y, width: size.width, height: size.height)
         }

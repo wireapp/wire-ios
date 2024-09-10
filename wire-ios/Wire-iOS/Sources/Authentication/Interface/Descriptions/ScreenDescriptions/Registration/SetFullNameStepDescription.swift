@@ -30,9 +30,11 @@ final class SetFullNameStepDescription: AuthenticationStepDescription {
 
     init() {
         backButton = BackButtonDescription()
-        mainView = TextFieldDescription(placeholder: TeamFullName.Textfield.placeholder.capitalized,
-                                        actionDescription: L10n.Localizable.General.next,
-                                        kind: .name(isTeam: false))
+        mainView = TextFieldDescription(
+            placeholder: TeamFullName.Textfield.placeholder.capitalized,
+            actionDescription: L10n.Localizable.General.next,
+            kind: .name(isTeam: false)
+        )
         headline = TeamFullName.headline
         subtext = nil
         secondaryView = nil

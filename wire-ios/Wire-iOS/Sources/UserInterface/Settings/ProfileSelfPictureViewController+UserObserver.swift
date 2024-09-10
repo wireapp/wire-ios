@@ -24,10 +24,12 @@ extension ProfileSelfPictureViewController: ZMUserObserver {
               let userSession = ZMUserSession.shared(),
               let profileImageUser = changeInfo.user as? ProfileImageFetchable else { return }
 
-        profileImageUser.fetchProfileImage(session: userSession,
-                                           cache: UIImage.defaultUserImageCache,
-                                           sizeLimit: nil,
-                                           desaturate: false) { image, _ in
+        profileImageUser.fetchProfileImage(
+            session: userSession,
+            cache: UIImage.defaultUserImageCache,
+            sizeLimit: nil,
+            desaturate: false
+        ) { image, _ in
             self.selfUserImageView.image = image
         }
     }

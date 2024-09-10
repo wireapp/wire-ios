@@ -100,8 +100,24 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
     func testThatItParsesAllKnownRemoveParticipantErrorResponses() {
         let errorResponses: [(ConversationRemoveParticipantError, ZMTransportResponse)] = [
-            (ConversationRemoveParticipantError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (ConversationRemoveParticipantError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
+            (
+                ConversationRemoveParticipantError.invalidOperation,
+                ZMTransportResponse(
+                    payload: ["label": "invalid-op"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                ConversationRemoveParticipantError.conversationNotFound,
+                ZMTransportResponse(
+                    payload: ["label": "no-conversation"] as ZMTransportData,
+                    httpStatus: 404,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
         ]
 
         for (expectedError, response) in errorResponses {
@@ -129,14 +145,18 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .left
             )
-            let conversationEvent = conversationEventPayload(from: memberLeave,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: memberLeave,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
@@ -166,15 +186,19 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedUserIDs: [service.qualifiedID!],
                 reason: .left
             )
-            let conversationEvent = conversationEventPayload(from: memberLeave,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: memberLeave,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
 
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             let waitForHandler = XCTestExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
@@ -217,12 +241,15 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 from: memberLeave,
                 conversationID: self.conversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
-                timestamp: memberLeaveTimestamp)
+                timestamp: memberLeaveTimestamp
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -231,7 +258,10 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
-            XCTAssertEqual(self.conversation.clearedTimeStamp?.transportString(), memberLeaveTimestamp.transportString())
+            XCTAssertEqual(
+                self.conversation.clearedTimeStamp?.transportString(),
+                memberLeaveTimestamp.transportString()
+            )
         }
     }
 
@@ -253,14 +283,18 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 qualifiedUserIDs: [user.qualifiedID!],
                 reason: .left
             )
-            let conversationEvent = conversationEventPayload(from: memberLeave,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: selfUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: memberLeave,
+                conversationID: conversation.qualifiedID,
+                senderID: selfUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -281,10 +315,12 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                     expectation.fulfill()
                 }
             }
-            let response = ZMTransportResponse(payload: nil,
-                                               httpStatus: 204,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 204,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -306,10 +342,12 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let response = ZMTransportResponse(payload: nil,
-                                               httpStatus: 404,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)

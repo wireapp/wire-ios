@@ -126,7 +126,10 @@ extension CompositeMessageItemContent: ButtonMessageData {
             }
 
             do {
-                try self.parentMessage.conversation?.appendButtonAction(havingId: buttonId, referenceMessageId: messageId)
+                try self.parentMessage.conversation?.appendButtonAction(
+                    havingId: buttonId,
+                    referenceMessageId: messageId
+                )
                 buttonState.state = .selected
             } catch {
                 Logging.messageProcessing.warn("Failed to append button action. Reason: \(error.localizedDescription)")

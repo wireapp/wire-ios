@@ -27,7 +27,12 @@ public struct UserPropertyValidator: UserPropertyValidating {
         try ExtremeCombiningCharactersValidator.validateCharactersValue(&mutableName)
 
         // The backend limits to 128. We'll fly just a bit below the radar.
-        let validate = try StringLengthValidator.validateStringValue(&mutableName, minimumStringLength: 2, maximumStringLength: 100, maximumByteLength: UInt32.max)
+        let validate = try StringLengthValidator.validateStringValue(
+            &mutableName,
+            minimumStringLength: 2,
+            maximumStringLength: 100,
+            maximumByteLength: UInt32.max
+        )
 
         name = mutableName as? String
 
@@ -47,10 +52,12 @@ public struct UserPropertyValidator: UserPropertyValidating {
 
     public func validate(password: inout String?) throws -> Bool {
         var mutablePassword: Any? = password
-        let result = try StringLengthValidator.validateStringValue(&mutablePassword,
-                                                                   minimumStringLength: 8,
-                                                                   maximumStringLength: 120,
-                                                                   maximumByteLength: UInt32.max)
+        let result = try StringLengthValidator.validateStringValue(
+            &mutablePassword,
+            minimumStringLength: 8,
+            maximumStringLength: 120,
+            maximumByteLength: UInt32.max
+        )
         password = mutablePassword as? String
         return result
     }
@@ -72,7 +79,12 @@ public struct UserPropertyValidator: UserPropertyValidating {
 
     public func validate(phoneVerificationCode: inout String?) throws -> Bool {
         var mutableCode: Any? = phoneVerificationCode
-        let result = try StringLengthValidator.validateStringValue(&mutableCode, minimumStringLength: 6, maximumStringLength: 6, maximumByteLength: UInt32.max)
+        let result = try StringLengthValidator.validateStringValue(
+            &mutableCode,
+            minimumStringLength: 6,
+            maximumStringLength: 6,
+            maximumByteLength: UInt32.max
+        )
         phoneVerificationCode = mutableCode as? String
         return result
     }

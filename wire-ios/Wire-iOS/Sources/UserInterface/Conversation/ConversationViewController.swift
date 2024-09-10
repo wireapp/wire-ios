@@ -29,17 +29,24 @@ final class ConversationViewController: UIViewController {
 
     override var keyCommands: [UIKeyCommand]? {
         [
-            UIKeyCommand(action: #selector(gotoBottom(_:)),
-                         input: UIKeyCommand.inputDownArrow,
-                         modifierFlags: [.command, .alternate],
-                         discoverabilityTitle: keyboardShortcut.scrollToBottom),
-            UIKeyCommand(action: #selector(onCollectionButtonPressed(_:)),
-                         input: "f",
-                         modifierFlags: [.command],
-                         discoverabilityTitle: keyboardShortcut.searchInConversation),
-            UIKeyCommand(action: #selector(titleViewTapped),
-                         input: "i", modifierFlags: [.command],
-                         discoverabilityTitle: keyboardShortcut.conversationDetail),
+            UIKeyCommand(
+                action: #selector(gotoBottom(_:)),
+                input: UIKeyCommand.inputDownArrow,
+                modifierFlags: [.command, .alternate],
+                discoverabilityTitle: keyboardShortcut.scrollToBottom
+            ),
+            UIKeyCommand(
+                action: #selector(onCollectionButtonPressed(_:)),
+                input: "f",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.searchInConversation
+            ),
+            UIKeyCommand(
+                action: #selector(titleViewTapped),
+                input: "i",
+                modifierFlags: [.command],
+                discoverabilityTitle: keyboardShortcut.conversationDetail
+            ),
         ]
     }
 
@@ -178,7 +185,12 @@ final class ConversationViewController: UIViewController {
 
         observationToken = PrivacyWarningChecker.addPresenter(self)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
 
         UIView.performWithoutAnimation {
             self.view.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -287,8 +299,10 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
     }
 
-    override func willTransition(to newCollection: UITraitCollection,
-                                 with coordinator: UIViewControllerTransitionCoordinator) {
+    override func willTransition(
+        to newCollection: UITraitCollection,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
         super.willTransition(to: newCollection, with: coordinator)
         self.updateLeftNavigationBarItems()
     }
@@ -326,7 +340,10 @@ final class ConversationViewController: UIViewController {
     }
 
     private func setupMediaBarViewController() {
-        mediaBarViewController.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMediaBar(_:))))
+        mediaBarViewController.view.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(didTapMediaBar(_:))
+        ))
     }
 
     @objc
@@ -431,7 +448,9 @@ final class ConversationViewController: UIViewController {
         }
 
         guard let mlsConversation else {
-            assertionFailure("conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!")
+            assertionFailure(
+                "conversation with MLSGroupID \(mlsGroupIdentifier) is expected to be always available at this point!"
+            )
             return
         }
 
@@ -441,7 +460,8 @@ final class ConversationViewController: UIViewController {
     // MARK: - ParticipantsPopover
 
     private func hideAndDestroyParticipantsPopover() {
-        if (presentedViewController is GroupDetailsViewController) || (presentedViewController is ProfileViewController) {
+        if (presentedViewController is GroupDetailsViewController) ||
+            (presentedViewController is ProfileViewController) {
             dismiss(animated: true)
         }
     }
@@ -474,13 +494,19 @@ final class ConversationViewController: UIViewController {
 
 extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
     // WARNING: DO NOT TOUCH THIS UNLESS YOU KNOW WHAT YOU ARE DOING
-    func invisibleInputAccessoryView(_ invisibleInputAccessoryView: InvisibleInputAccessoryView, superviewFrameChanged frame: CGRect?) {
+    func invisibleInputAccessoryView(
+        _ invisibleInputAccessoryView: InvisibleInputAccessoryView,
+        superviewFrameChanged frame: CGRect?
+    ) {
         // Adjust the input bar distance from bottom based on the invisibleAccessoryView
         var distanceFromBottom: CGFloat = 0
 
         // On iOS 8, the frame goes to zero when the accessory view is hidden
         if frame?.equalTo(.zero) == false {
-            let convertedFrame = view.convert(invisibleInputAccessoryView.superview?.frame ?? .zero, from: invisibleInputAccessoryView.superview?.superview)
+            let convertedFrame = view.convert(
+                invisibleInputAccessoryView.superview?.frame ?? .zero,
+                from: invisibleInputAccessoryView.superview?.superview
+            )
 
             // We have to use intrinsicContentSize here because the frame may not have actually been updated yet
             let newViewHeight = invisibleInputAccessoryView.intrinsicContentSize.height
@@ -556,14 +582,22 @@ extension ConversationViewController: ZMConversationListObserver {
 // MARK: - InputBar
 
 extension ConversationViewController: ConversationInputBarViewControllerDelegate {
-    func conversationInputBarViewControllerDidComposeText(text: String,
-                                                          mentions: [Mention],
-                                                          replyingTo message: ZMConversationMessage?) {
+    func conversationInputBarViewControllerDidComposeText(
+        text: String,
+        mentions: [Mention],
+        replyingTo message: ZMConversationMessage?
+    ) {
         contentViewController.scrollToBottomIfNeeded()
-        inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
+        inputBarController.sendController.sendTextMessage(
+            text,
+            mentions: mentions,
+            userSession: userSession,
+            replyingTo: message
+        )
     }
 
-    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
+    func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController)
+        -> Bool {
         if !contentViewController.isScrolledToBottom, !controller.isEditingMessage,
            !controller.isReplyingToMessage {
             collectionController = nil
@@ -580,9 +614,11 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         return true
     }
 
-    func conversationInputBarViewControllerDidFinishEditing(_ message: ZMConversationMessage,
-                                                            withText newText: String?,
-                                                            mentions: [Mention]) {
+    func conversationInputBarViewControllerDidFinishEditing(
+        _ message: ZMConversationMessage,
+        withText newText: String?,
+        mentions: [Mention]
+    ) {
         contentViewController.didFinishEditing(message)
         userSession.enqueue {
             if let newText,
@@ -658,7 +694,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!)
+            .wrapInNavigationController()
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }

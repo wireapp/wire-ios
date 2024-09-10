@@ -97,11 +97,19 @@ public final class ProgressSpinner: UIView {
 
         hidesWhenStopped = true
 
-        didBecomeActiveNotificationToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+        didBecomeActiveNotificationToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.applicationDidBecomeActive()
         }
 
-        didEnterBackgroundNotificationToken = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+        didEnterBackgroundNotificationToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.applicationDidEnterBackground()
         }
     }

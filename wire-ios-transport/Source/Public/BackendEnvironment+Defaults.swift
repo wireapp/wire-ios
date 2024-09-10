@@ -22,7 +22,11 @@ import WireUtilities
 extension BackendEnvironment {
     static let defaultsKey = "ZMBackendEnvironmentData"
 
-    public convenience init?(userDefaults: UserDefaults, configurationBundle: Bundle, environmentType type: EnvironmentType? = nil) {
+    public convenience init?(
+        userDefaults: UserDefaults,
+        configurationBundle: Bundle,
+        environmentType type: EnvironmentType? = nil
+    ) {
         let environmentType = type ?? EnvironmentType(userDefaults: userDefaults)
         switch environmentType {
         case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala, .diya, .elna, .foma:

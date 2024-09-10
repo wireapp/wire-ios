@@ -75,10 +75,16 @@ struct PushTokenMetadata {
 // MARK: - Register current push token
 
 extension ZMUserSession {
-    @objc public static let registerCurrentPushTokenNotificationName = Notification.Name(rawValue: "ZMUserSessionResetPushTokensNotification")
+    @objc public static let registerCurrentPushTokenNotificationName = Notification
+        .Name(rawValue: "ZMUserSessionResetPushTokensNotification")
 
     public func registerForRegisteringPushTokenNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(ZMUserSession.registerCurrentPushToken), name: ZMUserSession.registerCurrentPushTokenNotificationName, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ZMUserSession.registerCurrentPushToken),
+            name: ZMUserSession.registerCurrentPushTokenNotificationName,
+            object: nil
+        )
     }
 
     func registerCurrentPushToken() {
@@ -106,7 +112,10 @@ extension ZMUserSession {
             let notAuthenticated = !self.isAuthenticated
 
             if notAuthenticated {
-                WireLogger.notifications.info("Not displaying notification because app is not authenticated", attributes: .safePublic)
+                WireLogger.notifications.info(
+                    "Not displaying notification because app is not authenticated",
+                    attributes: .safePublic
+                )
                 completion()
                 return
             }
@@ -127,30 +136,39 @@ extension ZMUserSession {
 extension ZMUserSession: UNUserNotificationCenterDelegate {
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       willPresent notification: UNNotification,
-                                       withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions)
+            -> Void
+    ) {
         Logging.push.safePublic("Notification center wants to present in-app notification: \(notification)")
         let categoryIdentifier = notification.request.content.categoryIdentifier
 
-        handleInAppNotification(with: notification.userInfo,
-                                categoryIdentifier: categoryIdentifier,
-                                completionHandler: completionHandler)
+        handleInAppNotification(
+            with: notification.userInfo,
+            categoryIdentifier: categoryIdentifier,
+            completionHandler: completionHandler
+        )
     }
 
     // Called by the SessionManager when the user engages a notification action.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       didReceive response: UNNotificationResponse,
-                                       withCompletionHandler completionHandler: @escaping () -> Void) {
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         Logging.push.safePublic("Did receive notification response: \(response)")
         let userText = (response as? UNTextInputNotificationResponse)?.userText
         let note = response.notification
 
-        handleNotificationResponse(actionIdentifier: response.actionIdentifier,
-                                   categoryIdentifier: note.request.content.categoryIdentifier,
-                                   userInfo: note.userInfo,
-                                   userText: userText,
-                                   completionHandler: completionHandler)
+        handleNotificationResponse(
+            actionIdentifier: response.actionIdentifier,
+            categoryIdentifier: note.request.content.categoryIdentifier,
+            userInfo: note.userInfo,
+            userText: userText,
+            completionHandler: completionHandler
+        )
     }
 
     // MARK: Abstractions
@@ -160,9 +178,11 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
      * `UNNotificationResponse` objects in unit tests.
      */
 
-    func handleInAppNotification(with userInfo: NotificationUserInfo,
-                                 categoryIdentifier: String,
-                                 completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    func handleInAppNotification(
+        with userInfo: NotificationUserInfo,
+        categoryIdentifier: String,
+        completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         if categoryIdentifier == PushNotificationCategory.incomingCall.rawValue {
             self.handleTrackingOnCallNotification(with: userInfo)
         }
@@ -180,11 +200,13 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         }
     }
 
-    func handleNotificationResponse(actionIdentifier: String,
-                                    categoryIdentifier: String,
-                                    userInfo: NotificationUserInfo,
-                                    userText: String? = nil,
-                                    completionHandler: @escaping () -> Void) {
+    func handleNotificationResponse(
+        actionIdentifier: String,
+        categoryIdentifier: String,
+        userInfo: NotificationUserInfo,
+        userText: String? = nil,
+        completionHandler: @escaping () -> Void
+    ) {
         WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
 
         switch actionIdentifier {
@@ -218,10 +240,12 @@ extension UNNotificationContent {
 extension PushToken {
     public init(deviceToken: Data, pushTokenType: TokenType) {
         let metadata = PushTokenMetadata.current(for: pushTokenType)
-        self.init(deviceToken: deviceToken,
-                  appIdentifier: metadata.appIdentifier,
-                  transportType: metadata.transportType,
-                  tokenType: pushTokenType)
+        self.init(
+            deviceToken: deviceToken,
+            appIdentifier: metadata.appIdentifier,
+            transportType: metadata.transportType,
+            tokenType: pushTokenType
+        )
     }
 
     public static func createVOIPToken(from deviceToken: Data) -> PushToken {

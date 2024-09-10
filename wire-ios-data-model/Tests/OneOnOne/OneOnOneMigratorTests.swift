@@ -310,7 +310,10 @@ final class OneOnOneMigratorTests: XCTestCase {
         return (connection, conversation)
     }
 
-    private func createMLSConversation(with identifier: MLSGroupID, in context: NSManagedObjectContext) -> ZMConversation {
+    private func createMLSConversation(
+        with identifier: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
         let mlsConversation = ZMConversation.insertNewObject(in: context)
         mlsConversation.remoteIdentifier = .create()
         mlsConversation.domain = "local@domain.com"

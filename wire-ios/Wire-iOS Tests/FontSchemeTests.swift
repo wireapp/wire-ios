@@ -22,7 +22,12 @@ import WireDesign
 import XCTest
 
 final class FontSchemeTests: XCTestCase {
-    private func insertFontSizeItems(_ points: [FontSize: CGFloat], _ multiplier: CGFloat, _ fixedFontNames: inout [FontSpec: String], _ fontTextStyle: FontTextStyle) {
+    private func insertFontSizeItems(
+        _ points: [FontSize: CGFloat],
+        _ multiplier: CGFloat,
+        _ fixedFontNames: inout [FontSpec: String],
+        _ fontTextStyle: FontTextStyle
+    ) {
         let allFontSizeTuples: [(fontSize: FontSize, point: CGFloat)] = [
             (fontSize: .large, point: round(points[FontSize.large]! * multiplier)),
             (fontSize: .normal, point: round(points[FontSize.normal]! * multiplier)),

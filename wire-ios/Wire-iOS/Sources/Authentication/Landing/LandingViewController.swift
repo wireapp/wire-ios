@@ -85,9 +85,11 @@ final class LandingViewController: AuthenticationStepViewController {
     }()
 
     private let messageLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: Landing.welcomeMessage,
-                                     fontSpec: .bodyTwoSemibold,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: Landing.welcomeMessage,
+            fontSpec: .bodyTwoSemibold,
+            color: SemanticColors.Label.textDefault
+        )
 
         label.textAlignment = .center
         label.numberOfLines = 0
@@ -97,9 +99,11 @@ final class LandingViewController: AuthenticationStepViewController {
     }()
 
     private let subMessageLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: Landing.welcomeSubmessage,
-                                     fontSpec: .mediumRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: Landing.welcomeSubmessage,
+            fontSpec: .mediumRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -127,9 +131,11 @@ final class LandingViewController: AuthenticationStepViewController {
         )
         button.accessibilityIdentifier = "Login"
         button.setTitle(Landing.Login.Button.title, for: .normal)
-        button.addTarget(self,
-                         action: #selector(loginButtonTapped(_:)),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(loginButtonTapped(_:)),
+            for: .touchUpInside
+        )
 
         return button
     }()
@@ -143,9 +149,11 @@ final class LandingViewController: AuthenticationStepViewController {
         button.accessibilityIdentifier = "Enterprise Login"
         button.accessibilityLabel = L10n.Accessibility.Landing.LoginEnterpriseButton.description
         button.setTitle(Landing.Login.Enterprise.Button.title, for: .normal)
-        button.addTarget(self,
-                         action: #selector(enterpriseLoginButtonTapped(_:)),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(enterpriseLoginButtonTapped(_:)),
+            for: .touchUpInside
+        )
 
         return button
     }()
@@ -158,17 +166,21 @@ final class LandingViewController: AuthenticationStepViewController {
         )
         button.accessibilityIdentifier = "Login with email"
         button.setTitle(Landing.Login.Email.Button.title, for: .normal)
-        button.addTarget(self,
-                         action: #selector(loginButtonTapped(_:)),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(loginButtonTapped(_:)),
+            for: .touchUpInside
+        )
 
         return button
     }()
 
     private let createAccountInfoLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: Landing.CreateAccount.infotitle,
-                                     fontSpec: .mediumRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: Landing.CreateAccount.infotitle,
+            fontSpec: .mediumRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -184,9 +196,11 @@ final class LandingViewController: AuthenticationStepViewController {
         )
         button.accessibilityIdentifier = "Create An Account"
         button.setTitle(Landing.CreateAccount.title, for: .normal)
-        button.addTarget(self,
-                         action: #selector(createAccountButtonTapped(_:)),
-                         for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(createAccountButtonTapped(_:)),
+            for: .touchUpInside
+        )
 
         return button
     }()
@@ -256,15 +270,19 @@ final class LandingViewController: AuthenticationStepViewController {
         updateBarButtonItem()
         updateCustomBackendLabels()
 
-        NotificationCenter.default.addObserver(forName: AccountManagerDidUpdateAccountsNotificationName,
-                                               object: SessionManager.shared?.accountManager,
-                                               queue: .main) { _ in
+        NotificationCenter.default.addObserver(
+            forName: AccountManagerDidUpdateAccountsNotificationName,
+            object: SessionManager.shared?.accountManager,
+            queue: .main
+        ) { _ in
             self.updateBarButtonItem()
         }
 
-        NotificationCenter.default.addObserver(forName: BackendEnvironment.backendSwitchNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: BackendEnvironment.backendSwitchNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateCustomBackendLabels()
         }
     }
@@ -348,30 +366,48 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func createAndAddConstraints() {
-        topStackTopConstraint = topStack.topAnchor.constraint(equalTo: view.safeTopAnchor,
-                                                              constant: topStackTopConstraintConstant)
+        topStackTopConstraint = topStack.topAnchor.constraint(
+            equalTo: view.safeTopAnchor,
+            constant: topStackTopConstraintConstant
+        )
 
         contentViewWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 375)
-        contentViewLeadingConstraint = contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor,
-                                                                            constant: 24)
-        contentViewTrailingConstraint = contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor,
-                                                                              constant: -24)
+        contentViewLeadingConstraint = contentView.leadingAnchor.constraint(
+            equalTo: view.leadingAnchor,
+            constant: 24
+        )
+        contentViewTrailingConstraint = contentView.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -24
+        )
 
-        messageLabelLeadingConstraint = messageLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
-                                                                              constant: -messageLabelLabelConstraintsConstant)
-        messageLabelTrailingConstraint = messageLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                                                constant: messageLabelLabelConstraintsConstant)
+        messageLabelLeadingConstraint = messageLabel.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: -messageLabelLabelConstraintsConstant
+        )
+        messageLabelTrailingConstraint = messageLabel.trailingAnchor.constraint(
+            equalTo: contentView.trailingAnchor,
+            constant: messageLabelLabelConstraintsConstant
+        )
 
-        subMessageLabelLeadingConstraint = subMessageLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor,
-                                                                                    constant: -subMessageLabelConstraintsConstant)
-        subMessageLabelTrailingConstraint = subMessageLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor,
-                                                                                      constant: subMessageLabelConstraintsConstant)
+        subMessageLabelLeadingConstraint = subMessageLabel.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: -subMessageLabelConstraintsConstant
+        )
+        subMessageLabelTrailingConstraint = subMessageLabel.trailingAnchor.constraint(
+            equalTo: contentView.trailingAnchor,
+            constant: subMessageLabelConstraintsConstant
+        )
 
-        createAccountInfoLabelTopConstraint = createAccountInfoLabel.topAnchor.constraint(equalTo: buttonStackView.bottomAnchor,
-                                                                                          constant: 98)
+        createAccountInfoLabelTopConstraint = createAccountInfoLabel.topAnchor.constraint(
+            equalTo: buttonStackView.bottomAnchor,
+            constant: 98
+        )
 
-        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor,
-                                                                                          constant: -35)
+        createAccountButtomBottomConstraint = createAccountButton.bottomAnchor.constraint(
+            equalTo: view.safeBottomAnchor,
+            constant: -35
+        )
 
         NSLayoutConstraint.activate([
             // top stack view

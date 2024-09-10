@@ -52,7 +52,12 @@ final class AnimatedPenView: UIView {
         pen.layer.speed = 0
         pen.layer.timeOffset = 2
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -230,13 +235,16 @@ final class TypingIndicatorView: UIView {
                 animatedPen.isAnimating = false
                 self.layoutSubviews()
                 UIView.animate(easing: .easeInOutQuad, duration: 0.35, animations: expandLine)
-                UIView.animate(easing: .easeInQuad,
-                               duration: 0.15,
-                               delayTime: 0.15,
-                               animations: showContainer, completion: { _ in
-                                   self.animatedPen.isAnimating = true
-                                   completion?()
-                               })
+                UIView.animate(
+                    easing: .easeInQuad,
+                    duration: 0.15,
+                    delayTime: 0.15,
+                    animations: showContainer,
+                    completion: { _ in
+                        self.animatedPen.isAnimating = true
+                        completion?()
+                    }
+                )
             }
 
         } else {

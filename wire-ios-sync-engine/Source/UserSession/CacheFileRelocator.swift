@@ -49,7 +49,10 @@ struct CacheFileRelocator {
                 do {
                     try fm.moveItem(at: oldLocation, to: newLocation)
                 } catch {
-                    zmLog.error("Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)")
+                    zmLog
+                        .error(
+                            "Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)"
+                        )
                     do {
                         try fm.removeItem(at: oldLocation)
                     } catch let anError {
@@ -58,7 +61,10 @@ struct CacheFileRelocator {
                 }
             }
         } else if result.unassigned.count > 0 {
-            requireInternal(false, "Caches folder contains items that have not been assigned to an account. Items should always be assigned to an account. Use `FileManager.cachesURLForAccount(with accountIdentifier:, in sharedContainerURL:)` to get the default Cache location for the current account")
+            requireInternal(
+                false,
+                "Caches folder contains items that have not been assigned to an account. Items should always be assigned to an account. Use `FileManager.cachesURLForAccount(with accountIdentifier:, in sharedContainerURL:)` to get the default Cache location for the current account"
+            )
         }
     }
 

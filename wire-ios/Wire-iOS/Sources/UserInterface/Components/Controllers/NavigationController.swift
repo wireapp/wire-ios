@@ -60,7 +60,10 @@ final class NavigationController: UINavigationController {
         self.navigationBar.tintColor = SemanticColors.Label.textDefault
         self.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
-        self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(NavigationController.onEdgeSwipe(gestureRecognizer:)))
+        self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(
+            target: self,
+            action: #selector(NavigationController.onEdgeSwipe(gestureRecognizer:))
+        )
         self.dismissGestureRecognizer.edges = [.left]
         self.dismissGestureRecognizer.delegate = self
         self.view.addGestureRecognizer(self.dismissGestureRecognizer)
@@ -84,7 +87,11 @@ final class NavigationController: UINavigationController {
         }
     }
 
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        willShow viewController: UIViewController,
+        animated: Bool
+    ) {
         if let avoiding = viewController as? KeyboardAvoidingViewController {
             updateGesture(for: avoiding.viewController)
         } else {
@@ -114,10 +121,12 @@ final class NavigationController: UINavigationController {
 }
 
 extension NavigationController: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController,
-                              animationControllerFor operation: UINavigationController.Operation,
-                              from fromVC: UIViewController,
-                              to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        animationControllerFor operation: UINavigationController.Operation,
+        from fromVC: UIViewController,
+        to toVC: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
         if self.useDefaultPopGesture {
             return nil
         }
@@ -134,7 +143,11 @@ extension NavigationController: UINavigationControllerDelegate {
 }
 
 extension NavigationController: UIViewControllerTransitioningDelegate {
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
         SwizzleTransition(direction: .vertical)
     }
 
@@ -151,7 +164,10 @@ extension NavigationController: UIGestureRecognizerDelegate {
         return true
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         true
     }
 }

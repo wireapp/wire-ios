@@ -39,8 +39,10 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     let dimmingView = UIView()
     let closeButton = IconButton(fontSpec: .smallSemiboldFont)
     let titleLabel = UILabel()
-    let questionLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                         color: SemanticColors.Label.textSectionFooter)
+    let questionLabel = DynamicFontLabel(
+        fontSpec: .normalRegularFont,
+        color: SemanticColors.Label.textSectionFooter
+    )
 
     var callQualityStackView: CustomSpacingStackView!
     var scoreSelectorView: QualityScoreSelectorView!
@@ -111,7 +113,12 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         questionLabel.textAlignment = .center
         questionLabel.numberOfLines = 0
 
-        callQualityStackView = CustomSpacingStackView(customSpacedArrangedSubviews: [titleLabel, questionLabel, scoreSelectorView, closeButton])
+        callQualityStackView = CustomSpacingStackView(customSpacedArrangedSubviews: [
+            titleLabel,
+            questionLabel,
+            scoreSelectorView,
+            closeButton,
+        ])
         callQualityStackView.alignment = .fill
         callQualityStackView.distribution = .fill
         callQualityStackView.axis = .vertical
@@ -167,10 +174,24 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         ipad_centerYConstraint = contentView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ipad_centerXConstraint = contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
 
-        iphone_paddingLeftConstraint = callQualityStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
-        iphone_paddingRightConstraint = callQualityStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
-        ipad_paddingLeftConstraint = callQualityStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 44)
-        ipad_paddingRightConstraint = callQualityStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -44)
+        iphone_paddingLeftConstraint = callQualityStackView.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: 16
+        )
+        iphone_paddingRightConstraint = callQualityStackView.trailingAnchor
+            .constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -16
+            )
+        ipad_paddingLeftConstraint = callQualityStackView.leadingAnchor.constraint(
+            equalTo: contentView.leadingAnchor,
+            constant: 44
+        )
+        ipad_paddingRightConstraint = callQualityStackView.trailingAnchor
+            .constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -44
+            )
     }
 
     // MARK: Dismiss Events
@@ -194,7 +215,10 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
 
     // MARK: Adaptive Layout
 
-    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func willTransition(
+        to newCollection: UITraitCollection,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
         super.willTransition(to: newCollection, with: coordinator)
         coordinator.animate(alongsideTransition: { _ in self.updateLayout(for: newCollection) })
     }
@@ -219,8 +243,10 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
 // MARK: Call Quality View
 
 final class CallQualityView: UIStackView {
-    let scoreLabel = DynamicFontLabel(fontSpec: FontSpec.mediumRegularFont,
-                                      color: SemanticColors.Label.textDefault)
+    let scoreLabel = DynamicFontLabel(
+        fontSpec: FontSpec.mediumRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
     let scoreButton = ZMButton()
     let callback: (Int) -> Void
     let labelText: String
@@ -332,9 +358,11 @@ final class QualityScoreSelectorView: UIView {
 // MARK: Call Quality Animator
 
 final class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate {
-    func animationController(forPresented presented: UIViewController,
-                             presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
         (presented is CallQualityViewController) ? CallQualityPresentationTransition() : nil
     }
 

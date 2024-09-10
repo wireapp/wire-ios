@@ -45,11 +45,13 @@ final class CallParticipantView: BaseCallParticipantView {
 
     // MARK: - Initialization
 
-    override init(stream: Stream,
-                  isCovered: Bool,
-                  shouldShowActiveSpeakerFrame: Bool,
-                  shouldShowBorderWhenVideoIsStopped: Bool,
-                  pinchToZoomRule: PinchToZoomRule) {
+    override init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule
+    ) {
         super.init(
             stream: stream,
             isCovered: isCovered,
@@ -150,9 +152,11 @@ final class CallParticipantView: BaseCallParticipantView {
         self.snapshotView = snapshotView
     }
 
-    private func executeAnimations(animated: Bool,
-                                   animationBlock: @escaping () -> Void,
-                                   completionBlock: @escaping (Bool) -> Void) {
+    private func executeAnimations(
+        animated: Bool,
+        animationBlock: @escaping () -> Void,
+        completionBlock: @escaping (Bool) -> Void
+    ) {
         if animated {
             UIView.animate(withDuration: 0.2, animations: animationBlock, completion: completionBlock)
         } else {

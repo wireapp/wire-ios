@@ -52,12 +52,17 @@ open class SetChangeInfo<T: Hashable>: NSObject {
     open var updatedIndexes: IndexSet { changeSet.updatedIndexes }
     open var movedIndexPairs: [MovedIndex] { changeSet.movedIndexes }
     // for temporary objC-compatibility
-    open var zm_movedIndexPairs: [ZMMovedIndex] { changeSet.movedIndexes.map { ZMMovedIndex(from: UInt($0.from), to: UInt($0.to)) } }
+    open var zm_movedIndexPairs: [ZMMovedIndex] { changeSet.movedIndexes.map { ZMMovedIndex(
+        from: UInt($0.from),
+        to: UInt($0.to)
+    ) } }
     convenience init(observedObject: NSObject) {
         let orderSetState = OrderedSetState<T>(array: [])
-        self.init(observedObject: observedObject,
-                  changeSet: ChangedIndexes(start: orderSetState, end: orderSetState, updated: Set()),
-                  orderedSetState: orderSetState)
+        self.init(
+            observedObject: observedObject,
+            changeSet: ChangedIndexes(start: orderSetState, end: orderSetState, updated: Set()),
+            orderedSetState: orderSetState
+        )
     }
 
     public init(observedObject: NSObject, changeSet: ChangedIndexes<T>, orderedSetState: OrderedSetState<T>) {
@@ -87,7 +92,11 @@ public struct SetSnapshot<T: Hashable> {
     }
 
     // Returns the new state and the notification to send after some changes in messages
-    public func updatedState(_ updatedObjects: Set<T>, observedObject: NSObject, newSet: OrderedSetState<T>) -> SetStateUpdate<T>? {
+    public func updatedState(
+        _ updatedObjects: Set<T>,
+        observedObject: NSObject,
+        newSet: OrderedSetState<T>
+    ) -> SetStateUpdate<T>? {
         if self.set == newSet, updatedObjects.count == 0 {
             return nil
         }
@@ -95,12 +104,15 @@ public struct SetSnapshot<T: Hashable> {
         let changeSet = ChangedIndexes(start: self.set, end: newSet, updated: updatedObjects, moveType: self.moveType)
         let changeInfo = SetChangeInfo(observedObject: observedObject, changeSet: changeSet, orderedSetState: newSet)
 
-        if changeInfo.insertedIndexes.count == 0, changeInfo.deletedIndexes.count == 0, changeInfo.updatedIndexes.count == 0, changeInfo.movedIndexPairs.count == 0 {
+        if changeInfo.insertedIndexes.count == 0, changeInfo.deletedIndexes.count == 0,
+           changeInfo.updatedIndexes.count == 0, changeInfo.movedIndexPairs.count == 0 {
             return nil
         }
-        return SetStateUpdate(newSnapshot: SetSnapshot(set: newSet, moveType: self.moveType),
-                              changeInfo: changeInfo,
-                              removedObjects: changeSet.deletedObjects,
-                              insertedObjects: changeSet.insertedObjects)
+        return SetStateUpdate(
+            newSnapshot: SetSnapshot(set: newSet, moveType: self.moveType),
+            changeInfo: changeInfo,
+            removedObjects: changeSet.deletedObjects,
+            insertedObjects: changeSet.insertedObjects
+        )
     }
 }

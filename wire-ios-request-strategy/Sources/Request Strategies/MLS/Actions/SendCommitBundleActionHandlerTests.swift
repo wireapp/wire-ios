@@ -122,7 +122,8 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         test_itHandlesFailure(
             status: 533,
             payload: payload as ZMTransportData,
-            expectedError: SendCommitBundleAction.Failure.unreachableDomains(Set(domains)))
+            expectedError: SendCommitBundleAction.Failure.unreachableDomains(Set(domains))
+        )
     }
 
     func test_itHandlesNonFederatingBackendsFailure() {
@@ -131,6 +132,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         test_itHandlesFailure(
             status: 409,
             payload: payload as ZMTransportData,
-            expectedError: SendCommitBundleAction.Failure.nonFederatingDomains(Set(domains)))
+            expectedError: SendCommitBundleAction.Failure.nonFederatingDomains(Set(domains))
+        )
     }
 }

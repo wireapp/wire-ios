@@ -107,7 +107,8 @@ final class ConversationTextMessageCell: UIView,
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
         if url.isMention {
-            if let message = self.message, let mention = message.textMessageData?.mentions.first(where: { $0.location == url.mentionLocation }) {
+            if let message = self.message,
+               let mention = message.textMessageData?.mentions.first(where: { $0.location == url.mentionLocation }) {
                 return self.openMention(mention)
             } else {
                 return false
@@ -119,7 +120,12 @@ final class ConversationTextMessageCell: UIView,
     }
 
     func openMention(_ mention: Mention) -> Bool {
-        delegate?.conversationMessageWantsToOpenUserDetails(self, user: mention.user, sourceView: messageTextView, frame: selectionRect)
+        delegate?.conversationMessageWantsToOpenUserDetails(
+            self,
+            user: mention.user,
+            sourceView: messageTextView,
+            frame: selectionRect
+        )
         return true
     }
 
@@ -177,7 +183,10 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
 // MARK: - Factory
 
 extension ConversationTextMessageCellDescription {
-    static func cells(for message: ZMConversationMessage, searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
+    static func cells(
+        for message: ZMConversationMessage,
+        searchQueries: [String]
+    ) -> [AnyConversationMessageCellDescription] {
         guard let textMessageData = message.textMessageData else {
             preconditionFailure("Invalid text message")
         }
@@ -185,9 +194,11 @@ extension ConversationTextMessageCellDescription {
         return cells(textMessageData: textMessageData, message: message, searchQueries: searchQueries)
     }
 
-    static func cells(textMessageData: TextMessageData,
-                      message: ZMConversationMessage,
-                      searchQueries: [String]) -> [AnyConversationMessageCellDescription] {
+    static func cells(
+        textMessageData: TextMessageData,
+        message: ZMConversationMessage,
+        searchQueries: [String]
+    ) -> [AnyConversationMessageCellDescription] {
         var cells: [AnyConversationMessageCellDescription] = []
 
         // Refetch the link attachments if needed
@@ -204,7 +215,12 @@ extension ConversationTextMessageCellDescription {
         // Search queries
         if !searchQueries.isEmpty {
             let highlightStyle: [NSAttributedString.Key: AnyObject] = [.backgroundColor: UIColor.accentDarken]
-            messageText = messageText.highlightingAppearances(of: searchQueries, with: highlightStyle, upToWidth: 0, totalMatches: nil)
+            messageText = messageText.highlightingAppearances(
+                of: searchQueries,
+                with: highlightStyle,
+                upToWidth: 0,
+                totalMatches: nil
+            )
         }
 
         // Quote
@@ -215,7 +231,10 @@ extension ConversationTextMessageCellDescription {
 
         // Text
         if !messageText.string.isEmpty {
-            let textCell = ConversationTextMessageCellDescription(attributedString: messageText, isObfuscated: message.isObfuscated)
+            let textCell = ConversationTextMessageCellDescription(
+                attributedString: messageText,
+                isObfuscated: message.isObfuscated
+            )
             cells.append(AnyConversationMessageCellDescription(textCell))
         }
 
@@ -226,7 +245,10 @@ extension ConversationTextMessageCellDescription {
         // Links
         if let attachment = attachments.first {
             // Link Attachment
-            let attachmentCell = ConversationLinkAttachmentCellDescription(attachment: attachment, thumbnailResource: message.linkAttachmentImage)
+            let attachmentCell = ConversationLinkAttachmentCellDescription(
+                attachment: attachment,
+                thumbnailResource: message.linkAttachmentImage
+            )
             cells.append(AnyConversationMessageCellDescription(attachmentCell))
         } else if textMessageData.linkPreview != nil {
             // Link Preview

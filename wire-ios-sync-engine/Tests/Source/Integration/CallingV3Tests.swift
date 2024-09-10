@@ -29,7 +29,13 @@ final class CallStateTestObserver: WireCallCenterCallStateObserver {
         token = WireCallCenterV3.addCallStateObserver(observer: self, for: conversation, context: context)
     }
 
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: ZMUser,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         changes.append(callState)
     }
 
@@ -84,17 +90,26 @@ final class CallingV3Tests: IntegrationTest {
         let convIdRef = self.conversationIdRef
         let userIdRef = self.selfUser.identifier.cString(using: .utf8)
         self.conversationUnderTest.voiceChannel?.leave()
-        WireSyncEngine.closedCallHandler(reason: WCALL_REASON_STILL_ONGOING,
-                                         conversationId: convIdRef,
-                                         messageTime: 0,
-                                         userId: userIdRef,
-                                         contextRef: self.wireCallCenterRef)
+        WireSyncEngine.closedCallHandler(
+            reason: WCALL_REASON_STILL_ONGOING,
+            conversationId: convIdRef,
+            messageTime: 0,
+            userId: userIdRef,
+            contextRef: self.wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func otherStartCall(user: ZMUser, isVideoCall: Bool = false, shouldRing: Bool = true) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.incomingCallHandler(conversationId: conversationIdRef, messageTime: UInt32(ceil(Date().timeIntervalSince1970)), userId: userIdRef, isVideoCall: isVideoCall ? 1 : 0, shouldRing: shouldRing ? 1 : 0, contextRef: wireCallCenterRef)
+        WireSyncEngine.incomingCallHandler(
+            conversationId: conversationIdRef,
+            messageTime: UInt32(ceil(Date().timeIntervalSince1970)),
+            userId: userIdRef,
+            isVideoCall: isVideoCall ? 1 : 0,
+            shouldRing: shouldRing ? 1 : 0,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -117,13 +132,21 @@ final class CallingV3Tests: IntegrationTest {
 
     func establishedFlow(user: ZMUser) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.establishedCallHandler(conversationId: conversationIdRef, userId: userIdRef, contextRef: wireCallCenterRef)
+        WireSyncEngine.establishedCallHandler(
+            conversationId: conversationIdRef,
+            userId: userIdRef,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func participantsChanged(members: [(user: ZMUser, establishedFlow: Bool)]) {
-        let mappedMembers = members.map { AVSCallMember(userId: $0.user.remoteIdentifier!, audioEstablished: $0.establishedFlow) }
-        (userSession!.managedObjectContext.zm_callCenter as! WireCallCenterV3IntegrationMock).mockAVSWrapper.mockMembers = mappedMembers
+        let mappedMembers = members.map { AVSCallMember(
+            userId: $0.user.remoteIdentifier!,
+            audioEstablished: $0.establishedFlow
+        ) }
+        (userSession!.managedObjectContext.zm_callCenter as! WireCallCenterV3IntegrationMock).mockAVSWrapper
+            .mockMembers = mappedMembers
 
         WireSyncEngine.groupMemberHandler(conversationIdRef: conversationIdRef, contextRef: wireCallCenterRef)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -131,7 +154,13 @@ final class CallingV3Tests: IntegrationTest {
 
     func closeCall(user: ZMUser, reason: CallClosedReason) {
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.closedCallHandler(reason: reason.wcall_reason, conversationId: conversationIdRef, messageTime: 0, userId: userIdRef, contextRef: wireCallCenterRef)
+        WireSyncEngine.closedCallHandler(
+            reason: reason.wcall_reason,
+            conversationId: conversationIdRef,
+            messageTime: 0,
+            userId: userIdRef,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -139,7 +168,13 @@ final class CallingV3Tests: IntegrationTest {
         otherStartCall(user: user)
 
         let userIdRef = user.remoteIdentifier!.transportString().cString(using: .utf8)
-        WireSyncEngine.missedCallHandler(conversationId: conversationIdRef, messageTime: UInt32(Date().timeIntervalSince1970), userId: userIdRef, isVideoCall: 0, contextRef: wireCallCenterRef)
+        WireSyncEngine.missedCallHandler(
+            conversationId: conversationIdRef,
+            messageTime: UInt32(Date().timeIntervalSince1970),
+            userId: userIdRef,
+            isVideoCall: 0,
+            contextRef: wireCallCenterRef
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
@@ -191,8 +226,16 @@ final class CallingV3Tests: IntegrationTest {
         stateObserver.checkLastNotificationHasCallState(.outgoing(degraded: false))
 
         // when
-        participantsChanged(members: [(user: conversationUnderTest.localParticipants.firstObject as! ZMUser, establishedFlow: false),
-                                      (user: conversationUnderTest.localParticipants.lastObject as! ZMUser, establishedFlow: false)])
+        participantsChanged(members: [
+            (
+                user: conversationUnderTest.localParticipants.firstObject as! ZMUser,
+                establishedFlow: false
+            ),
+            (
+                user: conversationUnderTest.localParticipants.lastObject as! ZMUser,
+                establishedFlow: false
+            ),
+        ])
         stateObserver.changes = []
 
         // when
@@ -528,8 +571,10 @@ final class CallingV3Tests: IntegrationTest {
         establishedFlow(user: localSelfUser)
 
         // second user joins
-        participantsChanged(members: [(user: localUser1, establishedFlow: false),
-                                      (user: localUser2, establishedFlow: false)])
+        participantsChanged(members: [
+            (user: localUser1, establishedFlow: false),
+            (user: localUser2, establishedFlow: false),
+        ])
 
         // then
         XCTAssertEqual(convObserver!.notifications.count, 1)
@@ -606,7 +651,10 @@ final class CallingV3Tests: IntegrationTest {
         otherStartCall(user: user)
 
         // then
-        XCTAssertEqual(conversationUnderTest.voiceChannel?.state, .incoming(video: false, shouldRing: true, degraded: false))
+        XCTAssertEqual(
+            conversationUnderTest.voiceChannel?.state,
+            .incoming(video: false, shouldRing: true, degraded: false)
+        )
     }
 
     func testThatCallIsTerminatedIfConversationSecurityDegrades() {

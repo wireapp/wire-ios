@@ -78,7 +78,11 @@ final class ZMHotFixTests_Integration: MessagingTest {
             let incomingMessage = try! oneOnOneConversation.appendText(content: "Test") as! ZMClientMessage
             let confirmation = Confirmation(messageId: incomingMessage.nonce!, type: .delivered)
 
-            confirmationMessage = try! oneOnOneConversation.appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
+            confirmationMessage = try! oneOnOneConversation.appendClientMessage(
+                with: GenericMessage(content: confirmation),
+                expires: false,
+                hidden: true
+            )
 
             self.syncMOC.saveOrRollback()
 

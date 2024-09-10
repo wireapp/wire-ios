@@ -71,7 +71,14 @@ final class TextSearchResultCell: UITableViewCell {
     }
 
     private func createConstraints() {
-        for item in [userImageView, userImageViewContainer, footerView, messageTextLabel, resultCountView, separatorView] {
+        for item in [
+            userImageView,
+            userImageViewContainer,
+            footerView,
+            messageTextLabel,
+            resultCountView,
+            separatorView,
+        ] {
             item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([

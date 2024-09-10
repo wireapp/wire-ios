@@ -23,12 +23,26 @@ final class ZMMockURLSession: ZMURLSession {
     @objc var cancellationHandler: (() -> Void)?
 
     @objc static func createMockSession() -> ZMMockURLSession {
-        ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: ZMMockURLSessionDelegate(), delegateQueue: OperationQueue(), identifier: "ZMMockURLSession", userAgent: "Test UserAgent")
+        ZMMockURLSession(
+            configuration: .ephemeral,
+            trustProvider: MockEnvironment(),
+            delegate: ZMMockURLSessionDelegate(),
+            delegateQueue: OperationQueue(),
+            identifier: "ZMMockURLSession",
+            userAgent: "Test UserAgent"
+        )
     }
 
     @objc(createMockSessionWithDelegate:)
     static func createMockSession(delegate: ZMURLSessionDelegate) -> ZMMockURLSession {
-        ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: delegate, delegateQueue: OperationQueue(), identifier: "ZMMockURLSession", userAgent: "Test UserAgent")
+        ZMMockURLSession(
+            configuration: .ephemeral,
+            trustProvider: MockEnvironment(),
+            delegate: delegate,
+            delegateQueue: OperationQueue(),
+            identifier: "ZMMockURLSession",
+            userAgent: "Test UserAgent"
+        )
     }
 
     override func cancelAllTasks(completionHandler handler: @escaping () -> Void) {
@@ -43,7 +57,12 @@ final class ZMMockURLSession: ZMURLSession {
 
 @objc
 final class ZMMockURLSessionDelegate: NSObject, ZMURLSessionDelegate {
-    func urlSession(_ URLSession: ZMURLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+    func urlSession(
+        _ URLSession: ZMURLSession,
+        dataTask: URLSessionDataTask,
+        didReceive response: URLResponse,
+        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+    ) {
         // no-op
     }
 
@@ -55,7 +74,12 @@ final class ZMMockURLSessionDelegate: NSObject, ZMURLSessionDelegate {
         // no-op
     }
 
-    func urlSession(_ URLSession: ZMURLSession, taskDidComplete task: URLSessionTask, transportRequest: ZMTransportRequest, responseData: Data) {
+    func urlSession(
+        _ URLSession: ZMURLSession,
+        taskDidComplete task: URLSessionTask,
+        transportRequest: ZMTransportRequest,
+        responseData: Data
+    ) {
         // no-op
     }
 

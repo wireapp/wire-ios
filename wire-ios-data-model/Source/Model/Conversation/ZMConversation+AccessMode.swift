@@ -47,10 +47,12 @@ extension ConversationAccessMode: Hashable {
 }
 
 extension ConversationAccessMode {
-    static let stringValues: [ConversationAccessMode: String] = [.invite: "invite",
-                                                                 .code: "code",
-                                                                 .link: "link",
-                                                                 .private: "private"]
+    static let stringValues: [ConversationAccessMode: String] = [
+        .invite: "invite",
+        .code: "code",
+        .link: "link",
+        .private: "private",
+    ]
 
     public var stringValue: [String] {
         ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
@@ -175,10 +177,12 @@ extension ZMConversation: SwiftConversationLike {
     public internal(set) var accessRoles: Set<ConversationAccessRoleV2> {
         get {
             guard let strings = accessRoleStringsV2 else {
-                return [.teamMember,
-                        .nonTeamMember,
-                        .guest,
-                        .service]
+                return [
+                    .teamMember,
+                    .nonTeamMember,
+                    .guest,
+                    .service,
+                ]
             }
             return Set(strings.compactMap(ConversationAccessRoleV2.init))
         }

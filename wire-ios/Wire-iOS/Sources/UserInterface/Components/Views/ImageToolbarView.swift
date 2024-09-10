@@ -62,8 +62,10 @@ final class ImageToolbarView: UIView {
     }
 
     private func updateButtonStyle() {
-        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) : .from(scheme: .iconNormal)
-        let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) : .from(scheme: .iconHighlighted)
+        let normalColor: UIColor = isPlacedOnImage ? .from(scheme: .iconNormal, variant: .dark) :
+            .from(scheme: .iconNormal)
+        let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) :
+            .from(scheme: .iconHighlighted)
         let selectedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
 
         for item in [sketchButton, emojiButton, textButton, expandButton] {

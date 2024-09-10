@@ -43,7 +43,11 @@ class FileManagerMoveTests: XCTestCase {
         self.createFiles(in: self.tempFolder1, relativeFilePaths: files)
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.moveFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: true
+        )
 
         // THEN
         for file in files {
@@ -68,7 +72,11 @@ class FileManagerMoveTests: XCTestCase {
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles)
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.moveFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: true
+        )
 
         // THEN
         for item in filesToMove + preExistingFiles {
@@ -91,7 +99,11 @@ class FileManagerMoveTests: XCTestCase {
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: false)
+        try FileManager.default.moveFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: false
+        )
 
         // THEN
         self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "DESTINATION")
@@ -112,7 +124,11 @@ class FileManagerMoveTests: XCTestCase {
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.moveFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: true
+        )
 
         // THEN
         self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "SOURCE")
@@ -134,7 +150,11 @@ extension FileManagerMoveTests {
         self.createFiles(in: self.tempFolder1, relativeFilePaths: files)
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.copyFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: true
+        )
 
         // THEN
         for file in files {
@@ -159,7 +179,11 @@ extension FileManagerMoveTests {
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles)
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.copyFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: true
+        )
 
         // THEN
         for item in filesToMove + preExistingFiles {
@@ -181,7 +205,11 @@ extension FileManagerMoveTests {
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: false)
+        try FileManager.default.copyFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: false
+        )
 
         // THEN
         self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "DESTINATION")
@@ -202,7 +230,11 @@ extension FileManagerMoveTests {
         self.createFiles(in: self.tempFolder2, relativeFilePaths: preExistingFiles, content: "DESTINATION")
 
         // WHEN
-        try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
+        try FileManager.default.copyFolderRecursively(
+            from: self.tempFolder1,
+            to: self.tempFolder2,
+            overwriteExistingFiles: true
+        )
 
         // THEN
         self.checkIfFileExists(in: self.tempFolder2, relativePath: overwrittenExistingFile, content: "SOURCE")

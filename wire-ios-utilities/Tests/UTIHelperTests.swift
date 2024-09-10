@@ -59,9 +59,11 @@ final class UTIHelperTests: XCTestCase {
 
     func testThatCommonFilesConformsAudioType() {
         // given
-        let suts = ["audio/mp4",
-                    "audio/mpeg",
-                    "audio/x-m4a"]
+        let suts = [
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/x-m4a",
+        ]
 
         for sut in suts {
             // when & then
@@ -71,10 +73,12 @@ final class UTIHelperTests: XCTestCase {
 
     func testThatConformsToImageTypeIdentifiesCommonImageTypes() {
         // given
-        let suts = ["public.jpeg",
-                    "com.compuserve.gif",
-                    "public.png",
-                    "public.svg-image"]
+        let suts = [
+            "public.jpeg",
+            "com.compuserve.gif",
+            "public.png",
+            "public.svg-image",
+        ]
 
         for sut in suts {
             // when & then

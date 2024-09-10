@@ -208,7 +208,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: 2, videoState: .stopped, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: 2,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -233,7 +238,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: 2, videoState: .stopped, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: 2,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -258,7 +268,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: 2, videoState: .stopped, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: 2,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -510,7 +525,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: MockCallPermissions.videoAllowedForever,
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: 2, videoState: .started, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: 2,
+                videoState: .started,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -612,7 +632,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .stopped, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -637,7 +662,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .started, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -662,7 +692,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .stopped, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .stopped,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: false,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -687,7 +722,10 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, mockUsers: SwiftMockLoader.mockUsers())),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                mockUsers: SwiftMockLoader.mockUsers()
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -789,7 +827,11 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: MockCallPermissions.videoAllowedForever,
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .screenSharing, mockUsers: SwiftMockLoader.mockUsers())),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .screenSharing,
+                mockUsers: SwiftMockLoader.mockUsers()
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -814,7 +856,11 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: MockCallPermissions.videoAllowedForever,
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .started, mockUsers: SwiftMockLoader.mockUsers())),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                mockUsers: SwiftMockLoader.mockUsers()
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -839,7 +885,12 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: MockCallPermissions.videoAllowedForever,
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .started, microphoneState: .unmuted, mockUsers: mockUsers)),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                microphoneState: .unmuted,
+                mockUsers: mockUsers
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -864,7 +915,11 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .started, mockUsers: SwiftMockLoader.mockUsers())),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                mockUsers: SwiftMockLoader.mockUsers()
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,
@@ -889,7 +944,11 @@ struct CallInfoTestFixture {
             videoPlaceholderState: .hidden,
             permissions: CallPermissions(),
             degradationState: .none,
-            accessoryType: .participantsList(CallParticipantsListHelper.participants(count: groupSize.rawValue, videoState: .started, mockUsers: SwiftMockLoader.mockUsers())),
+            accessoryType: .participantsList(CallParticipantsListHelper.participants(
+                count: groupSize.rawValue,
+                videoState: .started,
+                mockUsers: SwiftMockLoader.mockUsers()
+            )),
             canToggleMediaType: true,
             isMuted: false,
             callState: CallStateMock.ongoing,

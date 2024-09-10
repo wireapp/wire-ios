@@ -96,7 +96,8 @@ extension CGFloat {
     enum ConversationListHeader {
         static let iconWidth: CGFloat = 32
         /// 75% of ConversationAvatarView.iconWidth + TeamAccountView.imageInset * 2 = 24 + 2 * 2
-        static let avatarSize: CGFloat = 24 + Constants.teamAccountViewImageInsets.left + Constants.teamAccountViewImageInsets.right
+        static let avatarSize: CGFloat = 24 + Constants.teamAccountViewImageInsets.left + Constants
+            .teamAccountViewImageInsets.right
 
         static let barHeight: CGFloat = 44
     }

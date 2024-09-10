@@ -143,7 +143,10 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
                 guard let self else { return }
 
-                await self.snoozeCertificateEnrollmentUseCase.invoke(endOfPeriod: endOfPeriod, isUpdateMode: self.isUpdateMode)
+                await self.snoozeCertificateEnrollmentUseCase.invoke(
+                    endOfPeriod: endOfPeriod,
+                    isUpdateMode: self.isUpdateMode
+                )
                 self.isUpdateMode = false
             }
         }
@@ -233,7 +236,8 @@ extension UIAlertController {
         canCancel: Bool,
         isUpdateMode: Bool,
         completion: @escaping () -> Void,
-        cancelled: @escaping () -> Void) -> UIAlertController {
+        cancelled: @escaping () -> Void
+    ) -> UIAlertController {
         typealias UpdateAlert = L10n.Localizable.FailedToUpdateCertificate.Alert
         typealias Alert = L10n.Localizable.FailedToGetCertificate.Alert
         typealias Button = L10n.Localizable.FailedToGetCertificate.Button
@@ -262,7 +266,8 @@ extension UIAlertController {
 
     static func reminderGetCertificate(
         timeLeft: String,
-        completion: @escaping () -> Void) -> UIAlertController {
+        completion: @escaping () -> Void
+    ) -> UIAlertController {
         typealias Alert = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 
         let controller = UIAlertController(

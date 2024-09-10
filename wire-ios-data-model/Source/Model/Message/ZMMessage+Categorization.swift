@@ -67,9 +67,12 @@ extension ZMMessage {
     /// Sorted fetch request by category. It will match a Core Data object if the intersection of the Core Data value and ANY of the passed
     /// in categories is matching that category (in other words, the Core Data value can have more bits set that a certain category and it will
     /// still match).
-    public static func fetchRequestMatching(categories: Set<MessageCategory>,
-                                            excluding: MessageCategory = .none,
-                                            conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
+    public static func fetchRequestMatching(
+        categories: Set<MessageCategory>,
+        excluding: MessageCategory = .none,
+        conversation: ZMConversation? = nil
+    )
+        -> NSFetchRequest<NSFetchRequestResult> {
         let orPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: categories.map {
             NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.rawValue, $0.rawValue)
         })
@@ -81,25 +84,45 @@ extension ZMMessage {
             ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
             : nil
 
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [orPredicate, excludingPredicate, conversationPredicate].compactMap { $0 })
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            orPredicate,
+            excludingPredicate,
+            conversationPredicate,
+        ].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
     }
 
-    public static func fetchRequestMatching(matchPairs: [CategoryMatch],
-                                            conversation: ZMConversation? = nil) -> NSFetchRequest<NSFetchRequestResult> {
+    public static func fetchRequestMatching(
+        matchPairs: [CategoryMatch],
+        conversation: ZMConversation? = nil
+    )
+        -> NSFetchRequest<NSFetchRequestResult> {
         let categoryPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: matchPairs.map {
             if $0.excluding != .none {
-                return NSPredicate(format: "((%K & %d) = %d) && ((%K & %d) = 0)",
-                                   ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue,
-                                   ZMMessageCachedCategoryKey, $0.excluding.rawValue)
+                return NSPredicate(
+                    format: "((%K & %d) = %d) && ((%K & %d) = 0)",
+                    ZMMessageCachedCategoryKey,
+                    $0.including.rawValue,
+                    $0.including.rawValue,
+                    ZMMessageCachedCategoryKey,
+                    $0.excluding.rawValue
+                )
             }
-            return NSPredicate(format: "(%K & %d) = %d", ZMMessageCachedCategoryKey, $0.including.rawValue, $0.including.rawValue)
+            return NSPredicate(
+                format: "(%K & %d) = %d",
+                ZMMessageCachedCategoryKey,
+                $0.including.rawValue,
+                $0.including.rawValue
+            )
         })
         let conversationPredicate: NSPredicate? = (conversation != nil)
             ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
             : nil
 
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].compactMap { $0 })
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            categoryPredicate,
+            conversationPredicate,
+        ].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
     }
 }
@@ -115,12 +138,13 @@ extension ZMMessage {
             return .none
         }
 
-        let category = [self.textCategory,
-                        self.imageCategory,
-                        self.fileCategory,
-                        self.locationCategory,
-                        self.knockCategory,
-                        self.systemMessageCategory,
+        let category = [
+            self.textCategory,
+            self.imageCategory,
+            self.fileCategory,
+            self.locationCategory,
+            self.knockCategory,
+            self.systemMessageCategory,
         ]
         .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
             current.union(other)
@@ -133,7 +157,8 @@ extension ZMMessage {
             return .none
         }
         var category = MessageCategory.image
-        if let asset = self as? ZMAssetClientMessage, asset.mediumGenericMessage == nil, imageMessageData.imageData == nil {
+        if let asset = self as? ZMAssetClientMessage, asset.mediumGenericMessage == nil,
+           imageMessageData.imageData == nil {
             category.update(with: .excludedFromCollection)
         }
         if imageMessageData.isAnimatedGIF {
@@ -167,7 +192,10 @@ extension ZMMessage {
             return .none
         }
         var category = MessageCategory.file
-        if let asset = self as? ZMAssetClientMessage, asset.transferState.isOne(of: [.uploadingFailed, .uploadingCancelled]) {
+        if let asset = self as? ZMAssetClientMessage, asset.transferState.isOne(of: [
+            .uploadingFailed,
+            .uploadingCancelled,
+        ]) {
             category.update(with: .excludedFromCollection)
         }
         if fileData.isAudio {

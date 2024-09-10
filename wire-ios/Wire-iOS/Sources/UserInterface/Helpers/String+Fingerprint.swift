@@ -32,8 +32,10 @@ extension String {
         split(every: 2).joined(separator: " ")
     }
 
-    func fingerprintString(attributes: [NSAttributedString.Key: Any],
-                           boldAttributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+    func fingerprintString(
+        attributes: [NSAttributedString.Key: Any],
+        boldAttributes: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
         var bold = true
         return split { !$0.isHexDigit }.map {
             let attributedElement = String($0) && (bold ? boldAttributes : attributes)

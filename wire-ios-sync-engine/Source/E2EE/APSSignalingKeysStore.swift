@@ -25,8 +25,10 @@ public struct SignalingKeys {
     let decryptionKey: Data
 
     init(verificationKey: Data? = nil, decryptionKey: Data? = nil) {
-        self.verificationKey = verificationKey ?? NSData.secureRandomData(ofLength: APSSignalingKeysStore.defaultKeyLengthBytes)
-        self.decryptionKey = decryptionKey ?? NSData.secureRandomData(ofLength: APSSignalingKeysStore.defaultKeyLengthBytes)
+        self.verificationKey = verificationKey ?? NSData
+            .secureRandomData(ofLength: APSSignalingKeysStore.defaultKeyLengthBytes)
+        self.decryptionKey = decryptionKey ?? NSData
+            .secureRandomData(ofLength: APSSignalingKeysStore.defaultKeyLengthBytes)
     }
 }
 

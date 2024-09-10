@@ -61,13 +61,15 @@ private struct ParticipantsSectionViewModel {
 
         switch (conversationRole, showSectionCount) {
         case (.member, true):
-            return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)".localized(args: participants.count)
+            return GroupDetails.ConversationMembersHeader.title.localizedUppercase + " (%d)"
+                .localized(args: participants.count)
 
         case (.member, false):
             return GroupDetails.ConversationMembersHeader.title.localizedUppercase
 
         case (.admin, true):
-            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)".localized(args: participants.count)
+            return GroupDetails.ConversationAdminsHeader.title.localizedUppercase + " (%d)"
+                .localized(args: participants.count)
 
         case (.admin, false):
             return GroupDetails.ConversationAdminsHeader.title.localizedUppercase
@@ -130,9 +132,15 @@ private struct ParticipantsSectionViewModel {
             }
     }
 
-    static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
+    static func computeRows(
+        _ participants: [UserType],
+        totalParticipantsCount: Int,
+        maxParticipants: Int,
+        maxDisplayedParticipants: Int
+    ) -> [ParticipantsRowType] {
         guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.user) }
-        return participants[0 ..< maxDisplayedParticipants].map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
+        return participants[0 ..< maxDisplayedParticipants]
+            .map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
     }
 }
 
@@ -209,7 +217,10 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
-        collectionView?.register(ShowAllParticipantsCell.self, forCellWithReuseIdentifier: ShowAllParticipantsCell.reuseIdentifier)
+        collectionView?.register(
+            ShowAllParticipantsCell.self,
+            forCellWithReuseIdentifier: ShowAllParticipantsCell.reuseIdentifier
+        )
         self.collectionView = collectionView
     }
 
@@ -225,7 +236,10 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         viewModel.rows.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let configuration = viewModel.rows[indexPath.row]
         let showSeparator = (viewModel.rows.count - 1) != indexPath.row
 
@@ -248,7 +262,9 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         switch configuration {
         case let .user(user):
             guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
-            let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified } else { false }
+            let isE2EICertified = if let userID = user.remoteIdentifier,
+                                     let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified }
+            else { false }
             cell.configure(
                 user: user,
                 isE2EICertified: isE2EICertified,
@@ -331,8 +347,10 @@ extension ParticipantsSectionController: UserObserving {
 
 extension UICollectionView {
     fileprivate func dequeueFooter(for indexPath: IndexPath) -> UICollectionReusableView {
-        dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
-                                         withReuseIdentifier: "SectionFooter",
-                                         for: indexPath)
+        dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter",
+            for: indexPath
+        )
     }
 }

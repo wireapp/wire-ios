@@ -36,7 +36,11 @@ final class SessionManagerProxyTests: IntegrationTest {
 
         reachabilityWrapper = ReachabilityWrapper(enabled: false, reachabilityClosure: { reachability })
 
-        unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession, environment: mockEnvironment, reachability: reachability)
+        unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(
+            transportSession: transportSession,
+            environment: mockEnvironment,
+            reachability: reachability
+        )
         authenticatedSessionFactory = MockAuthenticatedSessionFactory(
             application: application,
             mediaManager: mockMediaManager,
@@ -96,7 +100,10 @@ final class SessionManagerProxyTests: IntegrationTest {
         XCTAssertFalse(unauthenticatedSessionFactory.readyForRequests)
 
         // EXPECT
-        customExpectation(forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: nil) { _ -> Bool in
+        customExpectation(
+            forNotification: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled),
+            object: nil
+        ) { _ -> Bool in
             true
         }
 

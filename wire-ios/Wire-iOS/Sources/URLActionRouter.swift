@@ -195,7 +195,11 @@ extension URLActionRouter: PresentationDelegate {
         typealias UrlAction = L10n.Localizable.UrlAction
         switch action {
         case .connectBot:
-            presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
+            presentConfirmationAlert(
+                title: UrlAction.title,
+                message: UrlAction.ConnectToBot.message,
+                decisionHandler: decisionHandler
+            )
         case let .accessBackend(url):
             // Switching backend is handled below, so pass false here.
             decisionHandler(false)
@@ -205,12 +209,18 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
-    func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void) {
+    func shouldPerformActionWithMessage(
+        _ message: String,
+        action: URLAction,
+        decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void
+    ) {
         switch action {
         case .joinConversation:
-            presentConfirmationAlert(title: nil,
-                                     message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
-                                     decisionHandler: decisionHandler)
+            presentConfirmationAlert(
+                title: nil,
+                message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
+                decisionHandler: decisionHandler
+            )
         default:
             decisionHandler(true)
         }
@@ -239,9 +249,11 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     private func presentConfirmationAlert(title: String?, message: String, decisionHandler: @escaping (Bool) -> Void) {
-        let alert = UIAlertController(title: title,
-                                      message: message,
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
 
         let agreeAction = UIAlertAction.confirm(style: .default) { _ in decisionHandler(true) }
         alert.addAction(agreeAction)
@@ -379,9 +391,11 @@ extension URLActionRouter {
                 let browserViewController = BrowserViewController(url: WireURLs.shared.guestLinksInfo)
                 topmostViewController?.present(browserViewController, animated: true)
             }
-            alert.addAction(UIAlertAction(title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
-                                          style: .default,
-                                          handler: guestLinksLearnMoreHandler))
+            alert.addAction(UIAlertAction(
+                title: L10n.Localizable.UrlAction.JoinConversation.Error.Alert.LearnMore.action,
+                style: .default,
+                handler: guestLinksLearnMoreHandler
+            ))
         default:
             break
         }

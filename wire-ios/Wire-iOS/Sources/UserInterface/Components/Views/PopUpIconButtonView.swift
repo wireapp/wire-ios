@@ -102,7 +102,10 @@ class PopUpIconButtonView: UIView {
         if let imageView = button.imageView {
             // rect in window coordinates
             let imageRect = imageView.convert(button.imageView!.bounds, to: nil)
-            let image = button.icon(for: .normal)!.makeImage(size: .tiny, color: SemanticColors.Button.textInputBarItemEnabled)
+            let image = button.icon(for: .normal)!.makeImage(
+                size: .tiny,
+                color: SemanticColors.Button.textInputBarItemEnabled
+            )
             image.draw(in: imageRect)
         }
 
@@ -110,7 +113,8 @@ class PopUpIconButtonView: UIView {
         if let buttonImageView = button.imageView {
             for (index, icon) in button.itemIcons.enumerated() {
                 let itemRect = rectForItem(icon)!
-                let iconColor = index == selectedIndex ? SemanticColors.Button.borderInputBarItemHighlighted : SemanticColors.Button.textInputBarItemEnabled
+                let iconColor = index == selectedIndex ? SemanticColors.Button
+                    .borderInputBarItemHighlighted : SemanticColors.Button.textInputBarItemEnabled
                 let image = icon.makeImage(size: .medium, color: iconColor)
                 // rect in window coordinates
                 var imageRect = buttonImageView.convert(buttonImageView.bounds, to: nil)
@@ -143,8 +147,13 @@ class PopUpIconButtonView: UIView {
 
         // BL corner
         point.x += smallRadius
-        path.addArc(withCenter: point, radius: smallRadius,
-                    startAngle: .pi, endAngle: .pi * 0.5, clockwise: false)
+        path.addArc(
+            withCenter: point,
+            radius: smallRadius,
+            startAngle: .pi,
+            endAngle: .pi * 0.5,
+            clockwise: false
+        )
 
         // line to BR corner
         point.x += lowerRect.width - 2 * smallRadius
@@ -153,8 +162,13 @@ class PopUpIconButtonView: UIView {
 
         // BR corner
         point.y -= smallRadius
-        path.addArc(withCenter: point, radius: smallRadius,
-                    startAngle: .pi * 0.5, endAngle: 0, clockwise: false)
+        path.addArc(
+            withCenter: point,
+            radius: smallRadius,
+            startAngle: .pi * 0.5,
+            endAngle: 0,
+            clockwise: false
+        )
 
         // line to TR corner
         point.x += smallRadius
@@ -168,8 +182,13 @@ class PopUpIconButtonView: UIView {
 
             // corner connecting top right of lower rect to upper rect
             point.x += largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: .pi, endAngle: .pi * 1.5, clockwise: true)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: .pi,
+                endAngle: .pi * 1.5,
+                clockwise: true
+            )
 
             // line to BR corner
             point.x += CGFloat(button.itemIcons.count - 1) * itemWidth - largeRadius + shiftFactor
@@ -178,8 +197,13 @@ class PopUpIconButtonView: UIView {
 
             // BR corner
             point.y -= largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: .pi * 0.5, endAngle: 0, clockwise: false)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: .pi * 0.5,
+                endAngle: 0,
+                clockwise: false
+            )
 
             // line to UR corner
             point.x += largeRadius
@@ -188,8 +212,13 @@ class PopUpIconButtonView: UIView {
 
             // UR corner
             point.x -= largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: 0, endAngle: .pi * 1.5, clockwise: false)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: 0,
+                endAngle: .pi * 1.5,
+                clockwise: false
+            )
 
             // line to UL corner
             point.x = lowerRect.origin.x
@@ -198,8 +227,13 @@ class PopUpIconButtonView: UIView {
 
             // UL corner
             point.y += largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: .pi * 1.5, endAngle: .pi, clockwise: false)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: .pi * 1.5,
+                endAngle: .pi,
+                clockwise: false
+            )
 
             // line to BL corner
             point.x -= largeRadius
@@ -237,8 +271,13 @@ class PopUpIconButtonView: UIView {
 
             // UR corner
             point.x -= largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: 0, endAngle: .pi * 1.5, clockwise: false)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: 0,
+                endAngle: .pi * 1.5,
+                clockwise: false
+            )
 
             // line to UL corner
             point.x -= upperRect.width - largeRadius * 2
@@ -247,8 +286,13 @@ class PopUpIconButtonView: UIView {
 
             // UL corner
             point.y += largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: .pi * 1.5, endAngle: .pi, clockwise: false)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: .pi * 1.5,
+                endAngle: .pi,
+                clockwise: false
+            )
 
             // line to BL corner
             point.x -= largeRadius
@@ -257,8 +301,13 @@ class PopUpIconButtonView: UIView {
 
             // BL corner
             point.x += largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: .pi, endAngle: .pi * 0.5, clockwise: false)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: .pi,
+                endAngle: .pi * 0.5,
+                clockwise: false
+            )
 
             // line to lower rect's TL corner
             point = lowerRect.origin
@@ -268,8 +317,13 @@ class PopUpIconButtonView: UIView {
 
             // corner joining upper rect & lower rect
             point.y += largeRadius
-            path.addArc(withCenter: point, radius: largeRadius,
-                        startAngle: .pi * 1.5, endAngle: 0, clockwise: true)
+            path.addArc(
+                withCenter: point,
+                radius: largeRadius,
+                startAngle: .pi * 1.5,
+                endAngle: 0,
+                clockwise: true
+            )
 
             path.close()
             return path

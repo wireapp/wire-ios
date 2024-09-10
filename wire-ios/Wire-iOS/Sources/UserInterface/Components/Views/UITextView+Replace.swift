@@ -30,8 +30,11 @@ extension UITextView {
         let selectionOffset = range.location + replacement.length
         attributedText = updatedString
 
-        guard let cursorPosition = position(from: beginningOfDocument, offset:
-            selectionOffset) else { return }
+        guard let cursorPosition = position(
+            from: beginningOfDocument,
+            offset:
+            selectionOffset
+        ) else { return }
         guard let updatedSelection = textRange(from: cursorPosition, to: cursorPosition) else { return }
         selectedTextRange = updatedSelection
     }

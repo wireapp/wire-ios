@@ -171,7 +171,10 @@ extension NSManagedObjectContext {
 
     public internal(set) var encryptMessagesAtRest: Bool {
         get {
-            guard let value = persistentStoreMetadata(forKey: PersistentMetadataKey.encryptMessagesAtRest.rawValue) as? NSNumber else {
+            guard let value = persistentStoreMetadata(
+                forKey: PersistentMetadataKey.encryptMessagesAtRest
+                    .rawValue
+            ) as? NSNumber else {
                 return false
             }
 
@@ -227,7 +230,11 @@ extension NSManagedObjectContext {
         }
 
         do {
-            let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(message: data, context: context, key: key._storage)
+            let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(
+                message: data,
+                context: context,
+                key: key._storage
+            )
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
             throw EncryptionError.cryptobox(error: error)
@@ -259,7 +266,12 @@ extension NSManagedObjectContext {
         }
 
         do {
-            return try ChaCha20Poly1305.AEADEncryption.decrypt(ciphertext: data, nonce: nonce, context: context, key: key._storage)
+            return try ChaCha20Poly1305.AEADEncryption.decrypt(
+                ciphertext: data,
+                nonce: nonce,
+                context: context,
+                key: key._storage
+            )
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
             throw EncryptionError.cryptobox(error: error)
         }

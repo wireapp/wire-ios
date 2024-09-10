@@ -20,10 +20,12 @@ import Foundation
 
 extension ZMMessageTests {
     @objc(mockEventOfType:forConversation:sender:data:)
-    func mockEvent(of type: ZMUpdateEventType,
-                   for conversation: ZMConversation?,
-                   sender senderID: UUID?,
-                   data: [AnyHashable: Any]?) -> ZMUpdateEvent {
+    func mockEvent(
+        of type: ZMUpdateEventType,
+        for conversation: ZMConversation?,
+        sender senderID: UUID?,
+        data: [AnyHashable: Any]?
+    ) -> ZMUpdateEvent {
         let updateEvent = ZMUpdateEvent()
         updateEvent.type = type
 
@@ -71,7 +73,12 @@ extension ZMMessageTests {
         let userIDs: [TransportCoding] = [sender.remoteIdentifier, user.remoteIdentifier]
         var message: ZMSystemMessage?
         performPretendingUiMocIsSyncMoc { [weak self] in
-            message = self?.createSystemMessage(from: .conversationMemberJoin, in: conversation, withUsersIDs: userIDs, senderID: sender.remoteIdentifier)
+            message = self?.createSystemMessage(
+                from: .conversationMemberJoin,
+                in: conversation,
+                withUsersIDs: userIDs,
+                senderID: sender.remoteIdentifier
+            )
         }
 
         uiMOC.saveOrRollback()

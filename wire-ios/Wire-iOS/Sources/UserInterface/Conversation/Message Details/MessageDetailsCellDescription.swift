@@ -60,9 +60,12 @@ extension MessageDetailsCellDescription {
     static func makeReactionCells(_ users: [UserType]) -> [MessageDetailsCellDescription] {
         users.map {
             let handle = $0.handle.map { "@" + $0 }
-            return MessageDetailsCellDescription(user: $0, subtitle: handle,
-                                                 accessibleSubtitleLabel: MessageDetails.userHandleSubtitleLabel,
-                                                 accessibleSubtitleValue: $0.handle)
+            return MessageDetailsCellDescription(
+                user: $0,
+                subtitle: handle,
+                accessibleSubtitleLabel: MessageDetails.userHandleSubtitleLabel,
+                accessibleSubtitleValue: $0.handle
+            )
         }
     }
 
@@ -71,9 +74,12 @@ extension MessageDetailsCellDescription {
             let formattedDate = $0.serverTimestamp.map(Message.shortDateTimeFormatter.string)
             let formattedAccessibleDate = $0.serverTimestamp.map(Message.spellOutDateTimeFormatter.string)
 
-            return MessageDetailsCellDescription(user: $0.userType, subtitle: formattedDate,
-                                                 accessibleSubtitleLabel: MessageDetails.userReadTimestampSubtitleLabel,
-                                                 accessibleSubtitleValue: formattedAccessibleDate)
+            return MessageDetailsCellDescription(
+                user: $0.userType,
+                subtitle: formattedDate,
+                accessibleSubtitleLabel: MessageDetails.userReadTimestampSubtitleLabel,
+                accessibleSubtitleValue: formattedAccessibleDate
+            )
         }
     }
 }

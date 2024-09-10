@@ -43,7 +43,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         conversation.lastReadServerTimeStamp = message1.serverTimestamp
 
         // when
-        var confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp! ... .distantFuture)
+        var confirmMessages = conversation
+            .confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp! ... .distantFuture)
 
         // then
         XCTAssertEqual(confirmMessages.count, 2)
@@ -53,9 +54,18 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
             confirmMessages.swapAt(0, 1)
         }
 
-        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.firstMessageID, message2.nonce?.transportString())
-        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds, [message4.nonce!.transportString()])
-        XCTAssertEqual(confirmMessages[1].underlyingMessage?.confirmation.firstMessageID, message3.nonce?.transportString())
+        XCTAssertEqual(
+            confirmMessages[0].underlyingMessage?.confirmation.firstMessageID,
+            message2.nonce?.transportString()
+        )
+        XCTAssertEqual(
+            confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds,
+            [message4.nonce!.transportString()]
+        )
+        XCTAssertEqual(
+            confirmMessages[1].underlyingMessage?.confirmation.firstMessageID,
+            message3.nonce?.transportString()
+        )
         XCTAssertEqual(confirmMessages[1].underlyingMessage?.confirmation.moreMessageIds, [])
     }
 
@@ -86,12 +96,19 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         message3.updateServerTimestamp(with: 30)
 
         // when
-        let confirmMessages = conversation.confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp! ... message2.serverTimestamp!)
+        let confirmMessages = conversation
+            .confirmUnreadMessagesAsRead(in: conversation.lastReadServerTimeStamp! ... message2.serverTimestamp!)
 
         // then
         XCTAssertEqual(confirmMessages.count, 1)
-        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.firstMessageID, message1.nonce?.transportString())
-        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds, [message2.nonce!.transportString()])
+        XCTAssertEqual(
+            confirmMessages[0].underlyingMessage?.confirmation.firstMessageID,
+            message1.nonce?.transportString()
+        )
+        XCTAssertEqual(
+            confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds,
+            [message2.nonce!.transportString()]
+        )
     }
 
     func testThatConfirmUnreadMessagesAsRead_StillConfirmsMessages_EvenIfLastReadServerTimestampAdvances() throws {

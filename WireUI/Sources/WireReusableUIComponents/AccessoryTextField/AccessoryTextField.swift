@@ -121,7 +121,10 @@ extension AccessoryTextField {
             accessoryStack.topAnchor.constraint(equalTo: accessoryContainer.topAnchor),
             accessoryStack.bottomAnchor.constraint(equalTo: accessoryContainer.bottomAnchor),
             accessoryStack.leadingAnchor.constraint(equalTo: accessoryContainer.leadingAnchor, constant: 0),
-            accessoryStack.trailingAnchor.constraint(equalTo: accessoryContainer.trailingAnchor, constant: -accessoryTrailingInset),
+            accessoryStack.trailingAnchor.constraint(
+                equalTo: accessoryContainer.trailingAnchor,
+                constant: -accessoryTrailingInset
+            ),
         ])
     }
 
@@ -169,8 +172,10 @@ extension AccessoryTextField {
 
 extension AccessoryTextField {
     func attributedPlaceholderString(placeholder: String) -> NSAttributedString {
-        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: textFieldAttributes.placeholderColor,
-                                                         .font: textFieldAttributes.placeholderFont.font!]
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: textFieldAttributes.placeholderColor,
+            .font: textFieldAttributes.placeholderFont.font!,
+        ]
         return NSAttributedString(string: placeholder, attributes: attributes)
     }
 
@@ -198,7 +203,12 @@ extension AccessoryTextField {
         var rightViewRect: CGRect
         let newY = bounds.origin.y + (bounds.size.height - contentSize.height) / 2
         if isLeftToRight {
-            rightViewRect = CGRect(x: CGFloat(bounds.maxX - contentSize.width), y: newY, width: contentSize.width, height: contentSize.height)
+            rightViewRect = CGRect(
+                x: CGFloat(bounds.maxX - contentSize.width),
+                y: newY,
+                width: contentSize.width,
+                height: contentSize.height
+            )
         } else {
             rightViewRect = CGRect(x: bounds.origin.x, y: newY, width: contentSize.width, height: contentSize.height)
         }
@@ -248,9 +258,11 @@ extension UIEdgeInsets {
 
     /// Returns a copy of the insets that are adapted for the current layout.
     fileprivate func directionAwareInsets(view: UIView) -> UIEdgeInsets {
-        UIEdgeInsets(top: top,
-                     left: leading(view: view),
-                     bottom: bottom,
-                     right: trailing(view: view))
+        UIEdgeInsets(
+            top: top,
+            left: leading(view: view),
+            bottom: bottom,
+            right: trailing(view: view)
+        )
     }
 }

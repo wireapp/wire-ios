@@ -74,7 +74,8 @@ public final class RequestLoopDetection: NSObject {
         if let firstNonTooOldIndex = self.recordedRequests.firstIndex(where: {
             $0.date > purgeDate
         }) {
-            self.recordedRequests.removeFirst(firstNonTooOldIndex) // note, this would be more efficient with linked list
+            self.recordedRequests
+                .removeFirst(firstNonTooOldIndex) // note, this would be more efficient with linked list
         } else {
             // all requests are old, kill them
             reset()

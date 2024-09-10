@@ -32,10 +32,16 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
-            let message = GenericMessage(content: Text(content: messageText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-            self.groupConversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
-                                                        to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                        data: try! message.serializedData())
+            let message =
+                GenericMessage(
+                    content: Text(content: messageText, mentions: [], linkPreviews: [], replyingTo: nil),
+                    nonce: UUID.create()
+                )
+            self.groupConversation.encryptAndInsertData(
+                from: self.user1.clients.anyObject() as! MockUserClient,
+                to: self.selfUser.clients.anyObject() as! MockUserClient,
+                data: try! message.serializedData()
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -51,10 +57,15 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let count = 0
         let insertMessage = {
             let text = "text \(count)"
-            let message = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-            self.groupConversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
-                                                        to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                        data: try! message.serializedData())
+            let message = GenericMessage(
+                content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: UUID.create()
+            )
+            self.groupConversation.encryptAndInsertData(
+                from: self.user1.clients.anyObject() as! MockUserClient,
+                to: self.selfUser.clients.anyObject() as! MockUserClient,
+                data: try! message.serializedData()
+            )
         }
 
         self.mockTransportSession.performRemoteChanges { _ in
@@ -71,7 +82,10 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         self.mockTransportSession.responseGeneratorBlock = { request in
             if request.path.contains("messages"), request.method == ZMTransportRequestMethod.post {
                 if request.path.contains(convIDString!) {
-                    return ZMTransportResponse(transportSessionError: NSError.requestExpiredError(), apiVersion: APIVersion.v0.rawValue)
+                    return ZMTransportResponse(
+                        transportSessionError: NSError.requestExpiredError(),
+                        apiVersion: APIVersion.v0.rawValue
+                    )
                 }
             }
             return nil
@@ -93,8 +107,16 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
         // then
         XCTAssertNotNil(conversation!.lastReadServerTimeStamp)
-        XCTAssertNotEqual(conversation!.lastReadServerTimeStamp!.timeIntervalSince1970, failedToSendMessage!.serverTimestamp!.timeIntervalSince1970, accuracy: 0.01)
-        XCTAssertEqual(conversation!.lastReadServerTimeStamp!.timeIntervalSince1970, previousMessage!.serverTimestamp!.timeIntervalSince1970, accuracy: 0.01)
+        XCTAssertNotEqual(
+            conversation!.lastReadServerTimeStamp!.timeIntervalSince1970,
+            failedToSendMessage!.serverTimestamp!.timeIntervalSince1970,
+            accuracy: 0.01
+        )
+        XCTAssertEqual(
+            conversation!.lastReadServerTimeStamp!.timeIntervalSince1970,
+            previousMessage!.serverTimestamp!.timeIntervalSince1970,
+            accuracy: 0.01
+        )
     }
 
     func testThatItAppendsClientMessages() {
@@ -104,8 +126,16 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let nonce1 = UUID.create()
         let nonce2 = UUID.create()
 
-        let genericMessage1 = GenericMessage(content: Text(content: expectedText1, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce1)
-        let genericMessage2 = GenericMessage(content: Text(content: expectedText2, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce2)
+        let genericMessage1 =
+            GenericMessage(
+                content: Text(content: expectedText1, mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: nonce1
+            )
+        let genericMessage2 =
+            GenericMessage(
+                content: Text(content: expectedText2, mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: nonce2
+            )
 
         self.testThatItAppendsMessage(to: self.groupConversation, with: { _ -> [UUID]? in
             self.groupConversation.insertClientMessage(from: self.user2, data: try! genericMessage1.serializedData())
@@ -114,11 +144,19 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
             return [nonce1, nonce2]
         }, verify: { conversation in
             let msg1 = conversation?.lastMessages(limit: 50)[1] as! ZMClientMessage
-            XCTAssertEqual(msg1.nonce, nonce1, "msg1 timestamp \(String(describing: msg1.serverTimestamp?.timeIntervalSince1970))")
+            XCTAssertEqual(
+                msg1.nonce,
+                nonce1,
+                "msg1 timestamp \(String(describing: msg1.serverTimestamp?.timeIntervalSince1970))"
+            )
             XCTAssertEqual(msg1.underlyingMessage?.text.content, expectedText1)
 
             let msg2 = conversation?.lastMessages(limit: 50)[0] as! ZMClientMessage
-            XCTAssertEqual(msg2.nonce, nonce2, "msg2 timestamp \(String(describing: msg2.serverTimestamp?.timeIntervalSince1970))")
+            XCTAssertEqual(
+                msg2.nonce,
+                nonce2,
+                "msg2 timestamp \(String(describing: msg2.serverTimestamp?.timeIntervalSince1970))"
+            )
             XCTAssertEqual(msg2.underlyingMessage?.text.content, expectedText2)
 
         })
@@ -128,27 +166,62 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let expectedText = "The sky above the port was the color of "
         let nonce = UUID.create()
 
-        self.testThatItSendsANotification(in: self.groupConversation, ignoreLastRead: false, onRemoteMessageCreatedWith: {
-            let message = GenericMessage(content: Text(content: expectedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-            self.groupConversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
-                                                        to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                        data: try! message.serializedData())
-        }, verify: { conversation in
-            let msg = conversation?.lastMessage
-            XCTAssertEqual(msg?.textMessageData?.messageText, expectedText)
-        })
+        self
+            .testThatItSendsANotification(
+                in: self.groupConversation,
+                ignoreLastRead: false,
+                onRemoteMessageCreatedWith: {
+                    let message =
+                        GenericMessage(
+                            content: Text(
+                                content: expectedText,
+                                mentions: [],
+                                linkPreviews: [],
+                                replyingTo: nil
+                            ),
+                            nonce: nonce
+                        )
+                    self.groupConversation
+                        .encryptAndInsertData(
+                            from: self.user2.clients
+                                .anyObject() as! MockUserClient,
+                            to: self.selfUser.clients
+                                .anyObject() as! MockUserClient,
+                            data: try! message
+                                .serializedData()
+                        )
+                },
+                verify: { conversation in
+                    let msg = conversation?.lastMessage
+                    XCTAssertEqual(msg?.textMessageData?.messageText, expectedText)
+                }
+            )
     }
 
     func testThatItSendsANotificationWhenRecievingAClientMessageThroughThePushChannel() {
         let expectedText = "The sky above the port was the color of "
-        let message = GenericMessage(content: Text(content: expectedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
+        let message =
+            GenericMessage(
+                content: Text(content: expectedText, mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: UUID.create()
+            )
 
-        self.testThatItSendsANotification(in: self.groupConversation, ignoreLastRead: false, onRemoteMessageCreatedWith: {
-            self.groupConversation.insertClientMessage(from: self.user2, data: try! message.serializedData())
-        }, verify: { conversation in
-            let msg = conversation?.lastMessage as! ZMClientMessage
-            XCTAssertEqual(msg.underlyingMessage?.text.content, expectedText)
-        })
+        self
+            .testThatItSendsANotification(
+                in: self.groupConversation,
+                ignoreLastRead: false,
+                onRemoteMessageCreatedWith: {
+                    self.groupConversation.insertClientMessage(
+                        from: self.user2,
+                        data: try! message
+                            .serializedData()
+                    )
+                },
+                verify: { conversation in
+                    let msg = conversation?.lastMessage as! ZMClientMessage
+                    XCTAssertEqual(msg.underlyingMessage?.text.content, expectedText)
+                }
+            )
     }
 
     func testThatSystemMessageIsAddedIfClientWasInactiveAndCantFetchAnyNotifications() {
@@ -237,10 +310,12 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         XCTAssertNotEqual(systemMessage, secondSystemMessage)
 
         let addedUsers = [self.user(for: self.user4), self.user(for: self.user5)]
-        let initialUsers = [self.user(for: self.selfUser),
-                            self.user(for: self.user3),
-                            self.user(for: self.user2),
-                            self.user(for: self.user1)]
+        let initialUsers = [
+            self.user(for: self.selfUser),
+            self.user(for: self.user3),
+            self.user(for: self.user2),
+            self.user(for: self.user1),
+        ]
         let removedUser = self.user(for: self.user3)
 
         XCTAssertEqual(conversation!.localParticipants.count, 5)
@@ -303,7 +378,14 @@ extension SendAndReceiveMessagesTests_Swift {
         XCTAssertNotNil(message)
 
         // when
-        let genericMessage = GenericMessage(content: MessageHide(conversationId: (groupConversation?.remoteIdentifier)!, messageId: messageNonce!), nonce: UUID.create())
+        let genericMessage =
+            GenericMessage(
+                content: MessageHide(
+                    conversationId: (groupConversation?.remoteIdentifier)!,
+                    messageId: messageNonce!
+                ),
+                nonce: UUID.create()
+            )
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
@@ -312,9 +394,11 @@ extension SendAndReceiveMessagesTests_Swift {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
-        message = ZMMessage.fetch(withNonce: messageNonce,
-                                  for: groupConversation!,
-                                  in: self.userSession!.managedObjectContext)
+        message = ZMMessage.fetch(
+            withNonce: messageNonce,
+            for: groupConversation!,
+            in: self.userSession!.managedObjectContext
+        )
         XCTAssertNil(message)
     }
 }

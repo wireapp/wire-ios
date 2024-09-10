@@ -35,7 +35,11 @@ public final class LegacyPersistedDataPatch {
     }
 
     /// Apply all patches to the MOC
-    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [LegacyPersistedDataPatch]? = nil) {
+    public static func applyAll(
+        in moc: NSManagedObjectContext,
+        fromVersion: String? = nil,
+        patches: [LegacyPersistedDataPatch]? = nil
+    ) {
         guard let currentVersion = Bundle(for: Self.self).infoDictionary!["FrameworkVersion"] as? String else {
             return zmLog.safePublic("Can't retrieve CFBundleShortVersionString for data model, skipping patches..")
         }
@@ -46,7 +50,8 @@ public final class LegacyPersistedDataPatch {
         }
 
         guard
-            let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String),
+            let previousPatchVersionString = fromVersion ??
+            (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String),
             let previousPatchVersion = FrameworkVersion(previousPatchVersionString)
         else {
             return zmLog.safePublic("No previous patch version stored (expected on fresh installs), skipping patches..")

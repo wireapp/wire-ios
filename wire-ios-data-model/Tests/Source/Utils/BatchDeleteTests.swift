@@ -62,10 +62,12 @@ class BatchDeleteTests: ZMTBaseTest {
     func createTestCoreData() throws -> (NSManagedObjectModel, NSManagedObjectContext) {
         let model = self.model
         let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-        _ = try persistentStoreCoordinator.addPersistentStore(type: .sqlite,
-                                                              configuration: nil,
-                                                              at: URL(fileURLWithPath: storagePath),
-                                                              options: [:])
+        _ = try persistentStoreCoordinator.addPersistentStore(
+            type: .sqlite,
+            configuration: nil,
+            at: URL(fileURLWithPath: storagePath),
+            options: [:]
+        )
 
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
@@ -135,11 +137,13 @@ class BatchDeleteTests: ZMTBaseTest {
         class FetchRequestObserver: NSObject, NSFetchedResultsControllerDelegate {
             var deletedCount = 0
 
-            public func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                                   didChange anObject: Any,
-                                   at indexPath: IndexPath?,
-                                   for type: NSFetchedResultsChangeType,
-                                   newIndexPath: IndexPath?) {
+            public func controller(
+                _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+                didChange anObject: Any,
+                at indexPath: IndexPath?,
+                for type: NSFetchedResultsChangeType,
+                newIndexPath: IndexPath?
+            ) {
                 switch type {
                 case .delete:
                     deletedCount += 1
@@ -170,10 +174,12 @@ class BatchDeleteTests: ZMTBaseTest {
 
         let fetchRequest = NSFetchRequest<TestEntity>(entityName: "\(TestEntity.self)")
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(TestEntity.identifier), ascending: true)]
-        let fetchRequestController = NSFetchedResultsController(fetchRequest: fetchRequest,
-                                                                managedObjectContext: moc,
-                                                                sectionNameKeyPath: nil,
-                                                                cacheName: nil)
+        let fetchRequestController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: moc,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
         fetchRequestController.delegate = observer
         try fetchRequestController.performFetch()
         XCTAssertEqual(fetchRequestController.sections?.count, 1)

@@ -102,7 +102,11 @@ class EventProcessingPerformanceTests: IntegrationTest {
             let usersIncludingSelfUser = self.users + [self.selfUser!]
 
             self.conversations = (1 ... conversationCount).map {
-                let conversation = session.insertTeamConversation(to: self.team, with: usersIncludingSelfUser, creator: self.selfUser)
+                let conversation = session.insertTeamConversation(
+                    to: self.team,
+                    with: usersIncludingSelfUser,
+                    creator: self.selfUser
+                )
                 conversation.changeName(by: self.selfUser, name: "Team conversation \($0)")
                 return conversation
             }

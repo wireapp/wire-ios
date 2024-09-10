@@ -19,19 +19,30 @@
 import Foundation
 
 extension ZMUserSession {
-    public func application(_ application: ZMApplication, didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]) {
+    public func application(
+        _ application: ZMApplication,
+        didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]
+    ) {
         startEphemeralTimers()
     }
 
-    public func application(_ application: ZMApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    public func application(
+        _ application: ZMApplication,
+        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {
-            self.applicationStatusDirectory.operationStatus.startBackgroundFetch(withCompletionHandler: completionHandler)
+            self.applicationStatusDirectory.operationStatus
+                .startBackgroundFetch(withCompletionHandler: completionHandler)
         }
     }
 
-    public func application(_ application: ZMApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+    public func application(
+        _ application: ZMApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
         completionHandler()
     }
 
@@ -82,7 +93,10 @@ extension ZMUserSession {
             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [managedObjectContext])
 
             syncManagedObjectContext.performGroupedBlock {
-                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [self.syncManagedObjectContext])
+                NSManagedObjectContext.mergeChanges(
+                    fromRemoteContextSave: changes,
+                    into: [self.syncManagedObjectContext]
+                )
             }
         }
 

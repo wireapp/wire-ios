@@ -73,7 +73,8 @@ extension NotificationAction {
             UNNotificationAction(
                 identifier: identifier,
                 title: titleFormat.pushActionString,
-                options: options)
+                options: options
+            )
         }
     }
 

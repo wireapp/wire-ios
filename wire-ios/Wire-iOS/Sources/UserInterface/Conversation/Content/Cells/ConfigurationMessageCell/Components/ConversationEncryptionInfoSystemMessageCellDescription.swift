@@ -40,8 +40,10 @@ final class ConversationEncryptionInfoSystemMessageCellDescription: Conversation
     init() {
         typealias connectionView = L10n.Localizable.Conversation.ConnectionView
 
-        configuration = View.Configuration(topText: connectionView.encryptionInfo,
-                                           bottomText: connectionView.sensitiveInformationWarning)
+        configuration = View.Configuration(
+            topText: connectionView.encryptionInfo,
+            bottomText: connectionView.sensitiveInformationWarning
+        )
 
         accessibilityLabel = "\(connectionView.encryptionInfo), \(connectionView.sensitiveInformationWarning)"
         actionController = nil

@@ -115,7 +115,8 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         }
         let crlURLBuilder = CRLURLBuilder(
             shouldUseProxy: e2eiFeatureConfig?.useProxyOnMobile ?? false,
-            proxyURLString: e2eiFeatureConfig?.crlProxy)
+            proxyURLString: e2eiFeatureConfig?.crlProxy
+        )
 
         var shouldNotifyAboutRevokedCertificate = false
 
@@ -143,7 +144,10 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                     shouldNotifyAboutRevokedCertificate = true
                 }
             } catch {
-                logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
+                logger
+                    .warn(
+                        "failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))"
+                    )
             }
         }
 

@@ -54,7 +54,11 @@ extension ConversationInputBarViewController {
     }
 
     func configureMentionButton() {
-        mentionButton.addTarget(self, action: #selector(ConversationInputBarViewController.mentionButtonTapped(sender:)), for: .touchUpInside)
+        mentionButton.addTarget(
+            self,
+            action: #selector(ConversationInputBarViewController.mentionButtonTapped(sender:)),
+            for: .touchUpInside
+        )
     }
 
     @objc
@@ -100,9 +104,13 @@ extension ConversationInputBarViewController {
     func registerForTextFieldSelectionChange() {
         guard !ProcessInfo.processInfo.isRunningTests else { return }
 
-        textfieldObserverToken = inputBar.textView.observe(\MarkdownTextView.selectedTextRange, options: [.new]) { [weak self] (textView: MarkdownTextView, change: NSKeyValueObservedChange<UITextRange?>) in
-            let newValue = change.newValue ?? nil
-            self?.triggerMentionsIfNeeded(from: textView, with: newValue)
-        }
+        textfieldObserverToken = inputBar.textView
+            .observe(\MarkdownTextView.selectedTextRange, options: [.new]) { [weak self] (
+                textView: MarkdownTextView,
+                change: NSKeyValueObservedChange<UITextRange?>
+            ) in
+                let newValue = change.newValue ?? nil
+                self?.triggerMentionsIfNeeded(from: textView, with: newValue)
+            }
     }
 }

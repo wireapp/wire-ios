@@ -92,7 +92,10 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             let mention = Mention(range: NSRange(location: 0, length: 4), user: self.selfUser)
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
 
-            let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
+            let textMessage = GenericMessage(
+                content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil),
+                nonce: nonce
+            )
             do {
                 try message.setUnderlyingMessage(textMessage)
             } catch {
@@ -138,7 +141,10 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             let mention = Mention(range: NSRange(location: 0, length: 4), user: self.selfUser)
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
 
-            let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
+            let textMessage = GenericMessage(
+                content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil),
+                nonce: nonce
+            )
             do {
                 try message.setUnderlyingMessage(textMessage)
             } catch {
@@ -165,7 +171,10 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             conversation.remoteIdentifier = UUID.create()
 
             let nonce = UUID.create()
-            let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+            let message = GenericMessage(
+                content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: nonce
+            )
             let contentData = try XCTUnwrap(message.serializedData())
             let data = contentData.base64String()
 
@@ -329,7 +338,10 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         let message2 = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let mention = Mention(range: NSRange(location: 0, length: 4), user: selfUser)
 
-        let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let textMessage = GenericMessage(
+            content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         do {
             try message2.setUnderlyingMessage(textMessage)
         } catch {

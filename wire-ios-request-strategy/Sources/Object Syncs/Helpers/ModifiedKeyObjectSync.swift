@@ -49,8 +49,10 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
     ///   - trackedKey: Key / property which should synchchronized when modified.
     ///   - modifiedPredicate: Predicate which determine if an object has been modified or not. If omitted
     ///                        an object is considered modified in all cases when the tracked key has been changed.
-    init(trackedKey: String,
-         modifiedPredicate: NSPredicate? = nil) {
+    init(
+        trackedKey: String,
+        modifiedPredicate: NSPredicate? = nil
+    ) {
         self.trackedKey = trackedKey
         self.modifiedPredicate = modifiedPredicate
     }

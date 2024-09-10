@@ -40,10 +40,12 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         return !user.canModifyReadReceiptSettings(in: conversation)
     }
 
-    init(conversation: GroupDetailsConversationType,
-         syncCompleted: Bool,
-         collectionView: UICollectionView,
-         presentingViewController: UIViewController) {
+    init(
+        conversation: GroupDetailsConversationType,
+        syncCompleted: Bool,
+        collectionView: UICollectionView,
+        presentingViewController: UIViewController
+    ) {
         self.conversation = conversation
         self.syncCompleted = syncCompleted
         self.presentingViewController = presentingViewController
@@ -67,12 +69,22 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         1
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath) as! GroupDetailsReceiptOptionsCell
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: cellReuseIdentifier,
+            for: indexPath
+        ) as! GroupDetailsReceiptOptionsCell
 
         cell.configure(with: conversation)
         cell.action = { [weak self] enabled in
@@ -109,22 +121,42 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
 
     // MARK: - Header
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: emptySectionHeaderHeight)
     }
 
     // MARK: - Footer
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
         footerView.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
         footerView.size(fittingWidth: collectionView.bounds.width)
         return footerView.bounds.size
     }
 
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionFooter else { return super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath) }
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        guard kind == UICollectionView.elementKindSectionFooter else { return super.collectionView(
+            collectionView,
+            viewForSupplementaryElementOfKind: kind,
+            at: indexPath
+        ) }
 
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter", for: indexPath)
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter",
+            for: indexPath
+        )
         (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
         return view
     }

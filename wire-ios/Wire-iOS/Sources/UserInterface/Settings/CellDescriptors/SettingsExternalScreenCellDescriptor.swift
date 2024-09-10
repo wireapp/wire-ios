@@ -64,14 +64,16 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         )
     }
 
-    convenience init(title: String,
-                     isDestructive: Bool,
-                     presentationStyle: PresentationStyle,
-                     presentationAction: @escaping () -> (UIViewController?),
-                     previewGenerator: PreviewGeneratorType? = .none,
-                     icon: StyleKitIcon? = nil,
-                     accessoryViewMode: AccessoryViewMode = .default,
-                     copiableText: String? = nil) {
+    convenience init(
+        title: String,
+        isDestructive: Bool,
+        presentationStyle: PresentationStyle,
+        presentationAction: @escaping () -> (UIViewController?),
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessoryViewMode: AccessoryViewMode = .default,
+        copiableText: String? = nil
+    ) {
         self.init(
             title: title,
             isDestructive: isDestructive,
@@ -85,15 +87,17 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         )
     }
 
-    init(title: String,
-         isDestructive: Bool,
-         presentationStyle: PresentationStyle,
-         identifier: String?,
-         presentationAction: @escaping () -> (UIViewController?),
-         previewGenerator: PreviewGeneratorType? = .none,
-         icon: StyleKitIcon? = nil,
-         accessoryViewMode: AccessoryViewMode = .default,
-         copiableText: String?) {
+    init(
+        title: String,
+        isDestructive: Bool,
+        presentationStyle: PresentationStyle,
+        identifier: String?,
+        presentationAction: @escaping () -> (UIViewController?),
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessoryViewMode: AccessoryViewMode = .default,
+        copiableText: String?
+    ) {
         self.title = title
         self.destructive = isDestructive
         self.presentationStyle = presentationStyle

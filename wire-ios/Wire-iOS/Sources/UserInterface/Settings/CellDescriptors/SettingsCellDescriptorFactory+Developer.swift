@@ -36,42 +36,54 @@ extension SettingsCellDescriptorFactory {
         )
 
         developerCellDescriptors.append(
-            Button(title: "Send broken message",
-                   isDestructive: true,
-                   selectAction: DebugActions.sendBrokenMessage)
+            Button(
+                title: "Send broken message",
+                isDestructive: true,
+                selectAction: DebugActions.sendBrokenMessage
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "First unread conversation (badge count)",
-                   isDestructive: false,
-                   selectAction: DebugActions.findUnreadConversationContributingToBadgeCount)
+            Button(
+                title: "First unread conversation (badge count)",
+                isDestructive: false,
+                selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "First unread conversation (back arrow count)",
-                   isDestructive: false,
-                   selectAction: DebugActions.findUnreadConversationContributingToBackArrowDot)
+            Button(
+                title: "First unread conversation (back arrow count)",
+                isDestructive: false,
+                selectAction: DebugActions.findUnreadConversationContributingToBackArrowDot
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "Delete invalid conversations",
-                   isDestructive: false,
-                   selectAction: DebugActions.deleteInvalidConversations)
+            Button(
+                title: "Delete invalid conversations",
+                isDestructive: false,
+                selectAction: DebugActions.deleteInvalidConversations
+            )
         )
 
         developerCellDescriptors.append(SettingsShareDatabaseCellDescriptor())
         developerCellDescriptors.append(SettingsShareCryptoboxCellDescriptor())
 
         developerCellDescriptors.append(
-            Button(title: "Reload user interface",
-                   isDestructive: false,
-                   selectAction: DebugActions.reloadUserInterface)
+            Button(
+                title: "Reload user interface",
+                isDestructive: false,
+                selectAction: DebugActions.reloadUserInterface
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "Re-calculate badge count",
-                   isDestructive: false,
-                   selectAction: DebugActions.recalculateBadgeCount)
+            Button(
+                title: "Re-calculate badge count",
+                isDestructive: false,
+                selectAction: DebugActions.recalculateBadgeCount
+            )
         )
 
         developerCellDescriptors.append(
@@ -91,47 +103,61 @@ extension SettingsCellDescriptorFactory {
         )
 
         developerCellDescriptors.append(
-            ExternalScreen(title: "Show database statistics",
-                           isDestructive: false,
-                           presentationStyle: .navigation,
-                           presentationAction: { DatabaseStatisticsController() })
+            ExternalScreen(
+                title: "Show database statistics",
+                isDestructive: false,
+                presentationStyle: .navigation,
+                presentationAction: { DatabaseStatisticsController() }
+            )
         )
 
         if !Analytics.shared.isOptedOut, !TrackingManager.shared.disableAnalyticsSharing {
             developerCellDescriptors.append(
-                Button(title: "Reset call quality survey",
-                       isDestructive: false,
-                       selectAction: DebugActions.resetCallQualitySurveyMuteFilter)
+                Button(
+                    title: "Reset call quality survey",
+                    isDestructive: false,
+                    selectAction: DebugActions.resetCallQualitySurveyMuteFilter
+                )
             )
         }
 
         developerCellDescriptors.append(
-            Button(title: "Trigger slow sync",
-                   isDestructive: false,
-                   selectAction: DebugActions.triggerSlowSync)
+            Button(
+                title: "Trigger slow sync",
+                isDestructive: false,
+                selectAction: DebugActions.triggerSlowSync
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "Trigger resyncResources",
-                   isDestructive: false,
-                   selectAction: DebugActions.triggerResyncResources)
+            Button(
+                title: "Trigger resyncResources",
+                isDestructive: false,
+                selectAction: DebugActions.triggerResyncResources
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "What's my analytics id?",
-                   isDestructive: false,
-                   selectAction: DebugActions.showAnalyticsIdentifier)
+            Button(
+                title: "What's my analytics id?",
+                isDestructive: false,
+                selectAction: DebugActions.showAnalyticsIdentifier
+            )
         )
 
         developerCellDescriptors.append(
-            Button(title: "What's the api version?",
-                   isDestructive: false,
-                   selectAction: DebugActions.showAPIVersionInfo)
+            Button(
+                title: "What's the api version?",
+                isDestructive: false,
+                selectAction: DebugActions.showAPIVersionInfo
+            )
         )
 
-        return SettingsGroupCellDescriptor(items: [SettingsSectionDescriptor(cellDescriptors: developerCellDescriptors)],
-                                           title: L10n.Localizable.Self.Settings.DeveloperOptions.title,
-                                           icon: .robot,
-                                           accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [SettingsSectionDescriptor(cellDescriptors: developerCellDescriptors)],
+            title: L10n.Localizable.Self.Settings.DeveloperOptions.title,
+            icon: .robot,
+            accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description
+        )
     }
 }

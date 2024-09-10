@@ -19,7 +19,8 @@
 import Foundation
 
 extension ZMUserSession {
-    @discardableResult func insertUnreadDotGeneratingMessageMessage(in conversation: ZMConversation) -> ZMSystemMessage {
+    @discardableResult func insertUnreadDotGeneratingMessageMessage(in conversation: ZMConversation)
+        -> ZMSystemMessage {
         let newTime = conversation.lastServerTimeStamp?.addingTimeInterval(5) ?? Date()
 
         let user = ZMUser.insertNewObject(in: self.managedObjectContext)

@@ -43,8 +43,15 @@ protocol UserProfileImageUploadStatusProtocol: AnyObject {
 }
 
 protocol UserProfileImageUploadStateChangeDelegate: AnyObject {
-    func didTransition(from oldState: UserProfileImageUpdateStatus.ProfileUpdateState, to currentState: UserProfileImageUpdateStatus.ProfileUpdateState)
-    func didTransition(from oldState: UserProfileImageUpdateStatus.ImageState, to currentState: UserProfileImageUpdateStatus.ImageState, for size: ProfileImageSize)
+    func didTransition(
+        from oldState: UserProfileImageUpdateStatus.ProfileUpdateState,
+        to currentState: UserProfileImageUpdateStatus.ProfileUpdateState
+    )
+    func didTransition(
+        from oldState: UserProfileImageUpdateStatus.ImageState,
+        to currentState: UserProfileImageUpdateStatus.ImageState,
+        for size: ProfileImageSize
+    )
 }
 
 public final class UserProfileImageUpdateStatus: NSObject {
@@ -118,10 +125,20 @@ public final class UserProfileImageUpdateStatus: NSObject {
     fileprivate(set) var assetsToDelete = Set<String>()
 
     public convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(managedObjectContext: managedObjectContext, preprocessor: ZMAssetsPreprocessor(delegate: nil), queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(), delegate: nil)
+        self.init(
+            managedObjectContext: managedObjectContext,
+            preprocessor: ZMAssetsPreprocessor(delegate: nil),
+            queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(),
+            delegate: nil
+        )
     }
 
-    init(managedObjectContext: NSManagedObjectContext, preprocessor: ZMAssetsPreprocessorProtocol, queue: OperationQueue, delegate: UserProfileImageUploadStateChangeDelegate?) {
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        preprocessor: ZMAssetsPreprocessorProtocol,
+        queue: OperationQueue,
+        delegate: UserProfileImageUploadStateChangeDelegate?
+    ) {
         log.debug("Created")
         self.queue = queue
         self.preprocessor = preprocessor
@@ -164,8 +181,15 @@ extension UserProfileImageUpdateStatus {
 
     private func updateUserProfile(with previewAssetId: String, completeAssetId: String) {
         let selfUser = ZMUser.selfUser(in: self.syncMOC)
-        assetsToDelete.formUnion([selfUser.previewProfileAssetIdentifier, selfUser.completeProfileAssetIdentifier].compactMap { $0 })
-        selfUser.updateAndSyncProfileAssetIdentifiers(previewIdentifier: previewAssetId, completeIdentifier: completeAssetId)
+        assetsToDelete
+            .formUnion(
+                [selfUser.previewProfileAssetIdentifier, selfUser.completeProfileAssetIdentifier]
+                    .compactMap { $0 }
+            )
+        selfUser.updateAndSyncProfileAssetIdentifiers(
+            previewIdentifier: previewAssetId,
+            completeIdentifier: completeAssetId
+        )
         selfUser.setImage(data: resizedImages[.preview], size: .preview)
         selfUser.setImage(data: resizedImages[.complete], size: .complete)
         self.resetImageState()
@@ -179,7 +203,8 @@ extension UserProfileImageUpdateStatus {
         }
 
         let imageOwner = UserProfileImageOwner(imageData: imageData)
-        guard let operations = preprocessor?.operations(forPreprocessingImageOwner: imageOwner), !operations.isEmpty else {
+        guard let operations = preprocessor?.operations(forPreprocessingImageOwner: imageOwner),
+              !operations.isEmpty else {
             resetImageState()
             setState(state: .failed(.preprocessingFailed))
             return
@@ -254,7 +279,10 @@ extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
 }
 
 extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
-    public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
+    public func completedDownsampleOperation(
+        _ operation: ZMImageDownsampleOperationProtocol,
+        imageOwner: ZMImageOwner
+    ) {
         syncMOC.performGroupedBlock {
             for siz in ProfileImageSize.allSizes {
                 if operation.format == siz.imageFormat,

@@ -30,8 +30,10 @@ protocol SimpleTextFieldDelegate: AnyObject {
 final class SimpleTextField: UITextField, DynamicTypeCapable {
     // MARK: - Properties
 
-    var attribute: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-                                                    .font: FontSpec.smallRegularFont.font!]
+    var attribute: [NSAttributedString.Key: Any] = [
+        .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
+        .font: FontSpec.smallRegularFont.font!,
+    ]
     enum Value {
         case valid(String)
         case error(SimpleTextFieldValidator.ValidationError)

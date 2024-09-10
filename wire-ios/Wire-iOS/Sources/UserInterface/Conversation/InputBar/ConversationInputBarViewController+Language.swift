@@ -21,7 +21,12 @@ import WireSyncEngine
 
 extension ConversationInputBarViewController {
     func setupInputLanguageObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(inputModeDidChange(_:)), name: UITextInputMode.currentInputModeDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(inputModeDidChange(_:)),
+            name: UITextInputMode.currentInputModeDidChangeNotification,
+            object: nil
+        )
     }
 
     @objc

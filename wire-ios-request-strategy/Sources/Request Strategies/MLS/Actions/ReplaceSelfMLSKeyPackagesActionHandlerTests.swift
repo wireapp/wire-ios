@@ -20,7 +20,10 @@ import Foundation
 import XCTest
 @testable import WireRequestStrategy
 
-class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<ReplaceSelfMLSKeyPackagesAction, ReplaceSelfMLSKeyPackagesActionHandler> {
+class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
+    ReplaceSelfMLSKeyPackagesAction,
+    ReplaceSelfMLSKeyPackagesActionHandler
+> {
     let clientId = UUID().transportString()
     let keyPackages = ["a2V5IHBhY2thZ2UgZGF0YQo="]
     let ciphersuite = MLSCipherSuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
@@ -30,7 +33,8 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
         action = ReplaceSelfMLSKeyPackagesAction(
             clientID: clientId,
             keyPackages: keyPackages,
-            ciphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+            ciphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        )
         handler = ReplaceSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 

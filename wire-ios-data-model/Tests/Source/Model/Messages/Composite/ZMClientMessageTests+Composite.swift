@@ -46,7 +46,11 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
         // WHEN
         uiMOC.performAndWait { [uiMOC] in
-            ZMClientMessage.updateButtonStates(withConfirmation: confirmation, forConversation: conversation, inContext: uiMOC)
+            ZMClientMessage.updateButtonStates(
+                withConfirmation: confirmation,
+                forConversation: conversation,
+                inContext: uiMOC
+            )
             uiMOC.saveOrRollback()
         }
 
@@ -65,7 +69,10 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
             compositeItemButton(buttonID: "4"),
         ]
 
-        let message = compositeMessage(with: compositeProto(items: buttonItems[0], buttonItems[1], buttonItems[2], buttonItems[3]), nonce: nonce)
+        let message = compositeMessage(
+            with: compositeProto(items: buttonItems[0], buttonItems[1], buttonItems[2], buttonItems[3]),
+            nonce: nonce
+        )
 
         let conversation = self.conversation(withMessage: message)
 
@@ -91,7 +98,11 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
 
         // WHEN
         uiMOC.performAndWait { [uiMOC] in
-            ZMClientMessage.updateButtonStates(withConfirmation: confirmation, forConversation: conversation, inContext: uiMOC)
+            ZMClientMessage.updateButtonStates(
+                withConfirmation: confirmation,
+                forConversation: conversation,
+                inContext: uiMOC
+            )
             uiMOC.saveOrRollback()
         }
 
@@ -118,7 +129,11 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
         let buttonAction = ButtonAction(buttonId: "1", referenceMessageId: nonce)
 
         // WHEN
-        ZMClientMessage.expireButtonState(forButtonAction: buttonAction, forConversation: conversation, inContext: uiMOC)
+        ZMClientMessage.expireButtonState(
+            forButtonAction: buttonAction,
+            forConversation: conversation,
+            inContext: uiMOC
+        )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN

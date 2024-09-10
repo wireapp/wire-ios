@@ -106,10 +106,18 @@ final class ConversationTableViewDataSource: NSObject {
     /// - Parameter forceRecalculate: true if force recreate cell with context check
     /// - Returns: arraySection of cell desctiptions
     @discardableResult
-    func calculateSections(forceRecalculate: Bool = false) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+    func calculateSections(forceRecalculate: Bool = false) -> [ArraySection<
+        String,
+        AnyConversationMessageCellDescription
+    >] {
         messages.enumerated().map { tuple in
             let sectionIdentifier = tuple.element.objectIdentifier
-            let context = self.context(for: tuple.element, at: tuple.offset, firstUnreadMessage: firstUnreadMessage, searchQueries: searchQueries)
+            let context = self.context(
+                for: tuple.element,
+                at: tuple.offset,
+                firstUnreadMessage: firstUnreadMessage,
+                searchQueries: searchQueries
+            )
             let sectionController = self.sectionController(for: tuple.element, at: tuple.offset)
 
             // Re-create cell description if the context has changed (message has been moved around or received new neighbours).
@@ -121,10 +129,14 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
-    func calculateSections(updating sectionController: ConversationMessageSectionController) -> [ArraySection<String, AnyConversationMessageCellDescription>] {
+    func calculateSections(updating sectionController: ConversationMessageSectionController) -> [ArraySection<
+        String,
+        AnyConversationMessageCellDescription
+    >] {
         let sectionIdentifier = sectionController.message.objectIdentifier
 
-        guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier }) else { return currentSections }
+        guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier })
+        else { return currentSections }
 
         for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
@@ -133,11 +145,19 @@ final class ConversationTableViewDataSource: NSObject {
             }
         }
 
-        let context = self.context(for: sectionController.message, at: section, firstUnreadMessage: firstUnreadMessage, searchQueries: searchQueries)
+        let context = self.context(
+            for: sectionController.message,
+            at: section,
+            firstUnreadMessage: firstUnreadMessage,
+            searchQueries: searchQueries
+        )
         sectionController.recreateCellDescriptions(in: context)
 
         var updatedSections = currentSections
-        updatedSections[section] = ArraySection(model: sectionIdentifier, elements: sectionController.tableViewCellDescriptions)
+        updatedSections[section] = ArraySection(
+            model: sectionIdentifier,
+            elements: sectionController.tableViewCellDescriptions
+        )
 
         return updatedSections
     }
@@ -169,10 +189,12 @@ final class ConversationTableViewDataSource: NSObject {
             return cachedEntry
         }
 
-        let actionController = ConversationMessageActionController(responder: messageActionResponder,
-                                                                   message: message,
-                                                                   context: .content,
-                                                                   view: tableView)
+        let actionController = ConversationMessageActionController(
+            responder: messageActionResponder,
+            message: message,
+            context: .content,
+            view: tableView
+        )
 
         actionControllers[message.objectIdentifier] = actionController
 
@@ -184,7 +206,12 @@ final class ConversationTableViewDataSource: NSObject {
             return cachedEntry
         }
 
-        let context = self.context(for: message, at: index, firstUnreadMessage: firstUnreadMessage, searchQueries: self.searchQueries)
+        let context = self.context(
+            for: message,
+            at: index,
+            firstUnreadMessage: firstUnreadMessage,
+            searchQueries: self.searchQueries
+        )
         let sectionController = ConversationMessageSectionController(
             message: message,
             context: context,
@@ -207,9 +234,11 @@ final class ConversationTableViewDataSource: NSObject {
         return sectionController(for: message, at: sectionIndex)
     }
 
-    func loadMessages(near message: ZMConversationMessage,
-                      forceRecalculate: Bool = false,
-                      completion: ((IndexPath?) -> Void)? = nil) {
+    func loadMessages(
+        near message: ZMConversationMessage,
+        forceRecalculate: Bool = false,
+        completion: ((IndexPath?) -> Void)? = nil
+    ) {
         guard let moc = conversation.managedObjectContext, let serverTimestamp = message.serverTimestamp else {
             if message.hasBeenDeleted {
                 completion?(nil)
@@ -239,17 +268,24 @@ final class ConversationTableViewDataSource: NSObject {
         completion?(indexPath)
     }
 
-    func loadMessages(offset: Int = 0,
-                      limit: Int = ConversationTableViewDataSource.defaultBatchSize,
-                      forceRecalculate: Bool = false) {
+    func loadMessages(
+        offset: Int = 0,
+        limit: Int = ConversationTableViewDataSource.defaultBatchSize,
+        forceRecalculate: Bool = false
+    ) {
         let fetchRequest = self.fetchRequest()
-        fetchRequest.fetchLimit = limit + 5 // We need to fetch a bit more than requested so that there is overlap between messages in different fetches
+        fetchRequest
+            .fetchLimit = limit +
+            5 // We need to fetch a bit more than requested so that there is overlap between messages in different fetches
         fetchRequest.fetchOffset = offset
 
-        fetchController = NSFetchedResultsController<ZMMessage>(fetchRequest: fetchRequest,
-                                                                managedObjectContext: conversation.managedObjectContext!,
-                                                                sectionNameKeyPath: nil,
-                                                                cacheName: nil)
+        fetchController = NSFetchedResultsController<ZMMessage>(
+            fetchRequest: fetchRequest,
+            managedObjectContext: conversation
+                .managedObjectContext!,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
 
         fetchController?.delegate = self
         try! fetchController?.performFetch()
@@ -355,21 +391,25 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
         // no-op
     }
 
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange anObject: Any,
-                    at indexPath: IndexPath?,
-                    for changeType: NSFetchedResultsChangeType,
-                    newIndexPath: IndexPath?) {
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for changeType: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         if let message = anObject as? ZMConversationMessage, changeType == .insert {
             /// VoiceOver will output the announcement string from the message
             message.postAnnouncementIfNeeded()
         }
     }
 
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange sectionInfo: NSFetchedResultsSectionInfo,
-                    atSectionIndex sectionIndex: Int,
-                    for changeType: NSFetchedResultsChangeType) {
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange sectionInfo: NSFetchedResultsSectionInfo,
+        atSectionIndex sectionIndex: Int,
+        for changeType: NSFetchedResultsChangeType
+    ) {
         // no-op
     }
 
@@ -451,7 +491,10 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
 }
 
 extension ConversationTableViewDataSource: ConversationMessageSectionControllerDelegate {
-    func messageSectionController(_ controller: ConversationMessageSectionController, didRequestRefreshForMessage message: ZMConversationMessage) {
+    func messageSectionController(
+        _ controller: ConversationMessageSectionController,
+        didRequestRefreshForMessage message: ZMConversationMessage
+    ) {
         reloadSections(newSections: calculateSections(updating: controller))
     }
 }
@@ -477,10 +520,12 @@ extension ConversationTableViewDataSource {
         return true
     }
 
-    func context(for message: ZMConversationMessage,
-                 at index: Int,
-                 firstUnreadMessage: ZMConversationMessage?,
-                 searchQueries: [String]) -> ConversationMessageContext {
+    func context(
+        for message: ZMConversationMessage,
+        at index: Int,
+        firstUnreadMessage: ZMConversationMessage?,
+        searchQueries: [String]
+    ) -> ConversationMessageContext {
         // 45 minutes
         let significantTimeInterval: TimeInterval = 60 * 45
         let isTimeIntervalSinceLastMessageSignificant: Bool
@@ -511,12 +556,16 @@ extension ConversationTableViewDataSource {
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true,
-            spacing: message.isSystem || previousMessage?.isSystem == true || isTimeIntervalSinceLastMessageSignificant ? 16 : 12
+            spacing: message.isSystem || previousMessage?
+                .isSystem == true || isTimeIntervalSinceLastMessageSignificant ? 16 : 12
         )
     }
 
     private func timeIntervalToPreviousMessage(from message: ZMConversationMessage, at index: Int) -> TimeInterval? {
-        guard let currentMessageTimestamp = message.serverTimestamp, let previousMessageTimestamp = messagePrevious(to: message, at: index)?.serverTimestamp else {
+        guard let currentMessageTimestamp = message.serverTimestamp, let previousMessageTimestamp = messagePrevious(
+            to: message,
+            at: index
+        )?.serverTimestamp else {
             return nil
         }
 
@@ -524,7 +573,8 @@ extension ConversationTableViewDataSource {
     }
 
     private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
-        guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
+        guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp,
+              let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
 }

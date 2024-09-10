@@ -20,11 +20,17 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol MessageAPI {
-    func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func broadcastProteusMessage(message: any ProteusMessage) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
-    func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
-    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
+    func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
 }
 
 extension Payload.ClientListByUserID {
@@ -41,7 +47,8 @@ extension Payload.MessageSendingStatusV0 {
             redundant: redundant.toClientListByQualifiedUserID(domain: domain),
             deleted: deleted.toClientListByQualifiedUserID(domain: domain),
             failedToSend: [:],
-            failedToConfirm: [:])
+            failedToConfirm: [:]
+        )
     }
 }
 
@@ -57,7 +64,8 @@ class MessageAPIV0: MessageAPI {
         self.httpClient = httpClient
     }
 
-    func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    func broadcastProteusMessage(message: any ProteusMessage) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/otr/messages"
 
         // FIXME: [WPB-5499] move encryption out of the API - [jacob]
@@ -96,7 +104,8 @@ class MessageAPIV0: MessageAPI {
         message: any ProteusMessage,
         conversationID: QualifiedID
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"].joined(separator: "/")
+        let path = "/" + ["conversations", conversationID.uuid.transportString(), "otr", "messages"]
+            .joined(separator: "/")
 
         // FIXME: [WPB-5499] move encryption out of the API - [jacob]
         guard let encryptedPayload = await message.encryptForTransport()
@@ -135,7 +144,11 @@ class MessageAPIV0: MessageAPI {
         }
     }
 
-    func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+    func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
         throw NetworkError.endpointNotAvailable
     }
 }
@@ -173,7 +186,8 @@ class MessageAPIV1: MessageAPIV0 {
         .v1
     }
 
-    override func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message: any ProteusMessage) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
 
         guard let encryptedPayload = await message.encryptForTransportQualified() else {
@@ -212,7 +226,9 @@ class MessageAPIV1: MessageAPIV0 {
         message: any ProteusMessage,
         conversationID: QualifiedID
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+        let path = "/" +
+            ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"]
+            .joined(separator: "/")
 
         guard let encryptedPayload = await message.encryptForTransportQualified() else {
             WireLogger.messaging.error("failed to encrypt message for transport")
@@ -270,7 +286,8 @@ class MessageAPIV4: MessageAPIV3 {
 
     private let protobufContentType = "application/x-protobuf"
 
-    override func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message: any ProteusMessage) async throws
+        -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
 
         guard let encryptedPayload = await message.encryptForTransportQualified() else {
@@ -310,7 +327,9 @@ class MessageAPIV4: MessageAPIV3 {
         message: any ProteusMessage,
         conversationID: QualifiedID
     ) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        let path = "/" + ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"].joined(separator: "/")
+        let path = "/" +
+            ["conversations", conversationID.domain, conversationID.uuid.transportString(), "proteus", "messages"]
+            .joined(separator: "/")
 
         guard let encryptedPayload = await message.encryptForTransportQualified() else {
             WireLogger.messaging.error("failed to encrypt message for transport")
@@ -355,7 +374,11 @@ class MessageAPIV5: MessageAPIV4 {
         .v5
     }
 
-    override func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
+    override func sendMLSMessage(
+        message encryptedMessage: Data,
+        conversationID: QualifiedID,
+        expirationDate: Date?
+    ) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse) {
         let request = ZMTransportRequest(
             path: "/mls/messages",
             method: .post,

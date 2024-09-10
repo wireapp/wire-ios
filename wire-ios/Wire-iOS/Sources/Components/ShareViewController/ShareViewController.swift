@@ -34,7 +34,8 @@ protocol Shareable {
     func previewView() -> UIView?
 }
 
-final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController, UITableViewDelegate, UITableViewDataSource {
+final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Shareable>: UIViewController,
+    UITableViewDelegate, UITableViewDataSource {
     let destinations: [D]
     let shareable: S
     private(set) var selectedDestinations: Set<D> = Set() {
@@ -163,7 +164,8 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ShareDestinationCell<D>.reuseIdentifier) as! ShareDestinationCell<D>
+        let cell = tableView
+            .dequeueReusableCell(withIdentifier: ShareDestinationCell<D>.reuseIdentifier) as! ShareDestinationCell<D>
 
         let destination = self.filteredDestinations[indexPath.row]
         cell.destination = destination
@@ -206,13 +208,17 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     private func keyboardFrameWillChange(notification: Notification) {
         let inputAccessoryHeight = UIResponder.currentFirst?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] keyboardFrameInView in
-            guard let self else { return }
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: self.view,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
 
-            let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
-            view.layoutIfNeeded()
-        })
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+                bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
+                view.layoutIfNeeded()
+            }
+        )
     }
 
     private func updateClearIndicator(for tokenField: TokenField) {

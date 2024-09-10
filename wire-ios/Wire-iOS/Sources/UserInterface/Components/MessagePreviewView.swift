@@ -85,9 +85,11 @@ final class MessageThumbnailPreviewView: UIView {
 
     private func setupMessageObserver() {
         if let userSession = ZMUserSession.shared() {
-            observerToken = MessageChangeInfo.add(observer: self,
-                                                  for: message,
-                                                  userSession: userSession)
+            observerToken = MessageChangeInfo.add(
+                observer: self,
+                for: message,
+                userSession: userSession
+            )
         }
     }
 
@@ -107,7 +109,8 @@ final class MessageThumbnailPreviewView: UIView {
 
         imagePreview.clipsToBounds = true
         imagePreview.contentMode = .scaleAspectFill
-        imagePreview.imageSizeLimit = .maxDimensionForShortSide(MessageThumbnailPreviewView.thumbnailSize * UIScreen.main.scale)
+        imagePreview
+            .imageSizeLimit = .maxDimensionForShortSide(MessageThumbnailPreviewView.thumbnailSize * UIScreen.main.scale)
         imagePreview.layer.cornerRadius = 4
         imagePreview.isAccessibilityElement = true
         imagePreview.accessibilityIdentifier = "ThumbnailImage_ReplyPreview"
@@ -165,17 +168,22 @@ final class MessageThumbnailPreviewView: UIView {
 
     private func updateForMessage() {
         typealias MessagePreview = L10n.Localizable.Conversation.InputBar.MessagePreview
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.smallSemiboldFont,
-                                                         .foregroundColor: SemanticColors.Label.textDefault]
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.smallSemiboldFont,
+            .foregroundColor: SemanticColors.Label.textDefault,
+        ]
 
         senderLabel.attributedText = (message.senderName && attributes) + self.editIcon()
         imagePreview.isHidden = !message.canBeShared
 
         if message.isImage {
-            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.smallSemiboldFont,
-                                                             .foregroundColor: SemanticColors.Label.textDefault]
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.smallSemiboldFont,
+                .foregroundColor: SemanticColors.Label.textDefault,
+            ]
             let imageIcon = NSTextAttachment.textAttachment(for: .photo, with: iconColor, verticalCorrection: -1)
-            let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image.localizedUppercase
+            let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image
+                .localizedUppercase
             contentTextView.attributedText = initialString && attributes
 
             if let imageResource = message.imageMessageData?.image {
@@ -183,7 +191,8 @@ final class MessageThumbnailPreviewView: UIView {
             }
         } else if message.isVideo, let fileMessageData = message.fileMessageData {
             let imageIcon = NSTextAttachment.textAttachment(for: .camera, with: iconColor, verticalCorrection: -1)
-            let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video.localizedUppercase
+            let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video
+                .localizedUppercase
             contentTextView.attributedText = initialString && attributes
 
             imagePreview.setImageResource(fileMessageData.thumbnailImage)
@@ -238,9 +247,11 @@ final class MessagePreviewView: UIView {
 
     private func setupMessageObserver() {
         if let userSession = ZMUserSession.shared() {
-            observerToken = MessageChangeInfo.add(observer: self,
-                                                  for: message,
-                                                  userSession: userSession)
+            observerToken = MessageChangeInfo.add(
+                observer: self,
+                for: message,
+                userSession: userSession
+            )
         }
     }
 
@@ -302,24 +313,32 @@ final class MessagePreviewView: UIView {
     }
 
     private func updateForMessage() {
-        let attributes: [NSAttributedString.Key: Any] = [.font: FontSpec.smallSemiboldFont.font!,
-                                                         .foregroundColor: SemanticColors.Label.textDefault]
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: FontSpec.smallSemiboldFont.font!,
+            .foregroundColor: SemanticColors.Label.textDefault,
+        ]
 
         senderLabel.attributedText = (message.senderName && attributes) + self.editIcon()
 
         if let textMessageData = message.textMessageData {
-            contentTextView.attributedText = NSAttributedString.formatForPreview(message: textMessageData, inputMode: true)
+            contentTextView.attributedText = NSAttributedString.formatForPreview(
+                message: textMessageData,
+                inputMode: true
+            )
         } else if let location = message.locationMessageData {
             let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: iconColor, verticalCorrection: -1)
-            let initialString = NSAttributedString(attachment: imageIcon) + "  " + (location.name ?? L10n.Localizable.Conversation.InputBar.MessagePreview.location).localizedUppercase
+            let initialString = NSAttributedString(attachment: imageIcon) + "  " +
+                (location.name ?? L10n.Localizable.Conversation.InputBar.MessagePreview.location).localizedUppercase
             contentTextView.attributedText = initialString && attributes
         } else if message.isAudio {
             let imageIcon = NSTextAttachment.textAttachment(for: .microphone, with: iconColor, verticalCorrection: -1)
-            let initialString = NSAttributedString(attachment: imageIcon) + "  " + L10n.Localizable.Conversation.InputBar.MessagePreview.audio.localizedUppercase
+            let initialString = NSAttributedString(attachment: imageIcon) + "  " + L10n.Localizable.Conversation
+                .InputBar.MessagePreview.audio.localizedUppercase
             contentTextView.attributedText = initialString && attributes
         } else if let fileData = message.fileMessageData {
             let imageIcon = NSTextAttachment.textAttachment(for: .document, with: iconColor, verticalCorrection: -1)
-            let initialString = NSAttributedString(attachment: imageIcon) + "  " + (fileData.filename ?? L10n.Localizable.Conversation.InputBar.MessagePreview.file).localizedUppercase
+            let initialString = NSAttributedString(attachment: imageIcon) + "  " +
+                (fileData.filename ?? L10n.Localizable.Conversation.InputBar.MessagePreview.file).localizedUppercase
             contentTextView.attributedText = initialString && attributes
         }
     }

@@ -107,10 +107,12 @@ class LegacyButton: ButtonWithLargerHitArea {
         clipsToBounds = true
     }
 
-    convenience init(legacyStyle: LegacyButtonStyle,
-                     variant: ColorSchemeVariant = ColorScheme.default.variant,
-                     cornerRadius: CGFloat = 4,
-                     fontSpec: FontSpec = .smallLightFont) {
+    convenience init(
+        legacyStyle: LegacyButtonStyle,
+        variant: ColorSchemeVariant = ColorScheme.default.variant,
+        cornerRadius: CGFloat = 4,
+        fontSpec: FontSpec = .smallLightFont
+    ) {
         self.init(fontSpec: fontSpec)
 
         self.legacyStyle = legacyStyle
@@ -168,7 +170,10 @@ class LegacyButton: ButtonWithLargerHitArea {
     override var intrinsicContentSize: CGSize {
         let s = super.intrinsicContentSize
 
-        return CGSize(width: s.width + titleEdgeInsets.left + titleEdgeInsets.right, height: s.height + titleEdgeInsets.top + titleEdgeInsets.bottom)
+        return CGSize(
+            width: s.width + titleEdgeInsets.left + titleEdgeInsets.right,
+            height: s.height + titleEdgeInsets.top + titleEdgeInsets.bottom
+        )
     }
 
     override var bounds: CGRect {

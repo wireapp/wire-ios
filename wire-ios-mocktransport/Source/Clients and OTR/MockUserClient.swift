@@ -108,7 +108,10 @@ extension MockUserClient {
             return nil
         }
 
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: context
+        ) as! MockUserClient
         newClient.label = label
         newClient.type = type
         newClient.identifier = String.createLegacyAlphanumerical()
@@ -137,8 +140,17 @@ extension MockUserClient {
 
     /// Insert a new client, automatically generate prekeys and last key
     @objc(insertClientWithLabel:type:deviceClass:user:context:)
-    public static func insertClient(label: String, type: String = "permanent", deviceClass: String = "phone", for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient? {
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
+    public static func insertClient(
+        label: String,
+        type: String = "permanent",
+        deviceClass: String = "phone",
+        for user: MockUser,
+        in context: NSManagedObjectContext
+    ) -> MockUserClient? {
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: context
+        ) as! MockUserClient
 
         newClient.user = user
         newClient.identifier = String.createLegacyAlphanumerical()
@@ -160,7 +172,10 @@ extension MockUserClient {
             return nil
         }
 
-        let mockPrekey = MockPreKey.insertNewKeys(withPayload: prekeys.map { $0["prekey"] as! String }, context: context)
+        let mockPrekey = MockPreKey.insertNewKeys(
+            withPayload: prekeys.map { $0["prekey"] as! String },
+            context: context
+        )
         newClient.prekeys = Set(mockPrekey)
 
         let mockLastPrekey = MockPreKey.insertNewKey(withPrekey: lastPrekey, for: newClient, in: context)
@@ -199,7 +214,8 @@ extension MockUserClient {
 
 @objc extension MockUserClient {
     public static var mockEncryptionSessionDirectory: URL {
-        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("mocktransport-encryptionDirectory")
     }
 
     static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {
@@ -247,7 +263,10 @@ extension MockUserClient {
         var decryptedData: Data?
         to.encryptionContext.perform { session in
             if !session.hasSession(for: from.sessionIdentifier!) {
-                decryptedData = try? session.createClientSessionAndReturnPlaintext(for: from.sessionIdentifier!, prekeyMessage: data)
+                decryptedData = try? session.createClientSessionAndReturnPlaintext(
+                    for: from.sessionIdentifier!,
+                    prekeyMessage: data
+                )
             } else {
                 decryptedData = try? session.decrypt(data, from: from.sessionIdentifier!)
             }

@@ -20,8 +20,10 @@ import UIKit
 
 /// Implements the delegate method `navigationControllerSupportedInterfaceOrientations(_: UINavigationController)`
 /// and returns the value of the top view controller's supported interface orientations.
-public final class SupportedOrientationsDelegatingNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
-    public func navigationControllerSupportedInterfaceOrientations(_ navigationController: UINavigationController) -> UIInterfaceOrientationMask {
+public final class SupportedOrientationsDelegatingNavigationControllerDelegate: NSObject,
+    UINavigationControllerDelegate {
+    public func navigationControllerSupportedInterfaceOrientations(_ navigationController: UINavigationController)
+        -> UIInterfaceOrientationMask {
         navigationController.topViewController?.supportedInterfaceOrientations ?? .all
     }
 }

@@ -19,7 +19,11 @@
 @testable import WireDataModel
 
 extension Notification {
-    fileprivate init(inserted: [NSManagedObject] = [], updated: [NSManagedObject] = [], deleted: [NSManagedObject] = []) {
+    fileprivate init(
+        inserted: [NSManagedObject] = [],
+        updated: [NSManagedObject] = [],
+        deleted: [NSManagedObject] = []
+    ) {
         self.init(name: .NSManagedObjectContextDidSave, userInfo: [
             NSInsertedObjectsKey: Set<NSManagedObject>(inserted),
             NSUpdatedObjectsKey: Set<NSManagedObject>(updated),
@@ -185,7 +189,10 @@ class ShareObjectStoreTests: ZMTBaseTest {
         // Given
 
         // Module prefix before project rename
-        NSKeyedArchiver.setClassName("ZMCDataModel.SharedObjectTestClass", for: WireDataModel.SharedObjectTestClass.self)
+        NSKeyedArchiver.setClassName(
+            "ZMCDataModel.SharedObjectTestClass",
+            for: WireDataModel.SharedObjectTestClass.self
+        )
         let item = WireDataModel.SharedObjectTestClass()
         item.flag = true
 

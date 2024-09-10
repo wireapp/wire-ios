@@ -423,8 +423,10 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
     func testUpdateUserProfile_AssetsIsNotUpdated_WhenAssetsHaveLocalChanges() throws {
         syncMOC.performGroupedAndWait {
             // given
-            let assetsModifiedKeys = [ZMUser.previewProfileAssetIdentifierKey,
-                                      ZMUser.completeProfileAssetIdentifierKey]
+            let assetsModifiedKeys = [
+                ZMUser.previewProfileAssetIdentifierKey,
+                ZMUser.completeProfileAssetIdentifierKey,
+            ]
             let oldPreviewAssetKey = "a"
             let oldCompleteAssetKey = "b"
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

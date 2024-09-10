@@ -211,7 +211,13 @@ extension ZMSLog {
 // MARK: - Internal stuff
 
 extension ZMSLog {
-    @objc public static func logWithLevel(_ level: ZMLogLevel, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
+    @objc public static func logWithLevel(
+        _ level: ZMLogLevel,
+        message: @autoclosure () -> String,
+        tag: String?,
+        file: String = #file,
+        line: UInt = #line
+    ) {
         let entry = ZMSLogEntry(text: message(), timestamp: Date())
         logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)
     }

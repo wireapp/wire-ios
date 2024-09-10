@@ -81,8 +81,10 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    private func createCallViewController(selfUser: UserType,
-                                          mediaManager: ZMMockAVSMediaManager) -> CallViewController {
+    private func createCallViewController(
+        selfUser: UserType,
+        mediaManager: ZMMockAVSMediaManager
+    ) -> CallViewController {
         let proximityManager = ProximityMonitorManager()
         let callController = CallViewController(
             voiceChannel: mockVoiceChannel,
@@ -100,7 +102,13 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
 
         for _ in 0 ..< amount {
             participants.append(
-                CallParticipant(user: MockUserType(), userId: AVSIdentifier.stub, clientId: UUID().transportString(), state: .connected(videoState: .started, microphoneState: .unmuted), activeSpeakerState: .inactive)
+                CallParticipant(
+                    user: MockUserType(),
+                    userId: AVSIdentifier.stub,
+                    clientId: UUID().transportString(),
+                    state: .connected(videoState: .started, microphoneState: .unmuted),
+                    activeSpeakerState: .inactive
+                )
             )
         }
 
@@ -152,7 +160,10 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
         // when & then
         verifyDeallocation { () -> CallViewController in
             // given
-            let callController = createCallViewController(selfUser: MockUserType.createSelfUser(name: "Alice"), mediaManager: ZMMockAVSMediaManager())
+            let callController = createCallViewController(
+                selfUser: MockUserType.createSelfUser(name: "Alice"),
+                mediaManager: ZMMockAVSMediaManager()
+            )
             // Simulate user click
             callController.startOverlayTimer()
             return callController

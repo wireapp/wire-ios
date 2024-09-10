@@ -51,7 +51,10 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
     // MARK: - getNotificationSettings
 
     public var getNotificationSettingsCompletionHandler_Invocations: [(UNNotificationSettings) -> Void] = []
-    public var getNotificationSettingsCompletionHandler_MockMethod: ((@escaping (UNNotificationSettings) -> Void) -> Void)?
+    public var getNotificationSettingsCompletionHandler_MockMethod: (
+        (@escaping (UNNotificationSettings) -> Void)
+            -> Void
+    )?
 
     @available(*, noasync)
     public func getNotificationSettings(completionHandler: @escaping (UNNotificationSettings) -> Void) {
@@ -143,12 +146,24 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
     // MARK: - requestAuthorization
 
-    public var requestAuthorizationOptionsCompletionHandler_Invocations: [(options: UNAuthorizationOptions, completionHandler: (Bool, (any Error)?) -> Void)] = []
-    public var requestAuthorizationOptionsCompletionHandler_MockMethod: ((UNAuthorizationOptions, @escaping (Bool, (any Error)?) -> Void) -> Void)?
+    public var requestAuthorizationOptionsCompletionHandler_Invocations: [(
+        options: UNAuthorizationOptions,
+        completionHandler: (Bool, (any Error)?) -> Void
+    )] = []
+    public var requestAuthorizationOptionsCompletionHandler_MockMethod: ((
+        UNAuthorizationOptions,
+        @escaping (Bool, (any Error)?) -> Void
+    ) -> Void)?
 
     @available(*, noasync)
-    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void) {
-        requestAuthorizationOptionsCompletionHandler_Invocations.append((options: options, completionHandler: completionHandler))
+    public func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, (any Error)?) -> Void
+    ) {
+        requestAuthorizationOptionsCompletionHandler_Invocations.append((
+            options: options,
+            completionHandler: completionHandler
+        ))
 
         guard let mock = requestAuthorizationOptionsCompletionHandler_MockMethod else {
             fatalError("no mock for `requestAuthorizationOptionsCompletionHandler`")
@@ -179,11 +194,17 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
     // MARK: - add
 
-    public var addWithCompletionHandler_Invocations: [(request: UNNotificationRequest, completionHandler: (((any Error)?) -> Void)?)] = []
+    public var addWithCompletionHandler_Invocations: [(
+        request: UNNotificationRequest,
+        completionHandler: (((any Error)?) -> Void)?
+    )] = []
     public var addWithCompletionHandler_MockMethod: ((UNNotificationRequest, (((any Error)?) -> Void)?) -> Void)?
 
     @available(*, noasync)
-    public func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?) {
+    public func add(
+        _ request: UNNotificationRequest,
+        withCompletionHandler completionHandler: (((any Error)?) -> Void)?
+    ) {
         addWithCompletionHandler_Invocations.append((request: request, completionHandler: completionHandler))
 
         guard let mock = addWithCompletionHandler_MockMethod else {

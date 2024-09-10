@@ -80,9 +80,11 @@ class IconImageView: UIImageView {
         }
     }
 
-    func set(style: IconImageStyle? = nil,
-             size: StyleKitIcon.Size? = nil,
-             color: UIColor? = nil) {
+    func set(
+        style: IconImageStyle? = nil,
+        size: StyleKitIcon.Size? = nil,
+        color: UIColor? = nil
+    ) {
         // save size and color if needed
         set(size: size, color: color)
 

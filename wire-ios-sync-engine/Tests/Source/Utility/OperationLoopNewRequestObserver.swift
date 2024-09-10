@@ -25,7 +25,11 @@ final class OperationLoopNewRequestObserver {
     private var newRequestNotification = "RequestAvailableNotification"
 
     init() {
-        token = notificationCenter.addObserver(forName: Notification.Name(rawValue: newRequestNotification), object: nil, queue: .main) { [weak self] note in
+        token = notificationCenter.addObserver(
+            forName: Notification.Name(rawValue: newRequestNotification),
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             self?.notifications.append(note)
         }
     }

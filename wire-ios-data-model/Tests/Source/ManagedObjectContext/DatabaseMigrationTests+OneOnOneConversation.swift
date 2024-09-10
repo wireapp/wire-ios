@@ -104,7 +104,10 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
 
                     // Connected conversation was migrated.
                     let connectedUser = try XCTUnwrap(ZMUser.fetch(with: connectedUserID, in: context))
-                    let connectedConversation = try XCTUnwrap(ZMConversation.fetch(with: connectedConversationID, in: context))
+                    let connectedConversation = try XCTUnwrap(ZMConversation.fetch(
+                        with: connectedConversationID,
+                        in: context
+                    ))
                     XCTAssertEqual(connectedUser.oneOnOneConversation, connectedConversation)
                     XCTAssertEqual(connectedConversation.oneOnOneUser, connectedUser)
 
@@ -121,7 +124,8 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                     XCTAssertNil(teamConversation2.oneOnOneUser)
                 }
             },
-            for: self)
+            for: self
+        )
     }
 
     private func addUser(

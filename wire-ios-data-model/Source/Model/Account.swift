@@ -21,7 +21,8 @@ import Foundation
 extension Account: NotificationContext {}
 
 extension Notification.Name {
-    public static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")
+    public static let AccountUnreadCountDidChangeNotification = Notification
+        .Name("AccountUnreadCountDidChangeNotification")
 }
 
 /// An `Account` holds information related to a single account,
@@ -53,13 +54,15 @@ public final class Account: NSObject, Codable {
         case loginCredentials
     }
 
-    public required init(userName: String,
-                         userIdentifier: UUID,
-                         teamName: String? = nil,
-                         imageData: Data? = nil,
-                         teamImageData: Data? = nil,
-                         unreadConversationCount: Int = 0,
-                         loginCredentials: LoginCredentials? = nil) {
+    public required init(
+        userName: String,
+        userIdentifier: UUID,
+        teamName: String? = nil,
+        imageData: Data? = nil,
+        teamImageData: Data? = nil,
+        unreadConversationCount: Int = 0,
+        loginCredentials: LoginCredentials? = nil
+    ) {
         self.userName = userName
         self.userIdentifier = userIdentifier
         self.teamName = teamName

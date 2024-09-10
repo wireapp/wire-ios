@@ -194,7 +194,11 @@ class LinkPreviewDetectorTests: XCTestCase {
     func assertThatItCallsTheCompletionClosure(withText text: String, line: UInt = #line) {
         // given
         let queue = OperationQueue()
-        sut = LinkPreviewDetector(previewDownloader: previewDownloader, imageDownloader: imageDownloader, workerQueue: queue)
+        sut = LinkPreviewDetector(
+            previewDownloader: previewDownloader,
+            imageDownloader: imageDownloader,
+            workerQueue: queue
+        )
         let completionExpectation = expectation(description: "It calls the completion closure")
 
         // when

@@ -101,7 +101,10 @@ extension ClientMessageRequestFactoryTests {
             // THEN
             XCTAssertNotNil(request)
             XCTAssertNotNil(message)
-            XCTAssertEqual(request?.path, "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/\(domain)/\(conversationID.transportString())/proteus/messages"
+            )
             XCTAssertEqual(message, expectedMessage)
         }
     }

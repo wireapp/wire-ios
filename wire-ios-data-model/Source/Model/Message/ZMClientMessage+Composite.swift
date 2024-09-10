@@ -48,17 +48,21 @@ extension ZMClientMessage: CompositeMessageData {
 // MARK: - ButtonStates Interface
 
 extension ZMClientMessage {
-    static func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation,
-                                   forConversation conversation: ZMConversation,
-                                   inContext moc: NSManagedObjectContext) {
+    static func updateButtonStates(
+        withConfirmation confirmation: ButtonActionConfirmation,
+        forConversation conversation: ZMConversation,
+        inContext moc: NSManagedObjectContext
+    ) {
         let nonce = UUID(uuidString: confirmation.referenceMessageID)
         let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         message?.updateButtonStates(withConfirmation: confirmation)
     }
 
-    static func expireButtonState(forButtonAction buttonAction: ButtonAction,
-                                  forConversation conversation: ZMConversation,
-                                  inContext moc: NSManagedObjectContext) {
+    static func expireButtonState(
+        forButtonAction buttonAction: ButtonAction,
+        forConversation conversation: ZMConversation,
+        inContext moc: NSManagedObjectContext
+    ) {
         let nonce = UUID(uuidString: buttonAction.referenceMessageID)
         let message = ZMClientMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         message?.expireButtonState(withButtonAction: buttonAction)

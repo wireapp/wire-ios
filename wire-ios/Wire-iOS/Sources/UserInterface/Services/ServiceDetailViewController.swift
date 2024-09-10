@@ -126,7 +126,8 @@ final class ServiceDetailViewController: UIViewController {
             action: #selector(ServiceDetailViewController.dismissButtonTapped(_:))
         )
         navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton.description
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ServiceDetails.CloseButton
+            .description
     }
 
     private func setupViews() {
@@ -166,7 +167,10 @@ final class ServiceDetailViewController: UIViewController {
             detailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             actionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             actionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            actionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(16 + UIScreen.safeArea.bottom)),
+            actionButton.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -(16 + UIScreen.safeArea.bottom)
+            ),
             detailView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 16),
             actionButton.topAnchor.constraint(equalTo: detailView.bottomAnchor, constant: 16),
             actionButton.heightAnchor.constraint(equalToConstant: 48),
@@ -201,7 +205,11 @@ final class ServiceDetailViewController: UIViewController {
 
                     switch result {
                     case .success:
-                        Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
+                        Analytics.shared.tag(ServiceAddedEvent(
+                            service: serviceUser,
+                            conversation: conversation,
+                            context: .startUI
+                        ))
                         completion?(.success(conversation: conversation))
                     case let .failure(error):
                         completion?(.failure(error: (error as? AddBotError) ?? AddBotError.general))
@@ -217,12 +225,20 @@ final class ServiceDetailViewController: UIViewController {
                 )
 
             case .openConversation:
-                if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
+                if let existingConversation = ZMConversation.existingConversation(
+                    in: userSession.managedObjectContext,
+                    service: serviceUser,
+                    team: userSession.selfUser.membership?.team
+                ) {
                     completion?(.success(conversation: existingConversation))
                 } else {
                     serviceUser.createConversation(in: userSession, completionHandler: { result in
                         if case let .success(conversation) = result {
-                            Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
+                            Analytics.shared.tag(ServiceAddedEvent(
+                                service: serviceUser,
+                                conversation: conversation,
+                                context: .startUI
+                            ))
                         }
 
                         switch result {

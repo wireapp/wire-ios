@@ -119,7 +119,10 @@ class BaseTest: ZMTBaseTest {
         strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext),
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(
+                linkPreviewDetector: linkPreviewDetector,
+                managedObjectContext: coreDataStack.syncContext
+            ),
             transportSession: transportSession
         )
 

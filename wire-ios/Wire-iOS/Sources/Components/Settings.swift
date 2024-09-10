@@ -150,7 +150,12 @@ class Settings {
 
         startLogging()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground(_:)),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
     }
 
     // Persist all the settings
@@ -181,8 +186,9 @@ class Settings {
     // MARK: - MediaManager
 
     func restoreLastUsedAVSSettings() {
-        if let savedIntensity = defaults.object(forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue) as? NSNumber,
-           let intensityLevel = AVSIntensityLevel(rawValue: UInt(savedIntensity.intValue)) {
+        if let savedIntensity = defaults
+            .object(forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue) as? NSNumber,
+            let intensityLevel = AVSIntensityLevel(rawValue: UInt(savedIntensity.intValue)) {
             AVSMediaManager.sharedInstance().intensityLevel = intensityLevel
         } else {
             AVSMediaManager.sharedInstance().intensityLevel = .full

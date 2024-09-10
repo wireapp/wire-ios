@@ -26,9 +26,11 @@ extension QualifiedID {
 }
 
 extension MessagingTestBase {
-    func createConnectionPayload(_ connection: ZMConnection,
-                                 status: ZMConnectionStatus = .accepted,
-                                 lastUpdate: Date = Date()) -> Payload.Connection {
+    func createConnectionPayload(
+        _ connection: ZMConnection,
+        status: ZMConnectionStatus = .accepted,
+        lastUpdate: Date = Date()
+    ) -> Payload.Connection {
         Payload.Connection(
             from: nil,
             to: connection.to.remoteIdentifier,
@@ -36,11 +38,14 @@ extension MessagingTestBase {
             conversationID: connection.to.oneOnOneConversation!.remoteIdentifier,
             qualifiedConversationID: connection.to.oneOnOneConversation!.qualifiedID,
             lastUpdate: lastUpdate,
-            status: Payload.ConnectionStatus(status)!)
+            status: Payload.ConnectionStatus(status)!
+        )
     }
 
-    func createConnectionPayload(to qualifiedTo: QualifiedID = .randomID(),
-                                 conversation qualifiedConversation: QualifiedID = .randomID()) -> Payload.Connection {
+    func createConnectionPayload(
+        to qualifiedTo: QualifiedID = .randomID(),
+        conversation qualifiedConversation: QualifiedID = .randomID()
+    ) -> Payload.Connection {
         let fromID = UUID()
         let toID = qualifiedTo.uuid
         let qualifiedTo = qualifiedTo
@@ -52,17 +57,25 @@ extension MessagingTestBase {
             conversationID: qualifiedConversation.uuid,
             qualifiedConversationID: qualifiedConversation,
             lastUpdate: Date(),
-            status: .accepted)
+            status: .accepted
+        )
     }
 
-    func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "", apiVersion: APIVersion) -> ZMTransportResponse {
+    func responseFailure(
+        code: Int,
+        label: Payload.ResponseFailure.Label,
+        message: String = "",
+        apiVersion: APIVersion
+    ) -> ZMTransportResponse {
         let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message, data: nil)
         let payloadData = responseFailure.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
-                                           httpStatus: code,
-                                           transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
+        let response = ZMTransportResponse(
+            payload: payloadString as ZMTransportData,
+            httpStatus: code,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
 
         return response
     }

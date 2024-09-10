@@ -47,7 +47,11 @@ final class CharacterInputFieldTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = CharacterInputField(maxLength: 8, characterSet: CharacterSet.decimalDigits, size: CGSize(width: 375, height: 56))
+        sut = CharacterInputField(
+            maxLength: 8,
+            characterSet: CharacterSet.decimalDigits,
+            size: CGSize(width: 375, height: 56)
+        )
         delegate = TestCharacterInputFieldDelegate()
         sut.delegate = delegate
     }
@@ -187,7 +191,11 @@ final class CharacterInputFieldTests: XCTestCase {
 
     func testThatItWorksWithOtherSymbols() {
         // given
-        let sut = CharacterInputField(maxLength: 100, characterSet: CharacterSet.uppercaseLetters, size: CGSize(width: 375, height: 56))
+        let sut = CharacterInputField(
+            maxLength: 100,
+            characterSet: CharacterSet.uppercaseLetters,
+            size: CGSize(width: 375, height: 56)
+        )
         sut.delegate = delegate
         // when
         sut.insertText("123456789")

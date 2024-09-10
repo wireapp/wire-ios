@@ -40,11 +40,17 @@ public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProvide
         self.queue = queue
         self.provider = provider
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(handle), name: .deleteAssetNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle),
+            name: .deleteAssetNotification,
+            object: nil
+        )
     }
 
     @objc private func handle(note: Notification) {
-        guard note.name == Notification.Name.deleteAssetNotification, let identifier = note.object as? String else { return }
+        guard note.name == Notification.Name.deleteAssetNotification,
+              let identifier = note.object as? String else { return }
         queue.performGroupedBlock { [weak self] in
             self?.add(identifier)
         }

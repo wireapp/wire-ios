@@ -203,12 +203,16 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     func size(inCollectionViewSize collectionViewSize: CGSize) -> CGSize {
-        if !ConversationListCell.cachedSize.equalTo(CGSize.zero), ConversationListCell.cachedSize.width == collectionViewSize.width {
+        if !ConversationListCell.cachedSize.equalTo(CGSize.zero),
+           ConversationListCell.cachedSize.width == collectionViewSize.width {
             return ConversationListCell.cachedSize
         }
 
         let fullHeightString = "Ü"
-        itemView.configure(with: NSAttributedString(string: fullHeightString), subtitle: NSAttributedString(string: fullHeightString, attributes: ZMConversation.statusRegularStyle()))
+        itemView.configure(
+            with: NSAttributedString(string: fullHeightString),
+            subtitle: NSAttributedString(string: fullHeightString, attributes: ZMConversation.statusRegularStyle())
+        )
 
         let fittingSize = CGSize(width: collectionViewSize.width, height: 0)
 

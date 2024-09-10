@@ -26,7 +26,11 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
     fileprivate(set) var deleteSync: ZMSingleRequestSync! = nil
     let cookieStorage: ZMPersistentCookieStorage
 
-    public init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus, cookieStorage: ZMPersistentCookieStorage) {
+    public init(
+        withManagedObjectContext moc: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        cookieStorage: ZMPersistentCookieStorage
+    ) {
         self.cookieStorage = cookieStorage
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         self.configuration = [
@@ -40,7 +44,9 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let shouldBeDeleted: NSNumber = self.managedObjectContext.persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber, shouldBeDeleted.boolValue
+        guard let shouldBeDeleted: NSNumber = self.managedObjectContext
+            .persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber,
+            shouldBeDeleted.boolValue
         else {
             return nil
         }
@@ -52,13 +58,22 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
     // MARK: - ZMSingleRequestTranscoder
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
-        let request = ZMTransportRequest(path: type(of: self).path, method: .delete, payload: [:] as ZMTransportData, shouldCompress: true, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: type(of: self).path,
+            method: .delete,
+            payload: [:] as ZMTransportData,
+            shouldCompress: true,
+            apiVersion: apiVersion.rawValue
+        )
         return request
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         if response.result == .success || response.result == .permanentError {
-            self.managedObjectContext.setPersistentStoreMetadata(NSNumber(value: false), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
+            self.managedObjectContext.setPersistentStoreMetadata(
+                NSNumber(value: false),
+                key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
+            )
 
             guard let context = managedObjectContext.zm_userInterface else {
                 return

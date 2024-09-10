@@ -106,7 +106,12 @@ class WirelessExpirationTimeFormatterTests: XCTestCase {
 
     // MARK: - Helper
 
-    private func assert(remainingTime: TimeInterval, expected: String?, file: StaticString = #file, line: UInt = #line) {
+    private func assert(
+        remainingTime: TimeInterval,
+        expected: String?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         let result = WirelessExpirationTimeFormatter.shared.string(for: remainingTime)
         XCTAssertEqual(result, expected, file: file, line: line)
     }

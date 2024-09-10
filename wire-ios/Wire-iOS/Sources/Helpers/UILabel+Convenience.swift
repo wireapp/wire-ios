@@ -25,7 +25,8 @@ extension UILabel {
         key: String? = nil,
         size: FontSize = .normal,
         weight: FontWeight = .regular,
-        color: UIColor) {
+        color: UIColor
+    ) {
         self.init(frame: .zero)
         text = key.map(\.localized)
         font = FontSpec(size, weight).font
@@ -61,8 +62,10 @@ extension UILabel {
         style.firstLineHeadIndent = leadingMargin
         style.headIndent = leadingMargin
 
-        label.attributedText = NSAttributedString(string: L10n.Localizable.Passcode.hintLabel,
-                                                  attributes: [NSAttributedString.Key.paragraphStyle: style])
+        label.attributedText = NSAttributedString(
+            string: L10n.Localizable.Passcode.hintLabel,
+            attributes: [NSAttributedString.Key.paragraphStyle: style]
+        )
         return label
     }
 }

@@ -119,13 +119,22 @@ public class OperationStatus: NSObject {
         startBackgroundFetch(timeout: 30.0, withCompletionHandler: completionHandler)
     }
 
-    public func startBackgroundFetch(timeout: TimeInterval, withCompletionHandler completionHandler: @escaping BackgroundFetchHandler) {
+    public func startBackgroundFetch(
+        timeout: TimeInterval,
+        withCompletionHandler completionHandler: @escaping BackgroundFetchHandler
+    ) {
         guard backgroundFetchHandler == nil else {
             return completionHandler(.failed)
         }
 
         backgroundFetchHandler = completionHandler
-        backgroundFetchTimer = Timer.scheduledTimer(timeInterval: timeout, target: self, selector: #selector(backgroundFetchTimeout), userInfo: nil, repeats: false)
+        backgroundFetchTimer = Timer.scheduledTimer(
+            timeInterval: timeout,
+            target: self,
+            selector: #selector(backgroundFetchTimeout),
+            userInfo: nil,
+            repeats: false
+        )
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
@@ -133,13 +142,22 @@ public class OperationStatus: NSObject {
         startBackgroundTask(timeout: 30.0, withCompletionHandler: completionHandler)
     }
 
-    public func startBackgroundTask(timeout: TimeInterval, withCompletionHandler completionHandler: @escaping BackgroundTaskHandler) {
+    public func startBackgroundTask(
+        timeout: TimeInterval,
+        withCompletionHandler completionHandler: @escaping BackgroundTaskHandler
+    ) {
         guard backgroundTaskHandler == nil, isInBackground else {
             return completionHandler(.failed)
         }
 
         backgroundTaskHandler = completionHandler
-        backgroundTaskTimer = Timer.scheduledTimer(timeInterval: timeout, target: self, selector: #selector(backgroundTaskTimeout), userInfo: nil, repeats: false)
+        backgroundTaskTimer = Timer.scheduledTimer(
+            timeInterval: timeout,
+            target: self,
+            selector: #selector(backgroundTaskTimeout),
+            userInfo: nil,
+            repeats: false
+        )
     }
 
     func backgroundFetchTimeout() {

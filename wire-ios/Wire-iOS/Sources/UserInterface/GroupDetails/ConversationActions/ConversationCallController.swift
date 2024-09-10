@@ -76,18 +76,24 @@ final class ConversationCallController: NSObject {
     func joinCall() {
         guard conversation.canJoinCall else { return }
 
-        let checker = PrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
-            conversation.acknowledgePrivacyChanges()
-            conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
-                conversation.joinCall() // This will result in joining an ongoing call.
-            }
-        }, cancelAction: { [weak self] in
-            guard let userSession = ZMUserSession.shared() else { return }
-            self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+        let checker = PrivacyWarningChecker(
+            conversation: conversation,
+            alertType: .incomingCall,
+            continueAction: { [conversation] in
+                conversation.acknowledgePrivacyChanges()
+                conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
+                    conversation.joinCall() // This will result in joining an ongoing call.
+                }
+            },
+            cancelAction: { [weak self] in
+                guard let userSession = ZMUserSession.shared() else { return }
+                self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
 
-        }, showAlert: { [weak self] in
-            self?.presentIncomingCallDegradedAlert()
-        })
+            },
+            showAlert: { [weak self] in
+                self?.presentIncomingCallDegradedAlert()
+            }
+        )
         checker.performAction()
     }
 

@@ -324,8 +324,14 @@ final class UserSessionMock: UserSession {
 
     func fetchAllClients() {}
 
-    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
-    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+    var createTeamOneOnOneWithCompletion_Invocations: [(
+        user: UserType,
+        completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    )] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((
+        UserType,
+        @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) -> Void)?
 
     func createTeamOneOnOne(
         with user: UserType,

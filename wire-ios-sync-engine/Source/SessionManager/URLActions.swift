@@ -131,7 +131,8 @@ extension URLAction {
             self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
 
         case URL.Host.accessBackend:
-            guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config), let url = URL(string: config) else {
+            guard let config = components.query(for: URLQueryItem.Key.AccessBackend.config),
+                  let url = URL(string: config) else {
                 throw DeepLinkRequestError.malformedLink
             }
             self = .accessBackend(configurationURL: url)
@@ -155,7 +156,8 @@ extension URLAction {
                 guard let cookieString = components.query(for: URLQueryItem.Key.cookie) else {
                     throw CompanyLoginError.missingRequiredParameter
                 }
-                guard let userID = components.query(for: URLQueryItem.Key.userIdentifier).flatMap(UUID.init(transportString:)) else {
+                guard let userID = components.query(for: URLQueryItem.Key.userIdentifier)
+                    .flatMap(UUID.init(transportString:)) else {
                     throw CompanyLoginError.missingRequiredParameter
                 }
 
@@ -188,7 +190,8 @@ extension URLAction {
 
     private static func validateURLSchemeRequest(with components: URLComponents, in defaults: UserDefaults) -> Bool {
         guard let storedToken = CompanyLoginVerificationToken.current(in: defaults) else { return false }
-        guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:)) else { return false }
+        guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:))
+        else { return false }
         return storedToken.matches(identifier: token)
     }
 }

@@ -23,7 +23,13 @@ import XCTest
 // MARK: - Teams
 
 class MockTransportSessionTeamTests: MockTransportSessionTests {
-    func checkThat(response: ZMTransportResponse?, contains teams: [MockTeam], hasMore: Bool = false, file: StaticString = #file, line: UInt = #line) {
+    func checkThat(
+        response: ZMTransportResponse?,
+        contains teams: [MockTeam],
+        hasMore: Bool = false,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         XCTAssertNotNil(response, "Response should not be empty", file: file, line: line)
         XCTAssertEqual(response?.httpStatus, 200, "Http status should be 200", file: file, line: line)
         XCTAssertNotNil(response?.payload, "Response should have payload", file: file, line: line)
@@ -41,13 +47,24 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
 
         XCTAssertEqual(receivedHasMore, hasMore, "has_more should be \(hasMore)")
 
-        XCTAssertEqual(payloadTeams.count, teams.count, "Response should have \(teams.count) teams", file: file, line: line)
+        XCTAssertEqual(
+            payloadTeams.count,
+            teams.count,
+            "Response should have \(teams.count) teams",
+            file: file,
+            line: line
+        )
 
         let receivedTeamIdentifiers = payloadTeams.compactMap { $0["id"] as? String }
         let expectedTeamIdentifiers = teams.map(\.identifier)
 
         for expectedId in expectedTeamIdentifiers {
-            XCTAssertTrue(receivedTeamIdentifiers.contains(expectedId), "Payload should contain team with identifier '\(expectedId)'", file: file, line: line)
+            XCTAssertTrue(
+                receivedTeamIdentifiers.contains(expectedId),
+                "Payload should contain team with identifier '\(expectedId)'",
+                file: file,
+                line: line
+            )
         }
 
         let extraTeams = Set(receivedTeamIdentifiers).subtracting(expectedTeamIdentifiers)
@@ -266,7 +283,12 @@ extension MockTransportSessionTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // When
-        let response = self.response(forPayload: nil, path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)", method: .delete, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)",
+            method: .delete,
+            apiVersion: .v0
+        )
 
         // Then
         XCTAssertEqual(response?.httpStatus, 403)
@@ -290,7 +312,12 @@ extension MockTransportSessionTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // When
-        let response = self.response(forPayload: nil, path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)", method: .delete, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)",
+            method: .delete,
+            apiVersion: .v0
+        )
 
         // Then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -310,7 +337,11 @@ extension MockTransportSessionTeamTests {
 
             creator = session.insertUser(withName: "creator")
             team.creator = creator
-            conversation = session.insertTeamConversation(to: team, with: [creator, session.insertSelfUser(withName: "Am I")], creator: creator)
+            conversation = session.insertTeamConversation(
+                to: team,
+                with: [creator, session.insertSelfUser(withName: "Am I")],
+                creator: creator
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -348,8 +379,10 @@ extension MockTransportSessionTeamTests {
         XCTAssertNotNil(userId)
         XCTAssertEqual(userId as? String, user.identifier)
 
-        guard let permissionsPayload = payload?["permissions"] as? [String: Any] else { return XCTFail("No permissions payload") }
-        guard let permissionsValue = permissionsPayload["self"] as? NSNumber else { return XCTFail("No permissions value") }
+        guard let permissionsPayload = payload?["permissions"] as? [String: Any]
+        else { return XCTFail("No permissions payload") }
+        guard let permissionsValue = permissionsPayload["self"] as? NSNumber
+        else { return XCTFail("No permissions value") }
         let permissions = MockPermissions(rawValue: permissionsValue.int64Value)
         XCTAssertEqual(permissions, [permission1, permission2])
     }
@@ -408,7 +441,12 @@ extension MockTransportSessionTeamTests {
         // When
         let requestPayload = ["user_ids": [user1.identifier, user2.identifier]]
         let path = "/teams/\(team.identifier)/get-members-by-ids-using-post"
-        let response = self.response(forPayload: requestPayload as ZMTransportData, path: path, method: .post, apiVersion: .v0)
+        let response = self.response(
+            forPayload: requestPayload as ZMTransportData,
+            path: path,
+            method: .post,
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -471,7 +509,12 @@ extension MockTransportSessionTeamTests {
 
         // Then
         let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
-        let response = self.response(forPayload: ["password": "Ex@mple!"] as NSDictionary, path: path, method: .put, apiVersion: .v0)
+        let response = self.response(
+            forPayload: ["password": "Ex@mple!"] as NSDictionary,
+            path: path,
+            method: .put,
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 412)
         XCTAssertEqual(response?.payload as? NSDictionary, ["label": "legalhold-not-pending"])
@@ -496,7 +539,12 @@ extension MockTransportSessionTeamTests {
 
         // Then
         let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
-        let response = self.response(forPayload: ["password": "Ex@mple!"] as NSDictionary, path: path, method: .put, apiVersion: .v0)
+        let response = self.response(
+            forPayload: ["password": "Ex@mple!"] as NSDictionary,
+            path: path,
+            method: .put,
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNil(response?.payload)

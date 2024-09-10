@@ -79,10 +79,11 @@ final class CompanyLoginFlowHandler {
     }
 
     private func startListeningToFlowCompletion() {
-        token = NotificationCenter.default.addObserver(forName: .companyLoginDidFinish, object: nil, queue: .main) { [weak self] _ in
-            self?.activeWebBrowser?.dismiss(animated: true, completion: nil)
-            self?.activeWebBrowser = nil
-        }
+        token = NotificationCenter.default
+            .addObserver(forName: .companyLoginDidFinish, object: nil, queue: .main) { [weak self] _ in
+                self?.activeWebBrowser?.dismiss(animated: true, completion: nil)
+                self?.activeWebBrowser = nil
+            }
     }
 
     // MARK: - Utilities

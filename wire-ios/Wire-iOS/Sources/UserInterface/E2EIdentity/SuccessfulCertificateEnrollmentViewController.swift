@@ -73,14 +73,16 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         let button = ZMButton(
             style: .secondaryTextButtonStyle,
             cornerRadius: 12,
-            fontSpec: .buttonSmallBold)
+            fontSpec: .buttonSmallBold
+        )
 
         button.accessibilityIdentifier = "certificateDetailsButton"
         button.setTitle(L10n.Localizable.EnrollE2eiCertificate.certificateDetailsButton, for: .normal)
         button.addTarget(
             self,
             action: #selector(certificateDetailsTapped),
-            for: .touchUpInside)
+            for: .touchUpInside
+        )
 
         return button
     }()
@@ -133,17 +135,19 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     // MARK: - Helpers
 
     private func setupViews() {
-        [stackView,
-         certificateDetailsButton,
+        [
+            stackView,
+            certificateDetailsButton,
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
 
-        [titleLabel,
-         shieldImageView,
-         detailsLabel,
-         confirmationButton,
+        [
+            titleLabel,
+            shieldImageView,
+            detailsLabel,
+            confirmationButton,
         ].forEach {
             stackView.addArrangedSubview($0)
         }
@@ -168,7 +172,10 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             certificateDetailsButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             certificateDetailsButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             certificateDetailsButton.heightAnchor.constraint(equalToConstant: 32),
-            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64),
+            certificateDetailsButton.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -64
+            ),
         ])
     }
 
@@ -181,11 +188,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         var detailsView = E2EIdentityCertificateDetailsView(
             certificateDetails: certificateDetails,
             isDownloadAndCopyEnabled: Settings.isClipboardEnabled,
-            isMenuPresented: false) {
-                saveFileManager.save(value: self.certificateDetails, fileName: "certificate-chain", type: "txt")
-            } performCopy: { value in
-                UIPasteboard.general.string = value
-            }
+            isMenuPresented: false
+        ) {
+            saveFileManager.save(value: self.certificateDetails, fileName: "certificate-chain", type: "txt")
+        } performCopy: { value in
+            UIPasteboard.general.string = value
+        }
         detailsView.didDismiss = {
             wrapNavigationController.dismiss(animated: true)
         }

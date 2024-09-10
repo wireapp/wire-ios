@@ -148,9 +148,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.perform {
@@ -172,9 +173,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueue {
@@ -204,9 +206,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueue {
@@ -244,9 +247,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         var contextSaved = false
 
         // expect
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
-            contextSaved = true
-        }
+        NotificationCenter.default
+            .addObserver(forName: .NSManagedObjectContextDidSave, object: uiMOC, queue: nil) { _ in
+                contextSaved = true
+            }
 
         // WHEN
         sut.enqueueDelayed {
@@ -425,7 +429,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
         XCTAssertNotEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalNever)
-        XCTAssertGreaterThanOrEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalMinimum)
+        XCTAssertGreaterThanOrEqual(
+            application.minimumBackgroundFetchInverval,
+            UIApplication.backgroundFetchIntervalMinimum
+        )
         XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, TimeInterval(20 * 60))
     }
 

@@ -107,9 +107,11 @@ public final class AppLockController: AppLockType {
     private var config: Config {
         let appLock = featureRepository.fetchAppLock()
 
-        return Config(isAvailable: appLock.status == .enabled,
-                      isForced: appLock.config.enforceAppLock,
-                      timeout: appLock.config.inactivityTimeoutSecs)
+        return Config(
+            isAvailable: appLock.status == .enabled,
+            isForced: appLock.config.enforceAppLock,
+            timeout: appLock.config.inactivityTimeoutSecs
+        )
     }
 
     // MARK: - Life cycle

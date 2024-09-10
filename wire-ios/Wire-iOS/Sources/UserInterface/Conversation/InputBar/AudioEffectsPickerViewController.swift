@@ -23,7 +23,11 @@ import WireDataModel
 import WireDesign
 
 protocol AudioEffectsPickerDelegate: AnyObject {
-    func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String)
+    func audioEffectsPickerDidPickEffect(
+        _ picker: AudioEffectsPickerViewController,
+        effect: AVSAudioEffectType,
+        resultFilePath: String
+    )
 }
 
 final class AudioEffectsPickerViewController: UIViewController {
@@ -80,7 +84,11 @@ final class AudioEffectsPickerViewController: UIViewController {
                 let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
                 effectPath.deleteFileAtPath()
                 self.selectedAudioEffect.apply(self.recordingPath, outPath: effectPath) {
-                    self.delegate?.audioEffectsPickerDidPickEffect(self, effect: self.selectedAudioEffect, resultFilePath: effectPath)
+                    self.delegate?.audioEffectsPickerDidPickEffect(
+                        self,
+                        effect: self.selectedAudioEffect,
+                        resultFilePath: effectPath
+                    )
 
                     self.playMedia(effectPath)
                 }
@@ -235,7 +243,8 @@ final class AudioEffectsPickerViewController: UIViewController {
 
         switch state {
         case .tip:
-            subtitleLabel.text = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.filterTip.localizedUppercase
+            subtitleLabel.text = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.filterTip
+                .localizedUppercase
             subtitleLabel.textColor = SemanticColors.Label.textDefault
         case .time:
             let duration = if let player = audioPlayerController?.player {
@@ -259,8 +268,15 @@ final class AudioEffectsPickerViewController: UIViewController {
         }
 
         if animated {
-            let options: UIView.AnimationOptions = (state == .playing) ? .transitionFlipFromTop : .transitionFlipFromBottom
-            UIView.transition(with: statusBoxView, duration: 0.35, options: options, animations: change, completion: .none)
+            let options: UIView
+                .AnimationOptions = (state == .playing) ? .transitionFlipFromTop : .transitionFlipFromBottom
+            UIView.transition(
+                with: statusBoxView,
+                duration: 0.35,
+                options: options,
+                animations: change,
+                completion: .none
+            )
         } else {
             change()
         }
@@ -297,7 +313,8 @@ final class AudioEffectsPickerViewController: UIViewController {
     }
 }
 
-extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollectionViewDataSource,
+    UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
@@ -306,19 +323,34 @@ extension AudioEffectsPickerViewController: UICollectionViewDelegate, UICollecti
         effects.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AudioEffectCell.reuseIdentifier, for: indexPath) as! AudioEffectCell
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: AudioEffectCell.reuseIdentifier,
+            for: indexPath
+        ) as! AudioEffectCell
         cell.effect = effects[indexPath.item]
-        let lastColumn = ((indexPath as NSIndexPath).item % type(of: self).effectColumns) == type(of: self).effectColumns - 1
-        let lastRow = Int(floorf(Float((indexPath as NSIndexPath).item) / Float(type(of: self).effectColumns))) == type(of: self).effectRows - 1
+        let lastColumn = ((indexPath as NSIndexPath).item % type(of: self).effectColumns) == type(of: self)
+            .effectColumns - 1
+        let lastRow = Int(floorf(Float((indexPath as NSIndexPath).item) / Float(type(of: self).effectColumns))) ==
+            type(of: self).effectRows - 1
 
-        cell.borders = (lastColumn ? AudioEffectCellBorders.None : AudioEffectCellBorders.Right).union(lastRow ? [] : [AudioEffectCellBorders.Bottom])
+        cell.borders = (lastColumn ? AudioEffectCellBorders.None : AudioEffectCellBorders.Right)
+            .union(lastRow ? [] : [AudioEffectCellBorders.Bottom])
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        CGSize(width: CGFloat(Int(collectionView.bounds.width) / type(of: self).effectColumns),
-               height: CGFloat(Int(collectionView.bounds.height) / type(of: self).effectRows))
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        CGSize(
+            width: CGFloat(Int(collectionView.bounds.width) / type(of: self).effectColumns),
+            height: CGFloat(Int(collectionView.bounds.height) / type(of: self).effectRows)
+        )
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

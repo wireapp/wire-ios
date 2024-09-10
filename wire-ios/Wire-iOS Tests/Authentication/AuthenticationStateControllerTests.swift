@@ -96,11 +96,17 @@ class AuthenticationStateControllerTests: XCTestCase {
         stateController.transition(to: .createCredentials(user), mode: .normal)
 
         // WHEN
-        stateController.transition(to: .incrementalUserCreation(user, .setName), mode: .rewindToOrReset(to: .createCredentials(user)))
+        stateController.transition(
+            to: .incrementalUserCreation(user, .setName),
+            mode: .rewindToOrReset(to: .createCredentials(user))
+        )
 
         // THEN
         XCTAssertEqual(stateController.currentStep, .incrementalUserCreation(user, .setName))
-        XCTAssertEqual(stateController.stack, [.start, .landingScreen, .createCredentials(user), .incrementalUserCreation(user, .setName)])
+        XCTAssertEqual(
+            stateController.stack,
+            [.start, .landingScreen, .createCredentials(user), .incrementalUserCreation(user, .setName)]
+        )
         XCTAssertEqual(delegate.lastKnownChangeMode, .rewindToOrReset(to: .createCredentials(user)))
         XCTAssertEqual(delegate.lastKnownStep, .incrementalUserCreation(user, .setName))
     }
@@ -111,7 +117,10 @@ class AuthenticationStateControllerTests: XCTestCase {
         stateController.transition(to: .landingScreen, mode: .normal)
 
         // WHEN
-        stateController.transition(to: .incrementalUserCreation(user, .setName), mode: .rewindToOrReset(to: .createCredentials(user)))
+        stateController.transition(
+            to: .incrementalUserCreation(user, .setName),
+            mode: .rewindToOrReset(to: .createCredentials(user))
+        )
 
         // THEN
         XCTAssertEqual(stateController.currentStep, .incrementalUserCreation(user, .setName))

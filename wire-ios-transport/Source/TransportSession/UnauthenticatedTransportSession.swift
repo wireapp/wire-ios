@@ -63,13 +63,14 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// Property to accept requests
     public let readyForRequests: Bool
 
-    public init(environment: BackendEnvironmentProvider,
-                proxyUsername: String?,
-                proxyPassword: String?,
-                urlSession: SessionProtocol? = nil,
-                reachability: ReachabilityProvider,
-                applicationVersion: String,
-                readyForRequests: Bool = false
+    public init(
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        urlSession: SessionProtocol? = nil,
+        reachability: ReachabilityProvider,
+        applicationVersion: String,
+        readyForRequests: Bool = false
     ) {
         self.baseURL = environment.backendURL
         self.environment = environment
@@ -83,7 +84,10 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         configuration.httpAdditionalHeaders = ["User-Agent": ZMUserAgent.userAgent(withAppVersion: applicationVersion)]
 
         if let proxySettings = environment.proxy {
-            let proxyDictionary = proxySettings.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword)
+            let proxyDictionary = proxySettings.socks5Settings(
+                proxyUsername: proxyUsername,
+                proxyPassword: proxyPassword
+            )
             configuration.connectionProxyDictionary = proxyDictionary
             configuration.httpShouldUsePipelining = true
             (urlSession as? URLSession)?.configuration.connectionProxyDictionary = proxyDictionary
@@ -127,10 +131,14 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     private func enqueueRequest(_ request: ZMTransportRequest) {
         guard readyForRequests else {
-            WireLogger.network.info("Dropping request \(request) as networkTransportSession not ready", attributes: .safePublic)
+            WireLogger.network.info(
+                "Dropping request \(request) as networkTransportSession not ready",
+                attributes: .safePublic
+            )
             return
         }
-        guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init) else { preconditionFailure() }
+        guard let urlRequest = URL(string: request.path, relativeTo: baseURL).flatMap(NSMutableURLRequest.init)
+        else { preconditionFailure() }
         urlRequest.configure(with: request)
         WireLogger.network.log(request: urlRequest)
 
@@ -140,7 +148,12 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
             if let response = response as? HTTPURLResponse {
                 WireLogger.network.log(response: response)
-                transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
+                transportResponse = ZMTransportResponse(
+                    httpurlResponse: response,
+                    data: data,
+                    error: error,
+                    apiVersion: request.apiVersion
+                )
             } else if let error {
                 transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
             }
@@ -184,11 +197,19 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 // MARK: - SSL Pinning
 
 extension UnauthenticatedTransportSession: URLSessionDelegate {
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    public func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         let protectionSpace = challenge.protectionSpace
         if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
             // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with this authentication method
-            guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host) else { return completionHandler(.cancelAuthenticationChallenge, nil) }
+            guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host)
+            else { return completionHandler(
+                .cancelAuthenticationChallenge,
+                nil
+            ) }
         }
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
@@ -226,7 +247,10 @@ extension ZMTransportResponse {
     /// - returns: The encrypted cookie data (using the cookies key) if there is any.
     private func extractCookieData() -> Data? {
         guard let response = rawResponse else { return nil }
-        let cookies = HTTPCookie.cookies(withResponseHeaderFields: response.allHeaderFields as! [String: String], for: response.url!)
+        let cookies = HTTPCookie.cookies(
+            withResponseHeaderFields: response.allHeaderFields as! [String: String],
+            for: response.url!
+        )
         return HTTPCookie.extractData(from: cookies)
     }
 

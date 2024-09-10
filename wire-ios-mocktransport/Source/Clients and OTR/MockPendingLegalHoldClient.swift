@@ -47,7 +47,10 @@ extension MockUser {
             return false
         }
 
-        let pendingClient = NSEntityDescription.insertNewObject(forEntityName: "PendingLegalHoldClient", into: managedObjectContext) as! MockPendingLegalHoldClient
+        let pendingClient = NSEntityDescription.insertNewObject(
+            forEntityName: "PendingLegalHoldClient",
+            into: managedObjectContext
+        ) as! MockPendingLegalHoldClient
 
         pendingClient.user = self
 
@@ -69,10 +72,16 @@ extension MockUser {
             return false
         }
 
-        let mockPrekey = MockPreKey.insertNewKeys(withPayload: prekeys.map { $0["prekey"] as! String }, context: managedObjectContext)
+        let mockPrekey = MockPreKey.insertNewKeys(
+            withPayload: prekeys.map { $0["prekey"] as! String },
+            context: managedObjectContext
+        )
         pendingClient.prekeys = Set(mockPrekey)
 
-        let mockLastPrekey = NSEntityDescription.insertNewObject(forEntityName: "PreKey", into: managedObjectContext) as! MockPreKey
+        let mockLastPrekey = NSEntityDescription.insertNewObject(
+            forEntityName: "PreKey",
+            into: managedObjectContext
+        ) as! MockPreKey
         mockLastPrekey.identifier = Int(CBOX_LAST_PREKEY_ID)
         mockLastPrekey.value = lastPrekey
 
@@ -90,7 +99,10 @@ extension MockUser {
             return false
         }
 
-        let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: managedObjectContext) as! MockUserClient
+        let newClient = NSEntityDescription.insertNewObject(
+            forEntityName: "UserClient",
+            into: managedObjectContext
+        ) as! MockUserClient
 
         newClient.user = self
         newClient.identifier = pendingClient.identifier

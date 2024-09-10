@@ -37,7 +37,10 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
         headline = TooManyDevices.title
         subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
 
-        mainView = SolidButtonDescription(title: TooManyDevices.ManageButton.title.capitalized, accessibilityIdentifier: "manage_devices")
+        mainView = SolidButtonDescription(
+            title: TooManyDevices.ManageButton.title.capitalized,
+            accessibilityIdentifier: "manage_devices"
+        )
         secondaryView = nil
         footerView = nil
     }

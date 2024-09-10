@@ -53,7 +53,11 @@ public class Mention: NSObject {
 }
 
 extension Mention {
-    static func mentions(from protos: [WireProtos.Mention]?, messageText: String?, moc: NSManagedObjectContext?) -> [Mention] {
+    static func mentions(
+        from protos: [WireProtos.Mention]?,
+        messageText: String?,
+        moc: NSManagedObjectContext?
+    ) -> [Mention] {
         guard let protos,
               let messageText,
               let managedObjectContext = moc else { return [] }
@@ -65,7 +69,8 @@ extension Mention {
         return mentions.filter { mention  in
             let range = mention.range.range
 
-            guard !mentionRanges.intersects(integersIn: range), range.upperBound <= messageRange.upperBound else { return false }
+            guard !mentionRanges.intersects(integersIn: range),
+                  range.upperBound <= messageRange.upperBound else { return false }
 
             mentionRanges.insert(integersIn: range)
 

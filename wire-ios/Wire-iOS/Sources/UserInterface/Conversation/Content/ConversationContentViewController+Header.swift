@@ -36,7 +36,8 @@ extension ConversationContentViewController {
             conversation.firstActiveParticipantOtherThanSelf
         }
 
-        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation.conversationType == .oneOnOne
+        let connectionOrOneOnOne = conversation.conversationType == .connection || conversation
+            .conversationType == .oneOnOne
 
         if connectionOrOneOnOne, let otherParticipant {
             connectionViewController = UserConnectionViewController(userSession: userSession, user: otherParticipant)

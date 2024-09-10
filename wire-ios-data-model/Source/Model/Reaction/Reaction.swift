@@ -42,7 +42,12 @@ public let ZMReactionUsersValueKey      = "users"
         firstReactionDate ?? Date.distantPast
     }
 
-    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage, creationDate: Date?) -> Reaction {
+    public static func insertReaction(
+        _ unicodeValue: String,
+        users: [ZMUser],
+        inMessage message: ZMMessage,
+        creationDate: Date?
+    ) -> Reaction {
         let reaction = insertNewObject(in: message.managedObjectContext!)
         reaction.message = message
         reaction.unicodeValue = unicodeValue

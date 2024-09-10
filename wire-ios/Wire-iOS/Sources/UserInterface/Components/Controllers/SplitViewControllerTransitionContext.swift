@@ -27,9 +27,11 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
 
     private var viewControllers: [UITransitionContextViewControllerKey: UIViewController] = [:]
 
-    init(from fromViewController: UIViewController?,
-         to toViewController: UIViewController?,
-         containerView: UIView) {
+    init(
+        from fromViewController: UIViewController?,
+        to toViewController: UIViewController?,
+        containerView: UIView
+    ) {
         self.containerView = containerView
 
         super.init()

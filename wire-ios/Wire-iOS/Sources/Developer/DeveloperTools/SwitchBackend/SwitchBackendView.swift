@@ -31,9 +31,10 @@ struct SwitchBackendView: View {
             .navigationTitle("Switch backend")
             .navigationBarTitleDisplayMode(.inline)
             .alert(item: $viewModel.alertItem) { alertItem in
-                Alert(title: Text(""),
-                      message: Text(alertItem.message),
-                      dismissButton: .default(Text("OK")) { alertItem.action?() }
+                Alert(
+                    title: Text(""),
+                    message: Text(alertItem.message),
+                    dismissButton: .default(Text("OK")) { alertItem.action?() }
                 )
             }
     }

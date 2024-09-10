@@ -31,8 +31,14 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
             return nil
         }
 
-        if let (emailPassword, proxyCredentials) = context as? (EmailPasswordInput, AuthenticationProxyCredentialsInput?) {
-            let request = AuthenticationLoginRequest.email(address: emailPassword.email, password: emailPassword.password)
+        if let (emailPassword, proxyCredentials) = context as? (
+            EmailPasswordInput,
+            AuthenticationProxyCredentialsInput?
+        ) {
+            let request = AuthenticationLoginRequest.email(
+                address: emailPassword.email,
+                password: emailPassword.password
+            )
 
             return [.startLoginFlow(request, proxyCredentials)]
         } else {

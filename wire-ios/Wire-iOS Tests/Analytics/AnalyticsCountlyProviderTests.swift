@@ -41,24 +41,32 @@ final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper
     }
 
     func testThatLogRoundedConvertNumberIntoBuckets() {
-        XCTAssertEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100].map { $0.logRound() }, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 46, 91])
+        XCTAssertEqual(
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 50, 100].map { $0.logRound() },
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 46, 91]
+        )
     }
 
     func testThatCountlyAttributesFromConverationIsGenerated() {
-        let mockConversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC, otherUser: otherUser)
+        let mockConversation = ZMConversation.createOtherUserConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser
+        )
 
         let convertedDictionary = mockConversation.attributesForConversation.countlyStringValueDictionary
 
-        XCTAssertEqual(convertedDictionary, ["conversation_guests_wireless": "0",
-                                             "is_allow_guests": "False",
-                                             "conversation_type": "one_to_one",
-                                             "conversation_guests_pro": "0",
-                                             "user_type": "user",
-                                             "with_service": "False",
-                                             "conversation_size": "2",
-                                             "conversation_services": "0",
-                                             "is_global_ephemeral": "False",
-                                             "conversation_guests": "0"])
+        XCTAssertEqual(convertedDictionary, [
+            "conversation_guests_wireless": "0",
+            "is_allow_guests": "False",
+            "conversation_type": "one_to_one",
+            "conversation_guests_pro": "0",
+            "user_type": "user",
+            "with_service": "False",
+            "conversation_size": "2",
+            "conversation_services": "0",
+            "is_global_ephemeral": "False",
+            "conversation_guests": "0",
+        ])
     }
 
     // MARK: - app.open tag

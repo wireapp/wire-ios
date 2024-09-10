@@ -25,10 +25,15 @@ public final class ManagedObjectContextChangesMerger: NSObject {
         self.managedObjectContexts = managedObjectContexts
         super.init()
         for moc in managedObjectContexts {
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(ManagedObjectContextChangesMerger.contextDidSave(_:)),
-                                                   name: NSNotification.Name.NSManagedObjectContextDidSave,
-                                                   object: moc)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(
+                    ManagedObjectContextChangesMerger
+                        .contextDidSave(_:)
+                ),
+                name: NSNotification.Name.NSManagedObjectContextDidSave,
+                object: moc
+            )
         }
     }
 

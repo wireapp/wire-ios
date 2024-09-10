@@ -30,13 +30,18 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
         conversationSync.nextRequest(for: apiVersion)
     }
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        configuration = [.allowsRequestsWhileOnline,
-                         .allowsRequestsDuringQuickSync,
-                         .allowsRequestsWhileWaitingForWebsocket,
-                         .allowsRequestsWhileInBackground]
+        configuration = [
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringQuickSync,
+            .allowsRequestsWhileWaitingForWebsocket,
+            .allowsRequestsWhileInBackground,
+        ]
         conversationSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: self)
     }
 }
@@ -57,7 +62,8 @@ extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChang
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = object.compactMap { $0 as? ZMConversation }.filter(\.needsToVerifyLegalHold)
+        let conversationsNeedingToVerifyClients = object.compactMap { $0 as? ZMConversation }
+            .filter(\.needsToVerifyLegalHold)
 
         if !conversationsNeedingToVerifyClients.isEmpty {
             conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
@@ -78,14 +84,27 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return nil }
 
-        return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, domain: conversation.domain, selfClient: selfClient, apiVersion: apiVersion)
+        return requestFactory.upstreamRequestForFetchingClients(
+            conversationId: conversationID,
+            domain: conversation.domain,
+            selfClient: selfClient,
+            apiVersion: apiVersion
+        )
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>, completionHandler: @escaping () -> Void) {
+    public func didReceive(
+        response: ZMTransportResponse,
+        for identifiers: Set<ZMConversation>,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let conversation = identifiers.first else { return completionHandler() }
 
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)
-        let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
+        let clientChanges = verifyClientsParser.processEmptyUploadResponse(
+            response,
+            in: conversation,
+            clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate
+        )
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
 

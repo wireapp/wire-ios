@@ -93,7 +93,10 @@ enum PasswordCharacterClass: Hashable, Decodable {
         let rawValue = try container.decode(String.self)
 
         guard let decodedSet = PasswordCharacterClass(rawValue: rawValue) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "'\(rawValue)' is not a valid character set.")
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "'\(rawValue)' is not a valid character set."
+            )
         }
 
         self = decodedSet

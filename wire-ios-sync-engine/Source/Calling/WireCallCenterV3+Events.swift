@@ -45,18 +45,21 @@ extension WireCallCenterV3: ZMConversationObserver {
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(isConversationDegraded: changeInfo.conversation.isDegraded)
+        let updatedCallState = previousSnapshot.callState
+            .update(isConversationDegraded: changeInfo.conversation.isDegraded)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
 
             if let context = uiMOC, let callerId = initiatorForCall(conversationId: conversationId) {
-                let notification = WireCallCenterCallStateNotification(context: context,
-                                                                       callState: updatedCallState,
-                                                                       conversationId: conversationId,
-                                                                       callerId: callerId,
-                                                                       messageTime: Date(),
-                                                                       previousCallState: previousSnapshot.callState)
+                let notification = WireCallCenterCallStateNotification(
+                    context: context,
+                    callState: updatedCallState,
+                    conversationId: conversationId,
+                    callerId: callerId,
+                    messageTime: Date(),
+                    previousCallState: previousSnapshot.callState
+                )
                 notification.post(in: context.notificationContext)
             }
         }
@@ -124,7 +127,10 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func handleEventInContext(_ description: String, _ handlerBlock: @escaping (NSManagedObjectContext) -> Void) {
+    private func handleEventInContext(
+        _ description: String,
+        _ handlerBlock: @escaping (NSManagedObjectContext) -> Void
+    ) {
         guard let context = self.uiMOC else {
             zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
@@ -136,13 +142,27 @@ extension WireCallCenterV3 {
     }
 
     /// Handles incoming calls.
-    func handleIncomingCall(conversationId: AVSIdentifier, messageTime: Date, client: AVSClient, isVideoCall: Bool, shouldRing: Bool, conversationType: AVSConversationType) {
+    func handleIncomingCall(
+        conversationId: AVSIdentifier,
+        messageTime: Date,
+        client: AVSClient,
+        isVideoCall: Bool,
+        shouldRing: Bool,
+        conversationType: AVSConversationType
+    ) {
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
 
-            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, conversationType: conversationType)
+            self.createSnapshot(
+                callState: callState,
+                members: members,
+                callStarter: client.avsIdentifier,
+                video: isVideoCall,
+                for: conversationId,
+                conversationType: conversationType
+            )
             self.handle(callState: callState, conversationId: conversationId)
         }
     }
@@ -150,7 +170,12 @@ extension WireCallCenterV3 {
     /// Handles missed calls.
     func handleMissedCall(conversationId: AVSIdentifier, messageTime: Date, userId: AVSIdentifier, isVideoCall: Bool) {
         handleEvent("missed-call") {
-            self.missed(conversationId: conversationId, userId: userId, timestamp: messageTime, isVideoCall: isVideoCall)
+            self.missed(
+                conversationId: conversationId,
+                userId: userId,
+                timestamp: messageTime,
+                isVideoCall: isVideoCall
+            )
         }
     }
 
@@ -200,10 +225,20 @@ extension WireCallCenterV3 {
      * If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
      */
 
-    func handleCallEnd(reason: CallClosedReason, conversationId: AVSIdentifier, messageTime: Date?, userId: AVSIdentifier) {
+    func handleCallEnd(
+        reason: CallClosedReason,
+        conversationId: AVSIdentifier,
+        messageTime: Date?,
+        userId: AVSIdentifier
+    ) {
         guard isEnabled else { return }
         handleEvent("closed-call") {
-            self.handle(callState: .terminating(reason: reason), conversationId: conversationId, messageTime: messageTime, userId: userId)
+            self.handle(
+                callState: .terminating(reason: reason),
+                conversationId: conversationId,
+                messageTime: messageTime,
+                userId: userId
+            )
         }
     }
 
@@ -227,13 +262,15 @@ extension WireCallCenterV3 {
     }
 
     /// Handles sending call messages
-    func handleCallMessageRequest(token: WireCallMessageToken,
-                                  conversationId: AVSIdentifier,
-                                  senderUserId: AVSIdentifier,
-                                  senderClientId: String,
-                                  targets: AVSClientList?,
-                                  data: Data,
-                                  overMLSSelfConversation: Bool = false) {
+    func handleCallMessageRequest(
+        token: WireCallMessageToken,
+        conversationId: AVSIdentifier,
+        senderUserId: AVSIdentifier,
+        senderClientId: String,
+        targets: AVSClientList?,
+        data: Data,
+        overMLSSelfConversation: Bool = false
+    ) {
         guard isEnabled else { return }
 
         handleEventInContext("send-call-message") { managedObjectContext in
@@ -290,7 +327,10 @@ extension WireCallCenterV3 {
             do {
                 let change = try self.decoder.decode(AVSParticipantsChange.self, from: data)
                 let members = change.members.map(AVSCallMember.init)
-                self.callParticipantsChanged(conversationId: AVSIdentifier.from(string: change.convid), participants: members)
+                self.callParticipantsChanged(
+                    conversationId: AVSIdentifier.from(string: change.convid),
+                    participants: members
+                )
             } catch {
                 zmLog.safePublic("Cannot decode participant change JSON")
             }

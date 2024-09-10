@@ -44,7 +44,12 @@ extension NSManagedObjectContext {
 }
 
 extension ZMUserSession {
-    public typealias SaveFailureCallback = (_ metadata: [String: Any], _ type: ContextType, _ error: NSError, _ userInfo: [String: Any]) -> Void
+    public typealias SaveFailureCallback = (
+        _ metadata: [String: Any],
+        _ type: ContextType,
+        _ error: NSError,
+        _ userInfo: [String: Any]
+    ) -> Void
 
     /// Register a handle for monitoring when one of the manage object contexts fails
     /// to save and is rolled back. The call is invoked on the context queue, so it might not be on the main thread

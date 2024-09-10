@@ -48,7 +48,8 @@ class SettingsTableCell: SettingsTableCellProtocol {
     let cellNameLabel: UILabel = {
         let label = DynamicFontLabel(
             fontSpec: .normalSemiboldFont,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         label.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
@@ -78,8 +79,10 @@ class SettingsTableCell: SettingsTableCellProtocol {
     }()
 
     private let badgeLabel: UILabel = {
-        let badgeLabel = DynamicFontLabel(fontSpec: .smallMediumFont,
-                                          color: SemanticColors.Label.textDefaultWhite)
+        let badgeLabel = DynamicFontLabel(
+            fontSpec: .smallMediumFont,
+            color: SemanticColors.Label.textDefaultWhite
+        )
         badgeLabel.textAlignment = .center
         return badgeLabel
     }()
@@ -94,7 +97,10 @@ class SettingsTableCell: SettingsTableCellProtocol {
         return imagePreview
     }()
 
-    private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 24)
+    private lazy var cellNameLabelToIconInset: NSLayoutConstraint = cellNameLabel.leadingAnchor.constraint(
+        equalTo: iconImageView.trailingAnchor,
+        constant: 24
+    )
 
     var titleText = "" {
         didSet {
@@ -302,17 +308,23 @@ final class SettingsValueCell: SettingsTableCell {
     override var descriptor: SettingsCellDescriptorType? {
         willSet {
             if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
-                NotificationCenter.default.removeObserver(self,
-                                                          name: propertyDescriptor.settingsProperty.propertyName.notificationName,
-                                                          object: nil)
+                NotificationCenter.default.removeObserver(
+                    self,
+                    name: propertyDescriptor.settingsProperty.propertyName
+                        .notificationName,
+                    object: nil
+                )
             }
         }
         didSet {
             if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
-                NotificationCenter.default.addObserver(self,
-                                                       selector: #selector(SettingsValueCell.onPropertyChanged(_:)),
-                                                       name: propertyDescriptor.settingsProperty.propertyName.notificationName,
-                                                       object: nil)
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(SettingsValueCell.onPropertyChanged(_:)),
+                    name: propertyDescriptor.settingsProperty.propertyName
+                        .notificationName,
+                    object: nil
+                )
             }
         }
     }
@@ -359,7 +371,10 @@ final class SettingsTextCell: SettingsTableCell,
         NSLayoutConstraint.activate([
             textInput.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -8),
             textInput.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8),
-            textInput.trailingAnchor.constraint(equalTo: trailingBoundaryView.trailingAnchor, constant: -textInputSpacing),
+            textInput.trailingAnchor.constraint(
+                equalTo: trailingBoundaryView.trailingAnchor,
+                constant: -textInputSpacing
+            ),
 
             cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing),
         ])
@@ -383,7 +398,11 @@ final class SettingsTextCell: SettingsTableCell,
 
     // MARK: - UITextFieldDelegate
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         if string.rangeOfCharacter(from: CharacterSet.newlines) != .none {
             textField.resignFirstResponder()
             return false

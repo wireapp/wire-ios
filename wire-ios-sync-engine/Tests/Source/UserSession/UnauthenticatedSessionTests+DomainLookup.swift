@@ -109,48 +109,65 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
     // MARK: Response handling
 
     func testThat404ResponseWithNoMatchingLabelIsError() {
-        checkThat(statusCode: 404,
-                  isProcessedAs:
-                  .failure(DomainLookupError.unknown), payload: nil)
+        checkThat(
+            statusCode: 404,
+            isProcessedAs:
+            .failure(DomainLookupError.unknown),
+            payload: nil
+        )
     }
 
     func testThat404ResponseWithMatchingLabelIsNotFound() {
         let payload = ["label": "custom-instance-not-found"]
-        checkThat(statusCode: 404,
-                  isProcessedAs: .failure(DomainLookupError.notFound),
-                  payload: payload as ZMTransportData)
+        checkThat(
+            statusCode: 404,
+            isProcessedAs: .failure(DomainLookupError.notFound),
+            payload: payload as ZMTransportData
+        )
     }
 
     func testThat500ResponseIsError() {
-        checkThat(statusCode: 500,
-                  isProcessedAs: .failure(DomainLookupError.networkFailure),
-                  payload: nil)
+        checkThat(
+            statusCode: 500,
+            isProcessedAs: .failure(DomainLookupError.networkFailure),
+            payload: nil
+        )
     }
 
     func testThat200ResponseIsProcessedAsValid() {
         let url = URL(string: "https://wire.com/config.json")!
         let payload = ["foo": "bar", "config_json_url": url.absoluteString]
 
-        checkThat(statusCode: 200,
-                  isProcessedAs: .success(DomainInfo(configurationURL: url)),
-                  payload: payload as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .success(DomainInfo(configurationURL: url)),
+            payload: payload as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithMalformdURLGeneratesParseError() {
-        checkThat(statusCode: 200,
-                  isProcessedAs: .failure(DomainLookupError.malformedData),
-                  payload: ["config_json_url": "22"] as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .failure(DomainLookupError.malformedData),
+            payload: ["config_json_url": "22"] as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithMissingPayloadGeneratesParseError() {
-        checkThat(statusCode: 200,
-                  isProcessedAs: .failure(DomainLookupError.malformedData),
-                  payload: nil)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .failure(DomainLookupError.malformedData),
+            payload: nil
+        )
     }
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo, Error>, payload: ZMTransportData?) {
+    func checkThat(
+        statusCode: Int,
+        isProcessedAs expectedResult: Result<DomainInfo, Error>,
+        payload: ZMTransportData?
+    ) {
         let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
@@ -171,7 +188,12 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         }
 
         // when
-        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: payload, httpStatus: statusCode, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(
+            payload: payload,
+            httpStatus: statusCode,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

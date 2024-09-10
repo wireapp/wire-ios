@@ -46,7 +46,8 @@ final class RemoveClientsViewController: UIViewController,
 
     required init(clientsList: [UserClient]) {
         viewModel = RemoveClientsViewController.ViewModel(
-            clientsList: clientsList)
+            clientsList: clientsList
+        )
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -80,7 +81,10 @@ final class RemoveClientsViewController: UIViewController,
         clientsTableView.dataSource = self
         clientsTableView.rowHeight = UITableView.automaticDimension
         clientsTableView.estimatedRowHeight = 80
-        clientsTableView.register(RemoveClientTableViewCell.self, forCellReuseIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier)
+        clientsTableView.register(
+            RemoveClientTableViewCell.self,
+            forCellReuseIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier
+        )
         clientsTableView.isEditing = true
         clientsTableView.backgroundColor = SemanticColors.View.backgroundDefault
         clientsTableView.separatorStyle = .none
@@ -118,7 +122,8 @@ final class RemoveClientsViewController: UIViewController,
                 context: .removeDevice,
                 callback: { password in
                     continuation.resume(returning: password)
-                })
+                }
+            )
             guard let alertController = requestPasswordController?.alertController else {
                 continuation.resume(returning: nil)
                 return
@@ -170,7 +175,10 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? RemoveClientTableViewCell {
+        if let cell = tableView.dequeueReusableCell(
+            withIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as? RemoveClientTableViewCell {
             cell.selectionStyle = .none
             cell.viewModel = .init(userClient: viewModel.clients[indexPath.row], shouldSetType: false)
 
@@ -180,14 +188,19 @@ final class RemoveClientsViewController: UIViewController,
         }
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
         let userClient = viewModel.clients[indexPath.row]
         Task {
             await removeUserClient(userClient)
         }
     }
 
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell
+        .EditingStyle {
         viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
     }
 

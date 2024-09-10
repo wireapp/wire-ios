@@ -126,7 +126,11 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
         activityIndicator.setIsActive(false)
         updateSaveButtonState()
         if let newEmail = viewModel.newEmail {
-            let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self, userSession: userSession)
+            let confirmController = ConfirmEmailViewController(
+                newEmail: newEmail,
+                delegate: self,
+                userSession: userSession
+            )
             navigationController?.pushViewController(confirmController, animated: true)
         }
     }

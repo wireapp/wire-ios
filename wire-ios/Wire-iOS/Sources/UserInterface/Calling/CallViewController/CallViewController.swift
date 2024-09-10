@@ -22,8 +22,10 @@ import WireCommonComponents
 import WireSyncEngine
 
 protocol CallViewControllerDelegate: AnyObject {
-    func callViewControllerDidDisappear(_ callController: CallViewController,
-                                        for conversation: ZMConversation?)
+    func callViewControllerDidDisappear(
+        _ callController: CallViewController,
+        for conversation: ZMConversation?
+    )
 }
 
 final class CallViewController: UIViewController {
@@ -335,15 +337,18 @@ final class CallViewController: UIViewController {
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(view: establishingCallStatusView, inContainer: view, withInsets: .zero)
         )
-        guard let user = voiceChannel.getSecondParticipant(), let session = userSession as? ZMUserSession else { return }
-        user.fetchProfileImage(session: session,
-                               imageCache: UIImage.defaultUserImageCache,
-                               sizeLimit: UserImageView.Size.normal.rawValue,
-                               isDesaturated: false,
-                               completion: { [weak self] image, _ in
-                                   guard let image else { return }
-                                   self?.establishingCallStatusView.setProfileImage(image: image)
-                               })
+        guard let user = voiceChannel.getSecondParticipant(),
+              let session = userSession as? ZMUserSession else { return }
+        user.fetchProfileImage(
+            session: session,
+            imageCache: UIImage.defaultUserImageCache,
+            sizeLimit: UserImageView.Size.normal.rawValue,
+            isDesaturated: false,
+            completion: { [weak self] image, _ in
+                guard let image else { return }
+                self?.establishingCallStatusView.setProfileImage(image: image)
+            }
+        )
     }
 
     private func updateIdleTimer() {
@@ -428,7 +433,13 @@ extension CallViewController: ZMConversationObserver {
 }
 
 extension CallViewController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateConfiguration()
         hideOverlayAfterCallEstablishedIfNeeded()
         hapticsController.updateCallState(callState)
@@ -444,8 +455,10 @@ extension CallViewController: ActiveSpeakersObserver {
 // MARK: - WireCallCenterCallParticipantObserver
 
 extension CallViewController: WireCallCenterCallParticipantObserver {
-    func callParticipantsDidChange(conversation: ZMConversation,
-                                   participants: [CallParticipant]) {
+    func callParticipantsDidChange(
+        conversation: ZMConversation,
+        participants: [CallParticipant]
+    ) {
         hapticsController.updateParticipants(participants)
         updateVideoGridPresentationModeIfNeeded(participants: participants)
         updateConfiguration() // Has to succeed updating the timestamps
@@ -532,11 +545,15 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         guard let userSession = userSession as? ZMUserSession else { return }
 
         switch action {
-        case .continueDegradedCall: userSession.enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
+        case .continueDegradedCall: userSession
+            .enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
         case .acceptCall: acceptCallIfPossible()
         case .acceptDegradedCall: acceptDegradedCall()
         case .terminateCall: voiceChannel.leave(userSession: userSession, completion: nil)
-        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leave(userSession: userSession, completion: nil) }
+        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leave(
+                userSession: userSession,
+                completion: nil
+            ) }
         case .toggleMuteState: voiceChannel.toggleMuteState(userSession: userSession)
         case .toggleSpeakerState: AVSMediaManager.sharedInstance().toggleSpeaker()
         case .minimizeOverlay: minimizeOverlay()
@@ -551,7 +568,10 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         restartOverlayTimerIfNeeded()
     }
 
-    func infoRootViewController(_ viewController: CallInfoRootViewController, contextDidChange context: CallInfoRootViewController.Context) {
+    func infoRootViewController(
+        _ viewController: CallInfoRootViewController,
+        contextDidChange context: CallInfoRootViewController.Context
+    ) {
         guard canHideOverlay else { return }
         switch context {
         case .overview: startOverlayTimer()

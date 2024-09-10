@@ -30,7 +30,8 @@ protocol MediaPlaybackManagerChangeObserver: AnyObject {
 }
 
 extension Notification.Name {
-    static let mediaPlaybackManagerPlayerStateChanged = Notification.Name("MediaPlaybackManagerPlayerStateChangedNotification")
+    static let mediaPlaybackManagerPlayerStateChanged = Notification
+        .Name("MediaPlaybackManagerPlayerStateChangedNotification")
     static let activeMediaPlayerChanged = Notification.Name("activeMediaPlayerChanged")
 }
 

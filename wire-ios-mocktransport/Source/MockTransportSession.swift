@@ -30,7 +30,12 @@ extension MockTransportSession {
     }
 
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
-    public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+    public func pushEventsForTeams(
+        inserted: Set<NSManagedObject>,
+        updated: Set<NSManagedObject>,
+        deleted: Set<NSManagedObject>,
+        shouldSendEventsToSelfUser: Bool
+    ) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
         let updatedEvents = updated
@@ -55,12 +60,27 @@ extension MockTransportSession {
             allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false))
         }
 
-        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), selfUser: selfUser)
-        let membersPushEvents = membersEvents.compactMap { $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(
+            team: team,
+            changedValues: team.changedValues(),
+            selfUser: selfUser
+        )
+        let membersPushEvents = membersEvents.compactMap { $0 }.map { MockPushEvent(
+            with: $0.payload,
+            uuid: UUID.create(),
+            isTransient: false
+        ) }
         allEvents.append(contentsOf: membersPushEvents)
 
-        let conversationsEvents = MockTeamConversationEvent.createIfNeeded(team: team, changedValues: team.changedValues())
-        let conversationsPushEvents = conversationsEvents.compactMap { $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let conversationsEvents = MockTeamConversationEvent.createIfNeeded(
+            team: team,
+            changedValues: team.changedValues()
+        )
+        let conversationsPushEvents = conversationsEvents.compactMap { $0 }.map { MockPushEvent(
+            with: $0.payload,
+            uuid: UUID.create(),
+            isTransient: false
+        ) }
         allEvents.append(contentsOf: conversationsPushEvents)
 
         return allEvents
@@ -80,13 +100,21 @@ extension MockTransportSession {
     }
 
     @objc(pushEventsForInsertedConversations:updated:shouldSendEventsToSelfUser:)
-    public func pushEventsForConversations(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+    public func pushEventsForConversations(
+        inserted: Set<NSManagedObject>,
+        updated: Set<NSManagedObject>,
+        shouldSendEventsToSelfUser: Bool
+    ) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
         let insertedPayloads: [ZMTransportData] = relevant(conversations: inserted)
             .filter { conversation -> Bool in
                 if let team = conversation.team {
-                    return !team.contains(user: self.selfUser) // Team conversations where you are a member are handled separately
+                    return !team
+                        .contains(
+                            user: self
+                                .selfUser
+                        ) // Team conversations where you are a member are handled separately
                 } else {
                     return true
                 }

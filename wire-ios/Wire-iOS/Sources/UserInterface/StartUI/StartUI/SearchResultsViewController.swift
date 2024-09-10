@@ -58,11 +58,29 @@ extension SearchGroup {
 }
 
 protocol SearchResultsViewControllerDelegate: AnyObject {
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnUser user: UserType, indexPath: IndexPath, section: SearchResultsViewControllerSection)
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didDoubleTapOnUser user: UserType, indexPath: IndexPath)
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation)
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser)
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction)
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnUser user: UserType,
+        indexPath: IndexPath,
+        section: SearchResultsViewControllerSection
+    )
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didDoubleTapOnUser user: UserType,
+        indexPath: IndexPath
+    )
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnConversation conversation: ZMConversation
+    )
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnSeviceUser user: ServiceUser
+    )
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        wantsToPerformAction action: SearchResultsViewControllerAction
+    )
 }
 
 enum SearchResultsViewControllerAction: Int {
@@ -210,7 +228,8 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
         servicesSection = SearchServicesSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
-        conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header.teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
+        conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
+            .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         inviteTeamMemberSection = InviteTeamMemberSection(team: team)
 
         super.init(nibName: nil, bundle: nil)
@@ -284,10 +303,12 @@ final class SearchResultsViewController: UIViewController {
     }
 
     func searchForUsers(withQuery query: String) {
-        var options: SearchOptions = [.conversations,
-                                      .contacts,
-                                      .teamMembers,
-                                      .directory]
+        var options: SearchOptions = [
+            .conversations,
+            .contacts,
+            .teamMembers,
+            .directory,
+        ]
 
         if isFederationEnabled {
             options.formUnion(.federated)
@@ -432,21 +453,43 @@ final class SearchResultsViewController: UIViewController {
 }
 
 extension SearchResultsViewController: SearchSectionControllerDelegate {
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectUser user: UserType, at indexPath: IndexPath) {
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        didSelectUser user: UserType,
+        at indexPath: IndexPath
+    ) {
         if let user = user as? ZMUser {
-            delegate?.searchResultsViewController(self, didTapOnUser: user, indexPath: indexPath, section: sectionFor(controller: searchSectionController))
+            delegate?.searchResultsViewController(
+                self,
+                didTapOnUser: user,
+                indexPath: indexPath,
+                section: sectionFor(controller: searchSectionController)
+            )
         } else if let service = user as? ServiceUser, service.isServiceUser {
             delegate?.searchResultsViewController(self, didTapOnSeviceUser: service)
         } else if let searchUser = user as? ZMSearchUser {
-            delegate?.searchResultsViewController(self, didTapOnUser: searchUser, indexPath: indexPath, section: sectionFor(controller: searchSectionController))
+            delegate?.searchResultsViewController(
+                self,
+                didTapOnUser: searchUser,
+                indexPath: indexPath,
+                section: sectionFor(controller: searchSectionController)
+            )
         }
     }
 
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectConversation conversation: ZMConversation, at indexPath: IndexPath) {
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        didSelectConversation conversation: ZMConversation,
+        at indexPath: IndexPath
+    ) {
         delegate?.searchResultsViewController(self, didTapOnConversation: conversation)
     }
 
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectRow row: CreateGroupSection.Row, at indexPath: IndexPath) {
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        didSelectRow row: CreateGroupSection.Row,
+        at indexPath: IndexPath
+    ) {
         switch row {
         case .createGroup:
             delegate?.searchResultsViewController(self, wantsToPerformAction: .createGroup)
@@ -455,7 +498,10 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         }
     }
 
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, wantsToDisplayError error: LocalizedError) {
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        wantsToDisplayError error: LocalizedError
+    ) {
         presentLocalizedErrorAlert(error)
     }
 }

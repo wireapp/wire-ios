@@ -22,7 +22,11 @@ extension NSString {
     public func containsURL() -> Bool {
         do {
             let urlDetector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-            let matches = urlDetector.matches(in: self as String, options: [], range: NSRange(location: 0, length: self.length))
+            let matches = urlDetector.matches(
+                in: self as String,
+                options: [],
+                range: NSRange(location: 0, length: self.length)
+            )
             return matches.count > 0
         } catch _ as NSError {
             return false
@@ -36,10 +40,20 @@ extension NSString {
     }
 
     public func removingTrailingForwardSlash() -> String {
-        replacingOccurrences(of: "/", with: "", options: [.anchored, .backwards], range: NSRange(location: 0, length: self.length))
+        replacingOccurrences(
+            of: "/",
+            with: "",
+            options: [.anchored, .backwards],
+            range: NSRange(location: 0, length: self.length)
+        )
     }
 
     public func removingURLScheme(_ scheme: String) -> String {
-        replacingOccurrences(of: scheme + "://", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
+        replacingOccurrences(
+            of: scheme + "://",
+            with: "",
+            options: .anchored,
+            range: NSRange(location: 0, length: self.length)
+        )
     }
 }

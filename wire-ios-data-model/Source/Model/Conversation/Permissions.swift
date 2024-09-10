@@ -49,8 +49,20 @@ public struct Permissions: OptionSet {
     // cases of the TeamRole enum.
 
     public static let partner: Permissions = [.createConversation, .getTeamConversations]
-    public static let member: Permissions = [.partner, .deleteConversation, .addRemoveConversationMember, .modifyConversationMetaData, .getMemberPermissions]
-    public static let admin: Permissions = [.member, .addTeamMember, .removeTeamMember, .setTeamData, .setMemberPermissions]
+    public static let member: Permissions = [
+        .partner,
+        .deleteConversation,
+        .addRemoveConversationMember,
+        .modifyConversationMetaData,
+        .getMemberPermissions,
+    ]
+    public static let admin: Permissions = [
+        .member,
+        .addTeamMember,
+        .removeTeamMember,
+        .setTeamData,
+        .setMemberPermissions,
+    ]
     public static let owner: Permissions = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
 

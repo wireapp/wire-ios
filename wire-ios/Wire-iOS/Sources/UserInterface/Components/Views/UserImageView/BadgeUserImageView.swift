@@ -159,7 +159,15 @@ final class BadgeUserImageView: UserImageView {
             if animated {
                 hideBadge()
                 changeImage()
-                UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 15.0, options: [], animations: showBadge, completion: nil)
+                UIView.animate(
+                    withDuration: 0.65,
+                    delay: 0,
+                    usingSpringWithDamping: 0.5,
+                    initialSpringVelocity: 15.0,
+                    options: [],
+                    animations: showBadge,
+                    completion: nil
+                )
                 UIView.animate(easing: .easeOutQuart, duration: 0.15, animations: showShadow)
             } else {
                 changeImage()

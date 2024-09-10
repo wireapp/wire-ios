@@ -170,7 +170,10 @@ enum ConversationSystemMessageCellDescription {
 
         case .newConversation:
             var cells: [AnyConversationMessageCellDescription] = []
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message, data: systemMessageData)
+            let startedConversationCell = ConversationStartedSystemMessageCellDescription(
+                message: message,
+                data: systemMessageData
+            )
             cells.append(AnyConversationMessageCellDescription(startedConversationCell))
 
             // Only display invite user cell for team members
@@ -199,16 +202,21 @@ enum ConversationSystemMessageCellDescription {
             }
 
         case .domainsStoppedFederating:
-            let domainsStoppedFederatingCell = ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
+            let domainsStoppedFederatingCell =
+                ConversationDomainsStoppedFederatingSystemMessageCellDescription(systemMessageData: systemMessageData)
             return [AnyConversationMessageCellDescription(domainsStoppedFederatingCell)]
 
-        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted, .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
+        case .mlsMigrationFinalized, .mlsMigrationJoinAfterwards, .mlsMigrationOngoingCall, .mlsMigrationStarted,
+             .mlsMigrationUpdateVersion, .mlsMigrationPotentialGap:
             let description = MLSMigrationCellDescription(messageType: systemMessageData.systemMessageType)
             return [AnyConversationMessageCellDescription(description)]
 
         case .mlsNotSupportedSelfUser, .mlsNotSupportedOtherUser:
             if let user = conversation.connectedUserType {
-                let description = MLSMigrationSupportCellDescription(messageType: systemMessageData.systemMessageType, for: user)
+                let description = MLSMigrationSupportCellDescription(
+                    messageType: systemMessageData.systemMessageType,
+                    for: user
+                )
                 return [AnyConversationMessageCellDescription(description)]
             } else {
                 assertionFailure("connectedUserType should not be nil in this case")

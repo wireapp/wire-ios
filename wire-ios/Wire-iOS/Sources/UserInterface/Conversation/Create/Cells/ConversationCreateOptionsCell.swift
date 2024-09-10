@@ -77,14 +77,16 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
         let color = SemanticColors.Icon.foregroundPlainDownArrow
         let image = StyleKitIcon.downArrow.makeImage(
             size: .tiny,
-            color: color).withRenderingMode(.alwaysTemplate)
+            color: color
+        ).withRenderingMode(.alwaysTemplate)
 
         // flip upside down if necessary
         if let cgImage = image.cgImage, expanded {
             accessory = UIImage(
                 cgImage: cgImage,
                 scale: image.scale,
-                orientation: .downMirrored).withRenderingMode(.alwaysTemplate)
+                orientation: .downMirrored
+            ).withRenderingMode(.alwaysTemplate)
         } else {
             accessory = image
         }

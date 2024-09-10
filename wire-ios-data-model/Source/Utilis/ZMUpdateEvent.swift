@@ -60,7 +60,9 @@ extension ZMUpdateEvent {
     }
 
     public var safeLoggingConversationId: String {
-        conversationUUID.flatMap { QualifiedID(uuid: $0, domain: conversationDomain ?? "<nil>").safeForLoggingDescription } ?? "<nil>"
+        conversationUUID
+            .flatMap { QualifiedID(uuid: $0, domain: conversationDomain ?? "<nil>").safeForLoggingDescription } ??
+            "<nil>"
     }
 
     public var userIDs: [UUID] {
@@ -128,13 +130,17 @@ extension ZMUpdateEvent {
     public func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
         if let qualifiedUserIDs {
             if createIfNeeded {
-                qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,
-                                                            domain: $0.domain,
-                                                            in: context) }
+                qualifiedUserIDs.map { ZMUser.fetchOrCreate(
+                    with: $0.uuid,
+                    domain: $0.domain,
+                    in: context
+                ) }
             } else {
-                qualifiedUserIDs.compactMap { ZMUser.fetch(with: $0.uuid,
-                                                           domain: $0.domain,
-                                                           in: context) }
+                qualifiedUserIDs.compactMap { ZMUser.fetch(
+                    with: $0.uuid,
+                    domain: $0.domain,
+                    in: context
+                ) }
             }
         } else {
             if createIfNeeded {

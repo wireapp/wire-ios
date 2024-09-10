@@ -40,8 +40,15 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
         titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
         configureBackground()
         let backIndicatorInsets = UIEdgeInsets(top: 0, left: 4, bottom: 2.5, right: 0)
-        backIndicatorImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).with(insets: backIndicatorInsets, backgroundColor: .clear)
-        backIndicatorTransitionMaskImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).with(insets: backIndicatorInsets, backgroundColor: .clear)
+        backIndicatorImage = StyleKitIcon.backArrow.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault)
+            .with(
+                insets: backIndicatorInsets,
+                backgroundColor: .clear
+            )
+        backIndicatorTransitionMaskImage = StyleKitIcon.backArrow.makeImage(
+            size: .tiny,
+            color: SemanticColors.Icon.foregroundDefault
+        ).with(insets: backIndicatorInsets, backgroundColor: .clear)
     }
 
     func configureBackground() {
@@ -50,10 +57,15 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
         shadowImage = UIImage.singlePixelImage(with: UIColor.clear)
     }
 
-    static func titleTextAttributes(for color: UIColor = SemanticColors.Label.textDefault) -> [NSAttributedString.Key: Any] {
-        [.font: FontSpec.smallSemiboldFont.font!,
-         .foregroundColor: color,
-         .baselineOffset: 1.0]
+    static func titleTextAttributes(
+        for color: UIColor = SemanticColors.Label
+            .textDefault
+    ) -> [NSAttributedString.Key: Any] {
+        [
+            .font: FontSpec.smallSemiboldFont.font!,
+            .foregroundColor: color,
+            .baselineOffset: 1.0,
+        ]
     }
 }
 
@@ -62,7 +74,10 @@ extension UIViewController {
         navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
         navigationBarClass: AnyClass? = DefaultNavigationBar.self
     ) -> UINavigationController {
-        let navigationController = navigationControllerClass.init(navigationBarClass: navigationBarClass, toolbarClass: nil)
+        let navigationController = navigationControllerClass.init(
+            navigationBarClass: navigationBarClass,
+            toolbarClass: nil
+        )
         navigationController.setViewControllers([self], animated: false)
         navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
 

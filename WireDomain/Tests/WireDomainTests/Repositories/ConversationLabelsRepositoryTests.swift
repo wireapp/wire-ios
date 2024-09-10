@@ -92,7 +92,12 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         _ = await context.perform { [context] in
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true,
+                in: context,
+                created: &created
+            )
             label?.name = Scaffolding.conversationLabel1.name
             context.saveOrRollback()
         }
@@ -128,7 +133,12 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         _ = await context.perform { [self] in
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true,
+                in: context,
+                created: &created
+            )
             label?.conversations = Set([conversation1, conversation2])
             context.saveOrRollback()
         }
@@ -168,7 +178,12 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         _ = await context.perform { [context] in
             var created = false
-            _ = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            _ = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true,
+                in: context,
+                created: &created
+            )
             context.saveOrRollback()
         }
 
@@ -202,7 +217,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         }
     }
 
-    func testPullConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed() async throws {
+    func testPullConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed(
+    ) async throws {
         // Given
 
         _ = await context.perform { [context] in
@@ -239,7 +255,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let a = try context.fetch(fetchRequest)
             let labelNames = a.compactMap(\.name)
             let expected = [
-                Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
+                Scaffolding.favoriteConversationLabel1.name!,
+                /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
                 Scaffolding.conversationLabel3.name!,
             ]

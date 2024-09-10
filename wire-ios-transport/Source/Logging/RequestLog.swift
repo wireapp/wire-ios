@@ -73,8 +73,7 @@ struct RequestLog: Codable {
         "X-cache",
         "Sec-WebSocket-key",
         "sec-websocket-accept",
-    ].map { $0.lowercased() }
-    )
+    ].map { $0.lowercased() })
 }
 
 extension URL {
@@ -89,7 +88,10 @@ extension URL {
         for item in queryComponents.enumerated() {
             var redactedItem = item.element
             // truncates to 8 digits max for ids
-            let value = redactedItem.value?.redactedAndTruncated(maxVisibleCharacters: visibleCharactersCount, length: 8) ?? ""
+            let value = redactedItem.value?.redactedAndTruncated(
+                maxVisibleCharacters: visibleCharactersCount,
+                length: 8
+            ) ?? ""
             redactedItem.value = value
             queryComponents[item.offset] = redactedItem
         }

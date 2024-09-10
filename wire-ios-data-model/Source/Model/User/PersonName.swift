@@ -115,7 +115,12 @@
         // If the name contains latin scheme tag, it uses the first name as the given name
         // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
         schemeTagger.string = string
-        let tags = schemeTagger.tags(in: NSRange(location: 0, length: schemeTagger.string!.count), scheme: NSLinguisticTagScheme.script.rawValue, options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
+        let tags = schemeTagger.tags(
+            in: NSRange(location: 0, length: schemeTagger.string!.count),
+            scheme: NSLinguisticTagScheme.script.rawValue,
+            options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames],
+            tokenRanges: nil
+        )
 
         let nameOrder: NameOrder = if tags.contains("Arab") {
             .arabicGivenName
@@ -135,7 +140,12 @@
 
         // This is a bit more complicated because we don't want chinese names to be split up by their individual characters
         let options: NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace, .omitOther]
-        fullName.enumerateLinguisticTags(in: fullRange, scheme: NSLinguisticTagScheme.tokenType.rawValue, options: options, orthography: nil) { tag, substringRange, _, _ in
+        fullName.enumerateLinguisticTags(
+            in: fullRange,
+            scheme: NSLinguisticTagScheme.tokenType.rawValue,
+            options: options,
+            orthography: nil
+        ) { tag, substringRange, _, _ in
             guard tag == NSLinguisticTag.word.rawValue else { return }
             let substring = fullName[substringRange]
             if let aComponent = component {

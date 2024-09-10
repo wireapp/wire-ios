@@ -101,8 +101,10 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Adaptive UI
 
     func toggleConstraints() {
-        userInterfaceSizeClass(self).toggle(compactConstraints: [contentViewWidthCompact],
-                                            regularConstraints: [contentViewWidthRegular])
+        userInterfaceSizeClass(self).toggle(
+            compactConstraints: [contentViewWidthCompact],
+            regularConstraints: [contentViewWidthRegular]
+        )
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -129,8 +131,10 @@ extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
     }
 
     func failedToDeleteClients(_ error: Error) {
-        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error as NSError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
 }

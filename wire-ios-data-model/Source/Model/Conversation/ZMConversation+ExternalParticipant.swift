@@ -47,9 +47,11 @@ extension ZMConversation {
 
     @objc
     class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
-        ["participantRoles.user.isServiceUser",
-         "participantRoles.user.hasTeam",
-         "participantRoles.user.isExternalPartner"]
+        [
+            "participantRoles.user.isServiceUser",
+            "participantRoles.user.hasTeam",
+            "participantRoles.user.isExternalPartner",
+        ]
     }
 
     /// The state of external participants in the conversation.

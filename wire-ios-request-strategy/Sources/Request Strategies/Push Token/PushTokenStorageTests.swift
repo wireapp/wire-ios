@@ -43,10 +43,12 @@ final class PushTokenStorageTests: MessagingTestBase {
     func testPushToken() {
         // Given
         let deviceToken = Data(repeating: 0x41, count: 10)
-        let pushToken = PushToken(deviceToken: deviceToken,
-                                  appIdentifier: "com.wire",
-                                  transportType: "APNS_VOIP",
-                                  tokenType: .voip)
+        let pushToken = PushToken(
+            deviceToken: deviceToken,
+            appIdentifier: "com.wire",
+            transportType: "APNS_VOIP",
+            tokenType: .voip
+        )
         XCTAssertNil(PushTokenStorage.pushToken)
 
         // When

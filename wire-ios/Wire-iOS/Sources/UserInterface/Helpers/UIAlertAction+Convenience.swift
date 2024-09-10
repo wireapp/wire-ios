@@ -53,7 +53,12 @@ extension UIAlertAction {
         }
     }
 
-    convenience init(icon: StyleKitIcon?, title: String, tintColor: UIColor, handler: ((UIAlertAction) -> Void)? = nil) {
+    convenience init(
+        icon: StyleKitIcon?,
+        title: String,
+        tintColor: UIColor,
+        handler: ((UIAlertAction) -> Void)? = nil
+    ) {
         self.init(title: title, style: .default, handler: handler)
 
         setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")

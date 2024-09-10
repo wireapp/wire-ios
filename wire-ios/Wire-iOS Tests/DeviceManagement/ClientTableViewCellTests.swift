@@ -250,11 +250,12 @@ extension ClientTableViewCellModel {
         .uppercased()
         .splitStringIntoLines(charactersPerLine: 16)
 
-    static func mock(title: String = "Lorem ipsum",
-                     isProteusVerified: Bool = false,
-                     mlsThumbprint: String = mockFingerPrint,
-                     proteusId: String = mockProteusId,
-                     e2eIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil
+    static func mock(
+        title: String = "Lorem ipsum",
+        isProteusVerified: Bool = false,
+        mlsThumbprint: String = mockFingerPrint,
+        proteusId: String = mockProteusId,
+        e2eIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil
     ) -> Self {
         .init(
             title: title,

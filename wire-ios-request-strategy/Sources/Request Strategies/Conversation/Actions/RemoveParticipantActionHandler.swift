@@ -74,7 +74,8 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             // Log error
             return nil
         }
-        let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
+        let path =
+            "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
 
         return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
@@ -97,7 +98,8 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
 
             // TODO: jacob this logic should be moved to data model
             // Update cleared timestamp if self user left and deleted history
-            if let clearedTimestamp = conversation.clearedTimeStamp, clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
+            if let clearedTimestamp = conversation.clearedTimeStamp,
+               clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)
             }
             let success = {

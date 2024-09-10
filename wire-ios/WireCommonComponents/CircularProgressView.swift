@@ -32,7 +32,12 @@ public class CircularProgressView: UIView {
     private func setup() {
         setupShapeLayer()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(CircularProgressView.applicationDidBecomeActive(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     private func setupShapeLayer() {

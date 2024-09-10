@@ -49,7 +49,8 @@ final class SessionManagerLifeCycleObserver {
     }
 }
 
-extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
+extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver,
+    SessionManagerDestroyedSessionObserver {
     // MARK: - SessionManagerCreatedSessionObserver
 
     func sessionManagerCreated(userSession: ZMUserSession) {

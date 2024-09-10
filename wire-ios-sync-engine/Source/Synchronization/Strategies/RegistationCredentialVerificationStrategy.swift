@@ -38,19 +38,28 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
         switch currentStatus.phase {
         case let .sendActivationCode(unverifiedEmail):
             path = "/activate/send"
-            payload = ["email": unverifiedEmail,
-                       "locale": NSLocale.formattedLocaleIdentifier()!]
+            payload = [
+                "email": unverifiedEmail,
+                "locale": NSLocale.formattedLocaleIdentifier()!,
+            ]
         case let .checkActivationCode(unverifiedEmail, code):
             path = "/activate"
-            payload = ["email": unverifiedEmail,
-                       "code": code,
-                       "dryrun": true]
+            payload = [
+                "email": unverifiedEmail,
+                "code": code,
+                "dryrun": true,
+            ]
         default:
             let phaseString = currentStatus.phase.map { "\($0)" } ?? "<nil>"
             fatal("Generating request for invalid phase: \(phaseString)")
         }
 
-        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

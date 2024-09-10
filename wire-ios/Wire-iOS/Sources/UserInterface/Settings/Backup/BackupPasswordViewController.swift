@@ -30,16 +30,20 @@ final class BackupPasswordViewController: UIViewController {
     private let passwordView = SimpleTextField()
 
     private let subtitleLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: HistoryBackup.Password.description,
-                                     style: .subline1,
-                                     color: LabelColors.textSectionHeader)
+        let label = DynamicFontLabel(
+            text: HistoryBackup.Password.description,
+            style: .subline1,
+            color: LabelColors.textSectionHeader
+        )
         label.numberOfLines = 0
         return label
     }()
 
     private let passwordRulesLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(style: .subline1,
-                                     color: LabelColors.textSectionHeader)
+        let label = DynamicFontLabel(
+            style: .subline1,
+            color: LabelColors.textSectionHeader
+        )
         label.numberOfLines = 0
         return label
     }()
@@ -87,8 +91,10 @@ final class BackupPasswordViewController: UIViewController {
         passwordView.delegate = self
         passwordView.textColor = LabelColors.textSectionHeader
         passwordView.backgroundColor = ViewColors.backgroundUserCell
-        let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
-                                                         .font: UIFont.font(for: .body1)]
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
+            .font: UIFont.font(for: .body1),
+        ]
         passwordView.updatePlaceholderAttributedText(attributes: attributes)
     }
 
@@ -116,13 +122,15 @@ final class BackupPasswordViewController: UIViewController {
             title: HistoryBackup.Password.cancel,
             action: UIAction { [weak self] _ in
                 self?.onCompletion?(nil)
-            })
+            }
+        )
 
         let nextButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
             title: HistoryBackup.Password.next,
             action: UIAction { [weak self] _ in
                 self?.onCompletion?(self?.password)
-            })
+            }
+        )
 
         nextButtonItem.tintColor = UIColor.accent()
         nextButtonItem.isEnabled = false
@@ -150,7 +158,11 @@ final class BackupPasswordViewController: UIViewController {
 // MARK: - UITextFieldDelegate
 
 extension BackupPasswordViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         if string.containsCharacters(from: .whitespaces) {
             return false
         }

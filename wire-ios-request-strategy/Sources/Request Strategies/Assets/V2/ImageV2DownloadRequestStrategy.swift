@@ -23,31 +23,40 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
     fileprivate let requestFactory = ClientMessageRequestFactory()
     private var token: Any?
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let downloadPredicate = NSPredicate { object, _ -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version < 3 else { return false }
 
-            let missingMediumImage = message.imageMessageData != nil && !message.hasDownloadedFile && message.assetId != nil
-            let missingVideoThumbnail = message.fileMessageData != nil && !message.hasDownloadedPreview && message.fileMessageData?.thumbnailAssetID != nil
+            let missingMediumImage = message.imageMessageData != nil && !message.hasDownloadedFile && message
+                .assetId != nil
+            let missingVideoThumbnail = message.fileMessageData != nil && !message.hasDownloadedPreview && message
+                .fileMessageData?.thumbnailAssetID != nil
 
             return (missingMediumImage || missingVideoThumbnail) && message.hasEncryptedAsset
         }
 
-        downstreamSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                             entityName: ZMAssetClientMessage.entityName(),
-                                                             predicateForObjectsToDownload: downloadPredicate,
-                                                             managedObjectContext: managedObjectContext)
+        downstreamSync = ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: ZMAssetClientMessage.entityName(),
+            predicateForObjectsToDownload: downloadPredicate,
+            managedObjectContext: managedObjectContext
+        )
 
         registerForWhitelistingNotification()
     }
 
     func registerForWhitelistingNotification() {
-        self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
-                                                       context: self.managedObjectContext.notificationContext,
-                                                       object: nil) { [weak self] note in
+        self.token = NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.imageDownloadNotificationName,
+            context: self.managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadImage(objectID)
         }
@@ -91,10 +100,18 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
             case .v0, .v1:
                 if message.imageMessageData != nil {
                     guard let assetId = message.assetId?.transportString() else { return nil }
-                    return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
+                    return requestFactory.requestToGetAsset(
+                        assetId,
+                        inConversation: conversation.remoteIdentifier!,
+                        apiVersion: apiVersion
+                    )
                 } else if message.fileMessageData != nil {
                     guard let assetId = message.fileMessageData?.thumbnailAssetID else { return nil }
-                    return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
+                    return requestFactory.requestToGetAsset(
+                        assetId,
+                        inConversation: conversation.remoteIdentifier!,
+                        apiVersion: apiVersion
+                    )
                 }
 
             case .v2, .v3, .v4, .v5, .v6:
@@ -120,9 +137,11 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
         storeMediumImage(forMessage: message, imageData: imageData)
 
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
-        NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
-                                                        changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
-                                                        uiContext: uiMOC)
+        NotificationDispatcher.notifyNonCoreDataChanges(
+            objectID: message.objectID,
+            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
+            uiContext: uiMOC
+        )
     }
 
     fileprivate func storeMediumImage(

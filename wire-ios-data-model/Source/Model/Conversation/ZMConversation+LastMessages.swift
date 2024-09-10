@@ -26,9 +26,20 @@ extension ZMConversation {
             // This must filter out:
             // 1. Messages that are older than clearedTimeStamp.
             // 2. But NOT the messages that are pending, i.e. still can be uploaded.
-            let deliveryIsPendingPredicate = NSPredicate(format: "%K == NO AND %K == NO", #keyPath(ZMMessage.isExpired), #keyPath(ZMOTRMessage.delivered))
-            let messageIsNotCleared = NSPredicate(format: "%K > %@", #keyPath(ZMMessage.serverTimestamp), clearedTimeStamp as CVarArg)
-            allPredicates.append(NSCompoundPredicate(orPredicateWithSubpredicates: [deliveryIsPendingPredicate, messageIsNotCleared]))
+            let deliveryIsPendingPredicate = NSPredicate(
+                format: "%K == NO AND %K == NO",
+                #keyPath(ZMMessage.isExpired),
+                #keyPath(ZMOTRMessage.delivered)
+            )
+            let messageIsNotCleared = NSPredicate(
+                format: "%K > %@",
+                #keyPath(ZMMessage.serverTimestamp),
+                clearedTimeStamp as CVarArg
+            )
+            allPredicates.append(NSCompoundPredicate(orPredicateWithSubpredicates: [
+                deliveryIsPendingPredicate,
+                messageIsNotCleared,
+            ]))
         }
 
         allPredicates.append(NSPredicate(format: "%K == %@", #keyPath(ZMMessage.visibleInConversation), self))
@@ -59,7 +70,13 @@ extension ZMConversation {
     public func lastMessageSent(by user: ZMUser) -> ZMMessage? {
         let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
         fetchRequest.fetchLimit = 1
-        fetchRequest.predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(ZMMessage.visibleInConversation), self, #keyPath(ZMMessage.sender), user)
+        fetchRequest.predicate = NSPredicate(
+            format: "%K == %@ AND %K == %@",
+            #keyPath(ZMMessage.visibleInConversation),
+            self,
+            #keyPath(ZMMessage.sender),
+            user
+        )
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
 
         return self.managedObjectContext?.fetchOrAssert(request: fetchRequest).first

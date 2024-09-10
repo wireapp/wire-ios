@@ -38,7 +38,8 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         featureRepository: FeatureRepositoryInterface,
         featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
-        accountId: UUID) {
+        accountId: UUID
+    ) {
         self.featureRepository = featureRepository
         self.featureRepositoryContext = featureRepositoryContext
         self.recurringActionService = recurringActionService
@@ -72,8 +73,10 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
                 let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
-                NotificationCenter.default.post(name: .featureDidChangeNotification,
-                                                object: notificationObject)
+                NotificationCenter.default.post(
+                    name: .featureDidChangeNotification,
+                    object: notificationObject
+                )
             }
         }
 

@@ -75,10 +75,12 @@ public class DiskDatabaseTest: ZMTBaseTest {
 
     private func createDatabase() {
         let account = Account(userName: "", userIdentifier: accountId)
-        coreDataStack = CoreDataStack(account: account,
-                                      applicationContainer: sharedContainerURL,
-                                      inMemoryStore: false,
-                                      dispatchGroup: dispatchGroup)
+        coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         coreDataStack.loadStores { error in
             XCTAssertNil(error)
@@ -91,7 +93,11 @@ public class DiskDatabaseTest: ZMTBaseTest {
     }
 
     private func cleanUp() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }

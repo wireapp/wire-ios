@@ -42,7 +42,10 @@ extension SLComposeServiceViewController {
      * - parameter displayMode: The special mode in which the preview should displayed, if any.
      */
 
-    func fetchMainAttachmentPreview(_ completionHandler: @escaping (_ item: PreviewItem?, _ displayMode: PreviewDisplayMode?) -> Void) {
+    func fetchMainAttachmentPreview(_ completionHandler: @escaping (
+        _ item: PreviewItem?,
+        _ displayMode: PreviewDisplayMode?
+    ) -> Void) {
         func completeTask(_ result: PreviewItem?, _ preferredDisplayMode: PreviewDisplayMode?) {
             DispatchQueue.main.async { completionHandler(result, preferredDisplayMode) }
         }
@@ -55,7 +58,8 @@ extension SLComposeServiceViewController {
             }
 
             let numberOfAttachments = attachments.values.reduce(0) { $0 + $1.count }
-            let defaultDisplayMode: PreviewDisplayMode? = numberOfAttachments > 1 ? .mixed(numberOfAttachments, nil) : nil
+            let defaultDisplayMode: PreviewDisplayMode? = numberOfAttachments > 1 ? .mixed(numberOfAttachments, nil) :
+                nil
 
             switch attachmentType {
             case .walletPass, .image:
@@ -114,30 +118,38 @@ extension SLComposeServiceViewController {
      * This method generally works for movies, photos, wallet passes. It does not generate any preview for items shared from the iCloud drive app.
      */
 
-    private func loadSystemPreviewForAttachment(_ item: NSItemProvider, type: AttachmentType, completionHandler: @escaping (PreviewItem, PreviewDisplayMode?) -> Void) {
-        item.loadPreviewImage(options: [NSItemProviderPreferredImageSizeKey: PreviewDisplayMode.pixelSize]) { container, error in
-            func useFallbackIcon() {
-                let fallbackIcon = self.fallbackIcon(forAttachment: item, ofType: type)
-                completionHandler(.placeholder(fallbackIcon), .placeholder)
-            }
+    private func loadSystemPreviewForAttachment(
+        _ item: NSItemProvider,
+        type: AttachmentType,
+        completionHandler: @escaping (PreviewItem, PreviewDisplayMode?) -> Void
+    ) {
+        item
+            .loadPreviewImage(options: [
+                NSItemProviderPreferredImageSizeKey: PreviewDisplayMode
+                    .pixelSize,
+            ]) { container, error in
+                func useFallbackIcon() {
+                    let fallbackIcon = self.fallbackIcon(forAttachment: item, ofType: type)
+                    completionHandler(.placeholder(fallbackIcon), .placeholder)
+                }
 
-            guard error == nil else {
-                useFallbackIcon()
-                return
-            }
-
-            if let image = container as? UIImage {
-                completionHandler(PreviewItem.image(image), nil)
-            } else if let data = container as? Data {
-                guard let image = UIImage(data: data) else {
+                guard error == nil else {
                     useFallbackIcon()
                     return
                 }
-                completionHandler(PreviewItem.image(image), nil)
-            } else {
-                useFallbackIcon()
+
+                if let image = container as? UIImage {
+                    completionHandler(PreviewItem.image(image), nil)
+                } else if let data = container as? Data {
+                    guard let image = UIImage(data: data) else {
+                        useFallbackIcon()
+                        return
+                    }
+                    completionHandler(PreviewItem.image(image), nil)
+                } else {
+                    useFallbackIcon()
+                }
             }
-        }
     }
 
     /// Returns the placeholder icon for the attachment of the specified type.

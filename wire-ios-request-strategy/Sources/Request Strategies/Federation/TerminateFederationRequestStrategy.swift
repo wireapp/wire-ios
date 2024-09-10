@@ -79,8 +79,10 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
                payload.domains.count == 2,
                let firstDomain = payload.domains.first,
                let secondDomain = payload.domains.last {
-                federationTerminationManager.handleFederationTerminationBetween(firstDomain,
-                                                                                otherDomain: secondDomain)
+                federationTerminationManager.handleFederationTerminationBetween(
+                    firstDomain,
+                    otherDomain: secondDomain
+                )
             }
 
         default:

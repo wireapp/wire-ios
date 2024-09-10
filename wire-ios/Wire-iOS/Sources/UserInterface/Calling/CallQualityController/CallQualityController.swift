@@ -130,7 +130,13 @@ class CallQualityController: NSObject {
 // MARK: - Call State
 
 extension CallQualityController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         guard canPresentCallQualitySurvey else { return }
         let eventDate = Date()
 

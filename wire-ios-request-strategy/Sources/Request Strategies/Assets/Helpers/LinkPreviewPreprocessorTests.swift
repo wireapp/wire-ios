@@ -28,7 +28,11 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     var downloadLinkPreviewsCallCount = 0
     var excludedRanges: [NSRange] = []
 
-    func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
+    func downloadLinkPreviews(
+        inText text: String,
+        excluding: [NSRange],
+        completion: @escaping ([LinkMetadata]) -> Void
+    ) {
         downloadLinkPreviewsCallCount += 1
         excludedRanges = excluding
         completion(nextResult)
@@ -53,7 +57,12 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func createMessage(text: String = "text message 123", mentions: [Mention] = [], state: ZMLinkPreviewState = .waitingToBeProcessed, isEphemeral: Bool = false) -> ZMClientMessage {
+    func createMessage(
+        text: String = "text message 123",
+        mentions: [Mention] = [],
+        state: ZMLinkPreviewState = .waitingToBeProcessed,
+        isEphemeral: Bool = false
+    ) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
@@ -64,7 +73,11 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
         return message
     }
 
-    func assertThatItProcessesMessageWithLinkPreviewState(_ state: ZMLinkPreviewState, shouldProcess: Bool = false, line: UInt = #line) {
+    func assertThatItProcessesMessageWithLinkPreviewState(
+        _ state: ZMLinkPreviewState,
+        shouldProcess: Bool = false,
+        line: UInt = #line
+    ) {
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let message = self.createMessage(state: state)
@@ -76,7 +89,12 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait {
             // THEN
             let callCount: Int = shouldProcess ? 1 : 0
-            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, callCount, "Failure processing state \(state.rawValue)", line: line)
+            XCTAssertEqual(
+                self.mockDetector.downloadLinkPreviewsCallCount,
+                callCount,
+                "Failure processing state \(state.rawValue)",
+                line: line
+            )
         }
     }
 }
@@ -94,7 +112,12 @@ extension LinkPreviewPreprocessorTests {
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            preview = LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -121,7 +144,12 @@ extension LinkPreviewPreprocessorTests {
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            self.mockDetector.nextResult = [LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)]
+            self.mockDetector.nextResult = [LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )]
             message = self.createMessage()
 
             // WHEN
@@ -184,7 +212,10 @@ extension LinkPreviewPreprocessorTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let text = "@john - www.sunet.se hello"
-            let message = self.createMessage(text: text, mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)])
+            let message = self.createMessage(
+                text: text,
+                mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)]
+            )
 
             // WHEN
             self.sut.processMessage(message)
@@ -232,7 +263,12 @@ extension LinkPreviewPreprocessorTests {
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            preview = LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -262,7 +298,12 @@ extension LinkPreviewPreprocessorTests {
         self.syncMOC.performGroupedAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            let preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            let preview = LinkMetadata(
+                originalURLString: "example.com",
+                permanentURLString: URL,
+                resolvedURLString: URL,
+                offset: 0
+            )
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]

@@ -19,8 +19,10 @@
 import UIKit
 
 extension UIUserInterfaceSizeClass {
-    func toggle(compactConstraints: [NSLayoutConstraint],
-                regularConstraints: [NSLayoutConstraint]) {
+    func toggle(
+        compactConstraints: [NSLayoutConstraint],
+        regularConstraints: [NSLayoutConstraint]
+    ) {
         switch self {
         case .regular:
             compactConstraints.forEach { $0.isActive = false }

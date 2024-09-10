@@ -31,7 +31,10 @@ final class ConnectRequestCell: UITableViewCell {
 
             connectRequestViewController?.view.removeFromSuperview()
 
-            let incomingConnectionViewController = IncomingConnectionViewController(userSession: ZMUserSession.shared(), user: user)
+            let incomingConnectionViewController = IncomingConnectionViewController(
+                userSession: ZMUserSession.shared(),
+                user: user
+            )
 
             incomingConnectionViewController.onAction = { [weak self] action in
                 switch action {

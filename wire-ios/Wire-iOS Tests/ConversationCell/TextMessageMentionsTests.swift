@@ -69,8 +69,10 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         let messageText = "@Bruno"
         let mention = Mention(range: NSRange(location: 0, length: 6), user: otherUser)
 
-        verify(message: createMessage(messageText: messageText, mentions: [mention]),
-               allColorSchemes: true)
+        verify(
+            message: createMessage(messageText: messageText, mentions: [mention]),
+            allColorSchemes: true
+        )
     }
 
     func testThatItRendersMentions() {
@@ -128,10 +130,14 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         selfUser.name = "Tyler Durden"
         selfUser.initials = "TD"
         let mention = Mention(range: NSRange(location: 219, length: 6), user: selfUser)
-        verify(message: createMessage(messageText: messageText,
-                                      mentions: [mention]),
-               waitForTextViewToLoad: true,
-               snapshotBackgroundColor: .black)
+        verify(
+            message: createMessage(
+                messageText: messageText,
+                mentions: [mention]
+            ),
+            waitForTextViewToLoad: true,
+            snapshotBackgroundColor: .black
+        )
     }
 
     func testThatItRendersMentions_InMarkdown() {

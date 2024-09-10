@@ -42,7 +42,11 @@ extension ConversationListViewController {
 
         let user = ZMUser.selfUser(inUserSession: session)
 
-        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
+        let accountView = AccountViewBuilder(
+            account: viewModel.account,
+            user: user,
+            displayContext: .conversationListHeader
+        ).build()
         accountView.unreadCountStyle = .current
         accountView.autoUpdateSelection = false
 
@@ -144,7 +148,8 @@ extension ConversationListViewController {
             imageViewContainer.widthAnchor.constraint(equalTo: imageViewContainer.heightAnchor),
 
             imageView.centerXAnchor.constraint(equalTo: imageViewContainer.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor)])
+            imageView.centerYAnchor.constraint(equalTo: imageViewContainer.centerYAnchor),
+        ])
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentLegalHoldInfo))
         imageViewContainer.addGestureRecognizer(tapGestureRecognizer)

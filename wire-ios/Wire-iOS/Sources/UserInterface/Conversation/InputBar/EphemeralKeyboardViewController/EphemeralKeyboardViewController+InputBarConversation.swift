@@ -42,7 +42,10 @@ extension InputBarConversation {
     ///   - color: Indicates the color for the icons
     /// - Returns: An UIImage as the icon with the proper icon
 
-    private func timeoutImage(for timeout: MessageDestructionTimeoutValue, withColor color: UIColor = UIColor.accent()) -> UIImage? {
+    private func timeoutImage(
+        for timeout: MessageDestructionTimeoutValue,
+        withColor color: UIColor = UIColor.accent()
+    ) -> UIImage? {
         guard timeout != .none else { return nil }
         if timeout.isYears { return StyleKitIcon.timeoutYear.makeImage(size: 64, color: color) }
         if timeout.isWeeks { return StyleKitIcon.timeoutWeek.makeImage(size: 64, color: color) }

@@ -30,8 +30,10 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
     private enum Option: Int, CaseIterable {
         case notifications = 0, guests, services, timeout
 
-        func accessible(in conversation: GroupDetailsConversationType,
-                        by user: UserType) -> Bool {
+        func accessible(
+            in conversation: GroupDetailsConversationType,
+            by user: UserType
+        ) -> Bool {
             switch self {
             case .notifications: user.canModifyNotificationSettings(in: conversation)
             case .guests:        user.canModifyAccessControlSettings(in: conversation)
@@ -91,13 +93,23 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         options.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let option = options[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: option.cellReuseIdentifier, for: indexPath) as! GroupDetailsDisclosureOptionsCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: option.cellReuseIdentifier,
+            for: indexPath
+        ) as! GroupDetailsDisclosureOptionsCell
 
         cell.configure(with: conversation)
         cell.showSeparator = indexPath.row < options.count - 1

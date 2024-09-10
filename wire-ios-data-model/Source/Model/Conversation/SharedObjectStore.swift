@@ -159,7 +159,11 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         }
     }
 
-    public func unarchiver(_ unarchiver: NSKeyedUnarchiver, cannotDecodeObjectOfClassName name: String, originalClasses classNames: [String]) -> Swift.AnyClass? {
+    public func unarchiver(
+        _ unarchiver: NSKeyedUnarchiver,
+        cannotDecodeObjectOfClassName name: String,
+        originalClasses classNames: [String]
+    ) -> Swift.AnyClass? {
         let oldModulePrefix = "ZMCDataModel"
         if let modulePrefixRange = name.range(of: oldModulePrefix) {
             let fixedName = name.replacingCharacters(in: modulePrefixRange, with: "WireDataModel")

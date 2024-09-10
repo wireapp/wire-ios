@@ -24,15 +24,20 @@ extension UIAlertController {
     }
 
     /// We call this method when user decides to add a custom timeout for their messages
-    static func requestCustomTimeInterval(over controller: UIViewController,
-                                          with completion: @escaping (Result<TimeInterval, Error>) -> Void) {
+    static func requestCustomTimeInterval(
+        over controller: UIViewController,
+        with completion: @escaping (Result<TimeInterval, Error>) -> Void
+    ) {
         let alertController = UIAlertController(title: "Custom timer", message: nil, preferredStyle: .alert)
         alertController.addTextField { (textField: UITextField) in
             textField.keyboardType = .decimalPad
             textField.placeholder = "Time interval in seconds"
         }
 
-        let confirmAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak alertController] _ in
+        let confirmAction = UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ) { [weak alertController] _ in
             guard let input = alertController?.textFields?.first,
                   let inputText = input.text,
                   let selectedTimeInterval = TimeInterval(inputText) else {

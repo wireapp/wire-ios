@@ -107,6 +107,9 @@ class KeychainManagerTests: XCTestCase {
         try KeychainManager.deleteItem(item)
 
         // Then fetching the key throws Error
-        XCTAssertThrowsError(try KeychainManager.fetchItem(item) as Data, "Deleted item should not supposed to fetch again.")
+        XCTAssertThrowsError(
+            try KeychainManager.fetchItem(item) as Data,
+            "Deleted item should not supposed to fetch again."
+        )
     }
 }

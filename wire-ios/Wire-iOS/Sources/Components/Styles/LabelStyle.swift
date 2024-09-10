@@ -25,22 +25,28 @@ struct LabelStyle {
 
     static let footerLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textSectionFooter)
+        textColor: SemanticColors.Label.textSectionFooter
+    )
     static let headerLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textSectionHeader)
+        textColor: SemanticColors.Label.textSectionHeader
+    )
     static let primaryCellLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textDefault)
+        textColor: SemanticColors.Label.textDefault
+    )
     static let secondaryCellLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textCellSubtitle)
+        textColor: SemanticColors.Label.textCellSubtitle
+    )
     static let dateInConversationLabel: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.Label.textDefault)
+        textColor: SemanticColors.Label.textDefault
+    )
     static let searchBarPlaceholder: Self = LabelStyle(
         backgroundColor: .clear,
-        textColor: SemanticColors.SearchBar.textInputViewPlaceholder)
+        textColor: SemanticColors.SearchBar.textInputViewPlaceholder
+    )
 }
 
 extension UILabel: Stylable {

@@ -206,10 +206,12 @@ extension FeatureTests {
 
 extension Feature {
     @discardableResult
-    static func insert(name: Name,
-                       status: Status,
-                       config: Data?,
-                       context: NSManagedObjectContext) -> Feature {
+    static func insert(
+        name: Name,
+        status: Status,
+        config: Data?,
+        context: NSManagedObjectContext
+    ) -> Feature {
         let feature = Feature.insertNewObject(in: context)
         feature.name = name
         feature.status = status

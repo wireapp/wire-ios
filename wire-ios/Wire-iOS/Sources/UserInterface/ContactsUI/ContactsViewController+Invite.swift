@@ -34,7 +34,10 @@ extension ContactsViewController {
     @objc
     func sendIndirectInvite(_ sender: UIButton) {
         let shareItemProvider = ShareItemProvider(placeholderItem: "")
-        let activityController = UIActivityViewController(activityItems: [shareItemProvider], applicationActivities: nil)
+        let activityController = UIActivityViewController(
+            activityItems: [shareItemProvider],
+            applicationActivities: nil
+        )
         activityController.excludedActivityTypes = [UIActivity.ActivityType.airDrop]
         if let popoverPresentationController = activityController.popoverPresentationController {
             let margin = 2 * fmin(sender.frame.origin.x, sender.frame.origin.y)
@@ -127,9 +130,13 @@ extension ContactsViewController {
             })
         }
 
-        actions.append(UIAlertAction(title: L10n.Localizable.ContactsUi.InviteSheet.cancelButtonTitle, style: .cancel) { _ in
-            chooseContactDetailController.dismiss(animated: true)
-        })
+        actions
+            .append(UIAlertAction(
+                title: L10n.Localizable.ContactsUi.InviteSheet.cancelButtonTitle,
+                style: .cancel
+            ) { _ in
+                chooseContactDetailController.dismiss(animated: true)
+            })
 
         actions.forEach(chooseContactDetailController.addAction)
         return chooseContactDetailController

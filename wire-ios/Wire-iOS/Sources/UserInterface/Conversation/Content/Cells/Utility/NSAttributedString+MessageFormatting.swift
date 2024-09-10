@@ -50,7 +50,8 @@ extension NSAttributedString {
     fileprivate static func defaultParagraphStyle() -> NSParagraphStyle {
         let paragraphStyle = NSMutableParagraphStyle()
 
-        paragraphStyle.minimumLineHeight = 22 * UIFont.wr_preferredContentSizeMultiplier(for: UIApplication.shared.preferredContentSizeCategory)
+        paragraphStyle.minimumLineHeight = 22 * UIFont
+            .wr_preferredContentSizeMultiplier(for: UIApplication.shared.preferredContentSizeCategory)
         paragraphStyle.paragraphSpacing = CGFloat.MessageCell.paragraphSpacing
 
         return paragraphStyle
@@ -118,7 +119,11 @@ extension NSAttributedString {
         }
 
         markdownText.removeAttribute(.link, range: NSRange(location: 0, length: markdownText.length))
-        markdownText.addAttribute(.foregroundColor, value: SemanticColors.Label.textDefault, range: NSRange(location: 0, length: markdownText.length))
+        markdownText.addAttribute(
+            .foregroundColor,
+            value: SemanticColors.Label.textDefault,
+            range: NSRange(location: 0, length: markdownText.length)
+        )
         return markdownText
     }
 
@@ -127,9 +132,11 @@ extension NSAttributedString {
         var plainText = message.messageText ?? ""
 
         guard !isObfuscated else {
-            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont(name: "RedactedScript-Regular", size: 18)!,
-                                                             .foregroundColor: UIColor.accent(),
-                                                             .paragraphStyle: paragraphStyle]
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont(name: "RedactedScript-Regular", size: 18)!,
+                .foregroundColor: UIColor.accent(),
+                .paragraphStyle: paragraphStyle,
+            ]
             return NSAttributedString(string: plainText, attributes: attributes)
         }
 
@@ -185,7 +192,10 @@ extension NSMutableAttributedString {
     }
 
     func removeTrailingWhitespace() {
-        let trailingWhitespaceRange = mutableString.rangeOfCharacter(from: .whitespacesAndNewlines, options: [.anchored, .backwards])
+        let trailingWhitespaceRange = mutableString.rangeOfCharacter(
+            from: .whitespacesAndNewlines,
+            options: [.anchored, .backwards]
+        )
 
         if trailingWhitespaceRange.location != NSNotFound {
             mutableString.deleteCharacters(in: trailingWhitespaceRange)
@@ -196,7 +206,12 @@ extension NSMutableAttributedString {
         let text = self.string
 
         guard
-            let linkPreviewRange = text.range(of: linkPreview.originalURLString, options: .backwards, range: nil, locale: nil),
+            let linkPreviewRange = text.range(
+                of: linkPreview.originalURLString,
+                options: .backwards,
+                range: nil,
+                locale: nil
+            ),
             linkPreviewRange.upperBound == text.endIndex
         else {
             return

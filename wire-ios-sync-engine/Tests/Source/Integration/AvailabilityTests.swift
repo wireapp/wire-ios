@@ -51,11 +51,15 @@ final class AvailabilityTests: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let expectedRequests = ["/broadcast/otr/messages",                                      // attempt broadcast status (server responds with missing clients)
-                                "/users/prekeys",                                               // establish sessions with missing clients
-                                "/users/\(user1.identifier)/clients/\(client1.identifier!)",    // fetch client details
-                                "/users/\(user2.identifier)/clients/\(client2.identifier!)",    // fetch client details
-                                "/broadcast/otr/messages"]                                      // broadcast status
+        let expectedRequests = [
+            "/broadcast/otr/messages",
+            // attempt broadcast status (server responds with missing clients)
+            "/users/prekeys",
+            // establish sessions with missing clients
+            "/users/\(user1.identifier)/clients/\(client1.identifier!)",    // fetch client details
+            "/users/\(user2.identifier)/clients/\(client2.identifier!)",    // fetch client details
+            "/broadcast/otr/messages",
+        ]                                      // broadcast status
 
         XCTAssertNil(selfUser.modifiedKeys)
         XCTAssertEqual(expectedRequests.count, mockTransportSession.receivedRequests().count)
@@ -78,7 +82,8 @@ final class AvailabilityTests: IntegrationTest {
 
         // then
         let request = mockTransportSession.receivedRequests().last!
-        guard let data = request.binaryData, let message = try? Proteus_NewOtrMessage(serializedData: data) else { return XCTFail() }
+        guard let data = request.binaryData,
+              let message = try? Proteus_NewOtrMessage(serializedData: data) else { return XCTFail() }
         let connectedAndTeamMemberUUIDs = [user1, user2, user3, user4].compactMap { user(for: $0)?.remoteIdentifier }
         let recipientsUUIDs = message.recipients.compactMap { UUID(data: $0.user.uuid) }
 

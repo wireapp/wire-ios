@@ -183,7 +183,12 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     @discardableResult
     @objc(insertNewSelfClientInManagedObjectContext:selfUser:model:label:)
-    public static func insertNewSelfClient(in managedObjectContext: NSManagedObjectContext, selfUser: ZMUser, model: String, label: String) -> UserClient {
+    public static func insertNewSelfClient(
+        in managedObjectContext: NSManagedObjectContext,
+        selfUser: ZMUser,
+        model: String,
+        label: String
+    ) -> UserClient {
         WireLogger.userClient.debug("inserting new self client in context \(managedObjectContext)")
 
         let userClient = UserClient.insertNewObject(in: managedObjectContext)
@@ -195,11 +200,20 @@ public class UserClient: ZMManagedObject, UserClientType {
         return userClient
     }
 
-    public static func fetchUserClient(withRemoteId remoteIdentifier: String, forUser user: ZMUser, createIfNeeded: Bool) -> UserClient? {
-        precondition(!createIfNeeded || user.managedObjectContext!.zm_isSyncContext, "clients can only be created on the syncContext")
+    public static func fetchUserClient(
+        withRemoteId remoteIdentifier: String,
+        forUser user: ZMUser,
+        createIfNeeded: Bool
+    ) -> UserClient? {
+        precondition(
+            !createIfNeeded || user.managedObjectContext!.zm_isSyncContext,
+            "clients can only be created on the syncContext"
+        )
 
         guard let context = user.managedObjectContext else {
-            fatal("User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object).")
+            fatal(
+                "User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object)."
+            )
         }
 
         let relationClients = user.clients.filter { $0.remoteIdentifier == remoteIdentifier }
@@ -208,7 +222,10 @@ public class UserClient: ZMManagedObject, UserClientType {
             WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
         }
 
-        requireInternal(relationClients.count <= 1, "Detected duplicate clients: \(relationClients.map(\.safeForLoggingDescription))")
+        requireInternal(
+            relationClients.count <= 1,
+            "Detected duplicate clients: \(relationClients.map(\.safeForLoggingDescription))"
+        )
 
         if let client = relationClients.first {
             return client
@@ -302,7 +319,8 @@ public class UserClient: ZMManagedObject, UserClientType {
         get async {
             guard
                 let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
-                let proteusProvider = await managedObjectContext?.perform({ self.managedObjectContext?.proteusProvider })
+                let proteusProvider = await managedObjectContext?
+                .perform({ self.managedObjectContext?.proteusProvider })
             else {
                 return false
             }
@@ -360,12 +378,15 @@ public class UserClient: ZMManagedObject, UserClientType {
     public func resolveDecryptionFailedSystemMessages() {
         let request = NSBatchUpdateRequest(entityName: ZMSystemMessage.entityName())
 
-        request.predicate = NSPredicate(format: "%K = %d AND %K = %@",
-                                        ZMMessageSystemMessageTypeKey,
-                                        ZMSystemMessageType.decryptionFailed.rawValue,
-                                        ZMMessageSenderClientIDKey,
-                                        remoteIdentifier!)
-        request.propertiesToUpdate = [ZMMessageSystemMessageTypeKey: ZMSystemMessageType.decryptionFailedResolved.rawValue]
+        request.predicate = NSPredicate(
+            format: "%K = %d AND %K = %@",
+            ZMMessageSystemMessageTypeKey,
+            ZMSystemMessageType.decryptionFailed.rawValue,
+            ZMMessageSenderClientIDKey,
+            remoteIdentifier!
+        )
+        request
+            .propertiesToUpdate = [ZMMessageSystemMessageTypeKey: ZMSystemMessageType.decryptionFailedResolved.rawValue]
         request.resultType = .updatedObjectIDsResultType
         managedObjectContext?.executeBatchUpdateRequestOrAssert(request)
     }
@@ -383,7 +404,10 @@ public class UserClient: ZMManagedObject, UserClientType {
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 
 extension UserClient {
-    @objc public static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
+    @objc public static func fetchExistingUserClient(
+        with remoteIdentifier: String,
+        in context: NSManagedObjectContext
+    ) -> UserClient? {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
         fetchRequest.fetchLimit = 1
@@ -449,16 +473,19 @@ extension UserClient {
         }
 
         if !client.isSelfClient() {
-            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
-                                                 ed448: mlsEd448,
-                                                 p256: mlsP256,
-                                                 p384: mlsP384,
-                                                 p521: mlsP521)
+            client.mlsPublicKeys = MLSPublicKeys(
+                ed25519: mlsEd25519,
+                ed448: mlsEd448,
+                p256: mlsP256,
+                p384: mlsP384,
+                p521: mlsP521
+            )
         }
 
         if let selfClient = selfUser.selfClient() {
             if client.remoteIdentifier != selfClient.remoteIdentifier, isNewClient {
-                if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
+                if let selfClientActivationdate = selfClient.activationDate,
+                   client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
                     // swiftlint:disable:next todo_requires_jira_link
                     // TODO: Check this flag
 
@@ -501,7 +528,9 @@ extension UserClient {
         }
         let selfUser = ZMUser.selfUser(in: context)
         guard self.user == selfUser else {
-            fatal("The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.safeForLoggingDescription))")
+            fatal(
+                "The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.safeForLoggingDescription))"
+            )
         }
         guard selfUser.selfClient() != self else {
             fatal("Attempt to delete the self client. This should never happen!")
@@ -608,14 +637,16 @@ extension UserClient {
         proteusProviding: ProteusProviding
     ) async -> Bool {
         await proteusProviding.performAsync { proteusService in
-            await establishSession(through: proteusService,
-                                   sessionId: sessionId,
-                                   preKey: preKey
+            await establishSession(
+                through: proteusService,
+                sessionId: sessionId,
+                preKey: preKey
             )
         } withKeyStore: { keystore in
-            establishSession(through: keystore,
-                             sessionId: sessionId,
-                             preKey: preKey
+            establishSession(
+                through: keystore,
+                sessionId: sessionId,
+                preKey: preKey
             )
         }
     }
@@ -628,7 +659,11 @@ extension UserClient {
         do {
             // swiftlint:disable:next todo_requires_jira_link
             // TODO: check if we should delete session if it exists before creating new one
-            let proteusSessionId = ProteusSessionID(domain: sessionId.domain, userID: sessionId.userId, clientID: sessionId.clientId)
+            let proteusSessionId = ProteusSessionID(
+                domain: sessionId.domain,
+                userID: sessionId.userId,
+                clientID: sessionId.clientId
+            )
             try await proteusService.establishSession(id: proteusSessionId, fromPrekey: preKey)
             return true
         } catch {
@@ -765,7 +800,11 @@ extension UserClient {
     }
 
     public func updateSecurityLevelAfterDiscovering(_ clients: Set<UserClient>) {
-        changeSecurityLevel(.clientDiscovered, clients: clients, causedBy: clients.compactMap(\.discoveredByMessage).first)
+        changeSecurityLevel(
+            .clientDiscovered,
+            clients: clients,
+            causedBy: clients.compactMap(\.discoveredByMessage).first
+        )
     }
 
     func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
@@ -786,7 +825,11 @@ extension UserClient {
         }
     }
 
-    func changeSecurityLevel(_ securityChangeType: SecurityChangeType, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {
+    func changeSecurityLevel(
+        _ securityChangeType: SecurityChangeType,
+        clients: Set<UserClient>,
+        causedBy: ZMOTRMessage?
+    ) {
         let conversations = activeConversationsForUserOfClients(clients)
         for conversation in conversations {
             if !conversation.isReadOnly {
@@ -794,7 +837,11 @@ extension UserClient {
                     guard let user = client.user else { return false }
                     return conversation.localParticipants.contains(user)
                 }
-                securityChangeType.changeSecurityLevel(conversation, clients: Set(clientsInConversation), causedBy: causedBy)
+                securityChangeType.changeSecurityLevel(
+                    conversation,
+                    clients: Set(clientsInConversation),
+                    causedBy: causedBy
+                )
             }
         }
     }
@@ -856,8 +903,10 @@ extension UserClient {
             return nil
         }
 
-        return EncryptionSessionIdentifier(userId: userIdentifier.uuidString,
-                                           clientId: clientIdentifier)
+        return EncryptionSessionIdentifier(
+            userId: userIdentifier.uuidString,
+            clientId: clientIdentifier
+        )
     }
 
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
@@ -870,9 +919,11 @@ extension UserClient {
             return nil
         }
 
-        return EncryptionSessionIdentifier(domain: domain,
-                                           userId: userIdentifier.uuidString,
-                                           clientId: clientIdentifier)
+        return EncryptionSessionIdentifier(
+            domain: domain,
+            userId: userIdentifier.uuidString,
+            clientId: clientIdentifier
+        )
     }
 
     /// Migrates from old session identifier to new session identifier if needed.
@@ -885,8 +936,10 @@ extension UserClient {
             return
         }
 
-        sessionDirectory.migrateSession(from: sessionIdentifier_V1,
-                                        to: sessionIdentifier)
+        sessionDirectory.migrateSession(
+            from: sessionIdentifier_V1,
+            to: sessionIdentifier
+        )
     }
 
     public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
@@ -897,8 +950,10 @@ extension UserClient {
             return
         }
 
-        sessionDirectory.migrateSession(from: sessionIdentifier_V2.rawValue,
-                                        to: sessionIdentifier)
+        sessionDirectory.migrateSession(
+            from: sessionIdentifier_V2.rawValue,
+            to: sessionIdentifier
+        )
     }
 }
 

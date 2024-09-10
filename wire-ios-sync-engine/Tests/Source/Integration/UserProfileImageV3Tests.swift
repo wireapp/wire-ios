@@ -28,21 +28,56 @@ class UserProfileImageV3Tests: IntegrationTest {
     }
 
     func checkProfileImagesMatch(local: ZMUser, remote: MockUser, file: StaticString = #file, line: UInt = #line) {
-        XCTAssertNotNil(local.completeProfileAssetIdentifier, "Complete assetId should bet set on local user", file: file, line: line)
-        XCTAssertNotNil(local.previewProfileAssetIdentifier, "Preview assetId should bet set on local user", file: file, line: line)
+        XCTAssertNotNil(
+            local.completeProfileAssetIdentifier,
+            "Complete assetId should bet set on local user",
+            file: file,
+            line: line
+        )
+        XCTAssertNotNil(
+            local.previewProfileAssetIdentifier,
+            "Preview assetId should bet set on local user",
+            file: file,
+            line: line
+        )
 
-        guard let previewId = remote.previewProfileAssetIdentifier, let completeId = remote.completeProfileAssetIdentifier else { return }
+        guard let previewId = remote.previewProfileAssetIdentifier,
+              let completeId = remote.completeProfileAssetIdentifier else { return }
         let previewAsset = MockAsset(in: mockTransportSession.managedObjectContext, forID: previewId)
         let completeAsset = MockAsset(in: mockTransportSession.managedObjectContext, forID: completeId)
-        checkProfileImagesMatch(local: local, previewAsset: previewAsset, completeAsset: completeAsset, file: file, line: line)
+        checkProfileImagesMatch(
+            local: local,
+            previewAsset: previewAsset,
+            completeAsset: completeAsset,
+            file: file,
+            line: line
+        )
     }
 
-    func checkProfileImagesMatch(local: ZMUser, previewAsset: MockAsset?, completeAsset: MockAsset?, file: StaticString = #file, line: UInt = #line) {
+    func checkProfileImagesMatch(
+        local: ZMUser,
+        previewAsset: MockAsset?,
+        completeAsset: MockAsset?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         XCTAssertNotNil(completeAsset, "Complete asset should exist on server", file: file, line: line)
         XCTAssertNotNil(previewAsset, "Complete asset should exist on server", file: file, line: line)
 
-        XCTAssertEqual(local.previewProfileAssetIdentifier, previewAsset?.identifier, "Preview assetId should match remote assetId", file: file, line: line)
-        XCTAssertEqual(local.completeProfileAssetIdentifier, completeAsset?.identifier, "Complete assetId should match remote assetId", file: file, line: line)
+        XCTAssertEqual(
+            local.previewProfileAssetIdentifier,
+            previewAsset?.identifier,
+            "Preview assetId should match remote assetId",
+            file: file,
+            line: line
+        )
+        XCTAssertEqual(
+            local.completeProfileAssetIdentifier,
+            completeAsset?.identifier,
+            "Complete assetId should match remote assetId",
+            file: file,
+            line: line
+        )
     }
 
     func testThatSelfUserImagesAreUploadedWhenThereAreNone() {

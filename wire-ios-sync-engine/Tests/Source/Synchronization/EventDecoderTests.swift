@@ -188,7 +188,10 @@ extension EventDecoderTest {
 
         syncMOC.performGroupedBlock {
             // given
-            let event1 = self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: GenericMessage(content: Calling(content: "123")))
+            let event1 = self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: GenericMessage(content: Calling(content: "123"))
+            )
             let event2 = self.eventStreamEvent()
 
             self.insert([event1, event2])
@@ -213,7 +216,11 @@ extension EventDecoderTest {
             // given
             let callingBessage = GenericMessage(content: Calling(content: "123"))
 
-            let event1 = self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: callingBessage, from: ZMUser.selfUser(in: self.syncMOC))
+            let event1 = self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: callingBessage,
+                from: ZMUser.selfUser(in: self.syncMOC)
+            )
             let event2 = self.eventStreamEvent()
 
             self.insert([event1, event2])
@@ -236,7 +243,10 @@ extension EventDecoderTest {
 
         syncMOC.performGroupedBlock {
             // given
-            let event1 = self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: GenericMessage(content: WireProtos.Availability(.away)))
+            let event1 = self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: GenericMessage(content: WireProtos.Availability(.away))
+            )
             let event2 = self.eventStreamEvent()
 
             self.insert([event1, event2])
@@ -366,11 +376,26 @@ extension EventDecoderTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!
     }
 
-    func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
+    func eventStreamEvent(
+        conversation: ZMConversation,
+        genericMessage: GenericMessage,
+        from user: ZMUser? = nil,
+        uuid: UUID? = nil
+    ) -> ZMUpdateEvent {
         var payload: ZMTransportData = if let user {
-            payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
+            payloadForMessage(
+                in: conversation,
+                type: EventConversationAddOTRMessage,
+                data: ["text": try? genericMessage.serializedData().base64EncodedString()],
+                time: nil,
+                from: user
+            )!
         } else {
-            payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!
+            payloadForMessage(
+                in: conversation,
+                type: EventConversationAddOTRMessage,
+                data: ["text": try? genericMessage.serializedData().base64EncodedString()]
+            )!
         }
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!
@@ -392,7 +417,11 @@ extension EventDecoderTest {
     func insert(_ events: [ZMUpdateEvent], startIndex: Int64 = 0) {
         eventMOC.performGroupedBlockAndWait {
             for (index, event) in events.enumerated() {
-                _ = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: Int64(startIndex) + Int64(index))
+                _ = StoredUpdateEvent.encryptAndCreate(
+                    event,
+                    managedObjectContext: self.eventMOC,
+                    index: Int64(startIndex) + Int64(index)
+                )
             }
 
             XCTAssert(self.eventMOC.saveOrRollback())

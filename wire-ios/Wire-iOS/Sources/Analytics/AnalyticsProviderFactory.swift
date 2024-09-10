@@ -47,7 +47,10 @@ final class AnalyticsProviderFactory: NSObject {
                 let appKey = Bundle.countlyAppKey,
                 let url = BackendEnvironment.shared.countlyURL
             else {
-                zmLog.error("Could not create Countly provider. Make sure COUNTLY_APP_KEY in .xcconfig is set and countlyURL exists in backend environment.")
+                zmLog
+                    .error(
+                        "Could not create Countly provider. Make sure COUNTLY_APP_KEY in .xcconfig is set and countlyURL exists in backend environment."
+                    )
                 return nil
             }
 

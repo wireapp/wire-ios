@@ -39,20 +39,30 @@ final class OperationLoopTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
         let accountId = UUID()
-        let directoryURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let directoryURL = try! FileManager.default.url(
+            for: .cachesDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
         let account = Account(userName: "", userIdentifier: accountId)
 
-        let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: directoryURL,
-                                          inMemoryStore: true,
-                                          dispatchGroup: dispatchGroup)
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: directoryURL,
+            inMemoryStore: true,
+            dispatchGroup: dispatchGroup
+        )
         coreDataStack.loadStores { error in
             XCTAssertNil(error)
         }
 
         self.coreDataStack = coreDataStack
-        self.sut = OperationLoop(userContext: coreDataStack.viewContext,
-                                 syncContext: coreDataStack.syncContext, callBackQueue: OperationQueue())
+        self.sut = OperationLoop(
+            userContext: coreDataStack.viewContext,
+            syncContext: coreDataStack.syncContext,
+            callBackQueue: OperationQueue()
+        )
     }
 
     override func tearDown() {

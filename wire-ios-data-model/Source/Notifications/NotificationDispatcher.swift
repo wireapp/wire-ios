@@ -260,7 +260,11 @@ import Foundation
 
     /// This can safely be called from any thread as it will switch to uiContext internally.
 
-    public static func notifyNonCoreDataChanges(objectID: NSManagedObjectID, changedKeys: [String], uiContext: NSManagedObjectContext) {
+    public static func notifyNonCoreDataChanges(
+        objectID: NSManagedObjectID,
+        changedKeys: [String],
+        uiContext: NSManagedObjectContext
+    ) {
         uiContext.performGroupedBlock {
             guard let uiMessage = try? uiContext.existingObject(with: objectID) else { return }
 
@@ -298,7 +302,10 @@ import Foundation
             managedObjectContext.conversationListObserverCenter
         }
 
-        managedObjectContext.conversationListObserverCenter.folderChanges(inserted: insertedLabels, deleted: deletedLabels)
+        managedObjectContext.conversationListObserverCenter.folderChanges(
+            inserted: insertedLabels,
+            deleted: deletedLabels
+        )
 
         let insertedConversations = modifiedObjects.inserted.compactMap { $0 as? ZMConversation }
         let deletedConversations = modifiedObjects.deleted.compactMap { $0 as? ZMConversation }

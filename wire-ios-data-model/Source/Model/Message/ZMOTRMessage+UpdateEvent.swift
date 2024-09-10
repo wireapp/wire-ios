@@ -20,22 +20,34 @@ import Foundation
 
 extension ZMOTRMessage {
     @objc
-    static func createOrUpdate(fromUpdateEvent updateEvent: ZMUpdateEvent,
-                               inManagedObjectContext moc: NSManagedObjectContext,
-                               prefetchResult: ZMFetchRequestBatchResult) -> ZMOTRMessage? {
+    static func createOrUpdate(
+        fromUpdateEvent updateEvent: ZMUpdateEvent,
+        inManagedObjectContext moc: NSManagedObjectContext,
+        prefetchResult: ZMFetchRequestBatchResult
+    ) -> ZMOTRMessage? {
         let selfUser = ZMUser.selfUser(in: moc)
 
         guard
             let senderID = updateEvent.senderUUID,
             let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
-            !isSelf(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier)
+            !isSelf(
+                conversation: conversation,
+                andIsSenderID: senderID,
+                differentFromSelfUserID: selfUser.remoteIdentifier
+            )
         else {
-            WireLogger.eventProcessing.debug("Illegal sender or conversation, abort processing.", attributes: updateEvent.logAttributes)
+            WireLogger.eventProcessing.debug(
+                "Illegal sender or conversation, abort processing.",
+                attributes: updateEvent.logAttributes
+            )
             return nil
         }
 
         guard !conversation.isForcedReadOnly else {
-            WireLogger.eventProcessing.warn("Ignoring incoming message in readonly conversation.", attributes: updateEvent.logAttributes)
+            WireLogger.eventProcessing.warn(
+                "Ignoring incoming message in readonly conversation.",
+                attributes: updateEvent.logAttributes
+            )
             return nil
         }
 
@@ -43,7 +55,10 @@ extension ZMOTRMessage {
             let message = GenericMessage(from: updateEvent),
             let content = message.content
         else {
-            WireLogger.eventProcessing.warn("Can't read protobuf, abort processing:\n\(updateEvent.payload)", attributes: updateEvent.logAttributes)
+            WireLogger.eventProcessing.warn(
+                "Can't read protobuf, abort processing:\n\(updateEvent.payload)",
+                attributes: updateEvent.logAttributes
+            )
             appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
             return nil
         }
@@ -56,7 +71,10 @@ extension ZMOTRMessage {
         ]
         WireLogger.eventProcessing.debug("Processing message", attributes: logAttributes)
         // Update the legal hold state in the conversation
-        conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
+        conversation.updateSecurityLevelIfNeededAfterReceiving(
+            message: message,
+            timestamp: updateEvent.timestamp ?? Date()
+        )
 
         if !message.knownMessage {
             UnknownMessageAnalyticsTracker.tagUnknownMessage(with: moc.analytics)
@@ -87,28 +105,60 @@ extension ZMOTRMessage {
             ZMUser.selfUser(in: moc).analyticsIdentifier = trackingIdentifier
 
         case .deleted:
-            ZMMessage.remove(remotelyDeletedMessage: message.deleted, inConversation: conversation, senderID: senderID, inContext: moc)
+            ZMMessage.remove(
+                remotelyDeletedMessage: message.deleted,
+                inConversation: conversation,
+                senderID: senderID,
+                inContext: moc
+            )
 
         case .reaction:
-            ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, creationDate: updateEvent.timestamp, inContext: moc)
+            ZMMessage.add(
+                reaction: message.reaction,
+                senderID: senderID,
+                conversation: conversation,
+                creationDate: updateEvent.timestamp,
+                inContext: moc
+            )
 
         case .confirmation:
-            ZMMessageConfirmation.createMessageConfirmations(message.confirmation, conversation: conversation, updateEvent: updateEvent)
+            ZMMessageConfirmation.createMessageConfirmations(
+                message.confirmation,
+                conversation: conversation,
+                updateEvent: updateEvent
+            )
 
         case .buttonActionConfirmation:
-            ZMClientMessage.updateButtonStates(withConfirmation: message.buttonActionConfirmation, forConversation: conversation, inContext: moc)
+            ZMClientMessage.updateButtonStates(
+                withConfirmation: message.buttonActionConfirmation,
+                forConversation: conversation,
+                inContext: moc
+            )
 
         case .edited:
-            return ZMClientMessage.editMessage(withEdit: message.edited, forConversation: conversation, updateEvent: updateEvent, inContext: moc, prefetchResult: prefetchResult)
+            return ZMClientMessage.editMessage(
+                withEdit: message.edited,
+                forConversation: conversation,
+                updateEvent: updateEvent,
+                inContext: moc,
+                prefetchResult: prefetchResult
+            )
 
         case .clientAction(.resetSession):
             let sender = ZMUser.fetchOrCreate(with: senderID, domain: nil, in: moc)
             guard
                 let senderClientID = updateEvent.senderClientID,
-                let senderClient = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: sender, createIfNeeded: true),
+                let senderClient = UserClient.fetchUserClient(
+                    withRemoteId: senderClientID,
+                    forUser: sender,
+                    createIfNeeded: true
+                ),
                 let timestamp = updateEvent.timestamp
             else {
-                WireLogger.eventProcessing.warn("clientAction resetSession did not create any message", attributes: logAttributes)
+                WireLogger.eventProcessing.warn(
+                    "clientAction resetSession did not create any message",
+                    attributes: logAttributes
+                )
                 return nil
             }
             conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
@@ -121,16 +171,21 @@ extension ZMOTRMessage {
                 conversation.shouldAdd(event: updateEvent),
                 let nonce = UUID(uuidString: message.messageID)
             else {
-                WireLogger.eventProcessing.warn("Dropping message because no nonce or for self conv", attributes: logAttributes)
+                WireLogger.eventProcessing.warn(
+                    "Dropping message because no nonce or for self conv",
+                    attributes: logAttributes
+                )
                 return nil
             }
 
             let messageClass: AnyClass = GenericMessage.entityClass(for: message)
-            var clientMessage = messageClass.fetch(withNonce: nonce,
-                                                   for: conversation,
-                                                   in: moc,
-                                                   prefetchResult: prefetchResult,
-                                                   assumeMissingIfNotPrefetched: true) as? ZMOTRMessage
+            var clientMessage = messageClass.fetch(
+                withNonce: nonce,
+                for: conversation,
+                in: moc,
+                prefetchResult: prefetchResult,
+                assumeMissingIfNotPrefetched: true
+            ) as? ZMOTRMessage
 
             guard !isZombieObject(clientMessage) else {
                 WireLogger.eventProcessing.warn("Dropping message because zombieObject", attributes: logAttributes)
@@ -153,7 +208,11 @@ extension ZMOTRMessage {
                 clientMessage?.senderClientID = updateEvent.senderClientID
                 clientMessage?.serverTimestamp = updateEvent.timestamp
 
-                if isGroup(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier) {
+                if isGroup(
+                    conversation: conversation,
+                    andIsSenderID: senderID,
+                    differentFromSelfUserID: selfUser.remoteIdentifier
+                ) {
                     let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
                     clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
                 }
@@ -161,8 +220,12 @@ extension ZMOTRMessage {
                 if let message = clientMessage {
                     prefetchResult.add([message])
                 }
-            } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID {
-                WireLogger.eventProcessing.warn("senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: updateEvent.senderClientID)))", attributes: logAttributes)
+            } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent
+                .senderClientID {
+                WireLogger.eventProcessing.warn(
+                    "senderClientID (\(String(describing: clientMessage?.senderClientID))) is missing or different from the update event's senderClientID (\(String(describing: updateEvent.senderClientID)))",
+                    attributes: logAttributes
+                )
                 return nil
             }
 
@@ -193,15 +256,27 @@ extension ZMOTRMessage {
         return message.isZombieObject
     }
 
-    private static func isSelf(conversation: ZMConversation, andIsSenderID senderID: UUID, differentFromSelfUserID selfUserID: UUID) -> Bool {
+    private static func isSelf(
+        conversation: ZMConversation,
+        andIsSenderID senderID: UUID,
+        differentFromSelfUserID selfUserID: UUID
+    ) -> Bool {
         conversation.isSelfConversation && senderID != selfUserID
     }
 
-    private static func isGroup(conversation: ZMConversation, andIsSenderID senderID: UUID, differentFromSelfUserID selfUserID: UUID) -> Bool {
+    private static func isGroup(
+        conversation: ZMConversation,
+        andIsSenderID senderID: UUID,
+        differentFromSelfUserID selfUserID: UUID
+    ) -> Bool {
         conversation.conversationType == .group && senderID != selfUserID
     }
 
-    private static func appendInvalidSystemMessage(forUpdateEvent event: ZMUpdateEvent, toConversation conversation: ZMConversation, inContext moc: NSManagedObjectContext) {
+    private static func appendInvalidSystemMessage(
+        forUpdateEvent event: ZMUpdateEvent,
+        toConversation conversation: ZMConversation,
+        inContext moc: NSManagedObjectContext
+    ) {
         guard let remoteId = event.senderUUID,
               let sender = ZMUser.fetch(with: remoteId, domain: nil, in: moc) else {
             return

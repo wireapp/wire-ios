@@ -93,7 +93,12 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
     private var text: String
     private let attachment: NSItemProvider?
 
-    init(conversation: WireShareEngine.Conversation, sharingSession: SharingSession, text: String, attachment: NSItemProvider? = nil) {
+    init(
+        conversation: WireShareEngine.Conversation,
+        sharingSession: SharingSession,
+        text: String,
+        attachment: NSItemProvider? = nil
+    ) {
         self.text = text
         self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
@@ -144,7 +149,10 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         let longestDimension: CGFloat = 1024
 
         // note: this doesn't seem to have any effect, but perhaps it's an iOS bug that will be fixed...
-        let options = [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(width: longestDimension, height: longestDimension))]
+        let options = [NSItemProviderPreferredImageSizeKey: NSValue(cgSize: CGSize(
+            width: longestDimension,
+            height: longestDimension
+        ))]
 
         // app extensions have severely limited memory resources & risk termination if they are too greedy. In order to
         // minimize memory consumption we must downscale the images being shared. Standard image scaling methods that
@@ -174,16 +182,20 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
             } else {
                 // if it fails, it will attach the content directly
 
-                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] image, error in
+                self?.attachment
+                    .loadItem(
+                        forTypeIdentifier: UTType.image.identifier,
+                        options: options
+                    ) { [weak self] image, error in
 
-                    error?.log(message: "Unable to load image from attachment")
+                        error?.log(message: "Unable to load image from attachment")
 
-                    if let image = image as? UIImage {
-                        self?.imageData = image.jpegData(compressionQuality: 0.9)
+                        if let image = image as? UIImage {
+                            self?.imageData = image.jpegData(compressionQuality: 0.9)
+                        }
+
+                        completion()
                     }
-
-                    completion()
-                }
             }
         }
     }
@@ -292,20 +304,24 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                     return completion()
                 }
 
-                self?.prepareForSending(withUTI: UTIString,
-                                        name: name,
-                                        data: data,
-                                        completion: prepareColsure)
+                self?.prepareForSending(
+                    withUTI: UTIString,
+                    name: name,
+                    data: data,
+                    completion: prepareColsure
+                )
             } else if let dataURL = data as? URL {
                 guard dataURL.fileSize ?? .max <= AccountManager.fileSizeLimitInBytes else {
                     self?.error = .fileSizeTooBig
                     return completion()
                 }
 
-                self?.prepareForSending(withUTI: UTIString,
-                                        name: name,
-                                        dataURL: dataURL,
-                                        completion: prepareColsure)
+                self?.prepareForSending(
+                    withUTI: UTIString,
+                    name: name,
+                    dataURL: dataURL,
+                    completion: prepareColsure
+                )
             } else {
                 completion()
             }
@@ -314,9 +330,11 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
     typealias SendingCompletion = (URL?, Error?) -> Void
 
-    private func convertVideoIfNeeded(UTI: String,
-                                      fileURL: URL,
-                                      completion: @escaping SendingCompletion) {
+    private func convertVideoIfNeeded(
+        UTI: String,
+        fileURL: URL,
+        completion: @escaping SendingCompletion
+    ) {
         if UTType(UTI)?.conforms(to: UTType.movie) ?? false {
             AVURLAsset.convertVideoToUploadFormat(at: fileURL) { url, _, error in
                 completion(url, error)
@@ -332,10 +350,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     ///   - name: file name
     ///   - dataURL: data URL
     ///   - completion: completion handler
-    private func prepareForSending(withUTI UTI: String,
-                                   name: String?,
-                                   dataURL: URL,
-                                   completion: @escaping SendingCompletion) {
+    private func prepareForSending(
+        withUTI UTI: String,
+        name: String?,
+        dataURL: URL,
+        completion: @escaping SendingCompletion
+    ) {
         guard let fileName = nameForFile(withUTI: UTI, name: name) else { return completion(nil, nil) }
 
         do {
@@ -357,10 +377,12 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     /// Process data to the right format to be sent
-    private func prepareForSending(withUTI UTI: String,
-                                   name: String?,
-                                   data: Data,
-                                   completion: @escaping (URL?, Error?) -> Void) {
+    private func prepareForSending(
+        withUTI UTI: String,
+        name: String?,
+        data: Data,
+        completion: @escaping (URL?, Error?) -> Void
+    ) {
         guard let fileName = nameForFile(withUTI: UTI, name: name) else { return completion(nil, nil) }
 
         let fileManager = FileManager.default

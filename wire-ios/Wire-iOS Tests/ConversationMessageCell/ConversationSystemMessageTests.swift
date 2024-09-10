@@ -60,11 +60,15 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
 
     func testAddParticipant_Service() {
         let mockConversation = SwiftMockConversation()
-        let message = MockMessageFactory.systemMessage(with: .participantsAdded,
-                                                       conversation: mockConversation,
-                                                       users: 1, clients: 0)!
+        let message = MockMessageFactory.systemMessage(
+            with: .participantsAdded,
+            conversation: mockConversation,
+            users: 1,
+            clients: 0
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
-        message.backingSystemMessageData?.userTypes = Set<AnyHashable>([MockServiceUserType.createServiceUser(name: "GitHub")])
+        message.backingSystemMessageData?
+            .userTypes = Set<AnyHashable>([MockServiceUserType.createServiceUser(name: "GitHub")])
 
         verify(message: message)
     }
@@ -84,7 +88,12 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
     }
 
     func testRemoveSelfUser_LegalHoldPolicyConflict() {
-        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 0, clients: 0, reason: .legalHoldPolicyConflict)!
+        let message = MockMessageFactory.systemMessage(
+            with: .participantsRemoved,
+            users: 0,
+            clients: 0,
+            reason: .legalHoldPolicyConflict
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         message.backingSystemMessageData.userTypes = Set([mockSelfUser])
@@ -93,14 +102,24 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
     }
 
     func testRemoveParticipant_LegalHoldPolicyConflict() {
-        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 1, clients: 0, reason: .legalHoldPolicyConflict)!
+        let message = MockMessageFactory.systemMessage(
+            with: .participantsRemoved,
+            users: 1,
+            clients: 0,
+            reason: .legalHoldPolicyConflict
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allColorSchemes: true)
     }
 
     func testRemoveManyParticipants_LegalHoldPolicyConflict() {
-        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 5, clients: 0, reason: .legalHoldPolicyConflict)!
+        let message = MockMessageFactory.systemMessage(
+            with: .participantsRemoved,
+            users: 5,
+            clients: 0,
+            reason: .legalHoldPolicyConflict
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allColorSchemes: true)
@@ -156,27 +175,44 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
 
     func testDecryptionFailedResolved_Other() {
         let user = MockUserType.createUser(name: "Bruno")
-        let message = MockMessageFactory.systemMessage(with: .decryptionFailedResolved, users: 0, clients: 0, sender: user)!
+        let message = MockMessageFactory.systemMessage(
+            with: .decryptionFailedResolved,
+            users: 0,
+            clients: 0,
+            sender: user
+        )!
 
         verify(message: message)
     }
 
     func testDecryptionFailedIdentifyChanged_Self() {
-        let message = MockMessageFactory.systemMessage(with: .decryptionFailed_RemoteIdentityChanged, users: 0, clients: 0)!
+        let message = MockMessageFactory.systemMessage(
+            with: .decryptionFailed_RemoteIdentityChanged,
+            users: 0,
+            clients: 0
+        )!
 
         verify(message: message)
     }
 
     func testDecryptionFailedIdentifyChanged_Other() {
         let user = MockUserType.createUser(name: "Bruno")
-        let message = MockMessageFactory.systemMessage(with: .decryptionFailed_RemoteIdentityChanged, users: 0, clients: 0, sender: user)!
+        let message = MockMessageFactory.systemMessage(
+            with: .decryptionFailed_RemoteIdentityChanged,
+            users: 0,
+            clients: 0,
+            sender: user
+        )!
 
         verify(message: message)
     }
 
     func testNewClient_oneUser_oneClient() {
         let numUsers = 1
-        let (message, mockSystemMessageData) = MockMessageFactory.systemMessageAndData(with: .newClient, users: numUsers)
+        let (message, mockSystemMessageData) = MockMessageFactory.systemMessageAndData(
+            with: .newClient,
+            users: numUsers
+        )
 
         let userClients: [AnyHashable] = [MockUserClient()]
 
@@ -334,14 +370,24 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
     // MARK: - Domains stopped federating
 
     func testRemoveParticipants_federationTermination() {
-        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 5, clients: 0, reason: .federationTermination)!
+        let message = MockMessageFactory.systemMessage(
+            with: .participantsRemoved,
+            users: 5,
+            clients: 0,
+            reason: .federationTermination
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allWidths: false)
     }
 
     func testRemoveParticipant_federationTermination() {
-        let message = MockMessageFactory.systemMessage(with: .participantsRemoved, users: 1, clients: 0, reason: .federationTermination)!
+        let message = MockMessageFactory.systemMessage(
+            with: .participantsRemoved,
+            users: 1,
+            clients: 0,
+            reason: .federationTermination
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allWidths: false)
@@ -350,20 +396,24 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
     func testSelfDomainStoppedFederatingWithOtherDomain() {
         let selfUser = SelfUser.provider?.providedSelfUser
         let selfDomain = selfUser?.domain ?? ""
-        let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
-                                                       users: 1,
-                                                       clients: 0,
-                                                       domains: [selfDomain, "anta.wire.link"])!
+        let message = MockMessageFactory.systemMessage(
+            with: .domainsStoppedFederating,
+            users: 1,
+            clients: 0,
+            domains: [selfDomain, "anta.wire.link"]
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allWidths: false)
     }
 
     func testTwoDomainsStoppedFederating() {
-        let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
-                                                       users: 1,
-                                                       clients: 0,
-                                                       domains: ["anta.wire.link", "foma.wire.link"])!
+        let message = MockMessageFactory.systemMessage(
+            with: .domainsStoppedFederating,
+            users: 1,
+            clients: 0,
+            domains: ["anta.wire.link", "foma.wire.link"]
+        )!
         message.senderUser = SwiftMockLoader.mockUsers().last
 
         verify(message: message, allWidths: false)

@@ -40,7 +40,11 @@ final class MockZiphyRequester: ZiphyURLRequester {
 
     var response: MockZiphyResponse?
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping MockZiphyRequesterCompletionHandler) -> ZiphyRequestIdentifier {
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping MockZiphyRequesterCompletionHandler
+    )
+        -> ZiphyRequestIdentifier {
         self.completionHandler = completionHandler
         return NSUUID()
     }

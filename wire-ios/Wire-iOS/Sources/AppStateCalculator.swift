@@ -186,7 +186,10 @@ final class AppStateCalculator {
         self.appState = appState
         self.pendingAppState = nil
 
-        WireLogger.appState.debug("transitioning to app state \(appState.safeForLoggingDescription)", attributes: .safePublic)
+        WireLogger.appState.debug(
+            "transitioning to app state \(appState.safeForLoggingDescription)",
+            attributes: .safePublic
+        )
         delegate?.appStateCalculator(self, didCalculate: appState) {
             completion?()
         }
@@ -271,13 +274,19 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .migrating, completion: userSessionCanBeTornDown)
     }
 
-    func sessionManagerWillOpenAccount(_ account: Account,
-                                       from selectedAccount: Account?,
-                                       userSessionCanBeTornDown: @escaping () -> Void) {
-        let appState: AppState = .loading(account: account,
-                                          from: selectedAccount)
-        transition(to: appState,
-                   completion: userSessionCanBeTornDown)
+    func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    ) {
+        let appState: AppState = .loading(
+            account: account,
+            from: selectedAccount
+        )
+        transition(
+            to: appState,
+            completion: userSessionCanBeTornDown
+        )
     }
 
     func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {

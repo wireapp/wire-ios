@@ -36,10 +36,12 @@ final class MessageSendingStatusPayloadProcessor {
         let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = await context.perform {
             WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
-            return (payload.deleted.fetchClients(in: context),
-                    payload.redundant.fetchUsers(in: context),
-                    payload.missing.fetchOrCreateClients(in: message.context),
-                    payload.failedToConfirm.fetchUsers(in: message.context))
+            return (
+                payload.deleted.fetchClients(in: context),
+                payload.redundant.fetchUsers(in: context),
+                payload.missing.fetchOrCreateClients(in: message.context),
+                payload.failedToConfirm.fetchUsers(in: message.context)
+            )
         }
 
         if !deletedClients.isEmpty {
@@ -78,7 +80,10 @@ final class MessageSendingStatusPayloadProcessor {
 
             newMissingClients.forEach { $0.discoveredByMessage = message as? ZMOTRMessage }
             message.registersNewMissingClients(Set(newMissingClients))
-            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(newMissingClients), causedBy: message as? ZMOTRMessage)
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(
+                clients: Set(newMissingClients),
+                causedBy: message as? ZMOTRMessage
+            )
 
             if !failedToConfirmUsers.isEmpty {
                 message.addFailedToSendRecipients(failedToConfirmUsers)

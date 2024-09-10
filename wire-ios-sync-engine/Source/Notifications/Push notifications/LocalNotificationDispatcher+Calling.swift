@@ -40,7 +40,12 @@ extension LocalNotificationDispatcher {
     }
 
     func processMissedCall(in conversation: ZMConversation, caller: ZMUser) {
-        let note = ZMLocalNotification(callState: .terminating(reason: .canceled), conversation: conversation, caller: caller, moc: syncMOC)
+        let note = ZMLocalNotification(
+            callState: .terminating(reason: .canceled),
+            conversation: conversation,
+            caller: caller,
+            moc: syncMOC
+        )
         callingNotifications.cancelNotifications(conversation)
         note.map(scheduleLocalNotification)
         note.map(callingNotifications.addObject)

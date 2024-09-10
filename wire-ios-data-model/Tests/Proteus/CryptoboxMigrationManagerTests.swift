@@ -132,7 +132,10 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
 
         // When
         await assertItThrows(error: CryptoboxMigrationManager.Failure.failedToMigrateData) {
-            try await self.sut.performMigration(accountDirectory: self.accountDirectory, coreCrypto: self.mockSafeCoreCrypto)
+            try await self.sut.performMigration(
+                accountDirectory: self.accountDirectory,
+                coreCrypto: self.mockSafeCoreCrypto
+            )
         }
 
         // Then

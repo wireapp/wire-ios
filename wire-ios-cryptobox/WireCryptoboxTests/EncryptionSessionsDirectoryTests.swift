@@ -53,7 +53,10 @@ extension EncryptionSessionsDirectoryTests {
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(decoded, plainText)
     }
 
@@ -68,7 +71,10 @@ extension EncryptionSessionsDirectoryTests {
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(decoded, plainText)
     }
 
@@ -116,7 +122,12 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         var prekeyRetrievedId: UInt16 = 0
         let prekeyData = Data(base64Encoded: prekey, options: [])!
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
+        let result = prekeyData
+            .withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(
+                prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                prekeyData.count,
+                &prekeyRetrievedId
+            ) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
     }
@@ -131,7 +142,12 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         var prekeyRetrievedId: UInt16 = 0
         let prekeyData = Data(base64Encoded: prekey, options: [])!
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
+        let result = prekeyData
+            .withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(
+                prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                prekeyData.count,
+                &prekeyRetrievedId
+            ) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
     }
@@ -152,7 +168,12 @@ extension EncryptionSessionsDirectoryTests {
             let (id, prekey) = prekeys[i]
             let prekeyData = Data(base64Encoded: prekey, options: [])!
             var prekeyRetrievedId: UInt16 = 0
-            let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
+            let result = prekeyData
+                .withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(
+                    prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                    prekeyData.count,
+                    &prekeyRetrievedId
+                ) }
             XCTAssertEqual(result, CBOX_SUCCESS)
             XCTAssertEqual(Int(prekeyRetrievedId), i + rangeStart)
             XCTAssertEqual(prekeyRetrievedId, id)
@@ -195,7 +216,11 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // WHEN
         // THEN
-        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(domain: "example.com", userId: "aa22", clientId: "8899")))
+        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(
+            domain: "example.com",
+            userId: "aa22",
+            clientId: "8899"
+        )))
     }
 }
 
@@ -238,7 +263,8 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusAliceCopy.debug_disableContextValidityCheck = true
         let cypher = try? statusAliceCopy.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
         XCTAssertNil(cypher)
@@ -256,10 +282,14 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusAliceCopy.debug_disableContextValidityCheck = true
         let prekeyMessage = try! statusAliceCopy.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(plainText, decoded)
     }
 
@@ -275,7 +305,8 @@ extension EncryptionSessionsDirectoryTests {
         let statusAliceCopy = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusAliceCopy.debug_disableContextValidityCheck = true
         let cypher = try? statusAliceCopy.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
         XCTAssertNil(cypher)
@@ -286,7 +317,10 @@ extension EncryptionSessionsDirectoryTests {
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         self.recreateStatuses() // force save
 
         // WHEN
@@ -299,7 +333,8 @@ extension EncryptionSessionsDirectoryTests {
         let statusBobCopy = EncryptionSessionsDirectory(
             generatingContext: contextBob,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
-            extensiveLoggingSessions: Set())
+            extensiveLoggingSessions: Set()
+        )
         statusBobCopy.debug_disableContextValidityCheck = true
         let decoded = try! statusBobCopy.decrypt(cypherText, from: Person.Alice.identifier)
         XCTAssertEqual(decoded, plainText)
@@ -416,7 +451,10 @@ extension EncryptionSessionsDirectoryTests {
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
-        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        let decoded = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
         XCTAssertEqual(decoded, plainText)
     }
 
@@ -574,7 +612,10 @@ extension EncryptionSessionsDirectoryTests {
         }
 
         // WHEN
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
 
         // THEN
         waitForExpectations(timeout: 0.2)
@@ -628,7 +669,10 @@ extension EncryptionSessionsDirectoryTests {
         }
 
         // WHEN
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -680,7 +724,10 @@ extension EncryptionSessionsDirectoryTests {
     func establishSessionBetweenAliceAndBob() {
         self.establishSessionFromAliceToBob()
         let prekeyMessage = try! statusAlice.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
-        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(
+            for: Person.Alice.identifier,
+            prekeyMessage: prekeyMessage
+        )
 
         /// This will force commit
         self.recreateStatuses()

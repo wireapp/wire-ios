@@ -25,7 +25,11 @@ extension UserChangeInfo {
     /// Adds an observer for a user conforming to UserType. You must hold on to the token until you want to stop
     /// observing.
     ///
-    public static func add(observer: UserObserving, for user: UserType, in userSession: ZMUserSession) -> NSObjectProtocol? {
+    public static func add(
+        observer: UserObserving,
+        for user: UserType,
+        in userSession: ZMUserSession
+    ) -> NSObjectProtocol? {
         add(observer: observer, for: user, in: userSession.managedObjectContext)
     }
 
@@ -42,7 +46,10 @@ extension UserChangeInfo {
     /// Adds an observer for changes in all ZMSearchUsers. You must hold on to the token until you want to stop
     /// observing.
     ///
-    public static func add(searchUserObserver observer: UserObserving, in userSession: ZMUserSession) -> NSObjectProtocol {
+    public static func add(
+        searchUserObserver observer: UserObserving,
+        in userSession: ZMUserSession
+    ) -> NSObjectProtocol {
         add(searchUserObserver: observer, in: userSession.managedObjectContext)
     }
 }

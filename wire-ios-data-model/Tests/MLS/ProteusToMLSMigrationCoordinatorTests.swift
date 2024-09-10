@@ -359,7 +359,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         // TODO: [WPB-542] Assert we update the conversation protocol
     }
 
-    func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached() async throws {
+    func test_ItDoesntUpdateProtocolToMLS_IfParticipantsDontSupportMLS_AndFinalisationTimeHasNotBeenReached(
+    ) async throws {
         // GIVEN
         mockStorage.underlyingMigrationStatus = .started
 
@@ -491,7 +492,8 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             mockActionsProvider.fetchBackendPublicKeysIn_MockError = nil
         } else {
             mockActionsProvider.fetchBackendPublicKeysIn_MockValue = nil
-            mockActionsProvider.fetchBackendPublicKeysIn_MockError = FetchBackendMLSPublicKeysAction.Failure.mlsNotEnabled
+            mockActionsProvider.fetchBackendPublicKeysIn_MockError = FetchBackendMLSPublicKeysAction.Failure
+                .mlsNotEnabled
         }
 
         // Set MLS feature

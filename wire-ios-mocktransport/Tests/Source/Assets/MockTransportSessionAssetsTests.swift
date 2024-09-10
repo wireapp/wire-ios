@@ -30,7 +30,13 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         // when
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: id, domain: domain, assetToken: token, assetData: data, contentType: contentType)
+            asset = session.insertAsset(
+                with: id,
+                domain: domain,
+                assetToken: token,
+                assetData: data,
+                contentType: contentType
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -47,7 +53,12 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let data = self.verySmallJPEGData()
 
         // when
-        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v3", apiVersion: .v0)
+        let response = self.response(
+            forAssetData: data,
+            contentType: "application/octet-stream",
+            path: "/assets/v3",
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
 
         // then
@@ -77,13 +88,23 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let contentType = "application/octet-stream"
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: NSUUID.create(), assetToken: NSUUID.create(), assetData: data, contentType: contentType)
+            asset = session.insertAsset(
+                with: NSUUID.create(),
+                assetToken: NSUUID.create(),
+                assetData: data,
+                contentType: contentType
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .get, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/assets/v3/\(asset!.identifier)",
+            method: .get,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertNotNil(response)
@@ -104,13 +125,23 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let contentType = "application/octet-stream"
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: NSUUID.create(), assetToken: NSUUID.create(), assetData: Data("data".utf8), contentType: contentType)
+            asset = session.insertAsset(
+                with: NSUUID.create(),
+                assetToken: NSUUID.create(),
+                assetData: Data("data".utf8),
+                contentType: contentType
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v3/\(asset!.identifier)", method: .delete, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/assets/v3/\(asset!.identifier)",
+            method: .delete,
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
 
@@ -124,7 +155,12 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
 
         // when
         let domain = UUID.create().transportString()
-        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v4/\(domain)", apiVersion: .v0)
+        let response = self.response(
+            forAssetData: data,
+            contentType: "application/octet-stream",
+            path: "/assets/v4/\(domain)",
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
 
         // then
@@ -144,7 +180,12 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         // when
         let key = UUID.create().transportString()
         let domain = UUID.create().transportString()
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .get, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/assets/v4/\(domain)/\(key)",
+            method: .get,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertNotNil(response)
@@ -157,13 +198,24 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let contentType = "application/octet-stream"
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: NSUUID.create(), domain: UUID.create().transportString(), assetToken: NSUUID.create(), assetData: data, contentType: contentType)
+            asset = session.insertAsset(
+                with: NSUUID.create(),
+                domain: UUID.create().transportString(),
+                assetToken: NSUUID.create(),
+                assetData: data,
+                contentType: contentType
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .get, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)",
+            method: .get,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertNotNil(response)
@@ -174,7 +226,12 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         // when
         let key = UUID.create().transportString()
         let domain = UUID.create().transportString()
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(domain)/\(key)", method: .delete, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/assets/v4/\(domain)/\(key)",
+            method: .delete,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertNotNil(response)
@@ -186,13 +243,24 @@ class MockTransportSessionAssetsTests: MockTransportSessionTests {
         let contentType = "application/octet-stream"
         var asset: MockAsset?
         sut.performRemoteChanges { session in
-            asset = session.insertAsset(with: NSUUID.create(), domain: UUID.create().transportString(), assetToken: NSUUID.create(), assetData: Data("data".utf8), contentType: contentType)
+            asset = session.insertAsset(
+                with: NSUUID.create(),
+                domain: UUID.create().transportString(),
+                assetToken: NSUUID.create(),
+                assetData: Data("data".utf8),
+                contentType: contentType
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(asset)
 
         // when
-        let response = self.response(forPayload: nil, path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)", method: .delete, apiVersion: .v0)
+        let response = self.response(
+            forPayload: nil,
+            path: "/assets/v4/\(asset!.domain!)/\(asset!.identifier)",
+            method: .delete,
+            apiVersion: .v0
+        )
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
 

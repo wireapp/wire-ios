@@ -21,11 +21,13 @@ import WireSyncEngine
 
 extension UIApplicationShortcutItem {
     static let markAllAsReadType = "com.wire.shortcut.markAllAsRead"
-    static let markAllAsRead = UIApplicationShortcutItem(type: markAllAsReadType,
-                                                         localizedTitle: L10n.Localizable.Shortcut.MarkAllAsRead.title,
-                                                         localizedSubtitle: nil,
-                                                         icon: UIApplicationShortcutIcon(type: .taskCompleted),
-                                                         userInfo: nil)
+    static let markAllAsRead = UIApplicationShortcutItem(
+        type: markAllAsReadType,
+        localizedTitle: L10n.Localizable.Shortcut.MarkAllAsRead.title,
+        localizedSubtitle: nil,
+        icon: UIApplicationShortcutIcon(type: .taskCompleted),
+        userInfo: nil
+    )
 }
 
 final class QuickActionsManager: NSObject {

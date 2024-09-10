@@ -48,7 +48,10 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     }
 
     @available(*, noasync)
-    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void) {
+    public func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, (any Error)?) -> Void
+    ) {
         userNotificationCenter.requestAuthorization(options: options, completionHandler: completionHandler)
     }
 
@@ -57,7 +60,10 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     }
 
     @available(*, noasync)
-    public func add(_ request: UNNotificationRequest, withCompletionHandler completionHandler: (((any Error)?) -> Void)?) {
+    public func add(
+        _ request: UNNotificationRequest,
+        withCompletionHandler completionHandler: (((any Error)?) -> Void)?
+    ) {
         userNotificationCenter.add(request, withCompletionHandler: completionHandler)
     }
 

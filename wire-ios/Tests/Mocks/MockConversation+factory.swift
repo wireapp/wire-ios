@@ -58,8 +58,10 @@ extension MockConversation {
         return mockConversation
     }
 
-    static func groupConversation(selfUser: UserType = MockUserType.createSelfUser(name: "Alice"),
-                                  otherUser: UserType = SwiftMockLoader.mockUsers().first!) -> MockConversation {
+    static func groupConversation(
+        selfUser: UserType = MockUserType.createSelfUser(name: "Alice"),
+        otherUser: UserType = SwiftMockLoader.mockUsers().first!
+    ) -> MockConversation {
         let mockConversation = MockConversation()
         mockConversation.conversationType = .group
         mockConversation.displayName = otherUser.name

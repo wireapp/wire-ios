@@ -28,8 +28,10 @@ final class UserPropertyCell: SeparatorTableViewCell {
     typealias LabelColors = SemanticColors.Label
 
     private let propertyNameLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .smallRegularFont,
-                                     color: LabelColors.textUserPropertyCellName)
+        let label = DynamicFontLabel(
+            fontSpec: .smallRegularFont,
+            color: LabelColors.textUserPropertyCellName
+        )
         label.numberOfLines = 1
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)
@@ -37,8 +39,10 @@ final class UserPropertyCell: SeparatorTableViewCell {
     }()
 
     private let propertyValueLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(fontSpec: .normalLightFont,
-                                     color: LabelColors.textDefault)
+        let label = DynamicFontLabel(
+            fontSpec: .normalLightFont,
+            color: LabelColors.textDefault
+        )
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         label.setContentHuggingPriority(.defaultLow, for: .vertical)

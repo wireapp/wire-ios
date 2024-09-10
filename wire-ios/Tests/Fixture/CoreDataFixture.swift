@@ -31,7 +31,30 @@ final class CoreDataFixture {
     var otherUserConversation: ZMConversation!
     var team: Team?
     var teamMember: Member?
-    let usernames = ["Anna", "Claire", "Dean", "Erik", "Frank", "Gregor", "Hanna", "Inge", "James", "Laura", "Klaus", "Lena", "Linea", "Lara", "Elliot", "Francois", "Felix", "Brian", "Brett", "Hannah", "Ana", "Paula"]
+    let usernames = [
+        "Anna",
+        "Claire",
+        "Dean",
+        "Erik",
+        "Frank",
+        "Gregor",
+        "Hanna",
+        "Inge",
+        "James",
+        "Laura",
+        "Klaus",
+        "Lena",
+        "Linea",
+        "Lara",
+        "Elliot",
+        "Francois",
+        "Felix",
+        "Brian",
+        "Brett",
+        "Hannah",
+        "Ana",
+        "Paula",
+    ]
 
     // The provider to use when configuring `SelfUser.provider`, needed only when tested code
     // invokes `SelfUser.current`. As we slowly migrate to `UserType`, we will use this more
@@ -63,7 +86,8 @@ final class CoreDataFixture {
         /// From ZMSnapshotTestCase
 
         XCTAssertEqual(UIScreen.main.scale, 3, "Snapshot tests need to be run on a device with a 3x scale")
-        if UIDevice.current.systemVersion.compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
+        if UIDevice.current.systemVersion
+            .compare("17", options: .numeric, range: nil, locale: .current) == .orderedAscending {
             XCTFail("Snapshot tests need to be run on a device running at least iOS 17")
         }
         AppRootRouter.configureAppearance()
@@ -71,17 +95,24 @@ final class CoreDataFixture {
         snapshotBackgroundColor = UIColor.clear
 
         do {
-            documentsDirectory = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            documentsDirectory = try FileManager.default.url(
+                for: .documentDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            )
         } catch {
             XCTAssertNil(error, "Unexpected error \(error)")
         }
 
         let account = Account(userName: "", userIdentifier: UUID())
         let group = ZMSDispatchGroup(dispatchGroup: dispatchGroup, label: "CoreDataStack")
-        let coreDataStack = CoreDataStack(account: account,
-                                          applicationContainer: documentsDirectory!,
-                                          inMemoryStore: true,
-                                          dispatchGroup: group)
+        let coreDataStack = CoreDataStack(
+            account: account,
+            applicationContainer: documentsDirectory!,
+            inMemoryStore: true,
+            dispatchGroup: group
+        )
 
         coreDataStack.loadStores(completionHandler: { _ in })
         self.uiMOC = coreDataStack.viewContext
@@ -257,9 +288,11 @@ extension CoreDataFixtureTestHelper {
     }
 
     func createGroupConversation() -> ZMConversation {
-        ZMConversation.createGroupConversation(moc: coreDataFixture.uiMOC,
-                                               otherUser: otherUser,
-                                               selfUser: selfUser)
+        ZMConversation.createGroupConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser,
+            selfUser: selfUser
+        )
     }
 
     func createTeamGroupConversation() -> ZMConversation {

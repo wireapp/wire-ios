@@ -75,7 +75,10 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
         accessibilityLabel = configuration.attributedText?.string
     }
 
-    private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
+    private static func configuration(
+        for systemMessageType: ZMSystemMessageType,
+        in conversation: ZMConversation
+    ) -> View.Configuration {
         let systemMessageTitle = title(for: systemMessageType)
         let attributedText = NSAttributedString.markdown(from: systemMessageTitle, style: .systemMessage)
 
@@ -87,7 +90,8 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     private static func title(for messageType: ZMSystemMessageType) -> String {
         switch messageType {
         case .legalHoldEnabled:
-            L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+            L10n.Localizable.Content.System.MessageLegalHold
+                .enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
         case .legalHoldDisabled:
             L10n.Localizable.Content.System.MessageLegalHold.disabled
         default:
@@ -97,7 +101,12 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
 }
 
 extension ConversationLegalHoldSystemMessageCell {
-    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    override func textView(
+        _ textView: UITextView,
+        shouldInteractWith url: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
            let conversation,
            let clientViewController = ZClientViewController.shared {

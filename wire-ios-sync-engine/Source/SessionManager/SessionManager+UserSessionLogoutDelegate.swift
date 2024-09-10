@@ -44,7 +44,8 @@ extension SessionManager: UserSessionLogoutDelegate {
             return
         }
 
-        WireLogger.authentication.warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
+        WireLogger.authentication
+            .warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
 
         switch userSessionErrorCode {
         case .clientDeletedRemotely:

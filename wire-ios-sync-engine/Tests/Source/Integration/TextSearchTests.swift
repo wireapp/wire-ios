@@ -39,7 +39,11 @@ class TextSearchTests: ConversationTestsBase {
         mockTransportSession.performRemoteChanges { _ in
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"))
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -47,7 +51,8 @@ class TextSearchTests: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        guard let convo = conversation(for: selfToUser1Conversation) else { return XCTFail("Undable to get conversation") }
+        guard let convo = conversation(for: selfToUser1Conversation)
+        else { return XCTFail("Undable to get conversation") }
         let lastMessage = convo.lastMessage
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
@@ -67,7 +72,11 @@ class TextSearchTests: ConversationTestsBase {
         mockTransportSession.performRemoteChanges { _ in
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"), nonce: nonce)
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -75,16 +84,24 @@ class TextSearchTests: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        guard let convo = conversation(for: selfToUser1Conversation) else { return XCTFail("Undable to get conversation") }
+        guard let convo = conversation(for: selfToUser1Conversation)
+        else { return XCTFail("Undable to get conversation") }
         guard let lastMessage = convo.lastMessage else { return XCTFail("Undable to get message") }
         XCTAssertEqual(lastMessage.textMessageData?.messageText, "Hello there!")
 
         // And when
         mockTransportSession.performRemoteChanges { _ in
-            let genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: nonce, text: Text(content: "This is an edit!!")))
+            let genericMessage = GenericMessage(content: MessageEdit(
+                replacingMessageID: nonce,
+                text: Text(content: "This is an edit!!")
+            ))
 
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
 
             } catch {
                 XCTFail()
@@ -113,7 +130,11 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: Text(content: text), expiresAfterTimeInterval: 300)
 
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -121,7 +142,8 @@ class TextSearchTests: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        guard let convo = conversation(for: selfToUser1Conversation) else { return XCTFail("Undable to get conversation") }
+        guard let convo = conversation(for: selfToUser1Conversation)
+        else { return XCTFail("Undable to get conversation") }
         let lastMessage = convo.lastMessage
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, text)
 
@@ -142,7 +164,11 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: Text(content: "Hello there!"), nonce: nonce)
 
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -150,7 +176,8 @@ class TextSearchTests: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        guard let convo = conversation(for: selfToUser1Conversation) else { return XCTFail("Undable to get conversation") }
+        guard let convo = conversation(for: selfToUser1Conversation)
+        else { return XCTFail("Undable to get conversation") }
         let lastMessage = convo.lastMessage
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
@@ -162,7 +189,11 @@ class TextSearchTests: ConversationTestsBase {
             let genericMessage = GenericMessage(content: MessageDelete(messageId: nonce))
 
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: firstClient, to: selfClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -173,7 +204,13 @@ class TextSearchTests: ConversationTestsBase {
         verifyThatItCanSearch(for: "Hello", in: convo, andFinds: nil)
     }
 
-    func verifyThatItCanSearch(for query: String, in conversation: ZMConversation, andFinds message: ZMMessage?, file: StaticString = #file, line: UInt = #line) {
+    func verifyThatItCanSearch(
+        for query: String,
+        in conversation: ZMConversation,
+        andFinds message: ZMMessage?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // Given
         let delegate = MockSearchDelegate()
         let searchQuery = TextSearchQuery(conversation: conversation, query: query, delegate: delegate)
@@ -183,12 +220,18 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
 
         // Then
-        guard let result = delegate.results.last else { return XCTFail("No search result found", file: file, line: line) }
+        guard let result = delegate.results.last
+        else { return XCTFail("No search result found", file: file, line: line) }
 
         if let message {
             XCTAssertEqual(result.matches.count, 1, file: file, line: line)
             guard let match = result.matches.first else { return XCTFail("No match found", file: file, line: line) }
-            XCTAssertEqual(match.textMessageData?.messageText, message.textMessageData?.messageText, file: file, line: line)
+            XCTAssertEqual(
+                match.textMessageData?.messageText,
+                message.textMessageData?.messageText,
+                file: file,
+                line: line
+            )
         } else {
             XCTAssert(result.matches.isEmpty, file: file, line: line)
         }

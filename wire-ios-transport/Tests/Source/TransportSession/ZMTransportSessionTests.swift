@@ -76,18 +76,24 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         serverName = "https://example.com"
         baseURL = URL(string: serverName)!
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
-        cookieStorage = ZMPersistentCookieStorage(forServerName: serverName, userIdentifier: userIdentifier, useCache: true)
+        cookieStorage = ZMPersistentCookieStorage(
+            forServerName: serverName,
+            userIdentifier: userIdentifier,
+            useCache: true
+        )
         reachability = FakeReachability()
         environment = MockEnvironment()
-        sut = ZMTransportSession(environment: environment,
-                                 proxyUsername: nil,
-                                 proxyPassword: nil,
-                                 cookieStorage: cookieStorage,
-                                 reachability: reachability,
-                                 initialAccessToken: nil,
-                                 applicationGroupIdentifier: containerIdentifier,
-                                 applicationVersion: "1.0",
-                                 minTLSVersion: nil)
+        sut = ZMTransportSession(
+            environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            cookieStorage: cookieStorage,
+            reachability: reachability,
+            initialAccessToken: nil,
+            applicationGroupIdentifier: containerIdentifier,
+            applicationVersion: "1.0",
+            minTLSVersion: nil
+        )
     }
 
     override func tearDown() {
@@ -129,6 +135,10 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         check(identifier: backgroundConfiguration.identifier, contains: [userID])
         XCTAssertEqual(backgroundConfiguration.sharedContainerIdentifier, containerIdentifier)
 
-        XCTAssertEqual(Set<String>([foregroundSession.identifier, backgroundSession.identifier]).count, 2, "All identifiers should be unique")
+        XCTAssertEqual(
+            Set<String>([foregroundSession.identifier, backgroundSession.identifier]).count,
+            2,
+            "All identifiers should be unique"
+        )
     }
 }

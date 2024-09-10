@@ -22,7 +22,11 @@ import WireDataModel
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: merge to UserClientType or stay in UI project? It is depends on localized string resource
 protocol UserClientTypeAttributedString {
-    func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool) -> NSAttributedString
+    func attributedRemoteIdentifier(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        boldAttributes: [NSAttributedString.Key: AnyObject],
+        uppercase: Bool
+    ) -> NSAttributedString
 }
 
 private let UserClientIdentifierMinimumLength = 16
@@ -43,11 +47,18 @@ extension Sequence where Element: UserClientType {
 }
 
 extension UserClientType {
-    func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
+    func attributedRemoteIdentifier(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        boldAttributes: [NSAttributedString.Key: AnyObject],
+        uppercase: Bool = false
+    ) -> NSAttributedString {
         let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
-        let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)
+        let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(
+            attributes: attributes,
+            boldAttributes: boldAttributes
+        )
 
         identifierString.append(attributedRemoteIdentifier)
 

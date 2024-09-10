@@ -55,7 +55,10 @@ public final class ZiphySearchResultsController {
     // MARK: - Getting Search Results
 
     /// Performs a search with the given term and returns the results.
-    public func search(withTerm searchTerm: String, _ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
+    public func search(
+        withTerm searchTerm: String,
+        _ completion: @escaping ZiphyListRequestCallback
+    ) -> CancelableTask? {
         self.paginationController = ZiphyPaginationController()
 
         self.paginationController?.fetchBlock = { [weak self] offset in
@@ -64,9 +67,10 @@ public final class ZiphySearchResultsController {
                 return nil
             }
 
-            return self.client.search(term: searchTerm, resultsLimit: self.pageSize, offset: offset) { [weak self] result in
-                self?.updatePagination(result)
-            }
+            return self.client
+                .search(term: searchTerm, resultsLimit: self.pageSize, offset: offset) { [weak self] result in
+                    self?.updatePagination(result)
+                }
         }
 
         return fetchMoreResults(completion)
@@ -92,7 +96,11 @@ public final class ZiphySearchResultsController {
     // MARK: - Fetching Data
 
     /// Attempts to fetch the data for the image of the specified type for the given GIF post.
-    public func fetchImageData(for ziph: Ziph, imageType: ZiphyImageType, completion: @escaping ZiphyImageDataCallback) {
+    public func fetchImageData(
+        for ziph: Ziph,
+        imageType: ZiphyImageType,
+        completion: @escaping ZiphyImageDataCallback
+    ) {
         guard let representation = ziph.images[imageType] else {
             self.client.callbackQueue.async { completion(.failure(.noSuchResource)) }
             return

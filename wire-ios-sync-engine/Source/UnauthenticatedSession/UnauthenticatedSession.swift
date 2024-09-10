@@ -68,13 +68,20 @@ public class UnauthenticatedSession: NSObject {
         self.userPropertyValidator = userPropertyValidator
         super.init()
 
-        self.authenticationStatus = ZMAuthenticationStatus(delegate: authenticationStatusDelegate,
-                                                           groupQueue: groupQueue,
-                                                           userInfoParser: self)
-        self.urlActionProcessors = [CompanyLoginURLActionProcessor(delegate: self,
-                                                                   authenticationStatus: authenticationStatus),
-                                    StartLoginURLActionProcessor(delegate: self,
-                                                                 authenticationStatus: authenticationStatus),
+        self.authenticationStatus = ZMAuthenticationStatus(
+            delegate: authenticationStatusDelegate,
+            groupQueue: groupQueue,
+            userInfoParser: self
+        )
+        self.urlActionProcessors = [
+            CompanyLoginURLActionProcessor(
+                delegate: self,
+                authenticationStatus: authenticationStatus
+            ),
+            StartLoginURLActionProcessor(
+                delegate: self,
+                authenticationStatus: authenticationStatus
+            ),
         ]
         self.operationLoop = UnauthenticatedOperationLoop(
             transportSession: transportSession,

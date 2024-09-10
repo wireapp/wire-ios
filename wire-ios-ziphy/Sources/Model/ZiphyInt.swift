@@ -45,7 +45,13 @@ public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
         let stringValue = try decoder.singleValueContainer().decode(String.self)
 
         guard let rawValue = Int(stringValue) else {
-            throw DecodingError.typeMismatch(Int.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Expected an integer convertible string, got \"\(stringValue)\""))
+            throw DecodingError.typeMismatch(
+                Int.self,
+                DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Expected an integer convertible string, got \"\(stringValue)\""
+                )
+            )
         }
 
         self.rawValue = rawValue

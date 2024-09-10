@@ -19,10 +19,15 @@
 import Foundation
 
 extension ZMConversation {
-    fileprivate static var predicateForObjectsNeedingToDownloadRoles = NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(ZMConversation.needsToDownloadRoles), ZMConversation.remoteIdentifierDataKey())
+    fileprivate static var predicateForObjectsNeedingToDownloadRoles = NSPredicate(
+        format: "%K == YES AND %K != NULL",
+        #keyPath(ZMConversation.needsToDownloadRoles),
+        ZMConversation.remoteIdentifierDataKey()
+    )
 
     fileprivate func updateRoles(with response: ZMTransportResponse) {
-        guard let rolesPayload = response.payload?.asDictionary()?["conversation_roles"] as? [[String: Any]] else { return }
+        guard let rolesPayload = response.payload?.asDictionary()?["conversation_roles"] as? [[String: Any]]
+        else { return }
         let existingRoles = nonTeamRoles
 
         // Update or insert new roles
@@ -38,14 +43,20 @@ extension ZMConversation {
     }
 }
 
-public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
+public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMRequestGeneratorSource, ZMDownstreamTranscoder {
     fileprivate let jsonDecoder = JSONDecoder()
     private(set) var downstreamSync: ZMDownstreamObjectSync!
 
     @objc
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
 
         configuration = [.allowsRequestsWhileOnline]
 
@@ -77,7 +88,11 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         guard
             downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
             let conversation = object as? ZMConversation

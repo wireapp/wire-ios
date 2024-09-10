@@ -25,23 +25,46 @@ private let minimumUserHandleLength = 2
 enum RandomHandleGenerator {
     /// Generate somes possible handles for the given display name
     static func generatePossibleHandles(displayName: String, alternativeNames: Int) -> [String] {
-        let normalized = displayName.normalizedForUserHandle.validHandle // this might be nil. if it is, we generate an extra one
-        let alternativeNames = randomWordsCombinations(count: normalized == nil ? alternativeNames + 1 : alternativeNames)
+        let normalized = displayName.normalizedForUserHandle
+            .validHandle // this might be nil. if it is, we generate an extra one
+        let alternativeNames =
+            randomWordsCombinations(count: normalized == nil ? alternativeNames + 1 : alternativeNames)
 
         var possibleHandles = [String]()
 
         if let normalized {
             possibleHandles.append(normalized)
             possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 1).appendAllDigits())
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(numberOfDigits: 2, variations: 4))
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(numberOfDigits: 3, variations: 4))
-            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(numberOfDigits: 4, variations: 6))
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(
+                numberOfDigits: 2,
+                variations: 4
+            ))
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(
+                numberOfDigits: 3,
+                variations: 4
+            ))
+            possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(
+                numberOfDigits: 4,
+                variations: 6
+            ))
         }
 
         possibleHandles.append(contentsOf: alternativeNames)
-        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(numberOfDigits: 2, variations: 2) }.flatMap { $0 })
-        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(numberOfDigits: 3, variations: 2) }.flatMap { $0 })
-        possibleHandles.append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(numberOfDigits: 4, variations: 2) }.flatMap { $0 })
+        possibleHandles
+            .append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(
+                numberOfDigits: 2,
+                variations: 2
+            ) }.flatMap { $0 })
+        possibleHandles
+            .append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 3).appendRandomDigits(
+                numberOfDigits: 3,
+                variations: 2
+            ) }.flatMap { $0 })
+        possibleHandles
+            .append(contentsOf: alternativeNames.map { $0.truncated(at: maximumUserHandleLength - 4).appendRandomDigits(
+                numberOfDigits: 4,
+                variations: 2
+            ) }.flatMap { $0 })
 
         return possibleHandles
     }
@@ -56,7 +79,9 @@ extension RandomHandleGenerator {
         let list2 = self.loadWords(file: "random2", ext: "txt")
 
         guard (list1.count * list2.count) > count * 20 else {
-            fatal("Won't generate that many random words \(count) with this little dictionary \(list1.count * list2.count)")
+            fatal(
+                "Won't generate that many random words \(count) with this little dictionary \(list1.count * list2.count)"
+            )
         }
 
         var generated = Set<String>()
@@ -146,7 +171,11 @@ extension String {
     /// Returns self transliterated to latin base
     private var translitteratedToLatin: String {
         let mutableString = NSMutableString(string: self) as CFMutableString
-        for transform in [kCFStringTransformToLatin, kCFStringTransformStripDiacritics, kCFStringTransformStripCombiningMarks] {
+        for transform in [
+            kCFStringTransformToLatin,
+            kCFStringTransformStripDiacritics,
+            kCFStringTransformStripCombiningMarks,
+        ] {
             CFStringTransform(mutableString, nil, transform, false)
         }
         return String(mutableString)
@@ -154,7 +183,8 @@ extension String {
 
     /// returns self only with alphanumeric and underscore
     private var onlyAlphanumericWithUnderscore: String {
-        let allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")
+        let allowedCharacters =
+            CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")
         return self.components(separatedBy: allowedCharacters.inverted).joined(separator: "")
     }
 

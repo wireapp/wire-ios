@@ -39,9 +39,13 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             self.mockApplicationStatus = MockApplicationStatus()
             self.mockApplicationStatus.mockSynchronizationState = .online
-            self.oneToOneconversationOnSync = syncMOC.object(with: self.oneToOneConversation.objectID) as? ZMConversation
+            self.oneToOneconversationOnSync = syncMOC
+                .object(with: self.oneToOneConversation.objectID) as? ZMConversation
 
-            self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
+            self.sut = LinkPreviewAssetDownloadRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: self.mockApplicationStatus
+            )
         }
         apiVersion = .v0
     }
@@ -59,11 +63,13 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    fileprivate func createLinkPreview(_ assetID: String,
-                                       _ assetDomain: String? = nil,
-                                       article: Bool = true,
-                                       otrKey: Data? = nil,
-                                       sha256: Data? = nil) -> LinkPreview {
+    fileprivate func createLinkPreview(
+        _ assetID: String,
+        _ assetDomain: String? = nil,
+        article: Bool = true,
+        otrKey: Data? = nil,
+        sha256: Data? = nil
+    ) -> LinkPreview {
         let URL = "http://www.example.com"
 
         if article {
@@ -106,7 +112,11 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     fileprivate func fireSyncCompletedNotification() {
         // ManagedObjectContextObserver does not process all changes until the sync is done
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"), object: nil, userInfo: nil)
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: "ZMApplicationDidEnterEventProcessingStateNotification"),
+            object: nil,
+            userInfo: nil
+        )
     }
 }
 
@@ -131,7 +141,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -156,7 +167,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/assets/v3/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -183,7 +195,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -210,7 +223,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(assetDomain)/\(assetID)")
             XCTAssertEqual(request.method, ZMTransportRequestMethod.get)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
@@ -314,8 +328,15 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
-            let response = ZMTransportResponse(imageData: encrypted, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
+            let response = ZMTransportResponse(
+                imageData: encrypted,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: self.apiVersion.rawValue
+            )
 
             // WHEN
             request.complete(with: response)
@@ -324,7 +345,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // THEN
             XCTAssertTrue(syncMOC.zm_fileAssetCache.hasEncryptedMediumImageData(for: message))
             XCTAssertFalse(syncMOC.zm_fileAssetCache.hasMediumImageData(for: message))
-            let decryptedData = syncMOC.zm_fileAssetCache.decryptedMediumImageData(for: message, encryptionKey: otrKey, sha256Digest: sha256)
+            let decryptedData = syncMOC.zm_fileAssetCache.decryptedMediumImageData(
+                for: message,
+                encryptionKey: otrKey,
+                sha256Digest: sha256
+            )
             XCTAssertEqual(decryptedData, data)
         }
     }
@@ -347,8 +372,15 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         self.syncMOC.performGroupedAndWait {
             // THEN
-            guard let request = self.sut.nextRequest(for: self.apiVersion) else { XCTFail("No request generated"); return }
-            let response = ZMTransportResponse(imageData: .secureRandomData(length: 256), httpStatus: 400, transportSessionError: nil, headers: nil, apiVersion: self.apiVersion.rawValue)
+            guard let request = self.sut.nextRequest(for: self.apiVersion)
+            else { XCTFail("No request generated"); return }
+            let response = ZMTransportResponse(
+                imageData: .secureRandomData(length: 256),
+                httpStatus: 400,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: self.apiVersion.rawValue
+            )
             // WHEN
             request.complete(with: response)
         }

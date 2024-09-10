@@ -34,7 +34,8 @@ private let zmLog = ZMSLog(tag: "userClientRS")
 /// - Fetch all self clients
 
 @objcMembers
-public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder, ZMSingleRequestTranscoder, RequestStrategy {
+public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStrategy, ZMUpstreamTranscoder,
+    ZMSingleRequestTranscoder, RequestStrategy {
     weak var clientRegistrationStatus: ZMClientRegistrationStatus?
     weak var clientUpdateStatus: ClientUpdateStatus?
 
@@ -191,7 +192,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
         }
 
-        if clientRegistrationStatus.currentPhase == .registered || clientRegistrationStatus.currentPhase == .registeringMLSClient {
+        if clientRegistrationStatus.currentPhase == .registered || clientRegistrationStatus
+            .currentPhase == .registeringMLSClient {
             return modifiedSync.nextRequest(for: apiVersion)
         }
 
@@ -291,8 +293,13 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         fatal("Unknown keys to sync (\(keys))")
     }
 
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
-        guard let client = managedObject as? UserClient else { fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)") }
+    public func request(
+        forInserting managedObject: ZMManagedObject,
+        forKeys keys: Set<String>?,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
+        guard let client = managedObject as? UserClient
+        else { fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)") }
         guard let prekeys = clientRegistrationStatus?.prekeys else {
             fatal("Asked to insert client when there's no prekeys available")
         }
@@ -332,7 +339,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     } catch {
                         // swiftlint:disable:next todo_requires_jira_link
                         // TODO: [F] check if we need to propagate error
-                        WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
+                        WireLogger.proteus
+                            .error(
+                                "prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)"
+                            )
                     }
                     managedObjectContext?.leaveAllGroups(groups)
                 }
@@ -344,7 +354,12 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         return true
     }
 
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+    public func shouldRetryToSyncAfterFailed(
+        toUpdate managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
         if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             return false
         }
@@ -355,7 +370,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 if didRetryRegisteringSignalingKeys {
                     (managedObject as? UserClient)?.needsToUploadSignalingKeys = false
                     managedObjectContext?.saveOrRollback()
-                    fatal("UserClientTranscoder sigKey request failed with bad-request - \(upstreamRequest.transportRequest.safeForLoggingDescription)")
+                    fatal(
+                        "UserClientTranscoder sigKey request failed with bad-request - \(upstreamRequest.transportRequest.safeForLoggingDescription)"
+                    )
                 }
                 didRetryRegisteringSignalingKeys = true
                 return true
@@ -368,7 +385,9 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 if didRetryUpdatingCapabilities {
                     (managedObject as? UserClient)?.needsToUpdateCapabilities = false
                     managedObjectContext?.saveOrRollback()
-                    fatal("UserClientTranscoder PUT Capabilities request failed with bad-request - \(upstreamRequest.transportRequest.safeForLoggingDescription)")
+                    fatal(
+                        "UserClientTranscoder PUT Capabilities request failed with bad-request - \(upstreamRequest.transportRequest.safeForLoggingDescription)"
+                    )
                 }
                 didRetryUpdatingCapabilities = true
                 return true
@@ -397,7 +416,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
     }
 
-    public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
+    public func updateInsertedObject(
+        _ managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse
+    ) {
         if let client = managedObject as? UserClient {
             guard
                 let payload = response.payload as? [String: AnyObject],
@@ -518,7 +541,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         guard let userClient = managedObject as? UserClient else { return false }
 
         if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
-            return processResponseForDeletingClients(managedObject, requestUserInfo: requestUserInfo, responsePayload: response.payload)
+            return processResponseForDeletingClients(
+                managedObject,
+                requestUserInfo: requestUserInfo,
+                responsePayload: response.payload
+            )
         } else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
             (managedObject as! UserClient).numberOfKeysRemaining += Int32(prekeyGenerator.keyCount)
             clientUpdateStatus?.didUploadPrekeys()
@@ -534,7 +561,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         return false
     }
 
-    func processResponseForDeletingClients(_ managedObject: ZMManagedObject!, requestUserInfo: [AnyHashable: Any]!, responsePayload payload: ZMTransportData!) -> Bool {
+    func processResponseForDeletingClients(
+        _ managedObject: ZMManagedObject!,
+        requestUserInfo: [AnyHashable: Any]!,
+        responsePayload payload: ZMTransportData!
+    ) -> Bool {
         // is it safe for ui??
         if let client = managedObject as? UserClient, let context = managedObjectContext {
             WaitingGroupTask(context: context) {

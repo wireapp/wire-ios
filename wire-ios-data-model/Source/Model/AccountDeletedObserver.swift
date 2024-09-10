@@ -33,18 +33,27 @@ public struct AccountDeletedNotification {
     }
 
     public func post(in context: NotificationContext, object: AnyObject? = nil) {
-        NotificationInContext(name: type(of: self).notificationName, context: context, object: object, userInfo: [type(of: self).userInfoKey: self]).post()
+        NotificationInContext(
+            name: type(of: self).notificationName,
+            context: context,
+            object: object,
+            userInfo: [type(of: self).userInfoKey: self]
+        ).post()
     }
 }
 
 extension AccountDeletedNotification {
-    public static func addObserver(observer: AccountDeletedObserver,
-                                   context: NSManagedObjectContext? = nil,
-                                   queue: GroupQueue) -> Any {
-        NotificationInContext.addUnboundedObserver(name: AccountDeletedNotification.notificationName,
-                                                   context: context?.notificationContext,
-                                                   object: nil,
-                                                   queue: .main) { [weak observer] note in
+    public static func addObserver(
+        observer: AccountDeletedObserver,
+        context: NSManagedObjectContext? = nil,
+        queue: GroupQueue
+    ) -> Any {
+        NotificationInContext.addUnboundedObserver(
+            name: AccountDeletedNotification.notificationName,
+            context: context?.notificationContext,
+            object: nil,
+            queue: .main
+        ) { [weak observer] note in
             guard
                 let note = note.userInfo[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification,
                 let context = note.context,

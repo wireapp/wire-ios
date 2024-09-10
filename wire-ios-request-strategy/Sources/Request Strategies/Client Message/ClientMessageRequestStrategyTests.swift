@@ -45,10 +45,12 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
             mockAttachmentsDetector = MockAttachmentDetector()
             mockMessageSender = MockMessageSenderInterface()
             LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
-            sut = ClientMessageRequestStrategy(context: syncMOC,
-                                               localNotificationDispatcher: localNotificationDispatcher,
-                                               applicationStatus: mockApplicationStatus,
-                                               messageSender: mockMessageSender)
+            sut = ClientMessageRequestStrategy(
+                context: syncMOC,
+                localNotificationDispatcher: localNotificationDispatcher,
+                applicationStatus: mockApplicationStatus,
+                messageSender: mockMessageSender
+            )
         }
 
         apiVersion = .v0
@@ -113,7 +115,11 @@ extension ClientMessageRequestStrategyTests {
         // GIVEN
         var confirmationMessage: ZMMessage!
         self.syncMOC.performGroupedAndWait {
-            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            confirmationMessage = try! self.oneToOneConversation
+                .appendClientMessage(with: GenericMessage(content: Confirmation(
+                    messageId: UUID(),
+                    type: .delivered
+                )))
             self.syncMOC.saveOrRollback()
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
@@ -132,15 +138,25 @@ extension ClientMessageRequestStrategyTests {
         // GIVEN
         var confirmationMessage: ZMMessage!
         var token: Any?
-        let response = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: self.apiVersion.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 403,
+            transportSessionError: nil,
+            apiVersion: self.apiVersion.rawValue
+        )
         let missingLegalholdConsentFailure = Payload.ResponseFailure(
             code: 403,
             label: .missingLegalholdConsent,
             message: "",
-            data: nil)
+            data: nil
+        )
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
         self.syncMOC.performGroupedAndWait {
-            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            confirmationMessage = try! self.oneToOneConversation
+                .appendClientMessage(with: GenericMessage(content: Confirmation(
+                    messageId: UUID(),
+                    type: .delivered
+                )))
             self.syncMOC.saveOrRollback()
             self.mockMessageSender.sendMessageMessage_MockError = failure
 
@@ -148,9 +164,11 @@ extension ClientMessageRequestStrategyTests {
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
             let expectation = self.customExpectation(description: "Notification fired")
-            token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      object: nil) { _ in
+            token = NotificationInContext.addObserver(
+                name: ZMConversation.failedToSendMessageNotificationName,
+                context: self.uiMOC.notificationContext,
+                object: nil
+            ) { _ in
                 expectation.fulfill()
             }
         }
@@ -183,7 +201,12 @@ extension ClientMessageRequestStrategyTests {
                 "time": Date().transportString(),
                 "from": self.otherUser.remoteIdentifier.transportString(),
             ] as NSDictionary
-            guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
+            guard let event = ZMUpdateEvent.decryptedUpdateEvent(
+                fromEventStreamPayload: eventPayload,
+                uuid: nil,
+                transient: false,
+                source: .webSocket
+            ) else {
                 XCTFail("Failed to create event")
                 return
             }
@@ -199,7 +222,11 @@ extension ClientMessageRequestStrategyTests {
     func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
-        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC, lastEventIDRepository: lastEventIDRepository)
+        let eventDecoder = EventDecoder(
+            eventMOC: self.eventMOC,
+            syncMOC: self.syncMOC,
+            lastEventIDRepository: lastEventIDRepository
+        )
         let text = "Everything"
         let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 

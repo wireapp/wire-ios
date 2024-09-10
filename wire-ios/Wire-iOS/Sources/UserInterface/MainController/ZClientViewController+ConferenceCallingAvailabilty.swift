@@ -50,7 +50,11 @@ extension ZClientViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction.link(title: learnMore, url: WireURLs.shared.wireEnterpriseInfo, presenter: self))
         alert.addAction(.cancel())
-        alert.addAction(UIAlertAction.link(title: upgradeActionTitle, url: URL.manageTeam(source: .settings), presenter: self))
+        alert.addAction(UIAlertAction.link(
+            title: upgradeActionTitle,
+            url: URL.manageTeam(source: .settings),
+            presenter: self
+        ))
 
         present(alert, animated: true)
     }

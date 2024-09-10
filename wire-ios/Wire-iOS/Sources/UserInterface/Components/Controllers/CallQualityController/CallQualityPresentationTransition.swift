@@ -55,8 +55,14 @@ final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimate
             contentView.transform = .identity
         }
 
-        UIView.animate(withDuration: duration, delay: 0, options: .systemPresentationCurve, animations: animations) { finished in
-            transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
-        }
+        UIView
+            .animate(
+                withDuration: duration,
+                delay: 0,
+                options: .systemPresentationCurve,
+                animations: animations
+            ) { finished in
+                transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
+            }
     }
 }

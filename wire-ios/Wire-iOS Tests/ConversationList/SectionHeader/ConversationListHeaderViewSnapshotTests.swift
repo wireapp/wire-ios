@@ -60,7 +60,10 @@ final class ConversationListHeaderViewSnapshotTests: XCTestCase {
         folderBadge: Int = 0,
         isCollapsed: Bool = false
     ) -> ConversationListHeaderView {
-        let view = ConversationListHeaderView(frame: CGRect(origin: .zero, size: CGSize(width: 320, height: CGFloat.ConversationListSectionHeader.height)))
+        let view = ConversationListHeaderView(frame: CGRect(
+            origin: .zero,
+            size: CGSize(width: 320, height: CGFloat.ConversationListSectionHeader.height)
+        ))
         view.title = "THISISAVERYVERYVERYVERYVERYVERYVERYVERYLONGFOLDERNAME"
         view.folderBadge = folderBadge
         view.collapsed = isCollapsed

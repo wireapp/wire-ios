@@ -25,13 +25,17 @@ extension ZMTBaseTest {
     }
 
     @objc
-    func createCoreDataStack(userIdentifier: UUID = UUID(),
-                             inMemoryStore: Bool = true) -> CoreDataStack {
+    func createCoreDataStack(
+        userIdentifier: UUID = UUID(),
+        inMemoryStore: Bool = true
+    ) -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL,
-                                  inMemoryStore: inMemoryStore,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: inMemoryStore,
+            dispatchGroup: dispatchGroup
+        )
 
         stack.loadStores { error in
             XCTAssertNil(error)
@@ -55,7 +59,11 @@ extension ZMTBaseTest {
     }
 
     func removeFilesInSharedContainer() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }

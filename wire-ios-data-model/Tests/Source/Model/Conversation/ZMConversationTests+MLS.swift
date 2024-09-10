@@ -67,8 +67,14 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
             readyConversation.mlsStatus = .ready
 
             // When
-            let pendingConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .pendingJoin, in: syncMOC)
-            let readyConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(mlsGroupStatus: .ready, in: syncMOC)
+            let pendingConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .pendingJoin,
+                in: syncMOC
+            )
+            let readyConversations = try ZMConversation.fetchConversationsWithMLSGroupStatus(
+                mlsGroupStatus: .ready,
+                in: syncMOC
+            )
 
             // Then
             XCTAssertEqual(pendingConversations, [pendingConversation])

@@ -51,7 +51,10 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             let topMostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? "")) { [weak topMostViewController] result in
+            ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(
+                email: "",
+                password: password ?? ""
+            )) { [weak topMostViewController] result in
                 Task { @MainActor in self.activityIndicator.stop() }
                 TrackingManager.shared.disableAnalyticsSharing = false
                 if case let .failure(error) = result {
@@ -70,13 +73,19 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
         var viewController: UIViewController?
 
         if selfUser.emailAddress == nil || selfUser.usesCompanyLogin {
-            let alert = UIAlertController(title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
-                                          message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
-                                          preferredStyle: .alert)
+            let alert = UIAlertController(
+                title: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.title,
+                message: L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message,
+                preferredStyle: .alert
+            )
             let actionCancel = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel, handler: nil)
-            let actionLogout = UIAlertAction(title: L10n.Localizable.General.ok, style: .destructive, handler: { [weak self] _ in
-                self?.logout()
-            })
+            let actionLogout = UIAlertAction(
+                title: L10n.Localizable.General.ok,
+                style: .destructive,
+                handler: { [weak self] _ in
+                    self?.logout()
+                }
+            )
             alert.addAction(actionCancel)
             alert.addAction(actionLogout)
 

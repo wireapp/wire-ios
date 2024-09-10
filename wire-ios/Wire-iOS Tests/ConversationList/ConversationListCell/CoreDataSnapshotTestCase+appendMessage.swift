@@ -27,13 +27,20 @@ extension CoreDataSnapshotTestCase {
     }
 
     func appendImage(to conversation: ZMConversation) {
-        (try! conversation.appendImage(from: self.image(inTestBundleNamed: "unsplash_burger.jpg").jpegData(compressionQuality: 1.0)!) as! ZMMessage).sender = self.otherUser
+        (
+            try! conversation
+                .appendImage(
+                    from: self.image(inTestBundleNamed: "unsplash_burger.jpg")
+                        .jpegData(compressionQuality: 1.0)!
+                ) as! ZMMessage
+        ).sender = self.otherUser
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
 
     func appendMention(to conversation: ZMConversation) {
         let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-        (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self.otherUser
+        (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self
+            .otherUser
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
         conversation.lastReadServerTimeStamp = Date.distantPast
     }

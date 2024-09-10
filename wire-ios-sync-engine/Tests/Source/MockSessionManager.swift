@@ -21,7 +21,8 @@ import Foundation
 @testable import WireSyncEngine
 
 class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
-    static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("MockSessionManager.accounts")
+    static let accountManagerURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        .appendingPathComponent("MockSessionManager.accounts")
 
     var foregroundNotificationResponder: ForegroundNotificationResponder?
     var callKitManager: CallKitManagerInterface = MockCallKitManager()
@@ -36,7 +37,11 @@ class MockSessionManager: NSObject, WireSyncEngine.SessionManagerType {
     var lastRequestToShowUserProfile: UserType?
     var lastRequestToShowConnectionRequest: UUID?
 
-    func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?, in session: ZMUserSession) {
+    func showConversation(
+        _ conversation: ZMConversation,
+        at message: ZMConversationMessage?,
+        in session: ZMUserSession
+    ) {
         if let message {
             lastRequestToShowMessage = (session, conversation, message)
         } else {

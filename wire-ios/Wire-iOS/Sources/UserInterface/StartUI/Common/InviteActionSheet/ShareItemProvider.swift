@@ -19,11 +19,17 @@
 import UIKit
 
 final class ShareItemProvider: UIActivityItemProvider {
-    override func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
+    override func activityViewController(
+        _ activityViewController: UIActivityViewController,
+        subjectForActivityType activityType: UIActivity.ActivityType?
+    ) -> String {
         L10n.Localizable.SendInvitation.subject
     }
 
-    override func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+    override func activityViewController(
+        _ activityViewController: UIActivityViewController,
+        itemForActivityType activityType: UIActivity.ActivityType?
+    ) -> Any? {
         guard
             let handle = SelfUser.provider?.providedSelfUser.handle
         else {

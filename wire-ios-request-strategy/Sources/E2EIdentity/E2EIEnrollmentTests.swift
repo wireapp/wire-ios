@@ -34,10 +34,12 @@ class E2EIEnrollmentTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
 
-        let acmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                          newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                          newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                          revokeCert: "")
+        let acmeDirectory = AcmeDirectory(
+            newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            revokeCert: ""
+        )
         mockAcmeApi = MockAcmeAPIInterface()
         mockApiProvider = MockAPIProviderInterface()
         mockE2eiService = MockE2EIServiceInterface()
@@ -84,7 +86,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let acmeResponse = ACMEResponse(
             nonce: expectedNonce,
             location: "Location",
-            response: Data())
+            response: Data()
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
@@ -108,12 +111,14 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedLocation = "Location"
         let expectedAcmeOrder = NewAcmeOrder(
             delegate: Data(),
-            authorizations: ["new order"])
+            authorizations: ["new order"]
+        )
 
         let acmeResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: Data())
+            response: Data()
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
@@ -144,18 +149,21 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let wireOidcChallenge = AcmeChallenge(
             delegate: Data(),
             url: "url",
-            target: "google")
+            target: "google"
+        )
 
         let newAcmeAuthz = NewAcmeAuthz(
             identifier: "111",
             keyauth: "keyauth",
-            challenge: wireOidcChallenge)
+            challenge: wireOidcChallenge
+        )
 
         let authorizationResponse = ACMEAuthorizationResponse(
             nonce: expectedNonce,
             location: expectedLocation,
             response: Data(),
-            challengeType: expectedChallengeType)
+            challengeType: expectedChallengeType
+        )
 
         // given
         mockAcmeApi.sendAuthorizationRequestPathRequestBody_MockMethod = { _, _ in
@@ -239,7 +247,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
 
         // given
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
@@ -254,11 +263,13 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let acmeChallenge = AcmeChallenge(
             delegate: Data(),
             url: "",
-            target: "")
+            target: ""
+        )
         let result = try await sut.validateDPoPChallenge(
             accessToken: "11",
             prevNonce: "Nonce",
-            acmeChallenge: acmeChallenge)
+            acmeChallenge: acmeChallenge
+        )
 
         // then
         XCTAssertEqual(result, expectedChallengeResponse)
@@ -272,7 +283,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
 
         // given
         mockAcmeApi.sendChallengeRequestPathRequestBody_MockMethod = { _, _ in
@@ -287,13 +299,15 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let acmeChallenge = AcmeChallenge(
             delegate: Data(),
             url: "",
-            target: "")
+            target: ""
+        )
 
         let result = try await sut.validateOIDCChallenge(
             idToken: "idToken",
             refreshToken: "refreshToken",
             prevNonce: "Nonce",
-            acmeChallenge: acmeChallenge)
+            acmeChallenge: acmeChallenge
+        )
 
         // then
         XCTAssertEqual(result, expectedChallengeResponse)
@@ -307,7 +321,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
         mockE2eiService.setDPoPChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
@@ -325,7 +340,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             status: "valid",
             token: "token",
             target: "target",
-            nonce: "nonce")
+            nonce: "nonce"
+        )
         mockE2eiService.setOIDCChallengeResponseChallenge_MockMethod = { _ in }
 
         // when
@@ -344,7 +360,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedACMEResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: expectedData)
+            response: expectedData
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
@@ -374,7 +391,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedACMEResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: expectedData)
+            response: expectedData
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in
@@ -403,7 +421,8 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         let expectedACMEResponse = ACMEResponse(
             nonce: expectedNonce,
             location: expectedLocation,
-            response: expectedData)
+            response: expectedData
+        )
 
         // given
         mockAcmeApi.sendACMERequestPathRequestBody_MockMethod = { _, _ in

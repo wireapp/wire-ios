@@ -24,8 +24,10 @@ import WireSyncEngine
 typealias CallParticipantsList = [CallParticipantsListCellConfiguration]
 
 protocol CallParticipantsListCellConfigurable: Reusable {
-    func configure(with configuration: CallParticipantsListCellConfiguration,
-                   selfUser: UserType)
+    func configure(
+        with configuration: CallParticipantsListCellConfiguration,
+        selfUser: UserType
+    )
 }
 
 enum CallParticipantsListCellConfiguration: Hashable {
@@ -92,13 +94,21 @@ extension CallParticipantsListView: UICollectionViewDataSource {
         rows.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cellConfiguration = rows[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellConfiguration.cellType.reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: cellConfiguration.cellType.reuseIdentifier,
+            for: indexPath
+        )
 
         if let configurableCell = cell as? CallParticipantsListCellConfigurable {
-            configurableCell.configure(with: cellConfiguration,
-                                       selfUser: selfUser)
+            configurableCell.configure(
+                with: cellConfiguration,
+                selfUser: selfUser
+            )
         }
         return cell
     }
@@ -120,8 +130,8 @@ extension UserCell: CallParticipantsListCellConfigurable {
         case let .connected(videoState, microphoneState):
             microphoneIconView.set(style: MicrophoneIconStyle(
                 state: microphoneState,
-                shouldPulse: activeSpeakerState.isSpeakingNow)
-            )
+                shouldPulse: activeSpeakerState.isSpeakingNow
+            ))
             videoIconView.set(style: VideoIconStyle(state: videoState))
             connectingLabel.isHidden = true
             unconnectedStateOverlay.isHidden = true
@@ -129,8 +139,8 @@ extension UserCell: CallParticipantsListCellConfigurable {
         case .connecting, .unconnectedButMayConnect:
             microphoneIconView.set(style: MicrophoneIconStyle(
                 state: nil,
-                shouldPulse: false)
-            )
+                shouldPulse: false
+            ))
             videoIconView.set(style: VideoIconStyle(state: nil))
             connectingLabel.isHidden = false
             unconnectedStateOverlay.isHidden = false
@@ -138,8 +148,8 @@ extension UserCell: CallParticipantsListCellConfigurable {
         default:
             microphoneIconView.set(style: MicrophoneIconStyle(
                 state: nil,
-                shouldPulse: activeSpeakerState.isSpeakingNow)
-            )
+                shouldPulse: activeSpeakerState.isSpeakingNow
+            ))
             videoIconView.set(style: VideoIconStyle(state: nil))
             connectingLabel.isHidden = true
             unconnectedStateOverlay.isHidden = true

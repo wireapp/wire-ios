@@ -148,7 +148,10 @@ class GenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForEdited() {
         // given
 
-        let editedTextMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID(), text: Text(content: "Hello 👩‍💻👨‍👩‍👧!")))
+        let editedTextMessage = GenericMessage(content: MessageEdit(
+            replacingMessageID: UUID(),
+            text: Text(content: "Hello 👩‍💻👨‍👩‍👧!")
+        ))
         let timestamp = Date(timeIntervalSince1970: 1_540_213_769)
 
         // when

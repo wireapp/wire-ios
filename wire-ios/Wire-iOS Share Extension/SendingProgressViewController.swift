@@ -77,12 +77,21 @@ final class SendingProgressViewController: UIViewController {
         super.viewDidLoad()
 
         self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(onCancelTapped))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .cancel,
+            target: self,
+            action: #selector(onCancelTapped)
+        )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(SendingProgressViewController.networkStatusDidChange(_:)),
-                                               name: Notification.Name.NetworkStatus,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(
+                SendingProgressViewController
+                    .networkStatusDidChange(_:)
+            ),
+            name: Notification.Name.NetworkStatus,
+            object: nil
+        )
 
         circularShadow.lineWidth = 2
         circularShadow.setProgress(1, animated: false)

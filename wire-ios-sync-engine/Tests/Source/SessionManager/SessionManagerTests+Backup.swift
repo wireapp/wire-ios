@@ -38,8 +38,16 @@ final class SessionManagerBackupTests: IntegrationTest {
         unzippedURL = directory.appendingPathComponent("BackupTests_Unzipped")
 
         do {
-            try FileManager.default.createDirectory(atPath: backupURL.path, withIntermediateDirectories: true, attributes: nil)
-            try FileManager.default.createDirectory(atPath: unzippedURL.path, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(
+                atPath: backupURL.path,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            try FileManager.default.createDirectory(
+                atPath: unzippedURL.path,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
         } catch {
             XCTFail("Unable to create directories: \(error)")
         }
@@ -83,7 +91,12 @@ final class SessionManagerBackupTests: IntegrationTest {
 
         let decryptedURL = createTemporaryURL()
         let moc = sessionManager!.activeUserSession!.managedObjectContext
-        try SessionManager.decrypt(from: url, to: decryptedURL, password: "12345678", accountId: ZMUser.selfUser(in: moc).remoteIdentifier!)
+        try SessionManager.decrypt(
+            from: url,
+            to: decryptedURL,
+            password: "12345678",
+            accountId: ZMUser.selfUser(in: moc).remoteIdentifier!
+        )
 
         guard decryptedURL.unzip(to: unzippedURL) else { return XCTFail("Decompression failed") }
 
@@ -115,14 +128,18 @@ final class SessionManagerBackupTests: IntegrationTest {
     func testThatItImportsAZippedBackup() throws {
         // Given
         XCTAssert(login())
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
 
         let backupResult = backupActiveAcount(password: name)
         let url = try backupResult.get()
 
         let moc = sessionManager!.activeUserSession!.managedObjectContext
         let userId = ZMUser.selfUser(in: moc).remoteIdentifier!
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: userId, applicationContainer: sharedContainer)
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: userId,
+            applicationContainer: sharedContainer
+        )
         let fm = FileManager.default
         try fm.removeItem(at: accountFolder)
         let storePath = accountFolder.appendingPathComponent("store").path
@@ -140,13 +157,22 @@ final class SessionManagerBackupTests: IntegrationTest {
         // Given
         XCTAssert(login())
 
-        try FileManager.default.createDirectory(atPath: backupURL.path, withIntermediateDirectories: true, attributes: nil)
+        try FileManager.default.createDirectory(
+            atPath: backupURL.path,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
         let dataURL = backupURL.appendingPathComponent("invalid_backup.zip")
         let randomData = Data.secureRandomData(length: 1024)
         try randomData.write(to: dataURL)
         let encryptedURL = createTemporaryURL()
         let moc = sessionManager!.activeUserSession!.managedObjectContext
-        try SessionManager.encrypt(from: dataURL, to: encryptedURL, password: "notsorandom", accountId: ZMUser.selfUser(in: moc).remoteIdentifier!)
+        try SessionManager.encrypt(
+            from: dataURL,
+            to: encryptedURL,
+            password: "notsorandom",
+            accountId: ZMUser.selfUser(in: moc).remoteIdentifier!
+        )
 
         do {
             // When

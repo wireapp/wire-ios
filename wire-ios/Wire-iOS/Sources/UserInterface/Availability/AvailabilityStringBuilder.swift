@@ -99,7 +99,12 @@ enum AvailabilityStringBuilder {
             0
         }
 
-        return NSTextAttachment.textAttachment(for: iconType, with: color, iconSize: 12, verticalCorrection: verticalCorrection)
+        return NSTextAttachment.textAttachment(
+            for: iconType,
+            with: color,
+            iconSize: 12,
+            verticalCorrection: verticalCorrection
+        )
     }
 
     static func color(for availability: Availability) -> UIColor {

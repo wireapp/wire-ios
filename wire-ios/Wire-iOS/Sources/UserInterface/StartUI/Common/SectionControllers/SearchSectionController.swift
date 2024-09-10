@@ -20,13 +20,28 @@ import UIKit
 import WireDataModel
 
 protocol SearchSectionControllerDelegate: AnyObject {
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectUser user: UserType, at indexPath: IndexPath)
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        didSelectUser user: UserType,
+        at indexPath: IndexPath
+    )
 
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectConversation conversation: ZMConversation, at indexPath: IndexPath)
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        didSelectConversation conversation: ZMConversation,
+        at indexPath: IndexPath
+    )
 
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectRow row: CreateGroupSection.Row, at indexPath: IndexPath)
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        didSelectRow row: CreateGroupSection.Row,
+        at indexPath: IndexPath
+    )
 
-    func searchSectionController(_ searchSectionController: CollectionViewSectionController, wantsToDisplayError error: LocalizedError)
+    func searchSectionController(
+        _ searchSectionController: CollectionViewSectionController,
+        wantsToDisplayError error: LocalizedError
+    )
 }
 
 class SearchSectionController: NSObject, CollectionViewSectionController {
@@ -43,11 +58,23 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
-        collectionView?.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
+        collectionView?.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let supplementaryView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let supplementaryView = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader",
+            for: indexPath
+        )
 
         if let sectionHeaderView = supplementaryView as? SectionHeader {
             sectionHeaderView.titleLabel.text = sectionTitle.localizedUppercase
@@ -57,15 +84,27 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
         return supplementaryView
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 48)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: CGFloat.StartUI.CellHeight)
     }
 
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
         // Workaround for when a cell is created inside an animation block. In this case it happens
         // when the keyboard is animating away which will change the height of the collection view
         // and therefore reveal more cells.
@@ -78,7 +117,10 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
         fatal("Must be overridden")
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         fatal("Must be overridden")
     }
 

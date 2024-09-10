@@ -143,7 +143,8 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             do {
                 try await joinMLSGroupIfNeeded(groupID, mlsService: mlsService)
 
-                let allParticipantsSupportMLS = await context.perform { self.allParticipantsSupportMLS(in: conversation) }
+                let allParticipantsSupportMLS = await context
+                    .perform { self.allParticipantsSupportMLS(in: conversation) }
 
                 guard migrationFinalisationTimeHasArrived || allParticipantsSupportMLS else {
                     continue
@@ -151,7 +152,10 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
                 try await updateConversationProtocolToMLS(for: conversation)
             } catch {
-                logger.warn("failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))")
+                logger
+                    .warn(
+                        "failed to migrate conversation (groupID:\(groupID.safeForLoggingDescription), error: \(String(describing: error))"
+                    )
                 continue
             }
         }

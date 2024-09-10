@@ -127,7 +127,10 @@ final class EmptySearchResultsView: UIView {
     private let scrollView = UIScrollView()
     private let stackView = UIStackView()
     private let iconView = UIImageView()
-    private let statusLabel = DynamicFontLabel(fontSpec: .normalRegularFont, color: LabelColors.textSettingsPasswordPlaceholder)
+    private let statusLabel = DynamicFontLabel(
+        fontSpec: .normalRegularFont,
+        color: LabelColors.textSettingsPasswordPlaceholder
+    )
     private let actionButton = LinkButton(fontSpec: .normalRegularFont)
     private let iconColor = LabelColors.textSettingsPasswordPlaceholder
 

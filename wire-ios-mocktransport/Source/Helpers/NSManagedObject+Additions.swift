@@ -30,7 +30,11 @@ extension NSManagedObject {
         return item
     }
 
-    public static func fetchAll<A: EntityNamedProtocol>(in context: NSManagedObjectContext, withPredicate predicate: NSPredicate? = nil, sortBy sortDescriptors: [NSSortDescriptor] = []) -> [A] {
+    public static func fetchAll<A: EntityNamedProtocol>(
+        in context: NSManagedObjectContext,
+        withPredicate predicate: NSPredicate? = nil,
+        sortBy sortDescriptors: [NSSortDescriptor] = []
+    ) -> [A] {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: A.entityName)
         fetchRequest.predicate = predicate
         fetchRequest.sortDescriptors = sortDescriptors
@@ -39,7 +43,10 @@ extension NSManagedObject {
         return teams ?? []
     }
 
-    public static func fetch<A: EntityNamedProtocol>(in context: NSManagedObjectContext, withPredicate predicate: NSPredicate) -> A? {
+    public static func fetch<A: EntityNamedProtocol>(
+        in context: NSManagedObjectContext,
+        withPredicate predicate: NSPredicate
+    ) -> A? {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: A.entityName)
         fetchRequest.predicate = predicate
         let results = try? context.fetch(fetchRequest)

@@ -172,7 +172,10 @@ extension ZMConversation {
 
         if !addedRoles.isEmpty {
             self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
-            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap(\.user)), addedSelfUser: addedSelfUser)
+            self.checkIfVerificationLevelChanged(
+                addedUsers: Set(addedRoles.compactMap(\.user)),
+                addedSelfUser: addedSelfUser
+            )
         }
     }
 
@@ -183,7 +186,10 @@ extension ZMConversation {
 
     // Fetch an existing role or create a new one if needed
     // Returns whether it was created or found
-    private func updateExistingOrCreateParticipantRole(for user: ZMUser, with role: Role?) -> (FetchOrCreation, ParticipantRole)? {
+    private func updateExistingOrCreateParticipantRole(
+        for user: ZMUser,
+        with role: Role?
+    ) -> (FetchOrCreation, ParticipantRole)? {
         guard let moc = self.managedObjectContext else { return nil }
 
         // If the user is already there, just change the role

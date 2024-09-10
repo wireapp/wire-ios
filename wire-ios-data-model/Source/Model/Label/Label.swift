@@ -83,7 +83,9 @@ public class Label: ZMManagedObject, LabelType {
     }
 
     override public static func predicateForFilteringResults() -> NSPredicate? {
-        NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
+        NSPredicate(
+            format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO"
+        )
     }
 
     override public static func isTrackingLocalModifications() -> Bool {
@@ -101,11 +103,13 @@ public class Label: ZMManagedObject, LabelType {
         // Looping through all objects in the context is way cheaper, because it does not involve (1)
         // taking any locks, nor (2) touching the file system.
         context.performAndWait {
-            guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()] else {
+            guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()]
+            else {
                 fatal("Label entity not registered in managed object model")
             }
 
-            for managedObject in context.registeredObjects where managedObject.entity == entity && !managedObject.isFault {
+            for managedObject in context.registeredObjects
+                where managedObject.entity == entity && !managedObject.isFault {
                 guard let label = managedObject as? Label, label.kind == .favorite else { continue }
                 return label
             }
@@ -138,7 +142,12 @@ public class Label: ZMManagedObject, LabelType {
         }
     }
 
-    public static func fetchOrCreate(remoteIdentifier: UUID, create: Bool, in context: NSManagedObjectContext, created: inout Bool) -> Label? {
+    public static func fetchOrCreate(
+        remoteIdentifier: UUID,
+        create: Bool,
+        in context: NSManagedObjectContext,
+        created: inout Bool
+    ) -> Label? {
         if let existing = fetch(with: remoteIdentifier, in: context) {
             created = false
             return existing

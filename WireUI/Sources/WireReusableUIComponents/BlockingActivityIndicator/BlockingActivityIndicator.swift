@@ -179,7 +179,8 @@ private var stateKey = 0
         controlsView.spacing = 24
         controlsView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(controlsView)
-        controlsView.topAnchor.constraint(equalToSystemSpacingBelow: targetView.bottomAnchor, multiplier: 2).isActive = true
+        controlsView.topAnchor.constraint(equalToSystemSpacingBelow: targetView.bottomAnchor, multiplier: 2)
+            .isActive = true
         controlsView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
 
         return contentView

@@ -447,9 +447,11 @@ public class ZMSearchUser: NSObject, UserType {
         else { return nil }
 
         let domain = payload.optionalDictionary(forKey: "qualified_id")?.string(forKey: "domain")
-        let localUser = ZMUser.fetch(with: remoteIdentifier,
-                                     domain: domain,
-                                     in: contextProvider.viewContext)
+        let localUser = ZMUser.fetch(
+            with: remoteIdentifier,
+            domain: domain,
+            in: contextProvider.viewContext
+        )
 
         if let searchUser = searchUsersCache?.object(forKey: remoteIdentifier as NSUUID) {
             searchUser.user = localUser
@@ -678,7 +680,12 @@ public class ZMSearchUser: NSObject, UserType {
         if let user = self.user {
             user.requestPreviewProfileImage()
         } else if let notificationContext = contextProvider?.viewContext.notificationContext {
-            NotificationInContext(name: .searchUserDidRequestPreviewAsset, context: notificationContext, object: self, userInfo: nil).post()
+            NotificationInContext(
+                name: .searchUserDidRequestPreviewAsset,
+                context: notificationContext,
+                object: self,
+                userInfo: nil
+            ).post()
         }
     }
 
@@ -688,7 +695,12 @@ public class ZMSearchUser: NSObject, UserType {
         if let user = self.user {
             user.requestCompleteProfileImage()
         } else if let notificationContext = contextProvider?.viewContext.notificationContext {
-            NotificationInContext(name: .searchUserDidRequestCompleteAsset, context: notificationContext, object: self, userInfo: nil).post()
+            NotificationInContext(
+                name: .searchUserDidRequestCompleteAsset,
+                context: notificationContext,
+                object: self,
+                userInfo: nil
+            ).post()
         }
     }
 

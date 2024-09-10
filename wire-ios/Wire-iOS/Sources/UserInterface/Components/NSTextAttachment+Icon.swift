@@ -41,7 +41,12 @@ extension NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = image
         let ratio = image.size.width / image.size.height
-        attachment.bounds = CGRect(x: 0, y: verticalCorrection, width: iconSize.rawValue * ratio, height: iconSize.rawValue)
+        attachment.bounds = CGRect(
+            x: 0,
+            y: verticalCorrection,
+            width: iconSize.rawValue * ratio,
+            height: iconSize.rawValue
+        )
         return attachment
     }
 }

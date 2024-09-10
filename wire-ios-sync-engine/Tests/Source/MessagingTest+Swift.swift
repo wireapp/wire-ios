@@ -43,10 +43,12 @@ extension MessagingTest {
     public func createClientTextMessageWith(text: String) -> ZMClientMessage? {
         let nonce = UUID.create()
         let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
-        let textMessage = GenericMessage(content: Text(content: text,
-                                                       mentions: [],
-                                                       linkPreviews: [],
-                                                       replyingTo: nil), nonce: nonce)
+        let textMessage = GenericMessage(content: Text(
+            content: text,
+            mentions: [],
+            linkPreviews: [],
+            replyingTo: nil
+        ), nonce: nonce)
         do {
             try message.setUnderlyingMessage(textMessage)
         } catch {
@@ -69,10 +71,12 @@ extension MessagingTest {
     @objc
     public func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: userIdentifier)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL,
-                                  inMemoryStore: shouldUseInMemoryStore,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL,
+            inMemoryStore: shouldUseInMemoryStore,
+            dispatchGroup: dispatchGroup
+        )
 
         stack.loadStores(completionHandler: { error in
             XCTAssertNil(error)

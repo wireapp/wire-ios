@@ -63,7 +63,10 @@ open class Flow {
     ///   - description: A short single line string describing a point of interest.
 
     public func checkpoint(description: LogConvertible) {
-        logger.info(FlowLog(name: name, event: .init(type: .checkpoint, description: description.logDescription, outcome: .success)))
+        logger.info(FlowLog(
+            name: name,
+            event: .init(type: .checkpoint, description: description.logDescription, outcome: .success)
+        ))
     }
 
     /// Report a successful end to the flow.
@@ -78,7 +81,10 @@ open class Flow {
     ///   - error: The failure reason.
 
     public func fail(_ error: Error) {
-        logger.error(FlowLog(name: name, event: .init(type: .end, description: String(describing: error), outcome: .failure)))
+        logger.error(FlowLog(
+            name: name,
+            event: .init(type: .end, description: String(describing: error), outcome: .failure)
+        ))
     }
 
     /// Report a failed end to the flow.
@@ -87,7 +93,10 @@ open class Flow {
     ///   - reason: The failure reason.
 
     public func fail(_ reason: LogConvertible) {
-        logger.error(FlowLog(name: name, event: .init(type: .end, description: reason.logDescription, outcome: .failure)))
+        logger.error(FlowLog(
+            name: name,
+            event: .init(type: .end, description: reason.logDescription, outcome: .failure)
+        ))
     }
 
     struct GenericError: Error {

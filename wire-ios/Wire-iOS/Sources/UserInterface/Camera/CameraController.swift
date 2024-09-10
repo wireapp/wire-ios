@@ -228,8 +228,10 @@ final class CameraController {
 
             let jpegType = AVVideoCodecType.jpeg
 
-            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: jpegType,
-                                                           AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9]])
+            let settings = AVCapturePhotoSettings(format: [
+                AVVideoCodecKey: jpegType,
+                AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9],
+            ])
 
             let delegate = PhotoCaptureDelegate(settings: settings, handler: handler) {
                 self.sessionQueue.async { self.captureDelegates[settings.uniqueID] = nil }
@@ -250,19 +252,28 @@ final class CameraController {
         private let handler: (PhotoResult) -> Void
         private let completion: () -> Void
 
-        init(settings: AVCapturePhotoSettings,
-             handler: @escaping (PhotoResult) -> Void,
-             completion: @escaping () -> Void) {
+        init(
+            settings: AVCapturePhotoSettings,
+            handler: @escaping (PhotoResult) -> Void,
+            completion: @escaping () -> Void
+        ) {
             self.settings = settings
             self.handler = handler
             self.completion = completion
         }
 
-        func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        func photoOutput(
+            _ output: AVCapturePhotoOutput,
+            didFinishProcessingPhoto photo: AVCapturePhoto,
+            error: Error?
+        ) {
             defer { completion() }
 
             if let error {
-                zmLog.error("PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)")
+                zmLog
+                    .error(
+                        "PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)"
+                    )
                 handler(PhotoResult(nil, error))
                 return
             }

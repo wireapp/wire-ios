@@ -100,8 +100,10 @@ class BottomSheetContainerViewController: UIViewController {
         bottomSheetViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         topConstraint = bottomSheetViewController.view.topAnchor
-            .constraint(equalTo: self.view.bottomAnchor,
-                        constant: -configuration.initialOffset)
+            .constraint(
+                equalTo: self.view.bottomAnchor,
+                constant: -configuration.initialOffset
+            )
 
         bottomViewHeightConstraint = bottomSheetViewController.view.heightAnchor
             .constraint(equalToConstant: configuration.height)
@@ -121,7 +123,12 @@ class BottomSheetContainerViewController: UIViewController {
         self.addChild(contentViewController)
         self.view.addSubview(contentViewController.view)
         contentViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        visibleControllerBottomConstraint = contentViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -configuration.initialOffset)
+        visibleControllerBottomConstraint = contentViewController.view.bottomAnchor
+            .constraint(
+                equalTo: view.bottomAnchor,
+                constant: -configuration
+                    .initialOffset
+            )
 
         NSLayoutConstraint.activate([
             contentViewController.view.leftAnchor
@@ -160,17 +167,20 @@ class BottomSheetContainerViewController: UIViewController {
         self.topConstraint.constant = -configuration.initialOffset
 
         if animated {
-            UIView.animate(withDuration: 0.3,
-                           delay: 0,
-                           usingSpringWithDamping: 0.8,
-                           initialSpringVelocity: 0.5,
-                           options: [.curveEaseOut],
-                           animations: {
-                               self.view.layoutIfNeeded()
-                               self.bottomSheetChangedOffset(fullHeightPercentage: 0.0)
-                           }, completion: { _ in
-                               self.state = .initial
-                           })
+            UIView.animate(
+                withDuration: 0.3,
+                delay: 0,
+                usingSpringWithDamping: 0.8,
+                initialSpringVelocity: 0.5,
+                options: [.curveEaseOut],
+                animations: {
+                    self.view.layoutIfNeeded()
+                    self.bottomSheetChangedOffset(fullHeightPercentage: 0.0)
+                },
+                completion: { _ in
+                    self.state = .initial
+                }
+            )
         } else {
             self.view.layoutIfNeeded()
             self.state = .initial
@@ -200,7 +210,8 @@ class BottomSheetContainerViewController: UIViewController {
                 topConstraint.constant = newConstant
                 self.view.layoutIfNeeded()
             }
-            let percent = (-topConstraint.constant - configuration.initialOffset) / (configuration.height - configuration.initialOffset)
+            let percent = (-topConstraint.constant - configuration.initialOffset) /
+                (configuration.height - configuration.initialOffset)
             bottomSheetChangedOffset(fullHeightPercentage: percent)
         case .ended:
             if self.state == .full {
@@ -232,7 +243,10 @@ class BottomSheetContainerViewController: UIViewController {
 }
 
 extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         if let otherGestureView = otherGestureRecognizer.view as? UIScrollView,
            otherGestureView.contentOffset.y > 0.0 {
             return false

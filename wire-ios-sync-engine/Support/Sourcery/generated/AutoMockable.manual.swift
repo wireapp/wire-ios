@@ -78,7 +78,8 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
     // MARK: - establishSession
 
-    public var establishSessionWithApiVersion_Invocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] = []
+    public var establishSessionWithApiVersion_Invocations: [(clients: Set<QualifiedClientID>, apiVersion: APIVersion)] =
+        []
     public var establishSessionWithApiVersion_MockError: Error?
     public var establishSessionWithApiVersion_MockMethod: ((Set<QualifiedClientID>, APIVersion) async throws -> Void)?
 

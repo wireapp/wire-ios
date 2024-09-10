@@ -79,7 +79,10 @@ extension Notification.Name {
 
         super.init()
 
-        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] _ in
+        self.resyncResourcesToken = NotificationInContext.addObserver(
+            name: .resyncResources,
+            context: managedObjectContext.notificationContext
+        ) { [weak self] _ in
             self?.resyncResources()
         }
 
@@ -176,7 +179,10 @@ extension SyncStatus {
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents
                 needsToRestartQuickSync = false
-                WireLogger.sync.debug("restarting quick sync since push channel was closed or open after request to fetch notifiations")
+                WireLogger.sync
+                    .debug(
+                        "restarting quick sync since push channel was closed or open after request to fetch notifiations"
+                    )
             } else {
                 WireLogger.sync.debug("sync complete")
                 notifyQuickSyncDidFinish()
@@ -237,7 +243,8 @@ extension SyncStatus {
 
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
-        WireLogger.sync.debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
+        WireLogger.sync
+            .debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
         if currentSyncPhase == .fetchingMissedEvents {
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
@@ -279,10 +286,12 @@ extension SyncStatus {
     }
 
     private func log(_ message: String? = nil) {
-        let info = SyncStatusLog(phase: currentSyncPhase.description,
-                                 isSyncing: isSyncing,
-                                 pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
-                                 message: message)
+        let info = SyncStatusLog(
+            phase: currentSyncPhase.description,
+            isSyncing: isSyncing,
+            pushChannelEstablishedDate: pushChannelEstablishedDate?.description,
+            message: message
+        )
         do {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(decoding: data, as: UTF8.self)

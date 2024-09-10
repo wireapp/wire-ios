@@ -23,8 +23,10 @@ import XCTest
 
 extension ZMUser {
     func mockSetExpires(at date: Date) {
-        self.update(withTransportData: ["id": self.remoteIdentifier?.transportString() as Any,
-                                        "expires_at": date.transportString()], authoritative: false)
+        self.update(withTransportData: [
+            "id": self.remoteIdentifier?.transportString() as Any,
+            "expires_at": date.transportString(),
+        ], authoritative: false)
     }
 }
 

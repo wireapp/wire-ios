@@ -62,7 +62,13 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     public let ciphersuite: MLSCipherSuite
     public var resultHandler: ResultHandler?
 
-    public init(domain: String?, userId: UUID, ciphersuite: MLSCipherSuite, excludedSelfClientId: String? = nil, resultHandler: ResultHandler? = nil) {
+    public init(
+        domain: String?,
+        userId: UUID,
+        ciphersuite: MLSCipherSuite,
+        excludedSelfClientId: String? = nil,
+        resultHandler: ResultHandler? = nil
+    ) {
         self.domain = domain
         self.userId = userId
         self.ciphersuite = ciphersuite

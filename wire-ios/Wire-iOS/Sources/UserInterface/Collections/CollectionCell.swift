@@ -40,7 +40,11 @@ class CollectionCell: UICollectionViewCell {
         didSet {
             self.messageObserverToken = nil
             if let userSession = ZMUserSession.shared(), let newMessage = message {
-                self.messageObserverToken = MessageChangeInfo.add(observer: self, for: newMessage, userSession: userSession)
+                self.messageObserverToken = MessageChangeInfo.add(
+                    observer: self,
+                    for: newMessage,
+                    userSession: userSession
+                )
             }
 
             actionController = message.map {
@@ -76,7 +80,8 @@ class CollectionCell: UICollectionViewCell {
         cachedSize = .none
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes)
+        -> UICollectionViewLayoutAttributes {
         if let cachedSize = self.cachedSize {
             var newFrame = layoutAttributes.frame
             newFrame.size.width = cachedSize.width
@@ -116,7 +121,10 @@ class CollectionCell: UICollectionViewCell {
         self.contentView.layer.masksToBounds = true
         self.contentView.layer.cornerRadius = 4
 
-        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(CollectionCell.onLongPress(_:)))
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(CollectionCell.onLongPress(_:))
+        )
 
         self.contentView.addGestureRecognizer(longPressGestureRecognizer)
 
@@ -189,8 +197,10 @@ class CollectionCell: UICollectionViewCell {
 
         let menuController = UIMenuController.shared
         menuController.menuItems = ConversationMessageActionController.allMessageActions
-        menuController.showMenu(from: menuConfigurationProperties.targetView,
-                                rect: menuConfigurationProperties.targetRect)
+        menuController.showMenu(
+            from: menuConfigurationProperties.targetView,
+            rect: menuConfigurationProperties.targetRect
+        )
     }
 
     override var canBecomeFirstResponder: Bool {

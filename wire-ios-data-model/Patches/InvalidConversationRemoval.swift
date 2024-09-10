@@ -23,7 +23,12 @@ enum InvalidConversationRemoval {
     /// we need to delete all invalid conversations which have been accumulating over time.
     static func removeInvalid(in moc: NSManagedObjectContext) {
         do {
-            try moc.batchDeleteEntities(named: ZMConversation.entityName(), matching: NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.invalid.rawValue)"))
+            try moc.batchDeleteEntities(
+                named: ZMConversation.entityName(),
+                matching: NSPredicate(
+                    format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.invalid.rawValue)"
+                )
+            )
         } catch {
             fatalError("Failed to perform batch update: \(error)")
         }

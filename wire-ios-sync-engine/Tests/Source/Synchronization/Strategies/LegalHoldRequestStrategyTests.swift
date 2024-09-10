@@ -31,7 +31,11 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        sut = LegalHoldRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
+        sut = LegalHoldRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncStatus: mockSyncStatus
+        )
 
         syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -53,7 +57,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             clientIdentifier: "eca3c87cfe28be49",
             lastPrekey: LegalHoldRequest.Prekey(
                 id: 65535,
-                key: Data(base64Encoded: "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY=")!
+                key: Data(
+                    base64Encoded: "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
+                )!
             )
         )
     }
@@ -116,7 +122,10 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
 
             // THEN
-            XCTAssertEqual(request.path, "/teams/\(team.remoteIdentifier!.transportString())/legalhold/\(selfUser.remoteIdentifier.transportString())")
+            XCTAssertEqual(
+                request.path,
+                "/teams/\(team.remoteIdentifier!.transportString())/legalhold/\(selfUser.remoteIdentifier.transportString())"
+            )
         }
     }
 
@@ -140,7 +149,12 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
-            request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 500,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -164,7 +178,12 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
             let payload = type(of: self).payloadForReceivingLegalHoldRequestStatus(request: expectedLegalHoldRequest)
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: payload,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -193,7 +212,12 @@ class LegalHoldRequestStrategyTests: MessagingTest {
                 "status": "disabled",
             ]
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
-            request.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

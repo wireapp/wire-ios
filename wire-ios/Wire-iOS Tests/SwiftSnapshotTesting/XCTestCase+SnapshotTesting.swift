@@ -29,16 +29,20 @@ private let perceptualPrecision: Float = 0.98
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
-    func verifyInWidths(matching value: UIView,
-                        widths: Set<CGFloat>,
-                        snapshotBackgroundColor: UIColor,
-                        configuration: ((UIView) -> Swift.Void)? = nil,
-                        named name: String? = nil,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
-        let container = containerView(with: value,
-                                      snapshotBackgroundColor: snapshotBackgroundColor)
+    func verifyInWidths(
+        matching value: UIView,
+        widths: Set<CGFloat>,
+        snapshotBackgroundColor: UIColor,
+        configuration: ((UIView) -> Swift.Void)? = nil,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let container = containerView(
+            with: value,
+            snapshotBackgroundColor: snapshotBackgroundColor
+        )
         let widthConstraint = container.addWidthConstraint(width: 300)
 
         for width in widths {
@@ -46,21 +50,25 @@ extension XCTestCase {
 
             configuration?(container)
 
-            verifyWithWidthInName(matching: container,
-                                  width: width,
-                                  named: name,
-                                  file: file,
-                                  testName: testName,
-                                  line: line)
+            verifyWithWidthInName(
+                matching: container,
+                width: width,
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
-    private func verifyWithWidthInName(matching value: UIView,
-                                       width: CGFloat,
-                                       named name: String? = nil,
-                                       file: StaticString = #file,
-                                       testName: String = #function,
-                                       line: UInt = #line) {
+    private func verifyWithWidthInName(
+        matching value: UIView,
+        width: CGFloat,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let nameWithProperty = if let name {
             "\(name)-\(width)"
         } else {
@@ -76,36 +84,44 @@ extension XCTestCase {
         )
     }
 
-    func verifyInAllPhoneWidths(matching value: UIView,
-                                snapshotBackgroundColor: UIColor? = nil,
-                                configuration: ((UIView) -> Swift.Void)? = nil,
-                                named name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        verifyInWidths(matching: value,
-                       widths: phoneWidths(),
-                       snapshotBackgroundColor: snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black),
-                       configuration: configuration,
-                       named: name,
-                       file: file,
-                       testName: testName,
-                       line: line)
+    func verifyInAllPhoneWidths(
+        matching value: UIView,
+        snapshotBackgroundColor: UIColor? = nil,
+        configuration: ((UIView) -> Swift.Void)? = nil,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        verifyInWidths(
+            matching: value,
+            widths: phoneWidths(),
+            snapshotBackgroundColor: snapshotBackgroundColor ??
+                (ColorScheme.default.variant == .light ? .white : .black),
+            configuration: configuration,
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 }
 
 extension XCTestCase {
     func snapshotDirectory(file: StaticString = #file) -> String {
         let fileName = "\(file)"
-        let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName).deletingPathExtension().lastPathComponent
+        let path = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"]! + "/" + URL(fileURLWithPath: fileName)
+            .deletingPathExtension().lastPathComponent
         return path
     }
 
     /// verify for a UIAlertController
-    func verify(matching value: UIAlertController,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) throws {
+    func verify(
+        matching value: UIAlertController,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) throws {
         throw XCTSkip("UIAlertController is not fully supported, please rewrite your test")
 
         // Reset default tint color to keep constant snapshot result
@@ -119,10 +135,14 @@ extension XCTestCase {
             presentViewController(value)
         }
 
-        let failure = verifySnapshot(of: value,
-                                     as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file, testName: testName, line: line)
+        let failure = verifySnapshot(
+            of: value,
+            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
 
         XCTAssertNil(failure, file: file, line: line)
 
@@ -133,18 +153,22 @@ extension XCTestCase {
     }
 
     @available(*, deprecated, message: "Use methods from SnapshotHelper instead.")
-    func verify(matching value: UIView,
-                named name: String? = nil,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
-        let failure = verifySnapshot(matching: value,
-                                     as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
-                                     named: name,
-                                     snapshotDirectory: snapshotDirectory(file: file),
-                                     file: file,
-                                     testName: testName,
-                                     line: line)
+    func verify(
+        matching value: UIView,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let failure = verifySnapshot(
+            matching: value,
+            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            named: name,
+            snapshotDirectory: snapshotDirectory(file: file),
+            file: file,
+            testName: testName,
+            line: line
+        )
 
         XCTAssertNil(failure, file: file, line: line)
     }
@@ -193,8 +217,10 @@ extension XCTestCase {
 
     // MARK: - UIAlertController hack
 
-    func presentViewController(_ controller: UIViewController,
-                               completion: Completion? = nil) {
+    func presentViewController(
+        _ controller: UIViewController,
+        completion: Completion? = nil
+    ) {
         let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))
 
         let container = UIViewController()
@@ -209,89 +235,113 @@ extension XCTestCase {
         container.present(controller, animated: false, completion: completion)
     }
 
-    func dismissViewController(_ controller: UIViewController,
-                               completion: Completion? = nil) {
+    func dismissViewController(
+        _ controller: UIViewController,
+        completion: Completion? = nil
+    ) {
         controller.dismiss(animated: false, completion: completion)
     }
 
     // MARK: - verify a UIViewController with a set of widths. The SUT is created in the closure instead of reusing
 
-    func verifyInAllPhoneWidths(createSut: () -> UIView,
-                                snapshotBackgroundColor: UIColor? = nil,
-                                named name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        verifyInWidths(createSut: createSut,
-                       widths: phoneWidths(),
-                       snapshotBackgroundColor: snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black),
-                       named: name,
-                       file: file,
-                       testName: testName,
-                       line: line)
+    func verifyInAllPhoneWidths(
+        createSut: () -> UIView,
+        snapshotBackgroundColor: UIColor? = nil,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        verifyInWidths(
+            createSut: createSut,
+            widths: phoneWidths(),
+            snapshotBackgroundColor: snapshotBackgroundColor ??
+                (ColorScheme.default.variant == .light ? .white : .black),
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
-    func verifyInAllPhoneWidths(createSut: () -> UIViewController,
-                                snapshotBackgroundColor: UIColor? = nil,
-                                named name: String? = nil,
-                                file: StaticString = #file,
-                                testName: String = #function,
-                                line: UInt = #line) {
-        verifyInWidths(createSut: createSut,
-                       widths: phoneWidths(),
-                       snapshotBackgroundColor: snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black),
-                       named: name,
-                       file: file,
-                       testName: testName,
-                       line: line)
+    func verifyInAllPhoneWidths(
+        createSut: () -> UIViewController,
+        snapshotBackgroundColor: UIColor? = nil,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        verifyInWidths(
+            createSut: createSut,
+            widths: phoneWidths(),
+            snapshotBackgroundColor: snapshotBackgroundColor ??
+                (ColorScheme.default.variant == .light ? .white : .black),
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
-    func verifyInWidths(createSut: () -> UIView,
-                        widths: Set<CGFloat>,
-                        snapshotBackgroundColor: UIColor,
-                        named name: String? = nil,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    func verifyInWidths(
+        createSut: () -> UIView,
+        widths: Set<CGFloat>,
+        snapshotBackgroundColor: UIColor,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         for width in widths {
-            verifyInWidth(createSut: createSut,
-                          width: width,
-                          snapshotBackgroundColor: snapshotBackgroundColor,
-                          named: name,
-                          file: file,
-                          testName: testName,
-                          line: line)
+            verifyInWidth(
+                createSut: createSut,
+                width: width,
+                snapshotBackgroundColor: snapshotBackgroundColor,
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
-    func verifyInWidths(createSut: () -> UIViewController,
-                        widths: Set<CGFloat>,
-                        snapshotBackgroundColor: UIColor,
-                        named name: String? = nil,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    func verifyInWidths(
+        createSut: () -> UIViewController,
+        widths: Set<CGFloat>,
+        snapshotBackgroundColor: UIColor,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         for width in widths {
-            verifyInWidth(createSut: createSut,
-                          width: width,
-                          snapshotBackgroundColor: snapshotBackgroundColor,
-                          named: name,
-                          file: file,
-                          testName: testName,
-                          line: line)
+            verifyInWidth(
+                createSut: createSut,
+                width: width,
+                snapshotBackgroundColor: snapshotBackgroundColor,
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
-    func verifyInWidth(createSut: () -> UIView,
-                       width: CGFloat,
-                       snapshotBackgroundColor: UIColor,
-                       named name: String? = nil,
-                       file: StaticString = #file,
-                       testName: String = #function,
-                       line: UInt = #line) {
+    func verifyInWidth(
+        createSut: () -> UIView,
+        width: CGFloat,
+        snapshotBackgroundColor: UIColor,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let sut = createSut()
-        let container = containerView(with: sut,
-                                      snapshotBackgroundColor: snapshotBackgroundColor)
+        let container = containerView(
+            with: sut,
+            snapshotBackgroundColor: snapshotBackgroundColor
+        )
         _ = container.addWidthConstraint(width: width)
 
         if ColorScheme.default.variant == .light {
@@ -300,29 +350,35 @@ extension XCTestCase {
             container.overrideUserInterfaceStyle = .dark
         }
 
-        verifyWithWidthInName(matching: container,
-                              width: width,
-                              named: name,
-                              file: file,
-                              testName: testName,
-                              line: line)
+        verifyWithWidthInName(
+            matching: container,
+            width: width,
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 
-    func verifyInWidth(createSut: () -> UIViewController,
-                       width: CGFloat,
-                       snapshotBackgroundColor: UIColor,
-                       named name: String? = nil,
-                       file: StaticString = #file,
-                       testName: String = #function,
-                       line: UInt = #line) {
-        verifyInWidth(createSut: {
-                          createSut().view
-                      },
-                      width: width,
-                      snapshotBackgroundColor: snapshotBackgroundColor,
-                      named: name,
-                      file: file,
-                      testName: testName,
-                      line: line)
+    func verifyInWidth(
+        createSut: () -> UIViewController,
+        width: CGFloat,
+        snapshotBackgroundColor: UIColor,
+        named name: String? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        verifyInWidth(
+            createSut: {
+                createSut().view
+            },
+            width: width,
+            snapshotBackgroundColor: snapshotBackgroundColor,
+            named: name,
+            file: file,
+            testName: testName,
+            line: line
+        )
     }
 }

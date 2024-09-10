@@ -20,15 +20,20 @@ import Foundation
 
 extension CharacterSet {
     // http://www.unicode.org/charts/PDF/U0300.pdf
-    private static let diacriticsCombiningCodes              = CharacterSet(charactersIn: UnicodeScalar(0x0300 as UInt16)! ... UnicodeScalar(0x036F as UInt16)!)
+    private static let diacriticsCombiningCodes              =
+        CharacterSet(charactersIn: UnicodeScalar(0x0300 as UInt16)! ... UnicodeScalar(0x036F as UInt16)!)
     // http://www.unicode.org/charts/PDF/U1AB0.pdf
-    private static let diacriticsCombiningCodesExtended      = CharacterSet(charactersIn: UnicodeScalar(0x1AB0 as UInt16)! ... UnicodeScalar(0x1AFF as UInt16)!)
+    private static let diacriticsCombiningCodesExtended      =
+        CharacterSet(charactersIn: UnicodeScalar(0x1AB0 as UInt16)! ... UnicodeScalar(0x1AFF as UInt16)!)
     // http://www.unicode.org/charts/PDF/U1DC0.pdf
-    private static let diacriticsCombiningCodesSupplementary = CharacterSet(charactersIn: UnicodeScalar(0x1DC0 as UInt16)! ... UnicodeScalar(0x1DFF as UInt16)!)
+    private static let diacriticsCombiningCodesSupplementary =
+        CharacterSet(charactersIn: UnicodeScalar(0x1DC0 as UInt16)! ... UnicodeScalar(0x1DFF as UInt16)!)
     // http://www.unicode.org/charts/PDF/U20D0.pdf
-    private static let diacriticsCombiningCodesForSymbols    = CharacterSet(charactersIn: UnicodeScalar(0x20D0 as UInt16)! ... UnicodeScalar(0x20FF as UInt16)!)
+    private static let diacriticsCombiningCodesForSymbols    =
+        CharacterSet(charactersIn: UnicodeScalar(0x20D0 as UInt16)! ... UnicodeScalar(0x20FF as UInt16)!)
     // http://www.unicode.org/charts/PDF/UFE20.pdf
-    private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xFE20 as UInt16)! ... UnicodeScalar(0xFE2F as UInt16)!)
+    private static let diacriticsCombiningCodesHalfMarks     =
+        CharacterSet(charactersIn: UnicodeScalar(0xFE20 as UInt16)! ... UnicodeScalar(0xFE2F as UInt16)!)
 
     public static var diacriticsCombining: CharacterSet = [
         diacriticsCombiningCodes,

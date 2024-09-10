@@ -35,7 +35,10 @@ extension FileManager {
         //
         // The app should not allow to run in all those cases.
 
-        require(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
+        require(
+            nil != sharedContainerURL,
+            "Unable to create shared container url using app group identifier: \(appGroupIdentifier)"
+        )
 
         return sharedContainerURL!
     }
@@ -44,7 +47,8 @@ extension FileManager {
 
     /// Returns the URL for caches appending the accountIdentifier if specified
     @objc public func cachesURL(forAppGroupIdentifier appGroupIdentifier: String, accountIdentifier: UUID?) -> URL? {
-        guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) else { return nil }
+        guard let sharedContainerURL = containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
+        else { return nil }
         return cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
     }
 
@@ -53,7 +57,10 @@ extension FileManager {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
             .appendingPathComponent("Caches", isDirectory: true)
         if let accountIdentifier {
-            return url.appendingPathComponent("\(type(of: self).cachesFolderPrefix)-\(accountIdentifier.uuidString)", isDirectory: true)
+            return url.appendingPathComponent(
+                "\(type(of: self).cachesFolderPrefix)-\(accountIdentifier.uuidString)",
+                isDirectory: true
+            )
         }
         return url
     }

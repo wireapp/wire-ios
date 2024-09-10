@@ -129,7 +129,8 @@ final class CollectionHeaderView: UICollectionReusableView {
         CGSize(width: desiredWidth, height: desiredHeight)
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes)
+        -> UICollectionViewLayoutAttributes {
         var newFrame = layoutAttributes.frame
         newFrame.size.width = intrinsicContentSize.width
         newFrame.size.height = intrinsicContentSize.height

@@ -238,6 +238,10 @@ extension AutomationHelper {
             try! FileManager.default.removeItem(atPath: sharedContainerURL.appendingPathComponent(item).path)
         }
         // COPY
-        try! FileManager.default.copyFolderRecursively(from: packageURL, to: sharedContainerURL, overwriteExistingFiles: true)
+        try! FileManager.default.copyFolderRecursively(
+            from: packageURL,
+            to: sharedContainerURL,
+            overwriteExistingFiles: true
+        )
     }
 }

@@ -37,14 +37,16 @@ extension Text {
 
 extension LinkPreview {
     fileprivate func sanitize() -> LinkPreview {
-        LinkPreview(withOriginalURL: redactedValue,
-                    permanentURL: redactedValue,
-                    offset: urlOffset,
-                    title: redactedValue,
-                    summary: redactedValue,
-                    imageAsset: image,
-                    article: article.sanitize(),
-                    tweet: nil)
+        LinkPreview(
+            withOriginalURL: redactedValue,
+            permanentURL: redactedValue,
+            offset: urlOffset,
+            title: redactedValue,
+            summary: redactedValue,
+            imageAsset: image,
+            article: article.sanitize(),
+            tweet: nil
+        )
     }
 }
 

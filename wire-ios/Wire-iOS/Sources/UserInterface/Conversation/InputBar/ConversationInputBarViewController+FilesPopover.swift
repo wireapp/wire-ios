@@ -36,29 +36,53 @@ extension ConversationInputBarViewController {
                 self.userSession.enqueue {
                     let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
                     guard let basePath = paths.first,
-                          let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist") else { return }
+                          let sourceLocation = Bundle.main.url(forResource: "CountryCodes", withExtension: "plist")
+                    else { return }
 
-                    let destLocation = URL(fileURLWithPath: basePath).appendingPathComponent(sourceLocation.lastPathComponent)
+                    let destLocation = URL(fileURLWithPath: basePath)
+                        .appendingPathComponent(sourceLocation.lastPathComponent)
 
                     try? FileManager.default.copyItem(at: sourceLocation, to: destLocation)
                     self.uploadFile(at: destLocation)
                 }
             }
 
-            alertController.addAction(UIAlertAction(title: "CountryCodes.plist",
-                                                    style: .default,
-                                                    handler: plistHandler))
+            alertController.addAction(UIAlertAction(
+                title: "CountryCodes.plist",
+                style: .default,
+                handler: plistHandler
+            ))
 
             let size = UInt(ZMUserSession.shared()?.maxUploadFileSize ?? 0) + 1
             let humanReadableSize = size / 1024 / 1024
-            alertController.addAction(uploadTestAlertAction(size: size, title: "Big file (size = \(humanReadableSize) MB)", fileName: "BigFile.bin"))
+            alertController.addAction(uploadTestAlertAction(
+                size: size,
+                title: "Big file (size = \(humanReadableSize) MB)",
+                fileName: "BigFile.bin"
+            ))
 
-            alertController.addAction(uploadTestAlertAction(size: 20_971_520, title: "20 MB file", fileName: "20MBFile.bin"))
-            alertController.addAction(uploadTestAlertAction(size: 41_943_040, title: "40 MB file", fileName: "40MBFile.bin"))
+            alertController.addAction(uploadTestAlertAction(
+                size: 20_971_520,
+                title: "20 MB file",
+                fileName: "20MBFile.bin"
+            ))
+            alertController.addAction(uploadTestAlertAction(
+                size: 41_943_040,
+                title: "40 MB file",
+                fileName: "40MBFile.bin"
+            ))
 
             if ZMUser.selfUser()?.hasTeam == true {
-                alertController.addAction(uploadTestAlertAction(size: 83_886_080, title: "80 MB file", fileName: "80MBFile.bin"))
-                alertController.addAction(uploadTestAlertAction(size: 125_829_120, title: "120 MB file", fileName: "120MBFile.bin"))
+                alertController.addAction(uploadTestAlertAction(
+                    size: 83_886_080,
+                    title: "80 MB file",
+                    fileName: "80MBFile.bin"
+                ))
+                alertController.addAction(uploadTestAlertAction(
+                    size: 125_829_120,
+                    title: "120 MB file",
+                    fileName: "120MBFile.bin"
+                ))
             }
         #endif
 
@@ -70,31 +94,41 @@ extension ConversationInputBarViewController {
             )
         }
 
-        alertController.addAction(UIAlertAction(icon: .movie,
-                                                title: L10n.Localizable.Content.File.uploadVideo,
-                                                tintColor: view.tintColor,
-                                                handler: uploadVideoHandler))
+        alertController.addAction(UIAlertAction(
+            icon: .movie,
+            title: L10n.Localizable.Content.File.uploadVideo,
+            tintColor: view.tintColor,
+            handler: uploadVideoHandler
+        ))
 
         let takeVideoHandler: ((UIAlertAction) -> Void) = { _ in
             self.recordVideo()
         }
 
-        alertController.addAction(UIAlertAction(icon: .cameraShutter,
-                                                title: L10n.Localizable.Content.File.takeVideo,
-                                                tintColor: view.tintColor,
-                                                handler: takeVideoHandler))
+        alertController.addAction(UIAlertAction(
+            icon: .cameraShutter,
+            title: L10n.Localizable.Content.File.takeVideo,
+            tintColor: view.tintColor,
+            handler: takeVideoHandler
+        ))
 
         let browseHandler: ((UIAlertAction) -> Void) = { _ in
 
-            let documentPickerViewController = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.item], asCopy: true)
+            let documentPickerViewController = UIDocumentPickerViewController(
+                forOpeningContentTypes: [UTType.item],
+                asCopy: true
+            )
             documentPickerViewController.delegate = self
             documentPickerViewController.allowsMultipleSelection = true
             self.present(documentPickerViewController, animated: true)
         }
 
-        alertController.addAction(UIAlertAction(icon: .ellipsis,
-                                                title: L10n.Localizable.Content.File.browse, tintColor: view.tintColor,
-                                                handler: browseHandler))
+        alertController.addAction(UIAlertAction(
+            icon: .ellipsis,
+            title: L10n.Localizable.Content.File.browse,
+            tintColor: view.tintColor,
+            handler: browseHandler
+        ))
 
         alertController.addAction(.cancel())
 

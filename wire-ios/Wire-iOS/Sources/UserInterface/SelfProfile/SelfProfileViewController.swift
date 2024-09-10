@@ -80,7 +80,10 @@ final class SelfProfileViewController: UIViewController {
             userRightInterfaceType: userRightInterfaceType
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(
+            isTeamMember: selfUser.isTeamMember,
+            userSession: userSession
+        )
 
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
@@ -186,7 +189,8 @@ final class SelfProfileViewController: UIViewController {
             profileHeaderViewController.view.leadingAnchor.constraint(equalTo: profileContainerView.leadingAnchor),
             profileHeaderViewController.view.topAnchor.constraint(greaterThanOrEqualTo: profileContainerView.topAnchor),
             profileHeaderViewController.view.trailingAnchor.constraint(equalTo: profileContainerView.trailingAnchor),
-            profileHeaderViewController.view.bottomAnchor.constraint(lessThanOrEqualTo: profileContainerView.bottomAnchor),
+            profileHeaderViewController.view.bottomAnchor
+                .constraint(lessThanOrEqualTo: profileContainerView.bottomAnchor),
             profileHeaderViewController.view.centerYAnchor.constraint(equalTo: profileContainerView.centerYAnchor),
 
             // settingsControllerView
@@ -212,7 +216,10 @@ final class SelfProfileViewController: UIViewController {
         let alertController = profileImagePicker.selectProfileImage()
         if let popoverPresentationController = alertController.popoverPresentationController {
             popoverPresentationController.sourceView = profileHeaderViewController.imageView.superview!
-            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(dx: -4, dy: -4)
+            popoverPresentationController.sourceRect = profileHeaderViewController.imageView.frame.insetBy(
+                dx: -4,
+                dy: -4
+            )
         }
         present(alertController, animated: true)
     }
@@ -230,7 +237,8 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
         presentingViewController?.dismiss(animated: true) {
-            AppDelegate.shared.mediaPlaybackManager?.stop() // there must be another more appropriate place for this line
+            AppDelegate.shared.mediaPlaybackManager?
+                .stop() // there must be another more appropriate place for this line
             self.accountSelector?.switchTo(account: account)
         }
     }
@@ -259,11 +267,14 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
     ///   - settingsPropertyFactory: caller of this delegate method
     ///   - newValue: new value of app lock option
     ///   - callback: callback for PasscodeSetupViewController
-    func appLockOptionDidChange(_ settingsPropertyFactory: SettingsPropertyFactory,
-                                newValue: Bool,
-                                callback: @escaping ResultHandler) {
+    func appLockOptionDidChange(
+        _ settingsPropertyFactory: SettingsPropertyFactory,
+        newValue: Bool,
+        callback: @escaping ResultHandler
+    ) {
         // There is an additional check for the simulator because there's no way to disable the device passcode on the simulator. We need it for testing.
-        guard AuthenticationType.current == .unavailable || (UIDevice.isSimulator && AuthenticationType.current == .passcode) else {
+        guard AuthenticationType
+            .current == .unavailable || (UIDevice.isSimulator && AuthenticationType.current == .passcode) else {
             callback(newValue)
             return
         }
@@ -275,13 +286,16 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
         }
 
         self.callback = callback
-        let passcodeSetupViewController = PasscodeSetupViewController(context: .createPasscode,
-                                                                      callback: callback)
+        let passcodeSetupViewController = PasscodeSetupViewController(
+            context: .createPasscode,
+            callback: callback
+        )
         passcodeSetupViewController.passcodeSetupViewControllerDelegate = self
 
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: passcodeSetupViewController)
 
-        let wrappedViewController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+        let wrappedViewController = keyboardAvoidingViewController
+            .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
 
         let closeItem = passcodeSetupViewController.closeItem
 

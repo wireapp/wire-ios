@@ -39,8 +39,10 @@ import WireSyncEngine
         registeredNotificationCategories.formUnion(categories)
     }
 
-    func requestAuthorization(options: UNAuthorizationOptions,
-                              completionHandler: @escaping (Bool, Error?) -> Void) {
+    func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, Error?) -> Void
+    ) {
         requestedAuthorizationOptions.insert(options)
     }
 

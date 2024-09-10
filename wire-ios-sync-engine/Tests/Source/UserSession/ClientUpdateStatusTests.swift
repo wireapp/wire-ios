@@ -41,10 +41,11 @@ class ClientUpdateStatusTests: MessagingTest {
             self.sut.determineInitialClientStatus()
         }
 
-        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
-            let change = ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error)
-            self?.receivedNotifications.append(change)
-        }
+        clientObserverToken = ZMClientUpdateNotification
+            .addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
+                let change = ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error)
+                self?.receivedNotifications.append(change)
+            }
     }
 
     override func tearDown() {
@@ -154,7 +155,10 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.fetchingClients) // if we go back online we want to try to verify the client
+        XCTAssertEqual(
+            self.sut.currentPhase,
+            ClientUpdatePhase.fetchingClients
+        ) // if we go back online we want to try to verify the client
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note {
@@ -263,7 +267,11 @@ class ClientUpdateStatusTests: MessagingTest {
             self.sut.didFetchClients([client, selfClient])
         }
 
-        let error = NSError(domain: "ClientManagement", code: ClientUpdateError.invalidCredentials.rawValue, userInfo: nil)
+        let error = NSError(
+            domain: "ClientManagement",
+            code: ClientUpdateError.invalidCredentials.rawValue,
+            userInfo: nil
+        )
         self.receivedNotifications.removeAll()
 
         // when
@@ -304,9 +312,14 @@ class ClientUpdateStatusTests: MessagingTest {
             self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
             self.sut.determineInitialClientStatus()
         }
-        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
-            self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
-        }
+        clientObserverToken = ZMClientUpdateNotification
+            .addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
+                self?.receivedNotifications.append(ClientUpdateStatusChange(
+                    type: type,
+                    clientObjectIDs: clientObjectIDs,
+                    error: error
+                ))
+            }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN

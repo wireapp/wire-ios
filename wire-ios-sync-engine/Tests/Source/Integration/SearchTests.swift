@@ -120,7 +120,8 @@ final class SearchTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // find user
-        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny") else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny")
+        else { XCTFail(); return }
 
         // then
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
@@ -156,7 +157,8 @@ final class SearchTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // find user
-        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny") else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny")
+        else { XCTFail(); return }
 
         // then
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
@@ -184,13 +186,17 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(
+                in: self.mockTransportSession.managedObjectContext,
+                forID: self.user1.previewProfileAssetIdentifier!
+            )?.data
             userName = self.user1.name
         }
 
         XCTAssertTrue(login())
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let user = searchForConnectedUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let user = searchForConnectedUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
 
         // when
         user.requestPreviewProfileImage()
@@ -206,13 +212,17 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(
+                in: self.mockTransportSession.managedObjectContext,
+                forID: self.user4.previewProfileAssetIdentifier!
+            )?.data
             userName = self.user4.name
         }
 
         XCTAssertTrue(login())
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
 
         // when
         searchUser.requestPreviewProfileImage()
@@ -234,7 +244,8 @@ final class SearchTests: IntegrationTest {
 
         // when
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -262,7 +273,8 @@ final class SearchTests: IntegrationTest {
         }
 
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
         searchUser.requestPreviewProfileImage()
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
         XCTAssertNotNil(token)
@@ -302,7 +314,8 @@ final class SearchTests: IntegrationTest {
         }
 
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
         searchUser.requestPreviewProfileImage()
         var token = UserChangeInfo.add(observer: self, for: searchUser, in: userSession!)
         XCTAssertNotNil(token)
@@ -335,14 +348,18 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(
+                in: self.mockTransportSession.managedObjectContext,
+                forID: self.user1.previewProfileAssetIdentifier!
+            )?.data
             userName = self.user1.name
         }
 
         XCTAssertTrue(login())
         guard let userName else { XCTFail("missing userName"); return }
         guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("searchQuery"); return }
-        guard let user = searchForConnectedUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing user"); return }
+        guard let user = searchForConnectedUser(withName: userName, searchQuery: searchQuery)
+        else { XCTFail("missing user"); return }
 
         // when
         mockTransportSession.resetReceivedRequests()
@@ -364,7 +381,10 @@ final class SearchTests: IntegrationTest {
         var userName: String?
 
         mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
+            profileImageData = MockAsset(
+                in: self.mockTransportSession.managedObjectContext,
+                forID: self.user4.previewProfileAssetIdentifier!
+            )?.data
             userName = self.user4.name
         }
 
@@ -373,7 +393,8 @@ final class SearchTests: IntegrationTest {
 
         // when
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         searchUser.requestPreviewProfileImage()
@@ -408,14 +429,19 @@ final class SearchTests: IntegrationTest {
                 self.user4.removeLegacyPictures()
             }
 
-            completeProfileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
+            completeProfileImageData = MockAsset(
+                in: self.mockTransportSession.managedObjectContext,
+                forID: self.user4.completeProfileAssetIdentifier!
+            )?.data
             userName = self.user4.name
         }
 
         XCTAssertTrue(login())
         guard let userName else { XCTFail("missing userName"); return }
-        guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("missing searchQuery"); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing searchUser"); return }
+        guard let searchQuery = userName.components(separatedBy: " ").last
+        else { XCTFail("missing searchQuery"); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: searchQuery)
+        else { XCTFail("missing searchUser"); return }
         searchUser.requestPreviewProfileImage()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -443,14 +469,18 @@ final class SearchTests: IntegrationTest {
             changes.addV3ProfilePicture(to: self.user4)
             self.user4.removeLegacyPictures()
 
-            completeProfileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
+            completeProfileImageData = MockAsset(
+                in: self.mockTransportSession.managedObjectContext,
+                forID: self.user4.completeProfileAssetIdentifier!
+            )?.data
             userName = self.user4.name
         }
 
         XCTAssertTrue(login())
 
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery)
+        else { XCTFail(); return }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // We reset the requests after having performed the search and fetching the users (in comparison to the other tests).

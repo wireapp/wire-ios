@@ -206,15 +206,22 @@ enum ColorSchemeColor: Int {
         case .cellHighlight:
             ColorPair(light: .white97, dark: .whiteAlpha16)
         case .replyBorder:
-            ColorPair(light: UIColor(white: 233.0 / 255.0, alpha: 1),
-                      dark: UIColor(white: 114.0 / 255.0, alpha: 1))
+            ColorPair(
+                light: UIColor(white: 233.0 / 255.0, alpha: 1),
+                dark: UIColor(white: 114.0 / 255.0, alpha: 1)
+            )
         case .replyHighlight:
-            ColorPair(light: UIColor(rgb: 0x33373A, alpha: 0.24),
-                      dark: UIColor(white: 1, alpha: 0.24))
+            ColorPair(
+                light: UIColor(rgb: 0x33373A, alpha: 0.24),
+                dark: UIColor(white: 1, alpha: 0.24)
+            )
         case .secondaryAction:
             ColorPair(light: UIColor(rgb: 0xE8ECEE), dark: .backgroundLightGraphite)
         case .secondaryActionDimmed:
-            ColorPair(light: UIColor(rgb: 0xE8ECEE, alpha: 0.24), dark: UIColor.backgroundLightGraphite.withAlphaComponent(0.24))
+            ColorPair(
+                light: UIColor(rgb: 0xE8ECEE, alpha: 0.24),
+                dark: UIColor.backgroundLightGraphite.withAlphaComponent(0.24)
+            )
         case .errorIndicator:
             ColorPair(light: UIColor(rgb: 0xE60606), dark: UIColor(rgb: 0xFC3E37))
         case .landingScreen:

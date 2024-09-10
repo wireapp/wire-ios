@@ -48,13 +48,17 @@ final class SearchResultTests: DatabaseTest {
 
         let handle = "fabio"
         let payload = ["documents": [
-            ["id": connectedUser.remoteIdentifier!,
-             "name": "Maria",
-             "accent_id": 5],
-            ["id": UUID.create().uuidString,
-             "name": "Fabio",
-             "accent_id": 5,
-             "handle": handle],
+            [
+                "id": connectedUser.remoteIdentifier!,
+                "name": "Maria",
+                "accent_id": 5,
+            ],
+            [
+                "id": UUID.create().uuidString,
+                "name": "Fabio",
+                "accent_id": 5,
+                "handle": handle,
+            ],
         ]]
 
         // when
@@ -87,13 +91,17 @@ final class SearchResultTests: DatabaseTest {
 
         let handle = "fabio"
         let payload = ["documents": [
-            ["id": user.remoteIdentifier!,
-             "name": "Member A",
-             "accent_id": 5],
-            ["id": UUID.create().uuidString,
-             "name": "Fabio",
-             "accent_id": 5,
-             "handle": handle],
+            [
+                "id": user.remoteIdentifier!,
+                "name": "Member A",
+                "accent_id": 5,
+            ],
+            [
+                "id": UUID.create().uuidString,
+                "name": "Fabio",
+                "accent_id": 5,
+                "handle": handle,
+            ],
         ]]
 
         // when
@@ -102,7 +110,8 @@ final class SearchResultTests: DatabaseTest {
             query: .fullTextSearch(""),
             searchOptions: [.directory],
             contextProvider: coreDataStack!,
-            searchUsersCache: mockCache)
+            searchUsersCache: mockCache
+        )
 
         // then
         XCTAssertEqual(result?.directory.count, 1)
@@ -113,13 +122,17 @@ final class SearchResultTests: DatabaseTest {
         // given
         let name = "User"
         let payload = ["documents": [
-            ["id": UUID.create().uuidString,
-             "name": name,
-             "accent_id": 5],
-            ["id": UUID.create().uuidString,
-             "name": "Fabio",
-             "accent_id": 5,
-             "handle": "aa\(name.lowercased())"],
+            [
+                "id": UUID.create().uuidString,
+                "name": name,
+                "accent_id": 5,
+            ],
+            [
+                "id": UUID.create().uuidString,
+                "name": "Fabio",
+                "accent_id": 5,
+                "handle": "aa\(name.lowercased())",
+            ],
         ]]
 
         // when
@@ -141,13 +154,17 @@ final class SearchResultTests: DatabaseTest {
         let expectedHandle = "aa\(name.lowercased())"
 
         let payload = ["documents": [
-            ["id": UUID.create().uuidString,
-             "name": name,
-             "accent_id": 5],
-            ["id": UUID.create().uuidString,
-             "name": "Fabio",
-             "accent_id": 5,
-             "handle": "aa\(name.lowercased())"],
+            [
+                "id": UUID.create().uuidString,
+                "name": name,
+                "accent_id": 5,
+            ],
+            [
+                "id": UUID.create().uuidString,
+                "name": "Fabio",
+                "accent_id": 5,
+                "handle": "aa\(name.lowercased())",
+            ],
         ]]
 
         // when
@@ -272,7 +289,11 @@ final class SearchResultTests: DatabaseTest {
             searchUsersCache: mockCache
         )
 
-        let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: selfUser.remoteIdentifier, permissions: .partner)
+        let membership = createMembershipPayload(
+            userID: remoteTeamMemberID,
+            createdBy: selfUser.remoteIdentifier,
+            permissions: .partner
+        )
         let membershipListPayload = WireSyncEngine.MembershipListPayload(hasMore: false, members: [membership])
 
         // when
@@ -363,7 +384,11 @@ final class SearchResultTests: DatabaseTest {
             searchUsersCache: mockCache
         )
 
-        let membership = createMembershipPayload(userID: remoteTeamMemberID, createdBy: selfUser.remoteIdentifier, permissions: .partner)
+        let membership = createMembershipPayload(
+            userID: remoteTeamMemberID,
+            createdBy: selfUser.remoteIdentifier,
+            permissions: .partner
+        )
         let membershipListPayload = WireSyncEngine.MembershipListPayload(hasMore: false, members: [membership])
 
         result?.extendWithMembershipPayload(payload: membershipListPayload)
@@ -422,15 +447,21 @@ final class SearchResultTests: DatabaseTest {
 
     // MARK: - Helpers
 
-    func createMembershipPayload(userID: UUID,
-                                 createdBy: UUID?,
-                                 permissions: Permissions) -> WireSyncEngine.MembershipPayload {
-        let membershipPermissons = WireSyncEngine.MembershipPayload.PermissionsPayload(copyPermissions: permissions.rawValue,
-                                                                                       selfPermissions: permissions.rawValue)
-        let membershipPayload = WireSyncEngine.MembershipPayload(userID: userID,
-                                                                 createdBy: createdBy,
-                                                                 createdAt: nil,
-                                                                 permissions: membershipPermissons)
+    func createMembershipPayload(
+        userID: UUID,
+        createdBy: UUID?,
+        permissions: Permissions
+    ) -> WireSyncEngine.MembershipPayload {
+        let membershipPermissons = WireSyncEngine.MembershipPayload.PermissionsPayload(
+            copyPermissions: permissions.rawValue,
+            selfPermissions: permissions.rawValue
+        )
+        let membershipPayload = WireSyncEngine.MembershipPayload(
+            userID: userID,
+            createdBy: createdBy,
+            createdAt: nil,
+            permissions: membershipPermissons
+        )
 
         return membershipPayload
     }

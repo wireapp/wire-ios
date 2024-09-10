@@ -24,7 +24,10 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssert(login())
 
         let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let conversationParticipantsService = ConversationParticipantsService(
+            context: userSession!
+                .managedObjectContext
+        )
         let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
         let observer = ConversationChangeObserver(conversation: conversation)
@@ -64,7 +67,10 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssert(login())
 
         let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let conversationParticipantsService = ConversationParticipantsService(
+            context: userSession!
+                .managedObjectContext
+        )
         let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
         await userSession!.managedObjectContext.perform {
@@ -84,7 +90,10 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // then
         await userSession!.managedObjectContext.perform { [self] in
-            XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
+            XCTAssertTrue(
+                self.conversation(for: emptyGroupConversation)!.localParticipants
+                    .contains(user(for: self.user2)!)
+            )
         }
     }
 
@@ -93,7 +102,10 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssert(login())
 
         let conversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let conversationParticipantsService = ConversationParticipantsService(
+            context: userSession!
+                .managedObjectContext
+        )
         let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
         await userSession!.managedObjectContext.perform {
@@ -115,7 +127,10 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // then
         await userSession!.managedObjectContext.perform { [self] in
-            XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
+            XCTAssertFalse(
+                self.conversation(for: groupConversation)!.localParticipants
+                    .contains(user(for: self.user2)!)
+            )
         }
     }
 
@@ -134,10 +149,16 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
-            let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-            self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
-                                                              to: self.selfUser.clients.anyObject() as! MockUserClient,
-                                                              data: try! message.serializedData())
+            let message =
+                GenericMessage(
+                    content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil),
+                    nonce: UUID.create()
+                )
+            self.selfToUser1Conversation.encryptAndInsertData(
+                from: self.user1.clients.anyObject() as! MockUserClient,
+                to: self.selfUser.clients.anyObject() as! MockUserClient,
+                data: try! message.serializedData()
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

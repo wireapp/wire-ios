@@ -91,10 +91,20 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         // Then
         guard receivedTokens.count == 2 else { return XCTFail("receivedTokens.count != 2") }
 
-        let apns = PushToken(deviceToken: Data([0x01, 0x01, 0x01]), appIdentifier: "app", transportType: "APNS", tokenType: .standard)
+        let apns = PushToken(
+            deviceToken: Data([0x01, 0x01, 0x01]),
+            appIdentifier: "app",
+            transportType: "APNS",
+            tokenType: .standard
+        )
         XCTAssertEqual(receivedTokens[0], apns)
 
-        let voIP = PushToken(deviceToken: Data([0x03, 0x3, 0x03]), appIdentifier: "app", transportType: "APNS_VOIP", tokenType: .voip)
+        let voIP = PushToken(
+            deviceToken: Data([0x03, 0x3, 0x03]),
+            appIdentifier: "app",
+            transportType: "APNS_VOIP",
+            tokenType: .voip
+        )
         XCTAssertEqual(receivedTokens[1], voIP)
     }
 

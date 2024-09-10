@@ -272,8 +272,12 @@ extension ZMMessage: ZMConversationMessage {
         managedObjectContext.saveOrRollback()
 
         syncContext.performGroupedBlock {
-            guard let syncObject = try? syncContext.existingObject(with: conversationID), let syncConversation = syncObject as? ZMConversation else {
-                zmLog.error("Cannot mark as unread message outside of the conversation: sync conversation cannot be fetched.")
+            guard let syncObject = try? syncContext.existingObject(with: conversationID),
+                  let syncConversation = syncObject as? ZMConversation else {
+                zmLog
+                    .error(
+                        "Cannot mark as unread message outside of the conversation: sync conversation cannot be fetched."
+                    )
                 return
             }
 

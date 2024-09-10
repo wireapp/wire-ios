@@ -28,7 +28,8 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)
+        sut = ZMMockManagedObjectContextFactory
+            .testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)
         sut.createDispatchGroups()
     }
 
@@ -39,7 +40,8 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
     func testThatItWorksWithoutGroups() {
         // given
-        let moc = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
+        let moc = ZMMockManagedObjectContextFactory
+            .testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
         // when & then
         moc.performGroupedAndWait {}
     }

@@ -57,11 +57,16 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
         )
-        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
+        self.userProfileUpdateStatus = UserProfileUpdateStatus(
+            managedObjectContext: managedObjectContext,
+            analytics: analytics
+        )
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
-        self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
-                                                                   cookieProvider: cookieStorage,
-                                                                   coreCryptoProvider: coreCryptoProvider)
+        self.clientRegistrationStatus = ZMClientRegistrationStatus(
+            context: managedObjectContext,
+            cookieProvider: cookieStorage,
+            coreCryptoProvider: coreCryptoProvider
+        )
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
@@ -71,7 +76,10 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)
         super.init()
 
-        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] note in
+        callInProgressObserverToken = NotificationInContext.addObserver(
+            name: CallStateObserver.CallInProgressNotification,
+            context: managedObjectContext.notificationContext
+        ) { [weak self] note in
             managedObjectContext.performGroupedBlock {
                 if let callInProgress = note.userInfo[CallStateObserver.CallInProgressKey] as? Bool {
                     self?.operationStatus.hasOngoingCall = callInProgress

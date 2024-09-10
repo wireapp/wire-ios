@@ -26,7 +26,10 @@ class ConversationMessageTimerTests: IntegrationTest {
         createTeamAndConversations()
     }
 
-    private func responsePayload(for conversation: ZMConversation, timeout: MessageDestructionTimeoutValue) -> ZMTransportData {
+    private func responsePayload(
+        for conversation: ZMConversation,
+        timeout: MessageDestructionTimeoutValue
+    ) -> ZMTransportData {
         var payload: [String: Any] = [
             "from": user1.identifier,
             "conversation": conversation.remoteIdentifier!.transportString(),
@@ -123,7 +126,12 @@ class ConversationMessageTimerTests: IntegrationTest {
         let identifier = conversation.remoteIdentifier!.transportString()
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/conversations/\(identifier)/message-timer" else { return nil }
-            return ZMTransportResponse(payload: self.responsePayload(for: conversation, timeout: timeout), httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: self.responsePayload(for: conversation, timeout: timeout),
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         // when
@@ -139,7 +147,13 @@ class ConversationMessageTimerTests: IntegrationTest {
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1, "wrong request count", file: file, line: line)
         guard let request = mockTransportSession.receivedRequests().first else { return }
-        XCTAssertEqual(request.path, "/conversations/\(identifier)/message-timer", "wrong path \(request.path)", file: file, line: line)
+        XCTAssertEqual(
+            request.path,
+            "/conversations/\(identifier)/message-timer",
+            "wrong path \(request.path)",
+            file: file,
+            line: line
+        )
         XCTAssertEqual(request.method, .put, "wrong method", file: file, line: line)
     }
 }

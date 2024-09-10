@@ -47,7 +47,10 @@ final class MessageDestructionTimeoutValueTests: XCTestCase {
 // Tests for displayString of MessageDestructionTimeoutValue
 extension MessageDestructionTimeoutValueTests {
     func testThatItReturnsTheCorrectShortDisplayString() {
-        XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, NSLocalizedString("input.ephemeral.timeout.none", comment: ""))
+        XCTAssertEqual(
+            MessageDestructionTimeoutValue.none.displayString,
+            NSLocalizedString("input.ephemeral.timeout.none", comment: "")
+        )
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.shortDisplayString, "10")
         XCTAssertEqual(MessageDestructionTimeoutValue.fiveMinutes.shortDisplayString, "5")
         XCTAssertEqual(MessageDestructionTimeoutValue.oneDay.shortDisplayString, "1")
@@ -56,7 +59,10 @@ extension MessageDestructionTimeoutValueTests {
     }
 
     func testThatItReturnsTheCorrectFormattedString() {
-        XCTAssertEqual(MessageDestructionTimeoutValue.none.displayString, NSLocalizedString("input.ephemeral.timeout.none", comment: ""))
+        XCTAssertEqual(
+            MessageDestructionTimeoutValue.none.displayString,
+            NSLocalizedString("input.ephemeral.timeout.none", comment: "")
+        )
         XCTAssertEqual(MessageDestructionTimeoutValue.tenSeconds.displayString, "10 seconds")
         XCTAssertEqual(MessageDestructionTimeoutValue.fiveMinutes.displayString, "5 minutes")
         XCTAssertEqual(MessageDestructionTimeoutValue.oneDay.displayString, "1 day")
@@ -164,7 +170,10 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
         let featureRepository = FeatureRepository(context: self.syncMOC)
 
         syncMOC.performGroupedAndWait {
-            featureRepository.storeSelfDeletingMessages(.init(status: .enabled, config: .init(enforcedTimeoutSeconds: 300)))
+            featureRepository.storeSelfDeletingMessages(.init(
+                status: .enabled,
+                config: .init(enforcedTimeoutSeconds: 300)
+            ))
         }
 
         syncMOC.performGroupedAndWait {

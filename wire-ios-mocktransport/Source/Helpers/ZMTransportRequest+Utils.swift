@@ -49,7 +49,10 @@ import Foundation
             return []
         }
 
-        return ((multipartData as NSData).multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]) ?? []
+        return (
+            (multipartData as NSData)
+                .multipartDataItemsSeparated(withBoundary: "frontier") as? [ZMMultipartBodyItem]
+        ) ?? []
     }
 
     @objc(RESTComponentAtIndex:)

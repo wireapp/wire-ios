@@ -97,9 +97,11 @@ final class ProfileDetailsContentController: NSObject,
      * - parameter conversation: The conversation where the profile details will be displayed.
      */
 
-    init(user: UserType,
-         viewer: UserType,
-         conversation: ZMConversation?) {
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?
+    ) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
@@ -141,7 +143,10 @@ final class ProfileDetailsContentController: NSObject,
             richProfile.insert(UserRichProfileField(type: L10n.Localizable.Email.placeholder, value: email), at: 0)
         }
         if let domain = user.domain {
-            richProfile.append(UserRichProfileField(type: L10n.Localizable.Self.Settings.AccountSection.Domain.title, value: domain))
+            richProfile.append(UserRichProfileField(
+                type: L10n.Localizable.Self.Settings.AccountSection.Domain.title,
+                value: domain
+            ))
         }
 
         return richProfile.isEmpty ? nil : .richProfile(richProfile)
@@ -254,7 +259,10 @@ final class ProfileDetailsContentController: NSObject,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch contents[indexPath.section] {
         case let .groupAdminStatus(groupAdminEnabled):
-            let cell = tableView.dequeueReusableCell(withIdentifier: IconToggleSubtitleCell.zm_reuseIdentifier, for: indexPath) as! IconToggleSubtitleCell
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: IconToggleSubtitleCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! IconToggleSubtitleCell
 
             cell.configure(with: CellConfiguration.groupAdminToogle(get: {
                 groupAdminEnabled
@@ -268,7 +276,11 @@ final class ProfileDetailsContentController: NSObject,
 
         case let .richProfile(fields):
             let field = fields[indexPath.row]
-            let cell = tableView.dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(style: .default, reuseIdentifier: userPropertyCellID)
+            let cell = tableView
+                .dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(
+                    style: .default,
+                    reuseIdentifier: userPropertyCellID
+                )
             cell.propertyName = field.type
             cell.propertyValue = field.value
             return cell
@@ -277,7 +289,10 @@ final class ProfileDetailsContentController: NSObject,
             fatalError("We do not create cells for the readReceiptsStatus section.")
 
         case .blockingReason:
-            let cell = tableView.dequeueReusableCell(withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier, for: indexPath) as! UserBlockingReasonCell
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! UserBlockingReasonCell
             return cell
 
         case let .messageProtocol(messageProtocol):

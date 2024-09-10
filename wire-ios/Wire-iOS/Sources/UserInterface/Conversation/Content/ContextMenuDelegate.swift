@@ -38,10 +38,12 @@ extension ContextMenuDelegate {
             return nil
         }
 
-        return ConversationMessageActionController(responder: delegate,
-                                                   message: message,
-                                                   context: .content,
-                                                   view: view)
+        return ConversationMessageActionController(
+            responder: delegate,
+            message: message,
+            context: .content,
+            view: view
+        )
     }
 }
 
@@ -55,10 +57,12 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
             BrowserViewController(url: url)
         }
 
-        return UIContextMenuConfiguration(identifier: nil,
-                                          previewProvider: previewProvider,
-                                          actionProvider: { _ in
-                                              self.makeContextMenu(title: url.absoluteString, view: view)
-                                          })
+        return UIContextMenuConfiguration(
+            identifier: nil,
+            previewProvider: previewProvider,
+            actionProvider: { _ in
+                self.makeContextMenu(title: url.absoluteString, view: view)
+            }
+        )
     }
 }

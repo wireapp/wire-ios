@@ -24,7 +24,8 @@ enum DebugActions {
     static func alert(
         _ message: String,
         title: String = "",
-        textToCopy: String? = nil) {
+        textToCopy: String? = nil
+    ) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         if let textToCopy {
@@ -46,9 +47,10 @@ enum DebugActions {
         let allConversations = uiMOC.fetchOrAssert(request: fetchRequest)
 
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
-            let message = ["Found an unread conversation:",
-                           "\(String(describing: convo.displayName))",
-                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>",
+            let message = [
+                "Found an unread conversation:",
+                "\(String(describing: convo.displayName))",
+                "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>",
             ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
@@ -77,9 +79,10 @@ enum DebugActions {
 
         if let convo = ConversationList.conversations(inUserSession: userSession).items
             .first(where: predicate.evaluate) {
-            let message = ["Found an unread conversation:",
-                           "\(String(describing: convo.displayName))",
-                           "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>",
+            let message = [
+                "Found an unread conversation:",
+                "\(String(describing: convo.displayName))",
+                "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>",
             ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
             alert(message, textToCopy: textToCopy)
@@ -243,8 +246,10 @@ enum DebugActions {
 
     static func updateInvalidAccessRoles() {
         guard let userSession = ZMUserSession.shared() else { return }
-        let predicate = NSPredicate(format: "\(TeamKey) == nil AND \(AccessRoleStringsKeyV2) == %@",
-                                    [ConversationAccessRoleV2.teamMember.rawValue])
+        let predicate = NSPredicate(
+            format: "\(TeamKey) == nil AND \(AccessRoleStringsKeyV2) == %@",
+            [ConversationAccessRoleV2.teamMember.rawValue]
+        )
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = predicate
 
@@ -252,9 +257,12 @@ enum DebugActions {
         syncContext.performGroupedBlock {
             let conversations = try? syncContext.fetch(request)
             conversations?.forEach {
-                let action = UpdateAccessRolesAction(conversation: $0,
-                                                     accessMode: ConversationAccessMode.value(forAllowGuests: true),
-                                                     accessRoles: ConversationAccessRoleV2.fromLegacyAccessRole(.nonActivated))
+                let action = UpdateAccessRolesAction(
+                    conversation: $0,
+                    accessMode: ConversationAccessMode.value(forAllowGuests: true),
+                    accessRoles: ConversationAccessRoleV2
+                        .fromLegacyAccessRole(.nonActivated)
+                )
                 action.send(in: userSession.notificationContext)
             }
         }
@@ -270,7 +278,12 @@ enum DebugActions {
             let syncConversation = try! syncContext.existingObject(with: conversationId) as! ZMConversation
             let messages: [ZMClientMessage] = (0 ... count).map { i in
                 let nonce = UUID()
-                let genericMessage = GenericMessage(content: Text(content: "Debugging message \(i): Append many messages to the top conversation; Append many messages to the top conversation;"), nonce: nonce)
+                let genericMessage = GenericMessage(
+                    content: Text(
+                        content: "Debugging message \(i): Append many messages to the top conversation; Append many messages to the top conversation;"
+                    ),
+                    nonce: nonce
+                )
                 let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: syncContext)
                 try! clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = ZMUser.selfUser(in: syncContext)
@@ -291,7 +304,8 @@ enum DebugActions {
 
         var conversations: [ZMConversation]?
         userSession.syncManagedObjectContext.performGroupedBlock {
-            conversations = try? userSession.syncManagedObjectContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
+            conversations = try? userSession.syncManagedObjectContext
+                .fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
             conversations?.forEach { _ = $0.estimatedUnreadCount }
         }
         userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
@@ -324,7 +338,8 @@ enum DebugActions {
     }
 
     static func askString(title: String, _ callback: @escaping (String) -> Void) {
-        guard let controllerToPresentOver = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
+        guard let controllerToPresentOver = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        else { return }
 
         let controller = UIAlertController(
             title: title,

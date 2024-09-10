@@ -50,7 +50,8 @@ extension SearchResult {
         let filteredDocuments = documents.filter { document -> Bool in
             let name = document["name"] as? String
             let handle = document["handle"] as? String
-            return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?.contains(query.string.lowercased()) ?? false
+            return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?
+                .contains(query.string.lowercased()) ?? false
         }
 
         let searchUsers = ZMSearchUser.searchUsers(
@@ -134,14 +135,17 @@ extension SearchResult {
         }
     }
 
-    mutating func filterBy(searchOptions: SearchOptions,
-                           query: String,
-                           contextProvider: ContextProvider) {
+    mutating func filterBy(
+        searchOptions: SearchOptions,
+        query: String,
+        contextProvider: ContextProvider
+    ) {
         guard searchOptions.contains(.excludeNonActivePartners) else { return }
 
         let selfUser = ZMUser.selfUser(in: contextProvider.viewContext)
         let isHandleQuery = query.hasPrefix("@")
-        let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query).lowercased()
+        let queryWithoutAtSymbol = (isHandleQuery ? String(query[query.index(after: query.startIndex)...]) : query)
+            .lowercased()
 
         teamMembers = teamMembers.filter {
             $0.teamRole != .partner ||
@@ -167,13 +171,14 @@ extension SearchResult {
     }
 
     func union(withLocalResult result: SearchResult) -> SearchResult {
-        SearchResult(contacts: result.contacts,
-                     teamMembers: result.teamMembers,
-                     addressBook: result.addressBook,
-                     directory: directory,
-                     conversations: result.conversations,
-                     services: services,
-                     searchUsersCache: searchUsersCache
+        SearchResult(
+            contacts: result.contacts,
+            teamMembers: result.teamMembers,
+            addressBook: result.addressBook,
+            directory: directory,
+            conversations: result.conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
         )
     }
 

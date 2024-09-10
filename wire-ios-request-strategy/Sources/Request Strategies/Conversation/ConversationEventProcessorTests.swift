@@ -265,20 +265,28 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                 qualifiedID: qualifiedID,
                 type: .group,
                 name: "Hello World",
-                members: .init(selfMember: Payload.ConversationMember(id: selfUserID),
-                               others: [])
+                members: .init(
+                    selfMember: Payload.ConversationMember(id: selfUserID),
+                    others: []
+                )
             )
-            event = self.updateEvent(from: payload,
-                                     conversationID: .init(uuid: UUID(), domain: self.owningDomain),
-                                     senderID: self.otherUser.qualifiedID!,
-                                     timestamp: Date())
+            event = self.updateEvent(
+                from: payload,
+                conversationID: .init(uuid: UUID(), domain: self.owningDomain),
+                senderID: self.otherUser.qualifiedID!,
+                timestamp: Date()
+            )
         }
         // when
         await self.sut.processConversationEvents([event])
 
         await syncMOC.perform {
             // then
-            let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
+            let conversation = ZMConversation.fetch(
+                with: qualifiedID.uuid,
+                domain: qualifiedID.domain,
+                in: self.syncMOC
+            )
             XCTAssertNotNil(conversation)
         }
     }
@@ -322,10 +330,12 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         await syncMOC.perform {
             let payload = Payload.UpdateConversationName(name: newName)
-            event = self.updateEvent(from: payload,
-                                     conversationID: self.groupConversation.qualifiedID,
-                                     senderID: self.otherUser.qualifiedID!,
-                                     timestamp: Date())
+            event = self.updateEvent(
+                from: payload,
+                conversationID: self.groupConversation.qualifiedID,
+                senderID: self.otherUser.qualifiedID!,
+                timestamp: Date()
+            )
         }
 
         // when
@@ -439,14 +449,16 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             XCTAssertNotEqual(self.groupConversation.accessMode, newAccessMode)
             XCTAssertNotEqual(self.groupConversation.accessRoles, newAccessRole)
 
-            event = self.updateEvent(type: "conversation.access-update",
-                                     senderID: self.otherUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(),
-                                     dataPayload: [
-                                         "access": newAccessMode.stringValue,
-                                         "access_role_v2": newAccessRole.map(\.rawValue),
-                                     ])
+            event = self.updateEvent(
+                type: "conversation.access-update",
+                senderID: self.otherUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(),
+                dataPayload: [
+                    "access": newAccessMode.stringValue,
+                    "access_role_v2": newAccessRole.map(\.rawValue),
+                ]
+            )
         }
         // WHEN
         await self.sut.processConversationEvents([event])
@@ -476,7 +488,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
                 dataPayload: [
                     "access": newAccessMode.stringValue,
                     "access_role": legacyAccessRole.rawValue,
-                ])
+                ]
+            )
         }
 
         // WHEN
@@ -497,11 +510,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
 
             // GIVEN
-            event = self.updateEvent(type: "conversation.message-timer-update",
-                                     senderID: self.otherUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(),
-                                     dataPayload: ["message_timer": 31_536_000_000])
+            event = self.updateEvent(
+                type: "conversation.message-timer-update",
+                senderID: self.otherUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(),
+                dataPayload: ["message_timer": 31_536_000_000]
+            )
         }
 
         // WHEN
@@ -527,11 +542,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.groupConversation.activeMessageDestructionTimeoutType!, .groupConversation)
 
             // Given
-            event = self.updateEvent(type: "conversation.message-timer-update",
-                                     senderID: self.otherUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(),
-                                     dataPayload: ["message_timer": NSNull()])
+            event = self.updateEvent(
+                type: "conversation.message-timer-update",
+                senderID: self.otherUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(),
+                dataPayload: ["message_timer": NSNull()]
+            )
         }
 
         // WHEN
@@ -563,11 +580,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             XCTAssertNotNil(self.groupConversation.activeMessageDestructionTimeoutValue)
 
             // "turn off" synced timeout
-            event = self.updateEvent(type: "conversation.message-timer-update",
-                                     senderID: self.otherUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(),
-                                     dataPayload: ["message_timer": 0])
+            event = self.updateEvent(
+                type: "conversation.message-timer-update",
+                senderID: self.otherUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(),
+                dataPayload: ["message_timer": 0]
+            )
         }
 
         // WHEN
@@ -601,11 +620,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID.create()
 
-            event = self.updateEvent(type: "conversation.message-timer-update",
-                                     senderID: selfUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(),
-                                     dataPayload: ["message_timer": messageTimerMillis])
+            event = self.updateEvent(
+                type: "conversation.message-timer-update",
+                senderID: selfUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(),
+                dataPayload: ["message_timer": messageTimerMillis]
+            )
         }
 
         // WHEN
@@ -649,17 +670,21 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID.create()
 
-            valuedEvent = self.updateEvent(type: "conversation.message-timer-update",
-                                           senderID: selfUser.remoteIdentifier!,
-                                           conversationID: self.groupConversation.remoteIdentifier!,
-                                           timestamp: Date(),
-                                           dataPayload: ["message_timer": valuedMessageTimerMillis])
+            valuedEvent = self.updateEvent(
+                type: "conversation.message-timer-update",
+                senderID: selfUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(),
+                dataPayload: ["message_timer": valuedMessageTimerMillis]
+            )
 
-            event = self.updateEvent(type: "conversation.message-timer-update",
-                                     senderID: selfUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(timeIntervalSinceNow: 100),
-                                     dataPayload: ["message_timer": 0])
+            event = self.updateEvent(
+                type: "conversation.message-timer-update",
+                senderID: selfUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(timeIntervalSinceNow: 100),
+                dataPayload: ["message_timer": 0]
+            )
         }
 
         // WHEN
@@ -690,7 +715,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await self.syncMOC.perform {
             // THEN
             XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
-            guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else { return XCTFail("Last conversation message is not a system message")
+            guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage
+            else { return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
         }
@@ -722,14 +748,16 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             // GIVEN
-            event = self.updateEvent(type: "conversation.member-update",
-                                     senderID: selfUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(timeIntervalSinceNow: 100),
-                                     dataPayload: [
-                                         "target": userId.transportString(),
-                                         "conversation_role": "new",
-                                     ])
+            event = self.updateEvent(
+                type: "conversation.member-update",
+                senderID: selfUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(timeIntervalSinceNow: 100),
+                dataPayload: [
+                    "target": userId.transportString(),
+                    "conversation_role": "new",
+                ]
+            )
         }
         // WHEN
         await self.sut.processConversationEvents([event])
@@ -765,14 +793,16 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             // GIVEN
-            event = self.updateEvent(type: "conversation.member-update",
-                                     senderID: selfUser.remoteIdentifier!,
-                                     conversationID: self.groupConversation.remoteIdentifier!,
-                                     timestamp: Date(timeIntervalSinceNow: 100),
-                                     dataPayload: [
-                                         "target": selfUser.remoteIdentifier.transportString(),
-                                         "conversation_role": "new",
-                                     ])
+            event = self.updateEvent(
+                type: "conversation.member-update",
+                senderID: selfUser.remoteIdentifier!,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                timestamp: Date(timeIntervalSinceNow: 100),
+                dataPayload: [
+                    "target": selfUser.remoteIdentifier.transportString(),
+                    "conversation_role": "new",
+                ]
+            )
         }
         // WHEN
         await self.sut.processConversationEvents([event])
@@ -787,11 +817,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
     }
 
-    func updateEvent(type: String,
-                     senderID: UUID,
-                     conversationID: UUID,
-                     timestamp: Date,
-                     dataPayload: [String: Any]) -> ZMUpdateEvent {
+    func updateEvent(
+        type: String,
+        senderID: UUID,
+        conversationID: UUID,
+        timestamp: Date,
+        dataPayload: [String: Any]
+    ) -> ZMUpdateEvent {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),

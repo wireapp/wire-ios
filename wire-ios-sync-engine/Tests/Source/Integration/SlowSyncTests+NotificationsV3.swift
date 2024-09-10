@@ -36,11 +36,17 @@ final class SlowSyncTests_NotificationsV3: IntegrationTest {
     // MARK: - Slow sync with error
 
     func test_WhenSinceIdParam404DuringQuickSyncItTriggersASlowSync() {
-        internalTestSlowSyncIsPerformedDuringQuickSync(withSinceParameterId: self.mockTransportSession.invalidSinceParameter400)
+        internalTestSlowSyncIsPerformedDuringQuickSync(
+            withSinceParameterId: self.mockTransportSession
+                .invalidSinceParameter400
+        )
     }
 
     func test_WhenSinceIdParam400DuringQuickSyncItTriggersASlowSync() {
-        internalTestSlowSyncIsPerformedDuringQuickSync(withSinceParameterId: self.mockTransportSession.unknownSinceParameter404)
+        internalTestSlowSyncIsPerformedDuringQuickSync(
+            withSinceParameterId: self.mockTransportSession
+                .unknownSinceParameter404
+        )
     }
 
     func internalTestSlowSyncIsPerformedDuringQuickSync(withSinceParameterId sinceParameter: UUID) {
@@ -55,6 +61,9 @@ final class SlowSyncTests_NotificationsV3: IntegrationTest {
 
         // THEN
         // ensure it performs slow sync
-        wait(forConditionToBeTrue: self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true, timeout: 5)
+        wait(
+            forConditionToBeTrue: self.userSession?.applicationStatusDirectory.syncStatus.isSlowSyncing == true,
+            timeout: 5
+        )
     }
 }

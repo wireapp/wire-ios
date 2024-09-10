@@ -50,21 +50,29 @@ final class MLSMigrationSupportCellDescription: ConversationMessageCellDescripti
 
     // MARK: Attributed Strings
 
-    private static func makeAttributedString(messageType: ZMSystemMessageType, for user: UserType) -> NSAttributedString? {
+    private static func makeAttributedString(
+        messageType: ZMSystemMessageType,
+        for user: UserType
+    ) -> NSAttributedString? {
         switch messageType {
         case .mlsNotSupportedSelfUser:
             return makeMLSNotSupportedMessageForSelfUser(username: user.name ?? "")
         case .mlsNotSupportedOtherUser:
             return makeMLSNotSupportedMessageForOtherUser(username: user.name ?? "")
         default:
-            assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
+            assertionFailure(
+                "MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!"
+            )
             return nil
         }
     }
 
     private static func makeMLSNotSupportedMessageForSelfUser(username: String) -> NSAttributedString? {
         let text = NSMutableAttributedString.markdown(
-            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(username, WireURLs.shared.appOnItunes.absoluteString),
+            from: SystemMessageMLSMigrationLocalizable.mlsNotSupportedByYou(
+                username,
+                WireURLs.shared.appOnItunes.absoluteString
+            ),
             style: .systemMessage
         )
 

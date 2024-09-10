@@ -39,7 +39,12 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         customAffectedKeys: AffectedKeys? = nil
     ) {
         let fields: Set<String> = expectedChangedField == nil ? [] : [expectedChangedField!]
-        checkThatItNotifiesTheObserverOfAChange(message, modifier: modifier, expectedChangedFields: fields, customAffectedKeys: customAffectedKeys)
+        checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: modifier,
+            expectedChangedFields: fields,
+            customAffectedKeys: customAffectedKeys
+        )
     }
 
     func checkThatItNotifiesTheObserverOfAChange<T: ZMMessage>(
@@ -49,7 +54,11 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         customAffectedKeys: AffectedKeys? = nil
     ) {
         // given
-        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
+        withExtendedLifetime(MessageChangeInfo.add(
+            observer: self.messageObserver,
+            for: message,
+            managedObjectContext: self.uiMOC
+        )) {
             self.uiMOC.saveOrRollback()
 
             // when
@@ -82,8 +91,10 @@ class MessageObserverTests: NotificationDispatcherTestBase {
 
             guard !expectedChangedFields.isEmpty else { return }
             guard let changes = messageObserver.notifications.first else { return }
-            changes.checkForExpectedChangeFields(userInfoKeys: messageInfoKeys,
-                                                 expectedChangedFields: expectedChangedFields)
+            changes.checkForExpectedChangeFields(
+                userInfoKeys: messageInfoKeys,
+                expectedChangedFields: expectedChangedFields
+            )
         }
     }
 
@@ -109,15 +120,21 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         let imageData = verySmallJPEGData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData.count), mimeType: "image/jpeg")
-        let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(),
-                                              macKey: Data.zmRandomSHA256Key(),
-                                              mac: Data.zmRandomSHA256Key())
+        let keys = ZMImageAssetEncryptionKeys(
+            otrKey: Data.randomEncryptionKey(),
+            macKey: Data.zmRandomSHA256Key(),
+            mac: Data.zmRandomSHA256Key()
+        )
 
-        let imageMessage = GenericMessage(content: ImageAsset(mediumProperties: properties,
-                                                              processedProperties: properties,
-                                                              encryptionKeys: keys,
-                                                              format: .preview),
-                                          nonce: UUID.create())
+        let imageMessage = GenericMessage(
+            content: ImageAsset(
+                mediumProperties: properties,
+                processedProperties: properties,
+                encryptionKeys: keys,
+                format: .preview
+            ),
+            nonce: UUID.create()
+        )
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
@@ -161,7 +178,10 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
             modifier: { try! $0.setUnderlyingMessage(updateGenericMessage) },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.linkPreviewChanged), #keyPath(MessageChangeInfo.underlyingMessageChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.linkPreviewChanged),
+                #keyPath(MessageChangeInfo.underlyingMessageChanged),
+            ]
         )
     }
 
@@ -296,9 +316,18 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { _ in
-                _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
+                _ = ZMMessageConfirmation(
+                    type: .read,
+                    message: message,
+                    sender: ZMUser.selfUser(in: uiMOC),
+                    serverTimestamp: Date(),
+                    managedObjectContext: uiMOC
+                )
             },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.confirmationsChanged),
+                #keyPath(MessageChangeInfo.deliveryStateChanged),
+            ]
         )
     }
 
@@ -311,9 +340,18 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
             modifier: { _ in
-                _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
+                _ = ZMMessageConfirmation(
+                    type: .read,
+                    message: message,
+                    sender: ZMUser.selfUser(in: uiMOC),
+                    serverTimestamp: Date(),
+                    managedObjectContext: uiMOC
+                )
             },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.confirmationsChanged),
+                #keyPath(MessageChangeInfo.deliveryStateChanged),
+            ]
         )
     }
 
@@ -329,7 +367,10 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
             modifier: { try! $0.setUnderlyingMessage(update) },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
+            expectedChangedFields: [
+                #keyPath(MessageChangeInfo.underlyingMessageChanged),
+                #keyPath(MessageChangeInfo.linkPreviewChanged),
+            ]
         )
     }
 
@@ -338,10 +379,13 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
-        let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
-                                        permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
-                                        thumbnails: [URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!],
-                                        originalRange: NSRange(location: 20, length: 43))
+        let attachment = LinkAttachment(
+            type: .youTubeVideo,
+            title: "Pingu Season 1 Episode 1",
+            permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+            thumbnails: [URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!],
+            originalRange: NSRange(location: 20, length: 43)
+        )
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(

@@ -34,7 +34,8 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
-        let path = "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
+        let path =
+            "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
 
         var payload: ZMTransportData?
         if let skipOwn = action.excludedSelfClientId, !skipOwn.isEmpty {

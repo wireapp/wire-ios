@@ -51,7 +51,11 @@ extension GenericMessage {
             var obfuscatedLinkPreviews: [LinkPreview] = []
             if linkPreviews.count > 0 {
                 let offset = linkPreviews.first!.urlOffset
-                let offsetIndex = obfuscatedContent.index(obfuscatedContent.startIndex, offsetBy: Int(offset), limitedBy: obfuscatedContent.endIndex) ?? obfuscatedContent.startIndex
+                let offsetIndex = obfuscatedContent.index(
+                    obfuscatedContent.startIndex,
+                    offsetBy: Int(offset),
+                    limitedBy: obfuscatedContent.endIndex
+                ) ?? obfuscatedContent.startIndex
                 let originalURL = obfuscatedContent[offsetIndex...]
                 obfuscatedLinkPreviews = linkPreviews.map { $0.obfuscated(originalURL: String(originalURL)) }
             }

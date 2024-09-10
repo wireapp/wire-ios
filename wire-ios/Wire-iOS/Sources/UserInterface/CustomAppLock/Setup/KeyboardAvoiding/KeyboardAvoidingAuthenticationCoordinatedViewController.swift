@@ -18,7 +18,8 @@
 
 import UIKit
 
-final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvoidingViewController, AuthenticationCoordinatedViewController {
+final class KeyboardAvoidingAuthenticationCoordinatedViewController: KeyboardAvoidingViewController,
+    AuthenticationCoordinatedViewController {
     weak var authenticationCoordinator: AuthenticationCoordinator? {
         get {
             childAuthenticationCoordinatedViewController?.authenticationCoordinator

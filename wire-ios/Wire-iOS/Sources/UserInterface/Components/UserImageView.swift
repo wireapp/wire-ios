@@ -145,7 +145,13 @@ class UserImageView: AvatarImageView, UserObserving {
         }
 
         if animated, !ProcessInfo.processInfo.isRunningTests {
-            UIView.transition(with: self, duration: 0.15, options: .transitionCrossDissolve, animations: updateBlock, completion: nil)
+            UIView.transition(
+                with: self,
+                duration: 0.15,
+                options: .transitionCrossDissolve,
+                animations: updateBlock,
+                completion: nil
+            )
         } else {
             updateBlock()
         }

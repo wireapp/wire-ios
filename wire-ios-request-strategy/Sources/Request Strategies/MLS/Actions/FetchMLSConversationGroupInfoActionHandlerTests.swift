@@ -20,7 +20,10 @@ import WireDataModel
 import XCTest
 @testable import WireRequestStrategy
 
-class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSConversationGroupInfoAction, FetchMLSConversationGroupInfoActionHandler> {
+class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<
+    FetchMLSConversationGroupInfoAction,
+    FetchMLSConversationGroupInfoActionHandler
+> {
     override func setUp() {
         super.setUp()
         action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)

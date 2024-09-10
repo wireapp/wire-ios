@@ -21,15 +21,17 @@ import XCTest
 
 class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
     func testThatUnreadCountIsIncreased_ForContentTypes() {
-        let contentTypes: [LocalNotificationContentType] = [.image,
-                                                            .audio,
-                                                            .video,
-                                                            .fileUpload,
-                                                            .ephemeral(isMention: false, isReply: false),
-                                                            .hidden,
-                                                            .knock,
-                                                            .location,
-                                                            .text("Hello World", isMention: false, isReply: false)]
+        let contentTypes: [LocalNotificationContentType] = [
+            .image,
+            .audio,
+            .video,
+            .fileUpload,
+            .ephemeral(isMention: false, isReply: false),
+            .hidden,
+            .knock,
+            .location,
+            .text("Hello World", isMention: false, isReply: false),
+        ]
 
         for contentType in contentTypes {
             XCTAssertTrue(LocalNotificationType.message(contentType).shouldIncreaseUnreadCount)
@@ -37,8 +39,10 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
     }
 
     func testThatUnreadMentionCountIsIncreased_WhenSelfUserIsMentioned() {
-        let contentTypes: [LocalNotificationContentType] = [.ephemeral(isMention: true, isReply: false),
-                                                            .text("Hello World", isMention: true, isReply: false)]
+        let contentTypes: [LocalNotificationContentType] = [
+            .ephemeral(isMention: true, isReply: false),
+            .text("Hello World", isMention: true, isReply: false),
+        ]
 
         for contentType in contentTypes {
             XCTAssertTrue(LocalNotificationType.message(contentType).shouldIncreaseUnreadMentionCount)
@@ -46,8 +50,10 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
     }
 
     func testThatUnreadSelfReplyCountIsIncreased_WhenSelfUserIsReplied() {
-        let contentTypes: [LocalNotificationContentType] = [.ephemeral(isMention: false, isReply: true),
-                                                            .text("Hello World", isMention: false, isReply: true)]
+        let contentTypes: [LocalNotificationContentType] = [
+            .ephemeral(isMention: false, isReply: true),
+            .text("Hello World", isMention: false, isReply: true),
+        ]
 
         for contentType in contentTypes {
             XCTAssertTrue(LocalNotificationType.message(contentType).shouldIncreaseUnreadReplyCount)
@@ -55,10 +61,12 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
     }
 
     func testThatUnreadCountIsntIncreased_ForContentTypesWithoutUserGeneratedContent() {
-        let contentTypes: [LocalNotificationContentType] = [.messageTimerUpdate(nil),
-                                                            .participantsAdded,
-                                                            .participantsRemoved(reason: .none),
-                                                            .reaction(emoji: "❤️")]
+        let contentTypes: [LocalNotificationContentType] = [
+            .messageTimerUpdate(nil),
+            .participantsAdded,
+            .participantsRemoved(reason: .none),
+            .reaction(emoji: "❤️"),
+        ]
 
         for contentType in contentTypes {
             XCTAssertFalse(LocalNotificationType.message(contentType).shouldIncreaseUnreadCount)

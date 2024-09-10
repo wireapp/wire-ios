@@ -29,7 +29,10 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             let accessMode = ConversationAccessMode.allowGuests
 
             // when
-            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map(\.rawValue))
+            conversation.updateAccessStatus(
+                accessModes: accessMode.stringValue,
+                accessRoles: accessRoles.map(\.rawValue)
+            )
 
             // then
             XCTAssertEqual(conversation.accessMode, accessMode)
@@ -220,7 +223,11 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
 
-            let selfRole = Role.create(managedObjectContext: self.syncMOC, name: "test_role", conversation: conversation)
+            let selfRole = Role.create(
+                managedObjectContext: self.syncMOC,
+                name: "test_role",
+                conversation: conversation
+            )
 
             // when
             conversation.updateMembers([], selfUserRole: selfRole)
@@ -239,7 +246,11 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-            let selfRole = Role.create(managedObjectContext: self.syncMOC, name: "test_role", conversation: conversation)
+            let selfRole = Role.create(
+                managedObjectContext: self.syncMOC,
+                name: "test_role",
+                conversation: conversation
+            )
 
             // when
             conversation.updateMembers([], selfUserRole: selfRole)

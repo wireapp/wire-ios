@@ -77,7 +77,8 @@ final class DotView: UIView {
             circleView.topAnchor.constraint(equalTo: topAnchor),
             circleView.bottomAnchor.constraint(equalTo: bottomAnchor),
             circleView.leftAnchor.constraint(equalTo: leftAnchor),
-            circleView.rightAnchor.constraint(equalTo: rightAnchor)] + centerViewConstraints)
+            circleView.rightAnchor.constraint(equalTo: rightAnchor),
+        ] + centerViewConstraints)
     }
 
     @available(*, unavailable)

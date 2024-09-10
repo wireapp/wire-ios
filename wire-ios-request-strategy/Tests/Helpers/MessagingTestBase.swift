@@ -66,8 +66,10 @@ class MessagingTestBase: ZMTBaseTest {
         self.deleteAllOtherEncryptionContexts()
         self.deleteAllFilesInCache()
         self.accountIdentifier = UUID()
-        self.coreDataStack = createCoreDataStack(userIdentifier: accountIdentifier,
-                                                 inMemoryStore: useInMemoryStore)
+        self.coreDataStack = createCoreDataStack(
+            userIdentifier: accountIdentifier,
+            inMemoryStore: useInMemoryStore
+        )
         setupCaches(in: coreDataStack)
         setupTimers()
 
@@ -134,9 +136,10 @@ extension MessagingTestBase {
     ) async throws -> ZMUpdateEvent {
         let cyphertext = await syncMOC.perform { self.encryptedMessageToSelf(message: message, from: self.otherClient) }
         let innerPayload = await syncMOC.perform { [self] in
-            ["recipient": selfClient.remoteIdentifier!,
-             "sender": otherClient.remoteIdentifier!,
-             "text": cyphertext.base64String(),
+            [
+                "recipient": selfClient.remoteIdentifier!,
+                "sender": otherClient.remoteIdentifier!,
+                "text": cyphertext.base64String(),
             ]
         }
 
@@ -263,9 +266,11 @@ extension MessagingTestBase {
     }
 
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
-    func outgoingMessageWrapper(from request: ZMTransportRequest,
-                                file: StaticString = #file,
-                                line: UInt = #line) -> Proteus_NewOtrMessage? {
+    func outgoingMessageWrapper(
+        from request: ZMTransportRequest,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Proteus_NewOtrMessage? {
         guard let data = request.binaryData else {
             XCTFail("No binary data", file: file, line: line)
             return nil
@@ -274,10 +279,11 @@ extension MessagingTestBase {
     }
 
     /// Extract encrypted payload from a request
-    func outgoingEncryptedMessage(from request: ZMTransportRequest,
-                                  for client: UserClient,
-                                  line: UInt = #line,
-                                  file: StaticString = #file
+    func outgoingEncryptedMessage(
+        from request: ZMTransportRequest,
+        for client: UserClient,
+        line: UInt = #line,
+        file: StaticString = #file
     ) -> GenericMessage? {
         guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
@@ -506,7 +512,10 @@ extension MessagingTestBase {
     }
 
     private func deleteAllFilesInCache() {
-        let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
+        let files = try? FileManager.default.contentsOfDirectory(
+            at: self.cacheFolder,
+            includingPropertiesForKeys: [URLResourceKey.nameKey]
+        )
         files?.forEach {
             do {
                 try FileManager.default.removeItem(at: $0)
@@ -520,16 +529,20 @@ extension MessagingTestBase {
 // MARK: - Payload for message
 
 extension MessagingTestBase {
-    public func payloadForMessage(in conversation: ZMConversation?,
-                                  type: String,
-                                  data: Any) -> NSMutableDictionary? {
+    public func payloadForMessage(
+        in conversation: ZMConversation?,
+        type: String,
+        data: Any
+    ) -> NSMutableDictionary? {
         payloadForMessage(in: conversation!, type: type, data: data, time: nil)
     }
 
-    public func payloadForMessage(in conversation: ZMConversation,
-                                  type: String,
-                                  data: Any,
-                                  time: Date?) -> NSMutableDictionary? {
+    public func payloadForMessage(
+        in conversation: ZMConversation,
+        type: String,
+        data: Any,
+        time: Date?
+    ) -> NSMutableDictionary? {
         //      {
         //         "conversation" : "8500be67-3d7c-4af0-82a6-ef2afe266b18",
         //         "data" : {
@@ -547,34 +560,40 @@ extension MessagingTestBase {
         return payloadForMessage(in: conversation, type: type, data: data, time: time, from: user)
     }
 
-    public func payloadForMessage(in conversation: ZMConversation,
-                                  type: String,
-                                  data: Any,
-                                  time: Date?,
-                                  from: ZMUser) -> NSMutableDictionary? {
-        ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
-         "data": data,
-         "from": from.remoteIdentifier.transportString(),
-         "time": time?.transportString() ?? "",
-         "type": type,
+    public func payloadForMessage(
+        in conversation: ZMConversation,
+        type: String,
+        data: Any,
+        time: Date?,
+        from: ZMUser
+    ) -> NSMutableDictionary? {
+        [
+            "conversation": conversation.remoteIdentifier?.transportString() ?? "",
+            "data": data,
+            "from": from.remoteIdentifier.transportString(),
+            "time": time?.transportString() ?? "",
+            "type": type,
         ]
     }
 
-    public func payloadForMessage(conversationID: UUID,
-                                  domain: String?,
-                                  type: String,
-                                  data: Any,
-                                  time: Date?,
-                                  fromID: UUID) -> NSMutableDictionary? {
-        ["conversation": conversationID.transportString(),
-         "qualified_conversation": [
-             "id": conversationID.transportString(),
-             "domain": domain,
-         ],
-         "data": data,
-         "from": fromID.transportString(),
-         "time": time?.transportString() ?? "",
-         "type": type,
+    public func payloadForMessage(
+        conversationID: UUID,
+        domain: String?,
+        type: String,
+        data: Any,
+        time: Date?,
+        fromID: UUID
+    ) -> NSMutableDictionary? {
+        [
+            "conversation": conversationID.transportString(),
+            "qualified_conversation": [
+                "id": conversationID.transportString(),
+                "domain": domain,
+            ],
+            "data": data,
+            "from": fromID.transportString(),
+            "time": time?.transportString() ?? "",
+            "type": type,
         ]
     }
 }

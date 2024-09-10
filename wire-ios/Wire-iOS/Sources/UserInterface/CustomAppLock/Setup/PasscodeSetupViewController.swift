@@ -37,7 +37,8 @@ final class PasscodeSetupViewController: UIViewController {
                 L10n.Localizable.CreatePasscode.infoLabel
 
             case .forcedForTeam:
-                L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode.infoLabelForcedApplock
+                L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode
+                    .infoLabelForcedApplock
             }
         }
     }
@@ -63,7 +64,11 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     lazy var passcodeTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(.applockPasscode, isNew: true), delegate: self, setNewColors: true)
+        let textField = ValidatedTextField.createPasscodeTextField(
+            kind: .passcode(.applockPasscode, isNew: true),
+            delegate: self,
+            setNewColors: true
+        )
         textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
         textField.delegate = self
 
@@ -116,9 +121,11 @@ final class PasscodeSetupViewController: UIViewController {
     ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to follow current window's height
     ///   - context: context  for this screen. Depending on the context, there are a different title and info message.
     ///   - callback: callback for storing passcode result.
-    required init(useCompactLayout: Bool? = nil,
-                  context: Context,
-                  callback: ResultHandler?) {
+    required init(
+        useCompactLayout: Bool? = nil,
+        context: Context,
+        callback: ResultHandler?
+    ) {
         self.callback = callback
         self.context = context
 
@@ -227,14 +234,20 @@ final class PasscodeSetupViewController: UIViewController {
 
     // MARK: - keyboard avoiding
 
-    static func createKeyboardAvoidingFullScreenView(context: Context,
-                                                     delegate: PasscodeSetupViewControllerDelegate? = nil) -> KeyboardAvoidingAuthenticationCoordinatedViewController {
-        let passcodeSetupViewController = PasscodeSetupViewController(context: context,
-                                                                      callback: nil)
+    static func createKeyboardAvoidingFullScreenView(
+        context: Context,
+        delegate: PasscodeSetupViewControllerDelegate? = nil
+    )
+        -> KeyboardAvoidingAuthenticationCoordinatedViewController {
+        let passcodeSetupViewController = PasscodeSetupViewController(
+            context: context,
+            callback: nil
+        )
 
         passcodeSetupViewController.passcodeSetupViewControllerDelegate = delegate
 
-        let keyboardAvoidingViewController = KeyboardAvoidingAuthenticationCoordinatedViewController(viewController: passcodeSetupViewController)
+        let keyboardAvoidingViewController =
+            KeyboardAvoidingAuthenticationCoordinatedViewController(viewController: passcodeSetupViewController)
 
         keyboardAvoidingViewController.modalPresentationStyle = .fullScreen
 
@@ -294,7 +307,8 @@ extension PasscodeSetupViewController: TextFieldValidationDelegate {
 
 extension PasscodeSetupViewController: PasscodeSetupUserInterface {
     func setValidationLabelsState(errorReason: PasscodeError, passed: Bool) {
-        validationLabels[errorReason]?.attributedText = passed ? errorReason.descriptionWithPassedIcon : errorReason.descriptionWithInvalidIcon
+        validationLabels[errorReason]?.attributedText = passed ? errorReason.descriptionWithPassedIcon : errorReason
+            .descriptionWithInvalidIcon
         validationLabels[errorReason]?.isEnabled = passed
     }
 

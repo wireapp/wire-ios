@@ -43,9 +43,11 @@ final class PostContent {
     // MARK: - Send attachments
 
     /// Send the content to the selected conversation
-    func send(text: String,
-              sharingSession: SharingSession,
-              stateCallback: @escaping SendingStateCallback) {
+    func send(
+        text: String,
+        sharingSession: SharingSession,
+        stateCallback: @escaping SendingStateCallback
+    ) {
         guard sharingSession.fileSharingFeature.status == .enabled,
               SecurityFlags.fileSharing.isEnabled else {
             stateCallback(.fileSharingRestriction)
@@ -56,7 +58,12 @@ final class PostContent {
             return
         }
 
-        sendController = SendController(text: text, attachments: attachments, conversation: conversation, sharingSession: sharingSession)
+        sendController = SendController(
+            text: text,
+            attachments: attachments,
+            conversation: conversation,
+            sharingSession: sharingSession
+        )
 
         let allMessagesEnqueuedGroup = DispatchGroup()
         allMessagesEnqueuedGroup.enter()

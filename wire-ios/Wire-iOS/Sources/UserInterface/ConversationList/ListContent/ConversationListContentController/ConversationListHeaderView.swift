@@ -73,7 +73,8 @@ final class ConversationListHeaderView: UICollectionReusableView {
     private let titleLabel: UILabel = {
         let label = DynamicFontLabel(
             fontSpec: .smallRegularFont,
-            color: .white)
+            color: .white
+        )
         label.textColor = SemanticColors.Label.textDefault
         label.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return label
@@ -81,7 +82,10 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
     let badgeView: RoundedTextBadge = {
         let margin: CGFloat = 12
-        let roundedTextBadge = RoundedTextBadge(contentInset: UIEdgeInsets(top: 2, left: margin, bottom: 2, right: margin), font: FontSpec(.medium, .semibold).font!)
+        let roundedTextBadge = RoundedTextBadge(
+            contentInset: UIEdgeInsets(top: 2, left: margin, bottom: 2, right: margin),
+            font: FontSpec(.medium, .semibold).font!
+        )
 
         roundedTextBadge.textLabel.textColor = SemanticColors.Label.textDefaultWhite
         roundedTextBadge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
@@ -172,11 +176,17 @@ final class ConversationListHeaderView: UICollectionReusableView {
 
         arrowIconImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
 
-        badgeMarginConstraint = titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: badgeView.leadingAnchor, constant: 0)
+        badgeMarginConstraint = titleLabel.trailingAnchor.constraint(
+            lessThanOrEqualTo: badgeView.leadingAnchor,
+            constant: 0
+        )
         badgeWidthConstraint = badgeView.widthAnchor.constraint(greaterThanOrEqualToConstant: 0)
 
         NSLayoutConstraint.activate([
-            arrowIconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.ConversationList.horizontalMargin),
+            arrowIconImageView.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: CGFloat.ConversationList.horizontalMargin
+            ),
             arrowIconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -186,7 +196,10 @@ final class ConversationListHeaderView: UICollectionReusableView {
             badgeView.heightAnchor.constraint(equalToConstant: 20),
             badgeWidthConstraint!,
             badgeView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            badgeView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.ConversationList.horizontalMargin),
+            badgeView.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -CGFloat.ConversationList.horizontalMargin
+            ),
         ])
     }
 }

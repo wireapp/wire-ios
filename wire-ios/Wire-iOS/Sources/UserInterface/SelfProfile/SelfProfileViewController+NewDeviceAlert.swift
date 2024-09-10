@@ -39,13 +39,19 @@ extension SelfProfileViewController {
     private func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
-        let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in
+        let actionManageDevices = UIAlertAction(
+            title: L10n.Localizable.Self.NewDeviceAlert.manageDevices,
+            style: .default
+        ) { _ in
             self.openControllerForCellWithIdentifier(SettingsCellDescriptorFactory.settingsDevicesCellIdentifier)
         }
 
         newLoginAlertController.addAction(actionManageDevices)
 
-        let actionTrustDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.trustDevices, style: .default) { [weak self] _ in
+        let actionTrustDevices = UIAlertAction(
+            title: L10n.Localizable.Self.NewDeviceAlert.trustDevices,
+            style: .default
+        ) { [weak self] _ in
             self?.presentUserSettingChangeControllerIfNeeded()
         }
 
@@ -74,7 +80,8 @@ extension SelfProfileViewController {
                 resultViewController = viewController
             }
 
-            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
+            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType &
+                SettingsControllerGeneratorType {
                 for cellDescriptor in topCellGroupDescriptor.allCellDescriptors() {
                     if let cellIdentifier = cellDescriptor.identifier,
                        let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,

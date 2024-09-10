@@ -35,17 +35,24 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     private var footer = SectionFooter(frame: .zero)
     private let selfUser: UserType
 
-    private lazy var footerText: String = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
+    private lazy var footerText: String = L10n.Localizable.Participants.Section.Name
+        .footer(ZMConversation.maxParticipants)
 
-    init(selfUser: UserType,
-         delegate: SimpleTextFieldDelegate? = nil) {
+    init(
+        selfUser: UserType,
+        delegate: SimpleTextFieldDelegate? = nil
+    ) {
         textFieldDelegate = delegate
         self.selfUser = selfUser
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
         collectionView.flatMap(Cell.register)
-        collectionView?.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
+        collectionView?.register(
+            SectionFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter"
+        )
     }
 
     func becomeFirstResponder() {
@@ -62,24 +69,43 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
         1
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: Cell.self, for: indexPath)
         cell.textField.textFieldDelegate = textFieldDelegate
         nameCell = cell
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter", for: indexPath)
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let view = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter",
+            for: indexPath
+        )
         (view as? SectionFooter)?.titleLabel.text = footerText
         return view
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
         guard selfUser.isTeamMember else {
             return .zero
         }

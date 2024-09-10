@@ -40,7 +40,8 @@ class UserClientAPIV0: UserClientAPI {
         let request = requestsFactory.deleteClientRequest(
             clientId: clientId,
             password: password,
-            apiVersion: apiVersion)
+            apiVersion: apiVersion
+        )
 
         let response = await httpClient.send(request)
         if response.result != .success {

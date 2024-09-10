@@ -145,8 +145,10 @@ final class ArticleView: UIView {
         }
     }
 
-    func configure(withTextMessageData textMessageData: TextMessageData,
-                   obfuscated: Bool) {
+    func configure(
+        withTextMessageData textMessageData: TextMessageData,
+        obfuscated: Bool
+    ) {
         guard let linkPreview = textMessageData.linkPreview else {
             return
         }
@@ -198,7 +200,10 @@ final class ArticleView: UIView {
 
     private func configure(withTwitterStatus twitterStatus: TwitterStatusMetadata) {
         let author = twitterStatus.author ?? "-"
-        authorLabel.attributedText = L10n.Localizable.TwitterStatus.onTwitter(author).attributedString.addAttributes(authorHighlightAttributes, toSubstring: author)
+        authorLabel.attributedText = L10n.Localizable.TwitterStatus.onTwitter(author).attributedString.addAttributes(
+            authorHighlightAttributes,
+            toSubstring: author
+        )
 
         messageLabel.text = twitterStatus.message
     }
@@ -220,13 +225,18 @@ final class ArticleView: UIView {
 // MARK: - UIContextMenuInteractionDelegate
 
 extension ArticleView: UIContextMenuInteractionDelegate {
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        configurationForMenuAtLocation location: CGPoint
+    ) -> UIContextMenuConfiguration? {
         delegate?.linkPreviewContextMenu(view: self)
     }
 
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
-                                animator: UIContextMenuInteractionCommitAnimating) {
+    func contextMenuInteraction(
+        _ interaction: UIContextMenuInteraction,
+        willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
+        animator: UIContextMenuInteractionCommitAnimating
+    ) {
         animator.addCompletion {
             self.openURL()
         }

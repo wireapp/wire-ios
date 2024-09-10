@@ -49,7 +49,8 @@ private let ZMPushStringBundledMessages     = "bundled-messages"
 
 private let ZMPushStringMemberJoin          = "member.join"          // "[senderName] added you"
 private let ZMPushStringMemberLeave         = "member.leave"         // "[senderName] removed you"
-private let ZMPushStringMessageTimerUpdate  = "message-timer.update" // "[senderName] set the message timer to [duration]
+private let ZMPushStringMessageTimerUpdate  =
+    "message-timer.update" // "[senderName] set the message timer to [duration]
 private let ZMPushStringMessageTimerOff     = "message-timer.off"    // "[senderName] turned off the message timer
 
 private let ZMPushStringKnock               = "knock"                // "pinged"
@@ -196,7 +197,10 @@ extension LocalNotificationType {
         let conversationName = conversation?.displayName
 
         if let conversationName, let teamName {
-            return .localizedStringWithFormat(ZMPushStringTitle.pushFormatString, arguments: [conversationName, teamName])
+            return .localizedStringWithFormat(
+                ZMPushStringTitle.pushFormatString,
+                arguments: [conversationName, teamName]
+            )
         } else if let conversationName {
             return conversationName
         } else if let teamName {
@@ -207,7 +211,8 @@ extension LocalNotificationType {
     }
 
     public func alertTitleText(team: Team?) -> String? {
-        guard case let .availabilityBehaviourChangeAlert(availability) = self, availability.isOne(of: .away, .busy) else { return nil }
+        guard case let .availabilityBehaviourChangeAlert(availability) = self,
+              availability.isOne(of: .away, .busy) else { return nil }
 
         let teamName = team?.name
         let teamKey = teamName != nil ? TeamKey : nil
@@ -217,7 +222,8 @@ extension LocalNotificationType {
     }
 
     public func alertMessageBodyText() -> String {
-        guard case let .availabilityBehaviourChangeAlert(availability) = self, availability.isOne(of: .away, .busy) else { return "" }
+        guard case let .availabilityBehaviourChangeAlert(availability) = self,
+              availability.isOne(of: .away, .busy) else { return "" }
 
         let availabilityKey = availability == .away ? "away" : "busy"
         let localizationKey = [baseKey, availabilityKey, "message"].compactMap { $0 }.joined(separator: ".")
@@ -304,18 +310,27 @@ extension LocalNotificationType {
             arguments.append(conversationName)
         }
 
-        let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey].compactMap { $0 }.joined(separator: ".")
+        let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey]
+            .compactMap { $0 }.joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: arguments)
     }
 }
 
 extension String {
     public var pushFormatString: String {
-        Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.\(self)", value: "", table: "Push")
+        Bundle(for: ZMSingleRequestSync.self).localizedString(
+            forKey: "push.notification.\(self)",
+            value: "",
+            table: "Push"
+        )
     }
 
     public var pushActionString: String {
-        Bundle(for: ZMSingleRequestSync.self).localizedString(forKey: "push.notification.action.\(self)", value: "", table: "Push")
+        Bundle(for: ZMSingleRequestSync.self).localizedString(
+            forKey: "push.notification.action.\(self)",
+            value: "",
+            table: "Push"
+        )
     }
 
     fileprivate static func localizedStringWithFormat(_ format: String, arguments: [CVarArg]) -> String {

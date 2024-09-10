@@ -126,7 +126,12 @@ extension ZMConversationTests_Mute {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.mutedMessageTypes = .regular
         selfUser.teamIdentifier = UUID()
-        let message = try! conversation.appendText(content: "@you", mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)], fetchLinkPreview: false, nonce: UUID())
+        let message = try! conversation.appendText(
+            content: "@you",
+            mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)],
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
         // THEN
@@ -140,10 +145,22 @@ extension ZMConversationTests_Mute {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.mutedMessageTypes = .regular
 
-        let quotedMessage = try! conversation.appendText(content: "Hi!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID())
+        let quotedMessage = try! conversation.appendText(
+            content: "Hi!",
+            mentions: [],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         (quotedMessage as! ZMClientMessage).sender = selfUser
 
-        let message = try! conversation.appendText(content: "Hello!", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID())
+        let message = try! conversation.appendText(
+            content: "Hello!",
+            mentions: [],
+            replyingTo: quotedMessage,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
 
@@ -218,7 +235,12 @@ extension ZMConversationTests_Mute {
 
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         selfUser.teamIdentifier = UUID()
-        let message = try! conversation.appendText(content: "@you", mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)], fetchLinkPreview: false, nonce: UUID())
+        let message = try! conversation.appendText(
+            content: "@you",
+            mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)],
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
         // THEN
@@ -232,10 +254,22 @@ extension ZMConversationTests_Mute {
 
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
 
-        let quotedMessage = try! conversation.appendText(content: "Hi!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID())
+        let quotedMessage = try! conversation.appendText(
+            content: "Hi!",
+            mentions: [],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         (quotedMessage as! ZMClientMessage).sender = selfUser
 
-        let message = try! conversation.appendText(content: "Hello!", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID())
+        let message = try! conversation.appendText(
+            content: "Hello!",
+            mentions: [],
+            replyingTo: quotedMessage,
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
 
@@ -253,7 +287,12 @@ extension ZMConversationTests_Mute {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.mutedMessageTypes = .all
 
-        let message = try! conversation.appendText(content: "@you", mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)], fetchLinkPreview: false, nonce: UUID())
+        let message = try! conversation.appendText(
+            content: "@you",
+            mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)],
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
         // THEN
@@ -268,7 +307,12 @@ extension ZMConversationTests_Mute {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.mutedMessageTypes = .regular
 
-        let message = try! conversation.appendText(content: "@you", mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)], fetchLinkPreview: false, nonce: UUID())
+        let message = try! conversation.appendText(
+            content: "@you",
+            mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)],
+            fetchLinkPreview: false,
+            nonce: UUID()
+        )
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
         // THEN

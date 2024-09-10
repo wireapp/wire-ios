@@ -104,20 +104,31 @@ final class PermissionDeniedViewController: UIViewController {
             item?.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        var constraints = [heroLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
-                           heroLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28)]
+        var constraints = [
+            heroLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
+            heroLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
+        ]
 
-        constraints += [settingsButton.topAnchor.constraint(equalTo: heroLabel.bottomAnchor, constant: 28),
-                        settingsButton.heightAnchor.constraint(equalToConstant: 56)]
+        constraints += [
+            settingsButton.topAnchor.constraint(equalTo: heroLabel.bottomAnchor, constant: 28),
+            settingsButton.heightAnchor.constraint(equalToConstant: 56),
+        ]
 
-        constraints += [settingsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
-                        settingsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28)]
+        constraints += [
+            settingsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
+            settingsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
+        ]
 
-        constraints += [laterButton.topAnchor.constraint(equalTo: settingsButton.bottomAnchor, constant: 28),
-                        laterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -28),
-                        laterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
-                        laterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
-                        laterButton.heightAnchor.constraint(equalToConstant: 56)]
+        constraints += [
+            laterButton.topAnchor.constraint(equalTo: settingsButton.bottomAnchor, constant: 28),
+            laterButton.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -28
+            ),
+            laterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
+            laterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
+            laterButton.heightAnchor.constraint(equalToConstant: 56),
+        ]
 
         NSLayoutConstraint.activate(constraints)
     }

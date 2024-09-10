@@ -24,7 +24,8 @@ public class UserClientRequestFactory {
     func deleteClientRequest(
         clientId: String,
         password: String,
-        apiVersion: APIVersion) -> ZMTransportRequest {
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         let payload: [AnyHashable: Any] = [
             "password": password,
         ]
@@ -33,7 +34,8 @@ public class UserClientRequestFactory {
             path: "/clients/\(clientId)",
             method: ZMTransportRequestMethod.delete,
             payload: payload as ZMTransportData,
-            apiVersion: apiVersion.rawValue)
+            apiVersion: apiVersion.rawValue
+        )
 
         return request
     }

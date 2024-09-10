@@ -31,44 +31,63 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
     }
 
     func testMigratingDatabase_WithConversationWithNoRemoteIdentifier_ShouldSucceed() throws {
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(sourceVersion: "2.110.0",
-                                                                           entity: ZMConversation.self)
+        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+            sourceVersion: "2.110.0",
+            entity: ZMConversation.self
+        )
     }
 
     func testMigratingDatabase_WithTeamWithNoRemoteIdentifier_ShouldSucceed() throws {
         // it is not problem here, because remoteIdentifier is a String
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(sourceVersion: "2.110.0",
-                                                                           entity: Team.self)
+        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+            sourceVersion: "2.110.0",
+            entity: Team.self
+        )
     }
 
     func testMigratingDatabase_WithUserWithNoRemoteIdentifier_ShouldSucceed() throws {
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(sourceVersion: "2.110.0",
-                                                                           entity: ZMUser.self)
+        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+            sourceVersion: "2.110.0",
+            entity: ZMUser.self
+        )
     }
 
     func testMigratingDatabase_WithUserClientWithNoRemoteIdentifier_ShouldSucceed() throws {
         // it is not problem here, because remoteIdentifier is a String
-        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(sourceVersion: "2.106.0",
-                                                                           entity: UserClient.self)
+        try internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier(
+            sourceVersion: "2.106.0",
+            entity: UserClient.self
+        )
     }
 
-    private func internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier<T: ZMManagedObject>(sourceVersion: String, entity: T.Type) throws {
+    private func internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier<T: ZMManagedObject>(
+        sourceVersion: String,
+        entity: T
+            .Type
+    ) throws {
         let count = 100
-        try helper.migrateStoreToCurrentVersion(sourceVersion: sourceVersion,
-                                                preMigrationAction: { context in
+        try helper.migrateStoreToCurrentVersion(
+            sourceVersion: sourceVersion,
+            preMigrationAction: { context in
 
-                                                    for _ in 1 ... count {
-                                                        // object with no remoteIdentifier
-                                                        _ = T.insertNewObject(in: context)
-                                                    }
-                                                    try context.save()
+                for _ in 1 ... count {
+                    // object with no remoteIdentifier
+                    _ = T.insertNewObject(in: context)
+                }
+                try context.save()
 
-                                                }, postMigrationAction: { context in
-                                                    try context.performAndWait {
-                                                        let request = NSFetchRequest<NSManagedObject>(entityName: T.entityName())
-                                                        let result = try context.fetch(request)
-                                                        XCTAssertNotEqual(result.count, count)
-                                                    }
-                                                }, for: self)
+            },
+            postMigrationAction: { context in
+                try context.performAndWait {
+                    let request = NSFetchRequest<NSManagedObject>(
+                        entityName: T
+                            .entityName()
+                    )
+                    let result = try context.fetch(request)
+                    XCTAssertNotEqual(result.count, count)
+                }
+            },
+            for: self
+        )
     }
 }

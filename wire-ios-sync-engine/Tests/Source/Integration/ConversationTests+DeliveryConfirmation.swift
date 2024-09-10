@@ -56,7 +56,11 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         // when
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: textMessage.serializedData())
+                try self.selfToUser1Conversation?.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: textMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -87,7 +91,11 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         // when
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: confirmationMessage.serializedData())
+                try self.selfToUser1Conversation?.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: confirmationMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -126,7 +134,11 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         // when
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: confirmationMessage.serializedData())
+                try self.selfToUser1Conversation?.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: confirmationMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }

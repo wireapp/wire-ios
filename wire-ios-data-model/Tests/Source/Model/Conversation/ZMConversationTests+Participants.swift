@@ -470,7 +470,12 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         let team = self.createTeam(in: self.uiMOC)
         let user1 = self.createTeamMember(in: self.uiMOC, for: team)
         let user2 = self.createTeamMember(in: self.uiMOC, for: team)
-        let conversation = ZMConversation.insertGroupConversation(moc: self.uiMOC, participants: [user1, user2], name: self.name, team: team)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: self.uiMOC,
+            participants: [user1, user2],
+            name: self.name,
+            team: team
+        )
 
         // when
         let adminRole = Role.create(managedObjectContext: uiMOC, name: "wire_admin", team: team)

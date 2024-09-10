@@ -40,9 +40,11 @@ public class UpdateRoleAction: EntityAction {
 }
 
 extension ZMConversation {
-    public func updateRole(of participant: UserType,
-                           to newRole: Role,
-                           completion: @escaping UpdateRoleAction.ResultHandler) {
+    public func updateRole(
+        of participant: UserType,
+        to newRole: Role,
+        completion: @escaping UpdateRoleAction.ResultHandler
+    ) {
         guard
             let context = managedObjectContext,
             let user = participant as? ZMUser

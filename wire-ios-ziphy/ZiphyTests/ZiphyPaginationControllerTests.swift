@@ -142,15 +142,31 @@ class ZiphyPaginationControllerTests: XCTestCase {
     // MARK: - Utilities
 
     private func makePage1() -> ZiphyResult<[Ziph]> {
-        let image1 = Ziph(identifier: "2WifJGUWMwGTdbcY15", images: ZiphyAnimatedImageList(images: [:]), title: "neil patrick harris")
-        let image2 = Ziph(identifier: "8qFOTu7r79Bzt7zMfT", images: ZiphyAnimatedImageList(images: [:]), title: "tired monday GIF")
-        let image3 = Ziph(identifier: "3oz8xEqn8AGAQbR0yY", images: ZiphyAnimatedImageList(images: [:]), title: "roxxxy andrews yes")
+        let image1 = Ziph(
+            identifier: "2WifJGUWMwGTdbcY15",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "neil patrick harris"
+        )
+        let image2 = Ziph(
+            identifier: "8qFOTu7r79Bzt7zMfT",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "tired monday GIF"
+        )
+        let image3 = Ziph(
+            identifier: "3oz8xEqn8AGAQbR0yY",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "roxxxy andrews yes"
+        )
 
         return .success([image1, image2, image3])
     }
 
     private func makePage2() -> ZiphyResult<[Ziph]> {
-        let image1 = Ziph(identifier: "JzOyy8vKMCwvK", images: ZiphyAnimatedImageList(images: [:]), title: "judge judy bored over it")
+        let image1 = Ziph(
+            identifier: "JzOyy8vKMCwvK",
+            images: ZiphyAnimatedImageList(images: [:]),
+            title: "judge judy bored over it"
+        )
         return .success([image1])
     }
 }

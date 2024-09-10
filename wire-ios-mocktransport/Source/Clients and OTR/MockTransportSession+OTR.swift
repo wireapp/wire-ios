@@ -20,10 +20,12 @@ import WireProtos
 
 extension MockTransportSession {
     @objc(missedClients:users:sender:onlyForUserId:)
-    public func missedClients(_ recipients: [AnyHashable: Any]?,
-                              users: Set<MockUser>,
-                              sender: MockUserClient?,
-                              onlyForUserId: String?) -> [AnyHashable: Any]? {
+    public func missedClients(
+        _ recipients: [AnyHashable: Any]?,
+        users: Set<MockUser>,
+        sender: MockUserClient?,
+        onlyForUserId: String?
+    ) -> [AnyHashable: Any]? {
         var missedClients: [AnyHashable: Any] = [:]
         for user in users {
             if let onlyForUserId,
@@ -54,13 +56,27 @@ extension MockTransportSession {
         return client
     }
 
-    func missedClients(fromRecipients recipients: [Proteus_UserEntry], conversation: MockConversation, sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
+    func missedClients(
+        fromRecipients recipients: [Proteus_UserEntry],
+        conversation: MockConversation,
+        sender: MockUserClient,
+        onlyForUserId: String?
+    ) -> [String: [String]] {
         let users = conversation.activeUsers.set as! Set<MockUser>
         return missedClients(fromRecipients: recipients, users: users, sender: sender, onlyForUserId: onlyForUserId)
     }
 
-    func missedClients(fromRecipients recipients: [Proteus_UserEntry], sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
-        missedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers, sender: sender, onlyForUserId: onlyForUserId)
+    func missedClients(
+        fromRecipients recipients: [Proteus_UserEntry],
+        sender: MockUserClient,
+        onlyForUserId: String?
+    ) -> [String: [String]] {
+        missedClients(
+            fromRecipients: recipients,
+            users: selfUser.connectionsAndTeamMembers,
+            sender: sender,
+            onlyForUserId: onlyForUserId
+        )
     }
 
     /// Returns a list of missing clients in the conversation that were not included in the list of intendend recipients
@@ -70,7 +86,12 @@ extension MockTransportSession {
     ///   - sender: will be excluded from list
     ///   - onlyForUserId: if not nil, only return missing recipients matching this user ID
     /// - Returns: missing clients
-    func missedClients(fromRecipients recipients: [Proteus_UserEntry], users: Set<MockUser>, sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
+    func missedClients(
+        fromRecipients recipients: [Proteus_UserEntry],
+        users: Set<MockUser>,
+        sender: MockUserClient,
+        onlyForUserId: String?
+    ) -> [String: [String]] {
         var missedClients = [String: [String]]()
 
         for user in users {
@@ -109,7 +130,10 @@ extension MockTransportSession {
         return missedClients
     }
 
-    func deletedClients(fromRecipients recipients: [Proteus_UserEntry], conversation: MockConversation) -> [String: [String]] {
+    func deletedClients(
+        fromRecipients recipients: [Proteus_UserEntry],
+        conversation: MockConversation
+    ) -> [String: [String]] {
         let users = conversation.activeUsers.set as! Set<MockUser>
         return deletedClients(fromRecipients: recipients, users: users)
     }
@@ -157,10 +181,12 @@ extension MockTransportSession {
         return deletedClients
     }
 
-    func insertOTRMessageEvents(toConversation conversation: MockConversation,
-                                recipients: [Proteus_UserEntry],
-                                senderClient: MockUserClient,
-                                createEventBlock: (MockUserClient, Data, Data) -> MockEvent) {
+    func insertOTRMessageEvents(
+        toConversation conversation: MockConversation,
+        recipients: [Proteus_UserEntry],
+        senderClient: MockUserClient,
+        createEventBlock: (MockUserClient, Data, Data) -> MockEvent
+    ) {
         let activeUsers = conversation.activeUsers.array as? [MockUser]
         guard let activeClients = activeUsers?.flatMap({ user in
             user.userClients.compactMap(\.identifier)

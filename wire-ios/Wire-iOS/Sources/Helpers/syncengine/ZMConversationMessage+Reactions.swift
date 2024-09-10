@@ -57,8 +57,10 @@ extension ZMConversationMessage {
     }
 
     var canVisitLink: Bool {
-        guard let url = URL(string: textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
-            ?? ""),
+        guard let url = URL(
+            string: textMessageData?.linkPreview?.originalURLString ?? textMessageData?.messageText
+                ?? ""
+        ),
             UIApplication.shared.canOpenURL(url) else {
             return false
         }

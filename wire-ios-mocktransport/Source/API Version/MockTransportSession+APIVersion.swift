@@ -26,10 +26,12 @@ extension MockTransportSession {
             isAPIVersionEndpointAvailable,
             request.apiVersion == APIVersion.v0.rawValue
         else {
-            return ZMTransportResponse(payload: nil,
-                                       httpStatus: 404,
-                                       transportSessionError: nil,
-                                       apiVersion: request.apiVersion)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: request.apiVersion
+            )
         }
 
         let payload: NSDictionary

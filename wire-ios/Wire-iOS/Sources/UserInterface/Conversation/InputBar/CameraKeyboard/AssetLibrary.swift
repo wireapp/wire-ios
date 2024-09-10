@@ -68,7 +68,13 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         if synchronous {
             syncOperation()
         } else {
-            DispatchQueue(label: "WireAssetLibrary", qos: DispatchQoS.background, attributes: [], autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit, target: .none).async(execute: syncOperation)
+            DispatchQueue(
+                label: "WireAssetLibrary",
+                qos: DispatchQoS.background,
+                attributes: [],
+                autoreleaseFrequency: DispatchQueue.AutoreleaseFrequency.inherit,
+                target: .none
+            ).async(execute: syncOperation)
         }
     }
 

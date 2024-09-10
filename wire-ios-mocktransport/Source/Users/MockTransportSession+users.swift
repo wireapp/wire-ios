@@ -21,7 +21,11 @@ import Foundation
 extension MockTransportSession {
     @objc(fetchUserWithIdentifier:)
     public func fetchUser(withIdentifier identifier: String) -> MockUser? {
-        let request = MockUser.sortedFetchRequest(withPredicate: NSPredicate(format: "%K == %@", #keyPath(MockUser.identifier), identifier.lowercased()))
+        let request = MockUser.sortedFetchRequest(withPredicate: NSPredicate(
+            format: "%K == %@",
+            #keyPath(MockUser.identifier),
+            identifier.lowercased()
+        ))
         let users = try? managedObjectContext.fetch(request)
 
         return users?.first
@@ -29,15 +33,31 @@ extension MockTransportSession {
 
     @objc(processRichProfileFetchForUser:apiVersion:)
     public func processRichProfileFetchFor(user userID: String, apiVersion: APIVersion) -> ZMTransportResponse {
-        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue) }
+        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(
+            payload: nil,
+            httpStatus: 404,
+            transportSessionError: nil,
+            apiVersion: apiVersion
+                .rawValue
+        ) }
         if let members = self.selfUser.currentTeamMembers {
             guard members.contains(user) else {
-                return ZMTransportResponse(payload: ["label": "insufficient-permissions"] as NSDictionary, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+                return ZMTransportResponse(
+                    payload: ["label": "insufficient-permissions"] as NSDictionary,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: apiVersion.rawValue
+                )
             }
         }
 
         let fields = user.richProfile ?? []
-        return ZMTransportResponse(payload: ["fields": fields] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: ["fields": fields] as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     @objc(insertUserWithName:includeClient:)
@@ -48,11 +68,13 @@ extension MockTransportSession {
         user.handle = UUID.create().transportString()
 
         if includeClient {
-            let client = MockUserClient.insertClient(label: user.identifier,
-                                                     type: "permanent",
-                                                     deviceClass: "phone",
-                                                     for: user,
-                                                     in: managedObjectContext)
+            let client = MockUserClient.insertClient(
+                label: user.identifier,
+                type: "permanent",
+                deviceClass: "phone",
+                for: user,
+                in: managedObjectContext
+            )
             user.clients = NSMutableSet(array: [client!])
         }
 

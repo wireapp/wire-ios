@@ -80,7 +80,8 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
 
     func migrateStore(at storeURL: URL, toVersion version: Version) throws {
         WireLogger.localStorage.info(
-            "migrateStore at: \(SanitizedString(stringLiteral: storeURL.absoluteString)) to version: \(SanitizedString(stringLiteral: version.rawValue))", attributes: .safePublic
+            "migrateStore at: \(SanitizedString(stringLiteral: storeURL.absoluteString)) to version: \(SanitizedString(stringLiteral: version.rawValue))",
+            attributes: .safePublic
         )
 
         try forceWALCheckpointingForStore(at: storeURL)
@@ -88,13 +89,18 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
-            let logMessage = "core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
+            let logMessage =
+                "core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
             WireLogger.localStorage.info(logMessage, attributes: .safePublic)
 
             try self.runPreMigrationStep(migrationStep, for: currentURL)
 
-            let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
-            let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
+            let manager = NSMigrationManager(
+                sourceModel: migrationStep.sourceModel,
+                destinationModel: migrationStep.destinationModel
+            )
+            let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+                .appendingPathComponent(UUID().uuidString)
 
             do {
                 try manager.migrateStore(
@@ -104,7 +110,10 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
                     to: destinationURL,
                     type: persistentStoreType
                 )
-                WireLogger.localStorage.info("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
+                WireLogger.localStorage.info(
+                    "finish migrate store for \(migrationStep.sourceVersion)",
+                    attributes: .safePublic
+                )
             } catch {
                 throw CoreDataMigratorError.migrateStoreFailed(error: error)
             }
@@ -117,7 +126,10 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
 
             currentURL = destinationURL
 
-            WireLogger.localStorage.info("finish migration step for \(migrationStep.sourceVersion)", attributes: .safePublic)
+            WireLogger.localStorage.info(
+                "finish migration step for \(migrationStep.sourceVersion)",
+                attributes: .safePublic
+            )
 
             try self.runPostMigrationStep(migrationStep, for: currentURL)
         }
@@ -182,7 +194,11 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
             let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
             let options = [NSSQLitePragmasOption: ["journal_mode": "DELETE"]]
-            let store = try persistentStoreCoordinator.addPersistentStore(type: persistentStoreType, at: storeURL, options: options)
+            let store = try persistentStoreCoordinator.addPersistentStore(
+                type: persistentStoreType,
+                at: storeURL,
+                options: options
+            )
 
             try persistentStoreCoordinator.remove(store)
             WireLogger.localStorage.info("finish WAL checkpointing for store", attributes: .safePublic)
@@ -228,7 +244,11 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
                 type: persistentStoreType
             )
         } catch {
-            throw CoreDataMigratorError.failedToReplacePersistentStore(sourceURL: sourceURL, targetURL: targetURL, underlyingError: error)
+            throw CoreDataMigratorError.failedToReplacePersistentStore(
+                sourceURL: sourceURL,
+                targetURL: targetURL,
+                underlyingError: error
+            )
         }
     }
 
@@ -253,15 +273,20 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
             return
         }
         WireLogger.localStorage.debug("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
-        try action.perform(on: storeURL,
-                           with: step.sourceModel)
+        try action.perform(
+            on: storeURL,
+            with: step.sourceModel
+        )
     }
 
     func runPostMigrationStep(_ step: CoreDataMigrationStep<Version>, for storeURL: URL) throws {
-        guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion) else { return }
+        guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion)
+        else { return }
 
         WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
-        try action.perform(on: storeURL,
-                           with: step.destinationModel)
+        try action.perform(
+            on: storeURL,
+            with: step.destinationModel
+        )
     }
 }

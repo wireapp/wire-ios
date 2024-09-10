@@ -33,8 +33,10 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         userSession = UserSessionMock()
         coreDataFixture = CoreDataFixture()
         router = ActiveCallRouterProtocolMock()
-        conversation = ZMConversation.createOtherUserConversation(moc: coreDataFixture.uiMOC,
-                                                                  otherUser: otherUser)
+        conversation = ZMConversation.createOtherUserConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser
+        )
         callConversationProvider = MockCallConversationProvider()
         sut = CallController(userSession: userSession)
         sut.callConversationProvider = callConversationProvider
@@ -174,11 +176,13 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
 extension CallControllerTests {
     private func callController_callCenterDidChange(callState: CallState, conversation: ZMConversation) {
-        sut.callCenterDidChange(callState: callState,
-                                conversation: conversation,
-                                caller: otherUser,
-                                timestamp: nil,
-                                previousCallState: nil)
+        sut.callCenterDidChange(
+            callState: callState,
+            conversation: conversation,
+            caller: otherUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
     }
 }
 
@@ -218,7 +222,10 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var expectedEndedAlertChoice: AlertChoice?
     var presentEndingSecurityDegradedAlertIsCalled = false
-    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+    func presentEndingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    ) {
         presentEndingSecurityDegradedAlertIsCalled = true
         if let expectedEndedAlertChoice {
             completion(expectedEndedAlertChoice)
@@ -227,7 +234,10 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var expectedIncomingAlertChoice: AlertChoice?
     var presentIncomingSecurityDegradedAlertIsCalled = false
-    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+    func presentIncomingSecurityDegradedAlert(
+        for reason: CallDegradationReason,
+        completion: @escaping (AlertChoice) -> Void
+    ) {
         presentIncomingSecurityDegradedAlertIsCalled = true
         if let expectedIncomingAlertChoice {
             completion(expectedIncomingAlertChoice)

@@ -33,10 +33,12 @@ extension ContactAddressBook: AddressBookAccessor {
     }
 
     static var keysToFetch: [CNKeyDescriptor] {
-        [CNContactPhoneNumbersKey as CNKeyDescriptor,
-         CNContactEmailAddressesKey as CNKeyDescriptor,
-         CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-         CNContactOrganizationNameKey as CNKeyDescriptor]
+        [
+            CNContactPhoneNumbersKey as CNKeyDescriptor,
+            CNContactEmailAddressesKey as CNKeyDescriptor,
+            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+            CNContactOrganizationNameKey as CNKeyDescriptor,
+        ]
     }
 
     func rawContacts(matchingQuery query: String) -> [ContactRecord] {
@@ -49,7 +51,10 @@ extension ContactAddressBook: AddressBookAccessor {
         }
 
         let predicate: NSPredicate = CNContact.predicateForContacts(matchingName: query.lowercased())
-        guard let foundContacts = try? CNContactStore().unifiedContacts(matching: predicate, keysToFetch: ContactAddressBook.keysToFetch) else {
+        guard let foundContacts = try? CNContactStore().unifiedContacts(
+            matching: predicate,
+            keysToFetch: ContactAddressBook.keysToFetch
+        ) else {
             return []
         }
         return foundContacts
@@ -103,9 +108,11 @@ extension CNContact: ContactRecord {
 }
 
 extension ZMAddressBookContact {
-    convenience init?(contact: CNContact,
-                      phoneNumberNormalizer: @escaping AddressBook.Normalizer,
-                      emailNormalizer: @escaping AddressBook.Normalizer) {
+    convenience init?(
+        contact: CNContact,
+        phoneNumberNormalizer: @escaping AddressBook.Normalizer,
+        emailNormalizer: @escaping AddressBook.Normalizer
+    ) {
         self.init()
 
         // names

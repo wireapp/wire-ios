@@ -23,7 +23,10 @@ import XCTest
 
 class OrientableViewMock: OrientableView {
     func layoutForOrientation() {}
-    func layout(forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation, deviceOrientation: UIDeviceOrientation) {}
+    func layout(
+        forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
+        deviceOrientation: UIDeviceOrientation
+    ) {}
 }
 
 class GridViewDelegateMock: GridViewDelegate {
@@ -168,8 +171,14 @@ extension GridViewTests: UICollectionViewDataSource {
         tiles.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GridCell.reuseIdentifier, for: indexPath) as? GridCell else {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: GridCell.reuseIdentifier,
+            for: indexPath
+        ) as? GridCell else {
             return UICollectionViewCell()
         }
 

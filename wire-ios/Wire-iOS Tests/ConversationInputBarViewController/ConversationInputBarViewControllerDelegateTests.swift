@@ -77,9 +77,11 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
 private final class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
     var composedDrafts = [DraftMessage]()
 
-    func conversationInputBarViewControllerDidComposeText(text: String,
-                                                          mentions: [Mention],
-                                                          replyingTo message: ZMConversationMessage?) {}
+    func conversationInputBarViewControllerDidComposeText(
+        text: String,
+        mentions: [Mention],
+        replyingTo message: ZMConversationMessage?
+    ) {}
 
     func conversationInputBarViewControllerShouldBeginEditing(_: ConversationInputBarViewController) -> Bool {
         true
@@ -89,9 +91,11 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
         true
     }
 
-    func conversationInputBarViewControllerDidFinishEditing(_ message: ZMConversationMessage,
-                                                            withText newText: String?,
-                                                            mentions: [Mention]) {}
+    func conversationInputBarViewControllerDidFinishEditing(
+        _ message: ZMConversationMessage,
+        withText newText: String?,
+        mentions: [Mention]
+    ) {}
 
     func conversationInputBarViewControllerDidCancelEditing(_: ZMConversationMessage) {}
 

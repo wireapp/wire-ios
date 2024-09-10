@@ -24,8 +24,10 @@ final class WaveFormView: UIView {
     private let leftGradient = GradientView()
     private let rightGradient = GradientView()
 
-    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
-    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor.constraint(equalToConstant: gradientWidth)
+    private lazy var leftGradientWidthConstraint: NSLayoutConstraint = leftGradient.widthAnchor
+        .constraint(equalToConstant: gradientWidth)
+    private lazy var rightGradientWidthConstraint: NSLayoutConstraint = rightGradient.widthAnchor
+        .constraint(equalToConstant: gradientWidth)
 
     var gradientWidth: CGFloat = 25 {
         didSet {

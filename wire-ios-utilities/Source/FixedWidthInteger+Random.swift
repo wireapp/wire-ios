@@ -32,7 +32,10 @@ extension FixedWidthInteger {
     /// modulo bias free.
     ///
     public static func secureRandomNumber(upperBound: Self) -> Self {
-        assert(upperBound != 0 && upperBound != Self.min, "Upper bound should not be zero or equal to the minimum possible value")
+        assert(
+            upperBound != 0 && upperBound != Self.min,
+            "Upper bound should not be zero or equal to the minimum possible value"
+        )
 
         var random: Self
 

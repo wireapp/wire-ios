@@ -157,7 +157,10 @@ class ProteusServiceTests: XCTestCase {
         }
 
         // Then
-        await assertItThrows(error: ProteusService.DecryptionError.failedToEstablishSessionFromMessage(.duplicateMessage)) {
+        await assertItThrows(
+            error: ProteusService.DecryptionError
+                .failedToEstablishSessionFromMessage(.duplicateMessage)
+        ) {
             // When
             _ = try await sut.decrypt(
                 data: encryptedData,

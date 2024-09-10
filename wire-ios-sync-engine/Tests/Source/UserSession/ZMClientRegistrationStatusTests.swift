@@ -84,7 +84,10 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
 
             // then
             XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
-            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToToEnrollE2EIToRegisterClientError())
+            XCTAssertEqual(
+                mockClientRegistationDelegate.currentError as? NSError,
+                needToToEnrollE2EIToRegisterClientError()
+            )
         }
     }
 
@@ -435,7 +438,10 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
 
             // then
             XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
-            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToToEnrollE2EIToRegisterClientError())
+            XCTAssertEqual(
+                mockClientRegistationDelegate.currentError as? NSError,
+                needToToEnrollE2EIToRegisterClientError()
+            )
         }
     }
 
@@ -486,7 +492,8 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
             let error = NSError(
                 domain: "ZMUserSession",
                 code: UserSessionErrorCode.needsPasswordToRegisterClient.rawValue,
-                userInfo: selfUser.loginCredentials.dictionaryRepresentation)
+                userInfo: selfUser.loginCredentials.dictionaryRepresentation
+            )
 
             // when
             sut.didFail(toRegisterClient: error)

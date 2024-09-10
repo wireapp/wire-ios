@@ -128,7 +128,10 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
 
     func set(newValue: SettingsPropertyValue) throws {
         self.userDefaults.set(newValue.value(), forKey: self.userDefaultsKey)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: self.propertyName.changeNotificationName), object: self)
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: self.propertyName.changeNotificationName),
+            object: self
+        )
         self.trackNewValue()
     }
 
@@ -173,7 +176,10 @@ final class SettingsBlockProperty: SettingsProperty {
 
     func set(newValue: SettingsPropertyValue) throws {
         try setAction(self, newValue)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: propertyName.changeNotificationName), object: self)
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: propertyName.changeNotificationName),
+            object: self
+        )
         trackNewValue()
     }
 

@@ -140,11 +140,26 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let headerGenerator: () -> String?
     let footerGenerator: () -> String?
 
-    convenience init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
-        self.init(cellDescriptors: cellDescriptors, headerGenerator: { header }, footerGenerator: { footer }, visibilityAction: visibilityAction)
+    convenience init(
+        cellDescriptors: [SettingsCellDescriptorType],
+        header: String? = .none,
+        footer: String? = .none,
+        visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none
+    ) {
+        self.init(
+            cellDescriptors: cellDescriptors,
+            headerGenerator: { header },
+            footerGenerator: { footer },
+            visibilityAction: visibilityAction
+        )
     }
 
-    init(cellDescriptors: [SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
+    init(
+        cellDescriptors: [SettingsCellDescriptorType],
+        headerGenerator: @escaping () -> String?,
+        footerGenerator: @escaping () -> String?,
+        visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none
+    ) {
         self.cellDescriptors = cellDescriptors
         self.headerGenerator = headerGenerator
         self.footerGenerator = footerGenerator
@@ -172,7 +187,15 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     weak var viewController: UIViewController?
 
-    init(items: [SettingsSectionDescriptorType], title: String, style: InternalScreenStyle = .grouped, identifier: String? = .none, previewGenerator: PreviewGeneratorType? = .none, icon: StyleKitIcon? = nil, accessibilityBackButtonText: String) {
+    init(
+        items: [SettingsSectionDescriptorType],
+        title: String,
+        style: InternalScreenStyle = .grouped,
+        identifier: String? = .none,
+        previewGenerator: PreviewGeneratorType? = .none,
+        icon: StyleKitIcon? = nil,
+        accessibilityBackButtonText: String
+    ) {
         self.items = items
         self.title = title
         self.style = style

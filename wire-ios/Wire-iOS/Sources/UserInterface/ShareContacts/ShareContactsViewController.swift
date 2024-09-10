@@ -78,7 +78,8 @@ final class ShareContactsViewController: UIViewController {
     }()
 
     private let shareContactsContainerView = UIView()
-    private let addressBookAccessDeniedViewController = PermissionDeniedViewController.addressBookAccessDeniedViewController()
+    private let addressBookAccessDeniedViewController = PermissionDeniedViewController
+        .addressBookAccessDeniedViewController()
 
     private static var attributedHeroText: NSAttributedString {
         let title = RegistrationShareContacts.Hero.title
@@ -140,10 +141,14 @@ final class ShareContactsViewController: UIViewController {
             shareContactsContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             shareContactsContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
-            addressBookAccessDeniedViewController.view.topAnchor.constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.topAnchor),
-            addressBookAccessDeniedViewController.view.bottomAnchor.constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.bottomAnchor),
-            addressBookAccessDeniedViewController.view.leadingAnchor.constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.leadingAnchor),
-            addressBookAccessDeniedViewController.view.trailingAnchor.constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.trailingAnchor),
+            addressBookAccessDeniedViewController.view.topAnchor
+                .constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.topAnchor),
+            addressBookAccessDeniedViewController.view.bottomAnchor
+                .constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.bottomAnchor),
+            addressBookAccessDeniedViewController.view.leadingAnchor
+                .constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.leadingAnchor),
+            addressBookAccessDeniedViewController.view.trailingAnchor
+                .constraint(equalTo: addressBookAccessDeniedViewController.view.superview!.trailingAnchor),
 
             heroLabel.leadingAnchor.constraint(equalTo: heroLabel.superview!.leadingAnchor, constant: 28),
             heroLabel.trailingAnchor.constraint(equalTo: heroLabel.superview!.trailingAnchor, constant: -28),
@@ -151,9 +156,18 @@ final class ShareContactsViewController: UIViewController {
             shareContactsButton.topAnchor.constraint(equalTo: heroLabel.bottomAnchor, constant: 24),
             shareContactsButton.heightAnchor.constraint(equalToConstant: 56),
 
-            shareContactsButton.bottomAnchor.constraint(equalTo: shareContactsButton.superview!.bottomAnchor, constant: -28),
-            shareContactsButton.leadingAnchor.constraint(equalTo: shareContactsButton.superview!.leadingAnchor, constant: 28),
-            shareContactsButton.trailingAnchor.constraint(equalTo: shareContactsButton.superview!.trailingAnchor, constant: -28),
+            shareContactsButton.bottomAnchor.constraint(
+                equalTo: shareContactsButton.superview!.bottomAnchor,
+                constant: -28
+            ),
+            shareContactsButton.leadingAnchor.constraint(
+                equalTo: shareContactsButton.superview!.leadingAnchor,
+                constant: 28
+            ),
+            shareContactsButton.trailingAnchor.constraint(
+                equalTo: shareContactsButton.superview!.trailingAnchor,
+                constant: -28
+            ),
         ])
     }
 

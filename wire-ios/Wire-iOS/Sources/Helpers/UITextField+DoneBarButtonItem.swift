@@ -23,12 +23,17 @@ extension UITextField {
         let doneToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
         doneToolbar.barStyle = .default
 
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                                        target: nil,
-                                        action: nil)
-        let done = UIBarButtonItem(title: L10n.Localizable.General.done,
-                                   style: .done,
-                                   target: self, action: #selector(self.doneButtonAction))
+        let flexSpace = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil
+        )
+        let done = UIBarButtonItem(
+            title: L10n.Localizable.General.done,
+            style: .done,
+            target: self,
+            action: #selector(self.doneButtonAction)
+        )
 
         let items = [flexSpace, done]
         doneToolbar.items = items

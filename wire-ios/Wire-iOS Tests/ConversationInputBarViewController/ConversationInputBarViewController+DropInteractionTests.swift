@@ -66,7 +66,8 @@ final class ConversationInputBarViewControllerDropInteractionTests: XCTestCase {
         XCTAssertEqual(dropProposal.operation, UIDropOperation.forbidden, file: #file, line: #line)
     }
 
-    private func makeConversationInputBarViewController(conversation: MockInputBarConversationType) -> ConversationInputBarViewController {
+    private func makeConversationInputBarViewController(conversation: MockInputBarConversationType)
+        -> ConversationInputBarViewController {
         ConversationInputBarViewController(
             conversation: conversation,
             userSession: mockUserSession,

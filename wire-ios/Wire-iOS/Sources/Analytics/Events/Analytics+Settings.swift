@@ -29,8 +29,10 @@ extension Analytics {
               propertyName != SettingsPropertyName.disableAnalyticsSharing else {
             return
         }
-        let attributes = [settingsChangeEventPropertyName: propertyName,
-                          settingsChangeEventPropertyValue: value]
+        let attributes = [
+            settingsChangeEventPropertyName: propertyName,
+            settingsChangeEventPropertyValue: value,
+        ]
         tagEvent(settingsChangeEvent, attributes: attributes)
     }
 }

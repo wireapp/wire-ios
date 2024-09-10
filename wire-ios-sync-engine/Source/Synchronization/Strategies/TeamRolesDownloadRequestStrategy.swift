@@ -17,7 +17,11 @@
 //
 
 extension Team {
-    fileprivate static var predicateForTeamRolesNeedingToBeUpdated = NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToDownloadRoles), Team.remoteIdentifierDataKey())
+    fileprivate static var predicateForTeamRolesNeedingToBeUpdated = NSPredicate(
+        format: "%K == YES AND %K != NULL",
+        #keyPath(Team.needsToDownloadRoles),
+        Team.remoteIdentifierDataKey()
+    )
 
     fileprivate func updateRoles(with payload: [String: Any]) {
         guard let rolesPayload = payload["conversation_roles"] as? [[String: Any]] else { return }
@@ -45,7 +49,11 @@ public final class TeamRolesDownloadRequestStrategy:
     private(set) var downstreamSync: ZMDownstreamObjectSync!
     private unowned var syncStatus: SyncStatus
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, syncStatus: SyncStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncStatus: SyncStatus
+    ) {
         self.syncStatus = syncStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         downstreamSync = ZMDownstreamObjectSync(
@@ -87,8 +95,13 @@ public final class TeamRolesDownloadRequestStrategy:
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync, let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard downstreamSync as? ZMDownstreamObjectSync == self.downstreamSync,
+              let team = object as? Team else { fatal("Wrong sync or object for: \(object.safeForLoggingDescription)") }
         return TeamDownloadRequestFactory.requestToDownloadRoles(for: team.remoteIdentifier!, apiVersion: apiVersion)
     }
 

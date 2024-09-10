@@ -62,14 +62,19 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     func testThatItRendersYouTubeLinkAttachment() {
         // GIVEN
-        let attachment = LinkAttachment(type: .youTubeVideo,
-                                        title: "Lagar mat med Fernando Di Luca",
-                                        permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
-                                        thumbnails: [],
-                                        originalRange: NSRange(location: 0, length: 43))
+        let attachment = LinkAttachment(
+            type: .youTubeVideo,
+            title: "Lagar mat med Fernando Di Luca",
+            permalink: URL(string: "https://www.youtube.com/watch?v=l7aqpSTa234")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 43)
+        )
 
         mockThumbnail.cacheIdentifier = #function
-        let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
+        let configuration = ConversationLinkAttachmentCell.Configuration(
+            attachment: attachment,
+            thumbnailResource: mockThumbnail
+        )
 
         // WHEN
         sut = setUpCell(configuration: configuration)
@@ -80,12 +85,19 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     func testThatItRendersSoundCloudSongAttachment() {
         // GIVEN
-        let attachment = LinkAttachment(type: .soundCloudTrack, title: "Bridgit Mendler - Atlantis feat. Kaiydo",
-                                        permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
-                                        thumbnails: [], originalRange: NSRange(location: 0, length: 74))
+        let attachment = LinkAttachment(
+            type: .soundCloudTrack,
+            title: "Bridgit Mendler - Atlantis feat. Kaiydo",
+            permalink: URL(string: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 74)
+        )
 
         mockThumbnail.cacheIdentifier = #function
-        let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
+        let configuration = ConversationLinkAttachmentCell.Configuration(
+            attachment: attachment,
+            thumbnailResource: mockThumbnail
+        )
 
         // WHEN
         sut = setUpCell(configuration: configuration)
@@ -96,12 +108,19 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     func testThatItRendersSoundCloudPlaylistAttachment() {
         // GIVEN
-        let attachment = LinkAttachment(type: .soundCloudPlaylist, title: "Artists To Watch 2019",
-                                        permalink: URL(string: "https://soundcloud.com/playback/sets/2019-artists-to-watch")!,
-                                        thumbnails: [], originalRange: NSRange(location: 0, length: 58))
+        let attachment = LinkAttachment(
+            type: .soundCloudPlaylist,
+            title: "Artists To Watch 2019",
+            permalink: URL(string: "https://soundcloud.com/playback/sets/2019-artists-to-watch")!,
+            thumbnails: [],
+            originalRange: NSRange(location: 0, length: 58)
+        )
 
         mockThumbnail.cacheIdentifier = #function
-        let configuration = ConversationLinkAttachmentCell.Configuration(attachment: attachment, thumbnailResource: mockThumbnail)
+        let configuration = ConversationLinkAttachmentCell.Configuration(
+            attachment: attachment,
+            thumbnailResource: mockThumbnail
+        )
 
         // WHEN
         sut = setUpCell(configuration: configuration)

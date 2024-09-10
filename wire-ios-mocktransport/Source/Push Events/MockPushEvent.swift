@@ -26,7 +26,12 @@ import Foundation
     public let isSilent: Bool
 
     @objc(eventWithPayload:uuid:isTransient:isSilent:)
-    public static func event(with payload: ZMTransportData, uuid: UUID, isTransient: Bool, isSilent: Bool) -> MockPushEvent {
+    public static func event(
+        with payload: ZMTransportData,
+        uuid: UUID,
+        isTransient: Bool,
+        isSilent: Bool
+    ) -> MockPushEvent {
         MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient, isSilent: isSilent)
     }
 

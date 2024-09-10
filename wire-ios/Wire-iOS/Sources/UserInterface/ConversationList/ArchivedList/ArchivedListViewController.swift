@@ -132,10 +132,22 @@ final class ArchivedListViewController: UIViewController {
             stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            stackView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor, multiplier: 1),
-            stackView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor, multiplier: 1),
-            view.safeAreaLayoutGuide.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor, multiplier: 1),
+            stackView.leadingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: view.safeAreaLayoutGuide.leadingAnchor,
+                multiplier: 1
+            ),
+            stackView.topAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor,
+                multiplier: 1
+            ),
+            view.safeAreaLayoutGuide.trailingAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingAfter: stackView.trailingAnchor,
+                multiplier: 1
+            ),
+            view.safeAreaLayoutGuide.bottomAnchor.constraint(
+                greaterThanOrEqualToSystemSpacingBelow: stackView.bottomAnchor,
+                multiplier: 1
+            ),
 
             stackView.widthAnchor.constraint(lessThanOrEqualToConstant: 272),
         ])
@@ -166,7 +178,10 @@ extension ArchivedListViewController: UICollectionViewDataSource, UICollectionVi
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuseIdentifier, for: indexPath) as! ConversationListCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: cellReuseIdentifier,
+            for: indexPath
+        ) as! ConversationListCell
         cell.conversation = viewModel[indexPath.row]
         cell.delegate = self
         cell.mutuallyExclusiveSwipeIdentifier = swipeIdentifier

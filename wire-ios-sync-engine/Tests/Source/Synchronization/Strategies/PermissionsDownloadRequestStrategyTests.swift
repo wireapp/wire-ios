@@ -26,7 +26,10 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
-        sut = PermissionsDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        sut = PermissionsDownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
     }
 
     override func tearDown() {
@@ -116,7 +119,12 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
                 "permissions": ["self": 17, "copy": 0],
             ]
 
-            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -157,7 +165,12 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
-            let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: [] as ZMTransportData,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)

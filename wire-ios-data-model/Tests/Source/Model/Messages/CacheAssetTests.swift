@@ -112,7 +112,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         let sut = self.imageAsset()
 
         // when
-        sut.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 123, mimeType: "image/jpeg"))
+        sut.updateWithPreprocessedData(
+            verySmallJPEGData(),
+            imageProperties: ZMIImageProperties(
+                size: CGSize(width: 100, height: 100),
+                length: 123,
+                mimeType: "image/jpeg"
+            )
+        )
 
         // then
         XCTAssertTrue(sut.hasPreprocessed)
@@ -136,7 +143,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
     func testThatEncryptStoresTheEncryptedImage() {
         // given
         let sut = self.imageAsset()
-        sut.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 123, mimeType: "image/jpeg"))
+        sut.updateWithPreprocessedData(
+            verySmallJPEGData(),
+            imageProperties: ZMIImageProperties(
+                size: CGSize(width: 100, height: 100),
+                length: 123,
+                mimeType: "image/jpeg"
+            )
+        )
 
         // when
         sut.encrypt()
@@ -150,7 +164,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         // given
         let sut = gifAsset()
 
-        sut.updateWithPreprocessedData(data(forResource: "animated", extension: "gif"), imageProperties: ZMIImageProperties(size: CGSize(width: 640, height: 400), length: 185_798, mimeType: "image/gif"))
+        sut.updateWithPreprocessedData(
+            data(forResource: "animated", extension: "gif"),
+            imageProperties: ZMIImageProperties(
+                size: CGSize(width: 640, height: 400),
+                length: 185_798,
+                mimeType: "image/gif"
+            )
+        )
 
         // when
         sut.encrypt()
@@ -175,7 +196,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
     func testThatEncryptStoresTheEncryptedThumbnail() {
         // given
         let sut = self.thumbnailAsset()
-        sut.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 123, mimeType: "image/jpeg"))
+        sut.updateWithPreprocessedData(
+            verySmallJPEGData(),
+            imageProperties: ZMIImageProperties(
+                size: CGSize(width: 100, height: 100),
+                length: 123,
+                mimeType: "image/jpeg"
+            )
+        )
 
         // when
         sut.encrypt()
@@ -202,7 +230,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
     func testUpdateAssetIdForImage() {
         // given
         let sut = imageAsset()
-        sut.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 123, mimeType: "image/jpeg"))
+        sut.updateWithPreprocessedData(
+            verySmallJPEGData(),
+            imageProperties: ZMIImageProperties(
+                size: CGSize(width: 100, height: 100),
+                length: 123,
+                mimeType: "image/jpeg"
+            )
+        )
         sut.encrypt()
 
         // when
@@ -218,7 +253,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
     func testUpdateAssetIdForThumbnail() {
         // given
         let sut = thumbnailAsset()
-        sut.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 123, mimeType: "image/jpeg"))
+        sut.updateWithPreprocessedData(
+            verySmallJPEGData(),
+            imageProperties: ZMIImageProperties(
+                size: CGSize(width: 100, height: 100),
+                length: 123,
+                mimeType: "image/jpeg"
+            )
+        )
         sut.encrypt()
 
         // when

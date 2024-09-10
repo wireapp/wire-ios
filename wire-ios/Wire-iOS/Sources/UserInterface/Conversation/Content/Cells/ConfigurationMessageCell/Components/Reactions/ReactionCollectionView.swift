@@ -21,11 +21,13 @@ import UIKit
 
 // MARK: - ReactionCollectionView
 
-final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
+final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout,
+    UICollectionViewDelegate {
     // MARK: - Properties
 
     private var collectionViewHeight: CGFloat = 40
-    private lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: collectionViewHeight)
+    private lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor
+        .constraint(equalToConstant: collectionViewHeight)
     private let flowLayout = UICollectionViewFlowLayout()
     private var contentSizeObservation: NSKeyValueObservation?
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
@@ -68,11 +70,15 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: self)
 
-        contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] cell, _ in
-            guard let self else { return }
-            self.collectionViewHeightConstraint.constant = cell.contentSize.height
-            self.collectionViewHeightConstraint.isActive = true
-        })
+        contentSizeObservation = collectionView.observe(
+            \.contentSize,
+            options: .new,
+            changeHandler: { [weak self] cell, _ in
+                guard let self else { return }
+                self.collectionViewHeightConstraint.constant = cell.contentSize.height
+                self.collectionViewHeightConstraint.isActive = true
+            }
+        )
     }
 
     // MARK: - UICollectionView Delegates
@@ -81,8 +87,14 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         reactions.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "collectionCell", for: indexPath as IndexPath) as! ReactionCollectionViewCell
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "collectionCell",
+            for: indexPath as IndexPath
+        ) as! ReactionCollectionViewCell
         let reaction = reactions[indexPath.row]
         cell.configureData(
             emoji: reaction.emoji.value,
@@ -95,11 +107,19 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: 43, height: 24)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
         4
     }
 }

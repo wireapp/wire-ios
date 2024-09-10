@@ -21,7 +21,10 @@ import WireUtilities
 
 extension Bundle {
     public var appInfo: Bundle.Info {
-        Info(version: shortVersionString ?? "-", build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-")
+        Info(
+            version: shortVersionString ?? "-",
+            build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-"
+        )
     }
 
     public var shortVersionString: String? {

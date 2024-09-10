@@ -20,7 +20,11 @@ import UIKit
 import WireSyncEngine
 
 protocol CollectionsViewControllerDelegate: AnyObject {
-    func collectionsViewController(_ viewController: CollectionsViewController, performAction: MessageAction, onMessage: ZMConversationMessage)
+    func collectionsViewController(
+        _ viewController: CollectionsViewController,
+        performAction: MessageAction,
+        onMessage: ZMConversationMessage
+    )
 }
 
 final class CollectionsViewController: UIViewController {
@@ -72,7 +76,10 @@ final class CollectionsViewController: UIViewController {
         sections == .all
     }
 
-    private lazy var textSearchController = TextSearchViewController(conversation: collection.conversation, userSession: userSession)
+    private lazy var textSearchController = TextSearchViewController(
+        conversation: collection.conversation,
+        userSession: userSession
+    )
 
     convenience init(
         conversation: ZMConversation,
@@ -84,7 +91,10 @@ final class CollectionsViewController: UIViewController {
         let matchVideo = CategoryMatch(including: .video, excluding: .none)
         let matchLink = CategoryMatch(including: .linkPreview, excluding: .none)
 
-        let holder = AssetCollectionWrapper(conversation: conversation, matchingCategories: [matchImages, matchFiles, matchVideo, matchLink])
+        let holder = AssetCollectionWrapper(
+            conversation: conversation,
+            matchingCategories: [matchImages, matchFiles, matchVideo, matchLink]
+        )
 
         self.init(collection: holder, userSession: userSession, mainCoordinator: mainCoordinator)
     }
@@ -136,7 +146,10 @@ final class CollectionsViewController: UIViewController {
         videoMessages = []
         linkMessages = []
         fileAndAudioMessages = []
-        collection = AssetCollectionWrapper(conversation: collection.conversation, matchingCategories: collection.matchingCategories)
+        collection = AssetCollectionWrapper(
+            conversation: collection.conversation,
+            matchingCategories: collection.matchingCategories
+        )
         collection.assetCollectionDelegate.add(self)
         contentView.collectionView.reloadData()
     }
@@ -160,9 +173,11 @@ final class CollectionsViewController: UIViewController {
 
         updateNoElementsState()
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -237,7 +252,8 @@ final class CollectionsViewController: UIViewController {
             contentView.collectionView.performBatchUpdates({
                 for section in [CollectionsSectionSet.images, CollectionsSectionSet.videos]
                     where numberOfElements(for: section) != 0 {
-                    contentView.collectionView.reloadSections(IndexSet(integer: (CollectionsSectionSet.visible.firstIndex(of: section))!))
+                    contentView.collectionView
+                        .reloadSections(IndexSet(integer: (CollectionsSectionSet.visible.firstIndex(of: section))!))
                 }
             }, completion: { _ in
                 self.contentView.collectionView.reloadData()
@@ -311,7 +327,11 @@ final class CollectionsViewController: UIViewController {
            let count = navigationController?.viewControllers.count,
            count > 1 {
             let backButton = CollectionsView.backButton()
-            backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
+            backButton.addTarget(
+                self,
+                action: #selector(CollectionsViewController.backButtonPressed(_:)),
+                for: .touchUpInside
+            )
             navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
         }
     }
@@ -323,7 +343,11 @@ final class CollectionsViewController: UIViewController {
 }
 
 extension CollectionsViewController: AssetCollectionDelegate {
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
+    func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    ) {
         for messageCategory in messages {
             let conversationMessages = messageCategory.value
 
@@ -355,7 +379,8 @@ extension CollectionsViewController: AssetCollectionDelegate {
     }
 }
 
-extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewDataSource,
+    UICollectionViewDelegateFlowLayout {
     private func elements(for section: CollectionsSectionSet) -> [ZMConversationMessage] {
         switch section {
         case CollectionsSectionSet.images:
@@ -415,7 +440,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
     private func gridElementSize(in section: CollectionsSectionSet) -> CGSize {
         let sectionHorizontalInset = horizontalInset(in: section)
 
-        let size = (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(elementsPerLine(in: section))
+        let size = (contentView.collectionView.bounds.size.width - sectionHorizontalInset) /
+            CGFloat(elementsPerLine(in: section))
 
         return CGSize(width: size - 1, height: size - 1)
     }
@@ -426,7 +452,8 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
         repeat {
             count += 1
-        } while (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(count) > CollectionImageCell.maxCellSize
+        } while (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(count) >
+            CollectionImageCell.maxCellSize
 
         return count
     }
@@ -505,12 +532,19 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return numberOfElements(for: section)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         let (width, height) = sizeForCell(at: indexPath)
         return CGSize(width: width ?? 0, height: height ?? 0)
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
             fatal("Unknown section")
         }
@@ -519,23 +553,41 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
         switch section {
         case CollectionsSectionSet.images:
-            resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionImageCell.reuseIdentifier, for: indexPath) as! CollectionImageCell
+            resultCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionImageCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionImageCell
 
         case CollectionsSectionSet.filesAndAudio:
             if message(for: indexPath).fileMessageData?.isAudio == true {
-                resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionAudioCell.reuseIdentifier, for: indexPath) as! CollectionAudioCell
+                resultCell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: CollectionAudioCell.reuseIdentifier,
+                    for: indexPath
+                ) as! CollectionAudioCell
             } else {
-                resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionFileCell.reuseIdentifier, for: indexPath) as! CollectionFileCell
+                resultCell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: CollectionFileCell.reuseIdentifier,
+                    for: indexPath
+                ) as! CollectionFileCell
             }
 
         case CollectionsSectionSet.videos:
-            resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionVideoCell.reuseIdentifier, for: indexPath) as! CollectionVideoCell
+            resultCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionVideoCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionVideoCell
 
         case CollectionsSectionSet.links:
-            resultCell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionLinkCell.reuseIdentifier, for: indexPath) as! CollectionLinkCell
+            resultCell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionLinkCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionLinkCell
 
         case CollectionsSectionSet.loading:
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionLoadingCell.reuseIdentifier, for: indexPath) as! CollectionLoadingCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CollectionLoadingCell.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionLoadingCell
             cell.collapsed = fetchingDone
             cell.containerWidth = collectionView.bounds.size.width - horizontalInset(in: section)
             return cell
@@ -558,14 +610,22 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return resultCell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         guard let section = CollectionsSectionSet(index: UInt(indexPath.section)) else {
             fatal("Unknown section")
         }
 
         switch kind {
         case UICollectionView.elementKindSectionHeader:
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionHeaderView.reuseIdentifier, for: indexPath) as! CollectionHeaderView
+            let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: CollectionHeaderView.reuseIdentifier,
+                for: indexPath
+            ) as! CollectionHeaderView
             header.section = section
             header.totalItemsCount = UInt(moreElementsToSee(in: section) ? elements(for: section).count : 0)
             header.selectionAction = { [weak self] section in
@@ -584,7 +644,11 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                 collectionController.delegate = self.delegate
                 self.navigationController?.pushViewController(collectionController, animated: true)
             }
-            let size = self.collectionView(collectionView, layout: self.contentView.collectionView.collectionViewLayout, referenceSizeForHeaderInSection: indexPath.section)
+            let size = self.collectionView(
+                collectionView,
+                layout: self.contentView.collectionView.collectionViewLayout,
+                referenceSizeForHeaderInSection: indexPath.section
+            )
             header.desiredWidth = size.width
             header.desiredHeight = size.height
             return header
@@ -595,7 +659,11 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
     // MARK: - Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         guard let section = CollectionsSectionSet(index: UInt(section)) else {
             fatal("Unknown section")
         }
@@ -606,11 +674,19 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         return elements(for: section).isEmpty ? .zero : CGSize(width: collectionView.bounds.size.width, height: 48)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
         .zero
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         guard let section = CollectionsSectionSet(index: UInt(section)) else {
             fatal("Unknown section")
         }
@@ -708,7 +784,11 @@ extension CollectionsViewController: CollectionCellDelegate {
             }
 
         case .delete:
-            deletionDialogPresenter?.presentDeletionAlertController(forMessage: message, source: source, userSession: userSession) { [weak self] deleted in
+            deletionDialogPresenter?.presentDeletionAlertController(
+                forMessage: message,
+                source: source,
+                userSession: userSession
+            ) { [weak self] deleted in
                 guard deleted else { return }
                 _ = self?.navigationController?.popViewController(animated: true)
                 self?.refetchCollection()
@@ -726,7 +806,11 @@ extension CollectionsViewController: CollectionCellDelegate {
                 )
 
                 let backButton = CollectionsView.backButton()
-                backButton.addTarget(self, action: #selector(CollectionsViewController.backButtonPressed(_:)), for: .touchUpInside)
+                backButton.addTarget(
+                    self,
+                    action: #selector(CollectionsViewController.backButtonPressed(_:)),
+                    for: .touchUpInside
+                )
                 backButton.accessibilityLabel = L10n.Accessibility.ConversationSearch.BackButton.description
 
                 navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
@@ -749,13 +833,17 @@ extension CollectionsViewController: CollectionCellDelegate {
 
         case .save:
             if message.isImage {
-                guard let imageMessageData = message.imageMessageData, let imageData = imageMessageData.imageData else { return }
+                guard let imageMessageData = message.imageMessageData,
+                      let imageData = imageMessageData.imageData else { return }
 
                 let saveableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
                 saveableImage.saveToLibrary()
 
             } else if let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() {
-                let activityViewController = UIActivityViewController(activityItems: [fileURL], applicationActivities: nil)
+                let activityViewController = UIActivityViewController(
+                    activityItems: [fileURL],
+                    applicationActivities: nil
+                )
                 if let popoverPresentationController = activityViewController.popoverPresentationController {
                     let sourceView = (source as? CollectionCell)?.selectionView ?? view as UIView
                     popoverPresentationController.sourceView = sourceView.superview
@@ -763,7 +851,8 @@ extension CollectionsViewController: CollectionCellDelegate {
                 }
                 present(activityViewController, animated: true)
             } else {
-                WireLogger.conversation.warn("Saving a message of any type other than image or file is currently not handled.")
+                WireLogger.conversation
+                    .warn("Saving a message of any type other than image or file is currently not handled.")
             }
 
         case .download:

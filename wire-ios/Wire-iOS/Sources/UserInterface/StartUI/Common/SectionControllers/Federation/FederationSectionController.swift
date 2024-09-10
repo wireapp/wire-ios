@@ -50,7 +50,10 @@ final class FederationSectionController: SearchSectionController {
         users.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
         if let selfUser = ZMUser.selfUser() {

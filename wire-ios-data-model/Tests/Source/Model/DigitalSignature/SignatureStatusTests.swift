@@ -26,9 +26,11 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         asset = createAsset()
-        status = SignatureStatus(asset: asset,
-                                 data: Data(),
-                                 managedObjectContext: syncMOC)
+        status = SignatureStatus(
+            asset: asset,
+            data: Data(),
+            managedObjectContext: syncMOC
+        )
     }
 
     override func tearDown() {
@@ -72,10 +74,12 @@ final class SignatureStatusTests: ZMBaseManagedObjectTest {
         let (assetId, token) = ("id", "token")
         let original = WireProtos.Asset.Original(withSize: 200, mimeType: "application/pdf", name: "PDF test")
 
-        let remoteData = WireProtos.Asset.RemoteData(withOTRKey: otrKey,
-                                                     sha256: sha,
-                                                     assetId: assetId,
-                                                     assetToken: token)
+        let remoteData = WireProtos.Asset.RemoteData(
+            withOTRKey: otrKey,
+            sha256: sha,
+            assetId: assetId,
+            assetToken: token
+        )
         let asset = WireProtos.Asset.with {
             $0.original = original
             $0.uploaded = remoteData

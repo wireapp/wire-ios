@@ -26,7 +26,10 @@ final class FilePreviewGeneratorTests: XCTestCase {
     func testThatItDoesNotBreakOn0x0PDF() {
         // given
         let pdfPath = Bundle(for: type(of: self)).path(forResource: "0x0", ofType: "pdf")!
-        let sut = PDFFilePreviewGenerator(callbackQueue: OperationQueue.main, thumbnailSize: CGSize(width: 100, height: 100))
+        let sut = PDFFilePreviewGenerator(
+            callbackQueue: OperationQueue.main,
+            thumbnailSize: CGSize(width: 100, height: 100)
+        )
         // when
         let expectation = self.expectation(description: "Finished generating the preview")
         sut.generatePreview(URL(fileURLWithPath: pdfPath), UTI: kUTTypePDF as String) { image in
@@ -40,7 +43,10 @@ final class FilePreviewGeneratorTests: XCTestCase {
     func testThatItDoesNotBreakOnHugePDF() {
         // given
         let pdfPath = Bundle(for: type(of: self)).path(forResource: "huge", ofType: "pdf")!
-        let sut = PDFFilePreviewGenerator(callbackQueue: OperationQueue.main, thumbnailSize: CGSize(width: 100, height: 100))
+        let sut = PDFFilePreviewGenerator(
+            callbackQueue: OperationQueue.main,
+            thumbnailSize: CGSize(width: 100, height: 100)
+        )
         // when
         let expectation = self.expectation(description: "Finished generating the preview")
         sut.generatePreview(URL(fileURLWithPath: pdfPath), UTI: kUTTypePDF as String) { image in

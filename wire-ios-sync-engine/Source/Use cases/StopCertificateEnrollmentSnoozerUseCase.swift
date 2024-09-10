@@ -33,7 +33,8 @@ final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSn
 
     init(
         recurringActionService: RecurringActionServiceInterface,
-        accountId: UUID) {
+        accountId: UUID
+    ) {
         self.recurringActionService = recurringActionService
         self.actionId = "\(accountId).enrollCertificate"
     }

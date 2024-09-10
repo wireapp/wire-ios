@@ -41,9 +41,11 @@ final class ModalTopBarTests: XCTestCase {
     }
 
     func testThatItRendersCorrectly_LongTitle() {
-        sut.configure(title: "Adrian Hardacre, Amelia Henderson & Dylan Parsons",
-                      subtitle: nil,
-                      topAnchor: sut.topAnchor)
+        sut.configure(
+            title: "Adrian Hardacre, Amelia Henderson & Dylan Parsons",
+            subtitle: nil,
+            topAnchor: sut.topAnchor
+        )
 
         verifyInAllPhoneWidths(matching: sut)
     }
@@ -54,9 +56,11 @@ final class ModalTopBarTests: XCTestCase {
     }
 
     func testThatItRendersCorrectly_LongSubtitle() {
-        sut.configure(title: "Details",
-                      subtitle: "Adrian Hardacre, Amelia Henderson & Dylan Parsons",
-                      topAnchor: sut.topAnchor)
+        sut.configure(
+            title: "Details",
+            subtitle: "Adrian Hardacre, Amelia Henderson & Dylan Parsons",
+            topAnchor: sut.topAnchor
+        )
 
         verifyInAllPhoneWidths(matching: sut)
     }

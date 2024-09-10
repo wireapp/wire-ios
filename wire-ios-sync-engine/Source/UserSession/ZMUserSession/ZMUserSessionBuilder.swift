@@ -191,7 +191,10 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             userID: userId
         )
-        let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
+        let recurringActionService = recurringActionService ?? RecurringActionService(
+            storage: sharedUserDefaults,
+            dateProvider: .system
+        )
 
         // setup builder
 

@@ -34,7 +34,12 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
 
-        self.sut = LinkPreviewAssetUploadRequestStrategy(managedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus, linkPreviewPreprocessor: nil, previewImagePreprocessor: nil)
+        self.sut = LinkPreviewAssetUploadRequestStrategy(
+            managedObjectContext: self.syncMOC,
+            applicationStatus: mockApplicationStatus,
+            linkPreviewPreprocessor: nil,
+            previewImagePreprocessor: nil
+        )
     }
 
     override func tearDown() {
@@ -44,7 +49,12 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
     }
 
     /// Creates a message that should generate request
-    func createMessage(_ text: String, linkPreviewState: ZMLinkPreviewState = .waitingToBeProcessed, linkPreview: LinkMetadata, isEphemeral: Bool = false) -> ZMClientMessage {
+    func createMessage(
+        _ text: String,
+        linkPreviewState: ZMLinkPreviewState = .waitingToBeProcessed,
+        linkPreview: LinkMetadata,
+        isEphemeral: Bool = false
+    ) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
@@ -54,14 +64,21 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
-            let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfterTimeInterval: 10)
+            let genericMessage = GenericMessage(
+                content: Text(content: text, mentions: [], linkPreviews: [linkPreview]),
+                nonce: message.nonce!,
+                expiresAfterTimeInterval: 10
+            )
             do {
                 try message.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
         } else {
-            let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!)
+            let genericMessage = GenericMessage(
+                content: Text(content: text, mentions: [], linkPreviews: [linkPreview]),
+                nonce: message.nonce!
+            )
             do {
                 try message.setUnderlyingMessage(genericMessage)
             } catch {
@@ -105,7 +122,11 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
             $0.mentions = []
             $0.linkPreview = [linkPreview]
         }
-        let genericMessage = GenericMessage(content: text, nonce: message.nonce!, expiresAfterTimeInterval: message.deletionTimeout)
+        let genericMessage = GenericMessage(
+            content: text,
+            nonce: message.nonce!,
+            expiresAfterTimeInterval: message.deletionTimeout
+        )
         do {
             try message.setUnderlyingMessage(genericMessage)
         } catch {
@@ -115,9 +136,25 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         return (otrKey, sha256)
     }
 
-    func completeRequest(_ message: ZMClientMessage, request: ZMTransportRequest?, assetId: String, token: String, domain: String) {
-        let response = ZMTransportResponse(payload: ["key": assetId, "token": token, "domain": domain] as ZMTransportData, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
-        _ = sut.updateUpdatedObject(message, requestUserInfo: nil, response: response, keysToParse: [ZMClientMessage.linkPreviewStateKey])
+    func completeRequest(
+        _ message: ZMClientMessage,
+        request: ZMTransportRequest?,
+        assetId: String,
+        token: String,
+        domain: String
+    ) {
+        let response = ZMTransportResponse(
+            payload: ["key": assetId, "token": token, "domain": domain] as ZMTransportData,
+            httpStatus: 201,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
+        _ = sut.updateUpdatedObject(
+            message,
+            requestUserInfo: nil,
+            response: response,
+            keysToParse: [ZMClientMessage.linkPreviewStateKey]
+        )
     }
 }
 
@@ -128,7 +165,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
-            let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
+            let message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .processed,
+                linkPreview: article
+            )
             self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
 
             self.syncMOC.saveOrRollback()
@@ -148,7 +189,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
-            let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
+            let message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .processed,
+                linkPreview: article
+            )
             self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             self.process(self.sut, message: message)
             self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
@@ -165,7 +210,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
-            let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .waitingToBeProcessed, linkPreview: article)
+            let message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .waitingToBeProcessed,
+                linkPreview: article
+            )
             self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             self.process(self.sut, message: message)
 
@@ -181,7 +230,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
-            let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .done, linkPreview: article)
+            let message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .done,
+                linkPreview: article
+            )
             self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             self.process(self.sut, message: message)
 
@@ -197,7 +250,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
-            let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
+            let message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .processed,
+                linkPreview: article
+            )
             self.process(self.sut, message: message)
 
             // WHEN & THEN
@@ -216,7 +273,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             let article = self.createArticle()
-            message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
+            message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .processed,
+                linkPreview: article
+            )
             let keys = self.encryptLinkPreview(inMessage: message)
             otrKey = keys.0
             sha256 = keys.1
@@ -251,7 +312,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             let article = self.createArticle()
-            message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
+            message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .processed,
+                linkPreview: article
+            )
             _ = self.encryptLinkPreview(inMessage: message)
             self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             message.linkPreviewState = .processed
@@ -288,7 +353,12 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
 
         syncMOC.performGroupedBlock {
             let article = self.createArticle()
-            message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article, isEphemeral: true)
+            message = self.createMessage(
+                article.permanentURL!.absoluteString,
+                linkPreviewState: .processed,
+                linkPreview: article,
+                isEphemeral: true
+            )
             let keys = self.encryptLinkPreview(inMessage: message)
             otrKey = keys.0
             sha256 = keys.1

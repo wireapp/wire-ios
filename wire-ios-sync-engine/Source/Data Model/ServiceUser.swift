@@ -41,8 +41,10 @@ extension ServiceUser {
             return nil
         }
 
-        return ServiceUserData(provider: provider,
-                               service: service)
+        return ServiceUserData(
+            provider: provider,
+            service: service
+        )
     }
 }
 
@@ -105,7 +107,10 @@ public final class ServiceDetails: NSObject {
 }
 
 extension ServiceUserData {
-    fileprivate func requestToAddService(to conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
+    fileprivate func requestToAddService(
+        to conversation: ZMConversation,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         guard let remoteIdentifier = conversation.remoteIdentifier
         else {
             fatal("conversation is not synced with the backend")
@@ -113,11 +118,18 @@ extension ServiceUserData {
 
         let path = "/conversations/\(remoteIdentifier.transportString())/bots"
 
-        let payload: NSDictionary = ["provider": self.provider.transportString(),
-                                     "service": self.service.transportString(),
-                                     "locale": NSLocale.formattedLocaleIdentifier()!]
+        let payload: NSDictionary = [
+            "provider": self.provider.transportString(),
+            "service": self.service.transportString(),
+            "locale": NSLocale.formattedLocaleIdentifier()!,
+        ]
 
-        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     fileprivate func requestToFetchProvider(apiVersion: APIVersion) -> ZMTransportRequest {
@@ -186,11 +198,16 @@ extension ServiceUser {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    public func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
-        createConversation(transportSession: userSession.transportSession,
-                           eventProcessor: userSession.conversationEventProcessor,
-                           contextProvider: userSession,
-                           completionHandler: completionHandler)
+    public func createConversation(
+        in userSession: ZMUserSession,
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
+    ) {
+        createConversation(
+            transportSession: userSession.transportSession,
+            eventProcessor: userSession.conversationEventProcessor,
+            contextProvider: userSession,
+            completionHandler: completionHandler
+        )
     }
 
     func createConversation(
@@ -277,7 +294,11 @@ extension AddBotError {
 }
 
 extension ZMConversation {
-    public func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    public func add(
+        serviceUser: ServiceUser,
+        in userSession: ZMUserSession,
+        completionHandler: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard let serviceUserData = serviceUser.serviceUserData else {
             fatal("Not a service user")
         }
@@ -285,19 +306,27 @@ extension ZMConversation {
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)
     }
 
-    public func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
-        add(serviceUser: serviceUserData,
+    public func add(
+        serviceUser serviceUserData: ServiceUserData,
+        in userSession: ZMUserSession,
+        completionHandler: @escaping (Result<Void, Error>) -> Void
+    ) {
+        add(
+            serviceUser: serviceUserData,
             transportSession: userSession.transportSession,
             eventProcessor: userSession.conversationEventProcessor,
             contextProvider: userSession.coreDataStack,
-            completionHandler: completionHandler)
+            completionHandler: completionHandler
+        )
     }
 
-    func add(serviceUser serviceUserData: ServiceUserData,
-             transportSession: TransportSessionType,
-             eventProcessor: ConversationEventProcessorProtocol,
-             contextProvider: ContextProvider,
-             completionHandler: @escaping (Result<Void, Error>) -> Void) {
+    func add(
+        serviceUser serviceUserData: ServiceUserData,
+        transportSession: TransportSessionType,
+        eventProcessor: ConversationEventProcessorProtocol,
+        contextProvider: ContextProvider,
+        completionHandler: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
             return

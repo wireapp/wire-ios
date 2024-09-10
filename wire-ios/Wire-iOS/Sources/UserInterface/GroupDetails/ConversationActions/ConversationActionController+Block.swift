@@ -56,7 +56,11 @@ enum BlockResult {
 extension ConversationActionController {
     func requestBlockResult(for conversation: ZMConversation, handler: @escaping (BlockResult) -> Void) {
         guard let user = conversation.connectedUser else { return }
-        let controller = UIAlertController(title: BlockResult.title(for: user), message: nil, preferredStyle: .actionSheet)
+        let controller = UIAlertController(
+            title: BlockResult.title(for: user),
+            message: nil,
+            preferredStyle: .actionSheet
+        )
         BlockResult.all(isBlocked: user.isBlocked).map { $0.action(handler) }.forEach(controller.addAction)
         present(controller)
     }

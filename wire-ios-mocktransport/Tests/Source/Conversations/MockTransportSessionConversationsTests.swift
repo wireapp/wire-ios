@@ -46,7 +46,10 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         // when
         var conversation: MockConversation!
         sut.performRemoteChanges { session in
-            conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: session.insertUser(withName: "friend"))
+            conversation = session.insertOneOnOneConversation(
+                withSelfUser: self.selfUser,
+                otherUser: session.insertUser(withName: "friend")
+            )
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -60,7 +63,10 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         // when
         var conversation: MockConversation!
         sut.performRemoteChanges { session in
-            conversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [session.insertUser(withName: "friend"), session.insertUser(withName: "other friend")])
+            conversation = session.insertGroupConversation(
+                withSelfUser: self.selfUser,
+                otherUsers: [session.insertUser(withName: "friend"), session.insertUser(withName: "other friend")]
+            )
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -74,7 +80,11 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         // when
         var conversation: MockConversation!
         sut.performRemoteChanges { session in
-            conversation = session.insertTeamConversation(to: self.team, with: [session.insertUser(withName: "friend"), session.insertUser(withName: "other friend")], creator: self.selfUser)
+            conversation = session.insertTeamConversation(
+                to: self.team,
+                with: [session.insertUser(withName: "friend"), session.insertUser(withName: "other friend")],
+                creator: self.selfUser
+            )
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -115,7 +125,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         // then
         XCTAssertNotNil(conversation.changePushPayload)
         guard let access = conversation.changePushPayload?["access"] as? [String] else { XCTFail(); return }
-        guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String] else { XCTFail(); return }
+        guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String]
+        else { XCTFail(); return }
         XCTAssertEqual(access, newAccessMode)
         XCTAssertEqual(accessRoleV2, newAccessRoleV2)
     }
@@ -139,7 +150,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         // then
         XCTAssertNotNil(conversation.changePushPayload)
         guard let accessRole = conversation.changePushPayload?["access_role"] as? String else { XCTFail(); return }
-        guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String] else { XCTFail(); return }
+        guard let accessRoleV2 = conversation.changePushPayload?["access_role_v2"] as? [String]
+        else { XCTFail(); return }
 
         XCTAssertEqual(accessRole, newAccessRole)
         XCTAssertEqual(accessRoleV2, newAccessRoleV2)
@@ -149,7 +161,11 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         // given
         var conversation: MockConversation!
         sut.performRemoteChanges { session in
-            conversation = session.insertTeamConversation(to: self.team, with: [self.selfUser], creator: session.insertUser(withName: "some"))
+            conversation = session.insertTeamConversation(
+                to: self.team,
+                with: [self.selfUser],
+                creator: session.insertUser(withName: "some")
+            )
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         sut.saveAndCreatePushChannelEventForSelfUser()
@@ -183,7 +199,10 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         sut.performRemoteChanges { session in
             user1 = session.insertUser(withName: "one")
             user2 = session.insertUser(withName: "two")
-            conversation = session.insertConversation(withSelfUserAndGroupRoles: self.selfUser, otherUsers: [user1!, user2!])
+            conversation = session.insertConversation(
+                withSelfUserAndGroupRoles: self.selfUser,
+                otherUsers: [user1!, user2!]
+            )
         }
 
         // when
@@ -275,7 +294,11 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             session.registerClient(for: self.selfUser!, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "bar")
-            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: ZMTConversationType.oneOnOne)
+            conversation = session.insertConversation(
+                withCreator: self.selfUser,
+                otherUsers: [otherUser!],
+                type: ZMTConversationType.oneOnOne
+            )
 
             selfClient = self.selfUser?.clients.anyObject() as? MockUserClient
             otherUserClient = otherUser?.clients.anyObject() as? MockUserClient
@@ -296,14 +319,20 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         var messageData: Data?
         do {
             let data = try message.serializedData()
-            messageData = try selfClient?.newOtrMessageWithRecipients(for: [otherUserClient!], plainText: data).serializedData()
+            messageData = try selfClient?.newOtrMessageWithRecipients(for: [otherUserClient!], plainText: data)
+                .serializedData()
         } catch {
             return XCTFail()
         }
 
         // WHEN
         let requestPath = "/conversations/\(conversation!.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.post, apiVersion: .v0)
+        let response = self.response(
+            forProtobufData: messageData,
+            path: requestPath,
+            method: ZMTransportRequestMethod.post,
+            apiVersion: .v0
+        )
 
         // THEN
         XCTAssertEqual(response!.httpStatus, 201)
@@ -331,20 +360,42 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
             otherUser = session.insertUser(withName: "bar")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
-            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent", deviceClass: "phone")
-            redundantClient = session.registerClient(for: otherUser, label: "Wire for OS/2", type: "permanent", deviceClass: "phone")
+            secondOtherUserClient = session.registerClient(
+                for: otherUser,
+                label: "other2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
+            redundantClient = session.registerClient(
+                for: otherUser,
+                label: "Wire for OS/2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             selfClient = self.selfUser.clients.anyObject() as? MockUserClient
-            secondSelfClient = session.registerClient(for: self.selfUser, label: "self2", type: "permanent", deviceClass: "phone")
+            secondSelfClient = session.registerClient(
+                for: self.selfUser,
+                label: "self2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
-            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: .oneOnOne)
+            conversation = session.insertConversation(
+                withCreator: self.selfUser,
+                otherUsers: [otherUser!],
+                type: .oneOnOne
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let previousNotificationsCount = sut.generatedPushEvents.count
 
         let data = Data("foobar".utf8)
-        let messageData = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, redundantClient], plainText: data).serializedData()
+        let messageData = try? selfClient.newOtrMessageWithRecipients(
+            for: [otherUserClient, redundantClient],
+            plainText: data
+        ).serializedData()
 
         sut.performRemoteChanges { _ in
             redundantClient.user = nil
@@ -390,20 +441,37 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             session.registerClient(for: self.selfUser, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "bar")
-            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: .oneOnOne)
+            conversation = session.insertConversation(
+                withCreator: self.selfUser,
+                otherUsers: [otherUser!],
+                type: .oneOnOne
+            )
 
             selfClient = self.selfUser.clients.anyObject() as? MockUserClient
-            secondSelfClient = session.registerClient(for: self.selfUser, label: "self2", type: "permanent", deviceClass: "phone")
+            secondSelfClient = session.registerClient(
+                for: self.selfUser,
+                label: "self2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
 
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
-            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent", deviceClass: "phone")
+            secondOtherUserClient = session.registerClient(
+                for: otherUser,
+                label: "other2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let previousNotificationCount = sut.generatedPushEvents.count
 
         let data = Data("foobar".utf8)
-        let message = selfClient.newOtrMessageWithRecipients(for: [secondSelfClient, otherUserClient, secondOtherUserClient], plainText: data)
+        let message = selfClient.newOtrMessageWithRecipients(
+            for: [secondSelfClient, otherUserClient, secondOtherUserClient],
+            plainText: data
+        )
         let messageData = try? message.serializedData()
 
         // WHEN
@@ -427,7 +495,10 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationCount + 3)
         if sut.generatedPushEvents.count > 4 {
-            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(location: sut.generatedPushEvents.count - 3, length: 3)) as! [MockPushEvent]
+            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(
+                location: sut.generatedPushEvents.count - 3,
+                length: 3
+            )) as! [MockPushEvent]
 
             for event in otrEvents {
                 let eventPayload = event.payload.asDictionary()

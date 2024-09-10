@@ -95,11 +95,13 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
                 .flatMap(\.base64DecodedBytes)
                 .map(\.data)
 
-            action.succeed(with: Action.Result(removal: .init(ed25519: ed25519RemovalKey,
-                                                              ed448: ed448RemovalKey,
-                                                              p256: p256RemovalKey,
-                                                              p384: p384RemovalKey,
-                                                              p521: p521RemovalKey)))
+            action.succeed(with: Action.Result(removal: .init(
+                ed25519: ed25519RemovalKey,
+                ed448: ed448RemovalKey,
+                p256: p256RemovalKey,
+                p384: p384RemovalKey,
+                p521: p521RemovalKey
+            )))
 
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)

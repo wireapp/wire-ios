@@ -30,7 +30,11 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     override func setUp() {
         super.setUp()
         self.mockApplicationStatus = MockApplicationStatus()
-        self.sut = DeleteAccountRequestStrategy(withManagedObjectContext: self.uiMOC, applicationStatus: mockApplicationStatus, cookieStorage: cookieStorage)
+        self.sut = DeleteAccountRequestStrategy(
+            withManagedObjectContext: self.uiMOC,
+            applicationStatus: mockApplicationStatus,
+            cookieStorage: cookieStorage
+        )
     }
 
     override func tearDown() {
@@ -45,7 +49,10 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
 
     func testThatItGeneratesARequest() {
         // given
-        self.uiMOC.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
+        self.uiMOC.setPersistentStoreMetadata(
+            NSNumber(value: true),
+            key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
+        )
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -62,7 +69,10 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
 
     func testThatItGeneratesARequestOnlyOnce() {
         // given
-        self.uiMOC.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
+        self.uiMOC.setPersistentStoreMetadata(
+            NSNumber(value: true),
+            key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
+        )
 
         // when
         let request1: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -76,13 +86,24 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
     func testThatItSignsUserOutWhenSuccessful() {
         // given
         ZMUser.selfUser(in: self.uiMOC).remoteIdentifier = UUID()
-        self.uiMOC.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
+        self.uiMOC.setPersistentStoreMetadata(
+            NSNumber(value: true),
+            key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
+        )
 
-        observers.append(AccountDeletedNotification.addObserver(observer: self, queue: DispatchGroupQueue(queue: .main)))
+        observers.append(AccountDeletedNotification.addObserver(
+            observer: self,
+            queue: DispatchGroupQueue(queue: .main)
+        ))
 
         // when
         let request1: ZMTransportRequest! = self.sut.nextRequest(for: .v0)
-        request1.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request1.complete(with: ZMTransportResponse(
+            payload: NSDictionary(),
+            httpStatus: 201,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))

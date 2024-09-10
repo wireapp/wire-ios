@@ -25,7 +25,8 @@ enum GuestLinkFeatureStatus {
 }
 
 extension ZMConversation {
-    final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration, ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
+    final class OptionsConfigurationContainer: NSObject, ConversationGuestOptionsViewModelConfiguration,
+        ConversationServicesOptionsViewModelConfiguration, ZMConversationObserver {
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession

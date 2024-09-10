@@ -80,7 +80,10 @@ extension CoreDataStack {
             }
         }
 
-        let accountDirectory = Self.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let accountDirectory = Self.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: applicationContainer
+        )
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
         guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.missingLocalStore) }
@@ -94,7 +97,11 @@ extension CoreDataStack {
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
                 // Create target directory
-                try fileManager.createDirectory(at: databaseDirectory, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: databaseDirectory,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 let migrationStoreLocation = databaseDirectory.appendingStoreFile()
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
@@ -107,10 +114,12 @@ extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                try performMigration(coordinator: coordinator,
-                                     location: migrationStoreLocation,
-                                     options: options,
-                                     migration: migration)
+                try performMigration(
+                    coordinator: coordinator,
+                    location: migrationStoreLocation,
+                    options: options,
+                    migration: migration
+                )
 
                 // Import the persistent store to the account data directory
                 try coordinator.replacePersistentStore(
@@ -133,7 +142,12 @@ extension CoreDataStack {
         }
     }
 
-    private static func performMigration(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any], migration: @escaping (NSManagedObjectContext) throws -> Void) throws {
+    private static func performMigration(
+        coordinator: NSPersistentStoreCoordinator,
+        location: URL,
+        options: [String: Any],
+        migration: @escaping (NSManagedObjectContext) throws -> Void
+    ) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         _ = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)

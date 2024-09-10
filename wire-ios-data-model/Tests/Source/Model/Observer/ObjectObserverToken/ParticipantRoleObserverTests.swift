@@ -61,7 +61,11 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         // given
         uiMOC.saveOrRollback()
 
-        self.token = ParticipantRoleChangeInfo.add(observer: observer, for: participantRole, managedObjectContext: self.uiMOC)
+        self.token = ParticipantRoleChangeInfo.add(
+            observer: observer,
+            for: participantRole,
+            managedObjectContext: self.uiMOC
+        )
 
         // when
         modifier(participantRole)
@@ -71,9 +75,21 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         // then
         let changeCount = observer.notifications.count
         if !expectedChangedFields.isEmpty {
-            XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).", file: file, line: line)
+            XCTAssertEqual(
+                changeCount,
+                1,
+                "Observer expected 1 notification, but received \(changeCount).",
+                file: file,
+                line: line
+            )
         } else {
-            XCTAssertEqual(changeCount, 0, "Observer was notified, but DID NOT expect a notification", file: file, line: line)
+            XCTAssertEqual(
+                changeCount,
+                0,
+                "Observer was notified, but DID NOT expect a notification",
+                file: file,
+                line: line
+            )
         }
 
         // and when
@@ -83,9 +99,11 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(observer.notifications.count, changeCount, "Should not have changed further once")
 
         guard let changes = observer.notifications.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
-                                             expectedChangedFields: expectedChangedFields,
-                                             file: file,
-                                             line: line)
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: userInfoKeys,
+            expectedChangedFields: expectedChangedFields,
+            file: file,
+            line: line
+        )
     }
 }

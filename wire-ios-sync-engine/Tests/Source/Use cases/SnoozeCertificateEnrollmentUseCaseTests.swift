@@ -66,7 +66,8 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
     // MARK: Helpers
 
-    private func makeUseCase(recurringActionService: any RecurringActionServiceInterface) -> SnoozeCertificateEnrollmentUseCase {
+    private func makeUseCase(recurringActionService: any RecurringActionServiceInterface)
+        -> SnoozeCertificateEnrollmentUseCase {
         SnoozeCertificateEnrollmentUseCase(
             featureRepository: mockFeatureRepository,
             featureRepositoryContext: context,

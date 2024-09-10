@@ -40,8 +40,11 @@ class ImagePickerManager: NSObject {
 
     // MARK: - Methods
 
-    func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-                         completion: @escaping (UIImage) -> Void) -> UIAlertController {
+    func showActionSheet(
+        on viewController: UIViewController? = UIApplication.shared
+            .topmostViewController(onlyFullScreen: false),
+        completion: @escaping (UIImage) -> Void
+    ) -> UIAlertController {
         self.completion = completion
         self.viewController = viewController
 
@@ -51,9 +54,11 @@ class ImagePickerManager: NSObject {
 
     private func imagePickerAlert() -> UIAlertController {
         typealias Alert = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert
-        let actionSheet = UIAlertController(title: Alert.title,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+        let actionSheet = UIAlertController(
+            title: Alert.title,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
         // Choose from gallery option, if security flag enabled
         if mediaShareRestrictionManager.isPhotoLibraryEnabled {
@@ -112,7 +117,10 @@ class ImagePickerManager: NSObject {
 }
 
 extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)
             return
@@ -134,9 +142,11 @@ extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationContr
                 picker.dismiss(animated: true)
             }
 
-            let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
-                                                             onConfirm: onConfirm,
-                                                             onCancel: onCancel)
+            let context = ConfirmAssetViewController.Context(
+                asset: .image(mediaAsset: image),
+                onConfirm: onConfirm,
+                onCancel: onCancel
+            )
 
             let confirmImageViewController = ConfirmAssetViewController(context: context)
             confirmImageViewController.modalPresentationStyle = .fullScreen

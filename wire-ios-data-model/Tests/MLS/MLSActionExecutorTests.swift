@@ -99,8 +99,10 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         let sendCommitExpectation = XCTestExpectation(description: "send commit")
         var sendCommitContinuation: CheckedContinuation<Void, Never>?
 
-        let beforeDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has been started/is running")
-        let insideDecryptMessageInvertedExpectation = XCTestExpectation(description: "not yet decrypting message").inverted()
+        let beforeDecryptMessageExpectation =
+            XCTestExpectation(description: "Task to decrypt message has been started/is running")
+        let insideDecryptMessageInvertedExpectation = XCTestExpectation(description: "not yet decrypting message")
+            .inverted()
         let afterDecryptMessageExpectation = XCTestExpectation(description: "Task to decrypt message has finished")
 
         // Mock Update key material.
@@ -298,7 +300,13 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     func test_AddMembers() async throws {
         // Given
         let groupID = MLSGroupID.random()
-        let keyPackages = [KeyPackage(client: "client1", domain: "exampel.com", keyPackage: Data.random().base64String(), keyPackageRef: "", userID: .create())]
+        let keyPackages = [KeyPackage(
+            client: "client1",
+            domain: "exampel.com",
+            keyPackage: Data.random().base64String(),
+            keyPackageRef: "",
+            userID: .create()
+        )]
 
         let mockCommit = Data.random()
         let mockWelcome = Data.random()

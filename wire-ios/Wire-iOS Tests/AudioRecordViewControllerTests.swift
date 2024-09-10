@@ -29,7 +29,12 @@ private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecord
 
     func audioRecordViewControllerDidStartRecording(_: AudioRecordBaseViewController) {}
 
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {}
+    func audioRecordViewControllerWantsToSendAudio(
+        _ audioRecordViewController: AudioRecordBaseViewController,
+        recordingURL: URL,
+        duration: TimeInterval,
+        filter: AVSAudioEffectType
+    ) {}
 }
 
 final class AudioRecordViewControllerTests: XCTestCase {
@@ -56,9 +61,11 @@ final class AudioRecordViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    func verify(file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
+    func verify(
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         verifyInAllPhoneWidths(
             matching: sut.prepareForSnapshot(),
             file: file,

@@ -57,7 +57,10 @@ final class ConnectRequestsViewController: UIViewController,
         if !ProcessInfo.processInfo.isRunningTests {
             let pendingConnectionsList = userSession.pendingConnectionConversationsInUserSession()
             connectionRequests = pendingConnectionsList.items
-            pendingConnectionsListObserverToken = userSession.addConversationListObserver(self, for: pendingConnectionsList)
+            pendingConnectionsListObserverToken = userSession.addConversationListObserver(
+                self,
+                for: pendingConnectionsList
+            )
             userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
         }
 
@@ -166,7 +169,11 @@ final class ConnectRequestsViewController: UIViewController,
 
                 ZClientViewController.shared?.hideIncomingContactRequests {
                     if let oneToOneConversation = user.oneToOneConversation {
-                        ZClientViewController.shared?.select(conversation: oneToOneConversation, focusOnView: true, animated: true)
+                        ZClientViewController.shared?.select(
+                            conversation: oneToOneConversation,
+                            focusOnView: true,
+                            animated: true
+                        )
                     }
                 }
             }
@@ -221,6 +228,7 @@ extension ConnectRequestsViewController: ZMConversationListObserver {
 
 extension ConnectRequestsViewController: UserObserving {
     func userDidChange(_: UserChangeInfo) {
-        tableView.reloadData() // may need a slightly different approach, like enumerating through table cells of type FirstTimeTableViewCell and setting their bgColor property
+        tableView
+            .reloadData() // may need a slightly different approach, like enumerating through table cells of type FirstTimeTableViewCell and setting their bgColor property
     }
 }

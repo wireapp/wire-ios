@@ -24,17 +24,29 @@ class OtrBaseTest: XCTestCase {
         super.setUp()
 
         // clean stored cryptobox files
-        if let items = (try? FileManager.default.contentsOfDirectory(at: OtrBaseTest.sharedContainerURL, includingPropertiesForKeys: nil, options: [])) {
+        if let items = (try? FileManager.default.contentsOfDirectory(
+            at: OtrBaseTest.sharedContainerURL,
+            includingPropertiesForKeys: nil,
+            options: []
+        )) {
             items.forEach { try? FileManager.default.removeItem(at: $0) }
         }
     }
 
     static var sharedContainerURL: URL {
-        try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        try! FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+        )
     }
 
     static func otrDirectoryURL(accountIdentifier: UUID) -> URL {
-        let accountDirectory = CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: self.sharedContainerURL)
+        let accountDirectory = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: self.sharedContainerURL
+        )
         return FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
     }
 
@@ -43,6 +55,9 @@ class OtrBaseTest: XCTestCase {
     }
 
     static func legacyAccountOtrDirectory(accountIdentifier: UUID) -> URL {
-        FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL.appendingPathComponent(accountIdentifier.uuidString), createParentIfNeeded: true)
+        FileManager.keyStoreURL(
+            accountDirectory: self.sharedContainerURL.appendingPathComponent(accountIdentifier.uuidString),
+            createParentIfNeeded: true
+        )
     }
 }

@@ -57,11 +57,12 @@ public enum ZMSound: String, CustomStringConvertible {
 
         AudioServicesPlaySystemSound(soundId)
 
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(4 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)) {
-            if self.playingPreviewID == soundId {
-                self.stopPlayingPreview()
+        DispatchQueue.main
+            .asyncAfter(deadline: DispatchTime.now() + Double(Int64(4 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)) {
+                if self.playingPreviewID == soundId {
+                    self.stopPlayingPreview()
+                }
             }
-        }
     }
 
     public func fileURL() -> URL? {
@@ -69,7 +70,11 @@ public enum ZMSound: String, CustomStringConvertible {
         case .None:
             return nil
         case .WireText, .WirePing, .WireCall:
-            guard let path = Bundle.main.path(forResource: self.rawValue, ofType: type(of: self).fileExtension, inDirectory: "audio-notifications") else {
+            guard let path = Bundle.main.path(
+                forResource: self.rawValue,
+                ofType: type(of: self).fileExtension,
+                inDirectory: "audio-notifications"
+            ) else {
                 return nil
             }
             return URL(fileURLWithPath: path)

@@ -20,7 +20,10 @@ import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
 
-final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveSubconversationAction, LeaveSubconversationActionHandler> {
+final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<
+    LeaveSubconversationAction,
+    LeaveSubconversationActionHandler
+> {
     let conversationID = UUID()
     let domain = String.randomDomain()
     let subconversationType = SubgroupType.conference
@@ -109,8 +112,12 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
             .failure(status: 400, error: .mlsNotEnabled, label: "mls-not-enabled"),
             .failure(status: 400, error: .mlsProtocolError, label: "mls-protocol-error"),
             .failure(status: 400, error: .invalidParameters),
-            .failure(status: 403, error: .accessDenied, label:
-                "access-denied"),
+            .failure(
+                status: 403,
+                error: .accessDenied,
+                label:
+                "access-denied"
+            ),
             .failure(status: 404, error: .noConversation, label: "no-conversation"),
             .failure(status: 409, error: .mlsStaleMessage, label: "mls-stale-message"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo"),

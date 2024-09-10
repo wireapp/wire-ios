@@ -20,7 +20,8 @@ import Foundation
 import WireLinkPreview
 
 extension ZMClientMessage {
-    public static let linkPreviewImageDownloadNotification = NSNotification.Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
+    public static let linkPreviewImageDownloadNotification = NSNotification
+        .Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
 
     public var linkPreviewState: ZMLinkPreviewState {
         get {
@@ -74,7 +75,11 @@ extension ZMClientMessage {
 
         guard linkPreview.image.uploaded.hasAssetID, !hasDownloadedImage() else { return }
 
-        NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
+        NotificationInContext(
+            name: ZMClientMessage.linkPreviewImageDownloadNotification,
+            context: moc.notificationContext,
+            object: self.objectID
+        ).post()
     }
 
     public func fetchLinkPreviewImageData(
@@ -136,7 +141,11 @@ extension ZMClientMessage {
         }
 
         let timeout = deletionTimeout > 0 ? deletionTimeout : nil
-        let message = GenericMessage(content: originalText.updateLinkPreview(from: updatedText), nonce: nonce, expiresAfterTimeInterval: timeout)
+        let message = GenericMessage(
+            content: originalText.updateLinkPreview(from: updatedText),
+            nonce: nonce,
+            expiresAfterTimeInterval: timeout
+        )
 
         do {
             try setUnderlyingMessage(message)
@@ -278,7 +287,8 @@ extension ZMClientMessage: ZMImageOwner {
                 let genericMessage = GenericMessage(content: messageUpdate, nonce: nonce)
                 try setUnderlyingMessage(genericMessage)
             } catch {
-                Logging.messageProcessing.warn("Failed to link preview image data. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to link preview image data. Reason: \(error.localizedDescription)")
                 return
             }
         }

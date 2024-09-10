@@ -49,8 +49,14 @@ final class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTr
             contentView.transform = hideTransform
         }
 
-        UIView.animate(withDuration: duration, delay: 0, options: .systemDismissalCurve, animations: animations) { finished in
-            transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
-        }
+        UIView
+            .animate(
+                withDuration: duration,
+                delay: 0,
+                options: .systemDismissalCurve,
+                animations: animations
+            ) { finished in
+                transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
+            }
     }
 }

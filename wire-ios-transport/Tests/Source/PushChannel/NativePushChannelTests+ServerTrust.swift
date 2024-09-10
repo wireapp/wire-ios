@@ -45,19 +45,23 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         mockEnvironment = MockEnvironment()
 
         let dispatchGroup = ZMSDispatchGroup(label: "scheduler")
-        let scheduler = ZMTransportRequestScheduler(session: mockSchedulerSession,
-                                                    operationQueue: .main,
-                                                    group: dispatchGroup,
-                                                    reachability: FakeReachability(),
-                                                    backoff: ZMExponentialBackoff(group: dispatchGroup, work: .main))
+        let scheduler = ZMTransportRequestScheduler(
+            session: mockSchedulerSession,
+            operationQueue: .main,
+            group: dispatchGroup,
+            reachability: FakeReachability(),
+            backoff: ZMExponentialBackoff(group: dispatchGroup, work: .main)
+        )
 
-        sut = NativePushChannel(scheduler: scheduler,
-                                userAgentString: "user-agent",
-                                environment: mockEnvironment,
-                                proxyUsername: nil,
-                                proxyPassword: nil,
-                                minTLSVersion: nil,
-                                queue: .main)
+        sut = NativePushChannel(
+            scheduler: scheduler,
+            userAgentString: "user-agent",
+            environment: mockEnvironment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            minTLSVersion: nil,
+            queue: .main
+        )
     }
 
     override func tearDownWithError() throws {
@@ -73,9 +77,11 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
         // when
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
-        sut.urlSession(URLSession.shared,
-                       task: URLSession.shared.dataTask(with: URL(string: "test")!),
-                       didReceive: createMockAuthenticationChallenge()) { disposition, _ in
+        sut.urlSession(
+            URLSession.shared,
+            task: URLSession.shared.dataTask(with: URL(string: "test")!),
+            didReceive: createMockAuthenticationChallenge()
+        ) { disposition, _ in
             choosenDisposition = disposition
         }
 
@@ -90,9 +96,11 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
         // when
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
-        sut.urlSession(URLSession.shared,
-                       task: URLSession.shared.dataTask(with: URL(string: "test")!),
-                       didReceive: challenge) { disposition, _ in
+        sut.urlSession(
+            URLSession.shared,
+            task: URLSession.shared.dataTask(with: URL(string: "test")!),
+            didReceive: challenge
+        ) { disposition, _ in
             choosenDisposition = disposition
         }
 
@@ -107,9 +115,11 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
         // when
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
-        sut.urlSession(session,
-                       task: session.dataTask(with: URL(string: "test")!),
-                       didReceive: createMockAuthenticationChallenge()) { disposition, _ in
+        sut.urlSession(
+            session,
+            task: session.dataTask(with: URL(string: "test")!),
+            didReceive: createMockAuthenticationChallenge()
+        ) { disposition, _ in
             choosenDisposition = disposition
         }
 
@@ -119,20 +129,25 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
     // MARK: - Helpers
 
-    func createMockAuthenticationChallenge(authenticationMethod: String = NSURLAuthenticationMethodServerTrust) -> URLAuthenticationChallenge {
-        let protectionSpace = MockURLProtectionSpace(host: "example.com",
-                                                     port: 8080,
-                                                     protocol: nil,
-                                                     realm: nil,
-                                                     authenticationMethod: authenticationMethod)
+    func createMockAuthenticationChallenge(authenticationMethod: String = NSURLAuthenticationMethodServerTrust)
+        -> URLAuthenticationChallenge {
+        let protectionSpace = MockURLProtectionSpace(
+            host: "example.com",
+            port: 8080,
+            protocol: nil,
+            realm: nil,
+            authenticationMethod: authenticationMethod
+        )
         protectionSpace.mockServerTrust = SecTrust.trustWithChain(certificateData: certificates.production)
 
-        let authenticationChallenge = URLAuthenticationChallenge(protectionSpace: protectionSpace,
-                                                                 proposedCredential: nil,
-                                                                 previousFailureCount: 0,
-                                                                 failureResponse: nil,
-                                                                 error: nil,
-                                                                 sender: MockURLAuthenticationChallengeSender())
+        let authenticationChallenge = URLAuthenticationChallenge(
+            protectionSpace: protectionSpace,
+            proposedCredential: nil,
+            previousFailureCount: 0,
+            failureResponse: nil,
+            error: nil,
+            sender: MockURLAuthenticationChallengeSender()
+        )
 
         return authenticationChallenge
     }

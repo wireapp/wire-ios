@@ -33,14 +33,51 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 
     func testThatFileHeaderCanBeReadFromBuffer() throws {
         // given
-        let buffer = Data(base64Encoded: "V0JVSQAAAQ8CgQ/ikb7pIkWDhhDkY7uMxemLjGnPNJ2ohITEekzYAzAxygPF36PpKw9HXrGZWg==")!
+        let buffer =
+            Data(base64Encoded: "V0JVSQAAAQ8CgQ/ikb7pIkWDhhDkY7uMxemLjGnPNJ2ohITEekzYAzAxygPF36PpKw9HXrGZWg==")!
 
         // when
         let header = try Sut.Header(buffer: [UInt8](buffer))
 
         // then
         XCTAssertEqual(header.salt, [15, 2, 129, 15, 226, 145, 190, 233, 34, 69, 131, 134, 16, 228, 99, 187])
-        XCTAssertEqual(header.uuidHash, [140, 197, 233, 139, 140, 105, 207, 52, 157, 168, 132, 132, 196, 122, 76, 216, 3, 48, 49, 202, 3, 197, 223, 163, 233, 43, 15, 71, 94, 177, 153, 90])
+        XCTAssertEqual(
+            header.uuidHash,
+            [
+                140,
+                197,
+                233,
+                139,
+                140,
+                105,
+                207,
+                52,
+                157,
+                168,
+                132,
+                132,
+                196,
+                122,
+                76,
+                216,
+                3,
+                48,
+                49,
+                202,
+                3,
+                197,
+                223,
+                163,
+                233,
+                43,
+                15,
+                71,
+                94,
+                177,
+                153,
+                90,
+            ]
+        )
     }
 
     func testThatParsingHeaderWithWrongSizeThrowsAnError() {
@@ -62,7 +99,10 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 
     func testThatParsingHeaderWithUnknownPlatformThrowsAnError() {
         // given
-        let buffer = [UInt8](Data(base64Encoded: "QldVSQAAAQ8CgQ/ikb7pIkWDhhDkY7uMxemLjGnPNJ2ohITEekzYAzAxygPF36PpKw9HXrGZWg==")!)
+        let buffer =
+            [UInt8](
+                Data(base64Encoded: "QldVSQAAAQ8CgQ/ikb7pIkWDhhDkY7uMxemLjGnPNJ2ohITEekzYAzAxygPF36PpKw9HXrGZWg==")!
+            )
 
         // when
         do {
@@ -87,7 +127,11 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         directoryURL = docments.appendingPathComponent("ChaCha20EncryptionTests")
 
         do {
-            try FileManager.default.createDirectory(atPath: directoryURL.path, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(
+                atPath: directoryURL.path,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
         } catch {
             XCTFail("Unable to create directory: \(error)")
         }
@@ -132,7 +176,12 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         return outputURL
     }
 
-    private func decryptFromURL(_ url: URL, passphrase: Sut.Passphrase, file: StaticString = #file, line: UInt = #line) throws -> Data {
+    private func decryptFromURL(
+        _ url: URL,
+        passphrase: Sut.Passphrase,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> Data {
         let outputURL = createTemporaryURL()
         let outputStream = OutputStream(url: outputURL, append: false)!
         let inputStream = InputStream(url: url)!
@@ -160,8 +209,14 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
     func testThatDecryptionWorks() throws {
         // given
         let expectedMessage = "123456789"
-        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!)
-        let encryptedMessage = Data(base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep")!
+        let passphrase = Sut.Passphrase(
+            password: "1235678",
+            uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!
+        )
+        let encryptedMessage =
+            Data(
+                base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep"
+            )!
 
         // when
         let decryptedMessage = try decrypt(encryptedMessage, passphrase: passphrase)

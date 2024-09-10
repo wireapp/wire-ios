@@ -26,7 +26,10 @@ import WireSyncEngine
 final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle needsToRegisterEmailToRegisterClient errors

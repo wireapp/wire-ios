@@ -36,8 +36,9 @@ extension ZMImageMessage {
                 name: ZMAssetClientMessage.imageDownloadNotificationName,
                 context: moc.notificationContext,
                 object: objectID,
-                userInfo: nil)
-                .post()
+                userInfo: nil
+            )
+            .post()
         }
     }
 }

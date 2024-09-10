@@ -55,15 +55,20 @@ class SessionManagerURLActionsTests: IntegrationTest {
     func testThatItAsksDelegateIfURLActionShouldBePerformed() throws {
         // given
         presentationDelegate?.isPerformingActions = false
-        let url = URL(string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b")!
+        let url =
+            URL(
+                string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b"
+            )!
         XCTAssertTrue(login())
 
         // when
         let canOpenURL = try sessionManager?.openURL(url)
 
         // then
-        let expectedUserData = ServiceUserData(provider: UUID(uuidString: "3879b1ec-4a12-11e8-842f-0ed5f89f718b")!,
-                                               service: UUID(uuidString: "2e1863a6-4a12-11e8-842f-0ed5f89f718b")!)
+        let expectedUserData = ServiceUserData(
+            provider: UUID(uuidString: "3879b1ec-4a12-11e8-842f-0ed5f89f718b")!,
+            service: UUID(uuidString: "2e1863a6-4a12-11e8-842f-0ed5f89f718b")!
+        )
         XCTAssertEqual(canOpenURL, true)
         XCTAssertEqual(presentationDelegate.shouldPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.shouldPerformActionCalls.first, .connectBot(serviceUser: expectedUserData))
@@ -73,7 +78,10 @@ class SessionManagerURLActionsTests: IntegrationTest {
     func testThatItThrowsAnErrorWhileProcessingAuthenticatedURLAction_WhenLoggedOut() throws {
         // given
         presentationDelegate?.isPerformingActions = false
-        let url = URL(string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b")!
+        let url =
+            URL(
+                string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b"
+            )!
 
         // when then
         XCTAssertThrowsError(try sessionManager?.openURL(url)) { error in
@@ -88,7 +96,10 @@ class SessionManagerURLActionsTests: IntegrationTest {
         presentationDelegate?.isPerformingActions = false
 
         // when
-        let url = URL(string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b")!
+        let url =
+            URL(
+                string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b"
+            )!
         let canOpenURL = try sessionManager?.openURL(url)
         XCTAssertEqual(canOpenURL, true)
 
@@ -121,7 +132,10 @@ class SessionManagerURLActionsTests: IntegrationTest {
         presentationDelegate?.isPerformingActions = false
 
         // when
-        let url = URL(string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b")!
+        let url =
+            URL(
+                string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b"
+            )!
         let canOpenURL = try sessionManager?.openURL(url)
         XCTAssertEqual(canOpenURL, true)
 
@@ -133,8 +147,10 @@ class SessionManagerURLActionsTests: IntegrationTest {
         userSession!.delegate?.userSessionDidUnlock(userSession!)
 
         // then: action should get resumed
-        let expectedUserData = ServiceUserData(provider: UUID(uuidString: "3879b1ec-4a12-11e8-842f-0ed5f89f718b")!,
-                                               service: UUID(uuidString: "2e1863a6-4a12-11e8-842f-0ed5f89f718b")!)
+        let expectedUserData = ServiceUserData(
+            provider: UUID(uuidString: "3879b1ec-4a12-11e8-842f-0ed5f89f718b")!,
+            service: UUID(uuidString: "2e1863a6-4a12-11e8-842f-0ed5f89f718b")!
+        )
         XCTAssertEqual(presentationDelegate.shouldPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.shouldPerformActionCalls.first, .connectBot(serviceUser: expectedUserData))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

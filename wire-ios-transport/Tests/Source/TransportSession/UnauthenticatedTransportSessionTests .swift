@@ -33,7 +33,10 @@ private final class MockURLSession: SessionProtocol {
     var nextCompletionParameters: (Data?, URLResponse?, Error?)?
     var nextMockTask: MockTask?
 
-    func task(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTaskProtocol {
+    func task(
+        with request: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> DataTaskProtocol {
         recordedRequest = request
         recordedCompletionHandler = completionHandler
         if let params = nextCompletionParameters {
@@ -83,13 +86,15 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     private func setupSut(readyForRequests: Bool) {
         sessionMock = MockURLSession()
-        let endpoints = BackendEndpoints(backendURL: url,
-                                         backendWSURL: url,
-                                         blackListURL: url,
-                                         teamsURL: url,
-                                         accountsURL: url,
-                                         websiteURL: url,
-                                         countlyURL: url)
+        let endpoints = BackendEndpoints(
+            backendURL: url,
+            backendWSURL: url,
+            blackListURL: url,
+            teamsURL: url,
+            accountsURL: url,
+            websiteURL: url,
+            countlyURL: url
+        )
         let trust = MockCertificateTrust()
         let environment = BackendEnvironment(
             title: name,
@@ -98,13 +103,15 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
             proxySettings: nil,
             certificateTrust: trust
         )
-        sut = UnauthenticatedTransportSession(environment: environment,
-                                              proxyUsername: nil,
-                                              proxyPassword: nil,
-                                              urlSession: sessionMock,
-                                              reachability: MockReachability(),
-                                              applicationVersion: "1.0",
-                                              readyForRequests: readyForRequests)
+        sut = UnauthenticatedTransportSession(
+            environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            urlSession: sessionMock,
+            reachability: MockReachability(),
+            applicationVersion: "1.0",
+            readyForRequests: readyForRequests
+        )
     }
 
     func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
@@ -174,7 +181,8 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
             XCTAssertEqual(result, .success)
         }
 
-        guard let lastCompletion = sessionMock.recordedCompletionHandler else { return XCTFail("No completion handler") }
+        guard let lastCompletion = sessionMock.recordedCompletionHandler
+        else { return XCTFail("No completion handler") }
 
         // then
         do {

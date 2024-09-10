@@ -38,7 +38,10 @@ extension Int: SwiftPersistableInMetadata {}
 // TODO: Swift 4
 // extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
 extension NSManagedObjectContext {
-    @objc(setPersistentStoreMetadata:forKey:) public func setPersistentStoreMetadata(_ persistable: PersistableInMetadata?, key: String) {
+    @objc(setPersistentStoreMetadata:forKey:) public func setPersistentStoreMetadata(
+        _ persistable: PersistableInMetadata?,
+        key: String
+    ) {
         self.setPersistentStoreMetadata(data: persistable, key: key)
     }
 

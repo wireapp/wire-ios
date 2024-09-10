@@ -232,7 +232,8 @@ final class AudioMessageView: UIView, TransferView {
         if let viewsState = state.viewsStateForAudio() {
             playButton.setIcon(viewsState.playButtonIcon, size: .tiny, for: .normal)
             playButton.setBackgroundImageColor(viewsState.playButtonBackgroundColor, for: .normal)
-            playButton.accessibilityValue = viewsState.playButtonIcon == .play ? AudioMessage.Play.value : AudioMessage.Pause.value
+            playButton.accessibilityValue = viewsState.playButtonIcon == .play ? AudioMessage.Play.value : AudioMessage
+                .Pause.value
         }
 
         updateVisibleViews(allViews, visibleViews: visibleViews, animated: !loadingView.isHidden)
@@ -469,11 +470,13 @@ final class AudioMessageView: UIView, TransferView {
 // MARK: - WireCallCenterCallStateObserver
 
 extension AudioMessageView: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState,
-                             conversation: ZMConversation,
-                             caller: UserType,
-                             timestamp: Date?,
-                             previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         guard let player = audioTrackPlayer else { return }
         guard isOwnTrackPlayingInAudioPlayer() else { return }
 

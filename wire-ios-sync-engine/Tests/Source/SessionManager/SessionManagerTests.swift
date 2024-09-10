@@ -116,7 +116,10 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.count, 1)
         XCTAssertNil(sut.unauthenticatedSession)
         withExtendedLifetime(token) {
-            XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations, observer.createdUserSession)
+            XCTAssertEqual(
+                mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations,
+                observer.createdUserSession
+            )
         }
     }
 
@@ -275,7 +278,10 @@ final class SessionManagerTests: IntegrationTest {
 
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(testSessionManager.backgroundUserSessions.count, 2)
-        XCTAssertEqual(testSessionManager.backgroundUserSessions[account2.userIdentifier], testSessionManager.activeUserSession)
+        XCTAssertEqual(
+            testSessionManager.backgroundUserSessions[account2.userIdentifier],
+            testSessionManager.activeUserSession
+        )
 
         withExtendedLifetime(destroyToken) {
             NotificationCenter.default.post(Notification(name: UIApplication.didReceiveMemoryWarningNotification))
@@ -351,13 +357,14 @@ final class SessionManagerTests: IntegrationTest {
         let logoutExpectation = self.expectation(description: "Authentication after reboot")
 
         mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
-        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { error, userSessionCanBeTornDown in
-            XCTAssertNil(sut.activeUserSession)
-            XCTAssertEqual((error as? NSError)?.userSessionErrorCode, .needsAuthenticationAfterReboot)
+        mockDelegate
+            .sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { error, userSessionCanBeTornDown in
+                XCTAssertNil(sut.activeUserSession)
+                XCTAssertEqual((error as? NSError)?.userSessionErrorCode, .needsAuthenticationAfterReboot)
 
-            userSessionCanBeTornDown?()
-            logoutExpectation.fulfill()
-        }
+                userSessionCanBeTornDown?()
+                logoutExpectation.fulfill()
+            }
 
         // WHEN && THEN
         sut.accountManager.addAndSelect(createAccount())

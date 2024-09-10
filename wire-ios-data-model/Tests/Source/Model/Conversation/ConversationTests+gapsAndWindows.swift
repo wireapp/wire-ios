@@ -28,13 +28,15 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        let conversation = ZMConversation.insertGroupConversation(moc: uiMOC,
-                                                                  participants: [user1, user2, user3],
-                                                                  name: nil,
-                                                                  team: nil,
-                                                                  allowGuests: true,
-                                                                  readReceipts: false,
-                                                                  participantsRole: nil)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2, user3],
+            name: nil,
+            team: nil,
+            allowGuests: true,
+            readReceipts: false,
+            participantsRole: nil
+        )
 
         // then
         let conversations = ZMConversation.conversationsIncludingArchived(in: uiMOC)
@@ -57,7 +59,15 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // when
-        let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [user1, user2, user3], name: nil, team: nil, allowGuests: true, readReceipts: false, participantsRole: nil)
+        let conversation = ZMConversation.insertGroupConversation(
+            moc: uiMOC,
+            participants: [user1, user2, user3],
+            name: nil,
+            team: nil,
+            allowGuests: true,
+            readReceipts: false,
+            participantsRole: nil
+        )
 
         try! uiMOC.save()
 

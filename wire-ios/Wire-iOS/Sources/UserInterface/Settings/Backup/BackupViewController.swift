@@ -124,7 +124,8 @@ extension BackupViewController {
                 completion(password)
             }
         }
-        let navigationController = KeyboardAvoidingViewController(viewController: passwordController).wrapInNavigationController()
+        let navigationController = KeyboardAvoidingViewController(viewController: passwordController)
+            .wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet
         present(navigationController, animated: true)
     }

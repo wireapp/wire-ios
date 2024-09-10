@@ -51,7 +51,10 @@ final class SupportedOrientationsDelegatingSplitViewControllerDelegateTests: XCT
         // Given
         let splitViewController = UISplitViewController(style: .tripleColumn)
         splitViewController.setViewController(ViewController([.portrait, .portraitUpsideDown]), for: .primary)
-        splitViewController.setViewController(ViewController([.landscapeLeft, .portraitUpsideDown]), for: .supplementary)
+        splitViewController.setViewController(
+            ViewController([.landscapeLeft, .portraitUpsideDown]),
+            for: .supplementary
+        )
         splitViewController.setViewController(ViewController([.landscapeRight, .portraitUpsideDown]), for: .secondary)
 
         // When

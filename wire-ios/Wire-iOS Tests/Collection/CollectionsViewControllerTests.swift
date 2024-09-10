@@ -166,7 +166,8 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testImagesSectionWhenExpired() {
         let assetCollection = MockCollection(messages: [
             MockCollection.onlyImagesCategory: [expiredImageMessage],
-            MockCollection.onlyVideosCategory: [videoMessage, expiredVideoMessage]])
+            MockCollection.onlyVideosCategory: [videoMessage, expiredVideoMessage],
+        ])
         let controller = createController(showingCollection: assetCollection)
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
@@ -194,7 +195,8 @@ final class CollectionsViewControllerTests: XCTestCase {
     func testImagesSectionWhenDeleted() {
         let assetCollection = MockCollection(messages: [
             MockCollection.onlyImagesCategory: [deletedImageMessage],
-            MockCollection.onlyVideosCategory: [videoMessage, deletedVideoMessage]])
+            MockCollection.onlyVideosCategory: [videoMessage, deletedVideoMessage],
+        ])
         let controller = createController(showingCollection: assetCollection)
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
@@ -224,7 +226,12 @@ extension CollectionsViewControllerTests {
     func createController(showingCollection assetCollection: MockCollection) -> CollectionsViewController {
         let conversation = MockGroupDetailsConversation()
         let delegate = AssetCollectionMulticastDelegate()
-        let collection = AssetCollectionWrapper(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: [])
+        let collection = AssetCollectionWrapper(
+            conversation: conversation,
+            assetCollection: assetCollection,
+            assetCollectionDelegate: delegate,
+            matchingCategories: []
+        )
 
         let controller = CollectionsViewController(
             collection: collection,
@@ -232,7 +239,11 @@ extension CollectionsViewControllerTests {
             mainCoordinator: .mock
         )
         _ = controller.view
-        delegate.assetCollectionDidFetch(collection: assetCollection, messages: assetCollection.messages, hasMore: false)
+        delegate.assetCollectionDidFetch(
+            collection: assetCollection,
+            messages: assetCollection.messages,
+            hasMore: false
+        )
         delegate.assetCollectionDidFinishFetching(collection: assetCollection, result: .success)
         return controller
     }

@@ -66,7 +66,10 @@ final class Job: NSObject, Loggable {
 
     func execute() async throws -> UNNotificationContent {
         logger.trace("\(self.request.identifier, privacy: .public): executing job...")
-        logger.info("\(self.request.identifier, privacy: .public): request is for user (\(self.userID, privacy: .public)) and event (\(self.eventID, privacy: .public)")
+        logger
+            .info(
+                "\(self.request.identifier, privacy: .public): request is for user (\(self.userID, privacy: .public)) and event (\(self.eventID, privacy: .public)"
+            )
 
         guard isUserAuthenticated else {
             throw NotificationServiceError.userNotAuthenticated
@@ -84,7 +87,10 @@ final class Job: NSObject, Loggable {
             return content
 
         default:
-            logger.trace("\(self.request.identifier, privacy: .public): ignoring event of type: \(String(describing: event.type), privacy: .public)")
+            logger
+                .trace(
+                    "\(self.request.identifier, privacy: .public): ignoring event of type: \(String(describing: event.type), privacy: .public)"
+                )
             return .empty
         }
     }

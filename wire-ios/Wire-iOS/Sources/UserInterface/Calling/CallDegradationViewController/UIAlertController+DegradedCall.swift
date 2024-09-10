@@ -66,7 +66,10 @@ extension UIAlertController {
                 confirmationBlock(false)
             })
 
-            controller.addAction(UIAlertAction(title: DegradedCallLocale.Incoming.Alert.Action.continue, style: .default) { _ in
+            controller.addAction(UIAlertAction(
+                title: DegradedCallLocale.Incoming.Alert.Action.continue,
+                style: .default
+            ) { _ in
                 confirmationBlock(true)
             })
         } else {
@@ -78,7 +81,8 @@ extension UIAlertController {
 
     static func makeOutgoingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
-        cancelBlock: (() -> Void)? = nil) -> UIAlertController {
+        cancelBlock: (() -> Void)? = nil
+    ) -> UIAlertController {
         typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
 
         let title = DegradedCall.title
@@ -107,7 +111,8 @@ extension UIAlertController {
 
     static func makeEndingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
-        cancelBlock: (() -> Void)? = nil) -> UIAlertController {
+        cancelBlock: (() -> Void)? = nil
+    ) -> UIAlertController {
         typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
         typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
 
@@ -141,9 +146,11 @@ extension UIAlertController {
         typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
         typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
 
-        let controller = UIAlertController(title: DegradedCall.title,
-                                           message: IncomingCall.message,
-                                           preferredStyle: .alert)
+        let controller = UIAlertController(
+            title: DegradedCall.title,
+            message: IncomingCall.message,
+            preferredStyle: .alert
+        )
 
         // Add actions
 

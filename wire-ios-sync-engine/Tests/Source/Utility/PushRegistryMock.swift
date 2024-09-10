@@ -60,9 +60,14 @@ final class PushRegistryMock: PKPushRegistry {
     var mockPushToken: Data?
 
     func mockIncomingPushPayload(_ payload: [AnyHashable: Any], completion: (() -> Void)? = nil) {
-        delegate?.pushRegistry!(self, didReceiveIncomingPushWith: PushPayloadMock(dictionaryPayload: payload), for: .voIP, completion: {
-            completion?()
-        })
+        delegate?.pushRegistry!(
+            self,
+            didReceiveIncomingPushWith: PushPayloadMock(dictionaryPayload: payload),
+            for: .voIP,
+            completion: {
+                completion?()
+            }
+        )
     }
 
     func invalidatePushToken() {

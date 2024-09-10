@@ -77,9 +77,19 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
 
     public func addObserver(_ observer: ConversationDirectoryObserver) -> Any {
         let observerProxy = ConversationListObserverProxy(observer: observer, directory: self)
-        let listToken = ConversationListChangeInfo.addListObserver(observerProxy, for: nil, managedObjectContext: managedObjectContext)
-        let reloadToken = ConversationListChangeInfo.addReloadObserver(observerProxy, managedObjectContext: managedObjectContext)
-        let folderToken = ConversationListChangeInfo.addFolderObserver(observerProxy, managedObjectContext: managedObjectContext)
+        let listToken = ConversationListChangeInfo.addListObserver(
+            observerProxy,
+            for: nil,
+            managedObjectContext: managedObjectContext
+        )
+        let reloadToken = ConversationListChangeInfo.addReloadObserver(
+            observerProxy,
+            managedObjectContext: managedObjectContext
+        )
+        let folderToken = ConversationListChangeInfo.addFolderObserver(
+            observerProxy,
+            managedObjectContext: managedObjectContext
+        )
 
         return [folderToken, listToken, reloadToken, observerProxy]
     }
@@ -87,14 +97,20 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
     @objc
     public func createFolder(_ name: String) -> LabelType? {
         var created = false
-        let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: managedObjectContext, created: &created)
+        let label = Label.fetchOrCreate(
+            remoteIdentifier: UUID(),
+            create: true,
+            in: managedObjectContext,
+            created: &created
+        )
         label?.name = name
         label?.kind = .folder
         return label
     }
 }
 
-private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver {
+private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver,
+    ZMConversationListFolderObserver {
     weak var observer: ConversationDirectoryObserver?
     var directory: ZMConversationListDirectory
 
@@ -104,11 +120,19 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
     }
 
     func conversationListsDidReload() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
+            reloaded: true,
+            updatedLists: [],
+            updatedFolders: false
+        ))
     }
 
     func conversationListsDidChangeFolders() {
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
+            reloaded: false,
+            updatedLists: [],
+            updatedFolders: true
+        ))
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -130,6 +154,10 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
             []
         }
 
-        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(
+            reloaded: false,
+            updatedLists: updatedLists,
+            updatedFolders: false
+        ))
     }
 }

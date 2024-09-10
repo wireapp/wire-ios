@@ -28,8 +28,10 @@ extension Analytics {
         tagEvent(conversationMediaCompleteActionEventName, attributes: attributes)
     }
 
-    func tagMediaActionCompleted(_ action: ConversationMediaAction,
-                                 inConversation conversation: ZMConversation) {
+    func tagMediaActionCompleted(
+        _ action: ConversationMediaAction,
+        inConversation conversation: ZMConversation
+    ) {
         var attributes = conversation.ephemeralTrackingAttributes
         attributes["message_action"] = action.attributeValue
         attributes.merge(conversation.attributesForConversation) { _, new in new }

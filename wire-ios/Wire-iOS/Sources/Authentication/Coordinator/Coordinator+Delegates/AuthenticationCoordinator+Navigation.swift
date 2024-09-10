@@ -32,7 +32,11 @@ extension AuthenticationCoordinator: UINavigationControllerDelegate {
      * the view controller passed by the navigation controller is not equal to the `currentViewController`.
      */
 
-    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated: Bool
+    ) {
         defer {
             detectSSOCodeIfPossible()
         }

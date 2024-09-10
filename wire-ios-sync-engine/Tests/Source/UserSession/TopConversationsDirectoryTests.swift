@@ -136,7 +136,11 @@ class TopConversationsDirectoryTests: MessagingTest {
     }
 
     func testThatItUpdatesTheConversationsWhenRefreshIsCalledSubsequently() {
-        var changesMerger: ManagedObjectContextChangesMerger! = ManagedObjectContextChangesMerger(managedObjectContexts: Set([uiMOC, syncMOC]))
+        var changesMerger: ManagedObjectContextChangesMerger! =
+            ManagedObjectContextChangesMerger(managedObjectContexts: Set([
+                uiMOC,
+                syncMOC,
+            ]))
         // To silence warning that changesMerger is not read anywhere
         _ = changesMerger
 
@@ -349,7 +353,12 @@ extension TopConversationsDirectoryTests {
         fill(conversation, with: (messageCount, 0), file: file, line: line)
     }
 
-    func fill(_ conversation: ZMConversation, with messageCount: (new: Int, old: Int), file: StaticString = #file, line: UInt = #line) {
+    func fill(
+        _ conversation: ZMConversation,
+        with messageCount: (new: Int, old: Int),
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         guard messageCount.new > 0 || messageCount.old > 0 else { return }
         for item in 0 ..< messageCount.new {
             try! conversation.appendText(content: "Message #\(item)")

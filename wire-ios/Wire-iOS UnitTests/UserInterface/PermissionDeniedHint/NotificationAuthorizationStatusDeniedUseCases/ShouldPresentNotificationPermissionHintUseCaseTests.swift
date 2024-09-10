@@ -74,7 +74,10 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
         userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
-        userDefaults.setValue(mockDateProvider.now.addingTimeInterval(-3600), for: .lastTimeNotificationPermissionHintWasShown)
+        userDefaults.setValue(
+            mockDateProvider.now.addingTimeInterval(-3600),
+            for: .lastTimeNotificationPermissionHintWasShown
+        )
 
         // When
         let shouldPresentHint = await sut.invoke()
@@ -108,9 +111,15 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
     }
 
     func testDecoding() throws {
-        XCTAssertEqual(try UNNotificationSettings.with(authorizationStatus: .authorized).authorizationStatus, .authorized)
+        XCTAssertEqual(
+            try UNNotificationSettings.with(authorizationStatus: .authorized).authorizationStatus,
+            .authorized
+        )
         XCTAssertEqual(try UNNotificationSettings.with(authorizationStatus: .denied).authorizationStatus, .denied)
-        XCTAssertEqual(try UNNotificationSettings.with(authorizationStatus: .notDetermined).authorizationStatus, .notDetermined)
+        XCTAssertEqual(
+            try UNNotificationSettings.with(authorizationStatus: .notDetermined).authorizationStatus,
+            .notDetermined
+        )
     }
 }
 

@@ -21,7 +21,10 @@ import WireUtilities
 
 extension String {
     fileprivate static let UUIDMatcher: NSRegularExpression = {
-        let regex = try! NSRegularExpression(pattern: "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}", options: .caseInsensitive)
+        let regex = try! NSRegularExpression(
+            pattern: "[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}",
+            options: .caseInsensitive
+        )
         return regex
     }()
 

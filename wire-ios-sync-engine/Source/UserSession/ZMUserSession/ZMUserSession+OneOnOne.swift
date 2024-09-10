@@ -57,7 +57,8 @@ extension ZMUserSession {
                 )
 
                 try await self.viewContext.perform {
-                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation else {
+                    guard let conversation = try? self.viewContext.existingObject(with: objectID) as? ZMConversation
+                    else {
                         throw CreateTeamOneOnOneConversationError.conversationNotFound
                     }
 

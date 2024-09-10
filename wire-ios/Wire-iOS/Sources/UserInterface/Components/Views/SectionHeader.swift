@@ -21,8 +21,10 @@ import WireCommonComponents
 import WireDesign
 
 final class SectionHeaderView: UIView {
-    let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
-                                      color: SemanticColors.Label.textSectionHeader)
+    let titleLabel = DynamicFontLabel(
+        fontSpec: .smallSemiboldFont,
+        color: SemanticColors.Label.textSectionHeader
+    )
 
     override init(frame: CGRect) {
         super.init(frame: frame)

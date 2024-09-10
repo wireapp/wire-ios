@@ -284,9 +284,16 @@ public final class Canvas: UIView {
 
         if let referenceObject {
             let drawBounds = self.bounds.intersection(self.drawBounds)
-            let renderScale = 1 / referenceObject.scale // We want to match resolution of the image we are drawing upon on
-            let renderSize = drawBounds.size.applying(CGAffineTransform(scaleX: renderScale * scaleFactor, y: renderScale * scaleFactor))
-            let renderBounds = CGRect(origin: CGPoint.zero, size: renderSize).integral.applying(CGAffineTransform(scaleX: 1 / scaleFactor, y: 1 / scaleFactor))
+            let renderScale = 1 / referenceObject
+                .scale // We want to match resolution of the image we are drawing upon on
+            let renderSize = drawBounds.size.applying(CGAffineTransform(
+                scaleX: renderScale * scaleFactor,
+                y: renderScale * scaleFactor
+            ))
+            let renderBounds = CGRect(origin: CGPoint.zero, size: renderSize).integral.applying(CGAffineTransform(
+                scaleX: 1 / scaleFactor,
+                y: 1 / scaleFactor
+            ))
 
             UIGraphicsBeginImageContextWithOptions(renderBounds.size, true, scaleFactor)
 
@@ -385,7 +392,10 @@ extension Canvas: UIGestureRecognizerDelegate {
         gestureRecognizers?.forEach { $0.isEnabled = mode == .edit }
     }
 
-    @objc public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    @objc public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         true
     }
 
@@ -405,7 +415,10 @@ extension Canvas: UIGestureRecognizerDelegate {
         case .changed:
             guard let selection else { break }
             let translation = gestureRecognizer.translation(in: self)
-            selection.position = CGPoint(x: initialOrienation.position.x + translation.x, y: initialOrienation.position.y + translation.y)
+            selection.position = CGPoint(
+                x: initialOrienation.position.x + translation.x,
+                y: initialOrienation.position.y + translation.y
+            )
         default:
             break
         }

@@ -40,7 +40,10 @@ final class SearchServicesSectionController: SearchSectionController {
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
-        collectionView?.register(OpenServicesAdminCell.self, forCellWithReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier)
+        collectionView?.register(
+            OpenServicesAdminCell.self,
+            forCellWithReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier
+        )
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -63,17 +66,30 @@ final class SearchServicesSectionController: SearchSectionController {
         }
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         CGSize.zero
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         if canSelfUserManageTeam, indexPath.row == 0 {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier, for: indexPath)
+            return collectionView.dequeueReusableCell(
+                withReuseIdentifier: OpenServicesAdminCell.zm_reuseIdentifier,
+                for: indexPath
+            )
         } else {
             let service = self.service(for: indexPath)
 
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: UserCell.zm_reuseIdentifier,
+                for: indexPath
+            ) as! UserCell
             if let selfUser = ZMUser.selfUser() {
                 cell.configure(
                     user: service,

@@ -45,7 +45,12 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
     ]
 
-    func checkThatItNotifiesTheObserverOfAChange(_ userClient: UserClient, modifier: (UserClient) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ userClient: UserClient,
+        modifier: (UserClient) -> Void,
+        expectedChangedFields: Set<String>,
+        customAffectedKeys: AffectedKeys? = nil
+    ) {
         // given
         self.uiMOC.saveOrRollback()
 
@@ -67,8 +72,10 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
             XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
 
             guard let changes = clientObserver.receivedChangeInfo.first else { return }
-            changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
-                                                 expectedChangedFields: expectedChangedFields)
+            changes.checkForExpectedChangeFields(
+                userInfoKeys: userInfoKeys,
+                expectedChangedFields: expectedChangedFields
+            )
         }
     }
 
@@ -79,9 +86,13 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { otherClient.trustClient($0) },
-                                                     expectedChangedFields: [UserClientChangeInfoKey.TrustedByClientsChanged.rawValue]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            client,
+            modifier: { otherClient.trustClient($0) },
+            expectedChangedFields: [
+                UserClientChangeInfoKey
+                    .TrustedByClientsChanged.rawValue,
+            ]
         )
 
         XCTAssertTrue(client.trustedByClients.contains(otherClient))

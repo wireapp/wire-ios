@@ -57,7 +57,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheEphemeralMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let message = GenericMessage(content: Text(content: "Ephemeral Message"), nonce: UUID(), expiresAfterTimeInterval: 100)
+            let message = GenericMessage(
+                content: Text(content: "Ephemeral Message"),
+                nonce: UUID(),
+                expiresAfterTimeInterval: 100
+            )
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
             // when
@@ -85,7 +89,10 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheAudioMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let audioMetadata = ZMAudioMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), duration: 100)
+            let audioMetadata = ZMAudioMetadata(
+                fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+                duration: 100
+            )
             let message = GenericMessage(content: WireProtos.Asset(audioMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
@@ -100,7 +107,10 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheVideoMessage() {
         // given
         syncMOC.performGroupedAndWait {
-            let videoMetadata = ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())
+            let videoMetadata = ZMVideoMetadata(
+                fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+                thumbnail: self.verySmallJPEGData()
+            )
             let message = GenericMessage(content: WireProtos.Asset(videoMetadata))
             let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
@@ -130,7 +140,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMemberJoinEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMemberJoinUpdateEvent(UUID.create(), conversationID: UUID.create(), users: [self.selfUser])
+            let event = self.createMemberJoinUpdateEvent(
+                UUID.create(),
+                conversationID: UUID.create(),
+                users: [self.selfUser]
+            )
 
             // when
             let contentType = Sut(event: event, conversation: self.groupConversation, in: self.syncMOC)
@@ -143,7 +157,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     func testThatItCreatesASystemMessageNotificationContentTypeForTheMemberLeaveEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMemberLeaveUpdateEvent(UUID.create(), conversationID: UUID.create(), users: [self.selfUser])
+            let event = self.createMemberLeaveUpdateEvent(
+                UUID.create(),
+                conversationID: UUID.create(),
+                users: [self.selfUser]
+            )
 
             // when
             let contentType = Sut(event: event, conversation: self.groupConversation, in: self.syncMOC)

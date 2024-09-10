@@ -291,7 +291,11 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
 
     typealias MemberJoinPayload = Payload.ConversationEvent<Payload.UpdateConverationMemberJoin>
 
-    func fetchOrCreateConversation(id: UUID?, qualifiedID: QualifiedID?, in context: NSManagedObjectContext) -> ZMConversation? {
+    func fetchOrCreateConversation(
+        id: UUID?,
+        qualifiedID: QualifiedID?,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
     }

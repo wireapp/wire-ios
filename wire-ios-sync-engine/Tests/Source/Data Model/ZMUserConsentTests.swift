@@ -53,7 +53,11 @@ final class ZMUserConsentTests: DatabaseTest {
 
     func testSetRequest_true() {
         // given
-        let request = WireSyncEngine.ConsentRequestFactory.setConsentRequest(for: .marketing, value: true, apiVersion: .v0)
+        let request = WireSyncEngine.ConsentRequestFactory.setConsentRequest(
+            for: .marketing,
+            value: true,
+            apiVersion: .v0
+        )
         // then
         XCTAssertEqual(request.method, .put)
         XCTAssertEqual(request.path, "/self/consent")
@@ -63,7 +67,11 @@ final class ZMUserConsentTests: DatabaseTest {
 
     func testSetRequest_false() {
         // given
-        let request = WireSyncEngine.ConsentRequestFactory.setConsentRequest(for: .marketing, value: false, apiVersion: .v0)
+        let request = WireSyncEngine.ConsentRequestFactory.setConsentRequest(
+            for: .marketing,
+            value: false,
+            apiVersion: .v0
+        )
         // then
         XCTAssertEqual(request.method, .put)
         XCTAssertEqual(request.path, "/self/consent")
@@ -75,13 +83,15 @@ final class ZMUserConsentTests: DatabaseTest {
         typealias PayloadPair = ([String: Any], Bool)
 
         let pairs: [PayloadPair] =
-            [(["results": [["type": "yobobo", "value": 1]]], false),
-             (["results": [["type": 2, "value": 1]]], true),
-             (["results": [["type": 2, "value": 0]]], false),
-             (["results": [["type": 1, "value": 1]]], false),
-             (["results": [["type": 1000, "value": 0], ["type": 2, "value": 1]]], true),
-             (["results": []], false),
-             ([:], false)]
+            [
+                (["results": [["type": "yobobo", "value": 1]]], false),
+                (["results": [["type": 2, "value": 1]]], true),
+                (["results": [["type": 2, "value": 0]]], false),
+                (["results": [["type": 1, "value": 1]]], false),
+                (["results": [["type": 1000, "value": 0], ["type": 2, "value": 1]]], true),
+                (["results": []], false),
+                ([:], false),
+            ]
 
         for pair in pairs {
             let payload = ZMUser.parse(consentPayload: pair.0 as ZMTransportData)
@@ -96,7 +106,12 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/self/consent" else { return nil }
 
-            return ZMTransportResponse(payload: ["results": [["type": 2, "value": 1]]] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: ["results": [["type": 2, "value": 1]]] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         let fetchedData = customExpectation(description: "fetched data")
@@ -122,7 +137,12 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/self/consent" else { return nil }
 
-            return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: ["label": "invalid-op"] as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         let receivedError = customExpectation(description: "received error")
@@ -148,7 +168,12 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/self/consent" else { return nil }
 
-            return ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: [] as ZMTransportData,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         let receivedError = customExpectation(description: "received error")
@@ -156,7 +181,10 @@ final class ZMUserConsentTests: DatabaseTest {
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
             switch result {
             case let .failure(error):
-                XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.notAvailable)
+                XCTAssertEqual(
+                    error as! WireSyncEngine.ConsentRequestError,
+                    WireSyncEngine.ConsentRequestError.notAvailable
+                )
                 receivedError.fulfill()
             case .success:
                 XCTFail()
@@ -173,7 +201,12 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/self/consent" else { return nil }
 
-            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         let successExpectation = customExpectation(description: "set is successful")
@@ -198,7 +231,12 @@ final class ZMUserConsentTests: DatabaseTest {
         mockTransportSession.responseGeneratorBlock = { request in
             guard request.path == "/self/consent" else { return nil }
 
-            return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: ["label": "invalid-op"] as ZMTransportData,
+                httpStatus: 403,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         let receivedError = customExpectation(description: "received error")

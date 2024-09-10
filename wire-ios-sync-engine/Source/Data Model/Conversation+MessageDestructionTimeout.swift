@@ -62,7 +62,11 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let request = MessageDestructionTimeoutRequestFactory.set(timeout: Int(timeout.rawValue), for: self, apiVersion: apiVersion)
+        let request = MessageDestructionTimeoutRequestFactory.set(
+            timeout: Int(timeout.rawValue),
+            for: self,
+            apiVersion: apiVersion
+        )
         request.add(ZMCompletionHandler(on: managedObjectContext) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 userSession.processConversationEvents([event]) {
@@ -83,7 +87,8 @@ extension ZMConversation {
 
 private enum MessageDestructionTimeoutRequestFactory {
     static func set(timeout: Int, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
-        guard let identifier = conversation.remoteIdentifier?.transportString() else { fatal("conversation inserted on backend") }
+        guard let identifier = conversation.remoteIdentifier?.transportString()
+        else { fatal("conversation inserted on backend") }
 
         let payload: [AnyHashable: Any?]
         if timeout == 0 {
@@ -93,6 +98,11 @@ private enum MessageDestructionTimeoutRequestFactory {
             let timeoutInMS = Int64(timeout) * 1000
             payload = ["message_timer": timeoutInMS]
         }
-        return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return .init(
+            path: "/conversations/\(identifier)/message-timer",
+            method: .put,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 }

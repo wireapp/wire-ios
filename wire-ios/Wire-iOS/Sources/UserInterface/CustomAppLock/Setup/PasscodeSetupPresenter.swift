@@ -23,10 +23,12 @@ final class PasscodeSetupPresenter {
     private var interactorInput: PasscodeSetupInteractorInput
 
     private var passcodeValidationResult: PasswordValidationResult?
-    private let passcodeCharacterClasses: [PasswordCharacterClass] = [.uppercase,
-                                                                      .lowercase,
-                                                                      .special,
-                                                                      .digits]
+    private let passcodeCharacterClasses: [PasswordCharacterClass] = [
+        .uppercase,
+        .lowercase,
+        .special,
+        .digits,
+    ]
 
     var isPasscodeValid: Bool {
         switch passcodeValidationResult {
@@ -43,8 +45,10 @@ final class PasscodeSetupPresenter {
         interactor.interactorOutput = self
     }
 
-    init(userInterface: PasscodeSetupUserInterface,
-         interactorInput: PasscodeSetupInteractorInput) {
+    init(
+        userInterface: PasscodeSetupUserInterface,
+        interactorInput: PasscodeSetupInteractorInput
+    ) {
         self.userInterface = userInterface
         self.interactorInput = interactorInput
     }

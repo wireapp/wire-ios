@@ -39,7 +39,12 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                     ],
                 ],
             ]
-            return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: payload,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         // WHEN
@@ -60,7 +65,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         var messagesReceived = 0
         for request in mockTransportSession.receivedRequests() {
             guard request.path.hasPrefix(expectedPath), let data = request.binaryData else { continue }
-            guard let otrMessage = try? Proteus_NewOtrMessage(serializedData: data) else { return XCTFail("otrMessage was nil") }
+            guard let otrMessage = try? Proteus_NewOtrMessage(serializedData: data)
+            else { return XCTFail("otrMessage was nil") }
 
             let userEntries = otrMessage.recipients
             let clientEntry = userEntries.first?.clients.first
@@ -92,14 +98,22 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                     ],
                 ],
             ]
-            return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: payload,
+                httpStatus: 201,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         // WHEN
         mockTransportSession.resetReceivedRequests()
         performIgnoringZMLogError {
             self.userSession?.perform {
-                message = try! conv?.appendImage(from: self.verySmallJPEGData(), nonce: NSUUID.create()) as? ZMAssetClientMessage
+                message = try! conv?.appendImage(
+                    from: self.verySmallJPEGData(),
+                    nonce: NSUUID.create()
+                ) as? ZMAssetClientMessage
             }
             _ = self.waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         }
@@ -195,13 +209,23 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         let conversation = self.conversation(for: selfToUser1Conversation)
 
         userSession?.perform {
-            message = try! conversation?.appendText(content: "Bonsoir, je voudrais un croissant", mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
+            message = try! conversation?.appendText(
+                content: "Bonsoir, je voudrais un croissant",
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: .create()
+            ) as? ZMClientMessage
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // WHEN
         userSession?.perform {
-            message = try! conversation?.appendText(content: messageText, mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
+            message = try! conversation?.appendText(
+                content: messageText,
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: .create()
+            ) as? ZMClientMessage
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -228,7 +252,12 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         // WHEN
         userSession?.perform {
-            message = try! conversation?.appendText(content: messageText, mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
+            message = try! conversation?.appendText(
+                content: messageText,
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: .create()
+            ) as? ZMClientMessage
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -259,7 +288,12 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         // fail to send
         userSession?.perform {
-            message = try! conversation?.appendText(content: "Where's everyone", mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
+            message = try! conversation?.appendText(
+                content: "Where's everyone",
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: .create()
+            ) as? ZMClientMessage
         }
 
         wait(forConditionToBeTrue: message?.isExpired ?? false, timeout: 5)
@@ -334,7 +368,9 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertEqual(msg?.underlyingMessage?.text.content, expectedText)
     }
 
-    func testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(_ format: ZMImageFormat) throws {
+    func testThatItSendsANotificationWhenReceivingAnOtrAssetMessageThroughThePushChannel(
+        _ format: ZMImageFormat
+    ) throws {
         // GIVEN
         XCTAssertTrue(login())
 
@@ -407,7 +443,12 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         // WHEN
         userSession?.perform {
-            message = try! conversation?.appendText(content: text, mentions: [], fetchLinkPreview: true, nonce: .create()) as? ZMClientMessage
+            message = try! conversation?.appendText(
+                content: text,
+                mentions: [],
+                fetchLinkPreview: true,
+                nonce: .create()
+            ) as? ZMClientMessage
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -429,7 +470,11 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         var encryptedImageData = Data()
         let imagedata = verySmallJPEGData()
-        let genericMessage = try otrAssetGenericMessage(format: .medium, imageData: imagedata, encryptedData: &encryptedImageData)
+        let genericMessage = try otrAssetGenericMessage(
+            format: .medium,
+            imageData: imagedata,
+            encryptedData: &encryptedImageData
+        )
         let assetId = UUID.create()
 
         mockTransportSession.performRemoteChanges { session in
@@ -440,8 +485,20 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 return XCTFail()
             }
             let messageData = MockUserClient.encrypted(data: data, from: senderClient, to: selfClient)
-            self.groupConversation.insertOTRAsset(from: senderClient, to: selfClient, metaData: messageData, imageData: encryptedImageData, assetId: assetId, isInline: false)
-            session.createAsset(with: encryptedImageData, identifier: assetId.transportString(), contentType: "", forConversation: self.groupConversation.identifier)
+            self.groupConversation.insertOTRAsset(
+                from: senderClient,
+                to: selfClient,
+                metaData: messageData,
+                imageData: encryptedImageData,
+                assetId: assetId,
+                isInline: false
+            )
+            session.createAsset(
+                with: encryptedImageData,
+                identifier: assetId.transportString(),
+                contentType: "",
+                forConversation: self.groupConversation.identifier
+            )
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -508,7 +565,11 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                 return XCTFail()
             }
             let messageData = MockUserClient.encrypted(data: data, from: mockUser5Client, to: mockSelfClient)
-            self.groupConversationWithOnlyConnected.insertOTRMessage(from: mockUser5Client, to: mockSelfClient, data: messageData)
+            self.groupConversationWithOnlyConnected.insertOTRMessage(
+                from: mockUser5Client,
+                to: mockSelfClient,
+                data: messageData
+            )
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -558,7 +619,10 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         // THEN
         let lastMessage = conversation?.lastMessages(limit: 10)[1] as? ZMSystemMessage
         XCTAssertEqual(conversation?.securityLevel, ZMConversationSecurityLevel.secureWithIgnored)
-        XCTAssertEqual(conversation?.allMessages.count, 3) // 2x system message (secured & new client) + appended client message
+        XCTAssertEqual(
+            conversation?.allMessages.count,
+            3
+        ) // 2x system message (secured & new client) + appended client message
         XCTAssertEqual(lastMessage?.systemMessageData?.systemMessageType, ZMSystemMessageType.newClient)
     }
 
@@ -566,7 +630,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         shouldInsert: Bool,
         shouldChangeSecurityLevel: Bool,
         initialSecurityLevel: ZMConversationSecurityLevel,
-        expectedSecurityLevel: ZMConversationSecurityLevel) {
+        expectedSecurityLevel: ZMConversationSecurityLevel
+    ) {
         // GIVEN
         let expectedText = "The sky above the port was the color of "
         let message = GenericMessage(content: Text(content: expectedText), nonce: .create())
@@ -611,7 +676,13 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             let expectedUsers = [user(for: user1)]
             let users = Array(lastSystemMessage.users)
 
-            assertArray(users, hasSameElementsAs: expectedUsers as [Any], name1: "users", name2: "expectedUsers", failureRecorder: ZMTFailureRecorder())
+            assertArray(
+                users,
+                hasSameElementsAs: expectedUsers as [Any],
+                name1: "users",
+                name2: "expectedUsers",
+                failureRecorder: ZMTFailureRecorder()
+            )
             XCTAssertEqual(lastSystemMessage.systemMessageType, ZMSystemMessageType.newClient)
         } else {
             XCTAssertEqual(messageAddedCount, 1) // only the added client message
@@ -623,7 +694,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             shouldInsert: true,
             shouldChangeSecurityLevel: true,
             initialSecurityLevel: .secure,
-            expectedSecurityLevel: .secureWithIgnored)
+            expectedSecurityLevel: .secureWithIgnored
+        )
     }
 
     func testThatItInsertsNewClientSystemMessageWhenReceivingMessageFromNewClientInPartialSecureConversation() {
@@ -631,7 +703,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             shouldInsert: false,
             shouldChangeSecurityLevel: false,
             initialSecurityLevel: .secureWithIgnored,
-            expectedSecurityLevel: .secureWithIgnored)
+            expectedSecurityLevel: .secureWithIgnored
+        )
     }
 
     func testThatItDoesNotInsertNewClientSystemMessageWhenReceivingMessageFromNewClientInNotSecuredConversation() {
@@ -639,7 +712,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             shouldInsert: false,
             shouldChangeSecurityLevel: false,
             initialSecurityLevel: .notSecure,
-            expectedSecurityLevel: .notSecure)
+            expectedSecurityLevel: .notSecure
+        )
     }
 
     // MARK: - Unable to decrypt message
@@ -663,7 +737,11 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         mockTransportSession.performRemoteChanges { _ in
             firstMessageData = MockUserClient.encrypted(data: data, from: mockUser1Client, to: mockSelfClient)
-            self.selfToUser1Conversation.insertOTRMessage(from: mockUser1Client, to: mockSelfClient, data: firstMessageData)
+            self.selfToUser1Conversation.insertOTRMessage(
+                from: mockUser1Client,
+                to: mockSelfClient,
+                data: firstMessageData
+            )
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -680,7 +758,11 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         performIgnoringZMLogError {
             // and when resending the same data (CBox should return DUPLICATED error)
             self.mockTransportSession.performRemoteChanges { _ in
-                self.selfToUser1Conversation.insertOTRMessage(from: mockUser1Client, to: mockSelfClient, data: firstMessageData)
+                self.selfToUser1Conversation.insertOTRMessage(
+                    from: mockUser1Client,
+                    to: mockSelfClient,
+                    data: firstMessageData
+                )
             }
             _ = self.waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         }
@@ -746,10 +828,17 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
     }
 
     @discardableResult
-    func remotelyInsertOTRImage(into conversation: MockConversation, imageFormat format: ZMImageFormat) throws -> GenericMessage {
+    func remotelyInsertOTRImage(
+        into conversation: MockConversation,
+        imageFormat format: ZMImageFormat
+    ) throws -> GenericMessage {
         var encryptedImageData = Data()
         let imageData = self.verySmallJPEGData()
-        let message = try otrAssetGenericMessage(format: format, imageData: imageData, encryptedData: &encryptedImageData)
+        let message = try otrAssetGenericMessage(
+            format: format,
+            imageData: imageData,
+            encryptedData: &encryptedImageData
+        )
 
         mockTransportSession.performRemoteChanges { session in
             guard
@@ -760,16 +849,36 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
             }
             let messageData = MockUserClient.encrypted(data: data, from: senderClient, to: selfClient)
             let assetId = UUID.create()
-            session.createAsset(with: encryptedImageData, identifier: assetId.transportString(), contentType: "", forConversation: conversation.identifier)
-            conversation.insertOTRAsset(from: senderClient, to: selfClient, metaData: messageData, imageData: encryptedImageData, assetId: assetId, isInline: format == .preview)
+            session.createAsset(
+                with: encryptedImageData,
+                identifier: assetId.transportString(),
+                contentType: "",
+                forConversation: conversation.identifier
+            )
+            conversation.insertOTRAsset(
+                from: senderClient,
+                to: selfClient,
+                metaData: messageData,
+                imageData: encryptedImageData,
+                assetId: assetId,
+                isInline: format == .preview
+            )
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         return message
     }
 
-    func otrAssetGenericMessage(format: ZMImageFormat, imageData: Data, encryptedData: inout Data) throws -> GenericMessage {
-        let properties = ZMIImageProperties(size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), length: UInt(imageData.count), mimeType: "image/jpeg")
+    func otrAssetGenericMessage(
+        format: ZMImageFormat,
+        imageData: Data,
+        encryptedData: inout Data
+    ) throws -> GenericMessage {
+        let properties = ZMIImageProperties(
+            size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData),
+            length: UInt(imageData.count),
+            mimeType: "image/jpeg"
+        )
 
         let otrKey = Data.randomEncryptionKey()
         encryptedData = try imageData.zmEncryptPrefixingPlainTextIV(key: otrKey)
@@ -777,7 +886,12 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         let sha = encryptedData.zmSHA256Digest()
 
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, sha256: sha)
-        let imageAsset = ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: format)
+        let imageAsset = ImageAsset(
+            mediumProperties: properties,
+            processedProperties: properties,
+            encryptionKeys: keys,
+            format: format
+        )
         let message = GenericMessage(content: imageAsset, nonce: .create())
         return message
     }

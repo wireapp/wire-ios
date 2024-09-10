@@ -28,7 +28,8 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
     /// - networkStatusViewController: caller of this delegate method
     /// - Parameter orientation: orientation to check
     /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain orientation.
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool
+    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation)
+        -> Bool
 }
 
 final class NetworkStatusViewController: UIViewController {
@@ -67,7 +68,12 @@ final class NetworkStatusViewController: UIViewController {
         self.application = UIApplication.shared
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(updateStateForIPad), name: UIDevice.orientationDidChangeNotification, object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateStateForIPad),
+            name: UIDevice.orientationDidChangeNotification,
+            object: .none
+        )
 
         view.addSubview(networkStatusView)
 
@@ -108,7 +114,10 @@ final class NetworkStatusViewController: UIViewController {
             )
         }
 
-        networkStatusView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tappedOnNetworkStatusBar)))
+        networkStatusView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(tappedOnNetworkStatusBar)
+        ))
 
         setupApplicationNotifications()
     }

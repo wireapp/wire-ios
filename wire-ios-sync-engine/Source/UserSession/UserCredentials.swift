@@ -89,7 +89,11 @@ public class UserEmailCredentials: UserCredentials {
     }
 
     @objc(credentialsWithEmail:password:emailVerificationCode:)
-    public static func credentials(email: String, password: String, emailVerificationCode: String?) -> UserEmailCredentials {
+    public static func credentials(
+        email: String,
+        password: String,
+        emailVerificationCode: String?
+    ) -> UserEmailCredentials {
         UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
     }
 }

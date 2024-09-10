@@ -28,7 +28,10 @@ extension ZMUserSession {
                 do {
                     try await self?.proteusToMLSMigrationCoordinator.updateMigrationStatus()
                 } catch {
-                    WireLogger.mls.error("proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))")
+                    WireLogger.mls
+                        .error(
+                            "proteusToMLSMigrationCoordinator.updateMigrationStatus() threw error: \(String(reflecting: error))"
+                        )
                 }
             }
         }
@@ -39,7 +42,8 @@ extension ZMUserSession {
             // TODO: [WPB-6737] check why do we refreshData on main and block main thread here?
             guard let context = self?.managedObjectContext else { return }
             context.performGroupedAndWait {
-                let fetchRequest = ZMUser.sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
+                let fetchRequest = ZMUser
+                    .sortedFetchRequest(with: ZMUser.predicateForUsersArePendingToRefreshMetadata())
                 guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
                     return
                 }

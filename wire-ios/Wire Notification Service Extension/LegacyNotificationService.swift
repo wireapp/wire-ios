@@ -88,7 +88,8 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         do {
             session = try createSession(accountID: accountID)
         } catch {
-            WireLogger.notifications.error("failed to process process request: could not create session: \(error.localizedDescription)")
+            WireLogger.notifications
+                .error("failed to process process request: could not create session: \(error.localizedDescription)")
             return finishWithoutShowingNotification()
         }
 

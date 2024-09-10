@@ -60,12 +60,17 @@ extension MockUserType: SelfLegalHoldSubject {
     }
 
     func requestLegalHold() {
-        let keyData = Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!
+        let keyData =
+            Data(
+                base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g=="
+            )!
         let prekey = LegalHoldRequest.Prekey(id: 65535, key: keyData)
 
-        legalHoldDataSource.legalHoldRequest = LegalHoldRequest(target: UUID(),
-                                                                requester: UUID(),
-                                                                clientIdentifier: "eca3c87cfe28be49",
-                                                                lastPrekey: prekey)
+        legalHoldDataSource.legalHoldRequest = LegalHoldRequest(
+            target: UUID(),
+            requester: UUID(),
+            clientIdentifier: "eca3c87cfe28be49",
+            lastPrekey: prekey
+        )
     }
 }

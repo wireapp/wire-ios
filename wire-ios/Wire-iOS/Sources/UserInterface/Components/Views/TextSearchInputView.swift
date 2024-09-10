@@ -31,8 +31,10 @@ final class TextSearchInputView: UIView {
 
     let iconView = UIImageView()
     let searchInput = SearchTextView(style: .default)
-    let placeholderLabel = DynamicFontLabel(fontSpec: .body,
-                                            color: SearchBarColors.textInputViewPlaceholder)
+    let placeholderLabel = DynamicFontLabel(
+        fontSpec: .body,
+        color: SearchBarColors.textInputViewPlaceholder
+    )
     let clearButton = IconButton(style: .default)
 
     private let spinner = ProgressSpinner()
@@ -76,7 +78,11 @@ final class TextSearchInputView: UIView {
         placeholderLabel.isAccessibilityElement = false
 
         clearButton.setIcon(.clearInput, size: .tiny, for: .normal)
-        clearButton.addTarget(self, action: #selector(TextSearchInputView.onCancelButtonTouchUpInside(_:)), for: .touchUpInside)
+        clearButton.addTarget(
+            self,
+            action: #selector(TextSearchInputView.onCancelButtonTouchUpInside(_:)),
+            for: .touchUpInside
+        )
         clearButton.isHidden = true
         clearButton.accessibilityIdentifier = "cancel search"
         clearButton.accessibilityLabel = L10n.Accessibility.SearchView.ClearButton.description
@@ -118,7 +124,8 @@ final class TextSearchInputView: UIView {
                 spinner.trailingAnchor.constraint(equalTo: clearButton.leadingAnchor, constant: -6),
                 spinner.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor),
                 spinner.widthAnchor.constraint(equalToConstant: StyleKitIcon.Size.tiny.rawValue),
-            ])
+            ]
+        )
     }
 
     @available(*, unavailable)

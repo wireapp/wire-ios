@@ -96,15 +96,24 @@ extension Date {
         let gregorian = Calendar(identifier: .gregorian)
         // Today's date
         let today = Date()
-        let todayDateComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.DayMonthYearUnits, from: today)
+        let todayDateComponents: DateComponents? = gregorian.dateComponents(
+            WRDateFormatter.DayMonthYearUnits,
+            from: today
+        )
         // Yesterday
         var componentsToSubtract = DateComponents()
         componentsToSubtract.day = -1
 
         let yesterday = gregorian.date(byAdding: componentsToSubtract, to: today)
-        let yesterdayComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.DayMonthYearUnits, from: yesterday!)
+        let yesterdayComponents: DateComponents? = gregorian.dateComponents(
+            WRDateFormatter.DayMonthYearUnits,
+            from: yesterday!
+        )
         // This week
-        let thisWeekComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.WeekMonthYearUnits, from: today)
+        let thisWeekComponents: DateComponents? = gregorian.dateComponents(
+            WRDateFormatter.WeekMonthYearUnits,
+            from: today
+        )
         // Received date
         let dateComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.DayMonthYearUnits, from: self)
         let weekComponents: DateComponents? = gregorian.dateComponents(WRDateFormatter.WeekMonthYearUnits, from: self)
@@ -126,7 +135,8 @@ extension Date {
             WRDateFormatter.todayYesterdayFormatter.dateStyle = dateStyle
             dateString = WRDateFormatter.todayYesterdayFormatter.string(from: self)
         } else if isThisWeek {
-            dateString = "\(WRDateFormatter.thisWeekFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
+            dateString =
+                "\(WRDateFormatter.thisWeekFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
         } else {
             let dateFormatter = self.olderThanOneWeekdateFormatter
             dateString = "\(dateFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"

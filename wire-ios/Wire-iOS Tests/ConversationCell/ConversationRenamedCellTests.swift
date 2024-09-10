@@ -53,7 +53,8 @@ final class ConversationRenamedCellTests: ConversationMessageSnapshotTestCase {
         let message = MockMessageFactory.systemMessage(with: .conversationNameChanged, users: 0, clients: 0)!
         message.backingSystemMessageData.systemMessageType = .conversationNameChanged
         message.backingSystemMessageData.text = name
-        message.senderUser = fromSelf ? MockUserType.createSelfUser(name: "Alice") : MockUserType.createUser(name: "Bruno")
+        message.senderUser = fromSelf ? MockUserType.createSelfUser(name: "Alice") : MockUserType
+            .createUser(name: "Bruno")
 
         return message
     }

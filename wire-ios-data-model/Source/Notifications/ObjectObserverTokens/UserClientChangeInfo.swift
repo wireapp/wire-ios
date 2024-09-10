@@ -26,10 +26,12 @@ extension UserClient {
 
 extension UserClient: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
-        Set([#keyPath(UserClient.trustedByClients),
-             #keyPath(UserClient.ignoredByClients),
-             #keyPath(UserClient.needsToNotifyUser),
-             #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
+        Set([
+            #keyPath(UserClient.trustedByClients),
+            #keyPath(UserClient.ignoredByClients),
+            #keyPath(UserClient.needsToNotifyUser),
+            #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset),
+        ])
     }
 
     public var notificationName: Notification.Name {
@@ -85,7 +87,11 @@ extension UserClientChangeInfo {
         guard let managedObjectContext = client.managedObjectContext else {
             return nil
         }
-        return ManagedObjectObserverToken(name: .UserClientChange, managedObjectContext: managedObjectContext, object: client) { [weak observer] note in
+        return ManagedObjectObserverToken(
+            name: .UserClientChange,
+            managedObjectContext: managedObjectContext,
+            object: client
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? UserClientChangeInfo
             else { return }

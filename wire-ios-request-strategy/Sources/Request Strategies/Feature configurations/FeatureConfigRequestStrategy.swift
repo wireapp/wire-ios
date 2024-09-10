@@ -135,7 +135,8 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             try processor.processEventPayload(
                 data: payloadData,
                 featureName: featureName,
-                repository: repository)
+                repository: repository
+            )
 
             WireLogger.featureConfigs.info("Finished processing update event \(name)")
         } catch {

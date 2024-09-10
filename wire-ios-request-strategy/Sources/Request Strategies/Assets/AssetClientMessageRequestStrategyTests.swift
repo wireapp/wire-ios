@@ -65,8 +65,14 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if isImage {
             message = try! targetConversation.appendImage(from: imageData) as? ZMAssetClientMessage
         } else {
-            let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-            message = try! targetConversation.appendFile(with: ZMFileMetadata(fileURL: url, thumbnail: nil)) as? ZMAssetClientMessage
+            let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(
+                forResource: "Lorem Ipsum",
+                withExtension: "txt"
+            )!
+            message = try! targetConversation.appendFile(with: ZMFileMetadata(
+                fileURL: url,
+                thumbnail: nil
+            )) as? ZMAssetClientMessage
         }
 
         if isImage {
@@ -84,10 +90,12 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let previewId: String? = previewAssetId ? UUID.create().transportString() : nil
             let remote = WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil)
             let imageMetadata = WireProtos.Asset.ImageMetaData(width: 123, height: 420)
-            let previewAsset = WireProtos.Asset.Preview(size: 128,
-                                                        mimeType: "image/jpg",
-                                                        remoteData: remote,
-                                                        imageMetadata: imageMetadata)
+            let previewAsset = WireProtos.Asset.Preview(
+                size: 128,
+                mimeType: "image/jpg",
+                remoteData: remote,
+                imageMetadata: imageMetadata
+            )
 
             let previewMessage = GenericMessage(
                 content: WireProtos.Asset(original: nil, preview: previewAsset),
@@ -99,7 +107,11 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             XCTAssertTrue(message.underlyingMessage!.assetData!.hasPreview, line: line)
             XCTAssertEqual(message.underlyingMessage!.assetData!.preview.remote.hasAssetID, previewAssetId, line: line)
-            XCTAssertEqual(message.isEphemeral, targetConversation.activeMessageDestructionTimeoutValue != nil, line: line)
+            XCTAssertEqual(
+                message.isEphemeral,
+                targetConversation.activeMessageDestructionTimeoutValue != nil,
+                line: line
+            )
         }
 
         if uploaded {
@@ -117,7 +129,11 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             message.updateTransferState(.uploaded, synchronize: true)
             XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded, line: line)
-            XCTAssertEqual(message.isEphemeral, self.groupConversation.activeMessageDestructionTimeoutValue != nil, line: line)
+            XCTAssertEqual(
+                message.isEphemeral,
+                self.groupConversation.activeMessageDestructionTimeoutValue != nil,
+                line: line
+            )
         } else {
             message.updateTransferState(transferState, synchronize: true) // TODO: jacob
         }
@@ -244,16 +260,19 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             code: 403,
             label: .missingLegalholdConsent,
             message: "",
-            data: nil)
+            data: nil
+        )
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
         mockMessageSender.sendMessageMessage_MockError = failure
         var token: Any?
         self.syncMOC.performGroupedAndWait {
             self.createMessage(uploaded: true, assetId: true)
             let expectation = self.customExpectation(description: "Notification fired")
-            token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
-                                                      context: self.uiMOC.notificationContext,
-                                                      object: nil) { _ in
+            token = NotificationInContext.addObserver(
+                name: ZMConversation.failedToSendMessageNotificationName,
+                context: self.uiMOC.notificationContext,
+                object: nil
+            ) { _ in
                 expectation.fulfill()
             }
         }

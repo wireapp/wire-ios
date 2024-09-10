@@ -252,7 +252,12 @@ extension ZMOTRMessage_SecurityDegradationTests {
         user1.remoteIdentifier = UUID.create()
         let user2 = ZMUser.insertNewObject(in: moc)
         user2.remoteIdentifier = UUID.create()
-        let convo = ZMConversation.insertGroupConversation(moc: moc, participants: [user1, user2], team: nil, participantsRole: nil)!
+        let convo = ZMConversation.insertGroupConversation(
+            moc: moc,
+            participants: [user1, user2],
+            team: nil,
+            participantsRole: nil
+        )!
         return convo
     }
 }

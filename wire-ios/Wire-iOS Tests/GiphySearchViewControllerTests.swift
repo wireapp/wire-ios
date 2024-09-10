@@ -50,7 +50,11 @@ final class GiphySearchViewControllerTests: XCTestCase {
             // GIVEN
             let searchTerm = "apple"
 
-            var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(searchTerm: searchTerm, conversation: (mockConversation as Any) as! ZMConversation, searchResultsController: resultsController)
+            var giphySearchViewController: GiphySearchViewController! = GiphySearchViewController(
+                searchTerm: searchTerm,
+                conversation: (mockConversation as Any) as! ZMConversation,
+                searchResultsController: resultsController
+            )
             sut = giphySearchViewController
 
             // WHEN

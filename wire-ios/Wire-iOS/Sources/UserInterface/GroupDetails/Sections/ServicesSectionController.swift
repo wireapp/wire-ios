@@ -24,7 +24,11 @@ final class ServicesSectionController: GroupDetailsSectionController {
     private let serviceUsers: [UserType]
     private let conversation: GroupDetailsConversationType
 
-    init(serviceUsers: [UserType], conversation: GroupDetailsConversationType, delegate: GroupDetailsSectionControllerDelegate) {
+    init(
+        serviceUsers: [UserType],
+        conversation: GroupDetailsConversationType,
+        delegate: GroupDetailsSectionControllerDelegate
+    ) {
         self.serviceUsers = serviceUsers
         self.conversation = conversation
         self.delegate = delegate
@@ -48,7 +52,10 @@ final class ServicesSectionController: GroupDetailsSectionController {
         serviceUsers.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let user = serviceUsers[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         if let selfUser = ZMUser.selfUser() {

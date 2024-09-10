@@ -22,7 +22,8 @@ import WireSyncEngine
 extension ConversationInputBarViewController {
     @discardableResult
     func createEphemeralKeyboardViewController() -> EphemeralKeyboardViewController {
-        let ephemeralKeyboardViewController = EphemeralKeyboardViewController(conversation: conversation as? ZMConversation)
+        let ephemeralKeyboardViewController =
+            EphemeralKeyboardViewController(conversation: conversation as? ZMConversation)
         ephemeralKeyboardViewController.delegate = self
 
         self.ephemeralKeyboardViewController = ephemeralKeyboardViewController

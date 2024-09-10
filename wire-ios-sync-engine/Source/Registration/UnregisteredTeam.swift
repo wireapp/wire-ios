@@ -30,7 +30,14 @@ public struct UnregisteredTeam: Equatable {
     public let locale: String
     public let label: UUID?
 
-    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: AccentColor) {
+    public init(
+        teamName: String,
+        email: String,
+        emailCode: String,
+        fullName: String,
+        password: String,
+        accentColor: AccentColor
+    ) {
         self.teamName = teamName
         self.email = email
         self.emailCode = emailCode

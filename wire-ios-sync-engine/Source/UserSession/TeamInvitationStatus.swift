@@ -48,7 +48,10 @@ public func == (lhs: InviteResult, rhs: InviteResult) -> Bool {
     switch (lhs, rhs) {
     case let (InviteResult.success(email: lhsEmail), InviteResult.success(email: rhsEmail)):
         lhsEmail == rhsEmail
-    case let (InviteResult.failure(email: lhsEmail, error: lhsError), InviteResult.failure(email: rhsEmail, error: rhsError)):
+    case let (
+        InviteResult.failure(email: lhsEmail, error: lhsError),
+        InviteResult.failure(email: rhsEmail, error: rhsError)
+    ):
         lhsEmail == rhsEmail && lhsError == rhsError
     default:
         false

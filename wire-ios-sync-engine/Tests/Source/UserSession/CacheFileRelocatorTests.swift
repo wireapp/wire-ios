@@ -35,7 +35,10 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
         relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
 
         // then
-        let newLocation = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
+        let newLocation = FileManager.default.cachesURLForAccount(
+            with: self.userIdentifier,
+            in: self.sharedContainerURL
+        )
         let movedItemNames = try FileManager.default.contentsOfDirectory(atPath: newLocation.path)
         XCTAssertTrue(movedItemNames.count > 0)
         for itemName in itemNames {
@@ -57,8 +60,20 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
 
         // then
         let newFolder = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: fileUrl.path))                                         // tests that the file remains at the same place
-        XCTAssertFalse(FileManager.default.fileExists(atPath: newFolder.appendingPathComponent(fileName).path))     // tests that the file was not moved to the account folder
+        XCTAssertTrue(
+            FileManager.default
+                .fileExists(
+                    atPath: fileUrl
+                        .path
+                )
+        )                                         // tests that the file remains at the same place
+        XCTAssertFalse(
+            FileManager.default
+                .fileExists(
+                    atPath: newFolder.appendingPathComponent(fileName)
+                        .path
+                )
+        )     // tests that the file was not moved to the account folder
     }
 
     func testMovingOfNonWhitelistedFile() throws {
@@ -75,8 +90,20 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
 
         // then
         let newFolder = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
-        XCTAssertFalse(FileManager.default.fileExists(atPath: fileUrl.path))                                        // tests that the file isn't in the previous place
-        XCTAssertTrue(FileManager.default.fileExists(atPath: newFolder.appendingPathComponent(fileName).path))      // tests that the file was moved to the account folder
+        XCTAssertFalse(
+            FileManager.default
+                .fileExists(
+                    atPath: fileUrl
+                        .path
+                )
+        )                                        // tests that the file isn't in the previous place
+        XCTAssertTrue(
+            FileManager.default
+                .fileExists(
+                    atPath: newFolder.appendingPathComponent(fileName)
+                        .path
+                )
+        )      // tests that the file was moved to the account folder
     }
 
     private func clearFolder(at location: URL) {

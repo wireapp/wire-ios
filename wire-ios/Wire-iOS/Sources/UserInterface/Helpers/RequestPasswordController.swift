@@ -37,9 +37,11 @@ final class RequestPasswordController {
     private weak var okAction: UIAlertAction?
     weak var passwordTextField: UITextField?
 
-    init(context: RequestPasswordContext,
-         callback: @escaping Callback,
-         inputValidation: InputValidation? = nil) {
+    init(
+        context: RequestPasswordContext,
+        callback: @escaping Callback,
+        inputValidation: InputValidation? = nil
+    ) {
         self.callback = callback
         self.inputValidation = inputValidation
 
@@ -93,7 +95,11 @@ final class RequestPasswordController {
             }
 
             // NOTE: `RequestPasswordController` must not be deallocated while this target/action is active
-            textField.addTarget(self, action: #selector(RequestPasswordController.passwordTextFieldChanged(_:)), for: .editingChanged)
+            textField.addTarget(
+                self,
+                action: #selector(RequestPasswordController.passwordTextFieldChanged(_:)),
+                for: .editingChanged
+            )
 
             self.passwordTextField = textField
         }

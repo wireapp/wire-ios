@@ -52,7 +52,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
-    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
+    private lazy var collectionViewHeight: NSLayoutConstraint = collectionView.heightAnchor
+        .constraint(equalToConstant: 0)
     private let rowHeight: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
 
@@ -89,10 +90,12 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         setupCollectionView()
         setupConstraints()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillChangeFrame(_:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
 
         setupKeyboardObserver()
     }
@@ -191,7 +194,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     }
 
     @objc dynamic func keyboardWillChangeFrame(_ notification: Notification) {
-        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
+        else { return }
         resizeTable()
         UIView.animate(withDuration: duration) {
             self.view.layoutIfNeeded()
@@ -247,7 +251,11 @@ extension UserSearchResultsViewController: UserList {
 
         guard let collectionViewSelectedIndex else { return }
 
-        collectionView.scrollToItem(at: IndexPath(item: collectionViewSelectedIndex, section: 0), at: .centeredVertically, animated: true)
+        collectionView.scrollToItem(
+            at: IndexPath(item: collectionViewSelectedIndex, section: 0),
+            at: .centeredVertically,
+            animated: true
+        )
     }
 
     var users: [UserType] {
@@ -272,15 +280,25 @@ extension UserSearchResultsViewController: UICollectionViewDelegate {
 }
 
 extension UserSearchResultsViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: rowHeight)
     }
 }
 
 extension UserSearchResultsViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let user = searchResults[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         if let selfUser = ZMUser.selfUser() {
             cell.configure(
                 user: user,

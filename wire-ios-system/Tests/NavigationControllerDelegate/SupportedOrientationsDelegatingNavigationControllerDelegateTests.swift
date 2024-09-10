@@ -60,7 +60,10 @@ final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XC
     func testOnlyTheTopViewControllerIsConsidered() {
         // Given
         let navigationViewController = UINavigationController()
-        navigationViewController.setViewControllers([ViewController(.portraitUpsideDown), ViewController(.landscape)], animated: false)
+        navigationViewController.setViewControllers(
+            [ViewController(.portraitUpsideDown), ViewController(.landscape)],
+            animated: false
+        )
 
         // When
         let result = sut.navigationControllerSupportedInterfaceOrientations(navigationViewController)

@@ -57,9 +57,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
         try syncMOC.performGroupedAndWait {
             // given
             let conversationID = self.conversation.remoteIdentifier!
-            let action = UpdateAccessRolesAction(conversation: self.conversation,
-                                                 accessMode: self.accessMode,
-                                                 accessRoles: self.accessRoles)
+            let action = UpdateAccessRolesAction(
+                conversation: self.conversation,
+                accessMode: self.accessMode,
+                accessRoles: self.accessRoles
+            )
             // when
             let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v0))
 
@@ -76,14 +78,19 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             // given
             let conversationDomain = conversation.domain!
             let conversationID = conversation.remoteIdentifier!
-            let action = UpdateAccessRolesAction(conversation: conversation,
-                                                 accessMode: accessMode,
-                                                 accessRoles: accessRoles)
+            let action = UpdateAccessRolesAction(
+                conversation: conversation,
+                accessMode: accessMode,
+                accessRoles: accessRoles
+            )
             // when
             let request = try XCTUnwrap(sut.request(for: action, apiVersion: .v1))
 
             // then
-            XCTAssertEqual(request.path, "/v1/conversations/\(conversationDomain)/\(conversationID.transportString())/access")
+            XCTAssertEqual(
+                request.path,
+                "/v1/conversations/\(conversationDomain)/\(conversationID.transportString())/access"
+            )
             let payload = Payload.UpdateConversationAccess(request)
             XCTAssertEqual(payload?.accessRoleV2, accessRoles.map(\.rawValue))
             XCTAssertEqual(payload?.access, accessMode.stringValue)
@@ -94,10 +101,42 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
 
     func testThatItParsesAllKnownUpdateAccessRolesErrorResponses() {
         let errorResponses: [(UpdateAccessRolesError, ZMTransportResponse)] = [
-            (UpdateAccessRolesError.invalidOperation, ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (UpdateAccessRolesError.accessDenied, ZMTransportResponse(payload: ["label": "access-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (UpdateAccessRolesError.actionDenied, ZMTransportResponse(payload: ["label": "action-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
-            (UpdateAccessRolesError.conversationNotFound, ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)),
+            (
+                UpdateAccessRolesError.invalidOperation,
+                ZMTransportResponse(
+                    payload: ["label": "invalid-op"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                UpdateAccessRolesError.accessDenied,
+                ZMTransportResponse(
+                    payload: ["label": "access-denied"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                UpdateAccessRolesError.actionDenied,
+                ZMTransportResponse(
+                    payload: ["label": "action-denied"] as ZMTransportData,
+                    httpStatus: 403,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
+            (
+                UpdateAccessRolesError.conversationNotFound,
+                ZMTransportResponse(
+                    payload: ["label": "no-conversation"] as ZMTransportData,
+                    httpStatus: 404,
+                    transportSessionError: nil,
+                    apiVersion: APIVersion.v0.rawValue
+                )
+            ),
         ]
 
         for (expectedError, response) in errorResponses {
@@ -116,30 +155,40 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     func testThatItProcessUpdateAccessRolesEventInTheResponse() throws {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            let action = UpdateAccessRolesAction(conversation: self.conversation,
-                                                 accessMode: accessMode,
-                                                 accessRoles: accessRoles)
+            let action = UpdateAccessRolesAction(
+                conversation: self.conversation,
+                accessMode: accessMode,
+                accessRoles: accessRoles
+            )
             let expectation = self.customExpectation(description: "wait for handler to be called")
             action.resultHandler = { _ in
                 expectation.fulfill()
             }
-            let payload = Payload.UpdateConversationAccess(accessMode: accessMode,
-                                                           accessRoles: accessRoles)
+            let payload = Payload.UpdateConversationAccess(
+                accessMode: accessMode,
+                accessRoles: accessRoles
+            )
 
-            let conversationEvent = conversationEventPayload(from: payload,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: self.otherUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: payload,
+                conversationID: conversation.qualifiedID,
+                senderID: self.otherUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
-            XCTAssertEqual(conversation.accessRoles, [ConversationAccessRoleV2.teamMember,
-                                                      ConversationAccessRoleV2.nonTeamMember,
-                                                      ConversationAccessRoleV2.guest,
-                                                      ConversationAccessRoleV2.service])
+            XCTAssertEqual(conversation.accessRoles, [
+                ConversationAccessRoleV2.teamMember,
+                ConversationAccessRoleV2.nonTeamMember,
+                ConversationAccessRoleV2.guest,
+                ConversationAccessRoleV2.service,
+            ])
 
             self.sut.handleResponse(response, action: action)
         }
@@ -147,18 +196,22 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
         // then
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
-            XCTAssertEqual(conversation.accessRoles, [ConversationAccessRoleV2.teamMember,
-                                                      ConversationAccessRoleV2.nonTeamMember,
-                                                      ConversationAccessRoleV2.guest])
+            XCTAssertEqual(conversation.accessRoles, [
+                ConversationAccessRoleV2.teamMember,
+                ConversationAccessRoleV2.nonTeamMember,
+                ConversationAccessRoleV2.guest,
+            ])
         }
     }
 
     func testThatItCallsResultHandler_On200() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            var action = UpdateAccessRolesAction(conversation: self.conversation,
-                                                 accessMode: accessMode,
-                                                 accessRoles: accessRoles)
+            var action = UpdateAccessRolesAction(
+                conversation: self.conversation,
+                accessMode: accessMode,
+                accessRoles: accessRoles
+            )
             let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
@@ -166,17 +219,23 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let payload = Payload.UpdateConversationAccess(accessMode: accessMode,
-                                                           accessRoles: accessRoles)
+            let payload = Payload.UpdateConversationAccess(
+                accessMode: accessMode,
+                accessRoles: accessRoles
+            )
 
-            let conversationEvent = conversationEventPayload(from: payload,
-                                                             conversationID: conversation.qualifiedID,
-                                                             senderID: self.otherUser.qualifiedID)
+            let conversationEvent = conversationEventPayload(
+                from: payload,
+                conversationID: conversation.qualifiedID,
+                senderID: self.otherUser.qualifiedID
+            )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -189,9 +248,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     func testThatItCallsResultHandler_OnError() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            var action = UpdateAccessRolesAction(conversation: self.conversation,
-                                                 accessMode: accessMode,
-                                                 accessRoles: accessRoles)
+            var action = UpdateAccessRolesAction(
+                conversation: self.conversation,
+                accessMode: accessMode,
+                accessRoles: accessRoles
+            )
 
             let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { result in
@@ -200,10 +261,12 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let response = ZMTransportResponse(payload: nil,
-                                               httpStatus: 404,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)

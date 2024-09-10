@@ -46,7 +46,8 @@ extension AddressBookAccessor {
     /// If the block returns false, it will stop enumerating them.
     func enumerateValidContacts(block: @escaping (ZMAddressBookContact) -> (Bool)) {
         self.enumerateRawContacts {
-            guard let parsed = ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer) else {
+            guard let parsed = ZMAddressBookContact(contact: $0, phoneNumberNormalizer: self.phoneNumberNormalizer)
+            else {
                 return true
             }
             return block(parsed)
@@ -86,9 +87,11 @@ extension AddressBookAccessor {
             }
 
             let cardsRange = startingContactIndex ..< (startingContactIndex + UInt(cards.count))
-            let encodedAB = EncodedAddressBookChunk(numberOfTotalContacts: self.numberOfContacts,
-                                                    otherContactsHashes: cards,
-                                                    includedContacts: cardsRange)
+            let encodedAB = EncodedAddressBookChunk(
+                numberOfTotalContacts: self.numberOfContacts,
+                otherContactsHashes: cards,
+                includedContacts: cardsRange
+            )
             groupQueue.performGroupedBlock {
                 completion(encodedAB)
             }
@@ -304,8 +307,10 @@ extension ContactRecord {
 }
 
 extension ZMAddressBookContact {
-    convenience init?(contact: ContactRecord,
-                      phoneNumberNormalizer: AddressBook.Normalizer) {
+    convenience init?(
+        contact: ContactRecord,
+        phoneNumberNormalizer: AddressBook.Normalizer
+    ) {
         self.init()
 
         // names

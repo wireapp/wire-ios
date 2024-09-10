@@ -184,7 +184,10 @@ final class ProfileViewController: UIViewController {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
-        UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged, argument: navigationItem.titleView)
+        UIAccessibility.post(
+            notification: UIAccessibility.Notification.screenChanged,
+            argument: navigationItem.titleView
+        )
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -251,7 +254,8 @@ final class ProfileViewController: UIViewController {
         for item in [securityLevelView, tabsView, profileFooterView, incomingRequestFooter, activityIndicator] {
             item.translatesAutoresizingMaskIntoConstraints = false
         }
-        let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
+        let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor
+            .constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 
         NSLayoutConstraint.activate([
             securityLevelView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -290,7 +294,10 @@ extension ProfileViewController: ViewControllerDismisser {
 // MARK: - Footer View
 
 extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFooterViewDelegate {
-    func footerView(_ footerView: IncomingRequestFooterView, didRespondToRequestWithAction action: IncomingConnectionAction) {
+    func footerView(
+        _ footerView: IncomingRequestFooterView,
+        didRespondToRequestWithAction action: IncomingConnectionAction
+    ) {
         switch action {
         case .accept:
             viewModel.acceptConnectionRequest()
@@ -303,11 +310,15 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         performAction(action, targetView: footerView.leftButton)
     }
 
-    func footerView(_ footerView: ProfileFooterView,
-                    shouldPresentMenuWithActions actions: [ProfileAction]) {
-        let actionSheet = UIAlertController(title: nil,
-                                            message: nil,
-                                            preferredStyle: .actionSheet)
+    func footerView(
+        _ footerView: ProfileFooterView,
+        shouldPresentMenuWithActions actions: [ProfileAction]
+    ) {
+        let actionSheet = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
 
         actions.map { buildProfileAction($0, footerView: footerView) }
             .forEach(actionSheet.addAction)
@@ -315,10 +326,14 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         presentAlert(actionSheet, targetView: footerView)
     }
 
-    private func buildProfileAction(_ action: ProfileAction,
-                                    footerView: ProfileFooterView) -> UIAlertAction {
-        UIAlertAction(title: action.buttonText,
-                      style: .default) { _ in
+    private func buildProfileAction(
+        _ action: ProfileAction,
+        footerView: ProfileFooterView
+    ) -> UIAlertAction {
+        UIAlertAction(
+            title: action.buttonText,
+            style: .default
+        ) { _ in
             self.performAction(action, targetView: footerView)
         }
     }
@@ -428,7 +443,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         let title = "\(conversation.displayNameWithFallback) • \(NotificationResult.title)"
         let controller = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        NotificationResult.allCases.map { $0.action(for: conversation, handler: viewModel.handleNotificationResult) }.forEach(controller.addAction)
+        NotificationResult.allCases.map { $0.action(for: conversation, handler: viewModel.handleNotificationResult) }
+            .forEach(controller.addAction)
         presentAlert(controller, targetView: targetView)
     }
 
@@ -438,7 +454,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         guard let conversation = viewModel.conversation else { return }
 
         let controller = UIAlertController(title: ClearContentResult.title, message: nil, preferredStyle: .actionSheet)
-        ClearContentResult.options(for: conversation).map { $0.action(viewModel.handleDeleteResult) }.forEach(controller.addAction)
+        ClearContentResult.options(for: conversation).map { $0.action(viewModel.handleDeleteResult) }
+            .forEach(controller.addAction)
         presentAlert(controller, targetView: targetView)
     }
 
@@ -453,7 +470,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             preferredStyle: .actionSheet
         )
 
-        let removeAction = UIAlertAction(title: L10n.Localizable.Profile.removeDialogButtonRemoveConfirm, style: .destructive) { _ in
+        let removeAction = UIAlertAction(
+            title: L10n.Localizable.Profile.removeDialogButtonRemoveConfirm,
+            style: .destructive
+        ) { _ in
             self.viewModel.conversation?.removeOrShowError(participant: otherUser) { result in
                 switch result {
                 case .success:
@@ -472,7 +492,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
     private func duplicateUser() {
         guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
-        guard let user = viewModel.user as? ZMUser, let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
+        guard let user = viewModel.user as? ZMUser,
+              let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
             assertionFailure("couldn't get context to duplicateUser")
             return
         }
@@ -490,7 +511,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             duplicate.createdTeams = original.createdTeams
             context.saveOrRollback()
 
-            WireLogger.conversation.debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
+            WireLogger.conversation
+                .debug("duplicate user \(String(describing: user.qualifiedID?.safeForLoggingDescription))")
         }
     }
 
@@ -515,7 +537,8 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
             context.saveOrRollback()
 
-            WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+            WireLogger.conversation
+                .debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
         }
     }
 }

@@ -124,7 +124,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         await context.perform {
             if conversation.mlsGroupID == nil {
                 conversation.mlsGroupID = mlsGroupID
-                WireLogger.mls.info("MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))")
+                WireLogger.mls
+                    .info(
+                        "MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))"
+                    )
             }
         }
 
@@ -136,7 +139,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             conversationExists = try await mlsService.conversationExists(groupID: mlsGroupID)
         } catch {
-            WireLogger.mls.error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
+            WireLogger.mls
+                .error("failed to check if conversation \(mlsGroupID.safeForLoggingDescription) exists: \(error)")
             conversationExists = false
         }
         let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
@@ -149,7 +153,10 @@ public class MLSEventProcessor: MLSEventProcessing {
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
 
             if newStatus != previousStatus {
-                WireLogger.mls.debug("conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))")
+                WireLogger.mls
+                    .debug(
+                        "conversation \(String(describing: conversation.qualifiedID)) status changed: \(String(describing: previousStatus)) -> \(newStatus))"
+                    )
             }
         }
     }
@@ -274,7 +281,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             try await mlsService.wipeGroup(groupID)
         } catch {
-            WireLogger.mls.error("mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))")
+            WireLogger.mls
+                .error(
+                    "mlsService.wipeGroup(\(groupID.safeForLoggingDescription)) threw error: \(String(reflecting: error))"
+                )
         }
     }
 

@@ -55,7 +55,10 @@ enum TransferStateMigration {
 
         for (legacyValues, newValue) in LegacyTransferState.migrationMappings {
             let batchUpdateRequest = NSBatchUpdateRequest(entityName: ZMAssetClientMessage.entityName())
-            batchUpdateRequest.predicate = NSPredicate(format: "\(transferStateKey) IN %@", legacyValues.map(\.rawValue))
+            batchUpdateRequest.predicate = NSPredicate(
+                format: "\(transferStateKey) IN %@",
+                legacyValues.map(\.rawValue)
+            )
             batchUpdateRequest.propertiesToUpdate = [transferStateKey: newValue.rawValue]
             batchUpdateRequest.resultType = .updatedObjectsCountResultType
 

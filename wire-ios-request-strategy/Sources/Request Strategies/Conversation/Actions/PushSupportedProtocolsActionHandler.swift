@@ -26,7 +26,10 @@ final class PushSupportedProtocolsActionHandler: ActionHandler<PushSupportedProt
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
         var action = action
-        guard let transportRequest = SelfSupportedProtocolsRequestBuilder(apiVersion: apiVersion, supportedProtocols: action.supportedProtocols).buildTransportRequest() else {
+        guard let transportRequest = SelfSupportedProtocolsRequestBuilder(
+            apiVersion: apiVersion,
+            supportedProtocols: action.supportedProtocols
+        ).buildTransportRequest() else {
             action.fail(with: .requestEndpointUnavailable)
             return nil
         }

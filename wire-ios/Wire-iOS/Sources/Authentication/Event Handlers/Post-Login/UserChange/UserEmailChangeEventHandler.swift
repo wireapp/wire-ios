@@ -26,7 +26,10 @@ import WireDataModel
 final class UserEmailChangeEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: UserChangeInfo) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: UserChangeInfo
+    ) -> [AuthenticationCoordinatorAction]? {
         let changeInfo = context
 
         // Only execute actions if the profile has changed.

@@ -27,7 +27,12 @@ class GridCell: UICollectionViewCell {
         super.init(frame: frame)
         accessibilityIdentifier = GridCell.reuseIdentifier
 
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(orientationDidChange),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     override func layoutSubviews() {

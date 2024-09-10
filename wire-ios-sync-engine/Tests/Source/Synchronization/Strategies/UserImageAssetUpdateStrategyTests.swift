@@ -70,9 +70,11 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         self.updateStatus = MockImageUpdateStatus()
 
         sut = self.syncMOC.performAndWait {
-            UserImageAssetUpdateStrategy(managedObjectContext: self.syncMOC,
-                                         applicationStatus: mockApplicationStatus,
-                                         imageUploadStatus: updateStatus)
+            UserImageAssetUpdateStrategy(
+                managedObjectContext: self.syncMOC,
+                applicationStatus: mockApplicationStatus,
+                imageUploadStatus: updateStatus
+            )
         }
 
         let cache = UserImageLocalCache(location: nil)
@@ -156,9 +158,19 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTExpectFailure("this could be flaky", strict: false)
         // GIVEN
         let previewData = Data("--1--".utf8)
-        let previewRequest = sut.requestFactory.upstreamRequestForAsset(withData: previewData, shareable: true, retention: .eternal, apiVersion: .v0)
+        let previewRequest = sut.requestFactory.upstreamRequestForAsset(
+            withData: previewData,
+            shareable: true,
+            retention: .eternal,
+            apiVersion: .v0
+        )
         let completeData = Data("1111111".utf8)
-        let completeRequest = sut.requestFactory.upstreamRequestForAsset(withData: completeData, shareable: true, retention: .eternal, apiVersion: .v0)
+        let completeRequest = sut.requestFactory.upstreamRequestForAsset(
+            withData: completeData,
+            shareable: true,
+            retention: .eternal,
+            apiVersion: .v0
+        )
 
         // WHEN
         updateStatus.dataToConsume.removeAll()
@@ -178,7 +190,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     func testThatItCreatesDeleteRequestIfThereAreAssetsToDelete() {
         // GIVEN
         let assetId = "12344"
-        let deleteRequest = ZMTransportRequest(path: "/assets/v3/\(assetId)", method: .delete, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let deleteRequest = ZMTransportRequest(
+            path: "/assets/v3/\(assetId)",
+            method: .delete,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // WHEN
         updateStatus.assetIdsToDelete = [assetId]
@@ -192,7 +209,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         // GIVEN
         let size = ProfileImageSize.preview
         let sync = sut.upstreamRequestSyncs[size]
-        let failedResponse = ZMTransportResponse(payload: nil, httpStatus: 500, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let failedResponse = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 500,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // WHEN
         sut.didReceive(failedResponse, forSingleRequest: sync!)
@@ -207,7 +229,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         let sync = sut.upstreamRequestSyncs[size]
         let assetId = "123123"
         let payload: [String: String] = ["key": assetId]
-        let successResponse = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let successResponse = ZMTransportResponse(
+            payload: payload as NSDictionary,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // WHEN
         sut.didReceive(successResponse, forSingleRequest: sync!)
@@ -353,7 +380,13 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             let imageData = try XCTUnwrap(Data("image".utf8))
             let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.preview])
             user.previewProfileAssetIdentifier = "foo"
-            let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                imageData: imageData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // WHEN
             self.sut.update(user, with: response, downstreamSync: sync)
@@ -370,7 +403,13 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             let imageData = try XCTUnwrap(Data("image".utf8))
             let sync = try XCTUnwrap(self.sut.downstreamRequestSyncs[.complete])
             user.completeProfileAssetIdentifier = "foo"
-            let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                imageData: imageData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                headers: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // WHEN
             self.sut.update(user, with: response, downstreamSync: sync)
@@ -401,7 +440,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             XCTAssertEqual(request.method, .get)
 
             // Given
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
 
             // THEN
@@ -436,7 +480,12 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             XCTAssertEqual(request.method, .get)
 
             // Given
-            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
 
             // THEN

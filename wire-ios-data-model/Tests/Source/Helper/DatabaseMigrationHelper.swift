@@ -178,7 +178,10 @@ struct DatabaseMigrationHelper {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: storeFile.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
 
         // copy old version database into the expected location
         guard let source = databaseFixtureURL(version: versionName, database: database, file: file, line: line) else {
@@ -187,10 +190,16 @@ struct DatabaseMigrationHelper {
         try FileManager.default.copyItem(at: source, to: storeFile)
     }
 
-    func databaseFixtureURL(version: String, database: Database = .messaging, file: StaticString = #file, line: UInt = #line) -> URL? {
+    func databaseFixtureURL(
+        version: String,
+        database: Database = .messaging,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> URL? {
         let name = database.databaseFixtureFileName(for: version)
 
-        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension) else {
+        guard let source = WireDataModelTestsBundle.bundle.url(forResource: name, withExtension: database.extension)
+        else {
             XCTFail("Could not find \(name).\(database.extension) in test bundle", file: file, line: line)
             return nil
         }

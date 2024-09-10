@@ -91,9 +91,14 @@ final class MediaManagerLoader: NSObject {
 
     override init() {
         super.init()
-        flowManagerObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: OperationQueue.main, using: { [weak self] _ in
-            self?.send(message: .flowManagerLoaded)
-        })
+        flowManagerObserver = NotificationCenter.default.addObserver(
+            forName: FlowManager.AVSFlowManagerCreatedNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { [weak self] _ in
+                self?.send(message: .flowManagerLoaded)
+            }
+        )
 
         if AVSFlowManager.getInstance() != nil {
             self.send(message: .flowManagerLoaded)

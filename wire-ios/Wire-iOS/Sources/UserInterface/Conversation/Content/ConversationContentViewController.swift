@@ -127,13 +127,16 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.targetViewController = self
         messagePresenter.modalTargetController = parent
 
-        token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
-            self?.updateMediaBar()
-        }
+        token = NotificationCenter.default
+            .addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
+                self?.updateMediaBar()
+            }
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -147,7 +150,11 @@ final class ConversationContentViewController: UIViewController {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: ZMConversation.failedToSendMessageNotificationName, object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: ZMConversation.failedToSendMessageNotificationName,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -202,7 +209,8 @@ final class ConversationContentViewController: UIViewController {
         tableView.delegate = self
         tableView.separatorStyle = .none
         tableView.delaysContentTouches = false
-        tableView.keyboardDismissMode = AutomationHelper.sharedHelper.disableInteractiveKeyboardDismissal ? .none : .interactive
+        tableView.keyboardDismissMode = AutomationHelper.sharedHelper
+            .disableInteractiveKeyboardDismissal ? .none : .interactive
 
         tableView.backgroundColor = SemanticColors.View.backgroundConversationView
         view.backgroundColor = SemanticColors.View.backgroundConversationView
@@ -237,8 +245,10 @@ final class ConversationContentViewController: UIViewController {
     @objc
     private func showErrorAlertToSendMessage(_: Notification) {
         typealias MessageSendError = L10n.Localizable.Error.Message.Send
-        UIAlertController.showErrorAlertWithLink(title: MessageSendError.title,
-                                                 message: MessageSendError.missingLegalholdConsent)
+        UIAlertController.showErrorAlertWithLink(
+            title: MessageSendError.title,
+            message: MessageSendError.missingLegalholdConsent
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -420,11 +430,17 @@ final class ConversationContentViewController: UIViewController {
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
             DispatchQueue.main.async {
-                self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
+                self.delegate?.conversationContentViewController(
+                    self,
+                    didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage
+                )
             }
         } else {
             DispatchQueue.main.async {
-                self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
+                self.delegate?.conversationContentViewController(
+                    self,
+                    willDisplayActiveMediaPlayerFor: mediaPlayingMessage
+                )
             }
         }
     }
@@ -485,8 +501,10 @@ extension ConversationContentViewController: UITableViewDataSourcePrefetching {
 }
 
 extension UIAlertController {
-    fileprivate static func showErrorAlertWithLink(title: String,
-                                                   message: String) {
+    fileprivate static func showErrorAlertWithLink(
+        title: String,
+        message: String
+    ) {
         let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false)
 
         let legalHoldLearnMoreHandler: ((UIAlertAction) -> Swift.Void) = { _ in
@@ -494,17 +512,21 @@ extension UIAlertController {
             topmostViewController?.present(browserViewController, animated: true)
         }
 
-        let alertController = UIAlertController(title: title,
-                                                message: message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
 
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,
             style: .cancel
         ))
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.LegalholdActive.Alert.learnMore,
-                                                style: .default,
-                                                handler: legalHoldLearnMoreHandler))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.LegalholdActive.Alert.learnMore,
+            style: .default,
+            handler: legalHoldLearnMoreHandler
+        ))
 
         topmostViewController?.present(alertController, animated: true)
     }

@@ -95,29 +95,58 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
 
     func testLoginScreen_Email_WithProxyAuthenticated() {
         let backendEnvironmentProvider = MockEnvironment()
-        backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
-        backendEnvironmentProvider.proxy = FakeProxySettings(host: "api.example.org", port: 1345, needsAuthentication: true)
+        backendEnvironmentProvider
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        backendEnvironmentProvider.proxy = FakeProxySettings(
+            host: "api.example.org",
+            port: 1345,
+            needsAuthentication: true
+        )
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
-        runSnapshotTest(for: .provideCredentials(nil), customSize: .init(width: CGSize.iPhoneSize.iPhone4_7Inch.width, height: 1000)) // setting higher value for scrollview content
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            backendEnvironmentProvider: { backendEnvironmentProvider }
+        )
+        runSnapshotTest(
+            for: .provideCredentials(nil),
+            customSize: .init(
+                width: CGSize.iPhoneSize.iPhone4_7Inch.width,
+                height: 1000
+            )
+        ) // setting higher value for scrollview content
     }
 
     func testLoginScreen_Email_WithConfig() {
         let backendEnvironmentProvider = MockEnvironment()
-        backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        backendEnvironmentProvider
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
         backendEnvironmentProvider.proxy = nil
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            backendEnvironmentProvider: { backendEnvironmentProvider }
+        )
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
     func testLoginScreen_Email_WithProxyNoAuthentication() {
         let backendEnvironmentProvider = MockEnvironment()
-        backendEnvironmentProvider.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
-        backendEnvironmentProvider.proxy = FakeProxySettings(host: "api.example.org", port: 1345, needsAuthentication: false)
+        backendEnvironmentProvider
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        backendEnvironmentProvider.proxy = FakeProxySettings(
+            host: "api.example.org",
+            port: 1345,
+            needsAuthentication: false
+        )
         backendEnvironmentProvider.backendURL = URL(string: "https://api.example.org")!
 
-        builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: { backendEnvironmentProvider })
+        builder = AuthenticationInterfaceBuilder(
+            featureProvider: featureProvider,
+            backendEnvironmentProvider: { backendEnvironmentProvider }
+        )
         runSnapshotTest(for: .provideCredentials(nil))
     }
 
@@ -184,14 +213,19 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
                 return XCTFail("An interface was generated but we didn't expect one.", file: file, line: line)
             }
 
-            let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+            let navigationController = UINavigationController(
+                navigationBarClass: AuthenticationNavigationBar.self,
+                toolbarClass: nil
+            )
             navigationController.viewControllers = [viewController]
 
-            snapshotHelper.verify(matching: navigationController,
-                                  size: customSize,
-                                  file: file,
-                                  testName: testName,
-                                  line: line)
+            snapshotHelper.verify(
+                matching: navigationController,
+                size: customSize,
+                file: file,
+                testName: testName,
+                line: line
+            )
         } else {
             XCTAssertFalse(step.needsInterface, "Missing interface.", file: file, line: line)
         }

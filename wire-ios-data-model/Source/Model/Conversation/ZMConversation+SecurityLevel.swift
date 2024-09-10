@@ -138,7 +138,10 @@ extension ZMConversation {
 
     /// Should be called when a new client is discovered
     @objc(decreaseSecurityLevelIfNeededAfterDiscoveringClients:causedByMessage:)
-    public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy message: ZMOTRMessage?) {
+    public func decreaseSecurityLevelIfNeededAfterDiscovering(
+        clients: Set<UserClient>,
+        causedBy message: ZMOTRMessage?
+    ) {
         applySecurityChanges(cause: .addedClients(clients, source: message))
     }
 
@@ -256,15 +259,19 @@ extension ZMConversation {
         guard let context = managedObjectContext else { return }
 
         let previousLastMessage = lastMessage
-        let systemMessage = self.appendSystemMessage(type: .potentialGap,
-                                                     sender: ZMUser.selfUser(in: context),
-                                                     users: users,
-                                                     clients: nil,
-                                                     timestamp: timestamp)
+        let systemMessage = self.appendSystemMessage(
+            type: .potentialGap,
+            sender: ZMUser.selfUser(in: context),
+            users: users,
+            clients: nil,
+            timestamp: timestamp
+        )
         systemMessage.needsUpdatingUsers = true
 
-        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .potentialGap,
-           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage,
+           previousLastMessage.systemMessageType == .potentialGap,
+           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp,
+           previousLastMessageTimestamp <= timestamp {
             // In case the message before the new system message was also a system message of
             // the type ZMSystemMessageTypePotentialGap, we delete the old one and update the
             // users property of the new one to use old users and calculate the added / removed users
@@ -276,15 +283,23 @@ extension ZMConversation {
 
     /// Creates the message that warns user about the fact that decryption of incoming message is failed
     @objc(appendDecryptionFailedSystemMessageAtTime:sender:client:errorCode:)
-    public func appendDecryptionFailedSystemMessage(at date: Date?, sender: ZMUser, client: UserClient?, errorCode: Int) {
-        let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
+    public func appendDecryptionFailedSystemMessage(
+        at date: Date?,
+        sender: ZMUser,
+        client: UserClient?,
+        errorCode: Int
+    ) {
+        let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType
+            .decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
         let clients = client.flatMap { [$0] } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
-        let systemMessage = appendSystemMessage(type: type,
-                                                sender: sender,
-                                                users: nil,
-                                                clients: clients,
-                                                timestamp: serverTimestamp)
+        let systemMessage = appendSystemMessage(
+            type: type,
+            sender: sender,
+            users: nil,
+            clients: clients,
+            timestamp: serverTimestamp
+        )
 
         systemMessage.senderClientID = client?.remoteIdentifier
         systemMessage.decryptionErrorCode = NSNumber(value: errorCode)
@@ -307,7 +322,10 @@ extension ZMConversation {
             return
         }
 
-        WireLogger.eventProcessing.debug("Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map(\.remoteIdentifier.safeForLoggingDescription))")
+        WireLogger.eventProcessing
+            .debug(
+                "Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map(\.remoteIdentifier.safeForLoggingDescription))"
+            )
 
         switch conversationType {
         case .group:
@@ -344,39 +362,48 @@ extension ZMConversation {
     private func appendLegalHoldEnabledSystemMessageForConversation(cause: SecurityChangeCause) {
         var timestamp: Date?
 
-        if case let .addedClients(_, message) = cause, message?.conversation == self, message?.isUpdatingExistingMessage == false {
+        if case let .addedClients(_, message) = cause, message?.conversation == self,
+           message?.isUpdatingExistingMessage == false {
             timestamp = self.timestamp(before: message)
         }
 
-        appendSystemMessage(type: .legalHoldEnabled,
-                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestamp ?? timestampAfterLastMessage())
+        appendSystemMessage(
+            type: .legalHoldEnabled,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: nil,
+            clients: nil,
+            timestamp: timestamp ?? timestampAfterLastMessage()
+        )
     }
 
     private func appendLegalHoldEnabledSystemMessageForConversationAfterReceivingMessage(at timestamp: Date) {
-        appendSystemMessage(type: .legalHoldEnabled,
-                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestamp.previousNearestTimestamp)
+        appendSystemMessage(
+            type: .legalHoldEnabled,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: nil,
+            clients: nil,
+            timestamp: timestamp.previousNearestTimestamp
+        )
     }
 
     private func appendLegalHoldDisabledSystemMessageForConversation() {
-        appendSystemMessage(type: .legalHoldDisabled,
-                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestampAfterLastMessage())
+        appendSystemMessage(
+            type: .legalHoldDisabled,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: nil,
+            clients: nil,
+            timestamp: timestampAfterLastMessage()
+        )
     }
 
     private func appendLegalHoldDisabledSystemMessageForConversationAfterReceivingMessage(at timestamp: Date) {
-        appendSystemMessage(type: .legalHoldDisabled,
-                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                            users: nil,
-                            clients: nil,
-                            timestamp: timestamp.previousNearestTimestamp)
+        appendSystemMessage(
+            type: .legalHoldDisabled,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: nil,
+            clients: nil,
+            timestamp: timestamp.previousNearestTimestamp
+        )
     }
 }
 
@@ -425,7 +452,8 @@ extension ZMConversation {
     public func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
-            guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
+            guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation
+            else { return }
             conversation.clearMessagesThatCausedSecurityLevelDegradation()
             syncMOC.saveOrRollback()
         }
@@ -441,10 +469,14 @@ extension ZMConversation {
     /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered,
     /// halting the enumeration when a system message for security level degradation is found.
     /// This is executed asychronously on the sync context
-    private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(block: @escaping (ZMOTRMessage) -> Void) {
+    private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(
+        block: @escaping (ZMOTRMessage)
+            -> Void
+    ) {
         guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
-            guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
+            guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation
+            else { return }
             conversation.messagesThatCausedSecurityLevelDegradation.forEach(block)
             syncMOC.saveOrRollback()
         }
@@ -459,7 +491,11 @@ extension ZMConversation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
-                WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
+                WireLogger.messaging
+                    .warn(
+                        "expiring message due to security degradation " +
+                            String(describing: message.nonce?.transportString().readableHash)
+                    )
                 // All other messages: expire and mark that it caused security degradation
                 message.expire()
                 message.causedSecurityLevelDegradation = true
@@ -472,10 +508,14 @@ extension ZMConversation {
 
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        let undeliveredMessagesPredicate = NSPredicate(format: "%K == %@ AND %K == %@ AND %K == NO",
-                                                       ZMMessageConversationKey, self,
-                                                       ZMMessageSenderKey, selfUser,
-                                                       DeliveredKey)
+        let undeliveredMessagesPredicate = NSPredicate(
+            format: "%K == %@ AND %K == %@ AND %K == NO",
+            ZMMessageConversationKey,
+            self,
+            ZMMessageSenderKey,
+            selfUser,
+            DeliveredKey
+        )
 
         let fetchRequest = NSFetchRequest<ZMClientMessage>(entityName: ZMClientMessage.entityName())
         fetchRequest.predicate = undeliveredMessagesPredicate
@@ -552,11 +592,13 @@ extension ZMConversation {
             return
         }
 
-        appendSystemMessage(type: .conversationIsSecure,
-                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                            users: users,
-                            clients: clients,
-                            timestamp: timestampAfterLastMessage())
+        appendSystemMessage(
+            type: .conversationIsSecure,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: users,
+            clients: clients,
+            timestamp: timestampAfterLastMessage()
+        )
     }
 
     fileprivate enum SecurityChangeCause {
@@ -594,22 +636,26 @@ extension ZMConversation {
 
         guard !addedClients.isEmpty || !addedUsers.isEmpty else { return }
 
-        self.appendSystemMessage(type: .newClient,
-                                 sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                 users: affectedUsers,
-                                 addedUsers: addedUsers,
-                                 clients: addedClients,
-                                 timestamp: timestamp ?? timestampAfterLastMessage())
+        self.appendSystemMessage(
+            type: .newClient,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: affectedUsers,
+            addedUsers: addedUsers,
+            clients: addedClients,
+            timestamp: timestamp ?? timestampAfterLastMessage()
+        )
     }
 
     private func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
         let users = Set(clients.compactMap(\.user))
-        self.appendSystemMessage(type: .ignoredClient,
-                                 sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                 users: users,
-                                 clients: clients,
-                                 timestamp: timestampAfterLastMessage())
+        self.appendSystemMessage(
+            type: .ignoredClient,
+            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            users: users,
+            clients: clients,
+            timestamp: timestampAfterLastMessage()
+        )
     }
 
     @discardableResult
@@ -738,10 +784,24 @@ extension ZMSystemMessage {
     /// Fetch the first system message in the conversation about "started to use this device"
     fileprivate static func fetchStartedUsingOnThisDeviceMessage(conversation: ZMConversation) -> ZMSystemMessage? {
         guard let selfClient = ZMUser.selfUser(in: conversation.managedObjectContext!).selfClient() else { return nil }
-        let conversationPredicate = NSPredicate(format: "%K == %@ OR %K == %@", ZMMessageConversationKey, conversation, ZMMessageHiddenInConversationKey, conversation)
-        let newClientPredicate = NSPredicate(format: "%K == %d", ZMMessageSystemMessageTypeKey, ZMSystemMessageType.newClient.rawValue)
+        let conversationPredicate = NSPredicate(
+            format: "%K == %@ OR %K == %@",
+            ZMMessageConversationKey,
+            conversation,
+            ZMMessageHiddenInConversationKey,
+            conversation
+        )
+        let newClientPredicate = NSPredicate(
+            format: "%K == %d",
+            ZMMessageSystemMessageTypeKey,
+            ZMSystemMessageType.newClient.rawValue
+        )
         let containsSelfClient = NSPredicate(format: "ANY %K == %@", ZMMessageSystemMessageClientsKey, selfClient)
-        let compound = NSCompoundPredicate(andPredicateWithSubpredicates: [conversationPredicate, newClientPredicate, containsSelfClient])
+        let compound = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            conversationPredicate,
+            newClientPredicate,
+            containsSelfClient,
+        ])
 
         let fetchRequest = ZMSystemMessage.sortedFetchRequest(with: compound)
 

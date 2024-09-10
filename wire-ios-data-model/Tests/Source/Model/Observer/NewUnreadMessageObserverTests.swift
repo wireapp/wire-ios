@@ -54,8 +54,14 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
         super.setUp()
 
         self.testObserver = UnreadMessageTestObserver()
-        self.newMessageToken = NewUnreadMessagesChangeInfo.add(observer: self.testObserver, managedObjectContext: self.uiMOC)
-        self.newKnocksToken = NewUnreadKnockMessagesChangeInfo.add(observer: self.testObserver, managedObjectContext: self.uiMOC)
+        self.newMessageToken = NewUnreadMessagesChangeInfo.add(
+            observer: self.testObserver,
+            managedObjectContext: self.uiMOC
+        )
+        self.newKnocksToken = NewUnreadKnockMessagesChangeInfo.add(
+            observer: self.testObserver,
+            managedObjectContext: self.uiMOC
+        )
     }
 
     override func tearDown() {

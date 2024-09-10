@@ -106,9 +106,15 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
         wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
         messageRetentionInterval = try container.decodeIfPresent(TimeInterval.self, forKey: .messageRetentionInterval)
         authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
-        failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(Int.self, forKey: .failedPasswordThresholdBeforeWipe)
+        failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
+            Int.self,
+            forKey: .failedPasswordThresholdBeforeWipe
+        )
         encryptionAtRestEnabledByDefault = try container.decode(Bool.self, forKey: .encryptionAtRestEnabledByDefault)
-        legacyAppLockConfig = try container.decodeIfPresent(AppLockController.LegacyConfig.self, forKey: .legacyAppLockConfig)
+        legacyAppLockConfig = try container.decodeIfPresent(
+            AppLockController.LegacyConfig.self,
+            forKey: .legacyAppLockConfig
+        )
     }
 
     // MARK: - Methods

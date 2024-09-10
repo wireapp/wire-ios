@@ -91,7 +91,12 @@ final class LegalHoldDisclosureController: UserObserving {
     }
 
     private func configureObservers(userSession: UserSession) {
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterForeground),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
         userObserverToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
     }
 
@@ -193,9 +198,15 @@ final class LegalHoldDisclosureController: UserObserving {
 
         switch state {
         case .warningAboutDisabled:
-            alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
+            alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(
+                for: selfUserLegalHoldSubject,
+                suggestedStateChangeHandler: assignState
+            )
         case .warningAboutEnabled:
-            alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
+            alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(
+                for: selfUserLegalHoldSubject,
+                suggestedStateChangeHandler: assignState
+            )
         case let .warningAboutPendingRequest(request, fingerprint):
             alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
                 for: request,

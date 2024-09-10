@@ -28,10 +28,21 @@ class ConversationTests_LastRead: ConversationTestsBase {
         var toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
         self.mockTransportSession.performRemoteChanges { _ in
-            let message = GenericMessage(content: Text(content: "Will insert this to have a message to read", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-            self.selfToUser1Conversation.encryptAndInsertData(from: fromClient,
-                                                              to: toClient,
-                                                              data: try! message.serializedData())
+            let message =
+                GenericMessage(
+                    content: Text(
+                        content: "Will insert this to have a message to read",
+                        mentions: [],
+                        linkPreviews: [],
+                        replyingTo: nil
+                    ),
+                    nonce: UUID.create()
+                )
+            self.selfToUser1Conversation.encryptAndInsertData(
+                from: fromClient,
+                to: toClient,
+                data: try! message.serializedData()
+            )
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -47,15 +58,27 @@ class ConversationTests_LastRead: ConversationTestsBase {
             guard let client = client as? MockUserClient else {
                 return false
             }
-            return client.identifier == ZMUser.selfUser(in: self.userSession!.managedObjectContext).selfClient()!.remoteIdentifier
+            return client.identifier == ZMUser.selfUser(in: self.userSession!.managedObjectContext).selfClient()!
+                .remoteIdentifier
         }) as! MockUserClient
 
         // when
         self.mockTransportSession.performRemoteChanges { _ in
-            let message = GenericMessage(content: Text(content: "This should increase the unread count", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-            self.selfToUser1Conversation.encryptAndInsertData(from: fromClient,
-                                                              to: toClient,
-                                                              data: try! message.serializedData())
+            let message =
+                GenericMessage(
+                    content: Text(
+                        content: "This should increase the unread count",
+                        mentions: [],
+                        linkPreviews: [],
+                        replyingTo: nil
+                    ),
+                    nonce: UUID.create()
+                )
+            self.selfToUser1Conversation.encryptAndInsertData(
+                from: fromClient,
+                to: toClient,
+                data: try! message.serializedData()
+            )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

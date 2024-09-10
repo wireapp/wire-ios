@@ -361,7 +361,10 @@ final class CallGridViewController: UIViewController {
         // We have a stream but don't have a preview view yet.
         if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
             Log.calling.debug("Adding self video to floating preview")
-            thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
+            thumbnailViewController.setThumbnailContentView(
+                previewView,
+                contentSize: .previewSize(for: traitCollection)
+            )
         }
     }
 
@@ -505,8 +508,14 @@ extension CallGridViewController: UICollectionViewDataSource {
         dataSource.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GridCell.reuseIdentifier, for: indexPath) as? GridCell else {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: GridCell.reuseIdentifier,
+            for: indexPath
+        ) as? GridCell else {
             return UICollectionViewCell()
         }
 

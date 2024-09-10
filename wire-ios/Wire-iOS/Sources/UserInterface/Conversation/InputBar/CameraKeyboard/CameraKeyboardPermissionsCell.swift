@@ -56,7 +56,11 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         settingsButton.setTitle(L10n.Localizable.KeyboardPhotosAccess.Denied.Keyboard.settings, for: .normal)
         settingsButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 30, bottom: 10, right: 30)
         settingsButton.layer.masksToBounds = true
-        settingsButton.addTarget(self, action: #selector(CameraKeyboardPermissionsCell.openSettings), for: .touchUpInside)
+        settingsButton.addTarget(
+            self,
+            action: #selector(CameraKeyboardPermissionsCell.openSettings),
+            for: .touchUpInside
+        )
 
         containerView.backgroundColor = .clear
 
@@ -86,8 +90,10 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         case .ongoingCall:      KeyboardPhotoAccessDeniedLocale.ongoingCall
         }
 
-        descriptionLabel.font = UIFont.systemFont(ofSize: deniedAuthorization == .ongoingCall ? 14.0 : 16.0,
-                                                  weight: UIFont.Weight.light)
+        descriptionLabel.font = UIFont.systemFont(
+            ofSize: deniedAuthorization == .ongoingCall ? 14.0 : 16.0,
+            weight: UIFont.Weight.light
+        )
         descriptionLabel.text = title
 
         if SecurityFlags.cameraRoll.isEnabled {
@@ -99,7 +105,8 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     @objc
     private func openSettings() {
-        guard let url = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(url) else { return }
+        guard let url = URL(string: UIApplication.openSettingsURLString),
+              UIApplication.shared.canOpenURL(url) else { return }
         UIApplication.shared.open(url)
     }
 

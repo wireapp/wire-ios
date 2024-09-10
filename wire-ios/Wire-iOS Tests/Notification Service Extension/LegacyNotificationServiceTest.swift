@@ -52,9 +52,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
         callEventHandlerMock = CallEventHandlerMock()
         currentUserIdentifier = UUID.create()
         notificationContent = createNotificationContent()
-        request = UNNotificationRequest(identifier: currentUserIdentifier.uuidString,
-                                        content: notificationContent,
-                                        trigger: nil)
+        request = UNNotificationRequest(
+            identifier: currentUserIdentifier.uuidString,
+            content: notificationContent,
+            trigger: nil
+        )
 
         coreDataFixture = CoreDataFixture()
         mockConversation = createTeamGroupConversation()
@@ -144,7 +146,11 @@ final class LegacyNotificationServiceTests: XCTestCase {
         guard let event = createEvent() else {
             return nil
         }
-        return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: coreDataFixture.uiMOC)
+        return ZMLocalNotification(
+            event: event,
+            conversation: conversation,
+            managedObjectContext: coreDataFixture.uiMOC
+        )
     }
 
     private func createEvent() -> ZMUpdateEvent? {

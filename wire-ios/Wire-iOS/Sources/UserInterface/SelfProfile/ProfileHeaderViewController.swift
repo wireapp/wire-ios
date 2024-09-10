@@ -162,7 +162,11 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, e2eiCertifiedImageView, proteusVerifiedImageView])
+        let nameShieldStackView = UIStackView(arrangedSubviews: [
+            nameLabel,
+            e2eiCertifiedImageView,
+            proteusVerifiedImageView,
+        ])
         nameShieldStackView.axis = .horizontal
         nameShieldStackView.spacing = 4
 
@@ -253,7 +257,8 @@ final class ProfileHeaderViewController: UIViewController {
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
-            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint,
+            widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint,
+            bottomSpaceConstraint,
         ])
     }
 
@@ -318,7 +323,8 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateAvailabilityVisibility() {
-        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user.availability == .none
+        let isHidden = options.contains(.hideAvailability) || !options.contains(.allowEditingAvailability) && user
+            .availability == .none
         userStatusViewController.view?.isHidden = isHidden
     }
 

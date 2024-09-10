@@ -137,7 +137,10 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     }
 
     func testThatItRendersTextMessagePreview_LongText() {
-        let message = MockMessageFactory.textMessage(withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed.")
+        let message = MockMessageFactory
+            .textMessage(
+                withText: "Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed. Lorem Ipsum Dolor Sit Amed."
+            )
         let sut = message.replyPreview()!.prepareForSnapshot()
 
         snapshotHelper
@@ -213,13 +216,19 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
     func testThatItRendersLinkPreviewMessagePreview() {
         let url = "https://www.example.com/article/1"
-        let article = ArticleMetadata(originalURLString: url, permanentURLString: url, resolvedURLString: url, offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: url,
+            permanentURLString: url,
+            resolvedURLString: url,
+            offset: 0
+        )
         article.title = "You won't believe what happened next!"
 
         let message = MockMessageFactory.textMessage(withText: "https://www.example.com/article/1")
         message.backingTextMessageData.backingLinkPreview = article
         message.backingTextMessageData.linkPreviewImageCacheKey = "image-id-unsplash_matterhorn.jpg"
-        message.backingTextMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").jpegData(compressionQuality: 0.9)
+        message.backingTextMessageData.imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+            .jpegData(compressionQuality: 0.9)
         message.backingTextMessageData.linkPreviewHasImage = true
 
         let previewView = message.replyPreview()!

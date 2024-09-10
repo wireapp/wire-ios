@@ -114,7 +114,8 @@ extension NSTextAttachment {
         let attachment = NSTextAttachment()
         attachment.image = StyleKitIcon.downArrow.makeImage(
             size: size,
-            color: SemanticColors.Icon.foregroundPlainDownArrow).withRenderingMode(.alwaysTemplate)
+            color: SemanticColors.Icon.foregroundPlainDownArrow
+        ).withRenderingMode(.alwaysTemplate)
         return attachment
     }
 }

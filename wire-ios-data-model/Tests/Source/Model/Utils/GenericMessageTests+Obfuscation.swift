@@ -37,7 +37,12 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
             $0.height = 40
             $0.tag = "bar"
         }
-        let preview = WireProtos.Asset.Preview(size: 2000, mimeType: "video", remoteData: remoteData, imageMetadata: imageMetaData)
+        let preview = WireProtos.Asset.Preview(
+            size: 2000,
+            mimeType: "video",
+            remoteData: remoteData,
+            imageMetadata: imageMetaData
+        )
         let asset = WireProtos.Asset(original: original, preview: preview)
         return asset
     }

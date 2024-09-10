@@ -36,9 +36,21 @@ class TailEditingTextField: UITextField {
     }
 
     func setup() {
-        self.addTarget(self, action: #selector(TailEditingTextField.replaceNormalSpacesWithNonBreakingSpaces), for: UIControl.Event.editingDidBegin)
-        self.addTarget(self, action: #selector(TailEditingTextField.replaceNormalSpacesWithNonBreakingSpaces), for: UIControl.Event.editingChanged)
-        self.addTarget(self, action: #selector(TailEditingTextField.replaceNonBreakingSpacesWithNormalSpaces), for: UIControl.Event.editingDidEnd)
+        self.addTarget(
+            self,
+            action: #selector(TailEditingTextField.replaceNormalSpacesWithNonBreakingSpaces),
+            for: UIControl.Event.editingDidBegin
+        )
+        self.addTarget(
+            self,
+            action: #selector(TailEditingTextField.replaceNormalSpacesWithNonBreakingSpaces),
+            for: UIControl.Event.editingChanged
+        )
+        self.addTarget(
+            self,
+            action: #selector(TailEditingTextField.replaceNonBreakingSpacesWithNormalSpaces),
+            for: UIControl.Event.editingDidEnd
+        )
     }
 
     @objc func replaceNormalSpacesWithNonBreakingSpaces() {
@@ -50,7 +62,8 @@ class TailEditingTextField: UITextField {
     }
 
     @objc func replaceNonBreakingSpacesWithNormalSpaces() {
-        guard let isContainsNonBreakingSpace = (self.text?.contains(String.nonBreakingSpace)), isContainsNonBreakingSpace else { return }
+        guard let isContainsNonBreakingSpace = (self.text?.contains(String.nonBreakingSpace)),
+              isContainsNonBreakingSpace else { return }
 
         self.text = self.text?.replacingOccurrences(of: String.nonBreakingSpace, with: String.breakingSpace)
     }

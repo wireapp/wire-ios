@@ -41,18 +41,23 @@ extension ZMConversationMessage {
         } else if isImage {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.imageMessage
         } else if let locationData = locationMessageData {
-            contentDescriptionText = locationData.name ?? ConversationInputBarMessagePreview.Accessibility.locationMessage
+            contentDescriptionText = locationData.name ?? ConversationInputBarMessagePreview.Accessibility
+                .locationMessage
         } else if isVideo {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.videoMessage
         } else if isAudio {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.audioMessage
         } else if let fileData = fileMessageData {
-            contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.fileMessage(fileData.filename ?? "")
+            contentDescriptionText = ConversationInputBarMessagePreview.Accessibility
+                .fileMessage(fileData.filename ?? "")
         } else {
             contentDescriptionText = ConversationInputBarMessagePreview.Accessibility.unknownMessage
         }
 
-        return ConversationInputBarMessagePreview.Accessibility.messageFrom(contentDescriptionText, senderDescriptionText)
+        return ConversationInputBarMessagePreview.Accessibility.messageFrom(
+            contentDescriptionText,
+            senderDescriptionText
+        )
     }
 }
 

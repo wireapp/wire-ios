@@ -23,7 +23,11 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
     fileprivate var singleRequstSync: ZMSingleRequestSync!
 
     @objc
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, syncStatus: SyncStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncStatus: SyncStatus
+    ) {
         self.syncStatus = syncStatus
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -51,7 +55,10 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
 
         guard let userID = selfUser.remoteIdentifier else { return nil }
 
-        return ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())", apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            getFromPath: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {

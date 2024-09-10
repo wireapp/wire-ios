@@ -65,7 +65,10 @@ final class TopPeopleSectionController: SearchSectionController {
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
 
-        collectionView?.register(CollectionViewContainerCell.self, forCellWithReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier)
+        collectionView?.register(
+            CollectionViewContainerCell.self,
+            forCellWithReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier
+        )
     }
 
     override var isHidden: Bool {
@@ -84,12 +87,22 @@ final class TopPeopleSectionController: SearchSectionController {
         1
     }
 
-    override func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 97)
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier, for: indexPath) as! CollectionViewContainerCell
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: CollectionViewContainerCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! CollectionViewContainerCell
         cell.collectionView = innerCollectionView
         return cell
     }

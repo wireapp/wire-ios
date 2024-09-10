@@ -28,7 +28,10 @@ import WireSyncEngine
 final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle needsPasswordToRegisterClient errrors
@@ -48,11 +51,19 @@ final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEvent
         let numberOfAccounts = statusProvider?.numberOfAccounts ?? 0
         let credentials = error.userInfo[ZMUserLoginCredentialsKey] as? LoginCredentials
 
-        let nextStep = AuthenticationFlowStep.reauthenticate(credentials: credentials, numberOfAccounts: numberOfAccounts, isSignedOut: isSignedOut)
+        let nextStep = AuthenticationFlowStep.reauthenticate(
+            credentials: credentials,
+            numberOfAccounts: numberOfAccounts,
+            isSignedOut: isSignedOut
+        )
 
-        let alert = AuthenticationCoordinatorAlert(title: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
-                                                   message: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.message,
-                                                   actions: [.ok])
+        let alert = AuthenticationCoordinatorAlert(
+            title: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded
+                .title,
+            message: L10n.Localizable.Registration.Signin.Alert.PasswordNeeded
+                .message,
+            actions: [.ok]
+        )
 
         return [.hideLoadingView, .transition(nextStep, mode: .reset), .presentAlert(alert)]
     }

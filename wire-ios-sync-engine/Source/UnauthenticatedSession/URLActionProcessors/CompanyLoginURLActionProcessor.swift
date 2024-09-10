@@ -37,7 +37,10 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
             authenticationStatus.loginSucceeded(with: userInfo)
         case let .startCompanyLogin(code):
             guard delegate?.isAllowedToCreateNewAccount == true else {
-                presentationDelegate?.failedToPerformAction(urlAction, error: SessionManager.AccountError.accountLimitReached)
+                presentationDelegate?.failedToPerformAction(
+                    urlAction,
+                    error: SessionManager.AccountError.accountLimitReached
+                )
                 return
             }
             authenticationStatus.notifyCompanyLoginCodeDidBecomeAvailable(code)

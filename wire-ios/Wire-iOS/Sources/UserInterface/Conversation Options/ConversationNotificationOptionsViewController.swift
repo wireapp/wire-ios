@@ -77,8 +77,16 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         collectionViewLayout.minimumLineSpacing = 0
 
         CheckmarkCell.register(in: collectionView)
-        collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
-        collectionView.register(SectionFooter.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: "SectionFooter")
+        collectionView.register(
+            SectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "SectionHeader"
+        )
+        collectionView.register(
+            SectionFooter.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: "SectionFooter"
+        )
     }
 
     private func configureConstraints() {
@@ -91,7 +99,8 @@ final class ConversationNotificationOptionsViewController: UIViewController {
 
 // MARK: - Table View
 
-extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+extension ConversationNotificationOptionsViewController: UICollectionViewDelegateFlowLayout,
+    UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         1
     }
@@ -100,7 +109,10 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         items.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let item = items[indexPath.row]
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
 
@@ -111,14 +123,26 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionHeader {
-            let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader", for: indexPath)
+            let view = collectionView
+                .dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionHeader,
+                    withReuseIdentifier: "SectionHeader",
+                    for: indexPath
+                )
             return view
         } else {
-            let dequeuedView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
-                                                                               withReuseIdentifier: "SectionFooter",
-                                                                               for: indexPath)
+            let dequeuedView = collectionView
+                .dequeueReusableSupplementaryView(
+                    ofKind: UICollectionView.elementKindSectionFooter,
+                    withReuseIdentifier: "SectionFooter",
+                    for: indexPath
+                )
 
             guard let view = dequeuedView as? SectionFooter else { return UICollectionReusableView(frame: .zero) }
             view.titleLabel.text = L10n.Localizable.GroupDetails.NotificationOptionsCell.description
@@ -126,10 +150,17 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        let dequeuedView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter,
-                                                                           withReuseIdentifier: "SectionFooter",
-                                                                           for: IndexPath(item: 0, section: section))
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        let dequeuedView = collectionView
+            .dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionFooter,
+                withReuseIdentifier: "SectionFooter",
+                for: IndexPath(item: 0, section: section)
+            )
 
         guard let view = dequeuedView as? SectionFooter else { return .zero }
 
@@ -156,11 +187,19 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
 
     // MARK: Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 32)
     }
 }

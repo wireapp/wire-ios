@@ -79,6 +79,9 @@ final class AudioButtonOverlayTests: XCTestCase {
         XCTAssertEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play])
 
         sut.sendButton.sendActions(for: .touchUpInside)
-        XCTAssertEqual(buttonTapHistory, [AudioButtonOverlay.AudioButtonOverlayButtonType.play, AudioButtonOverlay.AudioButtonOverlayButtonType.send])
+        XCTAssertEqual(
+            buttonTapHistory,
+            [AudioButtonOverlay.AudioButtonOverlayButtonType.play, AudioButtonOverlay.AudioButtonOverlayButtonType.send]
+        )
     }
 }

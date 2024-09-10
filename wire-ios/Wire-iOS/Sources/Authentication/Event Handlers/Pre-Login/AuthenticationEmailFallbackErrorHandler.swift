@@ -44,7 +44,10 @@ final class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler 
             actions.append(.executeFeedbackAction(.showGuidanceDot))
         }
 
-        let alert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         actions.append(.presentErrorAlert(alert))
 
         return actions

@@ -21,13 +21,17 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
-@objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+@objcMembers public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy,
+    ZMContextChangeTrackerSource {
     private let requestFactory = AssetDownloadRequestFactory()
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
     private var token: Any?
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in
@@ -47,9 +51,11 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     }
 
     func registerForWhitelistingNotification() {
-        self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
-                                                       context: self.managedObjectContext.notificationContext,
-                                                       object: nil) { [weak self] note in
+        self.token = NotificationInContext.addObserver(
+            name: ZMAssetClientMessage.imageDownloadNotificationName,
+            context: self.managedObjectContext.notificationContext,
+            object: nil
+        ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
             self?.didRequestToDownloadImage(objectID)
         }
@@ -86,7 +92,8 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         let cache = managedObjectContext.zm_fileAssetCache!
 
         guard data.zmSHA256Digest() == remote.sha256 else {
-            zmLog.warn("v3 asset (preview): \(asset), message: \(assetClientMessage) digest is not valid, discarding...")
+            zmLog
+                .warn("v3 asset (preview): \(asset), message: \(assetClientMessage) digest is not valid, discarding...")
             managedObjectContext.delete(assetClientMessage)
             return
         }
@@ -118,13 +125,22 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 // MARK: - ZMDownstreamTranscoder
 
 extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage,
            let asset = assetClientMessage.underlyingMessage?.assetData,
            assetClientMessage.version >= 3 {
             let remote = asset.preview.remote
             let token = remote.hasAssetToken ? remote.assetToken : nil
-            if let request = requestFactory.requestToGetAsset(withKey: remote.assetID, token: token, domain: remote.assetDomain, apiVersion: apiVersion) {
+            if let request = requestFactory.requestToGetAsset(
+                withKey: remote.assetID,
+                token: token,
+                domain: remote.assetDomain,
+                apiVersion: apiVersion
+            ) {
                 request.add(ZMCompletionHandler(on: self.managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 })

@@ -36,7 +36,8 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
         sut = RemoveUserClientUseCase(
             userClientAPI: mockApiProvider.userClientAPIApiVersion_MockValue!,
-            syncContext: stack.syncContext)
+            syncContext: stack.syncContext
+        )
     }
 
     override func tearDown() async throws {

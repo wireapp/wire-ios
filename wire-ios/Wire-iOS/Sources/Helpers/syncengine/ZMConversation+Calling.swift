@@ -103,7 +103,10 @@ extension ZMConversation {
                 message: ErrorCallSlowCallLocale.slowConnection,
                 preferredStyle: .alert
             )
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default) { _ in
+            badConnectionController.addAction(UIAlertAction(
+                title: ErrorCallSlowCallLocale.SlowConnection.callAnyway,
+                style: .default
+            ) { _ in
                 handler(false)
             })
             badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
@@ -138,15 +141,20 @@ extension ZMConversation {
         return true
     }
 
-    func confirmJoiningCallIfNeeded(alertPresenter: UIViewController, forceAlertModal: Bool = false, completion: @escaping () -> Void) {
+    func confirmJoiningCallIfNeeded(
+        alertPresenter: UIViewController,
+        forceAlertModal: Bool = false,
+        completion: @escaping () -> Void
+    ) {
         guard ZMUserSession.shared()?.isCallOngoing == true else {
             return completion()
         }
 
-        let controller = UIAlertController.ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
-            guard confirmed else { return }
-            self.endAllCallsExceptIncoming(completion: completion)
-        }
+        let controller = UIAlertController
+            .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
+                guard confirmed else { return }
+                self.endAllCallsExceptIncoming(completion: completion)
+            }
 
         alertPresenter.present(controller, animated: true)
     }

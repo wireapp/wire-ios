@@ -103,7 +103,8 @@ final class SessionEstablisherTests: MessagingTestBase {
         enum Scaffolding {
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
             static let prekey = Payload.Prekey(key: "prekey123", id: nil)
-            static let prekeyByQualifiedUserID = [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
+            static let prekeyByQualifiedUserID =
+                [clientID.domain: [clientID.userID.transportString(): [clientID.clientID: prekey]]]
         }
 
         let selfUserId = UUID()
@@ -118,7 +119,8 @@ final class SessionEstablisherTests: MessagingTestBase {
             apiProvider.prekeyAPIApiVersion_MockValue = prekeyApi
         }
 
-        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
+        func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>)
+            -> Arrangement {
             switch result {
             case let .success(payload):
                 prekeyApi.fetchPrekeysFor_MockValue = payload
@@ -137,8 +139,8 @@ final class SessionEstablisherTests: MessagingTestBase {
             (self, SessionEstablisher(
                 context: coreDataStack.syncContext,
                 apiProvider: apiProvider,
-                processor: processor)
-            )
+                processor: processor
+            ))
         }
     }
 }

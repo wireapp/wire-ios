@@ -79,7 +79,11 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
         //  2. The only participants are the current user and the selected user
         //  3. It does not have a custom display name
         let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-        let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
         let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
         let sameParticipant = NSPredicate(
             format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",

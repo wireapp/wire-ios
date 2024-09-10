@@ -904,9 +904,19 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { url in
-            FileManager.default.createFile(atPath: url.path, contents: data, attributes: [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
-                                                                                          .creationDate: creationDate])
+        coordinator.coordinate(
+            writingItemAt: url,
+            options: NSFileCoordinator.WritingOptions.forReplacing,
+            error: &error
+        ) { url in
+            FileManager.default.createFile(
+                atPath: url.path,
+                contents: data,
+                attributes: [
+                    .protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
+                    .creationDate: creationDate,
+                ]
+            )
         }
 
         if let error {
@@ -924,8 +934,13 @@ private struct FileCache: Cache {
         coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
             do {
                 try FileManager.default.copyItem(at: fromUrl, to: url)
-                try FileManager.default.setAttributes([.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
-                                                       .creationDate: creationDate], ofItemAtPath: url.path)
+                try FileManager.default.setAttributes(
+                    [
+                        .protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
+                        .creationDate: creationDate,
+                    ],
+                    ofItemAtPath: url.path
+                )
             } catch {
                 fatal("Failed to copy from \(url) to \(url), \(error)")
             }
@@ -1000,7 +1015,11 @@ private struct FileCache: Cache {
     /// Returns assets created earlier than the given date
     func assetsOlderThan(_ date: Date) throws -> [URL] {
         let fileManager = FileManager.default
-        let files = try fileManager.contentsOfDirectory(at: cacheFolderURL, includingPropertiesForKeys: [.creationDateKey], options: [.skipsSubdirectoryDescendants])
+        let files = try fileManager.contentsOfDirectory(
+            at: cacheFolderURL,
+            includingPropertiesForKeys: [.creationDateKey],
+            options: [.skipsSubdirectoryDescendants]
+        )
 
         return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)

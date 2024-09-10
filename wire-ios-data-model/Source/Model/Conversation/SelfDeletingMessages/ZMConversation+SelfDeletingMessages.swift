@@ -57,7 +57,8 @@ extension ZMConversation {
     ///
     /// This is not necessarily the timeout used when appending new messages. See `activeTimeoutValue`.
 
-    public func messageDestructionTimeoutValue(for type: MessageDestructionTimeoutType) -> MessageDestructionTimeoutValue {
+    public func messageDestructionTimeoutValue(for type: MessageDestructionTimeoutType)
+        -> MessageDestructionTimeoutValue {
         switch type {
         case .team:
             .init(rawValue: teamMessageDestructionTimeout)
@@ -73,7 +74,10 @@ extension ZMConversation {
     /// Note: setting a timeout for the `team` type has no effect since this is controlled by the
     /// `Feature.SelfDeletingMessages` feature config.
 
-    public func setMessageDestructionTimeoutValue(_ value: MessageDestructionTimeoutValue, for type: MessageDestructionTimeoutType) {
+    public func setMessageDestructionTimeoutValue(
+        _ value: MessageDestructionTimeoutValue,
+        for type: MessageDestructionTimeoutType
+    ) {
         switch type {
         case .team:
             break

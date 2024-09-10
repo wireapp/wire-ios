@@ -115,7 +115,10 @@ extension FederationTerminationManager {
         }
     }
 
-    private func conversationsNotHosted(on domains: [String], withParticipantsOn userDomains: [String]) -> [ZMConversation] {
+    private func conversationsNotHosted(
+        on domains: [String],
+        withParticipantsOn userDomains: [String]
+    ) -> [ZMConversation] {
         ZMConversation.groupConversations(notHostedOnDomains: domains, in: context)
             .filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
     }
@@ -129,10 +132,12 @@ extension ZMConversation {
             return
         }
         let selfUser = ZMUser.selfUser(in: context)
-        appendParticipantsRemovedAnonymouslySystemMessage(users: users,
-                                                          sender: selfUser,
-                                                          removedReason: .federationTermination,
-                                                          at: Date())
+        appendParticipantsRemovedAnonymouslySystemMessage(
+            users: users,
+            sender: selfUser,
+            removedReason: .federationTermination,
+            at: Date()
+        )
     }
 
     fileprivate func appendFederationTerminationSystemMessage(domains: [String]) {

@@ -23,7 +23,11 @@ extension ZMConversation {
     @objc public static let defaultMemberRoleName = "wire_member"
 
     static func predicateSecureWithIgnored() -> NSPredicate {
-        NSPredicate(format: "%K == %d", #keyPath(ZMConversation.securityLevel), ZMConversationSecurityLevel.secureWithIgnored.rawValue)
+        NSPredicate(
+            format: "%K == %d",
+            #keyPath(ZMConversation.securityLevel),
+            ZMConversationSecurityLevel.secureWithIgnored.rawValue
+        )
     }
 
     /// After changes to conversation security degradation logic we need
@@ -74,18 +78,44 @@ extension ZMConversation {
                 let adminRole = conversation.getRoles().first(where: { $0.name == defaultAdminRoleName })
 
                 if let conversationTeam = conversation.team, conversationTeam == selfUser.team, selfUser.isTeamMember {
-                    participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: conversationTeam)
+                    participantRoleForSelfUser = getAParticipantRole(
+                        in: moc,
+                        adminRole: adminRole,
+                        user: selfUser,
+                        conversation: conversation,
+                        team: conversationTeam
+                    )
                 } else {
-                    participantRoleForSelfUser = getAParticipantRole(in: moc, adminRole: adminRole, user: selfUser, conversation: conversation, team: nil)
+                    participantRoleForSelfUser = getAParticipantRole(
+                        in: moc,
+                        adminRole: adminRole,
+                        user: selfUser,
+                        conversation: conversation,
+                        team: nil
+                    )
                 }
                 conversation.participantRoles.insert(participantRoleForSelfUser)
             }
         }
     }
 
-    private static func getAParticipantRole(in moc: NSManagedObjectContext, adminRole: Role?, user: ZMUser, conversation: ZMConversation, team: Team?) -> ParticipantRole {
-        let participantRoleForUser = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: conversation)
-        let customRole = Role.fetchOrCreateRole(with: defaultAdminRoleName, teamOrConversation: team != nil ? .team(team!) : .conversation(conversation), in: moc)
+    private static func getAParticipantRole(
+        in moc: NSManagedObjectContext,
+        adminRole: Role?,
+        user: ZMUser,
+        conversation: ZMConversation,
+        team: Team?
+    ) -> ParticipantRole {
+        let participantRoleForUser = ParticipantRole.create(
+            managedObjectContext: moc,
+            user: user,
+            conversation: conversation
+        )
+        let customRole = Role.fetchOrCreateRole(
+            with: defaultAdminRoleName,
+            teamOrConversation: team != nil ? .team(team!) : .conversation(conversation),
+            in: moc
+        )
 
         if let adminRole {
             participantRoleForUser.role = adminRole
@@ -123,9 +153,12 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: moc)
 
         let groupConversationsFetch = ZMConversation.sortedFetchRequest(
-            with: NSPredicate(format: "%K == %d",
-                              ZMConversationConversationTypeKey,
-                              ZMConversationType.group.rawValue))
+            with: NSPredicate(
+                format: "%K == %d",
+                ZMConversationConversationTypeKey,
+                ZMConversationType.group.rawValue
+            )
+        )
 
         guard let conversations = moc.fetchOrAssert(request: groupConversationsFetch) as? [ZMConversation] else {
             fatal("fetchOrAssert failed")

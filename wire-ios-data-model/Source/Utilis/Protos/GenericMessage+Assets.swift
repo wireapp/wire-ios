@@ -111,7 +111,12 @@ extension WireProtos.Asset {
 }
 
 extension WireProtos.Asset.Original {
-    public init(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: WireProtos.Asset.ImageMetaData? = nil) {
+    public init(
+        withSize size: UInt64,
+        mimeType: String,
+        name: String?,
+        imageMetaData: WireProtos.Asset.ImageMetaData? = nil
+    ) {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
@@ -124,7 +129,13 @@ extension WireProtos.Asset.Original {
         }
     }
 
-    public init(withSize size: UInt64, mimeType: String, name: String?, audioDurationInMillis: UInt, normalizedLoudness: [Float]) {
+    public init(
+        withSize size: UInt64,
+        mimeType: String,
+        name: String?,
+        audioDurationInMillis: UInt,
+        normalizedLoudness: [Float]
+    ) {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
@@ -159,7 +170,12 @@ extension WireProtos.Asset.Original {
 }
 
 extension WireProtos.Asset.Preview {
-    public init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
+    public init(
+        size: UInt64,
+        mimeType: String,
+        remoteData: WireProtos.Asset.RemoteData?,
+        imageMetadata: WireProtos.Asset.ImageMetaData
+    ) {
         self = WireProtos.Asset.Preview.with {
             $0.size = size
             $0.mimeType = mimeType
@@ -181,7 +197,13 @@ extension WireProtos.Asset.ImageMetaData {
 }
 
 extension WireProtos.Asset.RemoteData {
-    public init(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil, assetDomain: String? = nil) {
+    public init(
+        withOTRKey otrKey: Data,
+        sha256: Data,
+        assetId: String? = nil,
+        assetToken: String? = nil,
+        assetDomain: String? = nil
+    ) {
         self = WireProtos.Asset.RemoteData.with {
             $0.otrKey = otrKey
             $0.sha256 = sha256
@@ -202,7 +224,11 @@ extension WireProtos.Asset.RemoteData {
 
 extension GenericMessage {
     mutating func updateAssetOriginal(withImageProperties imageProperties: ZMIImageProperties) {
-        let asset = WireProtos.Asset(imageSize: imageProperties.size, mimeType: imageProperties.mimeType, size: UInt64(imageProperties.length))
+        let asset = WireProtos.Asset(
+            imageSize: imageProperties.size,
+            mimeType: imageProperties.mimeType,
+            size: UInt64(imageProperties.length)
+        )
         update(asset: asset)
     }
 
@@ -216,8 +242,16 @@ extension GenericMessage {
     }
 
     mutating func updateAssetPreview(withImageProperties imageProperties: ZMIImageProperties) {
-        let imageMetaData = WireProtos.Asset.ImageMetaData(width: Int32(imageProperties.size.width), height: Int32(imageProperties.size.height))
-        let preview = WireProtos.Asset.Preview(size: UInt64(imageProperties.length), mimeType: imageProperties.mimeType, remoteData: nil, imageMetadata: imageMetaData)
+        let imageMetaData = WireProtos.Asset.ImageMetaData(
+            width: Int32(imageProperties.size.width),
+            height: Int32(imageProperties.size.height)
+        )
+        let preview = WireProtos.Asset.Preview(
+            size: UInt64(imageProperties.length),
+            mimeType: imageProperties.mimeType,
+            remoteData: nil,
+            imageMetadata: imageMetaData
+        )
         let asset = WireProtos.Asset(original: nil, preview: preview)
         update(asset: asset)
     }

@@ -20,18 +20,23 @@ import Foundation
 @testable import WireDataModel
 
 final class ConversationObserverTests: NotificationDispatcherTestBase {
-    func checkThatItNotifiesTheObserverOfAChange(_ conversation: ZMConversation,
-                                                 modifier: (ZMConversation, ConversationObserver) -> Void,
-                                                 expectedChangedField: String?,
-                                                 expectedChangedKeys: Set<String>,
-                                                 file: StaticString = #file,
-                                                 line: UInt = #line) {
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: modifier,
-                                                     expectedChangedFields: expectedChangedField != nil ? [expectedChangedField!] : [],
-                                                     expectedChangedKeys: expectedChangedKeys,
-                                                     file: file,
-                                                     line: line)
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ conversation: ZMConversation,
+        modifier: (ZMConversation, ConversationObserver) -> Void,
+        expectedChangedField: String?,
+        expectedChangedKeys: Set<String>,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: expectedChangedField != nil ?
+                [expectedChangedField!] : [],
+            expectedChangedKeys: expectedChangedKeys,
+            file: file,
+            line: line
+        )
     }
 
     var conversationInfoKeys: Set<String> {
@@ -59,12 +64,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         ]
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(_ conversation: ZMConversation,
-                                                 modifier: (ZMConversation, ConversationObserver) -> Void,
-                                                 expectedChangedFields: Set<String>,
-                                                 expectedChangedKeys: Set<String>,
-                                                 file: StaticString = #file,
-                                                 line: UInt = #line) {
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ conversation: ZMConversation,
+        modifier: (ZMConversation, ConversationObserver) -> Void,
+        expectedChangedFields: Set<String>,
+        expectedChangedKeys: Set<String>,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // given
         let observer = ConversationObserver()
         self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
@@ -76,9 +83,21 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // then
         let changeCount = observer.notifications.count
         if !expectedChangedFields.isEmpty {
-            XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).", file: file, line: line)
+            XCTAssertEqual(
+                changeCount,
+                1,
+                "Observer expected 1 notification, but received \(changeCount).",
+                file: file,
+                line: line
+            )
         } else {
-            XCTAssertEqual(changeCount, 0, "Observer was notified, but DID NOT expect a notification", file: file, line: line)
+            XCTAssertEqual(
+                changeCount,
+                0,
+                "Observer was notified, but DID NOT expect a notification",
+                file: file,
+                line: line
+            )
         }
 
         // and when
@@ -87,15 +106,31 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // then
-        XCTAssertEqual(observer.notifications.count, changeCount, "Should have changed only once", file: file, line: line)
+        XCTAssertEqual(
+            observer.notifications.count,
+            changeCount,
+            "Should have changed only once",
+            file: file,
+            line: line
+        )
 
         if expectedChangedFields.isEmpty {
             return
         }
 
         guard let changes = observer.notifications.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys, expectedChangedFields: expectedChangedFields, file: file, line: line)
-        XCTAssert(expectedChangedKeys.isSubset(of: changes.changedKeys), "failed: changes.changedKeys = \(changes.changedKeys)", file: file, line: line)
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: conversationInfoKeys,
+            expectedChangedFields: expectedChangedFields,
+            file: file,
+            line: line
+        )
+        XCTAssert(
+            expectedChangedKeys.isSubset(of: changes.changedKeys),
+            "failed: changes.changedKeys = \(changes.changedKeys)",
+            file: file,
+            line: line
+        )
         self.token = nil
     }
 
@@ -108,10 +143,13 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.userDefinedName = "Phil" },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: ["displayName"]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.userDefinedName = "Phil"
+            },
+            expectedChangedField: "nameChanged",
+            expectedChangedKeys: ["displayName"]
         )
     }
 
@@ -131,12 +169,13 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _, _ in
-                                                         self.notifyNameChange(otherUser, name: "Phil")
-                                                     },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: ["displayName"]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in
+                self.notifyNameChange(otherUser, name: "Phil")
+            },
+            expectedChangedField: "nameChanged",
+            expectedChangedKeys: ["displayName"]
         )
     }
 
@@ -148,17 +187,23 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _, _ in
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in
 
-                                                         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-                                                         otherUser.name = "Foo"
-                                                         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-                                                     },
-                                                     expectedChangedFields: ["nameChanged",
-                                                                             "participantsChanged",
-                                                                             "activeParticipantsChanged"],
-                                                     expectedChangedKeys: ["displayName", "localParticipantRoles"]
+                let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+                otherUser.name = "Foo"
+                conversation.addParticipantAndUpdateConversationState(
+                    user: otherUser,
+                    role: nil
+                )
+            },
+            expectedChangedFields: [
+                "nameChanged",
+                "participantsChanged",
+                "activeParticipantsChanged",
+            ],
+            expectedChangedKeys: ["displayName", "localParticipantRoles"]
         )
     }
 
@@ -251,15 +296,19 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, observer in
-                                                         conversation.addParticipantAndUpdateConversationState(user: user1, role: nil)
-                                                         self.uiMOC.saveOrRollback()
-                                                         observer.clearNotifications()
-                                                         self.notifyNameChange(user1, name: "Bar")
-                                                     },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: ["displayName"]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, observer in
+                conversation.addParticipantAndUpdateConversationState(
+                    user: user1,
+                    role: nil
+                )
+                self.uiMOC.saveOrRollback()
+                observer.clearNotifications()
+                self.notifyNameChange(user1, name: "Bar")
+            },
+            expectedChangedField: "nameChanged",
+            expectedChangedKeys: ["displayName"]
         )
     }
 
@@ -271,10 +320,17 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in try! conversation.appendText(content: "foo") },
-                                                     expectedChangedFields: ["messagesChanged", "lastModifiedDateChanged"],
-                                                     expectedChangedKeys: ["allMessages", "lastModifiedDate"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                try! conversation.appendText(content: "foo")
+            },
+            expectedChangedFields: [
+                "messagesChanged",
+                "lastModifiedDateChanged",
+            ],
+            expectedChangedKeys: ["allMessages", "lastModifiedDate"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfAnAddedParticipant() {
@@ -287,12 +343,21 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.addParticipantAndUpdateConversationState(user: user, role: nil) },
-                                                     expectedChangedFields: ["participantsChanged",
-                                                                             "nameChanged",
-                                                                             "activeParticipantsChanged"],
-                                                     expectedChangedKeys: ["displayName", "localParticipantRoles"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.addParticipantAndUpdateConversationState(
+                    user: user,
+                    role: nil
+                )
+            },
+            expectedChangedFields: [
+                "participantsChanged",
+                "nameChanged",
+                "activeParticipantsChanged",
+            ],
+            expectedChangedKeys: ["displayName", "localParticipantRoles"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfARemovedParticipant() {
@@ -316,9 +381,11 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 conversation.participantRoles.remove(role)
                 self.uiMOC.delete(role)
             },
-            expectedChangedFields: ["participantsChanged",
-                                    "nameChanged",
-                                    "activeParticipantsChanged"],
+            expectedChangedFields: [
+                "participantsChanged",
+                "nameChanged",
+                "activeParticipantsChanged",
+            ],
             expectedChangedKeys: ["displayName", "localParticipantRoles"]
         )
     }
@@ -335,13 +402,24 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: { conversation, _ in conversation.removeParticipantsAndUpdateConversationState(users: Set([user]), initiatingUser: selfUser) },
-                                                expectedChangedFields: ["participantsChanged",
-                                                                        "nameChanged",
-                                                                        "activeParticipantsChanged"],
-                                                expectedChangedKeys: ["displayName",
-                                                                      "localParticipantRoles"])
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.removeParticipantsAndUpdateConversationState(
+                    users: Set([user]),
+                    initiatingUser: selfUser
+                )
+            },
+            expectedChangedFields: [
+                "participantsChanged",
+                "nameChanged",
+                "activeParticipantsChanged",
+            ],
+            expectedChangedKeys: [
+                "displayName",
+                "localParticipantRoles",
+            ]
+        )
     }
 
     func testThatItNotifiesTheObserverOfAParticipantRoleAdded() {
@@ -368,10 +446,12 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         }
 
         // then
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: modifier,
-                                                expectedChangedFields: ["participantsChanged"],
-                                                expectedChangedKeys: ["localParticipantRoles"])
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: ["participantsChanged"],
+            expectedChangedKeys: ["localParticipantRoles"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfAParticipantRoleChanged() {
@@ -401,10 +481,12 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         }
 
         // then
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: modifier,
-                                                expectedChangedFields: ["participantsChanged"],
-                                                expectedChangedKeys: ["localParticipantRoles"])
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: ["participantsChanged"],
+            expectedChangedKeys: ["localParticipantRoles"]
+        )
     }
 
     func testThatItNotifiesTheObserverIfTheSelfUserIsAdded() {
@@ -422,12 +504,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             modifier: { conversation, _ in
                 conversation.addParticipantAndUpdateConversationState(
                     user: ZMUser.selfUser(in: self.uiMOC),
-                    role: nil)
+                    role: nil
+                )
             },
             expectedChangedFields: [
                 "participantsChanged",
                 "activeParticipantsChanged",
-                "nameChanged"],
+                "nameChanged",
+            ],
             expectedChangedKeys: [
                 "localParticipantRoles",
                 "displayName",
@@ -450,7 +534,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             conversation,
             modifier: { conversation, _ in
                 conversation.removeParticipantAndUpdateConversationState(
-                    user: ZMUser.selfUser(in: self.uiMOC))
+                    user: ZMUser.selfUser(in: self.uiMOC)
+                )
             },
             expectedChangedFields: [
                 "participantsChanged",
@@ -460,7 +545,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             expectedChangedKeys: [
                 "localParticipantRoles",
                 "displayName",
-                "localParticipants"]
+                "localParticipants",
+            ]
         )
     }
 
@@ -471,10 +557,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.lastModifiedDate = Date() },
-                                                     expectedChangedField: "lastModifiedDateChanged",
-                                                     expectedChangedKeys: ["lastModifiedDate"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.lastModifiedDate = Date()
+            },
+            expectedChangedField: "lastModifiedDateChanged",
+            expectedChangedKeys: ["lastModifiedDate"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangedUnreadCount() {
@@ -519,8 +609,13 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).")
 
         guard let changes = observer.notifications.first else { return XCTFail() }
-        changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
-                                             expectedChangedFields: ["unreadCountChanged", "conversationListIndicatorChanged"])
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: conversationInfoKeys,
+            expectedChangedFields: [
+                "unreadCountChanged",
+                "conversationListIndicatorChanged",
+            ]
+        )
         XCTAssertEqual(changes.changedKeys, Set(["estimatedUnreadCount", "conversationListIndicator"]))
     }
 
@@ -532,10 +627,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.userDefinedName = "Cacao" },
-                                                     expectedChangedField: "nameChanged",
-                                                     expectedChangedKeys: ["displayName"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.userDefinedName = "Cacao"
+            },
+            expectedChangedField: "nameChanged",
+            expectedChangedKeys: ["displayName"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangeOneOnOneUser() {
@@ -547,10 +646,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.oneOnOneUser = otherUser },
-                                                     expectedChangedField: "oneOnOneUserChanged",
-                                                     expectedChangedKeys: ["oneOnOneUser"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.oneOnOneUser = otherUser
+            },
+            expectedChangedField: "oneOnOneUserChanged",
+            expectedChangedKeys: ["oneOnOneUser"]
+        )
     }
 
     func testThatAccessModeChangeIsTriggeringObservation() {
@@ -561,10 +664,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.accessMode = .teamOnly },
-                                                     expectedChangedField: "allowGuestsChanged",
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.accessModeStrings)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.accessMode = .teamOnly
+            },
+            expectedChangedField: "allowGuestsChanged",
+            expectedChangedKeys: [#keyPath(ZMConversation.accessModeStrings)]
+        )
     }
 
     func testThatSyncedDestructionTimeoutChangeIsTriggeringObservation() {
@@ -575,10 +682,20 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.setMessageDestructionTimeoutValue(.custom(1000), for: .groupConversation) },
-                                                     expectedChangedField: "destructionTimeoutChanged",
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.syncedMessageDestructionTimeout)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.setMessageDestructionTimeoutValue(
+                    .custom(1000),
+                    for: .groupConversation
+                )
+            },
+            expectedChangedField: "destructionTimeoutChanged",
+            expectedChangedKeys: [#keyPath(
+                ZMConversation
+                    .syncedMessageDestructionTimeout
+            )]
+        )
     }
 
     func createGroupConversation() -> ZMConversation {
@@ -595,10 +712,20 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let conversation = createGroupConversation()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.setMessageDestructionTimeoutValue(.custom(1000), for: .selfUser) },
-                                                     expectedChangedField: "destructionTimeoutChanged",
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.localMessageDestructionTimeout)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.setMessageDestructionTimeoutValue(
+                    .custom(1000),
+                    for: .selfUser
+                )
+            },
+            expectedChangedField: "destructionTimeoutChanged",
+            expectedChangedKeys: [#keyPath(
+                ZMConversation
+                    .localMessageDestructionTimeout
+            )]
+        )
     }
 
     func testThatLanguageChangeIsTriggeringObservation() {
@@ -606,10 +733,12 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let conversation = createGroupConversation()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.language = "de-DE" },
-                                                     expectedChangedField: "languageChanged",
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.language)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in conversation.language = "de-DE" },
+            expectedChangedField: "languageChanged",
+            expectedChangedKeys: [#keyPath(ZMConversation.language)]
+        )
     }
 
     func testThatAccessRoleChangeIsTriggeringObservation() {
@@ -620,10 +749,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.accessRole = .activated },
-                                                     expectedChangedField: "allowGuestsChanged",
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.accessRoleString)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.accessRole = .activated
+            },
+            expectedChangedField: "allowGuestsChanged",
+            expectedChangedKeys: [#keyPath(ZMConversation.accessRoleString)]
+        )
     }
 
     func testThatAccessRoleV2ChangeIsTriggeringObservation() {
@@ -634,10 +767,21 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.accessRoles = [.teamMember, .guest] },
-                                                     expectedChangedFields: ["allowServicesChanged", "allowGuestsChanged"],
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.accessRoleStringsV2)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in conversation.accessRoles = [
+                .teamMember,
+                .guest,
+            ] },
+            expectedChangedFields: [
+                "allowServicesChanged",
+                "allowGuestsChanged",
+            ],
+            expectedChangedKeys: [#keyPath(
+                ZMConversation
+                    .accessRoleStringsV2
+            )]
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangedConnectionStatusWhenInsertingAConnection() {
@@ -696,10 +840,12 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.isArchived = true },
-                                                     expectedChangedField: "isArchivedChanged",
-                                                     expectedChangedKeys: ["isArchived"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in conversation.isArchived = true },
+            expectedChangedField: "isArchivedChanged",
+            expectedChangedKeys: ["isArchived"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangedSilencedStatus() {
@@ -709,10 +855,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.mutedMessageTypes = .regular },
-                                                     expectedChangedField: "mutedMessageTypesChanged",
-                                                     expectedChangedKeys: ["mutedStatus"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.mutedMessageTypes = .regular
+            },
+            expectedChangedField: "mutedMessageTypesChanged",
+            expectedChangedKeys: ["mutedStatus"]
+        )
     }
 
     func addUnreadMissedCall(_ conversation: ZMConversation) {
@@ -751,8 +901,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(changeCount, 1, "Observer expected 1 notification, but received \(changeCount).")
 
         guard let changes = observer.notifications.first else { return XCTFail() }
-        changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
-                                             expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged", "unreadCountChanged"])
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: conversationInfoKeys,
+            expectedChangedFields: [
+                "conversationListIndicatorChanged",
+                "messagesChanged",
+                "unreadCountChanged",
+            ]
+        )
         XCTAssertEqual(changes.changedKeys, Set(["allMessages", "conversationListIndicator", "estimatedUnreadCount"]))
     }
 
@@ -762,12 +918,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                         conversation.clearedTimeStamp = Date()
-                                                     },
-                                                     expectedChangedField: "clearedChanged",
-                                                     expectedChangedKeys: ["clearedTimeStamp"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.clearedTimeStamp = Date()
+            },
+            expectedChangedField: "clearedChanged",
+            expectedChangedKeys: ["clearedTimeStamp"]
+        )
     }
 
     func testThatItNotifiesTheObserverOfASecurityLevelChange() {
@@ -776,12 +934,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                         conversation.securityLevel = .secure
-                                                     },
-                                                     expectedChangedField: "securityLevelChanged",
-                                                     expectedChangedKeys: ["securityLevel"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.securityLevel = .secure
+            },
+            expectedChangedField: "securityLevelChanged",
+            expectedChangedKeys: ["securityLevel"]
+        )
     }
 
     func testThatItNotifiesAboutSecurityLevelChange_AddingParticipant() {
@@ -792,13 +952,29 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                         let user = ZMUser.insertNewObject(in: self.uiMOC)
-                                                         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-                                                     },
-                                                     expectedChangedFields: ["securityLevelChanged", "messagesChanged", "nameChanged", "participantsChanged", "activeParticipantsChanged"],
-                                                     expectedChangedKeys: ["displayName", "allMessages", "localParticipantRoles", "securityLevel"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                let user = ZMUser.insertNewObject(in: self.uiMOC)
+                conversation.addParticipantAndUpdateConversationState(
+                    user: user,
+                    role: nil
+                )
+            },
+            expectedChangedFields: [
+                "securityLevelChanged",
+                "messagesChanged",
+                "nameChanged",
+                "participantsChanged",
+                "activeParticipantsChanged",
+            ],
+            expectedChangedKeys: [
+                "displayName",
+                "allMessages",
+                "localParticipantRoles",
+                "securityLevel",
+            ]
+        )
     }
 
     func testThatItNotifiesAboutSecurityLevelChange_AddingDevice() {
@@ -811,17 +987,22 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                         let client = UserClient.insertNewObject(in: self.uiMOC)
-                                                         client.remoteIdentifier = "aabbccdd"
-                                                         client.user = user
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                let client = UserClient.insertNewObject(in: self.uiMOC)
+                client.remoteIdentifier = "aabbccdd"
+                client.user = user
 
-                                                         conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [client], causedBy: nil)
+                conversation.decreaseSecurityLevelIfNeededAfterDiscovering(
+                    clients: [client],
+                    causedBy: nil
+                )
 
-                                                     },
-                                                     expectedChangedFields: ["securityLevelChanged", "messagesChanged"],
-                                                     expectedChangedKeys: ["securityLevel", "allMessages"])
+            },
+            expectedChangedFields: ["securityLevelChanged", "messagesChanged"],
+            expectedChangedKeys: ["securityLevel", "allMessages"]
+        )
     }
 
     func testThatItNotifiesAboutSecurityLevelChange_SendingMessageToDegradedConversation() {
@@ -909,12 +1090,14 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                         conversation.hasReadReceiptsEnabled = true
-                                                     },
-                                                     expectedChangedFields: ["hasReadReceiptsEnabledChanged"],
-                                                     expectedChangedKeys: ["hasReadReceiptsEnabled"])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { conversation, _ in
+                conversation.hasReadReceiptsEnabled = true
+            },
+            expectedChangedFields: ["hasReadReceiptsEnabledChanged"],
+            expectedChangedKeys: ["hasReadReceiptsEnabled"]
+        )
     }
 
     func testThatItSendsUpdateForUpdatedServiceUser() {
@@ -927,13 +1110,15 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
 
         // when
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: { _, _ in
-                                                    user.serviceIdentifier = UUID().uuidString
-                                                    user.providerIdentifier = UUID().uuidString
-                                                },
-                                                expectedChangedFields: ["externalParticipantsStateChanged"],
-                                                expectedChangedKeys: ["externalParticipantsState"])
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in
+                user.serviceIdentifier = UUID().uuidString
+                user.providerIdentifier = UUID().uuidString
+            },
+            expectedChangedFields: ["externalParticipantsStateChanged"],
+            expectedChangedKeys: ["externalParticipantsState"]
+        )
     }
 
     func testThatItNotifiesOfLegalHoldChanges_Enabled() {
@@ -957,10 +1142,18 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         }
 
         // Discovering a legal hold client should add a system message and change the legal hold value
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: modifier,
-                                                     expectedChangedFields: [#keyPath(ConversationChangeInfo.legalHoldStatusChanged), #keyPath(ConversationChangeInfo.messagesChanged)],
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: [
+                #keyPath(ConversationChangeInfo.legalHoldStatusChanged),
+                #keyPath(ConversationChangeInfo.messagesChanged),
+            ],
+            expectedChangedKeys: [
+                #keyPath(ZMConversation.legalHoldStatus),
+                #keyPath(ZMConversation.allMessages),
+            ]
+        )
     }
 
     // swiftlint:disable:next todo_requires_jira_link
@@ -993,10 +1186,18 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         }
 
         // Removing a legal hold client should add a system message and change the legal hold value
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: modifier,
-                                                     expectedChangedFields: [#keyPath(ConversationChangeInfo.legalHoldStatusChanged), #keyPath(ConversationChangeInfo.messagesChanged)],
-                                                     expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: [
+                #keyPath(ConversationChangeInfo.legalHoldStatusChanged),
+                #keyPath(ConversationChangeInfo.messagesChanged),
+            ],
+            expectedChangedKeys: [
+                #keyPath(ZMConversation.legalHoldStatus),
+                #keyPath(ZMConversation.allMessages),
+            ]
+        )
     }
 
     // MARK: - Role
@@ -1018,10 +1219,15 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             }
         }
 
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: modifier,
-                                                expectedChangedFields: [#keyPath(ConversationChangeInfo.participantsChanged)],
-                                                expectedChangedKeys: [#keyPath(ZMConversation.localParticipantRoles)])
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: modifier,
+            expectedChangedFields: [#keyPath(
+                ConversationChangeInfo
+                    .participantsChanged
+            )],
+            expectedChangedKeys: [#keyPath(ZMConversation.localParticipantRoles)]
+        )
     }
 }
 

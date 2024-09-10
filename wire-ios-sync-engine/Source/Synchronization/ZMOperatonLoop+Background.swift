@@ -33,7 +33,10 @@ private enum PushNotificationType: String {
 @objc
 extension ZMOperationLoop {
     @objc(fetchEventsFromPushChannelPayload:completionHandler:)
-    public func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any], completionHandler: @escaping () -> Void) {
+    public func fetchEvents(
+        fromPushChannelPayload payload: [AnyHashable: Any],
+        completionHandler: @escaping () -> Void
+    ) {
         guard let nonce = messageNonce(fromPushChannelData: payload) else {
             return completionHandler()
         }
@@ -57,7 +60,8 @@ extension ZMOperationLoop {
 
         switch notificationType {
         case .plain, .notice:
-            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
+               let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
                 return UUID(uuidString: rawUUID)
             }
         case .cipher:
@@ -86,7 +90,8 @@ extension ZMOperationLoop {
             return nil
         }
 
-        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable: Any],
+           let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
             return UUID(uuidString: rawUUID)
         }
 

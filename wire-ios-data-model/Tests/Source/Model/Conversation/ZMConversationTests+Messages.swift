@@ -388,10 +388,12 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         let longitude = Float(9.041169)
         let zoomLevel = Int32(16)
         let name = "天津市 နေပြည်တော် Test"
-        let locationData = LocationData(latitude: latitude,
-                                        longitude: longitude,
-                                        name: name,
-                                        zoomLevel: zoomLevel)
+        let locationData = LocationData(
+            latitude: latitude,
+            longitude: longitude,
+            name: name,
+            zoomLevel: zoomLevel
+        )
 
         return locationData
     }
@@ -458,10 +460,12 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         conversation.remoteIdentifier = UUID()
 
         // when
-        let videoMetadata = ZMVideoMetadata(fileURL: fileURL,
-                                            duration: TimeInterval(duration),
-                                            dimensions: dimensions,
-                                            thumbnail: thumbnailData)
+        let videoMetadata = ZMVideoMetadata(
+            fileURL: fileURL,
+            duration: TimeInterval(duration),
+            dimensions: dimensions,
+            thumbnail: thumbnailData
+        )
 
         guard let fileMessage = try? conversation.appendFile(with: videoMetadata) as? ZMAssetClientMessage else {
             XCTFail()
@@ -507,10 +511,12 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         conversation.remoteIdentifier = UUID()
 
         // when
-        let audioMetadata = ZMAudioMetadata(fileURL: fileURL,
-                                            duration: TimeInterval(duration),
-                                            normalizedLoudness: [],
-                                            thumbnail: thumbnailData)
+        let audioMetadata = ZMAudioMetadata(
+            fileURL: fileURL,
+            duration: TimeInterval(duration),
+            normalizedLoudness: [],
+            thumbnail: thumbnailData
+        )
 
         let fileMessage = try! conversation.appendFile(with: audioMetadata) as! ZMAssetClientMessage
 

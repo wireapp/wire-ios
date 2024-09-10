@@ -88,7 +88,10 @@ public final class Spinner: UIView {
         isHidden = false
         stopAnimationInternal()
 
-        spinner.layer.add(ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0), forKey: "rotateAnimation")
+        spinner.layer.add(
+            ProgressIndicatorRotationAnimation(rotationSpeed: 1.4, beginTime: 0),
+            forKey: "rotateAnimation"
+        )
     }
 
     private func stopAnimationInternal() {
@@ -110,7 +113,12 @@ public final class Spinner: UIView {
 
         let spinner = Spinner()
         spinner.isAnimating = true
-        spinner.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleRightMargin, .flexibleBottomMargin]
+        spinner.autoresizingMask = [
+            .flexibleLeftMargin,
+            .flexibleTopMargin,
+            .flexibleRightMargin,
+            .flexibleBottomMargin,
+        ]
         container.addSubview(spinner)
         spinner.center = container.center
 

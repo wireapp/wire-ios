@@ -23,12 +23,18 @@ extension NSManagedObjectContext {
     @objc
     public var zm_usePackagingFeatureConfig: Bool {
         get {
-            precondition(zm_isUserInterfaceContext, "zm_usePackagingFeatureConfig can only be accessed on the ui context")
+            precondition(
+                zm_isUserInterfaceContext,
+                "zm_usePackagingFeatureConfig can only be accessed on the ui context"
+            )
             return userInfo[NSManagedObjectContext.PackagingFeatureConfigKey] as? Bool ?? false
         }
 
         set {
-            precondition(zm_isUserInterfaceContext, "zm_usePackagingFeatureConfig can only be accessed on the ui context")
+            precondition(
+                zm_isUserInterfaceContext,
+                "zm_usePackagingFeatureConfig can only be accessed on the ui context"
+            )
             userInfo[NSManagedObjectContext.PackagingFeatureConfigKey] = newValue
         }
     }

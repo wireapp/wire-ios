@@ -80,7 +80,10 @@ final class ReachabilityWrapper: NSObject, ReachabilityProvider, TearDownCapable
             WireLogger.backend.debug("did set reachability enabled: \(enabled)")
             if safeReachability == nil, enabled {
                 safeReachability = reachabilityClosure()
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled), object: self)
+                NotificationCenter.default.post(
+                    name: NSNotification.Name(rawValue: ZMTransportSessionReachabilityIsEnabled),
+                    object: self
+                )
             } else if !enabled {
                 safeReachability?.tearDown()
                 safeReachability = nil

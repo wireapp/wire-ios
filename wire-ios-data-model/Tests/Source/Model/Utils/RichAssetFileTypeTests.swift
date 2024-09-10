@@ -59,7 +59,12 @@ class RichAssetFileTypeTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func assertFileType(_ mimeType: String, _ expectedType: RichAssetFileType?, file: StaticString = #file, line: UInt = #line) {
+    private func assertFileType(
+        _ mimeType: String,
+        _ expectedType: RichAssetFileType?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         XCTAssertEqual(RichAssetFileType(mimeType: mimeType), expectedType, file: file, line: line)
     }
 }

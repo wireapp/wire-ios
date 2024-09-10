@@ -56,7 +56,10 @@ final class NSAttributedStringHighlightTests: XCTestCase {
         // WHEN
         let prefixed = sut.cutAndPrefixedWithEllipsis(from: 6, fittingIntoWidth: 100)
         // THEN
-        XCTAssertEqual(NSAttributedString(string: String.ellipsis + "world, Hello world, Hello world", attributes: [:]), prefixed)
+        XCTAssertEqual(
+            NSAttributedString(string: String.ellipsis + "world, Hello world, Hello world", attributes: [:]),
+            prefixed
+        )
     }
 
     func testThatItCutsAndPrefixesLongStringFromSecondWord() {
@@ -65,7 +68,10 @@ final class NSAttributedStringHighlightTests: XCTestCase {
         // WHEN
         let prefixed = sut.cutAndPrefixedWithEllipsis(from: 15, fittingIntoWidth: 100)
         // THEN
-        XCTAssertEqual(NSAttributedString(string: String.ellipsis + "world, Hello world, Hello world", attributes: [:]), prefixed)
+        XCTAssertEqual(
+            NSAttributedString(string: String.ellipsis + "world, Hello world, Hello world", attributes: [:]),
+            prefixed
+        )
     }
 
     func testThatItCutsAndPrefixesLongStringFromThirdWord() {
@@ -74,7 +80,10 @@ final class NSAttributedStringHighlightTests: XCTestCase {
         // WHEN
         let prefixed = sut.cutAndPrefixedWithEllipsis(from: 19, fittingIntoWidth: 100)
         // THEN
-        XCTAssertEqual(NSAttributedString(string: String.ellipsis + "Hello world, Hello world", attributes: [:]), prefixed)
+        XCTAssertEqual(
+            NSAttributedString(string: String.ellipsis + "Hello world, Hello world", attributes: [:]),
+            prefixed
+        )
     }
 
     func testThatItCutsAndPrefixesLongStringFromThirdWordNewline() {
@@ -83,7 +92,10 @@ final class NSAttributedStringHighlightTests: XCTestCase {
         // WHEN
         let prefixed = sut.cutAndPrefixedWithEllipsis(from: 15, fittingIntoWidth: 100)
         // THEN
-        XCTAssertEqual(NSAttributedString(string: String.ellipsis + "Hello world, Hello world", attributes: [:]), prefixed)
+        XCTAssertEqual(
+            NSAttributedString(string: String.ellipsis + "Hello world, Hello world", attributes: [:]),
+            prefixed
+        )
     }
 
     func testThatItCutsAndPrefixesLongStringFromTheEnd() {

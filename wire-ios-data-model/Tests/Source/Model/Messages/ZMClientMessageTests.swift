@@ -68,7 +68,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
-        let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         let contentData = try XCTUnwrap(message.serializedData())
         let data = contentData.base64String()
 
@@ -101,7 +104,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
-        let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         let contentData = try XCTUnwrap(message.serializedData())
 
         let data: NSDictionary = [
@@ -143,7 +149,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
 
         try existingMessage.setUnderlyingMessage(message)
 
@@ -176,7 +185,13 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": XCTUnwrap(modifiedMessageData),
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(),
+            from: self.selfUser
+        )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
@@ -205,7 +220,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         try existingMessage.setUnderlyingMessage(message)
 
         existingMessage.visibleInConversation = conversation
@@ -236,7 +254,13 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": modifiedMessageData,
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(),
+            from: self.selfUser
+        )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
@@ -340,7 +364,10 @@ extension ClientMessageTests {
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
-        let prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let prototype = GenericMessage(
+            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
 
         let contentData = try prototype.serializedData()
         let data: NSDictionary = try [
@@ -368,7 +395,10 @@ extension ClientMessageTests {
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
-        var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        var prototype = GenericMessage(
+            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         prototype.messageID = "please-fail"
 
         let contentData = try prototype.serializedData()
@@ -461,12 +491,18 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
 
-        let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let modifiedMessage = GenericMessage(
+            content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         let contentData = try modifiedMessage.serializedData()
         let data: NSDictionary = try [
             "sender": XCTUnwrap(selfClient.remoteIdentifier),
@@ -502,13 +538,19 @@ extension ClientMessageTests {
         let unknownSender: String = .randomClientIdentifier()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
-        let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let modifiedMessage = GenericMessage(
+            content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
 
         let contentData = try modifiedMessage.serializedData()
         let data: NSDictionary = try [
@@ -544,13 +586,19 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: UUID.create()
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
-        let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let modifiedMessage = GenericMessage(
+            content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
 
         let contentData = try modifiedMessage.serializedData()
         let data: NSDictionary = try [
@@ -558,7 +606,13 @@ extension ClientMessageTests {
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": contentData.base64String(),
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(),
+            from: self.selfUser
+        )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
@@ -587,7 +641,10 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: UUID.create()
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
@@ -612,7 +669,13 @@ extension ClientMessageTests {
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": contentData.base64String(),
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(),
+            from: self.selfUser
+        )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
@@ -639,7 +702,10 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
@@ -664,7 +730,13 @@ extension ClientMessageTests {
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": contentData.base64String(),
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(),
+            from: self.selfUser
+        )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
@@ -692,7 +764,11 @@ extension ClientMessageTests {
         let selfClient = self.createSelfClient()
 
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
-        let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: .oneHour)
+        let message = GenericMessage(
+            content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce,
+            expiresAfter: .oneHour
+        )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
@@ -717,7 +793,13 @@ extension ClientMessageTests {
             "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": XCTUnwrap(contentData?.base64String()),
         ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
+        let payload = payloadForMessage(
+            in: conversation,
+            type: EventConversationAddOTRMessage,
+            data: data,
+            time: Date(),
+            from: self.selfUser
+        )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
@@ -744,7 +826,10 @@ extension ClientMessageTests {
         let existingMessage = try! conversation.appendText(content: "Initial") as! ZMClientMessage
         existingMessage.nonce = nonce
         existingMessage.visibleInConversation = conversation
-        let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let message = GenericMessage(
+            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            nonce: nonce
+        )
 
         let contentData = try XCTUnwrap(message.serializedData())
         let data = contentData.base64String()
@@ -795,7 +880,10 @@ extension ClientMessageTests {
             let messageEvent = self.encryptedExternalMessageFixtureWithBlob(from: firstClient)
             let base64SHA = "kKSSlbMxXEdd+7fekxB8Qr67/mpjjboBsr2wLcW7wzE="
             let base64OTRKey = "4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7w="
-            let external = External(withOTRKey: Data(base64Encoded: base64OTRKey)!, sha256: Data(base64Encoded: base64SHA)!)
+            let external = External(
+                withOTRKey: Data(base64Encoded: base64OTRKey)!,
+                sha256: Data(base64Encoded: base64SHA)!
+            )
 
             // when
             let message = GenericMessage(from: messageEvent!, withExternal: external)

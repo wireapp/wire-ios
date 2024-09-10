@@ -67,7 +67,8 @@ extension ZMConversationMessage {
             return false
         }
 
-        return !isEphemeral && conversation.isSelfAnActiveMember && isSent && (isText || isImage || isLocation || isFile)
+        return !isEphemeral && conversation
+            .isSelfAnActiveMember && isSent && (isText || isImage || isLocation || isFile)
     }
 
     /// Whether message details are available for this message.

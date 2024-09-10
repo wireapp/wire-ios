@@ -65,8 +65,10 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     func configure(with object: Configuration, animated: Bool) {
         configuration = object
-        articleView.configure(withTextMessageData: object.textMessageData,
-                              obfuscated: object.isObfuscated)
+        articleView.configure(
+            withTextMessageData: object.textMessageData,
+            obfuscated: object.isObfuscated
+        )
 
         updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }

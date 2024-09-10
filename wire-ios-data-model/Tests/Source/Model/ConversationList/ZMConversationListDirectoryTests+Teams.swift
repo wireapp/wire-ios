@@ -67,7 +67,17 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         let conversations = sut.conversationsIncludingArchived
 
         // then
-        XCTAssertEqual(Set(conversations.items), [teamConversation1, teamConversation2, archivedTeamConversation, conversationWithoutTeam, otherTeamConversation, otherTeamArchivedConversation])
+        XCTAssertEqual(
+            Set(conversations.items),
+            [
+                teamConversation1,
+                teamConversation2,
+                archivedTeamConversation,
+                conversationWithoutTeam,
+                otherTeamConversation,
+                otherTeamArchivedConversation,
+            ]
+        )
     }
 
     func testThatItReturnsArchivedConversationsInATeam() {

@@ -150,7 +150,11 @@ public final class NotificationSession {
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: accountIdentifier,
+            useCache: false
+        )
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
@@ -173,7 +177,10 @@ public final class NotificationSession {
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
+            accountContainer: CoreDataStack.accountDataFolder(
+                accountIdentifier: accountIdentifier,
+                applicationContainer: sharedContainerURL
+            ),
             analytics: analytics,
             accountIdentifier: accountIdentifier,
             sharedUserDefaults: sharedUserDefaults
@@ -260,7 +267,10 @@ public final class NotificationSession {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
-            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor),
+            mlsDecryptionService: MLSDecryptionService(
+                context: coreDataStack.syncContext,
+                mlsActionExecutor: mlsActionExecutor
+            ),
             lastEventIDRepository: lastEventIDRepository
         )
     }

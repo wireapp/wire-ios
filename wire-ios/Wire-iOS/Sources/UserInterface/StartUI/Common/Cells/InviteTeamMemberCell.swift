@@ -25,13 +25,16 @@ class StartUIIconCell: UICollectionViewCell {
     typealias PeoplePicker = L10n.Localizable.Peoplepicker
 
     fileprivate let iconView = UIImageView()
-    fileprivate let titleLabel = DynamicFontLabel(fontSpec: .bodyTwoSemibold,
-                                                  color: SemanticColors.Label.textDefault)
+    fileprivate let titleLabel = DynamicFontLabel(
+        fontSpec: .bodyTwoSemibold,
+        color: SemanticColors.Label.textDefault
+    )
     fileprivate let separator = UIView()
 
     fileprivate var icon: StyleKitIcon? {
         didSet {
-            iconView.image = icon?.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault).withRenderingMode(.alwaysTemplate)
+            iconView.image = icon?.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefault)
+                .withRenderingMode(.alwaysTemplate)
             iconView.tintColor = SemanticColors.Icon.foregroundDefault
         }
     }

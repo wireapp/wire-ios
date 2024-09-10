@@ -121,7 +121,8 @@ extension MockUser {
 extension MockUser {
     @objc public var connectionsAndTeamMembers: Set<MockUser> {
         let acceptedUsers: (Any) -> MockUser? = { connection in
-            guard let connection = connection as? MockConnection, MockConnection.status(from: connection.status) == .accepted else { return nil }
+            guard let connection = connection as? MockConnection,
+                  MockConnection.status(from: connection.status) == .accepted else { return nil }
             return connection.to == self ? connection.from : connection.to
         }
 
@@ -251,7 +252,8 @@ extension MockUser {
     }
 
     var assetData: [[String: Any]]? {
-        guard let previewId = previewProfileAssetIdentifier, let completeId = completeProfileAssetIdentifier else { return nil }
+        guard let previewId = previewProfileAssetIdentifier,
+              let completeId = completeProfileAssetIdentifier else { return nil }
         return [
             ["size": "preview", "type": "image", "key": previewId],
             ["size": "complete", "type": "image", "key": completeId],
@@ -276,7 +278,10 @@ extension MockUser {
     private var userPayloadForChangedValues: [String: Any]? {
         var payload = [String: Any]()
         let regularProperties: Set = [#keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone)]
-        let assetIds: Set = [#keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier)]
+        let assetIds: Set = [
+            #keyPath(MockUser.previewProfileAssetIdentifier),
+            #keyPath(MockUser.completeProfileAssetIdentifier),
+        ]
         for (changedKey, value) in changedValues() {
             if regularProperties.contains(changedKey) {
                 payload[changedKey] = value

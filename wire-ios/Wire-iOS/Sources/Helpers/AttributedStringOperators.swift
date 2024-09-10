@@ -216,13 +216,19 @@ extension String {
 
 extension NSAttributedString {
     // Adds the attribtues to the given substring in self and returns the resulting String
-    func addAttributes(_ attributes: [NSAttributedString.Key: AnyObject], toSubstring substring: String) -> NSAttributedString {
+    func addAttributes(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        toSubstring substring: String
+    ) -> NSAttributedString {
         let mutableSelf = NSMutableAttributedString(attributedString: self)
         mutableSelf.addAttributes(attributes, to: substring)
         return NSAttributedString(attributedString: mutableSelf)
     }
 
-    func setAttributes(_ attributes: [NSAttributedString.Key: AnyObject], toSubstring substring: String) -> NSAttributedString {
+    func setAttributes(
+        _ attributes: [NSAttributedString.Key: AnyObject],
+        toSubstring substring: String
+    ) -> NSAttributedString {
         let substringRange = (string as NSString).range(of: substring)
         guard substringRange.location != NSNotFound else { return self }
 

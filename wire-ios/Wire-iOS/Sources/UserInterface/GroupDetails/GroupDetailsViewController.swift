@@ -120,7 +120,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
-            second: verificationStatus)
+            second: verificationStatus
+        )
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
@@ -161,7 +162,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     func computeVisibleSections() -> [CollectionViewSectionController] {
         var sections = [CollectionViewSectionController]()
 
-        let renameGroupSectionController = RenameGroupSectionController(conversation: conversation, userSession: userSession)
+        let renameGroupSectionController = RenameGroupSectionController(
+            conversation: conversation,
+            userSession: userSession
+        )
         sections.append(renameGroupSectionController)
         self.renameGroupSectionController = renameGroupSectionController
 
@@ -207,7 +211,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                         userSession: userSession
                     )
                     sections.append(adminSection)
-                    if members.count <= (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) { // Don't display the ShowAll button
+                    if members
+                        .count <=
+                        (Int.ConversationParticipants.maxNumberWithoutTruncation - admins.count) {
+                        // Don't display the ShowAll button
                         if !members.isEmpty {
                             let memberSection = ParticipantsSectionController(
                                 participants: members,
@@ -281,7 +288,11 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // MARK: services sections
 
         if !serviceUsers.isEmpty {
-            let servicesSection = ServicesSectionController(serviceUsers: serviceUsers, conversation: conversation, delegate: self)
+            let servicesSection = ServicesSectionController(
+                serviceUsers: serviceUsers,
+                conversation: conversation,
+                delegate: self
+            )
             sections.append(servicesSection)
         }
 
@@ -321,8 +332,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
     }
 
-    func footerView(_ view: GroupDetailsFooterView,
-                    shouldPerformAction action: GroupDetailsFooterView.Action) {
+    func footerView(
+        _ view: GroupDetailsFooterView,
+        shouldPerformAction action: GroupDetailsFooterView.Action
+    ) {
         switch action {
         case .invite:
             let addParticipantsViewController = AddParticipantsViewController(
@@ -443,7 +456,10 @@ extension GroupDetailsViewController {
                 guard let user = user as? ZMUser else { continue }
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
-                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                        conversation: conversation,
+                        user: user
+                    )
                     userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                 } catch {
                     WireLogger.e2ei.error("Failed to get verification status for user: \(error)")

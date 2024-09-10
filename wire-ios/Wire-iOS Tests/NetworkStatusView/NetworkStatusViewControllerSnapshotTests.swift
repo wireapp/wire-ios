@@ -24,7 +24,10 @@ import XCTest
 final class MockContainerViewController: UIViewController, NetworkStatusBarDelegate {
     var bottomMargin = CGFloat.NetworkStatusBar.bottomMargin
 
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
+    func showInIPad(
+        networkStatusViewController: NetworkStatusViewController,
+        with orientation: UIInterfaceOrientation
+    ) -> Bool {
         true
     }
 
@@ -87,7 +90,12 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Helper method
 
-    private func verify(for newState: NetworkState, testName: String = #function, file: StaticString = #file, line: UInt = #line) {
+    private func verify(
+        for newState: NetworkState,
+        testName: String = #function,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // GIVEN
         sut.didChangeAvailability(newState: newState)
 

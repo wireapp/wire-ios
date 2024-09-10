@@ -128,7 +128,10 @@ final class ConfirmEmailViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsButtonCell.zm_reuseIdentifier, for: indexPath) as! SettingsButtonCell
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: SettingsButtonCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! SettingsButtonCell
         let text = SettingsAccountSectionEmailLocalizable.Verify.resend(newEmail)
         cell.titleText = text
         return cell

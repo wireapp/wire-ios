@@ -21,35 +21,73 @@ import XCTest
 @testable import WireMockTransport
 
 final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
-    func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, team: MockTeam, data: [String: String] = [:], file: StaticString = #file, line: UInt = #line) {
+    func check(
+        event: TestPushChannelEvent?,
+        hasType type: ZMUpdateEventType,
+        team: MockTeam,
+        data: [String: String] = [:],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
     }
 
-    func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, teamIdentifier: String, data: [String: String?] = [:], file: StaticString = #file, line: UInt = #line) {
+    func check(
+        event: TestPushChannelEvent?,
+        hasType type: ZMUpdateEventType,
+        teamIdentifier: String,
+        data: [String: String?] = [:],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         guard let event else { XCTFail("Should have event", file: file, line: line); return }
 
-        XCTAssertEqual(event.type, type, "Wrong type \(String(describing: ZMUpdateEvent.eventTypeString(for: type)))", file: file, line: line)
+        XCTAssertEqual(
+            event.type,
+            type,
+            "Wrong type \(String(describing: ZMUpdateEvent.eventTypeString(for: type)))",
+            file: file,
+            line: line
+        )
 
-        guard let payload = event.payload as? [String: Any] else { XCTFail("Event should have payload", file: file, line: line); return }
+        guard let payload = event.payload as? [String: Any] else { XCTFail(
+            "Event should have payload",
+            file: file,
+            line: line
+        ); return }
 
         XCTAssertEqual(payload["team"] as? String, teamIdentifier, "Wrong team identifier", file: file, line: line)
-        guard let date = (payload as NSDictionary).optionalDate(forKey: "time") else { XCTFail("Event should have time", file: file, line: line); return }
+        guard let date = (payload as NSDictionary).optionalDate(forKey: "time")
+        else { XCTFail("Event should have time", file: file, line: line); return }
 
         // workaroud: the date decoded from a string can have a rounded time in the milliseconds and then be "in the future",
         // so we add one second here for the comparison to avoid flakiness.
-        XCTAssertLessThan(date, Date(timeIntervalSinceNow: 1), "Event date should be in the past", file: file, line: line)
+        XCTAssertLessThan(
+            date,
+            Date(timeIntervalSinceNow: 1),
+            "Event date should be in the past",
+            file: file,
+            line: line
+        )
 
         guard !data.isEmpty else {
             return
         }
-        guard let receivedData = payload["data"] as? [String: String?] else { XCTFail("Event payload should have data", file: file, line: line); return }
+        guard let receivedData = payload["data"] as? [String: String?]
+        else { XCTFail("Event payload should have data", file: file, line: line); return }
 
         for (key, value) in data {
             guard let dataValue = receivedData[key] else {
                 XCTFail("Event payload data does not contain key: \"\(key)\"", file: file, line: line)
                 continue
             }
-            XCTAssertEqual(dataValue, value, "Event payload data for \"\(key)\" does not match, expected \"\(String(describing: value))\", got \"\(String(describing: dataValue))\"", file: file, line: line)
+            XCTAssertEqual(
+                dataValue,
+                value,
+                "Event payload data for \"\(key)\" does not match, expected \"\(String(describing: value))\", got \"\(String(describing: dataValue))\"",
+                file: file,
+                line: line
+            )
         }
     }
 

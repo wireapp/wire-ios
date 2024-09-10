@@ -36,7 +36,11 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         DeveloperFlag.storage = UserDefaults.standard
     }
 
-    func clientWithTrustedClientCount(_ trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient {
+    func clientWithTrustedClientCount(
+        _ trustedCount: UInt,
+        ignoredClientCount: UInt,
+        missedClientCount: UInt
+    ) -> UserClient {
         let client = UserClient.insertNewObject(in: self.uiMOC)
 
         func userClientSetWithClientCount(_ count: UInt) -> Set<UserClient>? {
@@ -329,7 +333,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
             conversation.addParticipantsAndUpdateConversationState(
                 users: Set([otherUser, ZMUser.selfUser(in: self.syncMOC)]),
-                role: nil)
+                role: nil
+            )
 
             selfClient.trustClient(otherClient1)
 
@@ -619,9 +624,11 @@ extension UserClientTests {
 
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient_NoExistingSelfClient() {
         // given
-        let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                     "type": "permanent" as AnyObject,
-                                                     "time": Date().transportString() as AnyObject]
+        let newClientPayload: [String: AnyObject] = [
+            "id": UUID().transportString() as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": Date().transportString() as AnyObject,
+        ]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -639,9 +646,11 @@ extension UserClientTests {
     func testThatItSetsNeedsSessionMigration_WhenInsertingANewSelfUserClientAndDomainIsNil() {
         // given
         _ = createSelfClient()
-        let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                     "type": "permanent" as AnyObject,
-                                                     "time": Date().transportString() as AnyObject]
+        let newClientPayload: [String: AnyObject] = [
+            "id": UUID().transportString() as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": Date().transportString() as AnyObject,
+        ]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -658,9 +667,11 @@ extension UserClientTests {
         _ = createSelfClient()
         ZMUser.selfUser(in: uiMOC).domain = "example.com"
 
-        let newClientPayload: [String: AnyObject] = ["id": UUID().transportString() as AnyObject,
-                                                     "type": "permanent" as AnyObject,
-                                                     "time": Date().transportString() as AnyObject]
+        let newClientPayload: [String: AnyObject] = [
+            "id": UUID().transportString() as AnyObject,
+            "type": "permanent" as AnyObject,
+            "time": Date().transportString() as AnyObject,
+        ]
         // when
         var newClient: UserClient!
         self.performPretendingUiMocIsSyncMoc {
@@ -750,7 +761,11 @@ extension UserClientTests {
         }
 
         // WHEN
-        let clientUI: UserClient? = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: userUI, createIfNeeded: false)
+        let clientUI: UserClient? = UserClient.fetchUserClient(
+            withRemoteId: "badf00d",
+            forUser: userUI,
+            createIfNeeded: false
+        )
 
         // THEN
         XCTAssertNotNil(clientUI)
@@ -839,8 +854,10 @@ extension UserClientTests {
         client.needsSessionMigration = true
 
         let userID = client.user!.remoteIdentifier.uuidString
-        let expectedSessionIdentifier = EncryptionSessionIdentifier(userId: userID,
-                                                                    clientId: clientID)
+        let expectedSessionIdentifier = EncryptionSessionIdentifier(
+            userId: userID,
+            clientId: clientID
+        )
 
         // when
         let sessionIdentifier = client.sessionIdentifier
@@ -862,9 +879,11 @@ extension UserClientTests {
         client.needsSessionMigration = false
 
         let userID = client.user!.remoteIdentifier.uuidString
-        let expectedSessionIdentifier = EncryptionSessionIdentifier(domain: domain,
-                                                                    userId: userID,
-                                                                    clientId: clientID)
+        let expectedSessionIdentifier = EncryptionSessionIdentifier(
+            domain: domain,
+            userId: userID,
+            clientId: clientID
+        )
 
         // when
         let sessionIdentifier = client.sessionIdentifier
@@ -903,11 +922,15 @@ extension UserClientTests {
             let clientID = otherClient.remoteIdentifier!
             otherUserDomain = UUID().uuidString
 
-            v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
-                                                              clientId: clientID)
-            v3SessionIdentifier = EncryptionSessionIdentifier(domain: otherUserDomain,
-                                                              userId: userID,
-                                                              clientId: clientID)
+            v2SessionIdentifier = EncryptionSessionIdentifier(
+                userId: userID,
+                clientId: clientID
+            )
+            v3SessionIdentifier = EncryptionSessionIdentifier(
+                domain: otherUserDomain,
+                userId: userID,
+                clientId: clientID
+            )
         }
 
         guard let preKey = preKeys.first else {
@@ -969,11 +992,15 @@ extension UserClientTests {
             let localDomain = "localdomain.com"
             BackendInfo.domain = localDomain
 
-            v2SessionIdentifier = EncryptionSessionIdentifier(userId: userID,
-                                                              clientId: clientID)
-            v3SessionIdentifier = EncryptionSessionIdentifier(domain: localDomain,
-                                                              userId: userID,
-                                                              clientId: clientID)
+            v2SessionIdentifier = EncryptionSessionIdentifier(
+                userId: userID,
+                clientId: clientID
+            )
+            v3SessionIdentifier = EncryptionSessionIdentifier(
+                domain: localDomain,
+                userId: userID,
+                clientId: clientID
+            )
         }
 
         guard let preKey = preKeys.first else {
@@ -1073,7 +1100,11 @@ extension UserClientTests {
         }
 
         // WHEN
-        resultOfMethod = await sut.establishSessionWithClient(sessionId: sessionId, usingPreKey: prekey, proteusProviding: mock)
+        resultOfMethod = await sut.establishSessionWithClient(
+            sessionId: sessionId,
+            usingPreKey: prekey,
+            proteusProviding: mock
+        )
 
         // THEN
         XCTAssertTrue(mockMethodCalled)

@@ -24,9 +24,11 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     var transportSession: TransportSessionType
     var eventProcessor: ConversationEventProcessorProtocol
 
-    init(contextProvider: ContextProvider,
-         transportSession: TransportSessionType,
-         eventProcessor: ConversationEventProcessorProtocol) {
+    init(
+        contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        eventProcessor: ConversationEventProcessorProtocol
+    ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
@@ -75,7 +77,13 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 } else if hasPassword {
                     self.handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
                 } else {
-                    self.handleJoinWithoutPassword(for: conversationName, key: key, code: code, urlAction: urlAction, delegate: delegate)
+                    self.handleJoinWithoutPassword(
+                        for: conversationName,
+                        key: key,
+                        code: code,
+                        urlAction: urlAction,
+                        delegate: delegate
+                    )
                 }
 
             case let .failure(error):
@@ -93,7 +101,12 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         delegate.completedURLAction(urlAction)
     }
 
-    private func handlePasswordPrompt(for conversationName: String, key: String, code: String, delegate: PresentationDelegate) {
+    private func handlePasswordPrompt(
+        for conversationName: String,
+        key: String,
+        code: String,
+        delegate: PresentationDelegate
+    ) {
         delegate.showPasswordPrompt(for: conversationName) { [weak self] password in
             guard let self, let password, !password.isEmpty else {
                 return
@@ -103,8 +116,17 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
     }
 
-    private func handleJoinWithoutPassword(for conversationName: String, key: String, code: String, urlAction: URLAction, delegate: PresentationDelegate) {
-        delegate.shouldPerformActionWithMessage(conversationName, action: .joinConversation(key: key, code: code)) { [weak self] shouldJoin in
+    private func handleJoinWithoutPassword(
+        for conversationName: String,
+        key: String,
+        code: String,
+        urlAction: URLAction,
+        delegate: PresentationDelegate
+    ) {
+        delegate.shouldPerformActionWithMessage(conversationName, action: .joinConversation(
+            key: key,
+            code: code
+        )) { [weak self] shouldJoin in
             guard let self, shouldJoin else {
                 delegate.completedURLAction(urlAction)
                 return
@@ -132,7 +154,12 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
             switch response {
             case let .success(conversation):
-                self.handleConversationSynchronization(conversation: conversation, key: key, code: code, delegate: delegate)
+                self.handleConversationSynchronization(
+                    conversation: conversation,
+                    key: key,
+                    code: code,
+                    delegate: delegate
+                )
             case let .failure(error):
                 delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
             }
@@ -163,7 +190,10 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         let viewContext = contextProvider.viewContext
 
         guard let conversation = ZMConversation.fetch(with: id, domain: nil, in: viewContext) else {
-            delegate?.failedToPerformAction(.openConversation(id: id), error: DeepLinkRequestError.invalidConversationLink)
+            delegate?.failedToPerformAction(
+                .openConversation(id: id),
+                error: DeepLinkRequestError.invalidConversationLink
+            )
             return
         }
 
@@ -183,7 +213,10 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         delegate?.completedURLAction(.openUserProfile(id: id))
     }
 
-    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation, Error>) -> Void) {
+    private func synchronise(
+        _ conversation: ZMConversation,
+        completion: @escaping (Result<ZMConversation, Error>) -> Void
+    ) {
         guard let qualifiedID = conversation.qualifiedID else {
             completion(.success(conversation))
             return

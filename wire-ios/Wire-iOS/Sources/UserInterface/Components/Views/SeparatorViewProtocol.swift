@@ -38,7 +38,10 @@ extension SeparatorViewProtocol where Self: ViewWithContentView {
     }
 
     func createSeparatorConstraints() {
-        separatorInsetConstraint = separator.leadingAnchor.constraint(equalTo: separatorLeadingAnchor, constant: separatorLeadingInset)
+        separatorInsetConstraint = separator.leadingAnchor.constraint(
+            equalTo: separatorLeadingAnchor,
+            constant: separatorLeadingInset
+        )
 
         NSLayoutConstraint.activate([
             separatorInsetConstraint,

@@ -22,7 +22,8 @@ import WireDataModel
 import WireDesign
 
 enum ConversationActionType {
-    case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left, teamMemberLeave
+    case none, started(withName: String?), added(herself: Bool), removed(reason: ZMParticipantsRemovedReason), left,
+         teamMemberLeave
 
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
@@ -136,7 +137,8 @@ final class ParticipantsCellViewModel {
         guard action.involvesUsersOtherThanSender else { return [sender] }
         guard let systemMessage = message.systemMessageData else { return [] }
 
-        let usersWithoutSender: Set<AnyHashable> = if case let .removed(reason) = action, reason == .federationTermination {
+        let usersWithoutSender: Set<AnyHashable> = if case let .removed(reason) = action,
+                                                      reason == .federationTermination {
             systemMessage.userTypes
         } else if let hashableSender = sender as? AnyHashable {
             systemMessage.userTypes.subtracting([hashableSender])
@@ -225,7 +227,12 @@ final class ParticipantsCellViewModel {
         let senderName = name(for: sender).capitalized
 
         if action.involvesUsersOtherThanSender {
-            return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser, names: nameList, isSelfIncludedInUsers: isSelfIncludedInUsers)
+            return formatter.title(
+                senderName: senderName,
+                senderIsSelf: sender.isSelfUser,
+                names: nameList,
+                isSelfIncludedInUsers: isSelfIncludedInUsers
+            )
         } else {
             return formatter.title(senderName: senderName, senderIsSelf: sender.isSelfUser)
         }

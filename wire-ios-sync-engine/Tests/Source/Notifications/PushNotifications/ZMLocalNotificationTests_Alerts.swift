@@ -38,7 +38,10 @@ final class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
 
         // then
         XCTAssertEqual(note?.title, "Notifications are disabled in Team-A")
-        XCTAssertEqual(note?.body, "Status affects notifications now. You’re set to “Away” and won’t receive any notifications.")
+        XCTAssertEqual(
+            note?.body,
+            "Status affects notifications now. You’re set to “Away” and won’t receive any notifications."
+        )
     }
 
     func testAvailabilityBehaviourChangeNotification_WhenBusy() {
@@ -50,6 +53,9 @@ final class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
 
         // then
         XCTAssertEqual(note?.title, "Notifications have changed in Team-A")
-        XCTAssertEqual(note?.body, "Status affects notifications now. You’re set to “Busy” and will only receive notifications when someone mentions you or replies to one of your messages.")
+        XCTAssertEqual(
+            note?.body,
+            "Status affects notifications now. You’re set to “Busy” and will only receive notifications when someone mentions you or replies to one of your messages."
+        )
     }
 }

@@ -89,7 +89,8 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
         case let .success(response) where response.status == 200:
             logger.trace("decoding response payload")
 
-            guard let payload = try? JSONSerialization.jsonObject(with: response.data, options: []) as? [AnyHashable: Any] else {
+            guard let payload = try? JSONSerialization
+                .jsonObject(with: response.data, options: []) as? [AnyHashable: Any] else {
                 return .failure(.failedToDecodePayload)
             }
 

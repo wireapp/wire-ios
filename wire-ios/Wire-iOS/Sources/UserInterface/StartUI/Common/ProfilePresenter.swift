@@ -34,10 +34,12 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         self.mainCoordinator = mainCoordinator
         super.init()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(deviceOrientationChanged),
-                                               name: UIDevice.orientationDidChangeNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(deviceOrientationChanged),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     @objc
@@ -55,7 +57,8 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         else { return }
 
         presentedViewController.popoverPresentationController?.sourceRect = presentedFrame
-        presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0).size
+        presentedViewController.preferredContentSize = presentedViewController.view.frame.insetBy(dx: -0.01, dy: 0.0)
+            .size
     }
 
     func presentProfileViewController(

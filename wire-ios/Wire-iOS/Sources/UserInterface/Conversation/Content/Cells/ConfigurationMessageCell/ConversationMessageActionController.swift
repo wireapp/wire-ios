@@ -30,10 +30,12 @@ final class ConversationMessageActionController {
     weak var responder: MessageActionResponder?
     weak var view: UIView!
 
-    init(responder: MessageActionResponder?,
-         message: ZMConversationMessage,
-         context: Context,
-         view: UIView) {
+    init(
+        responder: MessageActionResponder?,
+        message: ZMConversationMessage,
+        context: Context,
+        view: UIView
+    ) {
         self.responder = responder
         self.message = message
         self.context = context
@@ -135,13 +137,20 @@ final class ConversationMessageActionController {
             }
     }
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     var previewActionItems: [UIPreviewAction] {
         allPerformableMessageAction.compactMap { messageAction in
             guard let title = messageAction.title else { return nil }
 
-            return UIPreviewAction(title: title,
-                                   style: .default) { [weak self] _, _ in
+            return UIPreviewAction(
+                title: title,
+                style: .default
+            ) { [weak self] _, _ in
                 self?.perform(action: messageAction)
             }
         }
@@ -184,9 +193,11 @@ final class ConversationMessageActionController {
     // MARK: - Handler
 
     func perform(action: MessageAction) {
-        responder?.perform(action: action,
-                           for: message,
-                           view: view)
+        responder?.perform(
+            action: action,
+            for: message,
+            view: view
+        )
     }
 
     @objc func digitallySignMessage() {

@@ -55,7 +55,9 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
         let customBackend = MockEnvironment()
         customBackend.backendURL = URL(string: "https://api.example.org")!
         customBackend.proxy = nil
-        customBackend.environmentType = EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
+        customBackend
+            .environmentType =
+            EnvironmentTypeProvider(environmentType: .custom(url: URL(string: "https://api.example.org")!))
         sut = LandingViewController(backendEnvironmentProvider: {
             customBackend
         })
@@ -66,7 +68,10 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
     // MARK: - Helper Method
 
     func sutInUiNavigationController() -> UINavigationController {
-        let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+        let navigationController = UINavigationController(
+            navigationBarClass: AuthenticationNavigationBar.self,
+            toolbarClass: nil
+        )
         navigationController.setOverrideTraitCollection(UITraitCollection(horizontalSizeClass: .compact), forChild: sut)
         navigationController.viewControllers = [sut]
 

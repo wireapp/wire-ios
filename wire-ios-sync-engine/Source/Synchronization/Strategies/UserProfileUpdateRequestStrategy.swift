@@ -31,14 +31,23 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     fileprivate var handleSuggestionSearchSync: ZMSingleRequestSync! = nil
 
-    @available(*, unavailable, message: "use `init(managedObjectContext:appStateDelegate:userProfileUpdateStatus)`instead")
-    override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    @available(
+        *,
+        unavailable,
+        message: "use `init(managedObjectContext:appStateDelegate:userProfileUpdateStatus)`instead"
+    )
+    override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         fatalError()
     }
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                userProfileUpdateStatus: UserProfileUpdateStatus) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        userProfileUpdateStatus: UserProfileUpdateStatus
+    ) {
         self.userProfileUpdateStatus = userProfileUpdateStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -54,7 +63,10 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
         self.emailUpdateSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
         self.handleCheckSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
         self.handleSetSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-        self.handleSuggestionSearchSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.handleSuggestionSearchSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: managedObjectContext
+        )
     }
 
     @objc override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -95,21 +107,42 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             let payload: NSDictionary = [
                 "new_password": self.userProfileUpdateStatus.passwordToSet!,
             ]
-            return ZMTransportRequest(path: "/self/password", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/self/password",
+                method: .put,
+                payload: payload,
+                apiVersion: apiVersion.rawValue
+            )
 
         case self.emailUpdateSync:
             let payload: NSDictionary = [
                 "email": self.userProfileUpdateStatus.emailToSet!,
             ]
-            return ZMTransportRequest(path: "/access/self/email", method: .put, payload: payload, authentication: .needsCookieAndAccessToken, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/access/self/email",
+                method: .put,
+                payload: payload,
+                authentication: .needsCookieAndAccessToken,
+                apiVersion: apiVersion.rawValue
+            )
 
         case self.handleCheckSync:
             let handle = self.userProfileUpdateStatus.handleToCheck!
-            return ZMTransportRequest(path: "/users/handles/\(handle)", method: .head, payload: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/users/handles/\(handle)",
+                method: .head,
+                payload: nil,
+                apiVersion: apiVersion.rawValue
+            )
 
         case self.handleSetSync:
             let payload: NSDictionary = ["handle": self.userProfileUpdateStatus.handleToSet!]
-            return ZMTransportRequest(path: "/self/handle", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/self/handle",
+                method: .put,
+                payload: payload,
+                apiVersion: apiVersion.rawValue
+            )
 
         case self.handleSuggestionSearchSync:
             guard let handlesToCheck = self.userProfileUpdateStatus.suggestedHandlesToCheck else {
@@ -119,7 +152,12 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
                 "handles": handlesToCheck,
                 "return": 1,
             ] as NSDictionary
-            return ZMTransportRequest(path: "/users/handles", method: .post, payload: payload, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/users/handles",
+                method: .post,
+                payload: payload,
+                apiVersion: apiVersion.rawValue
+            )
 
         default:
             return nil

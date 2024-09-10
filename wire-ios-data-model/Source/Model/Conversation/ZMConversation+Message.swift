@@ -69,7 +69,11 @@ extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    func appendButtonAction(havingId id: String, referenceMessageId: UUID, nonce: UUID = UUID()) throws -> ZMClientMessage {
+    func appendButtonAction(
+        havingId id: String,
+        referenceMessageId: UUID,
+        nonce: UUID = UUID()
+    ) throws -> ZMClientMessage {
         let buttonAction = ButtonAction(buttonId: id, referenceMessageId: referenceMessageId)
         return try appendClientMessage(with: GenericMessage(content: buttonAction, nonce: nonce), hidden: true)
     }
@@ -98,7 +102,11 @@ extension ZMConversation {
             $0.zoom = locationData.zoomLevel
         }
 
-        let message = GenericMessage(content: locationContent, nonce: nonce, expiresAfter: activeMessageDestructionTimeoutValue)
+        let message = GenericMessage(
+            content: locationContent,
+            nonce: nonce,
+            expiresAfter: activeMessageDestructionTimeoutValue
+        )
         return try appendClientMessage(with: message)
     }
 
@@ -136,17 +144,28 @@ extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    public func appendText(content: String,
-                           mentions: [Mention] = [],
-                           replyingTo quotedMessage: ZMConversationMessage? = nil,
-                           fetchLinkPreview: Bool = true,
-                           nonce: UUID = UUID()) throws -> ZMConversationMessage {
+    public func appendText(
+        content: String,
+        mentions: [Mention] = [],
+        replyingTo quotedMessage: ZMConversationMessage? = nil,
+        fetchLinkPreview: Bool = true,
+        nonce: UUID = UUID()
+    ) throws -> ZMConversationMessage {
         guard !(content as NSString).zmHasOnlyWhitespaceCharacters() else {
             throw AppendMessageError.messageIsEmpty
         }
 
-        let text = Text(content: content, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage as? ZMOTRMessage)
-        let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: activeMessageDestructionTimeoutValue)
+        let text = Text(
+            content: content,
+            mentions: mentions,
+            linkPreviews: [],
+            replyingTo: quotedMessage as? ZMOTRMessage
+        )
+        let genericMessage = GenericMessage(
+            content: text,
+            nonce: nonce,
+            expiresAfter: activeMessageDestructionTimeoutValue
+        )
 
         let clientMessage = try appendClientMessage(with: genericMessage, expires: true, hidden: false, configure: {
             $0.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
@@ -155,9 +174,11 @@ extension ZMConversation {
         })
 
         if let notificationContext = managedObjectContext?.notificationContext {
-            NotificationInContext(name: ZMConversation.clearTypingNotificationName,
-                                  context: notificationContext,
-                                  object: self).post()
+            NotificationInContext(
+                name: ZMConversation.clearTypingNotificationName,
+                context: notificationContext,
+                object: self
+            ).post()
         }
 
         return clientMessage
@@ -216,9 +237,11 @@ extension ZMConversation {
         // We update the size again when the the preprocessing is done.
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
 
-        let asset = WireProtos.Asset(imageSize: imageSize,
-                                     mimeType: mimeType,
-                                     size: UInt64(imageData.count))
+        let asset = WireProtos.Asset(
+            imageSize: imageSize,
+            mimeType: mimeType,
+            size: UInt64(imageData.count)
+        )
 
         return try append(asset: asset, nonce: nonce, expires: true, prepareMessage: { message in
             moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)
@@ -295,10 +318,12 @@ extension ZMConversation {
         let message: ZMAssetClientMessage
 
         do {
-            message = try ZMAssetClientMessage(asset: asset,
-                                               nonce: nonce,
-                                               managedObjectContext: moc,
-                                               expiresAfter: activeMessageDestructionTimeoutValue?.rawValue)
+            message = try ZMAssetClientMessage(
+                asset: asset,
+                nonce: nonce,
+                managedObjectContext: moc,
+                expiresAfter: activeMessageDestructionTimeoutValue?.rawValue
+            )
         } catch {
             throw AppendMessageError.failedToProcessMessageData(reason: error.localizedDescription)
         }
@@ -330,10 +355,12 @@ extension ZMConversation {
     ///     - `AppendMessageError` if the message couldn't be appended.
 
     @discardableResult
-    public func appendClientMessage(with genericMessage: GenericMessage,
-                                    expires: Bool = true,
-                                    hidden: Bool = false,
-                                    configure: ((ZMClientMessage) -> Void)? = nil) throws -> ZMClientMessage {
+    public func appendClientMessage(
+        with genericMessage: GenericMessage,
+        expires: Bool = true,
+        hidden: Bool = false,
+        configure: ((ZMClientMessage) -> Void)? = nil
+    ) throws -> ZMClientMessage {
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
@@ -379,8 +406,11 @@ extension ZMConversation {
             .conversationId: self.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ]
 
-        WireLogger.messaging.debug("appending message to conversation",
-                                   attributes: logAttributes, .safePublic)
+        WireLogger.messaging.debug(
+            "appending message to conversation",
+            attributes: logAttributes,
+            .safePublic
+        )
 
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
@@ -415,27 +445,35 @@ extension ZMConversation {
     }
 
     @discardableResult @objc(appendText:mentions:fetchLinkPreview:nonce:)
-    public func _appendText(content: String,
-                            mentions: [Mention],
-                            fetchLinkPreview: Bool,
-                            nonce: UUID) -> ZMConversationMessage? {
-        try? appendText(content: content,
-                        mentions: mentions,
-                        fetchLinkPreview: fetchLinkPreview,
-                        nonce: nonce)
+    public func _appendText(
+        content: String,
+        mentions: [Mention],
+        fetchLinkPreview: Bool,
+        nonce: UUID
+    ) -> ZMConversationMessage? {
+        try? appendText(
+            content: content,
+            mentions: mentions,
+            fetchLinkPreview: fetchLinkPreview,
+            nonce: nonce
+        )
     }
 
     @discardableResult @objc(appendText:mentions:replyingToMessage:fetchLinkPreview:nonce:)
-    public func _appendText(content: String,
-                            mentions: [Mention],
-                            replyingTo quotedMessage: ZMConversationMessage?,
-                            fetchLinkPreview: Bool,
-                            nonce: UUID) -> ZMConversationMessage? {
-        try? appendText(content: content,
-                        mentions: mentions,
-                        replyingTo: quotedMessage,
-                        fetchLinkPreview: fetchLinkPreview,
-                        nonce: nonce)
+    public func _appendText(
+        content: String,
+        mentions: [Mention],
+        replyingTo quotedMessage: ZMConversationMessage?,
+        fetchLinkPreview: Bool,
+        nonce: UUID
+    ) -> ZMConversationMessage? {
+        try? appendText(
+            content: content,
+            mentions: mentions,
+            replyingTo: quotedMessage,
+            fetchLinkPreview: fetchLinkPreview,
+            nonce: nonce
+        )
     }
 
     @discardableResult @objc(appendKnock)

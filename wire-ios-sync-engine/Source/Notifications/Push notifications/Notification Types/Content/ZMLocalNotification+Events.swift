@@ -21,13 +21,18 @@ import WireDataModel
 extension ZMLocalNotification {
     // for each supported event type, use the corresponding notification builder.
     //
-    convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
+    convenience init?(
+        event: ZMUpdateEvent,
+        conversation: ZMConversation?,
+        managedObjectContext moc: NSManagedObjectContext
+    ) {
         var builderType: EventNotificationBuilder.Type?
 
         switch event.type {
         case .conversationOtrMessageAdd:
             guard let message = GenericMessage(from: event) else { break }
-            builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder.self
+            builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder
+                .self
 
         case .conversationCreate:
             builderType = ConversationCreateEventNotificationBuilder.self
@@ -162,7 +167,11 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 
         // fetch message that was reacted to and make sure the sender of the original message is the selfUser
         guard let conversation,
-              let reactionMessage = ZMMessage.fetch(withNonce: UUID(uuidString: message.reaction.messageID), for: conversation, in: moc),
+              let reactionMessage = ZMMessage.fetch(
+                  withNonce: UUID(uuidString: message.reaction.messageID),
+                  for: conversation,
+                  in: moc
+              ),
               reactionMessage.sender == ZMUser.selfUser(in: moc) else { return false }
 
         return true
@@ -263,7 +272,11 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
             let message = GenericMessage(from: event),
-            let contentType = LocalNotificationContentType(message: message, conversation: conversation, in: managedObjectContext)
+            let contentType = LocalNotificationContentType(
+                message: message,
+                conversation: conversation,
+                in: managedObjectContext
+            )
         else {
             return nil
         }
@@ -278,7 +291,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func bodyText() -> String {
-        notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {
@@ -302,7 +316,10 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
             let senderUUID = event.senderUUID,
             !conversation.isMessageSilenced(message, senderID: senderUUID)
         else {
-            Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")
+            Logging.push
+                .safePublic(
+                    "Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced"
+                )
             return false
         }
 
@@ -321,7 +338,11 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     let contentType: LocalNotificationContentType
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
-        guard let contentType = LocalNotificationContentType(event: event, conversation: conversation, in: managedObjectContext) else {
+        guard let contentType = LocalNotificationContentType(
+            event: event,
+            conversation: conversation,
+            in: managedObjectContext
+        ) else {
             return nil
         }
 
@@ -334,7 +355,8 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func bodyText() -> String {
-        notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {

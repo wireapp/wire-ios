@@ -51,7 +51,11 @@ final class AppLockChangeWarningViewController: UIViewController {
     }()
 
     private lazy var messageLabel: DynamicFontLabel = {
-        let label = DynamicFontLabel(text: messageLabelText, fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: messageLabelText,
+            fontSpec: .normalRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -61,7 +65,8 @@ final class AppLockChangeWarningViewController: UIViewController {
 
     private var messageLabelText: String {
         if isAppLockActive {
-            L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel.forcedApplock
+            L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.WarningScreen.InfoLabel
+                .forcedApplock
         } else {
             L10n.Localizable.WarningScreen.InfoLabel.nonForcedApplock
         }

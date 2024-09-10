@@ -76,7 +76,12 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         assertMatrixRow(.oneOnOne, selfUser: .personal, otherUsers: [.federated], expectedResult: [])
 
         // Team
-        assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam], expectedResult: [])
+        assertMatrixRow(
+            .oneOnOne,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.memberOfHostingTeam],
+            expectedResult: []
+        )
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.personal], expectedResult: [])
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.service], expectedResult: [])
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.external], expectedResult: [])
@@ -100,24 +105,59 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.service], expectedResult: [])
 
         // Only Remotes
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.federated], expectedResult: [.visibleRemotes])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.federated],
+            expectedResult: [.visibleRemotes]
+        )
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.federated], expectedResult: [.visibleRemotes])
 
         // Only Guests
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal], expectedResult: [.visibleGuests])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.personal],
+            expectedResult: [.visibleGuests]
+        )
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.personal], expectedResult: [.visibleGuests])
 
         // Only Services
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
-        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
-        assertMatrixRow(.group, selfUser: .external, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.memberOfHostingTeam, .service],
+            expectedResult: [.visibleServices]
+        )
+        assertMatrixRow(
+            .group,
+            selfUser: .personal,
+            otherUsers: [.memberOfHostingTeam, .service],
+            expectedResult: [.visibleServices]
+        )
+        assertMatrixRow(
+            .group,
+            selfUser: .external,
+            otherUsers: [.memberOfHostingTeam, .service],
+            expectedResult: [.visibleServices]
+        )
 
         // Only Externals
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.external], expectedResult: [.visibleExternals])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.external],
+            expectedResult: [.visibleExternals]
+        )
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.external], expectedResult: [.visibleExternals])
 
         // Guests and Services and Externals and Remotes
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal, .service, .external, .federated], expectedResult: [.visibleGuests, .visibleServices, .visibleExternals, .visibleRemotes])
+        assertMatrixRow(
+            .group,
+            selfUser: .memberOfHostingTeam,
+            otherUsers: [.personal, .service, .external, .federated],
+            expectedResult: [.visibleGuests, .visibleServices, .visibleExternals, .visibleRemotes]
+        )
     }
 
     // MARK: - Helpers
@@ -129,7 +169,14 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         return conversation
     }
 
-    func assertMatrixRow(_ conversationType: ZMConversationType, selfUser selfUserType: RelativeUserState, otherUsers: [RelativeUserState], expectedResult: ZMConversation.ExternalParticipantsState, file: StaticString = #file, line: UInt = #line) {
+    func assertMatrixRow(
+        _ conversationType: ZMConversationType,
+        selfUser selfUserType: RelativeUserState,
+        otherUsers: [RelativeUserState],
+        expectedResult: ZMConversation.ExternalParticipantsState,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         let conversation = createConversationWithSelfUser()
         conversation.conversationType = conversationType
 

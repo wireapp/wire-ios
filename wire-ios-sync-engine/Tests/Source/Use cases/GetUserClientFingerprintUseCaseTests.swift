@@ -159,8 +159,10 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     // MARK: - Helpers
 
     private func createSut(proteusEnabled: Bool) -> GetUserClientFingerprintUseCase {
-        mockProteusProvider = MockProteusProvider(mockProteusService: mockProteusService,
-                                                  useProteusService: proteusEnabled)
+        mockProteusProvider = MockProteusProvider(
+            mockProteusService: mockProteusService,
+            useProteusService: proteusEnabled
+        )
         mockProteusProvider.mockProteusService.localFingerprint_MockMethod = {
             self.fingerprint
         }
@@ -168,8 +170,10 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
             self.fingerprint
         }
 
-        return GetUserClientFingerprintUseCase(proteusProvider: mockProteusProvider,
-                                               sessionEstablisher: mockSessionEstablisher,
-                                               managedObjectContext: syncMOC)
+        return GetUserClientFingerprintUseCase(
+            proteusProvider: mockProteusProvider,
+            sessionEstablisher: mockSessionEstablisher,
+            managedObjectContext: syncMOC
+        )
     }
 }

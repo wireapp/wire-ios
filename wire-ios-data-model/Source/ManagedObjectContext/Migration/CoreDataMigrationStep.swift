@@ -37,9 +37,13 @@ struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
             let destinationURL = destinationVersion.managedObjectModelURL(),
             let sourceModel = NSManagedObjectModel(contentsOf: sourceURL),
             let destinationModel = NSManagedObjectModel(contentsOf: destinationURL),
-            let mappingModel = try? Self.mappingModel(fromSourceModel: sourceModel, toDestinationModel: destinationModel)
+            let mappingModel = try? Self.mappingModel(
+                fromSourceModel: sourceModel,
+                toDestinationModel: destinationModel
+            )
         else {
-            let message = "can not initialize migration step from source: \(sourceVersion) to destination: \(destinationVersion)!"
+            let message =
+                "can not initialize migration step from source: \(sourceVersion) to destination: \(destinationVersion)!"
             throw CoreDataMigratorError.missingFiles(message: message)
         }
 
@@ -56,7 +60,10 @@ struct CoreDataMigrationStep<Version: CoreDataMigrationVersion> {
         fromSourceModel sourceModel: NSManagedObjectModel,
         toDestinationModel destinationModel: NSManagedObjectModel
     ) throws -> NSMappingModel {
-        guard let customMapping = customMappingModel(fromSourceModel: sourceModel, toDestinationModel: destinationModel) else {
+        guard let customMapping = customMappingModel(
+            fromSourceModel: sourceModel,
+            toDestinationModel: destinationModel
+        ) else {
             return try inferredMappingModel(fromSourceModel: sourceModel, toDestinationModel: destinationModel)
         }
         return customMapping

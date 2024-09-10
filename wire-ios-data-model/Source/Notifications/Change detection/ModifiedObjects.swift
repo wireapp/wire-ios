@@ -70,7 +70,10 @@ struct ModifiedObjects {
             return managedObjects
 
         case let nsObjects as Set<NSObject>:
-            NotificationDispatcher.log.warn("Unable to cast userInfo content to Set of ZMManagedObject. Is there a new entity that does not inherit form it?")
+            NotificationDispatcher.log
+                .warn(
+                    "Unable to cast userInfo content to Set of ZMManagedObject. Is there a new entity that does not inherit form it?"
+                )
             let managedObjects = nsObjects.compactMap { $0 as? ZMManagedObject }
             return Set(managedObjects)
 

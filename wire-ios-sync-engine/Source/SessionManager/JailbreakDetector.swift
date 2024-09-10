@@ -125,9 +125,11 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
     }
 
     private var canOpenJailbrokenStores: Bool {
-        let jailbrokenStoresURLs: [String] = ["cydia://app",
-                                              "sileo://package",
-                                              "sileo://source"]
+        let jailbrokenStoresURLs: [String] = [
+            "cydia://app",
+            "sileo://package",
+            "sileo://source",
+        ]
 
         for url in jailbrokenStoresURLs where UIApplication.shared.canOpenURL(URL(string: url)!) {
             return true

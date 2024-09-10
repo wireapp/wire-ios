@@ -26,7 +26,10 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
         registrationStatus = TestRegistrationStatus()
-        sut = WireSyncEngine.RegistationCredentialVerificationStrategy(groupQueue: self.syncMOC, status: registrationStatus)
+        sut = WireSyncEngine.RegistationCredentialVerificationStrategy(
+            groupQueue: self.syncMOC,
+            status: registrationStatus
+        )
     }
 
     override func tearDown() {
@@ -49,10 +52,17 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         // given
         let email = "john@smith.com"
         let path = "/activate/send"
-        let payload = ["email": email,
-                       "locale": NSLocale.formattedLocaleIdentifier()!]
+        let payload = [
+            "email": email,
+            "locale": NSLocale.formattedLocaleIdentifier()!,
+        ]
 
-        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: APIVersion.v0.rawValue
+        )
         registrationStatus.phase = .sendActivationCode(unverifiedEmail: email)
 
         // when
@@ -68,7 +78,12 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         // given
         let email = "john@smith.com"
         registrationStatus.phase = .sendActivationCode(unverifiedEmail: email)
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         XCTAssertEqual(registrationStatus.successCalled, 0)
@@ -85,11 +100,18 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         let email = "john@smith.com"
         let code = "123456"
         let path = "/activate"
-        let payload = ["email": email,
-                       "code": code,
-                       "dryrun": true] as [String: Any]
+        let payload = [
+            "email": email,
+            "code": code,
+            "dryrun": true,
+        ] as [String: Any]
 
-        let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
+        let transportRequest = ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: APIVersion.v0.rawValue
+        )
         registrationStatus.phase = .checkActivationCode(unverifiedEmail: email, code: code)
 
         // when
@@ -106,7 +128,12 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         let email = "john@smith.com"
         let code = "123456"
         registrationStatus.phase = .checkActivationCode(unverifiedEmail: email, code: code)
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         // when
         XCTAssertEqual(registrationStatus.successCalled, 0)
@@ -141,7 +168,11 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
     }
 
     func testThatItNotifiesStatusAfterErrorToEmailVerify_DomainBlocked() {
-        checkSendingCodeResponseError(code: .domainBlocked, errorLabel: "domain-blocked-for-registration", httpStatus: 451)
+        checkSendingCodeResponseError(
+            code: .domainBlocked,
+            errorLabel: "domain-blocked-for-registration",
+            httpStatus: 451
+        )
     }
 
     // MARK: - error tests for activation
@@ -156,7 +187,13 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
 
     // MARK: - Helpers
 
-    func checkSendingCodeResponseError(code: UserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
+    func checkSendingCodeResponseError(
+        code: UserSessionErrorCode,
+        errorLabel: String,
+        httpStatus: NSInteger,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // given
         let email = "john@smith.com"
         let phase: RegistrationPhase = .sendActivationCode(unverifiedEmail: email)
@@ -165,7 +202,13 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
         checkResponseError(with: phase, code: code, errorLabel: errorLabel, httpStatus: httpStatus)
     }
 
-    func checkActivationResponseError(code: UserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
+    func checkActivationResponseError(
+        code: UserSessionErrorCode,
+        errorLabel: String,
+        httpStatus: NSInteger,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // given
         let email = "john@smith.com"
         let activationCode = "123456"

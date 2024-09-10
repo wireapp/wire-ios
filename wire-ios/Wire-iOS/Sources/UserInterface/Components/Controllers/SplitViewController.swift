@@ -20,7 +20,8 @@ import UIKit
 import WireDesign
 
 extension Notification.Name {
-    static let SplitLayoutObservableDidChangeToLayoutSize = Notification.Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
+    static let SplitLayoutObservableDidChangeToLayoutSize = Notification
+        .Name("SplitLayoutObservableDidChangeToLayoutSizeNotification")
 }
 
 enum SplitViewControllerTransition {
@@ -53,7 +54,10 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         didSet {
             guard oldValue != layoutSize else { return }
 
-            NotificationCenter.default.post(name: Notification.Name.SplitLayoutObservableDidChangeToLayoutSize, object: self)
+            NotificationCenter.default.post(
+                name: Notification.Name.SplitLayoutObservableDidChangeToLayoutSize,
+                object: self
+            )
         }
     }
 
@@ -147,7 +151,10 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         view.addGestureRecognizer(horizontalPanner)
     }
 
-    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func willTransition(
+        to newCollection: UITraitCollection,
+        with coordinator: UIViewControllerTransitionCoordinator
+    ) {
         futureTraitCollection = newCollection
         updateLayoutSize(for: newCollection)
 
@@ -204,16 +211,20 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     // MARK: - left and right view controllers
 
-    func setLeftViewControllerRevealed(_ leftViewControllerRevealed: Bool,
-                                       animated: Bool,
-                                       completion: Completion? = nil) {
+    func setLeftViewControllerRevealed(
+        _ leftViewControllerRevealed: Bool,
+        animated: Bool,
+        completion: Completion? = nil
+    ) {
         self.internalLeftViewControllerRevealed = leftViewControllerRevealed
         updateLeftViewController(animated: animated, completion: completion)
     }
 
-    func setRightViewController(_ newRightViewController: UIViewController?,
-                                animated: Bool,
-                                completion: Completion? = nil) {
+    func setRightViewController(
+        _ newRightViewController: UIViewController?,
+        animated: Bool,
+        completion: Completion? = nil
+    ) {
         guard rightViewController != newRightViewController else {
             return
         }
@@ -224,22 +235,26 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             rightViewController?.dismiss(animated: false)
         }
 
-        let transitionDidStart = transition(from: rightViewController,
-                                            to: newRightViewController,
-                                            containerView: rightView,
-                                            animator: animatorForRightView,
-                                            animated: animated,
-                                            completion: completion)
+        let transitionDidStart = transition(
+            from: rightViewController,
+            to: newRightViewController,
+            containerView: rightView,
+            animator: animatorForRightView,
+            animated: animated,
+            completion: completion
+        )
 
         if transitionDidStart {
             rightViewController = newRightViewController
         }
     }
 
-    func setLeftViewController(_ newLeftViewController: UIViewController?,
-                               animated: Bool = false,
-                               transition: SplitViewControllerTransition = .default,
-                               completion: Completion? = nil) {
+    func setLeftViewController(
+        _ newLeftViewController: UIViewController?,
+        animated: Bool = false,
+        transition: SplitViewControllerTransition = .default,
+        completion: Completion? = nil
+    ) {
         guard leftViewController != newLeftViewController else {
             completion?()
             return
@@ -248,7 +263,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         // without this line on iPad the text is displayed next to the tab item icon
         newLeftViewController.map { setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: $0) }
 
-        let animator: UIViewControllerAnimatedTransitioning = if leftViewController == nil || newLeftViewController == nil {
+        let animator: UIViewControllerAnimatedTransitioning = if leftViewController == nil || newLeftViewController ==
+            nil {
             CrossfadeTransition()
         } else if transition == .present {
             VerticalTransition(offset: 88)
@@ -258,12 +274,14 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             CrossfadeTransition()
         }
 
-        if self.transition(from: leftViewController,
-                           to: newLeftViewController,
-                           containerView: leftView,
-                           animator: animator,
-                           animated: animated,
-                           completion: completion) {
+        if self.transition(
+            from: leftViewController,
+            to: newLeftViewController,
+            containerView: leftView,
+            animator: animator,
+            animated: animated,
+            completion: completion
+        ) {
             internalLeftViewController = newLeftViewController
         }
     }
@@ -295,7 +313,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
             if self.openPercentage == 0,
                self.layoutSize != .regularLandscape,
-               self.leftView.layer.presentation()?.frame == self.leftView.frame || (self.leftView.layer.presentation()?.frame == nil && !animated) {
+               self.leftView.layer.presentation()?.frame == self.leftView
+               .frame || (self.leftView.layer.presentation()?.frame == nil && !animated) {
                 self.leftView.isHidden = true
             }
         }
@@ -394,12 +413,14 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         return Array(constraints)
     }
 
-    private func transition(from fromViewController: UIViewController?,
-                            to toViewController: UIViewController?,
-                            containerView: UIView,
-                            animator: UIViewControllerAnimatedTransitioning?,
-                            animated: Bool,
-                            completion: Completion? = nil) -> Bool {
+    private func transition(
+        from fromViewController: UIViewController?,
+        to toViewController: UIViewController?,
+        containerView: UIView,
+        animator: UIViewControllerAnimatedTransitioning?,
+        animated: Bool,
+        completion: Completion? = nil
+    ) -> Bool {
         // Return if transition is done or already in progress
         if let toViewController, children.contains(toViewController) {
             return false
@@ -414,9 +435,11 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             updateConstraints(for: view.bounds.size, willMoveToEmptyView: true)
         }
 
-        let transitionContext = SplitViewControllerTransitionContext(from: fromViewController,
-                                                                     to: toViewController,
-                                                                     containerView: containerView)
+        let transitionContext = SplitViewControllerTransitionContext(
+            from: fromViewController,
+            to: toViewController,
+            containerView: containerView
+        )
 
         transitionContext.isInteractive = false
         transitionContext.isAnimated = animated
@@ -457,13 +480,17 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         sideBySideConstraint.isActive = false
 
         let constraints: [NSLayoutConstraint] =
-            [leftView.topAnchor.constraint(equalTo: view.topAnchor), leftView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-             rightView.topAnchor.constraint(equalTo: view.topAnchor), rightView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-             leftViewLeadingConstraint,
-             rightViewLeadingConstraint,
-             leftViewWidthConstraint,
-             rightViewWidthConstraint,
-             pinLeftViewOffsetConstraint]
+            [
+                leftView.topAnchor.constraint(equalTo: view.topAnchor),
+                leftView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                rightView.topAnchor.constraint(equalTo: view.topAnchor),
+                rightView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+                leftViewLeadingConstraint,
+                rightViewLeadingConstraint,
+                leftViewWidthConstraint,
+                rightViewWidthConstraint,
+                pinLeftViewOffsetConstraint,
+            ]
 
         NSLayoutConstraint.activate(constraints)
     }

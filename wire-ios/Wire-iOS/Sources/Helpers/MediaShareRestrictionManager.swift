@@ -40,10 +40,12 @@ class MediaShareRestrictionManager {
     // MARK: - Private Properties
 
     private let sessionRestriction: SessionFileRestrictionsProtocol?
-    private let securityFlagRestrictedTypes: [ShareableMediaSource] = [.photoLibrary,
-                                                                       .gif,
-                                                                       .shareExtension,
-                                                                       .clipboard]
+    private let securityFlagRestrictedTypes: [ShareableMediaSource] = [
+        .photoLibrary,
+        .gif,
+        .shareExtension,
+        .clipboard,
+    ]
 
     // MARK: - Life cycle
 

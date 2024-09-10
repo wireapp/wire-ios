@@ -156,10 +156,19 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
 
         if let userSession = ZMUserSession.shared() {
-            self.selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
+            self.selfUserObserver = UserChangeInfo.add(
+                observer: self,
+                for: userSession.providedSelfUser,
+                in: userSession
+            )
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -226,7 +235,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
 
-        if let cell = tableView.dequeueReusableCell(withIdentifier: type(of: cellDescriptor).cellType.reuseIdentifier, for: indexPath) as? SettingsTableCellProtocol {
+        if let cell = tableView.dequeueReusableCell(
+            withIdentifier: type(of: cellDescriptor).cellType.reuseIdentifier,
+            for: indexPath
+        ) as? SettingsTableCellProtocol {
             cell.descriptor = cellDescriptor
             cellDescriptor.featureCell(cell)
             return cell
@@ -241,7 +253,11 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         return cellDescriptor.copiableText != nil
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
         let sectionDescriptor = sections[(indexPath as NSIndexPath).section]
         let cellDescriptor = sectionDescriptor.visibleCellDescriptors[(indexPath as NSIndexPath).row]
 
@@ -250,7 +266,10 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         }
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            let copy = UIAction(title: L10n.Localizable.Content.Message.copy, image: UIImage(systemName: "doc.on.doc")) { _ in
+            let copy = UIAction(
+                title: L10n.Localizable.Content.Message.copy,
+                image: UIImage(systemName: "doc.on.doc")
+            ) { _ in
                 let pasteboard = UIPasteboard.general
                 pasteboard.string = copiableText
             }
@@ -304,10 +323,12 @@ extension SettingsTableViewController: UserObserving {
         }
 
         if note.imageMediumDataChanged, let userSession = ZMUserSession.shared() {
-            note.user.fetchProfileImage(session: userSession,
-                                        imageCache: UIImage.defaultUserImageCache,
-                                        sizeLimit: nil,
-                                        isDesaturated: false) { [weak self] _, _ in
+            note.user.fetchProfileImage(
+                session: userSession,
+                imageCache: UIImage.defaultUserImageCache,
+                sizeLimit: nil,
+                isDesaturated: false
+            ) { [weak self] _, _ in
                 self?.refreshData()
             }
         }

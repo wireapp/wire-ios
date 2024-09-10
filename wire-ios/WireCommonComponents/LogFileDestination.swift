@@ -42,7 +42,8 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
     public var log: URL? {
         switch self {
         case .nse, .shareExtension:
-            guard let url = Bundle.appMainBundle.applicationGroupIdentifier.map(FileManager.sharedContainerDirectory(for:)) else {
+            guard let url = Bundle.appMainBundle.applicationGroupIdentifier
+                .map(FileManager.sharedContainerDirectory(for:)) else {
                 return nil
             }
             return url.appendingPathComponent(filename)

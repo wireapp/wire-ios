@@ -25,7 +25,10 @@ import Foundation
 final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle errors on start

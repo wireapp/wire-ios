@@ -30,7 +30,10 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
     typealias NoHistory = L10n.Localizable.Registration.NoHistory
 
     init() {
-        let restoreButton = SecondaryButtonDescription(title: NoHistory.restoreBackup.capitalized, accessibilityIdentifier: "restore_backup")
+        let restoreButton = SecondaryButtonDescription(
+            title: NoHistory.restoreBackup.capitalized,
+            accessibilityIdentifier: "restore_backup"
+        )
         views = [restoreButton]
 
         restoreButton.buttonTapped = { [weak self] in
@@ -53,7 +56,10 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
 
     init(context: NoHistoryContext) {
         backButton = BackButtonDescription()
-        mainView = SolidButtonDescription(title: L10n.Localizable.Registration.NoHistory.gotIt, accessibilityIdentifier: "ignore_backup")
+        mainView = SolidButtonDescription(
+            title: L10n.Localizable.Registration.NoHistory.gotIt,
+            accessibilityIdentifier: "ignore_backup"
+        )
         secondaryView = nil
         switch context {
         case .newDevice:

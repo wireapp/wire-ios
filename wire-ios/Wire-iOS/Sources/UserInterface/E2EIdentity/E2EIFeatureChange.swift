@@ -32,7 +32,8 @@ extension UIAlertController {
         message: String = MLSE2EIStrings.message,
         enrollButtonText: String = MLSE2EIStrings.Button.getCertificate,
         canRemindLater: Bool = true,
-        handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
+        handler: @escaping (E2EIChangeAction) -> Void
+    ) -> UIAlertController {
         let controller = UIAlertController(
             title: title,
             message: message,
@@ -44,19 +45,24 @@ extension UIAlertController {
         let learnMoreAction = UIAlertAction.link(
             title: MLSE2EIStrings.Button.learnMore,
             url: WireURLs.shared.endToEndIdentityInfo,
-            presenter: topViewController) {
-                if !canRemindLater {
-                    NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
-                }
-                handler(.learnMore)
+            presenter: topViewController
+        ) {
+            if !canRemindLater {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             }
+            handler(.learnMore)
+        }
 
-        let getCertificateAction = UIAlertAction(title: enrollButtonText,
-                                                 style: .default) { _ in
+        let getCertificateAction = UIAlertAction(
+            title: enrollButtonText,
+            style: .default
+        ) { _ in
             handler(.getCertificate)
         }
-        let remindLaterAction = UIAlertAction(title: MLSE2EIStrings.Button.remindMeLater,
-                                              style: .cancel) { _ in
+        let remindLaterAction = UIAlertAction(
+            title: MLSE2EIStrings.Button.remindMeLater,
+            style: .cancel
+        ) { _ in
             handler(.remindLater)
         }
 

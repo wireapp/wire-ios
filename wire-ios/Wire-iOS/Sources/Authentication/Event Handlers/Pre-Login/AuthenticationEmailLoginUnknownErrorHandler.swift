@@ -41,17 +41,27 @@ final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHand
 
         // We try to validate the fields to detect an error
         var detectedError: NSError = if !ZMUser.isValidEmailAddress(credentials.email) {
-            NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.invalidEmail.rawValue, userInfo: nil)
+            NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.invalidEmail.rawValue,
+                userInfo: nil
+            )
         } else if !ZMUser.isValidPassword(credentials.password) {
-            NSError(domain: NSError.userSessionErrorDomain, code: UserSessionErrorCode.invalidCredentials.rawValue, userInfo: nil)
+            NSError(
+                domain: NSError.userSessionErrorDomain,
+                code: UserSessionErrorCode.invalidCredentials.rawValue,
+                userInfo: nil
+            )
         } else {
             error
         }
 
         // Show the alert with a guidance dot
 
-        let alert = AuthenticationCoordinatorErrorAlert(error: detectedError,
-                                                        completionActions: [.unwindState(withInterface: false)])
+        let alert = AuthenticationCoordinatorErrorAlert(
+            error: detectedError,
+            completionActions: [.unwindState(withInterface: false)]
+        )
 
         return [.hideLoadingView, .executeFeedbackAction(.showGuidanceDot), .presentErrorAlert(alert)]
     }

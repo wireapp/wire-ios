@@ -29,7 +29,11 @@ class ProxiedRequestStrategyTests: MessagingTest {
         self.requestsStatus = ProxiedRequestsStatus(requestCancellation: MockRequestCancellation())
         self.mockApplicationStatus = MockApplicationStatus()
         self.mockApplicationStatus.mockSynchronizationState = .online
-        self.sut = ProxiedRequestStrategy(withManagedObjectContext: self.uiMOC, applicationStatus: self.mockApplicationStatus, requestsStatus: self.requestsStatus)
+        self.sut = ProxiedRequestStrategy(
+            withManagedObjectContext: self.uiMOC,
+            applicationStatus: self.mockApplicationStatus,
+            requestsStatus: self.requestsStatus
+        )
     }
 
     override func tearDown() {
@@ -44,7 +48,12 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesAGiphyRequest() {
         // given
-        requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar", method: .get, callback: { _, _, _ in }))
+        requestsStatus.add(request: ProxyRequest(
+            type: .giphy,
+            path: "/foo/bar",
+            method: .get,
+            callback: { _, _, _ in }
+        ))
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -61,7 +70,12 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesASoundcloudRequest() {
         // given
-        requestsStatus.add(request: ProxyRequest(type: .soundcloud, path: "/foo/bar", method: .get, callback: { _, _, _ in }))
+        requestsStatus.add(request: ProxyRequest(
+            type: .soundcloud,
+            path: "/foo/bar",
+            method: .get,
+            callback: { _, _, _ in }
+        ))
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -79,7 +93,12 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesAYouTubeRequest() {
         // given
-        requestsStatus.add(request: ProxyRequest(type: .youTube, path: "/foo/bar", method: .get, callback: { _, _, _ in }))
+        requestsStatus.add(request: ProxyRequest(
+            type: .youTube,
+            path: "/foo/bar",
+            method: .get,
+            callback: { _, _, _ in }
+        ))
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -96,7 +115,12 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
     func testThatItGeneratesARequestOnlyOnce() {
         // given
-        requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { _, _, _ in }))
+        requestsStatus.add(request: ProxyRequest(
+            type: .giphy,
+            path: "/foo/bar1",
+            method: .get,
+            callback: { _, _, _ in }
+        ))
 
         // when
         let request1: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -111,21 +135,35 @@ class ProxiedRequestStrategyTests: MessagingTest {
         // given
         let error = NSError(domain: "ZMTransportSession", code: 10, userInfo: nil)
         let data = "Foobar".data(using: String.Encoding.utf8, allowLossyConversion: true)!
-        let HTTPResponse = HTTPURLResponse(url: URL(string: "http://www.example.com/")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [
-            "Content-Length": "\(data.count)",
-            "Server": "nginx",
-        ]
+        let HTTPResponse = HTTPURLResponse(
+            url: URL(string: "http://www.example.com/")!,
+            statusCode: 200,
+            httpVersion: "HTTP/1.1",
+            headerFields: [
+                "Content-Length": "\(data.count)",
+                "Server": "nginx",
+            ]
         )!
 
-        let response = ZMTransportResponse(httpurlResponse: HTTPResponse, data: data, error: error, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            httpurlResponse: HTTPResponse,
+            data: data,
+            error: error,
+            apiVersion: APIVersion.v0.rawValue
+        )
         let expectation = self.customExpectation(description: "Callback invoked")
 
-        requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { responseData, responseURLResponse, responseError in
-            XCTAssertEqual(data, responseData)
-            XCTAssertEqual(error, responseError)
-            XCTAssertEqual(HTTPResponse, responseURLResponse)
-            expectation.fulfill()
-        }))
+        requestsStatus.add(request: ProxyRequest(
+            type: .giphy,
+            path: "/foo/bar1",
+            method: .get,
+            callback: { responseData, responseURLResponse, responseError in
+                XCTAssertEqual(data, responseData)
+                XCTAssertEqual(error, responseError)
+                XCTAssertEqual(HTTPResponse, responseURLResponse)
+                expectation.fulfill()
+            }
+        ))
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
@@ -141,7 +179,12 @@ class ProxiedRequestStrategyTests: MessagingTest {
     func testThatItMakesTheRequestExpireAfter20Seconds() {
         // given
         let ExpectedDelay: TimeInterval = 20
-        requestsStatus.add(request: ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { _, _, _ in }))
+        requestsStatus.add(request: ProxyRequest(
+            type: .giphy,
+            path: "/foo/bar1",
+            method: .get,
+            callback: { _, _, _ in }
+        ))
 
         // when
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)

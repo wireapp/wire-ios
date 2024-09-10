@@ -115,7 +115,10 @@ final class AuthenticationEventResponderChain {
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartReauthenticateErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartCompanyLoginLinkEventHandler(), to: &flowStartHandlers)
-        registerHandler(AuthenticationStartAddAccountEventHandler(featureProvider: featureProvider), to: &flowStartHandlers)
+        registerHandler(
+            AuthenticationStartAddAccountEventHandler(featureProvider: featureProvider),
+            to: &flowStartHandlers
+        )
 
         // clientRegistrationErrorHandlers
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
@@ -170,7 +173,15 @@ final class AuthenticationEventResponderChain {
     }
 
     /// Registers a handler inside the specified type erased array.
-    private func registerHandler<Handler: AuthenticationEventHandler>(_ handler: Handler, to handlerList: inout [AnyAuthenticationEventHandler<Handler.Context>]) {
+    private func registerHandler<Handler: AuthenticationEventHandler>(
+        _ handler: Handler,
+        to handlerList: inout [
+            AnyAuthenticationEventHandler<
+                Handler
+                    .Context
+            >,
+        ]
+    ) {
         let box = AnyAuthenticationEventHandler(handler)
         handlerList.append(box)
     }
@@ -227,15 +238,20 @@ final class AuthenticationEventResponderChain {
                 handler.statusProvider = nil
             }
 
-            if let responseActions = handler.handleEvent(currentStep: delegate.stateController.currentStep,
-                                                         context: context) {
+            if let responseActions = handler.handleEvent(
+                currentStep: delegate.stateController.currentStep,
+                context: context
+            ) {
                 lookupResult = (handler.name, responseActions)
                 break
             }
         }
 
         guard let (name, actions) = lookupResult else {
-            log.error("No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)")
+            log
+                .error(
+                    "No handler was found to handle the event.\nCurrentStep = \(delegate.stateController.currentStep)"
+                )
             return
         }
 

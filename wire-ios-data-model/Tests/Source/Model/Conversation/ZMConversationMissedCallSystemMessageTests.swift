@@ -143,7 +143,10 @@ final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase 
             let first = conversation.appendMissedCallMessage(fromUser: firstUser, at: timestamp)
 
             // when
-            let second = conversation.appendMissedCallMessage(fromUser: secondUser, at: timestamp.addingTimeInterval(100))
+            let second = conversation.appendMissedCallMessage(
+                fromUser: secondUser,
+                at: timestamp.addingTimeInterval(100)
+            )
 
             // then
             let lastMessages = conversation.lastMessages()

@@ -60,7 +60,10 @@ extension URLQueryItem {
 }
 
 public protocol URLSessionProtocol: AnyObject {
-    func dataTask(with request: URLRequest, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+    func dataTask(
+        with request: URLRequest,
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionDataTask
 }
 
 extension URLSession: URLSessionProtocol {}
@@ -163,8 +166,14 @@ public class CompanyLoginRequester {
         var components = urlComponents(host: host, token: token)
 
         components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.successRedirect, value: makeSuccessCallbackString(using: validationToken)),
-            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: makeFailureCallbackString(using: validationToken)),
+            URLQueryItem(
+                name: URLQueryItem.Key.successRedirect,
+                value: makeSuccessCallbackString(using: validationToken)
+            ),
+            URLQueryItem(
+                name: URLQueryItem.Key.errorRedirect,
+                value: makeFailureCallbackString(using: validationToken)
+            ),
         ]
 
         guard let url = components.url else {

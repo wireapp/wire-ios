@@ -19,7 +19,8 @@
 import Foundation
 
 enum CoreDataMigrationActionFactory {
-    static func createPreMigrationAction(for destinationVersion: some CoreDataMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPreMigrationAction(for destinationVersion: some CoreDataMigrationVersion)
+        -> CoreDataMigrationAction? {
         if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
             return createPreMigrationAction(for: version)
         }
@@ -31,7 +32,8 @@ enum CoreDataMigrationActionFactory {
         fatalError("unsupported coredata migration version")
     }
 
-    static func createPostMigrationAction(for destinationVersion: some CoreDataMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPostMigrationAction(for destinationVersion: some CoreDataMigrationVersion)
+        -> CoreDataMigrationAction? {
         if let version = destinationVersion as? CoreDataMessagingMigrationVersion {
             return createPostMigrationAction(for: version)
         }
@@ -45,7 +47,8 @@ enum CoreDataMigrationActionFactory {
 
     // MARK: - CoreDataMessagingMigrationVersion
 
-    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
+        -> CoreDataMigrationAction? {
         switch destinationVersion {
         case .v111:
             RemoveDuplicatePreAction()
@@ -58,7 +61,8 @@ enum CoreDataMigrationActionFactory {
         }
     }
 
-    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion)
+        -> CoreDataMigrationAction? {
         switch destinationVersion {
         case .v116:
             IsPendingInitialFetchMigrationAction()
@@ -76,11 +80,13 @@ enum CoreDataMigrationActionFactory {
 
     // MARK: - CoreDataEventsMigrationVersion
 
-    static func createPreMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPreMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion)
+        -> CoreDataMigrationAction? {
         nil
     }
 
-    static func createPostMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion) -> CoreDataMigrationAction? {
+    static func createPostMigrationAction(for destinationVersion: CoreDataEventsMigrationVersion)
+        -> CoreDataMigrationAction? {
         nil
     }
 }

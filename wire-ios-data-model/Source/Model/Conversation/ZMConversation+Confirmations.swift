@@ -40,7 +40,11 @@ extension ZMConversation {
             }
 
             do {
-                let confirmationMessage = try appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
+                let confirmationMessage = try appendClientMessage(
+                    with: GenericMessage(content: confirmation),
+                    expires: false,
+                    hidden: true
+                )
                 confirmationMessages.append(confirmationMessage)
             } catch {
                 Logging.messageProcessing.warn("Failed to append confirmation. Reason: \(error.localizedDescription)")
@@ -51,7 +55,11 @@ extension ZMConversation {
     }
 
     @discardableResult @objc
-    public func appendMessageReceiptModeChangedMessage(fromUser user: ZMUser, timestamp: Date, enabled: Bool) -> ZMSystemMessage {
+    public func appendMessageReceiptModeChangedMessage(
+        fromUser user: ZMUser,
+        timestamp: Date,
+        enabled: Bool
+    ) -> ZMSystemMessage {
         let message = appendSystemMessage(
             type: enabled ? .readReceiptsEnabled : .readReceiptsDisabled,
             sender: user,

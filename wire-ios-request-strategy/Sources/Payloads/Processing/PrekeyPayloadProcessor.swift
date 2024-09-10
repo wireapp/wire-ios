@@ -188,9 +188,11 @@ extension Payload.ClientListByQualifiedUserID {
                 let user = ZMUser.fetchOrCreate(with: userID, domain: domain, in: context)
                 let userClients = userClientIDs.compactMap { clientID -> UserClient? in
                     guard
-                        let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
-                                                                    forUser: user,
-                                                                    createIfNeeded: true)
+                        let userClient = UserClient.fetchUserClient(
+                            withRemoteId: clientID,
+                            forUser: user,
+                            createIfNeeded: true
+                        )
                     else {
                         return nil
                     }

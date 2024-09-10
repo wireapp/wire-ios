@@ -42,7 +42,8 @@ extension ConversationActionController {
                 case .failure:
                     let alert = UIAlertController(
                         title: L10n.Localizable.Error.Conversation.title,
-                        message: L10n.Localizable.Conversation.DeleteRequestErrorDialog.title(conversation.displayNameWithFallback),
+                        message: L10n.Localizable.Conversation.DeleteRequestErrorDialog
+                            .title(conversation.displayNameWithFallback),
                         preferredStyle: .alert
                     )
                     alert.addAction(UIAlertAction(

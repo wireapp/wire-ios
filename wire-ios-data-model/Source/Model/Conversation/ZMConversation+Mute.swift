@@ -53,7 +53,10 @@ public struct MutedMessageTypes: OptionSet {
 
     /// Only mentions and replies are muted. Only used to check the bits in the bitmask.
     /// Please do not set this as the value on the conversation.
-    public static let mentionsAndReplies = MutedMessageTypes(rawValue: MutedMessageOptionValue.mentionsAndReplies.rawValue)
+    public static let mentionsAndReplies = MutedMessageTypes(
+        rawValue: MutedMessageOptionValue.mentionsAndReplies
+            .rawValue
+    )
 }
 
 extension ZMConversation {
@@ -71,7 +74,8 @@ extension ZMConversation {
             if selfUser.hasTeam {
                 return MutedMessageTypes(rawValue: mutedStatus)
             } else {
-                return mutedStatus == MutedMessageOptionValue.none.rawValue ? MutedMessageTypes.none : MutedMessageTypes.all
+                return mutedStatus == MutedMessageOptionValue.none.rawValue ? MutedMessageTypes.none : MutedMessageTypes
+                    .all
             }
         }
         set {
@@ -84,7 +88,8 @@ extension ZMConversation {
             if selfUser.hasTeam {
                 mutedStatus = newValue.rawValue
             } else {
-                mutedStatus = (newValue == .none) ? MutedMessageOptionValue.none.rawValue : (MutedMessageOptionValue.all.rawValue)
+                mutedStatus = (newValue == .none) ? MutedMessageOptionValue.none
+                    .rawValue : (MutedMessageOptionValue.all.rawValue)
             }
 
             if managedObjectContext.zm_isUserInterfaceContext,
@@ -147,7 +152,8 @@ extension ZMConversation {
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: self, in: managedObjectContext)
 
-        if self.mutedMessageTypesIncludingAvailability == .regular, textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage) {
+        if self.mutedMessageTypesIncludingAvailability == .regular,
+           textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage) {
             return false
         } else {
             return true

@@ -39,13 +39,29 @@ final class CollectionsView: UIView {
         recreateLayout()
         collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
 
-        collectionView.register(CollectionImageCell.self, forCellWithReuseIdentifier: CollectionImageCell.reuseIdentifier)
+        collectionView.register(
+            CollectionImageCell.self,
+            forCellWithReuseIdentifier: CollectionImageCell.reuseIdentifier
+        )
         collectionView.register(CollectionFileCell.self, forCellWithReuseIdentifier: CollectionFileCell.reuseIdentifier)
-        collectionView.register(CollectionAudioCell.self, forCellWithReuseIdentifier: CollectionAudioCell.reuseIdentifier)
-        collectionView.register(CollectionVideoCell.self, forCellWithReuseIdentifier: CollectionVideoCell.reuseIdentifier)
+        collectionView.register(
+            CollectionAudioCell.self,
+            forCellWithReuseIdentifier: CollectionAudioCell.reuseIdentifier
+        )
+        collectionView.register(
+            CollectionVideoCell.self,
+            forCellWithReuseIdentifier: CollectionVideoCell.reuseIdentifier
+        )
         collectionView.register(CollectionLinkCell.self, forCellWithReuseIdentifier: CollectionLinkCell.reuseIdentifier)
-        collectionView.register(CollectionLoadingCell.self, forCellWithReuseIdentifier: CollectionLoadingCell.reuseIdentifier)
-        collectionView.register(CollectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionHeaderView.reuseIdentifier)
+        collectionView.register(
+            CollectionLoadingCell.self,
+            forCellWithReuseIdentifier: CollectionLoadingCell.reuseIdentifier
+        )
+        collectionView.register(
+            CollectionHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: CollectionHeaderView.reuseIdentifier
+        )
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 0, right: 0)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.allowsMultipleSelection = false

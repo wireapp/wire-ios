@@ -102,7 +102,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             )
         } catch let ConversationParticipantsError.failedToAddSomeUsers(users: failedUsers) {
             let failedUserIds = await context.perform { failedUsers.map { $0.remoteIdentifier.transportString() } }
-            Flow.addParticipants.checkpoint(description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))")
+            Flow.addParticipants
+                .checkpoint(
+                    description: "add FailedToAddUsersMessage for users: \(failedUserIds.joined(separator: ", "))"
+                )
 
             await appendFailedToAddUsersMessage(
                 in: conversation,
@@ -151,7 +154,8 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             try await mlsParticipantsService.addParticipants(users, to: conversation)
         } catch let MLSConversationParticipantsError.failedToClaimKeyPackages(users: failedUsers) {
             guard !failedUsers.isEmpty else {
-                return Flow.addParticipants.checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
+                return Flow.addParticipants
+                    .checkpoint(description: "unexpected failedToClaimKeyPackages but no failed users")
             }
 
             let users = Set(users)

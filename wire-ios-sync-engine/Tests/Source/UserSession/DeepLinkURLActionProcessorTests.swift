@@ -35,9 +35,11 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         mockEventProcessor.processConversationEvents_MockMethod = { _ in }
         presentationDelegate = MockPresentationDelegate()
 
-        sut = WireSyncEngine.DeepLinkURLActionProcessor(contextProvider: coreDataStack!,
-                                                        transportSession: mockTransportSession,
-                                                        eventProcessor: mockEventProcessor)
+        sut = WireSyncEngine.DeepLinkURLActionProcessor(
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession,
+            eventProcessor: mockEventProcessor
+        )
     }
 
     override func tearDown() {
@@ -78,7 +80,10 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         // THEN
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? DeepLinkRequestError, .invalidConversationLink)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? DeepLinkRequestError,
+            .invalidConversationLink
+        )
     }
 
     func testThatItAsksToShowUserProfile_WhenUserIsKnown() {
@@ -125,7 +130,10 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
         // THEN
         XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.count, 1)
-        XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.first?.first?.type, .conversationMemberJoin)
+        XCTAssertEqual(
+            mockEventProcessor.processConversationEvents_Invocations.first?.first?.type,
+            .conversationMemberJoin
+        )
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.first, action)
     }
@@ -141,6 +149,9 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         // THEN
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? ConversationFetchError, ConversationFetchError.invalidCode)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? ConversationFetchError,
+            ConversationFetchError.invalidCode
+        )
     }
 }

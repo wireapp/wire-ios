@@ -47,7 +47,8 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
             return
         }
         do {
-            guard let client = try await sync.perform({ try sync.existingObject(with: clientObjectID) as? UserClient }) else {
+            guard let client = try await sync.perform({ try sync.existingObject(with: clientObjectID) as? UserClient })
+            else {
                 return
             }
             await client.deleteClientAndEndSession()
@@ -65,11 +66,16 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
         }
         let userClientObjectID = userClient.objectID
         do {
-            guard let client = try await sync.perform({ try sync.existingObject(with: userClientObjectID) as? UserClient }),
-                  let selfClient = try await sync.perform({ try sync.existingObject(with: selfClientObjectID) as? UserClient }) else {
+            guard let client = try await sync
+                .perform({ try sync.existingObject(with: userClientObjectID) as? UserClient }),
+                let selfClient = try await sync
+                .perform({ try sync.existingObject(with: selfClientObjectID) as? UserClient }) else {
                 return
             }
-            _ = await selfClient.establishSessionWithClient(client, usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=")
+            _ = await selfClient.establishSessionWithClient(
+                client,
+                usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY="
+            )
             _ = await sync.perform { sync.saveOrRollback() }
         } catch {
             WireLogger.e2ei.debug(error.localizedDescription)

@@ -49,10 +49,12 @@ class PrekeyAPIV0: PrekeyAPI {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         let response = await httpClient.send(request)
         let result: Payload.PrekeyByUserID = try mapResponse(response)
@@ -73,10 +75,12 @@ class PrekeyAPIV1: PrekeyAPIV0 {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/list-prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
 
         let response = await httpClient.send(request)
         return try mapResponse(response)
@@ -108,10 +112,12 @@ class PrekeyAPIV4: PrekeyAPIV3 {
             throw NetworkError.errorEncodingRequest
         }
 
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .post,
-                                         payload: payloadAsString as ZMTransportData?,
-                                         apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/users/list-prekeys",
+            method: .post,
+            payload: payloadAsString as ZMTransportData?,
+            apiVersion: apiVersion.rawValue
+        )
         let response = await httpClient.send(request)
 
         let result: Payload.PrekeyByQualifiedUserIDV4 = try mapResponse(response)
@@ -144,7 +150,8 @@ extension Collection<QualifiedClientID> {
         let initial: Payload.ClientListByQualifiedUserID = [:]
 
         return self.reduce(into: initial) { result, client in
-            result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []].append(client.clientID)
+            result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []]
+                .append(client.clientID)
         }
     }
 }

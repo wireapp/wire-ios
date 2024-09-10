@@ -36,7 +36,8 @@ final class RandomGeneratorFromData: RandomGenerator {
     func rand<ContentType>() -> ContentType {
         let currentStep = self.step
         let result = source.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> ContentType in
-            pointer.baseAddress!.assumingMemoryBound(to: ContentType.self).advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
+            pointer.baseAddress!.assumingMemoryBound(to: ContentType.self)
+                .advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
         }
         step += MemoryLayout<ContentType>.size
 
@@ -286,7 +287,10 @@ final class ConversationAvatarView: UIView {
                 userImage.frame = clippingView.bounds
             }
         case .four:
-            layoutMultipleAvatars(with: CGSize(width: (containerSize.width - interAvatarInset) / 2.0, height: (containerSize.height - interAvatarInset) / 2.0))
+            layoutMultipleAvatars(with: CGSize(
+                width: (containerSize.width - interAvatarInset) / 2.0,
+                height: (containerSize.height - interAvatarInset) / 2.0
+            ))
         }
 
         updateCornerRadius()

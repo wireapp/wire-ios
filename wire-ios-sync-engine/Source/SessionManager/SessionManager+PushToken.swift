@@ -44,7 +44,10 @@ extension SessionManager {
         }
 
         guard localToken.tokenType == requiredPushTokenType else {
-            Logging.push.safePublic("local token is of type \(localToken.tokenType) but should be \(requiredPushTokenType), will generate a new token")
+            Logging.push
+                .safePublic(
+                    "local token is of type \(localToken.tokenType) but should be \(requiredPushTokenType), will generate a new token"
+                )
             generateLocalToken(session: session)
             return
         }

@@ -68,16 +68,30 @@ public final class NetworkStatus: NetworkStatusObservable {
     }
 
     deinit {
-        SCNetworkReachabilityUnscheduleFromRunLoop(reachabilityRef, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode!.rawValue)
+        SCNetworkReachabilityUnscheduleFromRunLoop(
+            reachabilityRef,
+            CFRunLoopGetCurrent(),
+            CFRunLoopMode.defaultMode!.rawValue
+        )
     }
 
     private func startReachabilityObserving() {
-        var context = SCNetworkReachabilityContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
+        var context = SCNetworkReachabilityContext(
+            version: 0,
+            info: nil,
+            retain: nil,
+            release: nil,
+            copyDescription: nil
+        )
         // Sets `self` as listener object
         context.info = UnsafeMutableRawPointer(Unmanaged<NetworkStatus>.passUnretained(self).toOpaque())
 
         if SCNetworkReachabilitySetCallback(reachabilityRef, reachabilityCallback, &context) {
-            if SCNetworkReachabilityScheduleWithRunLoop(reachabilityRef, CFRunLoopGetCurrent(), CFRunLoopMode.defaultMode!.rawValue) {
+            if SCNetworkReachabilityScheduleWithRunLoop(
+                reachabilityRef,
+                CFRunLoopGetCurrent(),
+                CFRunLoopMode.defaultMode!.rawValue
+            ) {
                 zmLog.info("Scheduled network reachability callback in runloop")
             } else {
                 zmLog.error("Error scheduling network reachability in runloop")
@@ -120,7 +134,11 @@ public final class NetworkStatus: NetworkStatusObservable {
 
     // MARK: - Utilities
 
-    private var reachabilityCallback: SCNetworkReachabilityCallBack = { (_: SCNetworkReachability, _: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) in
+    private var reachabilityCallback: SCNetworkReachabilityCallBack = { (
+        _: SCNetworkReachability,
+        _: SCNetworkReachabilityFlags,
+        info: UnsafeMutableRawPointer?
+    ) in
         guard let info else {
             assertionFailure("info was NULL in ReachabilityCallback")
             return

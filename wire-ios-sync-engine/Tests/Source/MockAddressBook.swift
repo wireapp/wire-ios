@@ -43,9 +43,11 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
         for contact in self.contacts where !block(contact) {
             return
         }
-        let infiniteContact = MockAddressBookContact(firstName: "johnny infinite",
-                                                     emailAddresses: ["johnny.infinite@example.com"],
-                                                     phoneNumbers: [])
+        let infiniteContact = MockAddressBookContact(
+            firstName: "johnny infinite",
+            emailAddresses: ["johnny.infinite@example.com"],
+            phoneNumbers: []
+        )
         while createInfiniteContacts {
             if !block(infiniteContact) {
                 return
@@ -57,7 +59,11 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
         guard matchingQuery != "" else {
             return contacts
         }
-        return contacts.filter { $0.firstName.lowercased().contains(matchingQuery.lowercased()) || $0.lastName.lowercased().contains(matchingQuery.lowercased()) }
+        return contacts
+            .filter {
+                $0.firstName.lowercased().contains(matchingQuery.lowercased()) || $0.lastName.lowercased()
+                    .contains(matchingQuery.lowercased())
+            }
     }
 
     /// Replace the content with a given number of random hashes
@@ -69,7 +75,12 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 
     /// Create a fake contact
     func createContact(card: UInt) -> MockAddressBookContact {
-        MockAddressBookContact(firstName: "tester \(card)", emailAddresses: ["tester_\(card)@example.com"], phoneNumbers: ["+155512300\(card % 10)"], identifier: "\(card)")
+        MockAddressBookContact(
+            firstName: "tester \(card)",
+            emailAddresses: ["tester_\(card)@example.com"],
+            phoneNumbers: ["+155512300\(card % 10)"],
+            identifier: "\(card)"
+        )
     }
 
     /// Generate an infinite number of contacts

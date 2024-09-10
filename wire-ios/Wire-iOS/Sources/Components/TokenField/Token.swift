@@ -26,8 +26,10 @@ final class Token<T: NSObjectProtocol>: Hashable {
     // if title render is longer than this length, it is trimmed with "..."
     var maxTitleWidth: CGFloat = 0
 
-    init(title: String,
-         representedObject: T) {
+    init(
+        title: String,
+        representedObject: T
+    ) {
         self.title = title
         self.representedObject = HashBox(value: representedObject)
 

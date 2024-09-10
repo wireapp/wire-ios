@@ -92,10 +92,12 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let action = ConnectToUserAction(userID: userID, domain: domain)
             let connection = createConnectionPayload(to: QualifiedID(uuid: userID, domain: domain))
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -113,10 +115,12 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             var action = ConnectToUserAction(userID: userID, domain: domain)
             let connection = createConnectionPayload(to: QualifiedID(uuid: userID, domain: domain))
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
-                                               httpStatus: 200,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payloadAsString as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { result in
@@ -147,10 +151,12 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
                 }
             }
 
-            let response = ZMTransportResponse(payload: nil,
-                                               httpStatus: 404,
-                                               transportSessionError: nil,
-                                               apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)

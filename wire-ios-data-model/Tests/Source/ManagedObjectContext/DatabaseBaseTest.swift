@@ -54,16 +54,22 @@ class DatabaseBaseTest: ZMTBaseTest {
     // MARK: - CoreData Stack
 
     /// Create storage stack
-    func createStorageStackAndWaitForCompletion(userID: UUID = UUID(), file: StaticString = #file, line: UInt = #line) -> CoreDataStack {
+    func createStorageStackAndWaitForCompletion(
+        userID: UUID = UUID(),
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> CoreDataStack {
         // we use backgroundActivity during the setup so we need to mock it for tests
         let manager = MockBackgroundActivityManager()
         BackgroundActivityFactory.shared.activityManager = manager
 
         let account = Account(userName: "", userIdentifier: userID)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: Self.applicationContainer,
-                                  inMemoryStore: false,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: Self.applicationContainer,
+            inMemoryStore: false,
+            dispatchGroup: dispatchGroup
+        )
 
         let exp = self.customExpectation(description: "should wait for loadStores to finish")
         stack.setup(onStartMigration: {

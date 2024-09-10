@@ -107,7 +107,11 @@ extension UIAlertController {
                 textField.isSecureTextEntry = inputConfiguration.isSecure
                 textField.textContentType = inputConfiguration.textContentType
 
-                token = NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: textField, queue: .main) { _ in
+                token = NotificationCenter.default.addObserver(
+                    forName: UITextField.textDidChangeNotification,
+                    object: textField,
+                    queue: .main
+                ) { _ in
                     continueAction.isEnabled = textField.text.map(inputConfiguration.validator) ?? false
                 }
 

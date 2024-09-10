@@ -34,11 +34,20 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // then
-        XCTAssertEqual(searchUser.completeImageData, sut.snapshotValues[#keyPath(ZMSearchUser.completeImageData)] as? Data)
-        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data)
+        XCTAssertEqual(
+            searchUser.completeImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.completeImageData)] as? Data
+        )
+        XCTAssertEqual(
+            searchUser.previewImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data
+        )
         XCTAssertEqual(searchUser.user, sut.snapshotValues[#keyPath(ZMSearchUser.user)] as? ZMUser)
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     func testThatItCreatesASnapshotOfAllValues_withUser() {
@@ -53,11 +62,20 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // then
-        XCTAssertEqual(searchUser.completeImageData, sut.snapshotValues[#keyPath(ZMSearchUser.completeImageData)] as? Data)
-        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data)
+        XCTAssertEqual(
+            searchUser.completeImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.completeImageData)] as? Data
+        )
+        XCTAssertEqual(
+            searchUser.previewImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data
+        )
         XCTAssertEqual(searchUser.user, sut.snapshotValues[#keyPath(ZMSearchUser.user)] as? ZMUser)
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     func testThatItPostsANotificationWhenUserImageChanged() {
@@ -89,7 +107,10 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data)
+        XCTAssertEqual(
+            searchUser.previewImageData,
+            sut.snapshotValues[#keyPath(ZMSearchUser.previewImageData)] as? Data
+        )
     }
 
     func testThatItPostsANotificationWhenConnectionChanged() {
@@ -155,7 +176,10 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     func testThatItPostsANotificationWhenTheUserIsAdded() {
@@ -184,7 +208,10 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(searchUser.isConnected, sut.snapshotValues[#keyPath(ZMSearchUser.isConnected)] as? Bool)
-        XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
+        XCTAssertEqual(
+            searchUser.isPendingApprovalByOtherUser,
+            sut.snapshotValues[#keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool
+        )
     }
 
     // MARK: - Helpers

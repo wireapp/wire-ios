@@ -21,37 +21,79 @@ import XCTest
 
 final class E2ETests: XCTestCase {
     func testThatItParsesSampleDataTwitter() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Twitter", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: "Twitter",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.twitterData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataTwitterWithImages() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 4, type: "article", siteNameString: "Twitter", userGeneratedImage: true, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 4,
+            type: "article",
+            siteNameString: "Twitter",
+            userGeneratedImage: true,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.twitterDataWithImages()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataTheVerge() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "The Verge", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: "The Verge",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.vergeData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataWashington() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Washington Post", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: "Washington Post",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.washingtonPostData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func disabled_testThatItParsesSampleDataYouTube() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video.other", siteNameString: "YouTube", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "video.other",
+            siteNameString: "YouTube",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.youtubeData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataGuardian() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "the Guardian", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: "the Guardian",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.guardianData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
@@ -61,25 +103,53 @@ final class E2ETests: XCTestCase {
     /// XCTAssertEqual failed: ("Optional("website")") is not equal to ("Optional("instapp:photo")") - Type should be instapp:photo, found:website
     /// XCTAssertEqual failed: ("nil") is not equal to ("Optional("Instagram")") - Site name should be Instagram, found: nil
     func testThatItParsesSampleDataInstagram() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "instapp:photo", siteNameString: "Instagram", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "instapp:photo",
+            siteNameString: "Instagram",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.instagramData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataVimeo() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video.other", siteNameString: "Vimeo", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "video.other",
+            siteNameString: "Vimeo",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.vimeoData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataFoursquare() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 4, type: "playfoursquare:venue", siteNameString: "Foursquare", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: true)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 4,
+            type: "playfoursquare:venue",
+            siteNameString: "Foursquare",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: true
+        )
         let mockData = OpenGraphMockDataProvider.foursquareData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataMedium() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Medium", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: "Medium",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.mediumData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
@@ -87,13 +157,27 @@ final class E2ETests: XCTestCase {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: failed with Xcode 13.1
     func disable_testThatItParsesSampleDataWire() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: nil, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "website",
+            siteNameString: nil,
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.wireData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataPolygon() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Polygon", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: "Polygon",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.polygonData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
@@ -101,38 +185,78 @@ final class E2ETests: XCTestCase {
     let uft16ExpectedString = "Apple\u{A0}Music"
 
     func disabled_testThatItParsesSampleDataiTunes() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: uft16ExpectedString, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "music.album",
+            siteNameString: uft16ExpectedString,
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.iTunesData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func disabled_testThatItParsesSampleDataiTunesWithoutTitle() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: uft16ExpectedString, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "music.album",
+            siteNameString: uft16ExpectedString,
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.iTunesDataWithoutTitle()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataYahooSports() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: nil, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "article",
+            siteNameString: nil,
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.yahooSports()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleSoundCloudTrackData() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.song", siteNameString: "SoundCloud", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "music.song",
+            siteNameString: "SoundCloud",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.soundCloudTrack()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleSoundCloudSetData() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.playlist", siteNameString: "SoundCloud", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(
+            numberOfImages: 1,
+            type: "music.playlist",
+            siteNameString: "SoundCloud",
+            userGeneratedImage: false,
+            hasDescription: true,
+            hasFoursquareMetaData: false
+        )
         let mockData = OpenGraphMockDataProvider.soundCloudPlaylist()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     // TODO: check why CI got `XCTAssertNil failed: "<OpenGraphData> nil: https://instagram.com/404:`
     func testThatItDoesNotParse404Links() {
-        let mockSite = OpenGraphMockData(head: "", expected: nil, urlString: "https://instagram.com/404", urlVersion: nil)
+        let mockSite = OpenGraphMockData(
+            head: "",
+            expected: nil,
+            urlString: "https://instagram.com/404",
+            urlVersion: nil
+        )
         assertThatItCanParseSampleData(mockSite, expected: nil)
     }
 
@@ -145,9 +269,11 @@ final class E2ETests: XCTestCase {
         let hasFoursquareMetaData: Bool
     }
 
-    private func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData,
-                                                expected: OpenGraphDataExpectation?,
-                                                line: UInt = #line) {
+    private func assertThatItCanParseSampleData(
+        _ mockData: OpenGraphMockData,
+        expected: OpenGraphDataExpectation?,
+        line: UInt = #line
+    ) {
         // given
         let completionExpectation = expectation(description: "It should parse the data")
         let sut = PreviewDownloader(resultsQueue: .main, parsingQueue: .main)
@@ -179,12 +305,41 @@ final class E2ETests: XCTestCase {
         }
 
         // then
-        XCTAssertEqual(data.content != nil, expected.hasDescription, expected.hasDescription ? "Should have description" : "Should not have description", line: line)
-        XCTAssertEqual(data.foursquareMetaData != nil, expected.hasFoursquareMetaData, expected.hasFoursquareMetaData ? "Should have Foursquare metadata" : "Should not have Foursquare metadata", line: line)
-        XCTAssertEqual(data.type, expected.type, "Type should be \(expected.type ?? "nil"), found:\(data.type)", line: line)
+        XCTAssertEqual(
+            data.content != nil,
+            expected.hasDescription,
+            expected.hasDescription ? "Should have description" : "Should not have description",
+            line: line
+        )
+        XCTAssertEqual(
+            data.foursquareMetaData != nil,
+            expected.hasFoursquareMetaData,
+            expected.hasFoursquareMetaData ? "Should have Foursquare metadata" : "Should not have Foursquare metadata",
+            line: line
+        )
+        XCTAssertEqual(
+            data.type,
+            expected.type,
+            "Type should be \(expected.type ?? "nil"), found:\(data.type)",
+            line: line
+        )
 
-        XCTAssertEqual(data.siteNameString, expected.siteNameString, "Site name should be \(expected.siteNameString ?? "nil"), found: \(data.siteNameString ?? "nil")", line: line)
-        XCTAssertEqual(data.userGeneratedImage, expected.userGeneratedImage, "User generated image should match", line: line)
-        XCTAssertTrue(data.imageUrls.count == expected.numberOfImages, "Should have \(expected.numberOfImages) images, found:\(data.imageUrls.count)", line: line)
+        XCTAssertEqual(
+            data.siteNameString,
+            expected.siteNameString,
+            "Site name should be \(expected.siteNameString ?? "nil"), found: \(data.siteNameString ?? "nil")",
+            line: line
+        )
+        XCTAssertEqual(
+            data.userGeneratedImage,
+            expected.userGeneratedImage,
+            "User generated image should match",
+            line: line
+        )
+        XCTAssertTrue(
+            data.imageUrls.count == expected.numberOfImages,
+            "Should have \(expected.numberOfImages) images, found:\(data.imageUrls.count)",
+            line: line
+        )
     }
 }

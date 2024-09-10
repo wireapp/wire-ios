@@ -27,7 +27,11 @@ extension ZMConnection {
         return result
     }
 
-    public static func fetchOrCreate(userID: UUID, domain: String?, in context: NSManagedObjectContext) -> ZMConnection {
+    public static func fetchOrCreate(
+        userID: UUID,
+        domain: String?,
+        in context: NSManagedObjectContext
+    ) -> ZMConnection {
         guard let connection = fetch(userID: userID, domain: domain, in: context) else {
             return create(userID: userID, domain: domain, in: context)
         }
@@ -45,30 +49,44 @@ extension ZMConnection {
         return connection
     }
 
-    public static func fetch(userID: UUID,
-                             domain: String?,
-                             in context: NSManagedObjectContext) -> ZMConnection? {
+    public static func fetch(
+        userID: UUID,
+        domain: String?,
+        in context: NSManagedObjectContext
+    ) -> ZMConnection? {
         let localDomain = ZMUser.selfUser(in: context).domain
         let isSearchingLocalDomain = domain == nil || localDomain == nil || localDomain == domain
 
-        return internalFetch(userID: userID,
-                             domain: domain ?? localDomain,
-                             searchingLocalDomain: isSearchingLocalDomain,
-                             in: context)
+        return internalFetch(
+            userID: userID,
+            domain: domain ?? localDomain,
+            searchingLocalDomain: isSearchingLocalDomain,
+            in: context
+        )
     }
 
-    static func internalFetch(userID: UUID,
-                              domain: String?,
-                              searchingLocalDomain: Bool,
-                              in context: NSManagedObjectContext) -> ZMConnection? {
+    static func internalFetch(
+        userID: UUID,
+        domain: String?,
+        searchingLocalDomain: Bool,
+        in context: NSManagedObjectContext
+    ) -> ZMConnection? {
         let predicate = if searchingLocalDomain {
             if let domain {
-                NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
+                NSPredicate(
+                    format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)",
+                    userID.uuidData as NSData,
+                    domain
+                )
             } else {
                 NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
             }
         } else {
-            NSPredicate(format: "to.remoteIdentifier_data == %@ AND to.domain == %@", userID.uuidData as NSData, domain ?? NSNull())
+            NSPredicate(
+                format: "to.remoteIdentifier_data == %@ AND to.domain == %@",
+                userID.uuidData as NSData,
+                domain ?? NSNull()
+            )
         }
 
         let fetchRequest = ZMConnection.sortedFetchRequest(with: predicate)

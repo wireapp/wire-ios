@@ -60,7 +60,12 @@ extension AddressBookSearchTests {
         // given
         let identifier = "233124"
         addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olivia 1", emailAddresses: ["oli@example.com"], phoneNumbers: [], identifier: identifier),
+            MockAddressBookContact(
+                firstName: "Olivia 1",
+                emailAddresses: ["oli@example.com"],
+                phoneNumbers: [],
+                identifier: identifier
+            ),
             MockAddressBookContact(firstName: "Olivia 2", emailAddresses: [], phoneNumbers: ["+155505012"]),
         ]
 

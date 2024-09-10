@@ -78,7 +78,9 @@ import Foundation
 
         // We only want to start processing originals.
         for asset in message.assets where asset.hasOriginal {
-            if asset.needsPreprocessing, let imageOperations = imageAssetPreprocessor?.operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
+            if asset.needsPreprocessing,
+               let imageOperations = imageAssetPreprocessor?
+               .operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
                 processingGroup.enter()
                 imageProcessingQueue.addOperations(imageOperations, waitUntilFinished: false)
             } else {
@@ -111,11 +113,17 @@ import Foundation
 }
 
 extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
-    public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
+    public func completedDownsampleOperation(
+        _ operation: ZMImageDownsampleOperationProtocol,
+        imageOwner: ZMImageOwner
+    ) {
         guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else { return }
 
         managedObjectContext.performGroupedBlock {
-            assetImageOwnerAdapter.asset.updateWithPreprocessedData(operation.downsampleImageData, imageProperties: operation.properties)
+            assetImageOwnerAdapter.asset.updateWithPreprocessedData(
+                operation.downsampleImageData,
+                imageProperties: operation.properties
+            )
             assetImageOwnerAdapter.asset.encrypt()
         }
     }

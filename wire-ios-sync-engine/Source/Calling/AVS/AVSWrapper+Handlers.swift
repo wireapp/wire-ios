@@ -55,7 +55,16 @@ extension AVSWrapper {
         ///                                 int conv_type /*WCALL_CONV_TYPE...*/,
         ///                                 void *arg);
 
-        typealias IncomingCall = @convention(c) (StringPtr, UInt32, StringPtr, StringPtr, Int32, Int32, Int32, ContextRef) -> Void
+        typealias IncomingCall = @convention(c) (
+            StringPtr,
+            UInt32,
+            StringPtr,
+            StringPtr,
+            Int32,
+            Int32,
+            Int32,
+            ContextRef
+        ) -> Void
 
         /// Callback used to inform the user of a missed call.
         ///
@@ -151,7 +160,19 @@ extension AVSWrapper {
         ///                            int my_clients_only /*bool*/,
         ///                            void *arg);
 
-        typealias CallMessageSend = @convention(c) (VoidPtr, StringPtr, StringPtr, StringPtr, StringPtr, StringPtr, UnsafePointer<UInt8>?, Int, Int32, Int32, ContextRef) -> Int32
+        typealias CallMessageSend = @convention(c) (
+            VoidPtr,
+            StringPtr,
+            StringPtr,
+            StringPtr,
+            StringPtr,
+            StringPtr,
+            UnsafePointer<UInt8>?,
+            Int,
+            Int32,
+            Int32,
+            ContextRef
+        ) -> Int32
 
         /// Callback used to inform the user when the list of participants in a call changes.
         ///
@@ -178,7 +199,16 @@ extension AVSWrapper {
         ///                                        int downloss, /* dnstream pkt loss % */
         ///                                        void *arg);
 
-        typealias NetworkQualityChange = @convention(c) (StringPtr, StringPtr, StringPtr, Int32, Int32, Int32, Int32, ContextRef) -> Void
+        typealias NetworkQualityChange = @convention(c) (
+            StringPtr,
+            StringPtr,
+            StringPtr,
+            Int32,
+            Int32,
+            Int32,
+            Int32,
+            ContextRef
+        ) -> Void
 
         /// Callback used to inform the user when the mute state changes.
         ///
@@ -196,7 +226,8 @@ extension AVSWrapper {
         ///
         /// typedef int (wcall_sft_req_h)(void *ctx, const char *url, const uint8_t *data, size_t len, void *arg);
 
-        typealias SFTCallMessageSend = @convention(c) (VoidPtr, StringPtr, UnsafePointer<UInt8>?, Int, ContextRef) -> Int32
+        typealias SFTCallMessageSend = @convention(c) (VoidPtr, StringPtr, UnsafePointer<UInt8>?, Int, ContextRef)
+            -> Int32
 
         /// Callback used to inform the user of a change in the list of active speakers
         ///

@@ -298,7 +298,8 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
     // MARK: Helpers
 
-    private func makeViewController(conversation: MockInputBarConversationType? = nil) -> ConversationInputBarViewController {
+    private func makeViewController(conversation: MockInputBarConversationType? = nil)
+        -> ConversationInputBarViewController {
         ConversationInputBarViewController(
             conversation: conversation ?? mockConversation,
             userSession: mockUserSession,

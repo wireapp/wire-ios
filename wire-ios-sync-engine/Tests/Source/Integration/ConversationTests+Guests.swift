@@ -54,7 +54,10 @@ class ConversationTests_Guests: IntegrationTest {
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
         guard let request = mockTransportSession.receivedRequests().first else { return }
-        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/features/conversationGuestLinks")
+        XCTAssertEqual(
+            request.path,
+            "/conversations/\(conversation.remoteIdentifier!.transportString())/features/conversationGuestLinks"
+        )
         XCTAssertEqual(request.method, .get)
     }
 

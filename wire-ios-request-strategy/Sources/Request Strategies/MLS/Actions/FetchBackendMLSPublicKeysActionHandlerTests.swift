@@ -20,7 +20,10 @@ import Foundation
 import WireDataModel
 @testable import WireRequestStrategy
 
-class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBackendMLSPublicKeysAction, FetchBackendMLSPublicKeysActionHandler> {
+class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<
+    FetchBackendMLSPublicKeysAction,
+    FetchBackendMLSPublicKeysActionHandler
+> {
     override func setUp() {
         super.setUp()
         action = FetchBackendMLSPublicKeysAction()

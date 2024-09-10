@@ -88,13 +88,22 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         return conversation
     }
 
-    func event(for message: String, in conversation: ZMConversation, mentions: [Mention] = [], replyingTo quotedMessage: ZMClientMessage? = nil) -> ZMUpdateEvent {
+    func event(
+        for message: String,
+        in conversation: ZMConversation,
+        mentions: [Mention] = [],
+        replyingTo quotedMessage: ZMClientMessage? = nil
+    ) -> ZMUpdateEvent {
         let text = Text(content: message, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage)
         let message = GenericMessage(content: text, nonce: UUID())
 
         let dataString = try! message.serializedData().base64EncodedString()
 
-        let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: dataString)
+        let payload = self.payloadForMessage(
+            in: conversation,
+            type: EventConversationAddClientMessage,
+            data: dataString
+        )
 
         return ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID())!
     }
@@ -150,7 +159,13 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let conversation = archivedConversation(with: .regular)
 
         // WHEN
-        let quotedMessage = try! conversation.appendText(content: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(
+            content: "Hello!",
+            mentions: [],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: .create()
+        ) as! ZMClientMessage
         quotedMessage.sender = selfUser
 
         // appending the message unarchives the conversation, so archive it again.
@@ -177,7 +192,13 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let conversation = archivedConversation(with: .all)
 
         // WHEN
-        let quotedMessage = try! conversation.appendText(content: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(
+            content: "Hello!",
+            mentions: [],
+            replyingTo: nil,
+            fetchLinkPreview: false,
+            nonce: .create()
+        ) as! ZMClientMessage
         quotedMessage.sender = selfUser
 
         // appending the message unarchives the conversation, so archive it again.

@@ -21,7 +21,10 @@ import Foundation
 extension ModelObjectsTests {
     // MARK: Users & Teams Members
 
-    @discardableResult func createTeamAndMember(for user: ZMUser, with permissions: Permissions? = nil) -> (Team, Member) {
+    @discardableResult func createTeamAndMember(
+        for user: ZMUser,
+        with permissions: Permissions? = nil
+    ) -> (Team, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.team = .insertNewObject(in: uiMOC)
         member.team?.remoteIdentifier = .create()

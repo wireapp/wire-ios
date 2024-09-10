@@ -28,7 +28,8 @@ extension AVAsset {
     public static func convertAudioToUploadFormat(
         _ inPath: String,
         outPath: String,
-        completion: ((_ success: Bool) -> Void)? = .none) {
+        completion: ((_ success: Bool) -> Void)? = .none
+    ) {
         let fileURL = URL(fileURLWithPath: inPath)
         let alteredAsset = AVAsset(url: fileURL)
         let session = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)
@@ -167,7 +168,8 @@ extension AVAssetExportSession {
         exportAsynchronously {
             if let session,
                let error = session.error {
-                zmLog.error("Export session error: status=\(session.status.rawValue) error=\(error) output=\(exportURL)")
+                zmLog
+                    .error("Export session error: status=\(session.status.rawValue) error=\(error) output=\(exportURL)")
             }
             completion(exportURL, session?.error)
         }

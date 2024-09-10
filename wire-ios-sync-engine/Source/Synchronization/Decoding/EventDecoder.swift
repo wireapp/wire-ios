@@ -107,7 +107,10 @@ extension EventDecoder {
     /// - parameter events The new events that should be decrypted and stored in the database.
     /// - parameter startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
     /// - Returns: Decrypted events
-    private func decryptAndStoreEvents(_ events: [ZMUpdateEvent], startingAtIndex startIndex: Int64) -> [ZMUpdateEvent] {
+    private func decryptAndStoreEvents(
+        _ events: [ZMUpdateEvent],
+        startingAtIndex startIndex: Int64
+    ) -> [ZMUpdateEvent] {
         let account = Account(userName: "", userIdentifier: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
         let publicKey = try? EncryptionKeys.publicKey(for: account)
         var decryptedEvents: [ZMUpdateEvent] = []
@@ -130,7 +133,12 @@ extension EventDecoder {
             // incrementing from the highest index currently stored in the database
             // The encryptedPayload property is encrypted using the public key
             for (idx, event) in decryptedEvents.enumerated() {
-                _ = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: self.eventMOC, index: Int64(idx) + startIndex + 1, publicKey: publicKey)
+                _ = StoredUpdateEvent.encryptAndCreate(
+                    event,
+                    managedObjectContext: self.eventMOC,
+                    index: Int64(idx) + startIndex + 1,
+                    publicKey: publicKey
+                )
             }
 
             self.eventMOC.saveOrRollback()
@@ -233,7 +241,8 @@ extension EventDecoder {
 
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
-            if event.conversationUUID == selfConversation.remoteIdentifier, event.senderUUID != selfUser.remoteIdentifier, let genericMessage = GenericMessage(from: event) {
+            if event.conversationUUID == selfConversation.remoteIdentifier,
+               event.senderUUID != selfUser.remoteIdentifier, let genericMessage = GenericMessage(from: event) {
                 return genericMessage.hasAvailability
             }
 

@@ -68,7 +68,10 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
             let request = try XCTUnwrap(self.sut.request(for: action, apiVersion: .v0))
 
             // then
-            XCTAssertEqual(request.path, "/conversations/\(conversationID.transportString())/members/\(userID.transportString())")
+            XCTAssertEqual(
+                request.path,
+                "/conversations/\(conversationID.transportString())/members/\(userID.transportString())"
+            )
             let payload = Payload.ConversationUpdateRole(request)
             XCTAssertEqual(payload?.role, self.role.name)
         }
@@ -120,7 +123,12 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // given
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
-            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)
@@ -134,7 +142,12 @@ final class UpdateRoleActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // given
             let action = UpdateRoleAction(user: self.user, conversation: self.conversation, role: self.role)
-            let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: nil,
+                httpStatus: 400,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             self.sut.handleResponse(response, action: action)

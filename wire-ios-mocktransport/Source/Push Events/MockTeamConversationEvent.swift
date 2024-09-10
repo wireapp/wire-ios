@@ -35,7 +35,8 @@ import Foundation
         let oldConversations = team.committedValues(forKeys: [conversationsKey])
 
         guard let currentConversations = changedValues[conversationsKey] as? Set<MockConversation> else { return [] }
-        guard let previousConversations = oldConversations[conversationsKey] as? Set<MockConversation> else { return [] }
+        guard let previousConversations = oldConversations[conversationsKey] as? Set<MockConversation>
+        else { return [] }
 
         let removedConversationsEvents = previousConversations
             .subtracting(currentConversations)

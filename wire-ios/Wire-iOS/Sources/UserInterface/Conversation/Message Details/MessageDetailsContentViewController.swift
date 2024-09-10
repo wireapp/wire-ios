@@ -240,7 +240,10 @@ final class MessageDetailsContentViewController: UIViewController {
 
         let offset = scrollView.contentOffset.y + scrollView.contentInset.top
         let scrollableContentHeight = scrollView.contentInset.top + scrollView.contentSize.height + footerRegionHeight
-        let visibleOnScreen = min(scrollableContentHeight - offset, scrollView.bounds.height - scrollView.contentInset.top)
+        let visibleOnScreen = min(
+            scrollableContentHeight - offset,
+            scrollView.bounds.height - scrollView.contentInset.top
+        )
         let bottomSpace = scrollableContentHeight - (visibleOnScreen + offset)
 
         let constant = bottomSpace - padding

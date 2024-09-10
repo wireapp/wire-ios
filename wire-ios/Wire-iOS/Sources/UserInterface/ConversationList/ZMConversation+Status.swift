@@ -114,7 +114,19 @@ enum StatusMessageType: Int, CaseIterable {
 
 extension StatusMessageType {
     /// Types of statuses that can be included in a status summary.
-    static let summaryTypes: [StatusMessageType] = [.mention, .reply, .missedCall, .knock, .text, .link, .image, .location, .audio, .video, .file]
+    static let summaryTypes: [StatusMessageType] = [
+        .mention,
+        .reply,
+        .missedCall,
+        .knock,
+        .text,
+        .link,
+        .image,
+        .location,
+        .audio,
+        .video,
+        .file,
+    ]
 
     var parentSummaryType: StatusMessageType? {
         switch self {
@@ -154,7 +166,8 @@ extension StatusMessageType {
         } else if message.isKnock {
             self = .knock
         } else if message.isSystem, let system = message.systemMessageData {
-            if let statusMessageType = StatusMessageType.conversationSystemMessageTypeToStatusMessageType[system.systemMessageType] {
+            if let statusMessageType = StatusMessageType
+                .conversationSystemMessageTypeToStatusMessageType[system.systemMessageType] {
                 self = statusMessageType
             } else {
                 return nil
@@ -211,9 +224,11 @@ final class ContentSizeCategoryUpdater {
     init(callback: @escaping () -> Void) {
         self.callback = callback
         callback()
-        self.observer = NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification,
-                                                               object: nil,
-                                                               queue: nil) { [weak self] _ in
+        self.observer = NotificationCenter.default.addObserver(
+            forName: UIContentSizeCategory.didChangeNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             self?.callback()
         }
     }
@@ -230,10 +245,14 @@ final class ConversationStatusStyle {
                 return
             }
 
-            self.regularStyle = [.font: FontSpec(.medium, .none).font!,
-                                 .foregroundColor: UIColor(white: 1.0, alpha: 0.64)]
-            self.emphasisStyle = [.font: FontSpec(.medium, .medium).font!,
-                                  .foregroundColor: UIColor(white: 1.0, alpha: 0.64)]
+            self.regularStyle = [
+                .font: FontSpec(.medium, .none).font!,
+                .foregroundColor: UIColor(white: 1.0, alpha: 0.64),
+            ]
+            self.emphasisStyle = [
+                .font: FontSpec(.medium, .medium).font!,
+                .foregroundColor: UIColor(white: 1.0, alpha: 0.64),
+            ]
         }
     }
 }
@@ -295,7 +314,8 @@ final class CallingMatcher: ConversationStatusMatcher {
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
         if conversation.voiceChannel?.state.canJoinCall == true {
             if let callerDisplayName = conversation.voiceChannel?.initiator?.name {
-                return L10n.Localizable.Conversation.Status.incomingCall(callerDisplayName) && type(of: self).regularStyle
+                return L10n.Localizable.Conversation.Status.incomingCall(callerDisplayName) && type(of: self)
+                    .regularStyle
             } else {
                 return L10n.Localizable.Conversation.Status.someone && type(of: self).regularStyle
             }
@@ -436,11 +456,13 @@ extension ConversationStatus {
             return true
         } else if hasSelfMention {
             // Summarize if there is at least one mention and another activity that can be inside a summary
-            return StatusMessageType.summaryTypes.reduce(into: UInt(0)) { $0 += (messagesRequiringAttentionByType[$1] ?? 0) } > 1
+            return StatusMessageType.summaryTypes
+                .reduce(into: UInt(0)) { $0 += (messagesRequiringAttentionByType[$1] ?? 0) } > 1
         } else if hasSelfReply {
             // Summarize if there is at least one reply and another activity that can be inside a summary
 
-            let count = StatusMessageType.summaryTypes.reduce(into: UInt(0)) { $0 += (messagesRequiringAttentionByType[$1] ?? 0) }
+            let count = StatusMessageType.summaryTypes
+                .reduce(into: UInt(0)) { $0 += (messagesRequiringAttentionByType[$1] ?? 0) }
 
             // if all activities are replies, do not summarize
             if messagesRequiringAttentionByType[.reply] == count {
@@ -584,7 +606,11 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
         case .missedCall:
             return .missedCall
         default:
-            return .unreadMessages(count: status.messagesRequiringAttention.compactMap { StatusMessageType(message: $0) }.filter { matchedTypes.firstIndex(of: $0) != .none }.count)
+            return .unreadMessages(
+                count: status.messagesRequiringAttention
+                    .compactMap { StatusMessageType(message: $0) }.filter { matchedTypes.firstIndex(of: $0) != .none }
+                    .count
+            )
         }
     }
 
@@ -608,7 +634,10 @@ final class FailedSendMatcher: ConversationStatusMatcher {
 final class GroupActivityMatcher: TypedConversationStatusMatcher {
     let matchedTypes: [StatusMessageType] = [.addParticipants, .removeParticipants]
 
-    private func addedString(for messages: [ZMConversationMessage], in conversation: MatcherConversation) -> NSAttributedString? {
+    private func addedString(
+        for messages: [ZMConversationMessage],
+        in conversation: MatcherConversation
+    ) -> NSAttributedString? {
         if let message = messages.last,
            let systemMessage = message.systemMessageData,
            let sender = message.senderUser,
@@ -622,8 +651,10 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
         return .none
     }
 
-    private func removedString(for messages: [ZMConversationMessage],
-                               in conversation: MatcherConversation) -> NSAttributedString? {
+    private func removedString(
+        for messages: [ZMConversationMessage],
+        in conversation: MatcherConversation
+    ) -> NSAttributedString? {
         if let message = messages.last,
            let systemMessage = message.systemMessageData,
            let sender = message.senderUser,
@@ -644,18 +675,23 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
             }
         }
 
-        let resultString = [addedString(for: allStatusMessagesByType[.addParticipants] ?? [], in: conversation),
-                            removedString(for: allStatusMessagesByType[.removeParticipants] ?? [], in: conversation)].compactMap { $0 }.joined(separator: "; " && type(of: self).regularStyle)
+        let resultString = [
+            addedString(for: allStatusMessagesByType[.addParticipants] ?? [], in: conversation),
+            removedString(for: allStatusMessagesByType[.removeParticipants] ?? [], in: conversation),
+        ]
+        .compactMap { $0 }.joined(separator: "; " && type(of: self).regularStyle)
         return resultString
     }
 
     var combinesWith: [ConversationStatusMatcher] = []
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
-        .unreadMessages(count: status.messagesRequiringAttention
-            .compactMap { StatusMessageType(message: $0) }
-            .filter { matchedTypes.contains($0) }
-            .count)
+        .unreadMessages(
+            count: status.messagesRequiringAttention
+                .compactMap { StatusMessageType(message: $0) }
+                .filter { matchedTypes.contains($0) }
+                .count
+        )
     }
 }
 
@@ -664,9 +700,10 @@ final class StartConversationMatcher: TypedConversationStatusMatcher {
     let matchedTypes: [StatusMessageType] = [.newConversation]
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
-        guard let message = status.messagesRequiringAttention.first(where: { StatusMessageType(message: $0) == .newConversation }),
-              let sender = message.senderUser,
-              !sender.isSelfUser
+        guard let message = status.messagesRequiringAttention
+            .first(where: { StatusMessageType(message: $0) == .newConversation }),
+            let sender = message.senderUser,
+            !sender.isSelfUser
         else {
             return .none
         }
@@ -674,7 +711,10 @@ final class StartConversationMatcher: TypedConversationStatusMatcher {
         let senderString = sender.name ?? ""
         let resultString = L10n.Localizable.Conversation.Status.startedConversation(senderString)
 
-        return (resultString && type(of: self).regularStyle).addAttributes(type(of: self).emphasisStyle, toSubstring: senderString)
+        return (resultString && type(of: self).regularStyle).addAttributes(
+            type(of: self).emphasisStyle,
+            toSubstring: senderString
+        )
     }
 
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon? {
@@ -725,26 +765,34 @@ private var allMatchers: [ConversationStatusMatcher] = {
     let failedSendMatcher = FailedSendMatcher()
     failedSendMatcher.combinesWith = [silencedMatcher, newMessageMatcher, groupActivityMatcher]
 
-    return [SecurityAlertMatcher(),
-            SelfUserLeftMatcher(),
-            BlockedMatcher(),
-            CallingMatcher(),
-            silencedMatcher,
-            TypingMatcher(),
-            newMessageMatcher,
-            failedSendMatcher,
-            groupActivityMatcher,
-            StartConversationMatcher(),
-            UsernameMatcher()]
+    return [
+        SecurityAlertMatcher(),
+        SelfUserLeftMatcher(),
+        BlockedMatcher(),
+        CallingMatcher(),
+        silencedMatcher,
+        TypingMatcher(),
+        newMessageMatcher,
+        failedSendMatcher,
+        groupActivityMatcher,
+        StartConversationMatcher(),
+        UsernameMatcher(),
+    ]
 }()
 
 extension ConversationStatus {
     func appliedMatchersForDescription(for conversation: MatcherConversation) -> [ConversationStatusMatcher] {
-        guard let topMatcher = allMatchers.first(where: { $0.isMatching(with: self) && $0.description(with: self, conversation: conversation) != .none }) else {
+        guard let topMatcher = allMatchers.first(where: { $0.isMatching(with: self) && $0.description(
+            with: self,
+            conversation: conversation
+        ) != .none }) else {
             return []
         }
 
-        return [topMatcher] + topMatcher.combinesWith.filter { $0.isMatching(with: self) && $0.description(with: self, conversation: conversation) != .none }
+        return [topMatcher] + topMatcher.combinesWith.filter { $0.isMatching(with: self) && $0.description(
+            with: self,
+            conversation: conversation
+        ) != .none }
     }
 
     func appliedMatcherForIcon(for conversation: MatcherConversation) -> ConversationStatusMatcher? {
@@ -783,13 +831,14 @@ extension ZMConversation {
     var status: ConversationStatus {
         let messagesRequiringAttention = estimatedUnreadCount > 0 ? unreadMessages : []
 
-        let messagesRequiringAttentionByType: [StatusMessageType: UInt] = messagesRequiringAttention.reduce(into: [:]) { histogram, element in
-            guard let messageType = StatusMessageType(message: element) else {
-                return
-            }
+        let messagesRequiringAttentionByType: [StatusMessageType: UInt] = messagesRequiringAttention
+            .reduce(into: [:]) { histogram, element in
+                guard let messageType = StatusMessageType(message: element) else {
+                    return
+                }
 
-            histogram[messageType, default: 0] += 1
-        }
+                histogram[messageType, default: 0] += 1
+            }
 
         let isOngoingCall: Bool = {
             guard let state = voiceChannel?.state else { return false }

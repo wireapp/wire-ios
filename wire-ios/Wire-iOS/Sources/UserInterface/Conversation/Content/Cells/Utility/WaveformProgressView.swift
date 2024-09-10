@@ -64,7 +64,12 @@ private final class WaveformBarsView: UIView {
 
         for i in 0 ..< numbersOfBars {
             let loudness = samples[Int((Float(i) / Float(numbersOfBars)) * Float(samples.count))]
-            let rect = CGRect(x: CGFloat(i) * stepSpacing, y: rect.height / 2, width: barWidth, height: max(minHeight, rect.height * CGFloat(loudness) * 0.5))
+            let rect = CGRect(
+                x: CGFloat(i) * stepSpacing,
+                y: rect.height / 2,
+                width: barWidth,
+                height: max(minHeight, rect.height * CGFloat(loudness) * 0.5)
+            )
             c.addRect(rect)
         }
 
@@ -117,7 +122,12 @@ final class WaveformProgressView: UIView {
     }
 
     func setProgress(_ progress: Float, animated: Bool) {
-        let path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: self.bounds.width * CGFloat(progress), height: self.bounds.height)).cgPath
+        let path = UIBezierPath(rect: CGRect(
+            x: 0,
+            y: 0,
+            width: self.bounds.width * CGFloat(progress),
+            height: self.bounds.height
+        )).cgPath
 
         if animated {
             let animation = CABasicAnimation(keyPath: "path")
@@ -134,7 +144,12 @@ final class WaveformProgressView: UIView {
 
     override var bounds: CGRect {
         didSet {
-            maskShape.path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: self.bounds.width * CGFloat(progress), height: self.bounds.height)).cgPath
+            maskShape.path = UIBezierPath(rect: CGRect(
+                x: 0,
+                y: 0,
+                width: self.bounds.width * CGFloat(progress),
+                height: self.bounds.height
+            )).cgPath
         }
     }
 

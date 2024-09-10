@@ -65,7 +65,8 @@ public func == (lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
     lhs.platform == rhs.platform
         && lhs.appVersion == rhs.appVersion
         && lhs.modelVersion == rhs.modelVersion
-        && (lhs.creationTime.timeIntervalSince1970 - rhs.creationTime.timeIntervalSince1970) < 0.001 // We only store 3 floating points
+        && (lhs.creationTime.timeIntervalSince1970 - rhs.creationTime.timeIntervalSince1970) <
+        0.001 // We only store 3 floating points
         && lhs.userIdentifier == rhs.userIdentifier
         && lhs.clientIdentifier == rhs.clientIdentifier
 }

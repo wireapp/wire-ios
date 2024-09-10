@@ -187,7 +187,12 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             caller.name = "SelfUser"
 
             // when
-            guard let note = ZMLocalNotification(callState: state, conversation: conversation, caller: caller, moc: syncMOC) else { return XCTFail("Did not create notification") }
+            guard let note = ZMLocalNotification(
+                callState: state,
+                conversation: conversation,
+                caller: caller,
+                moc: syncMOC
+            ) else { return XCTFail("Did not create notification") }
 
             // then
             XCTAssertEqual(note.title, "Callie")

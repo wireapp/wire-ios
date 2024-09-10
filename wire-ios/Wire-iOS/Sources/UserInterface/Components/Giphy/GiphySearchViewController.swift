@@ -26,7 +26,11 @@ import WireSyncEngine
 import Ziphy
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
-    func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String)
+    func giphySearchViewController(
+        _ giphySearchViewController: GiphySearchViewController,
+        didSelectImageData imageData: Data,
+        searchTerm: String
+    )
 }
 
 final class GiphySearchViewController: VerticalColumnCollectionViewController {
@@ -174,7 +178,10 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         collectionView?.showsVerticalScrollIndicator = false
         collectionView?.backgroundColor = SemanticColors.View.backgroundDefault
         collectionView?.accessibilityIdentifier = "giphyCollectionView"
-        collectionView?.register(GiphyCollectionViewCell.self, forCellWithReuseIdentifier: GiphyCollectionViewCell.CellIdentifier)
+        collectionView?.register(
+            GiphyCollectionViewCell.self,
+            forCellWithReuseIdentifier: GiphyCollectionViewCell.CellIdentifier
+        )
         edgesForExtendedLayout = []
     }
 
@@ -198,8 +205,14 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
         self.ziphs.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GiphyCollectionViewCell.CellIdentifier, for: indexPath) as! GiphyCollectionViewCell
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: GiphyCollectionViewCell.CellIdentifier,
+            for: indexPath
+        ) as! GiphyCollectionViewCell
         let ziph = ziphs[indexPath.item]
 
         guard let representation = ziph.images[.preview] else {
@@ -324,8 +337,16 @@ extension GiphySearchViewController {
     }
 
     @discardableResult
-    func pushConfirmationViewController(ziph: Ziph?, previewImage: FLAnimatedImage?, animated: Bool = true) -> GiphyConfirmationViewController {
-        let confirmationController = GiphyConfirmationViewController(withZiph: ziph, previewImage: previewImage, searchResultController: searchResultsController)
+    func pushConfirmationViewController(
+        ziph: Ziph?,
+        previewImage: FLAnimatedImage?,
+        animated: Bool = true
+    ) -> GiphyConfirmationViewController {
+        let confirmationController = GiphyConfirmationViewController(
+            withZiph: ziph,
+            previewImage: previewImage,
+            searchResultController: searchResultsController
+        )
         confirmationController.title = conversation.displayNameWithFallback
         confirmationController.delegate = self
         navigationController?.pushViewController(confirmationController, animated: animated)
@@ -337,7 +358,10 @@ extension GiphySearchViewController {
 // MARK: - GiphyConfirmationViewControllerDelegate
 
 extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
-    func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data) {
+    func giphyConfirmationViewController(
+        _ giphyConfirmationViewController: GiphyConfirmationViewController,
+        didConfirmImageData imageData: Data
+    ) {
         delegate?.giphySearchViewController(self, didSelectImageData: imageData, searchTerm: searchTerm)
     }
 }

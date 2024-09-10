@@ -28,7 +28,10 @@ final class String_FingerprintTests: XCTestCase {
         let boldAttributes = [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)]
 
         // WHEN
-        let attributedString = fingerprintString.fingerprintString(attributes: regularAttributes, boldAttributes: boldAttributes)
+        let attributedString = fingerprintString.fingerprintString(
+            attributes: regularAttributes,
+            boldAttributes: boldAttributes
+        )
 
         // THEN
         for item in stride(from: 0, to: 20, by: 6) {

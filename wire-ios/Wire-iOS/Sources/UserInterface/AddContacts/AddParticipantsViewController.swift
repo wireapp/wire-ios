@@ -43,7 +43,10 @@ extension ConversationLike where Self: SwiftConversationLike {
 }
 
 protocol AddParticipantsConversationCreationDelegate: AnyObject {
-    func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction)
+    func addParticipantsViewController(
+        _ addParticipantsViewController: AddParticipantsViewController,
+        didPerform action: AddParticipantsViewController.CreateAction
+    )
 }
 
 extension AddParticipantsViewController.Context {
@@ -113,8 +116,10 @@ final class AddParticipantsViewController: UIViewController {
     private let confirmButtonHeight: CGFloat = 56.0
     private let confirmButton: IconButton
     private let emptyResultView: EmptySearchResultsView
-    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                                                                  constant: -bottomMargin)
+    private lazy var bottomConstraint: NSLayoutConstraint = confirmButton.bottomAnchor.constraint(
+        equalTo: view.bottomAnchor,
+        constant: -bottomMargin
+    )
     private let backButtonDescriptor = BackButtonDescription()
     private let bottomMargin: CGFloat = 24
 
@@ -201,15 +206,19 @@ final class AddParticipantsViewController: UIViewController {
 
         searchGroupSelector = SearchGroupSelector()
 
-        searchResultsViewController = SearchResultsViewController(userSelection: userSelection,
-                                                                  userSession: userSession,
-                                                                  isAddingParticipants: true,
-                                                                  shouldIncludeGuests: viewModel.context.includeGuests,
-                                                                  isFederationEnabled: isFederationEnabled)
+        searchResultsViewController = SearchResultsViewController(
+            userSelection: userSelection,
+            userSession: userSession,
+            isAddingParticipants: true,
+            shouldIncludeGuests: viewModel.context.includeGuests,
+            isFederationEnabled: isFederationEnabled
+        )
 
         let user = SelfUser.provider?.providedSelfUser
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: user?.canManageTeam == true,
-                                                 isFederationEnabled: isFederationEnabled)
+        emptyResultView = EmptySearchResultsView(
+            isSelfUserAdmin: user?.canManageTeam == true,
+            isFederationEnabled: isFederationEnabled
+        )
         super.init(nibName: nil, bundle: nil)
 
         emptyResultView.delegate = self
@@ -220,7 +229,11 @@ final class AddParticipantsViewController: UIViewController {
 
         updateValues()
 
-        confirmButton.addTarget(self, action: #selector(searchHeaderViewControllerDidConfirmAction(_:)), for: .touchUpInside)
+        confirmButton.addTarget(
+            self,
+            action: #selector(searchHeaderViewControllerDidConfirmAction(_:)),
+            for: .touchUpInside
+        )
 
         searchResultsViewController.filterConversation = viewModel.filterConversation
         searchResultsViewController.mode = .list
@@ -248,10 +261,12 @@ final class AddParticipantsViewController: UIViewController {
 
         viewModel.selectedUsers.forEach(userSelection.add)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange(notification:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
         if viewModel.botCanBeAdded {
             view.addSubview(searchGroupSelector)
         }
@@ -334,7 +349,8 @@ final class AddParticipantsViewController: UIViewController {
         }
         updateTitle()
         navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(action: rightNavigationItemTapped())
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings.CloseButton.description
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.AddParticipantsConversationSettings
+            .CloseButton.description
     }
 
     private func updateSelectionValues() {
@@ -358,7 +374,10 @@ final class AddParticipantsViewController: UIViewController {
         updateTitle()
 
         // Notify delegate
-        conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .updatedUsers(userSelection.users))
+        conversationCreationDelegate?.addParticipantsViewController(
+            self,
+            didPerform: .updatedUsers(userSelection.users)
+        )
     }
 
     private func updateConfirmButtonState(state: Bool) {
@@ -404,14 +423,18 @@ final class AddParticipantsViewController: UIViewController {
         let firstResponder = UIResponder.currentFirst
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] keyboardFrameInView in
-            guard let self else { return }
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: self.view,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
 
-            let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
 
-            bottomConstraint.constant = -(keyboardHeight + bottomMargin)
-            view.layoutIfNeeded()
-        })
+                bottomConstraint.constant = -(keyboardHeight + bottomMargin)
+                view.layoutIfNeeded()
+            }
+        )
     }
 
     private func performSearch() {
@@ -463,7 +486,10 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
         }
     }
 
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
+    func searchHeaderViewController(
+        _ searchHeaderViewController: SearchHeaderViewController,
+        updatedSearchQuery query: String
+    ) {
         self.performSearch()
     }
 }
@@ -473,29 +499,50 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
         UIModalPresentationStyle.overFullScreen
     }
 
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+    func adaptivePresentationStyle(
+        for controller: UIPresentationController,
+        traitCollection: UITraitCollection
+    ) -> UIModalPresentationStyle {
         UIModalPresentationStyle.overFullScreen
     }
 }
 
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnUser user: UserType, indexPath: IndexPath, section: SearchResultsViewControllerSection) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnUser user: UserType,
+        indexPath: IndexPath,
+        section: SearchResultsViewControllerSection
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didDoubleTapOnUser user: UserType, indexPath: IndexPath) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didDoubleTapOnUser user: UserType,
+        indexPath: IndexPath
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnConversation conversation: ZMConversation) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnConversation conversation: ZMConversation
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, wantsToPerformAction action: SearchResultsViewControllerAction) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        wantsToPerformAction action: SearchResultsViewControllerAction
+    ) {
         // no-op
     }
 
-    func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
+    func searchResultsViewController(
+        _ searchResultsViewController: SearchResultsViewController,
+        didTapOnSeviceUser user: ServiceUser
+    ) {
         guard case let .add(conversation) = viewModel.context else { return }
 
         let detail = ServiceDetailViewController(

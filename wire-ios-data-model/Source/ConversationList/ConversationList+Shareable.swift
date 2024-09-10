@@ -23,7 +23,8 @@ extension ConversationList {
         excluding: ConversationLike? = nil
     ) -> [ZMConversation] {
         items.filter { conversation in
-            let isOneOnOneOrGroup = conversation.conversationType == .oneOnOne || conversation.conversationType == .group
+            let isOneOnOneOrGroup = conversation.conversationType == .oneOnOne || conversation
+                .conversationType == .group
             let isSelfAnActiveMember = conversation.isSelfAnActiveMember
             let isNotExcluded = !(conversation === excluding)
 

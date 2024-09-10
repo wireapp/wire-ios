@@ -149,7 +149,11 @@ extension NSPersistentStoreMetadataTests {
 // MARK: - What can be saved
 
 extension NSPersistentStoreMetadataTests {
-    func checkThatItCanSave<T: Equatable & SwiftPersistableInMetadata>(data: T, file: StaticString = #file, line: UInt = #line) {
+    func checkThatItCanSave<T: Equatable & SwiftPersistableInMetadata>(
+        data: T,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // GIVEN
         let key = "boo"
         self.uiMOC.setPersistentStoreMetadata(data, key: key)

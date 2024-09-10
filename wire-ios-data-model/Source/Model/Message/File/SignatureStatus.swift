@@ -63,9 +63,11 @@ public final class SignatureStatus: NSObject {
 
     // MARK: - Init
 
-    public init(asset: WireProtos.Asset?,
-                data: Data?,
-                managedObjectContext: NSManagedObjectContext) {
+    public init(
+        asset: WireProtos.Asset?,
+        data: Data?,
+        managedObjectContext: NSManagedObjectContext
+    ) {
         self.asset = asset
         self.managedObjectContext = managedObjectContext
 
@@ -119,8 +121,10 @@ public final class SignatureStatus: NSObject {
         }
 
         state = .finished
-        let fileMetaData = ZMFileMetadata(fileURL: fileMetaDataInfo.url,
-                                          name: fileMetaDataInfo.fileName)
+        let fileMetaData = ZMFileMetadata(
+            fileURL: fileMetaDataInfo.url,
+            name: fileMetaDataInfo.fileName
+        )
         DigitalSignatureNotification(state: .digitalSignatureReceived(fileMetaData))
             .post(in: managedObjectContext.notificationContext)
     }
@@ -162,11 +166,15 @@ public final class SignatureStatus: NSObject {
 // MARK: - Observable
 
 extension SignatureStatus {
-    public static func addObserver(_ observer: SignatureObserver,
-                                   context: NSManagedObjectContext) -> Any {
-        NotificationInContext.addObserver(name: DigitalSignatureNotification.notificationName,
-                                          context: context.notificationContext,
-                                          queue: .main) { [weak observer] note in
+    public static func addObserver(
+        _ observer: SignatureObserver,
+        context: NSManagedObjectContext
+    ) -> Any {
+        NotificationInContext.addObserver(
+            name: DigitalSignatureNotification.notificationName,
+            context: context.notificationContext,
+            queue: .main
+        ) { [weak observer] note in
             if let note = note.userInfo[DigitalSignatureNotification.userInfoKey] as? DigitalSignatureNotification {
                 switch note.state {
                 case .consentURLPending:
@@ -212,9 +220,11 @@ public class DigitalSignatureNotification: NSObject {
     // MARK: - Public Method
 
     public func post(in context: NotificationContext) {
-        NotificationInContext(name: DigitalSignatureNotification.notificationName,
-                              context: context,
-                              userInfo: [DigitalSignatureNotification.userInfoKey: self]).post()
+        NotificationInContext(
+            name: DigitalSignatureNotification.notificationName,
+            context: context,
+            userInfo: [DigitalSignatureNotification.userInfoKey: self]
+        ).post()
     }
 }
 

@@ -125,34 +125,42 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     ///   - kind: the type of text field
     ///   - leftInset: placeholder left inset
     ///   - cornerRadius: optional corner radius override
-    init(kind: Kind = .unknown,
-         leftInset: CGFloat = 8,
-         accessoryTrailingInset: CGFloat = 16,
-         cornerRadius: CGFloat? = nil,
-         setNewColors: Bool = false,
-         style: TextFieldStyle) {
+    init(
+        kind: Kind = .unknown,
+        leftInset: CGFloat = 8,
+        accessoryTrailingInset: CGFloat = 16,
+        cornerRadius: CGFloat? = nil,
+        setNewColors: Bool = false,
+        style: TextFieldStyle
+    ) {
         textFieldValidator = TextFieldValidator()
         self.kind = kind
 
         var textFieldAttributes: Attributes = if setNewColors == false {
-            AccessoryTextField.Attributes(textFont: ValidatedTextField.enteredTextFont,
-                                          textColor: UIColor.Team.textColor,
-                                          placeholderFont: ValidatedTextField.placeholderFont,
-                                          placeholderColor: UIColor.Team.placeholderColor,
-                                          backgroundColor: UIColor.Team.textfieldColor,
-                                          cornerRadius: cornerRadius ?? 0)
+            AccessoryTextField.Attributes(
+                textFont: ValidatedTextField.enteredTextFont,
+                textColor: UIColor.Team.textColor,
+                placeholderFont: ValidatedTextField.placeholderFont,
+                placeholderColor: UIColor.Team.placeholderColor,
+                backgroundColor: UIColor.Team.textfieldColor,
+                cornerRadius: cornerRadius ?? 0
+            )
         } else {
-            AccessoryTextField.Attributes(textFont: ValidatedTextField.enteredTextFont,
-                                          textColor: TextFieldColors.textInputView,
-                                          placeholderFont: ValidatedTextField.placeholderFont,
-                                          placeholderColor: TextFieldColors.textInputViewPlaceholder,
-                                          backgroundColor: TextFieldColors.backgroundInputView,
-                                          cornerRadius: cornerRadius ?? 0)
+            AccessoryTextField.Attributes(
+                textFont: ValidatedTextField.enteredTextFont,
+                textColor: TextFieldColors.textInputView,
+                placeholderFont: ValidatedTextField.placeholderFont,
+                placeholderColor: TextFieldColors.textInputViewPlaceholder,
+                backgroundColor: TextFieldColors.backgroundInputView,
+                cornerRadius: cornerRadius ?? 0
+            )
         }
 
-        super.init(leftInset: leftInset,
-                   accessoryTrailingInset: accessoryTrailingInset,
-                   textFieldAttributes: textFieldAttributes)
+        super.init(
+            leftInset: leftInset,
+            accessoryTrailingInset: accessoryTrailingInset,
+            textFieldAttributes: textFieldAttributes
+        )
         self.setupTextFieldProperties()
 
         setup()
@@ -164,8 +172,18 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     }
 
     private func configureObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidBeginEditing(_:)), name: UITextField.textDidBeginEditingNotification, object: self)
-        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidEndEditing(_:)), name: UITextField.textDidEndEditingNotification, object: self)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidBeginEditing(_:)),
+            name: UITextField.textDidBeginEditingNotification,
+            object: self
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidEndEditing(_:)),
+            name: UITextField.textDidEndEditingNotification,
+            object: self
+        )
     }
 
     @objc

@@ -69,10 +69,12 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func updateButtonMode() {
-        let buttonItem = UIBarButtonItem(title: L10n.Localizable.General.done,
-                                         style: .done,
-                                         target: self,
-                                         action: #selector(onClose))
+        let buttonItem = UIBarButtonItem(
+            title: L10n.Localizable.General.done,
+            style: .done,
+            target: self,
+            action: #selector(onClose)
+        )
         buttonItem.accessibilityIdentifier = "DoneButton"
         buttonItem.accessibilityLabel = L10n.Localizable.General.done
         buttonItem.tintColor = UIColor.black
@@ -93,9 +95,11 @@ final class DigitalSignatureVerificationViewController: UIViewController {
 // MARK: - WKNavigationDelegate
 
 extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView,
-                 decidePolicyFor navigationAction: WKNavigationAction,
-                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(
+        _ webView: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction,
+        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
         guard
             let url = navigationAction.request.url,
             let response = parseVerificationURL(url)

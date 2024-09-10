@@ -60,7 +60,8 @@ extension ZMMessage {
         managedObjectContext?.delete(self)
     }
 
-    @discardableResult @objc public static func deleteForEveryone(_ message: ZMConversationMessage) -> ZMClientMessage? {
+    @discardableResult @objc public static func deleteForEveryone(_ message: ZMConversationMessage)
+        -> ZMClientMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
         return castedMessage.deleteForEveryone()
     }

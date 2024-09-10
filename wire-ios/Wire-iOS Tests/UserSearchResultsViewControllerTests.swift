@@ -70,7 +70,12 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         for name in MockUserType.usernames {
             let user = MockUserType.createUser(name: name)
             user.zmAccentColor = .amber
-            XCTAssertFalse(user.isTeamMember, "user should not be a team member to generate snapshots with guest icon", file: file, line: line)
+            XCTAssertFalse(
+                user.isTeamMember,
+                "user should not be a team member to generate snapshots with guest icon",
+                file: file,
+                line: line
+            )
             allUsers.append(user)
         }
 
@@ -173,7 +178,8 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         NotificationCenter.default.post(name: UIResponder.keyboardWillShowNotification, object: nil, userInfo: [
             UIResponder.keyboardFrameBeginUserInfoKey: CGRect(x: 0, y: 0, width: 0, height: 0),
             UIResponder.keyboardFrameEndUserInfoKey: CGRect(x: 0, y: 0, width: 0, height: 100),
-            UIResponder.keyboardAnimationDurationUserInfoKey: TimeInterval(0.0)])
+            UIResponder.keyboardAnimationDurationUserInfoKey: TimeInterval(0.0),
+        ])
 
         snapshotHelper.verify(matching: sut)
     }

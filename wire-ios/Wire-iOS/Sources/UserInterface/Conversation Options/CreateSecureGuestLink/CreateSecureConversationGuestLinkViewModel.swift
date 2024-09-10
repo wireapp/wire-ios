@@ -26,7 +26,10 @@ import WireSyncEngine
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didGeneratePassword password: String)
     func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel)
-    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
+    func viewModel(
+        _ viewModel: CreateSecureConversationGuestLinkViewModel,
+        didFailToValidatePasswordWithReason reason: String
+    )
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String)
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
 }
@@ -78,7 +81,11 @@ final class CreateSecureConversationGuestLinkViewModel {
         return true
     }
 
-    func createSecuredGuestLinkIfValid(conversation: ZMConversation, passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
+    func createSecuredGuestLinkIfValid(
+        conversation: ZMConversation,
+        passwordField: ValidatedTextField,
+        confirmPasswordField: ValidatedTextField
+    ) {
         guard validatePassword(for: passwordField, against: confirmPasswordField) else {
             delegate?.viewModel(self, didFailToValidatePasswordWithReason: "Password validation failed.")
             return

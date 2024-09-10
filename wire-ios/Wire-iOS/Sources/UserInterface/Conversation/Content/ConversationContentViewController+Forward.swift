@@ -73,9 +73,14 @@ extension ZMMessage: Shareable {
                 conversations.forEachNonEphemeral {
                     do {
                         // We should not forward any mentions to other conversations
-                        try $0.appendText(content: self.textMessageData!.messageText!, mentions: [], fetchLinkPreview: fetchLinkPreview)
+                        try $0.appendText(
+                            content: self.textMessageData!.messageText!,
+                            mentions: [],
+                            fetchLinkPreview: fetchLinkPreview
+                        )
                     } catch {
-                        Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn("Failed to append text message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -85,31 +90,40 @@ extension ZMMessage: Shareable {
                     do {
                         try $0.appendImage(from: imageData)
                     } catch {
-                        WireLogger.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append image message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.shared.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
-                ZMUserSession.shared()?.perform {
-                    conversations.forEachNonEphemeral {
-                        do {
-                            try $0.appendFile(with: fileMetadata)
-                        } catch {
-                            WireLogger.messageProcessing.warn("Failed to append file message. Reason: \(error.localizedDescription)")
+            FileMetaDataGenerator.shared
+                .metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
+                    ZMUserSession.shared()?.perform {
+                        conversations.forEachNonEphemeral {
+                            do {
+                                try $0.appendFile(with: fileMetadata)
+                            } catch {
+                                WireLogger.messageProcessing
+                                    .warn("Failed to append file message. Reason: \(error.localizedDescription)")
+                            }
                         }
                     }
                 }
-            }
         } else if isLocation {
-            let locationData = LocationData.locationData(withLatitude: locationMessageData!.latitude, longitude: locationMessageData!.longitude, name: locationMessageData!.name, zoomLevel: locationMessageData!.zoomLevel)
+            let locationData = LocationData.locationData(
+                withLatitude: locationMessageData!.latitude,
+                longitude: locationMessageData!.longitude,
+                name: locationMessageData!.name,
+                zoomLevel: locationMessageData!.zoomLevel
+            )
             ZMUserSession.shared()?.perform {
                 conversations.forEachNonEphemeral {
                     do {
                         try $0.appendLocation(with: locationData)
                     } catch {
-                        WireLogger.messageProcessing.warn("Failed to append location message. Reason: \(error.localizedDescription)")
+                        WireLogger.messageProcessing
+                            .warn("Failed to append location message. Reason: \(error.localizedDescription)")
                     }
                 }
             }
@@ -137,14 +151,20 @@ extension ConversationContentViewController {
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
         if let keyboardAvoidingViewController = self.presentedViewController as? KeyboardAvoidingViewController,
-           let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<ZMConversation, ZMMessage> {
+           let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<
+               ZMConversation,
+               ZMMessage
+           > {
             shareViewController.showPreview = traitCollection.horizontalSizeClass != .regular
         }
     }
 }
 
 extension ConversationContentViewController: UIAdaptivePresentationControllerDelegate {
-    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+    func adaptivePresentationStyle(
+        for controller: UIPresentationController,
+        traitCollection: UITraitCollection
+    ) -> UIModalPresentationStyle {
         traitCollection.horizontalSizeClass == .regular ? .popover : .overFullScreen
     }
 }

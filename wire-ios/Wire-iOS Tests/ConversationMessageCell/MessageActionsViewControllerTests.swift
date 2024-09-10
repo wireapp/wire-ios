@@ -38,10 +38,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
     func testReactionPicker_ExistForStandardMessage() {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         // WHEN
-        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                                   actionController: actionController)
+        let messageActionsViewController = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
         // THEN
         XCTAssertTrue(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -50,10 +57,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.isEphemeral = true
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         // WHEN
-        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                                   actionController: actionController)
+        let messageActionsViewController = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
         // THEN
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -62,10 +76,17 @@ final class MessageActionsViewControllerTests: XCTestCase {
         // GIVEN
         let message = MockMessageFactory.textMessage(withText: "Test tests")
         message.deliveryState = .failedToSend
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
         // WHEN
-        let messageActionsViewController = MessageActionsViewController.controller(withActions: MessageAction.allCases,
-                                                                                   actionController: actionController)
+        let messageActionsViewController = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
         // THEN
         XCTAssertFalse(messageActionsViewController.view.containsBasicReactionPicker())
     }
@@ -129,8 +150,16 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
     func actionsTitlesForMessage(message: MockMessage) -> [String] {
         message.senderUser = MockUserType.createUser(name: "Bob")
-        let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-        let sut = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
+        let actionController = ConversationMessageActionController(
+            responder: nil,
+            message: message,
+            context: .content,
+            view: UIView()
+        )
+        let sut = MessageActionsViewController.controller(
+            withActions: MessageAction.allCases,
+            actionController: actionController
+        )
 
         return sut.actions.map { $0.title ?? "" }
     }

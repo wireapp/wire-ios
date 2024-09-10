@@ -99,7 +99,9 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
             context: notificationContext,
             queue: .main
         ) { note in
-            guard let note = note.userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification else { return }
+            guard let note = note
+                .userInfo[DatabaseEncryptionLockNotification.userInfoKey] as? DatabaseEncryptionLockNotification
+            else { return }
             handler(note.databaseIsEncrypted)
         }
     }

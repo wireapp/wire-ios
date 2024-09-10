@@ -38,7 +38,12 @@ final class Analytics: NSObject {
     }
 
     private func setupObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(userSessionDidBecomeAvailable(_:)), name: Notification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(userSessionDidBecomeAvailable(_:)),
+            name: Notification.Name.ZMUserSessionDidBecomeAvailable,
+            object: nil
+        )
     }
 
     @objc
@@ -70,8 +75,10 @@ final class Analytics: NSObject {
         }
     }
 
-    func tagEvent(_ event: String,
-                  attributes: [String: Any]) {
+    func tagEvent(
+        _ event: String,
+        attributes: [String: Any]
+    ) {
         guard let attributes = attributes as? [String: NSObject] else { return }
 
         tagEvent(event, attributes: attributes)
@@ -79,8 +86,10 @@ final class Analytics: NSObject {
 
     // MARK: - OTREvents
 
-    func tagCannotDecryptMessage(withAttributes userInfo: [String: Any],
-                                 conversation: ZMConversation?) {
+    func tagCannotDecryptMessage(
+        withAttributes userInfo: [String: Any],
+        conversation: ZMConversation?
+    ) {
         var attributes: [String: Any] = conversation?.attributesForConversation ?? [:]
 
         attributes.merge(userInfo) { _, new in new }

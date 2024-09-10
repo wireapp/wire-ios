@@ -76,9 +76,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         guestLinkObserver = NotificationCenter.default.addObserver(
             forName: ConversationGuestLink.didCreateSecureGuestLinkNotification,
             object: nil,
-            queue: .main) { [weak self] notification in
-                self?.handleGuestLinkNotification(notification)
-            }
+            queue: .main
+        ) { [weak self] notification in
+            self?.handleGuestLinkNotification(notification)
+        }
 
         setupNavigationBar()
     }
@@ -235,7 +236,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = viewModel.state.rows[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: row.cellType.reuseIdentifier, for: indexPath) as! CellConfigurationConfigurable
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: row.cellType.reuseIdentifier,
+            for: indexPath
+        ) as! CellConfigurationConfigurable
         cell.configure(with: row)
         return cell as! UITableViewCell
     }

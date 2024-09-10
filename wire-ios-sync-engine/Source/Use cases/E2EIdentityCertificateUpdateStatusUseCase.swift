@@ -67,7 +67,10 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
             return .noAction
         }
 
-        let certificate = try await getE2eIdentityCertificates.invoke(mlsGroupId: selfMLSConversationGroupID, clientIds: [mlsClientID]).first
+        let certificate = try await getE2eIdentityCertificates.invoke(
+            mlsGroupId: selfMLSConversationGroupID,
+            clientIds: [mlsClientID]
+        ).first
         guard let certificate else {
             WireLogger.e2ei.warn("Failed to get the certificate for the self-MLS-conversation.")
             return .noAction

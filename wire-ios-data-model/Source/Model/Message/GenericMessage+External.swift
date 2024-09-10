@@ -60,7 +60,10 @@ extension GenericMessage {
         let externalSha256 = externalData?.zmSHA256Digest()
 
         guard externalSha256 == external.sha256 else {
-            zmLog.error("Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256), updateEvent: \(updateEvent)")
+            zmLog
+                .error(
+                    "Invalid hash for external data: \(externalSha256 ?? Data()) != \(external.sha256), updateEvent: \(updateEvent)"
+                )
             return nil
         }
 

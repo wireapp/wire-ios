@@ -106,7 +106,8 @@ final class SketchToolbar: UIView {
 
         let buttonSpacing: CGFloat = 32
 
-        [centerButtonContainer, leftButton, rightButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [centerButtonContainer, leftButton, rightButton]
+            .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints = [
             leftButton.leftAnchor.constraint(equalTo: centerButtonContainer.leftAnchor, constant: buttonSpacing),

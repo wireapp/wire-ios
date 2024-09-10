@@ -20,9 +20,18 @@ import Foundation
 @testable import WireDataModel
 
 extension ObjectChangeInfo {
-    func checkForExpectedChangeFields(userInfoKeys: Set<String>, expectedChangedFields: Set<String>, file: StaticString = #file, line: UInt = #line) {
+    func checkForExpectedChangeFields(
+        userInfoKeys: Set<String>,
+        expectedChangedFields: Set<String>,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         guard userInfoKeys.isSuperset(of: expectedChangedFields) else {
-            return XCTFail("Expected change fields \(expectedChangedFields) not in userInfoKeys \(userInfoKeys). Please add them to the list.", file: file, line: line)
+            return XCTFail(
+                "Expected change fields \(expectedChangedFields) not in userInfoKeys \(userInfoKeys). Please add them to the list.",
+                file: file,
+                line: line
+            )
         }
 
         for key in userInfoKeys {
@@ -56,7 +65,12 @@ extension ObjectChangeInfo {
         newUnreadMessageObserver = NewUnreadMessageObserver()
         conversationObserver = ConversationObserver()
         sut = NotificationDispatcher(managedObjectContext: uiMOC)
-        NotificationCenter.default.addObserver(self, selector: #selector(NotificationDispatcherTestBase.contextDidMerge(_:)), name: Notification.Name.NSManagedObjectContextDidSave, object: syncMOC)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(NotificationDispatcherTestBase.contextDidMerge(_:)),
+            name: Notification.Name.NSManagedObjectContextDidSave,
+            object: syncMOC
+        )
         mergeNotifications = []
     }
 
@@ -146,7 +160,10 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(observer: newUnreadMessageObserver, managedObjectContext: uiMOC)) {
+        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(
+            observer: newUnreadMessageObserver,
+            managedObjectContext: uiMOC
+        )) {
             // when
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
             message.visibleInConversation = conversation
@@ -169,7 +186,10 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(observer: newUnreadMessageObserver, managedObjectContext: uiMOC)) {
+        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(
+            observer: newUnreadMessageObserver,
+            managedObjectContext: uiMOC
+        )) {
             // when
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
             message.visibleInConversation = conversation
@@ -272,7 +292,11 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         let observer = MockUserObserver()
         withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
             // when
-            NotificationDispatcher.notifyNonCoreDataChanges(objectID: user.objectID, changedKeys: ["name"], uiContext: uiMOC)
+            NotificationDispatcher.notifyNonCoreDataChanges(
+                objectID: user.objectID,
+                changedKeys: ["name"],
+                uiContext: uiMOC
+            )
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
             // then

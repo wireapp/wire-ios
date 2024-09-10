@@ -21,16 +21,24 @@ import Foundation
 extension ZMConversation {
     override open class func predicateForFilteringResults() -> NSPredicate {
         let selfType = ZMConversationType(rawValue: 1)!
-        return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue) && \(#keyPath(ZMConversation.isDeletedRemotely)) == NO")
+        return NSPredicate(
+            format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue) && \(#keyPath(ZMConversation.isDeletedRemotely)) == NO"
+        )
     }
 
     @objc
     public class func predicate(forSearchQuery searchQuery: String, selfUser: ZMUser) -> NSPredicate! {
         let convoNameMatching = userDefinedNamePredicate(forSearch: searchQuery)
 
-        let selfUserIsMember = NSPredicate(format: "%K == NULL OR (ANY %K.user == %@)", ZMConversationClearedTimeStampKey, ZMConversationParticipantRolesKey, selfUser)
+        let selfUserIsMember = NSPredicate(
+            format: "%K == NULL OR (ANY %K.user == %@)",
+            ZMConversationClearedTimeStampKey,
+            ZMConversationParticipantRolesKey,
+            selfUser
+        )
 
-        let groupOnly = NSPredicate(format: "(\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue))")
+        let groupOnly =
+            NSPredicate(format: "(\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue))")
 
         let notTeamOneToOne = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForTeamOneToOneConversation())
 
@@ -39,7 +47,8 @@ extension ZMConversation {
             selfUser: selfUser
         )
         let queryMatching = NSCompoundPredicate(
-            orPredicateWithSubpredicates: [userNamesMatching, convoNameMatching])
+            orPredicateWithSubpredicates: [userNamesMatching, convoNameMatching]
+        )
 
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
             queryMatching,
@@ -49,9 +58,12 @@ extension ZMConversation {
         ])
     }
 
-    private class func predicateForConversationWithUsers(matchingQuery query: String,
-                                                         selfUser: ZMUser) -> NSPredicate {
-        let roleNameMatchingRegexes = query.words.map { ".*\\b\(NSRegularExpression.escapedPattern(for: $0).lowercased()).*" }
+    private class func predicateForConversationWithUsers(
+        matchingQuery query: String,
+        selfUser: ZMUser
+    ) -> NSPredicate {
+        let roleNameMatchingRegexes = query.words
+            .map { ".*\\b\(NSRegularExpression.escapedPattern(for: $0).lowercased()).*" }
 
         let roleNameMatchingConditions = roleNameMatchingRegexes.map { _ in
             "$role.user.normalizedName MATCHES %@"
@@ -82,11 +94,17 @@ extension ZMConversation {
         //  3. It does not have a custom display name
 
         let isTeamConversation = NSPredicate(format: "team != NULL")
-        let isGroupConversation = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let isGroupConversation =
+            NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let hasNoUserDefinedName = NSPredicate(format: "\(ZMConversationUserDefinedNameKey) == NULL")
         let hasOnlyOneParticipant = NSPredicate(format: "\(ZMConversationParticipantRolesKey).@count == 2")
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [isTeamConversation, isGroupConversation, hasNoUserDefinedName, hasOnlyOneParticipant])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            isTeamConversation,
+            isGroupConversation,
+            hasNoUserDefinedName,
+            hasOnlyOneParticipant,
+        ])
     }
 
     class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {

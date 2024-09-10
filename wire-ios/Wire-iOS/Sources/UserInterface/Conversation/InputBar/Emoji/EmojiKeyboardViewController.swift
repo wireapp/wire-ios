@@ -74,7 +74,10 @@ final class EmojiKeyboardViewController: UIViewController {
             item.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
+        let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -32
+        )
 
         sectionViewControllerViewTrailing.priority = .defaultHigh
 
@@ -83,7 +86,10 @@ final class EmojiKeyboardViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: sectionViewControllerView.topAnchor),
-            sectionViewControllerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.safeArea.bottom),
+            sectionViewControllerView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor,
+                constant: -UIScreen.safeArea.bottom
+            ),
             sectionViewControllerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sectionViewControllerViewTrailing,
             sectionViewControllerView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
@@ -91,7 +97,10 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
+        let cell = self.collectionView.dequeueReusableCell(
+            withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
         return cell
     }
@@ -148,7 +157,11 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         })
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         let (first, last) = (section == 0, section == collectionView.numberOfSections)
         return UIEdgeInsets(top: 0, left: !first ? 12 : 0, bottom: 0, right: !last ? 12 : 0)
     }

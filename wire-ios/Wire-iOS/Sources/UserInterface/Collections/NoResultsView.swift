@@ -22,8 +22,10 @@ import WireDesign
 import WireSystem
 
 final class NoResultsView: UIView {
-    let label = DynamicFontLabel(fontSpec: .body,
-                                 color: SemanticColors.Label.textCollectionSecondary)
+    let label = DynamicFontLabel(
+        fontSpec: .body,
+        color: SemanticColors.Label.textCollectionSecondary
+    )
     private let iconView = UIImageView()
 
     var placeholderText: String? {

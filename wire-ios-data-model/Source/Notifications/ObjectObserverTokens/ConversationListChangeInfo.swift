@@ -66,14 +66,22 @@ extension ConversationListChangeInfo {
     /// Adds a ZMConversationListObserver to the specified list
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forList:managedObjectContext:)
-    public static func addListObserver(_ observer: ZMConversationListObserver, for list: ConversationList?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+    public static func addListObserver(
+        _ observer: ZMConversationListObserver,
+        for list: ConversationList?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
         if let list {
             zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
         } else {
             zmLog.debug("Registering observer \(observer) for all lists")
         }
 
-        return ManagedObjectObserverToken(name: .conversationListDidChange, managedObjectContext: managedObjectContext, object: list) { [weak observer] note in
+        return ManagedObjectObserverToken(
+            name: .conversationListDidChange,
+            managedObjectContext: managedObjectContext,
+            object: list
+        ) { [weak observer] note in
             guard let observer, let aList = note.object as? ConversationList else { return }
 
             zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
@@ -90,16 +98,30 @@ extension ConversationListChangeInfo {
     }
 
     @objc(addConversationListReloadObserver:managedObjectcontext:)
-    public static func addReloadObserver(_ observer: ZMConversationListReloadObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .conversationListsDidReload, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
-            observer?.conversationListsDidReload()
-        })
+    public static func addReloadObserver(
+        _ observer: ZMConversationListReloadObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .conversationListsDidReload,
+            managedObjectContext: managedObjectContext,
+            block: { [weak observer] _ in
+                observer?.conversationListsDidReload()
+            }
+        )
     }
 
     @objc(addConversationListFolderObserver:managedObjectcontext:)
-    public static func addFolderObserver(_ observer: ZMConversationListFolderObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .conversationListDidChangeFolders, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
-            observer?.conversationListsDidChangeFolders()
-        })
+    public static func addFolderObserver(
+        _ observer: ZMConversationListFolderObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .conversationListDidChangeFolders,
+            managedObjectContext: managedObjectContext,
+            block: { [weak observer] _ in
+                observer?.conversationListsDidChangeFolders()
+            }
+        )
     }
 }

@@ -64,7 +64,10 @@ final class Stroke: Renderable {
         if points.count == 1, let point = points.first {
             context.setFillColor(brush.color.cgColor)
             let origin = CGPoint(x: point.x - CGFloat(brush.size / 2), y: point.y - CGFloat(brush.size / 2))
-            context.addEllipse(in: CGRect(origin: origin, size: CGSize(width: Double(brush.size), height: Double(brush.size))))
+            context.addEllipse(in: CGRect(
+                origin: origin,
+                size: CGSize(width: Double(brush.size), height: Double(brush.size))
+            ))
             context.fillPath()
         } else {
             context.setStrokeColor(brush.color.cgColor)
@@ -100,8 +103,10 @@ final class Stroke: Renderable {
 
     func smooth(point: CGPoint, factor: CGFloat = 0.35) -> CGPoint {
         let previous = points.last!
-        return CGPoint(x: previous.x * (1 - factor) + point.x * factor,
-                       y: previous.y * (1 - factor) + point.y * factor)
+        return CGPoint(
+            x: previous.x * (1 - factor) + point.x * factor,
+            y: previous.y * (1 - factor) + point.y * factor
+        )
     }
 
     func interpolateBeizerPath(points: [CGPoint]) -> UIBezierPath {

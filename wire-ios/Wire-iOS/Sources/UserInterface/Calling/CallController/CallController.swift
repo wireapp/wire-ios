@@ -142,11 +142,13 @@ final class CallController: NSObject {
 // MARK: - WireCallCenterCallStateObserver
 
 extension CallController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState,
-                             conversation: ZMConversation,
-                             caller: UserType,
-                             timestamp: Date?,
-                             previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
@@ -165,9 +167,11 @@ extension CallController: WireCallCenterCallStateObserver {
     ///   - conversation: unverified conversation
     ///   - callState: state of the incoming call
     ///   - continueCallBlock: block to execute if no alert is shown or after user confirm or cancel choice on alert
-    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation,
-                                                         callState: CallState,
-                                                         continueCallBlock: @escaping (Bool) -> Void) {
+    private func presentSecurityDegradedAlertIfNecessary(
+        for conversation: ZMConversation,
+        callState: CallState,
+        continueCallBlock: @escaping (Bool) -> Void
+    ) {
         guard let voiceChannel = conversation.voiceChannel else {
             // no alert to show, continue
             continueCallBlock(true)
@@ -193,15 +197,21 @@ extension CallController: WireCallCenterCallStateObserver {
         }
 
         switch (degradationState, callState) {
-        case (.incoming(reason: let degradationReason),
-              .incoming(video: _, shouldRing: true, degraded: true)):
-            router?.presentIncomingSecurityDegradedAlert(for: degradationReason,
-                                                         completion: alertCompletion)
+        case (
+            .incoming(reason: let degradationReason),
+            .incoming(video: _, shouldRing: true, degraded: true)
+        ):
+            router?.presentIncomingSecurityDegradedAlert(
+                for: degradationReason,
+                completion: alertCompletion
+            )
 
         case (_, .terminating(reason: .securityDegraded)):
             if let reason = voiceChannel.degradationReason {
-                router?.presentEndingSecurityDegradedAlert(for: reason,
-                                                           completion: alertCompletion)
+                router?.presentEndingSecurityDegradedAlert(
+                    for: reason,
+                    completion: alertCompletion
+                )
             }
 
         default:
@@ -216,8 +226,10 @@ extension CallController: WireCallCenterCallStateObserver {
 // MARK: - ActiveCallViewControllerDelegate
 
 extension CallController: ActiveCallViewControllerDelegate {
-    func activeCallViewControllerDidDisappear(_ activeCallViewController: UIViewController,
-                                              for conversation: ZMConversation?) {
+    func activeCallViewControllerDidDisappear(
+        _ activeCallViewController: UIViewController,
+        for conversation: ZMConversation?
+    ) {
         router?.dismissActiveCall(animated: true, completion: nil)
         minimizedCall = conversation
     }

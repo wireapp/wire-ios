@@ -27,7 +27,11 @@ class TransferStateMigrationTests: DiskDatabaseTest {
         moc.stalenessInterval = 0.0
     }
 
-    func verifyThatLegacyTransferStateIsMigrated(_ rawLegacyTranferState: Int, expectedTranferState: AssetTransferState, line: UInt = #line) throws {
+    func verifyThatLegacyTransferStateIsMigrated(
+        _ rawLegacyTranferState: Int,
+        expectedTranferState: AssetTransferState,
+        line: UInt = #line
+    ) throws {
         // Given
         let conversation = createConversation()
         let assetMessage = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
@@ -42,20 +46,27 @@ class TransferStateMigrationTests: DiskDatabaseTest {
 
         // Then
         moc.refresh(assetMessage, mergeChanges: false)
-        XCTAssertEqual(assetMessage.transferState, expectedTranferState, "\(assetMessage.transferState.rawValue) is not equal to \(expectedTranferState.rawValue)", line: line)
+        XCTAssertEqual(
+            assetMessage.transferState,
+            expectedTranferState,
+            "\(assetMessage.transferState.rawValue) is not equal to \(expectedTranferState.rawValue)",
+            line: line
+        )
         moc.delete(assetMessage)
         try moc.save()
     }
 
     func testThatItMigratesTheLegacyTransferState() throws {
         let expectedMapping: [(WireDataModel.TransferStateMigration.LegacyTransferState, AssetTransferState)] =
-            [(.uploading, .uploading),
-             (.uploaded, .uploaded),
-             (.cancelledUpload, .uploadingCancelled),
-             (.downloaded, .uploaded),
-             (.downloading, .uploaded),
-             (.failedDownloaded, .uploaded),
-             (.failedUpload, .uploadingFailed)]
+            [
+                (.uploading, .uploading),
+                (.uploaded, .uploaded),
+                (.cancelledUpload, .uploadingCancelled),
+                (.downloaded, .uploaded),
+                (.downloading, .uploaded),
+                (.failedDownloaded, .uploaded),
+                (.failedUpload, .uploadingFailed),
+            ]
 
         for (legacy, migrated) in expectedMapping {
             try verifyThatLegacyTransferStateIsMigrated(legacy.rawValue, expectedTranferState: migrated)

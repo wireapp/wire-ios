@@ -69,8 +69,18 @@ final class SoundEventListener: NSObject {
         callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
         unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
 
         soundEventWatchDog.startIgnoreDate = Date()
         soundEventWatchDog.isMuted = UIApplication.shared.applicationState == .background
@@ -138,7 +148,13 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 }
 
 extension SoundEventListener: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         guard let mediaManager = AVSMediaManager.sharedInstance(),
               let userSession,
               let callCenter = userSession.callCenter,
@@ -152,7 +168,8 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
 
         switch callState {
         case .incoming(video: _, shouldRing: true, degraded: _):
-            guard let sessionManager = SessionManager.shared, conversation.mutedMessageTypesIncludingAvailability == .none else { return }
+            guard let sessionManager = SessionManager.shared,
+                  conversation.mutedMessageTypesIncludingAvailability == .none else { return }
 
             let otherNonIdleCalls = callCenter.nonIdleCalls.filter { (key: AVSIdentifier, _) -> Bool in
                 key != conversationId

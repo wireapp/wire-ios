@@ -21,8 +21,15 @@ import WireDataModel
 import WireSyncEngine
 
 protocol ArchivedListViewModelDelegate: AnyObject {
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo, applyChangesClosure: @escaping () -> Void)
-    func archivedListViewModel(_ model: ArchivedListViewModel, didUpdateConversationWithChange change: ConversationChangeInfo)
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateArchivedConversationsWithChange change: ConversationListChangeInfo,
+        applyChangesClosure: @escaping () -> Void
+    )
+    func archivedListViewModel(
+        _ model: ArchivedListViewModel,
+        didUpdateConversationWithChange change: ConversationChangeInfo
+    )
 }
 
 final class ArchivedListViewModel: NSObject {

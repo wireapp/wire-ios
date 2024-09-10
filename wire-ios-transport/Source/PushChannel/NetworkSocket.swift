@@ -72,7 +72,14 @@ public final class DataBuffer: NSObject {
 
     private let queueMarkerKey = DispatchSpecificKey<Void>()
 
-    public init(url: URL, trustProvider: BackendTrustProvider, delegate: NetworkSocketDelegate?, queue: DispatchQueue, callbackQueue: DispatchQueue, group: ZMSDispatchGroup) {
+    public init(
+        url: URL,
+        trustProvider: BackendTrustProvider,
+        delegate: NetworkSocketDelegate?,
+        queue: DispatchQueue,
+        callbackQueue: DispatchQueue,
+        group: ZMSDispatchGroup
+    ) {
         self.url = url
         self.trustProvider = trustProvider
         self.delegate = delegate
@@ -124,16 +131,22 @@ public final class DataBuffer: NSObject {
         CFReadStreamSetDispatchQueue(inputStream, queue)
         CFWriteStreamSetDispatchQueue(outputStream, queue)
 
-        let sslSettings: [AnyHashable: Any] = [kCFStreamSSLPeerName: hostName,
-                                               kCFStreamSSLValidatesCertificateChain: false]
+        let sslSettings: [AnyHashable: Any] = [
+            kCFStreamSSLPeerName: hostName,
+            kCFStreamSSLValidatesCertificateChain: false,
+        ]
 
         inputStream.setProperty(sslSettings, forKey: Stream.PropertyKey(kCFStreamPropertySSLSettings as String))
 
-        inputStream.setProperty(StreamSocketSecurityLevel.tlSv1,
-                                forKey: Stream.PropertyKey.socketSecurityLevelKey)
+        inputStream.setProperty(
+            StreamSocketSecurityLevel.tlSv1,
+            forKey: Stream.PropertyKey.socketSecurityLevelKey
+        )
 
-        inputStream.setProperty(StreamNetworkServiceTypeValue.background,
-                                forKey: Stream.PropertyKey.networkServiceType)
+        inputStream.setProperty(
+            StreamNetworkServiceTypeValue.background,
+            forKey: Stream.PropertyKey.networkServiceType
+        )
 
         inputStream.open()
         outputStream.open()
@@ -291,7 +304,10 @@ public final class DataBuffer: NSObject {
         }
 
         // Check if we are already writing to the stream
-        assert(outputStream.streamStatus != .writing, "Error: Trying to write into output stream, but stream is already writing. Threading issue?")
+        assert(
+            outputStream.streamStatus != .writing,
+            "Error: Trying to write into output stream, but stream is already writing. Threading issue?"
+        )
 
         // Check if the stream is errored
         guard outputStream.streamStatus != .error else {

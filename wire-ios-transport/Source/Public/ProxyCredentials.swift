@@ -57,9 +57,11 @@ public final class ProxyCredentials: NSObject {
 
             let username = String(decoding: usernameData, as: UTF8.self)
             let password = String(decoding: passwordData, as: UTF8.self)
-            return ProxyCredentials(username: username,
-                                    password: password,
-                                    proxy: proxy)
+            return ProxyCredentials(
+                username: username,
+                password: password,
+                proxy: proxy
+            )
         } catch {
             return nil
         }

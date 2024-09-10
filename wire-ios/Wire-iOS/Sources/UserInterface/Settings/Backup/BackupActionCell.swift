@@ -22,9 +22,11 @@ import WireDesign
 final class BackupActionCell: UITableViewCell {
     let actionTitleLabel: DynamicFontLabel = {
         let text = L10n.Localizable.Self.Settings.HistoryBackup.action
-        let label = DynamicFontLabel(text: text,
-                                     fontSpec: .normalRegularFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: text,
+            fontSpec: .normalRegularFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .left
         return label
     }()

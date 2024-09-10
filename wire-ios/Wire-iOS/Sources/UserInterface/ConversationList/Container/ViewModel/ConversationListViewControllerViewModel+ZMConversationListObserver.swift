@@ -35,9 +35,17 @@ extension ConversationListViewController.ViewModel {
 
     func updateObserverTokensForActiveTeam() {
         if let userSession = ZMUserSession.shared() {
-            allConversationsObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
+            allConversationsObserverToken = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.conversationsIncludingArchived(inUserSession: userSession),
+                userSession: userSession
+            )
 
-            connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            connectionRequestsObserverToken = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
         }
     }
 

@@ -42,7 +42,8 @@ final class CustomMessageView: UIView {
     override init(frame: CGRect) {
         messageLabel.isAccessibilityElement = true
         messageLabel.accessibilityLabel = "Text"
-        messageLabel.linkTextAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber]
+        messageLabel
+            .linkTextAttributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle().rawValue as NSNumber]
         if let selfUser = ZMUser.selfUser() {
             messageLabel.linkTextAttributes[NSAttributedString.Key.foregroundColor] = selfUser.accentColor
         } else {
@@ -68,7 +69,12 @@ final class CustomMessageView: UIView {
 // MARK: - UITextViewDelegate
 
 extension CustomMessageView: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith url: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         UIApplication.shared.open(url)
         return false
     }

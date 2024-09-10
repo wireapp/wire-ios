@@ -306,24 +306,28 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     func observeProfileUpdates() {
-        userProfileObserverToken = UserProfileUpdateStatus.add(observer: self, in: managedObjectContext.notificationContext)
+        userProfileObserverToken = UserProfileUpdateStatus.add(
+            observer: self,
+            in: managedObjectContext.notificationContext
+        )
     }
 
     func observeClientUpdates() {
-        clientUpdateObserverToken = ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self] type, clientIDs, error in
-            self?.managedObjectContext.performGroupedBlock {
-                switch type {
-                case .fetchCompleted:
-                    self?.didFetchClients(clientIDs: clientIDs)
-                case .deletionCompleted:
-                    self?.didDeleteClient()
-                case .deletionFailed:
-                    self?.failedDeletingClient(error: error)
-                case .fetchFailed:
-                    self?.failedFetchingClients(error: error)
+        clientUpdateObserverToken = ZMClientUpdateNotification
+            .addObserver(context: managedObjectContext) { [weak self] type, clientIDs, error in
+                self?.managedObjectContext.performGroupedBlock {
+                    switch type {
+                    case .fetchCompleted:
+                        self?.didFetchClients(clientIDs: clientIDs)
+                    case .deletionCompleted:
+                        self?.didDeleteClient()
+                    case .deletionFailed:
+                        self?.failedDeletingClient(error: error)
+                    case .fetchFailed:
+                        self?.failedFetchingClients(error: error)
+                    }
                 }
             }
-        }
     }
 
     @objc(didFailToRegisterClient:)
@@ -333,16 +337,23 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         var error: NSError = error
 
         // we should not reset login state for client registration errors
-        if error.code != UserSessionErrorCode.needsPasswordToRegisterClient.rawValue && error.code != UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue && error.code != UserSessionErrorCode.canNotRegisterMoreClients.rawValue {
+        if error.code != UserSessionErrorCode.needsPasswordToRegisterClient.rawValue && error
+            .code != UserSessionErrorCode.needsToRegisterEmailToRegisterClient.rawValue && error
+            .code != UserSessionErrorCode.canNotRegisterMoreClients.rawValue {
             emailCredentials = nil
         }
 
         if error.code == UserSessionErrorCode.needsPasswordToRegisterClient.rawValue {
             // help the user by providing the email associated with this account
-            error = NSError(domain: error.domain, code: error.code, userInfo: ZMUser.selfUser(in: managedObjectContext).loginCredentials.dictionaryRepresentation)
+            error = NSError(
+                domain: error.domain,
+                code: error.code,
+                userInfo: ZMUser.selfUser(in: managedObjectContext).loginCredentials.dictionaryRepresentation
+            )
         }
 
-        if error.code == UserSessionErrorCode.needsPasswordToRegisterClient.rawValue || error.code == UserSessionErrorCode.invalidCredentials.rawValue {
+        if error.code == UserSessionErrorCode.needsPasswordToRegisterClient.rawValue || error
+            .code == UserSessionErrorCode.invalidCredentials.rawValue {
             // set this label to block additional requests while we are waiting for the user to (re-)enter the password
             needsToCheckCredentials = true
         }
@@ -362,7 +373,10 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         cookieProvider.deleteKeychainItems()
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        let outError = NSError.userSessionError(code: .clientDeletedRemotely, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
+        let outError = NSError.userSessionError(
+            code: .clientDeletedRemotely,
+            userInfo: selfUser.loginCredentials.dictionaryRepresentation
+        )
         registrationStatusDelegate?.didDeleteSelfUserClient(error: outError)
     }
 
@@ -414,9 +428,11 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         let hasNotYetRegisteredClient = selfUser.clients.contains(where: { $0.remoteIdentifier == nil })
 
         if !hasNotYetRegisteredClient {
-            WireLogger.userClient.info("self user has no client that isn't yet registered. will need to create new self client")
+            WireLogger.userClient
+                .info("self user has no client that isn't yet registered. will need to create new self client")
         } else {
-            WireLogger.userClient.info("self user has a client that isn't yet registered. no need to create new self client")
+            WireLogger.userClient
+                .info("self user has a client that isn't yet registered. no need to create new self client")
         }
 
         return !hasNotYetRegisteredClient

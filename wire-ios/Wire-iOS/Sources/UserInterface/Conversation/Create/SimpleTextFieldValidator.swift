@@ -44,10 +44,12 @@ final class SimpleTextFieldValidator: NSObject {
         var validatedString: Any? = stringToValidate as Any
 
         do {
-            _ = try StringLengthValidator.validateStringValue(&validatedString,
-                                                              minimumStringLength: 1,
-                                                              maximumStringLength: 64,
-                                                              maximumByteLength: 256)
+            _ = try StringLengthValidator.validateStringValue(
+                &validatedString,
+                minimumStringLength: 1,
+                maximumStringLength: 64,
+                maximumByteLength: 256
+            )
         } catch let stringValidationError as NSError {
             switch stringValidationError.code {
             case ZMManagedObjectValidationErrorCode.tooLong.rawValue:
@@ -61,7 +63,11 @@ final class SimpleTextFieldValidator: NSObject {
 }
 
 extension SimpleTextFieldValidator: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         let oldValue = textField.text as NSString?
         let result = oldValue?.replacingCharacters(in: range, with: string) ?? ""
         if !result.isEmpty, self.validate(text: result) != nil {

@@ -367,7 +367,10 @@ final class SearchTaskTests: DatabaseTest {
 
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID()
-        conversation.addParticipantsAndUpdateConversationState(users: Set([userA, ZMUser.selfUser(in: uiMOC)]), role: nil)
+        conversation.addParticipantsAndUpdateConversationState(
+            users: Set([userA, ZMUser.selfUser(in: uiMOC)]),
+            role: nil
+        )
 
         userA.name = "Member A"
         userB.name = "Member B"
@@ -442,7 +445,10 @@ final class SearchTaskTests: DatabaseTest {
 
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID()
-        conversation.addParticipantsAndUpdateConversationState(users: Set([userA, userB, ZMUser.selfUser(in: self.uiMOC)]), role: nil)
+        conversation.addParticipantsAndUpdateConversationState(
+            users: Set([userA, userB, ZMUser.selfUser(in: self.uiMOC)]),
+            role: nil
+        )
 
         userA.name = "Member A"
         userB.name = "Member B"
@@ -822,7 +828,10 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10")
+        XCTAssertEqual(
+            mockTransportSession.receivedRequests().first?.path,
+            "/v2/search/contacts?q=steve%20o'hara%20%26%20s%C3%B6hne&size=10"
+        )
     }
 
     func testThatItDoesNotSendASearchRequestIfSeachingLocally() {
@@ -862,7 +871,10 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=foo%2Bbar&domain=example.com&size=10")
+        XCTAssertEqual(
+            mockTransportSession.receivedRequests().first?.path,
+            "/v2/search/contacts?q=foo%2Bbar&domain=example.com&size=10"
+        )
     }
 
     func testThatItEncodesUnsafeCharactersInRequest() {
@@ -881,7 +893,10 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=$%26%2B,/:;%3D?&size=10")
+        XCTAssertEqual(
+            mockTransportSession.receivedRequests().first?.path,
+            "/v2/search/contacts?q=$%26%2B,/:;%3D?&size=10"
+        )
     }
 
     func testThatItCallsCompletionHandlerForDirectorySearch() {
@@ -929,7 +944,10 @@ final class SearchTaskTests: DatabaseTest {
         // then
         XCTAssertEqual(mockTransportSession.receivedRequests().count, 2)
         XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/v2/search/contacts?q=user&size=10")
-        XCTAssertEqual(mockTransportSession.receivedRequests().last?.path, "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post")
+        XCTAssertEqual(
+            mockTransportSession.receivedRequests().last?.path,
+            "/v2/teams/\(teamIdentifier.transportString())/get-members-by-ids-using-post"
+        )
     }
 
     func testThatItDoesNotMakeRequestToFetchTeamMembershipMetadata_WhenLocalResultsOnly() {
@@ -996,7 +1014,10 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(mockTransportSession.receivedRequests().first?.path, "/teams/\(teamIdentifier.transportString())/services/whitelisted?prefix=steve%20o'hara%20%26%20s%C3%B6hne")
+        XCTAssertEqual(
+            mockTransportSession.receivedRequests().first?.path,
+            "/teams/\(teamIdentifier.transportString())/services/whitelisted?prefix=steve%20o'hara%20%26%20s%C3%B6hne"
+        )
     }
 
     func testThatItDoesNotSendASearchServicesRequest_WhenLocalResultsOnly() {
@@ -1019,9 +1040,11 @@ final class SearchTaskTests: DatabaseTest {
         let task = makeSearchTask(request: request)
 
         mockTransportSession.performRemoteChanges { remoteChanges in
-            remoteChanges.insertService(withName: "Service A",
-                                        identifier: UUID().transportString(),
-                                        provider: UUID().transportString())
+            remoteChanges.insertService(
+                withName: "Service A",
+                identifier: UUID().transportString(),
+                provider: UUID().transportString()
+            )
         }
 
         // expect
@@ -1037,7 +1060,11 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItTrimsThePrefixQuery() throws {
         // when
-        let task = SearchTask.servicesSearchRequest(teamIdentifier: self.teamIdentifier, query: "Search query ", apiVersion: .v0)
+        let task = SearchTask.servicesSearchRequest(
+            teamIdentifier: self.teamIdentifier,
+            query: "Search query ",
+            apiVersion: .v0
+        )
         // then
         let components = URLComponents(url: task.URL, resolvingAgainstBaseURL: false)
 

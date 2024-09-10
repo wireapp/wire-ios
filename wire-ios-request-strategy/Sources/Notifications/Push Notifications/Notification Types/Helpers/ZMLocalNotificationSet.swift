@@ -48,7 +48,10 @@ import WireUtilities
     func unarchiveOldNotifications() {
         // NotificationUserInfo was moved from WireSyncEngine. To avoid crashing when unarchiving
         // data stored in previous versions, we must add a mapping of the class from the old name.
-        NSKeyedUnarchiver.setClass(WireRequestStrategy.NotificationUserInfo.self, forClassName: "WireSyncEngine.NotificationUserInfo")
+        NSKeyedUnarchiver.setClass(
+            WireRequestStrategy.NotificationUserInfo.self,
+            forClassName: "WireSyncEngine.NotificationUserInfo"
+        )
 
         guard
             let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
@@ -157,11 +160,21 @@ extension ZMConversation {
         switch conversationType {
         case .group:
             if let conversationName, let callerName {
-                result = String.localizedStringWithFormat("callkit.call.started.group".pushFormatString, callerName, conversationName)
+                result = String.localizedStringWithFormat(
+                    "callkit.call.started.group".pushFormatString,
+                    callerName,
+                    conversationName
+                )
             } else if let conversationName {
-                result = String.localizedStringWithFormat("callkit.call.started.group.nousername".pushFormatString, conversationName)
+                result = String.localizedStringWithFormat(
+                    "callkit.call.started.group.nousername".pushFormatString,
+                    conversationName
+                )
             } else if let callerName {
-                result = String.localizedStringWithFormat("callkit.call.started.group.noconversationname".pushFormatString, callerName)
+                result = String.localizedStringWithFormat(
+                    "callkit.call.started.group.noconversationname".pushFormatString,
+                    callerName
+                )
             }
         case .oneOnOne:
             result = connectedUser?.name
@@ -169,6 +182,7 @@ extension ZMConversation {
             break
         }
 
-        return result ?? String.localizedStringWithFormat("callkit.call.started.group.nousername.noconversationname".pushFormatString)
+        return result ?? String
+            .localizedStringWithFormat("callkit.call.started.group.nousername.noconversationname".pushFormatString)
     }
 }

@@ -186,12 +186,16 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
 
         // THEN
-        XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
+        XCTAssertFalse(
+            patchApplied,
+            "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)"
+        )
     }
 
     func testThatItMigratesClientsSessionIdentifiers() async throws {
         // GIVEN
-        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        let hardcodedPrekey =
+            "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
         var selfClient: UserClient!
         var newClient: UserClient!
 
@@ -352,7 +356,8 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     private func assertSuccessfulSessionMigration(simulateCryptoboxMigration: Bool = false) async {
         // Given
-        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        let hardcodedPrekey =
+            "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
         var otherUser: ZMUser!
         var selfClient: UserClient!
         var otherUserClient: UserClient!

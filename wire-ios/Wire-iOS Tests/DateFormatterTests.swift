@@ -168,7 +168,10 @@ final class DateFormatterTests: XCTestCase {
         XCTAssert(dateString.contains(String(lastYear)), "dateString is \(dateString)")
 
         // change the date to today to see the date format changes (no year component)
-        XCTAssertFalse(startOfYearDateString.contains(String(thisYear)), "startOfYearDateString is \(startOfYearDateString)")
+        XCTAssertFalse(
+            startOfYearDateString.contains(String(thisYear)),
+            "startOfYearDateString is \(startOfYearDateString)"
+        )
     }
 
     func testWr_formattedDateWouldChangeAfterDateChangeToOneYearBefore() {
@@ -182,7 +185,10 @@ final class DateFormatterTests: XCTestCase {
         let dateString = oneYearBefore.formattedDate
 
         // THEN
-        XCTAssertFalse(startOfYearDateString.contains(String(thisYear)), "startOfYearDateString is \(startOfYearDateString)")
+        XCTAssertFalse(
+            startOfYearDateString.contains(String(thisYear)),
+            "startOfYearDateString is \(startOfYearDateString)"
+        )
         XCTAssert(dateString.contains(String(lastYear)), "dateString is \(dateString)")
     }
 }

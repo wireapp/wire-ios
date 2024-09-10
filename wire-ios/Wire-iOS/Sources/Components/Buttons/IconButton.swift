@@ -80,9 +80,11 @@ class IconButton: ButtonWithLargerHitArea {
         hitAreaPadding = CGSize(width: 20, height: 20)
     }
 
-    convenience init(style: IconButtonStyle,
-                     variant: ColorSchemeVariant = ColorScheme.default.variant,
-                     fontSpec: FontSpec = .normalRegularFont) {
+    convenience init(
+        style: IconButtonStyle,
+        variant: ColorSchemeVariant = ColorScheme.default.variant,
+        fontSpec: FontSpec = .normalRegularFont
+    ) {
         self.init(fontSpec: fontSpec)
 
         setIconColor(UIColor.from(scheme: .iconNormal, variant: variant), for: .normal)
@@ -165,15 +167,32 @@ class IconButton: ButtonWithLargerHitArea {
         let leftInset = isLeftToRight ? -inset : inset
         let rightInset = isLeftToRight ? inset : -inset
 
-        imageEdgeInsets = UIEdgeInsets(top: imageEdgeInsets.top, left: leftInset, bottom: imageEdgeInsets.bottom, right: rightInset)
-        titleEdgeInsets = UIEdgeInsets(top: titleEdgeInsets.top, left: rightInset, bottom: titleEdgeInsets.bottom, right: leftInset)
+        imageEdgeInsets = UIEdgeInsets(
+            top: imageEdgeInsets.top,
+            left: leftInset,
+            bottom: imageEdgeInsets.bottom,
+            right: rightInset
+        )
+        titleEdgeInsets = UIEdgeInsets(
+            top: titleEdgeInsets.top,
+            left: rightInset,
+            bottom: titleEdgeInsets.bottom,
+            right: leftInset
+        )
 
         let horizontal = inset + horizontalMargin
-        contentEdgeInsets = UIEdgeInsets(top: contentEdgeInsets.top, left: horizontal, bottom: contentEdgeInsets.bottom, right: horizontal)
+        contentEdgeInsets = UIEdgeInsets(
+            top: contentEdgeInsets.top,
+            left: horizontal,
+            bottom: contentEdgeInsets.bottom,
+            right: horizontal
+        )
     }
 
-    func setBackgroundImageColor(_ color: UIColor,
-                                 for state: UIControl.State) {
+    func setBackgroundImageColor(
+        _ color: UIColor,
+        for state: UIControl.State
+    ) {
         setBackgroundImage(UIImage.singlePixelImage(with: color), for: state)
 
         if adjustBackgroundImageWhenHighlighted, state.contains(.normal) {
@@ -181,11 +200,13 @@ class IconButton: ButtonWithLargerHitArea {
         }
     }
 
-    func setIcon(_ iconType: StyleKitIcon?,
-                 size: StyleKitIcon.Size,
-                 for state: UIControl.State,
-                 renderingMode: UIImage.RenderingMode = UIImage.RenderingMode.alwaysTemplate,
-                 force: Bool = false) {
+    func setIcon(
+        _ iconType: StyleKitIcon?,
+        size: StyleKitIcon.Size,
+        for state: UIControl.State,
+        renderingMode: UIImage.RenderingMode = UIImage.RenderingMode.alwaysTemplate,
+        force: Bool = false
+    ) {
         setIcon(iconType, iconSize: size.rawValue, for: state, renderingMode: renderingMode, force: force)
     }
 
@@ -197,11 +218,13 @@ class IconButton: ButtonWithLargerHitArea {
     ///   - state: UIControl state
     ///   - renderingMode: Default rendering mode is AlwaysTemplate
     ///   - force: force update
-    func setIcon(_ iconType: StyleKitIcon?,
-                 iconSize: CGFloat,
-                 for state: UIControl.State,
-                 renderingMode: UIImage.RenderingMode = UIImage.RenderingMode.alwaysTemplate,
-                 force: Bool = false) {
+    func setIcon(
+        _ iconType: StyleKitIcon?,
+        iconSize: CGFloat,
+        for state: UIControl.State,
+        renderingMode: UIImage.RenderingMode = UIImage.RenderingMode.alwaysTemplate,
+        force: Bool = false
+    ) {
         guard let iconType else {
             removeIcon(for: state)
             return
@@ -232,8 +255,10 @@ class IconButton: ButtonWithLargerHitArea {
         setImage(nil, for: state)
     }
 
-    func setIconColor(_ color: UIColor?,
-                      for state: UIControl.State) {
+    func setIconColor(
+        _ color: UIColor?,
+        for state: UIControl.State
+    ) {
         if color != nil {
             iconColorsByState[state.rawValue] = color
         } else {
@@ -242,11 +267,13 @@ class IconButton: ButtonWithLargerHitArea {
 
         if let currentIcon = iconDefinitionsByState[state.rawValue],
            currentIcon.renderingMode == .alwaysOriginal {
-            setIcon(currentIcon.type,
-                    iconSize: currentIcon.size,
-                    for: state,
-                    renderingMode: currentIcon.renderingMode,
-                    force: true)
+            setIcon(
+                currentIcon.type,
+                iconSize: currentIcon.size,
+                for: state,
+                renderingMode: currentIcon.renderingMode,
+                force: true
+            )
         }
 
         updateTintColor()
@@ -278,9 +305,11 @@ class IconButton: ButtonWithLargerHitArea {
         // Create a circular mask. It would also mask subviews.
 
         let radius: CGFloat = bounds.size.height / 2
-        let maskPath = UIBezierPath(roundedRect: bounds,
-                                    byRoundingCorners: .allCorners,
-                                    cornerRadii: CGSize(width: radius, height: radius))
+        let maskPath = UIBezierPath(
+            roundedRect: bounds,
+            byRoundingCorners: .allCorners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
 
         let maskLayer = CAShapeLayer()
         maskLayer.frame = bounds

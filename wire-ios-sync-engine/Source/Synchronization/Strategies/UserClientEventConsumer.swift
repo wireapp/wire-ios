@@ -48,7 +48,10 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
             do {
                 try await processUpdateEvent(event)
             } catch {
-                WireLogger.updateEvent.error("failed to process user client event: \(event.safeForLoggingDescription): \(error)", attributes: .safePublic)
+                WireLogger.updateEvent.error(
+                    "failed to process user client event: \(event.safeForLoggingDescription): \(error)",
+                    attributes: .safePublic
+                )
             }
         }
     }
@@ -71,7 +74,8 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
         switch event.type {
         case .userClientAdd:
             await managedObjectContext.perform {
-                if let client = UserClient.createOrUpdateSelfUserClient(clientInfo, context: self.managedObjectContext) {
+                if let client = UserClient
+                    .createOrUpdateSelfUserClient(clientInfo, context: self.managedObjectContext) {
                     let clientSet: Set<UserClient> = [client]
                     let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
                     selfUser.selfClient()?.addNewClientToIgnored(client)

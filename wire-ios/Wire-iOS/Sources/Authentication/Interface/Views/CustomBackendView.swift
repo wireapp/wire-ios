@@ -21,9 +21,11 @@ import WireDesign
 
 final class CustomBackendView: UIView {
     lazy var backendLabel: UILabel = {
-        let label = DynamicFontLabel(text: nil,
-                                     fontSpec: .headerSemiboldFont,
-                                     color: SemanticColors.Label.textSectionHeader)
+        let label = DynamicFontLabel(
+            text: nil,
+            fontSpec: .headerSemiboldFont,
+            color: SemanticColors.Label.textSectionHeader
+        )
         label.textAlignment = .right
         label.accessibilityIdentifier = "Backend domain"
         return label

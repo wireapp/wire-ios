@@ -85,7 +85,12 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
         context.setLineWidth(1)
 
         // draw dot
-        let dotPath = UIBezierPath(ovalIn: CGRect(x: dotSpacing, y: ceil((imageSize.height + dotSize) / 2), width: dotSize, height: dotSize))
+        let dotPath = UIBezierPath(ovalIn: CGRect(
+            x: dotSpacing,
+            y: ceil((imageSize.height + dotSize) / 2),
+            width: dotSize,
+            height: dotSize
+        ))
 
         if let dotColor {
             context.setFillColor(dotColor.cgColor)

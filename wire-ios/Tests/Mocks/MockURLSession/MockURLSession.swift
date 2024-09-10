@@ -108,15 +108,26 @@ class MockURLSession: DataTaskSession {
             }
 
             if let cache = self.cache {
-                self.startCaching(data: data, for: response, task: task, in: cache,
-                                  completionHandler: cachingCompletionHandler)
+                self.startCaching(
+                    data: data,
+                    for: response,
+                    task: task,
+                    in: cache,
+                    completionHandler: cachingCompletionHandler
+                )
             } else {
                 cachingCompletionHandler()
             }
         }
     }
 
-    private func startCaching(data: Data, for response: URLResponse, task: DataTask, in cache: URLCache, completionHandler: @escaping () -> Void) {
+    private func startCaching(
+        data: Data,
+        for response: URLResponse,
+        task: DataTask,
+        in cache: URLCache,
+        completionHandler: @escaping () -> Void
+    ) {
         guard let httpResponse = response as? HTTPURLResponse,
               (200 ..< 300).contains(httpResponse.statusCode) else {
             completionHandler()

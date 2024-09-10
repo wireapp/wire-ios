@@ -66,11 +66,15 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         mockSelfClient.remoteIdentifier = "selfClient123"
         MockUser.mockSelf().clients = Set([mockSelfClient])
 
-        let identifier = AVSIdentifier(identifier: MockUser.mockSelf().remoteIdentifier,
-                                       domain: nil)
+        let identifier = AVSIdentifier(
+            identifier: MockUser.mockSelf().remoteIdentifier,
+            domain: nil
+        )
 
-        selfAVSClient = AVSClient(userId: identifier,
-                                  clientId: mockSelfClient.remoteIdentifier!)
+        selfAVSClient = AVSClient(
+            userId: identifier,
+            clientId: mockSelfClient.remoteIdentifier!
+        )
 
         selfStream = stubProvider.stream(
             user: MockUserType.createUser(name: "Alice"),
@@ -116,7 +120,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     func testActiveSpeakersIndicators_OneToOne() throws {
-        throw XCTSkip("This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time.")
+        throw XCTSkip(
+            "This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time."
+        )
         // Given / When
         configuration.streams = [stubProvider.stream(
             user: MockUserType.createUser(name: "Bob"),
@@ -146,7 +152,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     }
 
     func testVideoStoppedBorder_DoesntAppear_OneToOne() throws {
-        throw XCTSkip("This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time.")
+        throw XCTSkip(
+            "This test has been flaky. The view that displays the name of the selfUser sometimes shifts to the left unexpectedly. I believe this issue stems from our current UI setup. For now, we can skip this test and plan to investigate the underlying cause at a later time."
+        )
         // Given / When
         configuration.streams = [stubProvider.stream(videoState: .stopped)]
         configuration.floatingStream = stubProvider.stream(
@@ -323,7 +331,12 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 }
 
 extension CallGridViewControllerSnapshotTests {
-    private func assertHint(input: HintTestCase.Input, output: HintTestCase.Output, file: StaticString = #file, line: UInt = #line) {
+    private func assertHint(
+        input: HintTestCase.Input,
+        output: HintTestCase.Output,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         mockHintView.didCallHideAndStopTimer = false
         mockHintView.hint = nil
 
@@ -442,7 +455,11 @@ extension CallGridViewControllerSnapshotTests {
             case showNothing
             case hideHintAndStopTimer
 
-            func assert(mockHintView: MockCallGridHintNotificationLabel, file: StaticString = #file, line: UInt = #line) {
+            func assert(
+                mockHintView: MockCallGridHintNotificationLabel,
+                file: StaticString = #file,
+                line: UInt = #line
+            ) {
                 switch self {
                 case let .show(hint: hint):
                     XCTAssertEqual(mockHintView.hint, hint, file: file, line: line)

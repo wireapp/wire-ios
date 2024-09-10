@@ -137,7 +137,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         sut.view.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
         sut.view.layoutIfNeeded()
 
-        snapshotHelper.verify(matching: sut, size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height))
+        snapshotHelper.verify(
+            matching: sut,
+            size: CGSize(width: CGSize.iPhoneSize.iPhone4_7.width, height: sut.tableView.contentSize.height)
+        )
     }
 
     func testThatApplockIsAvailableInOptionsGroup_WhenIsAvailable() {
@@ -145,8 +148,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         userSession.isAppLockAvailable = true
 
         settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
-        settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
-                                              userRightInterfaceType: MockUserRight.self)
+        settingsCellDescriptorFactory = .init(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: MockUserRight.self
+        )
 
         // then
         XCTAssertTrue(settingsCellDescriptorFactory.isAppLockAvailable)
@@ -157,8 +162,10 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
         userSession.isAppLockAvailable = false
 
         settingsPropertyFactory = .init(userSession: userSession, selfUser: selfUser)
-        settingsCellDescriptorFactory = .init(settingsPropertyFactory: settingsPropertyFactory,
-                                              userRightInterfaceType: MockUserRight.self)
+        settingsCellDescriptorFactory = .init(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: MockUserRight.self
+        )
 
         // then
         XCTAssertFalse(settingsCellDescriptorFactory.isAppLockAvailable)

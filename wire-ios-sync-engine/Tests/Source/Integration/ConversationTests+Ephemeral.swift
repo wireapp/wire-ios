@@ -20,7 +20,8 @@ import Foundation
 
 class ConversationTests_Ephemeral: ConversationTestsBase {
     var obfuscationTimer: ZMMessageDestructionTimer? {
-        userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
+        userSession!.syncManagedObjectContext
+            .performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
     }
 
     var deletionTimer: ZMMessageDestructionTimer? {
@@ -110,7 +111,11 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
 
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: deleteMessage.serializedData())
+                try self.selfToUser1Conversation?.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: deleteMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -135,7 +140,11 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
 
         mockTransportSession?.performRemoteChanges { _ in
             do {
-                try conversation.encryptAndInsertData(from: fromClient, to: toClient, data: genericMessage.serializedData())
+                try conversation.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -168,7 +177,9 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         spinMainQueue(withTimeout: 5.1) // We can't set isTesting and therefore have to wait 5sec at least :-/
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1)) // we have to wait until the request "made the roundtrip" to the backend
+        XCTAssert(waitForAllGroupsToBeEmpty(
+            withTimeout: 0.1
+        )) // we have to wait until the request "made the roundtrip" to the backend
 
         // then
         XCTAssertEqual(mockTransportSession?.receivedRequests().count, 1)

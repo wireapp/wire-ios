@@ -79,7 +79,8 @@ final class CallActionsView: UIView {
         verticalStackView.spacing = 37
         addSubview(verticalStackView)
         [microphoneButton, cameraButton, flipCameraButton, speakerButton].forEach(topStackView.addArrangedSubview)
-        [firstBottomRowSpacer, endCallButton, secondBottomRowSpacer, acceptCallButton].forEach(bottomStackView.addArrangedSubview)
+        [firstBottomRowSpacer, endCallButton, secondBottomRowSpacer, acceptCallButton]
+            .forEach(bottomStackView.addArrangedSubview)
         [speakersAllSegmentedView, topStackView].forEach(verticalStackView.addArrangedSubview)
         allButtons.forEach { $0.addTarget(self, action: #selector(performButtonAction), for: .touchUpInside) }
         addSubview(cameraButtonDisabled)
@@ -246,14 +247,18 @@ final class CallActionsView: UIView {
 
         microphoneButton.accessibilityLabel = input.isMuted ? Label.toggleMuteOff : Label.toggleMuteOn
         flipCameraButton.accessibilityLabel = Label.flipCamera
-        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Label.toggleSpeakerOff : Label.toggleSpeakerOn
+        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Label.toggleSpeakerOff : Label
+            .toggleSpeakerOn
         acceptCallButton.accessibilityLabel = Label.acceptCall
         endCallButton.accessibilityLabel = input.callState.canAccept ? Label.rejectCall : Label.terminateCall
         cameraButtonDisabled.accessibilityLabel = Label.toggleVideoOn
         cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Label.toggleVideoOff : Label.toggleVideoOn
-        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Label.switchToBackCamera : Label.switchToFrontCamera
+        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Label.switchToBackCamera : Label
+            .switchToFrontCamera
 
-        speakersAllSegmentedView.accessibilityIdentifier = "speakers_and_all_toggle.selected.\(input.videoGridPresentationMode.accessibilityIdentifier)"
+        speakersAllSegmentedView
+            .accessibilityIdentifier =
+            "speakers_and_all_toggle.selected.\(input.videoGridPresentationMode.accessibilityIdentifier)"
     }
 }
 

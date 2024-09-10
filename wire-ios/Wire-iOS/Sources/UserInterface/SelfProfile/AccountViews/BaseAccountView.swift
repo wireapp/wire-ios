@@ -61,8 +61,10 @@ class BaseAccountView: UIView {
     var onTap: (Account) -> Void = { _ in }
 
     var accessibilityState: String {
-        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue
-        var result = selected ? ConversationListHeaderAccessibilityLocale.active : ConversationListHeaderAccessibilityLocale.inactive
+        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam
+            .AccessibilityValue
+        var result = selected ? ConversationListHeaderAccessibilityLocale
+            .active : ConversationListHeaderAccessibilityLocale.inactive
 
         if hasUnreadMessages {
             result += "\(L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue.hasNewMessages)"
@@ -120,12 +122,17 @@ class BaseAccountView: UIView {
                     imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
                     imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
                     widthAnchor.constraint(lessThanOrEqualToConstant: 128),
-                ])
+                ]
+        )
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
         self.addGestureRecognizer(tapGesture)
 
-        self.unreadCountToken = NotificationCenter.default.addObserver(forName: .AccountUnreadCountDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        self.unreadCountToken = NotificationCenter.default.addObserver(
+            forName: .AccountUnreadCountDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateAppearance()
         }
 

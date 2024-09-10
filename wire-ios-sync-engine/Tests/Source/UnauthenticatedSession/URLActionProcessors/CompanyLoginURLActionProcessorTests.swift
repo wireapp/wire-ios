@@ -74,7 +74,10 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
         // then
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
-        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError, .accountLimitReached)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
+            .accountLimitReached
+        )
     }
 
     func testThatSSOCodeIsPropagatedToAuthenticationStatus_OnStartCompanyLoginAction() {

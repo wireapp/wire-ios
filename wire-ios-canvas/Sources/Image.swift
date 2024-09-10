@@ -84,7 +84,8 @@ final class Image: Editable {
         let rotationTransform = CGAffineTransform(rotationAngle: rotation)
         let translate = CGAffineTransform(translationX: position.x, y: position.y)
 
-        return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter).concatenating(translate)
+        return toCenter.concatenating(scaleTransform).concatenating(rotationTransform).concatenating(restoreCenter)
+            .concatenating(translate)
     }
 
     func sizeToFit(inRect rect: CGRect) {

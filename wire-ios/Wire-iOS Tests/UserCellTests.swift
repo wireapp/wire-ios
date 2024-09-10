@@ -230,7 +230,11 @@ final class UserCellTests: XCTestCase {
         }
 
         let callParticipantState: CallParticipantState = .connected(videoState: .started, microphoneState: .unmuted)
-        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
+        let config = CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: mockUser),
+            callParticipantState: callParticipantState,
+            activeSpeakerState: .inactive
+        )
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
 
@@ -262,8 +266,15 @@ final class UserCellTests: XCTestCase {
             return
         }
 
-        let callParticipantState: CallParticipantState = .connected(videoState: .screenSharing, microphoneState: .unmuted)
-        let config = CallParticipantsListCellConfiguration.callParticipant(user: HashBox(value: mockUser), callParticipantState: callParticipantState, activeSpeakerState: .inactive)
+        let callParticipantState: CallParticipantState = .connected(
+            videoState: .screenSharing,
+            microphoneState: .unmuted
+        )
+        let config = CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: mockUser),
+            callParticipantState: callParticipantState,
+            activeSpeakerState: .inactive
+        )
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         sut.configure(with: config, selfUser: user)
 

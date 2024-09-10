@@ -99,7 +99,8 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
         nonTeamTest {
             setupSut()
 
-            let navigationController = UIViewController().wrapInNavigationController(navigationControllerClass: NavigationController.self)
+            let navigationController = UIViewController()
+                .wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
             navigationController.pushViewController(sut, animated: false)
 

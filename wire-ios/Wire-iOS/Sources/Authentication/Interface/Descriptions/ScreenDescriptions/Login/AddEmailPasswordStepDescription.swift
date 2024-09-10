@@ -31,7 +31,10 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription?
 
-    private let emailPasswordFieldDescription = EmailPasswordFieldDescription(forRegistration: true, usePasswordDeferredValidation: true)
+    private let emailPasswordFieldDescription = EmailPasswordFieldDescription(
+        forRegistration: true,
+        usePasswordDeferredValidation: true
+    )
 
     init() {
         backButton = BackButtonDescription()
@@ -56,18 +59,23 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
             return
         }
 
-        let credentials = (emailPasswordFieldDescription.textField.emailField.input, emailPasswordFieldDescription.textField.passwordField.input)
+        let credentials = (
+            emailPasswordFieldDescription.textField.emailField.input,
+            emailPasswordFieldDescription.textField.passwordField.input
+        )
         emailPasswordFieldDescription.valueSubmitted?(credentials)
     }
 
     private func updateLoginButtonState(_ textField: EmailPasswordTextField) {
-        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField.passwordField.isInputValid
+        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField
+            .passwordField.isInputValid
     }
 }
 
 extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
     func textFieldDidUpdateText(_ textField: EmailPasswordTextField) {
-        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField.passwordField.isInputValid
+        (secondaryView as? CTAFooterDescription)?.ctaButton.isEnabled = textField.emailField.isInputValid && textField
+            .passwordField.isInputValid
     }
 
     func textField(_ textField: EmailPasswordTextField, didConfirmCredentials credentials: (String, String)) {}

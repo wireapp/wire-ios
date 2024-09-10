@@ -47,7 +47,10 @@ extension SettingsCellDescriptorFactory {
             presentationAction: { () -> (UIViewController?) in
                 let router = SettingsDebugReportRouter()
                 let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
-                let fetchShareableConversations = FetchShareableConversationsUseCase(contextProvider: userSession.contextProvider)
+                let fetchShareableConversations = FetchShareableConversationsUseCase(
+                    contextProvider: userSession
+                        .contextProvider
+                )
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
                     shareFile: shareFile,
@@ -56,7 +59,8 @@ extension SettingsCellDescriptorFactory {
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
                 return viewController
-            })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [submitDebugButton],
@@ -73,7 +77,8 @@ extension SettingsCellDescriptorFactory {
             presentationAction: { () -> (UIViewController?) in
                 ZMUserSession.shared()?.validatePushToken()
                 return self.pushButtonAlertController
-            })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [pushButton],
@@ -81,7 +86,8 @@ extension SettingsCellDescriptorFactory {
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
                 true
-            })
+            }
+        )
     }
 
     private var debuggingToolsSection: SettingsSectionDescriptor {

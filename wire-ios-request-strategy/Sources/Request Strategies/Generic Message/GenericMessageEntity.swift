@@ -35,7 +35,13 @@ import Foundation
 
     public let targetRecipients: Recipients
 
-    public init(message: GenericMessage, context: NSManagedObjectContext, conversation: ZMConversation? = nil, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(
+        message: GenericMessage,
+        context: NSManagedObjectContext,
+        conversation: ZMConversation? = nil,
+        targetRecipients: Recipients = .conversationParticipants,
+        completionHandler: ((_ response: ZMTransportResponse) -> Void)?
+    ) {
         self.context = context
         self.conversation = conversation
         self.message = message
@@ -99,7 +105,11 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
             guard let conversation else { return nil }
             return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
         case let .users(users):
-            return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
+            return await message.encryptForTransport(
+                forBroadcastRecipients: users,
+                useQualifiedIdentifiers: true,
+                in: context
+            )
         case let .clients(clientsByUser):
             return await message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
         }

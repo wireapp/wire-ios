@@ -97,7 +97,10 @@ class LinkAttachmentDetectorTests: XCTestCase {
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(previewDownloader.requestOpenGraphDataCallCount, 1)
-        XCTAssertEqual(previewDownloader.requestOpenGraphDataURLs, [URL(string: "http://youtube.com/watch?v=cggNqDAtJYU")!])
+        XCTAssertEqual(
+            previewDownloader.requestOpenGraphDataURLs,
+            [URL(string: "http://youtube.com/watch?v=cggNqDAtJYU")!]
+        )
         XCTAssertEqual(result, [])
     }
 

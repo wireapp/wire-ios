@@ -25,7 +25,11 @@ final class AccountTests: XCTestCase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let credentials = LoginCredentials(emailAddress: "bruno@example.com", hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(
+            emailAddress: "bruno@example.com",
+            hasPassword: true,
+            usesCompanyLogin: false
+        )
 
         let account = Account(
             userName: "Bruno",
@@ -50,13 +54,15 @@ final class AccountTests: XCTestCase {
 
         // we create and store an account
         do {
-            let account = Account(userName: userName,
-                                  userIdentifier: id,
-                                  teamName: team,
-                                  imageData: image,
-                                  teamImageData: image,
-                                  unreadConversationCount: count,
-                                  loginCredentials: nil)
+            let account = Account(
+                userName: userName,
+                userIdentifier: id,
+                teamName: team,
+                imageData: image,
+                teamImageData: image,
+                unreadConversationCount: count,
+                loginCredentials: nil
+            )
             try account.write(to: url)
         }
 
@@ -78,17 +84,23 @@ final class AccountTests: XCTestCase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
         let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
-        let credentials = LoginCredentials(emailAddress: "bruno@example.com", hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(
+            emailAddress: "bruno@example.com",
+            hasPassword: true,
+            usesCompanyLogin: false
+        )
 
         // we create and store an account
         do {
-            let account = Account(userName: userName,
-                                  userIdentifier: id,
-                                  teamName: team,
-                                  imageData: image,
-                                  teamImageData: image,
-                                  unreadConversationCount: count,
-                                  loginCredentials: credentials)
+            let account = Account(
+                userName: userName,
+                userIdentifier: id,
+                teamName: team,
+                imageData: image,
+                teamImageData: image,
+                unreadConversationCount: count,
+                loginCredentials: credentials
+            )
             try account.write(to: url)
         }
 
@@ -109,19 +121,23 @@ final class AccountTests: XCTestCase {
         // given
         let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
 
-        let account = Account(userName: userName,
-                              userIdentifier: id,
-                              teamName: team,
-                              imageData: image,
-                              teamImageData: image,
-                              unreadConversationCount: count)
+        let account = Account(
+            userName: userName,
+            userIdentifier: id,
+            teamName: team,
+            imageData: image,
+            teamImageData: image,
+            unreadConversationCount: count
+        )
 
-        let sameAccount = Account(userName: "",
-                                  userIdentifier: id,
-                                  teamName: "",
-                                  imageData: nil,
-                                  teamImageData: nil,
-                                  unreadConversationCount: 0)
+        let sameAccount = Account(
+            userName: "",
+            userIdentifier: id,
+            teamName: "",
+            imageData: nil,
+            teamImageData: nil,
+            unreadConversationCount: 0
+        )
 
         XCTAssertEqual(account, sameAccount)
     }

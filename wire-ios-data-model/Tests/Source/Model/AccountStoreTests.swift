@@ -192,7 +192,13 @@ final class AccountStoreTests: ZMConversationTestsBase {
         // when
         let name = "Marco", team = "Wire", image = verySmallJPEGData()
         do {
-            let account = Account(userName: name, userIdentifier: uuid, teamName: team, imageData: image, teamImageData: image)
+            let account = Account(
+                userName: name,
+                userIdentifier: uuid,
+                teamName: team,
+                imageData: image,
+                teamImageData: image
+            )
             XCTAssert(store.add(account))
         }
 
@@ -286,7 +292,15 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let account = store.load(accountID)
 
         // then
-        let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 1, loginCredentials: nil)
+        let expectedAccount = Account(
+            userName: "Alexis",
+            userIdentifier: accountID,
+            teamName: "Wire",
+            imageData: Data(),
+            teamImageData: nil,
+            unreadConversationCount: 1,
+            loginCredentials: nil
+        )
         XCTAssertEqual(account, expectedAccount)
     }
 
@@ -316,8 +330,20 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let account = store.load(accountID)
 
         // then
-        let expectedCredentials = LoginCredentials(emailAddress: "alexis@example.com", hasPassword: true, usesCompanyLogin: false)
-        let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 0, loginCredentials: expectedCredentials)
+        let expectedCredentials = LoginCredentials(
+            emailAddress: "alexis@example.com",
+            hasPassword: true,
+            usesCompanyLogin: false
+        )
+        let expectedAccount = Account(
+            userName: "Alexis",
+            userIdentifier: accountID,
+            teamName: "Wire",
+            imageData: Data(),
+            teamImageData: nil,
+            unreadConversationCount: 0,
+            loginCredentials: expectedCredentials
+        )
         XCTAssertEqual(account, expectedAccount)
     }
 }

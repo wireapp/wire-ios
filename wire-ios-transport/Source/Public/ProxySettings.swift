@@ -23,9 +23,11 @@ final class ProxySettings: NSObject, ProxySettingsProvider, Codable {
     let port: Int
     let needsAuthentication: Bool
 
-    init(host: String,
-         port: Int,
-         needsAuthentication: Bool = false) {
+    init(
+        host: String,
+        port: Int,
+        needsAuthentication: Bool = false
+    ) {
         self.host = host
         self.port = port
         self.needsAuthentication = needsAuthentication

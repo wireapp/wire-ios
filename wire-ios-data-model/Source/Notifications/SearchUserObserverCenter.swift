@@ -26,7 +26,8 @@ extension NSManagedObjectContext {
     @objc public var searchUserObserverCenter: SearchUserObserverCenter {
         assert(zm_isUserInterfaceContext, "SearchUserObserverCenter does not exist in syncMOC")
 
-        if let observer = self.userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
+        if let observer = self
+            .userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
             return observer
         }
 
@@ -38,12 +39,14 @@ extension NSManagedObjectContext {
 
 public class SearchUserSnapshot {
     /// Keys that we want to be notified for
-    static let observableKeys: [String] = [#keyPath(ZMSearchUser.name),
-                                           #keyPath(ZMSearchUser.completeImageData),
-                                           #keyPath(ZMSearchUser.previewImageData),
-                                           #keyPath(ZMSearchUser.isConnected),
-                                           #keyPath(ZMSearchUser.user),
-                                           #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)]
+    static let observableKeys: [String] = [
+        #keyPath(ZMSearchUser.name),
+        #keyPath(ZMSearchUser.completeImageData),
+        #keyPath(ZMSearchUser.previewImageData),
+        #keyPath(ZMSearchUser.isConnected),
+        #keyPath(ZMSearchUser.user),
+        #keyPath(ZMSearchUser.isPendingApprovalByOtherUser),
+    ]
 
     weak var searchUser: ZMSearchUser?
     public private(set) var snapshotValues: [String: NSObject?]
@@ -91,10 +94,12 @@ public class SearchUserSnapshot {
 
         let userChange = UserChangeInfo(object: searchUser)
         userChange.changedKeys = Set(changedKeys)
-        NotificationInContext(name: .SearchUserChange,
-                              context: moc.notificationContext,
-                              object: searchUser,
-                              changeInfo: userChange).post()
+        NotificationInContext(
+            name: .SearchUserChange,
+            context: moc.notificationContext,
+            object: searchUser,
+            changeInfo: userChange
+        ).post()
     }
 }
 
@@ -115,7 +120,10 @@ public class SearchUserSnapshot {
             zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
             return
         }
-        snapshots[remoteID] = snapshots[remoteID] ?? SearchUserSnapshot(searchUser: searchUser, managedObjectContext: moc)
+        snapshots[remoteID] = snapshots[remoteID] ?? SearchUserSnapshot(
+            searchUser: searchUser,
+            managedObjectContext: moc
+        )
     }
 
     /// Removes all snapshots for searchUsers that are not contained in this set
@@ -151,10 +159,11 @@ public class SearchUserSnapshot {
     func usersDidChange(info: UserChangeInfo) {
         guard snapshots.count > 0 else { return }
 
-        guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info.connectionStateChanged,
-              let user = info.user as? ZMUser,
-              let remoteID = user.remoteIdentifier,
-              let snapshot = snapshots[remoteID]
+        guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info
+            .connectionStateChanged,
+            let user = info.user as? ZMUser,
+            let remoteID = user.remoteIdentifier,
+            let snapshot = snapshots[remoteID]
         else {
             return
         }

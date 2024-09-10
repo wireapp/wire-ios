@@ -108,11 +108,13 @@ struct ButtonStyle {
         normalStateColors: (
             background: .clear,
             title: ButtonColors.textEmptyEnabled,
-            border: nil),
+            border: nil
+        ),
         highlightedStateColors: (
             background: .clear,
             title: ButtonColors.textEmptyEnabled,
-            border: nil)
+            border: nil
+        )
     )
 
     static let iconButtonStyle = ButtonStyle(

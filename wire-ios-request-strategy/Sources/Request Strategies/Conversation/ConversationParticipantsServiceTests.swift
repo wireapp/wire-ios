@@ -175,7 +175,8 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 
     // MARK: - Adding Participants (MLS) - Failed to claim Key Packages
 
-    func test_AddParticipants_RetriesOperation_AndInsertsSystemMessageForFailedUsers_AfterFailingToClaimKeyPackages() async throws {
+    func test_AddParticipants_RetriesOperation_AndInsertsSystemMessageForFailedUsers_AfterFailingToClaimKeyPackages(
+    ) async throws {
         // GIVEN
         let (failedUser1, failedUser2) = await uiMOC.perform { [self] in
             conversation.messageProtocol = .mls

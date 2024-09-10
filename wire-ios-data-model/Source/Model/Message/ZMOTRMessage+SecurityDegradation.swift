@@ -67,7 +67,8 @@ extension ZMConversation {
     /// and not persisted).
     public var messagesThatCausedSecurityLevelDegradation: [ZMOTRMessage] {
         guard let moc = self.managedObjectContext else { return [] }
-        guard let messageIds = moc.messagesThatCausedSecurityLevelDegradationByConversation[self.objectID] else { return [] }
+        guard let messageIds = moc.messagesThatCausedSecurityLevelDegradationByConversation[self.objectID]
+        else { return [] }
         return messageIds.compactMap {
             (try? moc.existingObject(with: $0)) as? ZMOTRMessage
         }
@@ -88,9 +89,13 @@ typealias SecurityDegradingMessagesByConversation = [NSManagedObjectID: Set<NSMa
 
 extension NSManagedObjectContext {
     /// Non-persisted list of messages that caused security level degradation, indexed by conversation
-    fileprivate(set) var messagesThatCausedSecurityLevelDegradationByConversation: SecurityDegradingMessagesByConversation {
+    fileprivate(
+        set
+    ) var messagesThatCausedSecurityLevelDegradationByConversation: SecurityDegradingMessagesByConversation {
         get {
-            self.userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation ?? SecurityDegradingMessagesByConversation()
+            self
+                .userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation ??
+                SecurityDegradingMessagesByConversation()
         }
         set {
             self.userInfo[messagesThatCausedSecurityLevelDegradationKey] = newValue
@@ -101,7 +106,10 @@ extension NSManagedObjectContext {
     /// Merge list of messages that caused security level degradation from one context to another
     func mergeSecurityLevelDegradationInfo(fromUserInfo userInfo: [String: Any]) {
         guard self.zm_isUserInterfaceContext else { return } // we don't merge anything to sync, sync is autoritative
-        let valuesToMerge = userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation
-        self.messagesThatCausedSecurityLevelDegradationByConversation = valuesToMerge ?? SecurityDegradingMessagesByConversation()
+        let valuesToMerge =
+            userInfo[messagesThatCausedSecurityLevelDegradationKey] as? SecurityDegradingMessagesByConversation
+        self
+            .messagesThatCausedSecurityLevelDegradationByConversation = valuesToMerge ??
+            SecurityDegradingMessagesByConversation()
     }
 }

@@ -52,10 +52,12 @@ final class SearchResultsView: UIView {
         addSubview(emptyResultContainer)
         createConstraints()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameDidChange(notification:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameDidChange(notification:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -158,19 +160,24 @@ final class SearchResultsView: UIView {
         let firstResponder = UIResponder.currentFirst
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self, animations: { [weak self] keyboardFrameInView in
-            guard let self else { return }
+        UIView.animate(
+            withKeyboardNotification: notification,
+            in: self,
+            animations: { [weak self] keyboardFrameInView in
+                guard let self else { return }
 
-            let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
-            layoutIfNeeded()
-        })
+                let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
+                accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
+                layoutIfNeeded()
+            }
+        )
     }
 
     private func updateContentInset() {
         if let accessoryView = self.accessoryView {
             accessoryView.layoutIfNeeded()
-            let bottomInset = (UIScreen.hasNotch ? accessoryViewMargin : 0) + accessoryView.frame.height - UIScreen.safeArea.bottom
+            let bottomInset = (UIScreen.hasNotch ? accessoryViewMargin : 0) + accessoryView.frame.height - UIScreen
+                .safeArea.bottom
 
             // Add padding at the bottom of the screen
             collectionView.contentInset.bottom = bottomInset

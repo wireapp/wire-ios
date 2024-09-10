@@ -54,7 +54,10 @@ final class ConversationListViewControllerTests: XCTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
+        let selfUser = MockUserType.createSelfUser(
+            name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart",
+            inTeam: UUID()
+        )
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -111,7 +114,8 @@ final class ConversationListViewControllerTests: XCTestCase {
         let modelHelper = ModelHelper()
         let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
         conversation.isArchived = true
-        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory()
+            .refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
         window.rootViewController = nil
         snapshotHelper.verify(matching: tabBarController)

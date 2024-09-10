@@ -35,7 +35,8 @@ public protocol Conversation: SharingTarget {
     var legalHoldStatus: ZMConversationLegalHoldStatus { get }
 
     /// Adds an observer for when the conversation verification status degrades
-    func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable
+    func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void)
+        -> TearDownCapable
 
     /// Accept the privacy warning, and resend the messages that caused them if wanted.
     func acknowledgePrivacyWarningAndResendMessages()

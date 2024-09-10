@@ -134,8 +134,10 @@ extension ZMConversation {
         let allParticipants = Set(usersAndRoles.map(\.0))
         let removedParticipants = self.localParticipantsExcludingSelf.subtracting(allParticipants)
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        removeParticipantsAndUpdateConversationState(users: removedParticipants,
-                                                     initiatingUser: ZMUser.selfUser(in: context))
+        removeParticipantsAndUpdateConversationState(
+            users: removedParticipants,
+            initiatingUser: ZMUser.selfUser(in: context)
+        )
 
         let selfUser = ZMUser.selfUser(in: context)
         if let role = selfUserRole {

@@ -23,8 +23,10 @@ import WireDesign
 final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
     // MARK: - Properties
 
-    let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
-                                      color: SemanticColors.Label.textDefault)
+    let titleLabel = DynamicFontLabel(
+        fontSpec: .smallSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
     let fingerprintLabel = CopyableLabel()
     let spinner = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
 
@@ -107,7 +109,8 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
            let attributedFingerprint = fingerprint?.attributedFingerprint(
                attributes: [.font: fingerprintLabelMonoFont, .foregroundColor: fingerprintLabel.textColor],
                boldAttributes: [.font: fingerprintLabelBoldMonoFont, .foregroundColor: fingerprintLabel.textColor],
-               uppercase: false) {
+               uppercase: false
+           ) {
             fingerprintLabel.attributedText = attributedFingerprint
             spinner.stopAnimating()
         } else {

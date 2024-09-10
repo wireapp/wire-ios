@@ -108,11 +108,15 @@ final class AuthenticatedRouter {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
             let alert = change.hasFurtherActions
-            ? UIAlertController.fromFeatureChangeWithActions(change,
-                                                             acknowledger: featureRepositoryProvider.featureRepository,
-                                                             actionsHandler: featureChangeActionsHandler)
-            : UIAlertController.fromFeatureChange(change,
-                                                  acknowledger: featureRepositoryProvider.featureRepository)
+            ? UIAlertController.fromFeatureChangeWithActions(
+                change,
+                acknowledger: featureRepositoryProvider.featureRepository,
+                actionsHandler: featureChangeActionsHandler
+            )
+            : UIAlertController.fromFeatureChange(
+                change,
+                acknowledger: featureRepositoryProvider.featureRepository
+            )
         else {
             return
         }
@@ -142,8 +146,10 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
+    func minimizeCallOverlay(
+        animated: Bool,
+        withCompletion completion: Completion?
+    ) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
 

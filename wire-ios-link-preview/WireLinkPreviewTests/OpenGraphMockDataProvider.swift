@@ -52,7 +52,12 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "article",
             url: "https://twitter.com/ayanonagon/status/749726072623685632",
             resolvedURL: "https://twitter.com/ayanonagon/status/749726072623685632",
-            imageUrls: ["https://pbs.twimg.com/media/CmeP2R6VIAAMx2N.jpg:large", "https://pbs.twimg.com/media/CmeP2R5UMAA_1fB.jpg:large", "https://pbs.twimg.com/media/CmeP2R6UIAAHT1t.jpg:large", "https://pbs.twimg.com/media/CmeP2T4UIAA5pNt.jpg:large"],
+            imageUrls: [
+                "https://pbs.twimg.com/media/CmeP2R6VIAAMx2N.jpg:large",
+                "https://pbs.twimg.com/media/CmeP2R5UMAA_1fB.jpg:large",
+                "https://pbs.twimg.com/media/CmeP2R6UIAAHT1t.jpg:large",
+                "https://pbs.twimg.com/media/CmeP2T4UIAA5pNt.jpg:large",
+            ],
             siteName: "Twitter",
             description: "“Hello from Lake Tahoe. Happy weekend everyone! ✌🏼️💙❤️”",
             userGeneratedImage: true
@@ -72,7 +77,12 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "playfoursquare:venue",
             url: "https://foursquare.com/neta_msf",
             resolvedURL: "https://foursquare.com/neta_msf",
-            imageUrls: ["https://irs0.4sqi.net/img/general/600x600/119241531_vEv_57iCz-SX9nKwMsd0GovpEA1gKtNAICRsah7GKjg.jpg", "https://irs3.4sqi.net/img/general/600x600/119241531__mAWGX94algkPbGcxKXYEqMAk4Vso70GkTWGdi-UTAA.jpg", "https://irs0.4sqi.net/img/general/600x600/119241531_b56QzEzT2AeqiFiAz5yzAvzMVkJv-TtuAchMcbuD5hk.jpg", "https://irs1.4sqi.net/img/general/600x600/119241531_aCFVIfqXAUOBJr1ixU8usw-sFxIBCz-zVNeSCcm4N74.jpg"],
+            imageUrls: [
+                "https://irs0.4sqi.net/img/general/600x600/119241531_vEv_57iCz-SX9nKwMsd0GovpEA1gKtNAICRsah7GKjg.jpg",
+                "https://irs3.4sqi.net/img/general/600x600/119241531__mAWGX94algkPbGcxKXYEqMAk4Vso70GkTWGdi-UTAA.jpg",
+                "https://irs0.4sqi.net/img/general/600x600/119241531_b56QzEzT2AeqiFiAz5yzAvzMVkJv-TtuAchMcbuD5hk.jpg",
+                "https://irs1.4sqi.net/img/general/600x600/119241531_aCFVIfqXAUOBJr1ixU8usw-sFxIBCz-zVNeSCcm4N74.jpg",
+            ],
             siteName: "Foursquare",
             description: "Burrito-Imbiss in Berlin, Berlin"
         )
@@ -93,7 +103,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "article",
             url: "http://www.theverge.com/2016/6/29/12054410/apple-tech-death-chart-headphone-jack-ports-usb-c",
             resolvedURL: "http://www.theverge.com/2016/6/29/12054410/apple-tech-death-chart-headphone-jack-ports-usb-c",
-            imageUrls: ["https://cdn0.vox-cdn.com/thumbor/eCXqqjnIBNh9YQxtkfu5EofTMO8=/0x134:1500x978/1600x900/cdn0.vox-cdn.com/uploads/chorus_image/image/49985217/imac_ports_large.0.jpg"],
+            imageUrls: [
+                "https://cdn0.vox-cdn.com/thumbor/eCXqqjnIBNh9YQxtkfu5EofTMO8=/0x134:1500x978/1600x900/cdn0.vox-cdn.com/uploads/chorus_image/image/49985217/imac_ports_large.0.jpg",
+            ],
             siteName: "The Verge",
             description: "The internet has been ablaze the past few weeks about Apple potentially removing the headphone jack from the next iPhone — a move that’s been heavily rumored for months, and has everything from..."
         )
@@ -131,7 +143,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "article",
             url: "http://www.theguardian.com/technology/2016/jul/01/tesla-autopilot-model-s-crash-how-does-it-work",
             resolvedURL: "http://www.theguardian.com/technology/2016/jul/01/tesla-autopilot-model-s-crash-how-does-it-work",
-            imageUrls: ["https://i.guim.co.uk/img/media/7a8eb8b3e9768f03fd56b1f38f3a4bbacc2f4521/0_115_3500_2102/3500.jpg?w=1200&h=630&q=55&auto=format&usm=12&fit=crop&bm=normal&ba=bottom%2Cleft&blend64=aHR0cHM6Ly91cGxvYWRzLmd1aW0uY28udWsvMjAxNi8wNS8yNS9vdmVybGF5LWxvZ28tMTIwMC05MF9vcHQucG5n&s=361fd974e61775119c65c52997274245"],
+            imageUrls: [
+                "https://i.guim.co.uk/img/media/7a8eb8b3e9768f03fd56b1f38f3a4bbacc2f4521/0_115_3500_2102/3500.jpg?w=1200&h=630&q=55&auto=format&usm=12&fit=crop&bm=normal&ba=bottom%2Cleft&blend64=aHR0cHM6Ly91cGxvYWRzLmd1aW0uY28udWsvMjAxNi8wNS8yNS9vdmVybGF5LWxvZ28tMTIwMC05MF9vcHQucG5n&s=361fd974e61775119c65c52997274245",
+            ],
             siteName: "the Guardian",
             description: "Tesla’s Autopilot is in the spotlight after a fatal crash. Samuel Gibbs used it when he drove to France in a Model S – here’s how he found the experience of driver assistance"
         )
@@ -169,7 +183,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "instapp:photo",
             url: "https://www.instagram.com/p/6AiRp5TOXB/",
             resolvedURL: "https://www.instagram.com/p/6AiRp5TOXB/",
-            imageUrls: ["https://scontent-frt3-1.cdninstagram.com/t51.2885-15/s750x750/sh0.08/e35/11809632_1741377449423046_2075339609_n.jpg?ig_cache_key=MTA0NDk4NTg2MDM0NzE5Mjc2OQ%3D%3D.2"],
+            imageUrls: [
+                "https://scontent-frt3-1.cdninstagram.com/t51.2885-15/s750x750/sh0.08/e35/11809632_1741377449423046_2075339609_n.jpg?ig_cache_key=MTA0NDk4NTg2MDM0NzE5Mjc2OQ%3D%3D.2",
+            ],
             siteName: "Instagram",
             description: "See this Instagram photo by @silvandaehn • 25 likes"
         )
@@ -207,7 +223,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "article",
             url: "http://www.nytimes.com/2016/07/03/opinion/sunday/brazils-olympic-catastrophe.html",
             resolvedURL: "http://www.nytimes.com/2016/07/03/opinion/sunday/brazils-olympic-catastrophe.html",
-            imageUrls: ["https://static01.nyt.com/images/2016/07/03/opinion/sunday/03barbara/03barbara-facebookJumbo.jpg"],
+            imageUrls: [
+                "https://static01.nyt.com/images/2016/07/03/opinion/sunday/03barbara/03barbara-facebookJumbo.jpg",
+            ],
             description: "Can Rio pull off the Games with only weeks to go?"
         )
 
@@ -225,7 +243,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "article",
             url: "https://www.washingtonpost.com/news/the-switch/wp/2016/07/12/holocaust-museum-to-visitors-please-stop-catching-pokemon-here/",
             resolvedURL: "https://www.washingtonpost.com/news/the-switch/wp/2016/07/12/holocaust-museum-to-visitors-please-stop-catching-pokemon-here/",
-            imageUrls: ["https://images.washingtonpost.com/?url=http://img.washingtonpost.com/blogs/the-switch/files/2016/07/DoduoHM.png&w=1484&op=resize&opt=1&filter=antialias"],
+            imageUrls: [
+                "https://images.washingtonpost.com/?url=http://img.washingtonpost.com/blogs/the-switch/files/2016/07/DoduoHM.png&w=1484&op=resize&opt=1&filter=antialias",
+            ],
             siteName: "Washington Post",
             description: "Melding the real world with a digital one can sometimes lead to uncomfortable consequences."
         )
@@ -263,7 +283,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "website",
             url: "https://wire.com/",
             resolvedURL: "https://wire.com/",
-            imageUrls: ["https://lh3.ggpht.com/gbxDT30ZwpwYMCF7ilrSaIpRQP3Z1Xdx2WUcyW5x_e8FDN8kA4CJGQQ0fFpVhKiGnPkAIOEf7S1_9cNi684Be-OY=s1024"],
+            imageUrls: [
+                "https://lh3.ggpht.com/gbxDT30ZwpwYMCF7ilrSaIpRQP3Z1Xdx2WUcyW5x_e8FDN8kA4CJGQQ0fFpVhKiGnPkAIOEf7S1_9cNi684Be-OY=s1024",
+            ],
             description: "HD quality calls, private and group chats with inline photos, music and video. Secure and perfectly synced across your devices."
         )
 
@@ -281,7 +303,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "website",
             url: "http://www.polygon.com/2016/7/11/12148448/which-pokemon-go-team-should-i-pick",
             resolvedURL: "http://www.polygon.com/2016/7/11/12148448/which-pokemon-go-team-should-i-pick",
-            imageUrls: ["https://cdn1.vox-cdn.com/thumbor/VhM0gxcxqzqlpHJNQmqPuilpdXA=/0x1075:1440x1885/1600x900/cdn0.vox-cdn.com/uploads/chorus_image/image/50077599/Screenshot_20160709-102153.0.0.png"],
+            imageUrls: [
+                "https://cdn1.vox-cdn.com/thumbor/VhM0gxcxqzqlpHJNQmqPuilpdXA=/0x1075:1440x1885/1600x900/cdn0.vox-cdn.com/uploads/chorus_image/image/50077599/Screenshot_20160709-102153.0.0.png",
+            ],
             siteName: "Polygon",
             description: "How to answer one of the game's toughest questions"
         )
@@ -300,7 +324,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "website",
             url: "https://itunes.apple.com/de/album/ellipsis-deluxe/id1093554521",
             resolvedURL: "https://itunes.apple.com/de/album/ellipsis-deluxe/id1093554521",
-            imageUrls: ["http://is2.mzstatic.com/image/thumb/Music49/v4/7b/29/cd/7b29cd44-0d47-963e-5ffe-89d67c6e7dc4/source/1200x630bf.jpg"],
+            imageUrls: [
+                "http://is2.mzstatic.com/image/thumb/Music49/v4/7b/29/cd/7b29cd44-0d47-963e-5ffe-89d67c6e7dc4/source/1200x630bf.jpg",
+            ],
             siteName: "iTunes",
             description: "Hör dir „Wolves of Winter“ vom Album „Ellipsis (Deluxe)“ an. Kaufe den Titel für 1,29 €. Kostenlos mit Apple Music-Abo."
         )
@@ -319,7 +345,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "website",
             url: "https://itunes.apple.com/de/album/ellipsis-deluxe/id1093554521",
             resolvedURL: "https://itunes.apple.com/de/album/ellipsis-deluxe/id1093554521",
-            imageUrls: ["http://is2.mzstatic.com/image/thumb/Music49/v4/7b/29/cd/7b29cd44-0d47-963e-5ffe-89d67c6e7dc4/source/1200x630bf.jpg"],
+            imageUrls: [
+                "http://is2.mzstatic.com/image/thumb/Music49/v4/7b/29/cd/7b29cd44-0d47-963e-5ffe-89d67c6e7dc4/source/1200x630bf.jpg",
+            ],
             siteName: "iTunes",
             description: "Hör dir „Wolves of Winter“ vom Album „Ellipsis (Deluxe)“ an. Kaufe den Titel für 1,29 €. Kostenlos mit Apple Music-Abo."
         )
@@ -338,7 +366,9 @@ final class OpenGraphMockDataProvider: NSObject {
             type: "article",
             url: "https://de.sports.yahoo.com/news/mario-gomez-besiktas-verl%c3%a4ngert-leihe-115423346.html",
             resolvedURL: "https://de.sports.yahoo.com/news/mario-gomez-besiktas-verl%c3%a4ngert-leihe-115423346.html",
-            imageUrls: ["https://s.yimg.com/bt/api/res/1.2/Hm3djeE3ivlN_WaKu7eOog--/YXBwaWQ9eW5ld3NfbGVnbztxPTc1O3c9NjAw/http://media.zenfs.com/de-DE/homerun/de.goal.com/629c73161149247ba39c58e4d8a951a4.cf.png"],
+            imageUrls: [
+                "https://s.yimg.com/bt/api/res/1.2/Hm3djeE3ivlN_WaKu7eOog--/YXBwaWQ9eW5ld3NfbGVnbztxPTc1O3c9NjAw/http://media.zenfs.com/de-DE/homerun/de.goal.com/629c73161149247ba39c58e4d8a951a4.cf.png",
+            ],
             siteName: "Yahoo Sport",
             description: "Der deutsche Stürmer spielt offenbar auch in der kommenden Saison in Istanbul. Die Türken leihen ihn demnach erneut aus. Ein wichtiges Argument sei die Champions League."
         )

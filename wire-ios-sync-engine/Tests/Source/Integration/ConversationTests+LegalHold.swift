@@ -46,7 +46,12 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         let conversation = self.conversation(for: selfToUser1Conversation)
         var legalHoldClient: MockUserClient!
         mockTransportSession.performRemoteChanges { session in
-            legalHoldClient = session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
+            legalHoldClient = session.registerClient(
+                for: self.user1,
+                label: "Legal Hold",
+                type: "legalhold",
+                deviceClass: "legalhold"
+            )
         }
 
         userSession?.perform {
@@ -91,7 +96,10 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             return
         }
 
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let conversationParticipantsService = ConversationParticipantsService(
+            context: userSession!
+                .managedObjectContext
+        )
         mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
@@ -129,7 +137,10 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             return
         }
 
-        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let conversationParticipantsService = ConversationParticipantsService(
+            context: userSession!
+                .managedObjectContext
+        )
 
         mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
@@ -174,7 +185,11 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.enabled)
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: otherUserClient,
+                    to: selfUserClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -196,7 +211,12 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         let conversation = self.conversation(for: selfToUser1Conversation)
 
         mockTransportSession.performRemoteChanges { session in
-            legalHoldClient = session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
+            legalHoldClient = session.registerClient(
+                for: self.user1,
+                label: "Legal Hold",
+                type: "legalhold",
+                deviceClass: "legalhold"
+            )
         }
 
         legalHoldUser.fetchUserClients()
@@ -209,7 +229,11 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.disabled)
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: otherUserClient,
+                    to: selfUserClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -233,7 +257,11 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.enabled)
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: otherUserClient,
+                    to: selfUserClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -267,7 +295,11 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.disabled)
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: otherUserClient, to: selfUserClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: otherUserClient,
+                    to: selfUserClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }

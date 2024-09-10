@@ -43,7 +43,8 @@ import Foundation
 
         guard let callState = conversation.voiceChannel?.state else { return }
 
-        if case let .incoming(video: video, shouldRing: _, degraded: _) = callState, callCenter?.activeCallConversations(in: self).count == 0 {
+        if case let .incoming(video: video, shouldRing: _, degraded: _) = callState,
+           callCenter?.activeCallConversations(in: self).count == 0 {
             _ = conversation.voiceChannel?.join(video: video, userSession: self)
         }
     }
@@ -54,7 +55,8 @@ import Foundation
             return
         }
 
-        guard let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext) as? ZMClientMessage else {
+        guard let message = userInfo
+            .message(in: conversation, managedObjectContext: managedObjectContext) as? ZMClientMessage else {
             return showConversation(conversation)
         }
 
@@ -72,7 +74,8 @@ import Foundation
     // MARK: - Background Actions
 
     public func ignoreCall(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "IgnoreCall Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "IgnoreCall Action Handler") else {
             return
         }
 
@@ -86,7 +89,8 @@ import Foundation
     }
 
     public func muteConversation(with userInfo: NotificationUserInfo, completionHandler: @escaping () -> Void) {
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Mute Conversation Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "Mute Conversation Action Handler") else {
             return
         }
 
@@ -106,7 +110,8 @@ import Foundation
             let conversation = userInfo.conversation(in: managedObjectContext)
         else { return completionHandler() }
 
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "DirectReply Action Handler") else {
+        guard let activity = BackgroundActivityFactory.shared
+            .startBackgroundActivity(name: "DirectReply Action Handler") else {
             return
         }
 
@@ -120,7 +125,10 @@ import Foundation
                     Logging.push.safePublic("failed to reply via push notification action")
                     self.localNotificationDispatcher?.didFailToSendMessage(in: conversationOnSyncContext!)
                 } else {
-                    self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationOnSyncContext, action: .text)
+                    self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(
+                        conversation: conversationOnSyncContext,
+                        action: .text
+                    )
                 }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completionHandler()
@@ -131,18 +139,25 @@ import Foundation
             do {
                 let message = try conversation.appendText(content: message)
                 self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
-                self.messageReplyObserver = ManagedObjectContextChangeObserver(context: self.managedObjectContext, callback: { [weak self] in
-                    self?.updateBackgroundTask(with: message)
-                })
+                self.messageReplyObserver = ManagedObjectContextChangeObserver(
+                    context: self.managedObjectContext,
+                    callback: { [weak self] in
+                        self?.updateBackgroundTask(with: message)
+                    }
+                )
             } catch {
-                Logging.messageProcessing.warn("Failed to reply to message from user notification. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to reply to message from user notification. Reason: \(error.localizedDescription)")
             }
         }
     }
 
     private func appendReadReceiptIfNeeded(with userInfo: NotificationUserInfo, in conversation: ZMConversation) {
         guard
-            let originalMessage = userInfo.message(in: conversation, managedObjectContext: self.managedObjectContext) as? ZMClientMessage,
+            let originalMessage = userInfo.message(
+                in: conversation,
+                managedObjectContext: self.managedObjectContext
+            ) as? ZMClientMessage,
             originalMessage.needsReadConfirmation
         else {
             return
@@ -152,7 +167,8 @@ import Foundation
             let confirmation = GenericMessage(content: Confirmation(messageId: originalMessage.nonce!, type: .read))
             try conversation.appendClientMessage(with: confirmation)
         } catch {
-            Logging.messageProcessing.warn("Failed to append read receipt from user notification. Reason: \(error.localizedDescription)")
+            Logging.messageProcessing
+                .warn("Failed to append read receipt from user notification. Reason: \(error.localizedDescription)")
         }
     }
 
@@ -166,7 +182,8 @@ import Foundation
             callCenter.activeCallConversations(in: self).count == 0
         else { return }
 
-        let type: ConversationMediaAction = callCenter.isVideoCall(conversationId: conversationId) ? .videoCall : .audioCall
+        let type: ConversationMediaAction = callCenter
+            .isVideoCall(conversationId: conversationId) ? .videoCall : .audioCall
 
         self.syncManagedObjectContext.performGroupedBlock { [weak self] in
             guard
@@ -174,7 +191,10 @@ import Foundation
                 let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
             else { return }
 
-            self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(conversation: conversationInSyncContext, action: type)
+            self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(
+                conversation: conversationInSyncContext,
+                action: type
+            )
         }
     }
 
@@ -184,7 +204,8 @@ import Foundation
             let message = userInfo.message(in: conversation, managedObjectContext: managedObjectContext)
         else { return completionHandler() }
 
-        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity") else {
+        guard let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "Like Message Activity")
+        else {
             return
         }
 
@@ -202,9 +223,12 @@ import Foundation
         enqueue {
             guard let reaction = ZMMessage.addReaction("❤️", to: message) else { return }
             self.appendReadReceiptIfNeeded(with: userInfo, in: conversation)
-            self.likeMesssageObserver = ManagedObjectContextChangeObserver(context: self.managedObjectContext, callback: { [weak self] in
-                self?.updateBackgroundTask(with: reaction)
-            })
+            self.likeMesssageObserver = ManagedObjectContextChangeObserver(
+                context: self.managedObjectContext,
+                callback: { [weak self] in
+                    self?.updateBackgroundTask(with: reaction)
+                }
+            )
         }
     }
 
@@ -219,7 +243,8 @@ import Foundation
 
 extension ZMUserSession {
     public func markAllConversationsAsRead() {
-        let allConversations = managedObjectContext.fetchOrAssert(request: NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
+        let allConversations = managedObjectContext
+            .fetchOrAssert(request: NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
         allConversations.forEach { $0.markAsRead() }
     }
 }

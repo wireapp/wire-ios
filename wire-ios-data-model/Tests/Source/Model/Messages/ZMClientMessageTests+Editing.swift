@@ -44,12 +44,23 @@ class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
 
         let genericMessage = GenericMessage(content: edited)
 
-        let updateEvent = createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier)
+        let updateEvent = createUpdateEvent(
+            nonce,
+            conversationID: conversationID,
+            genericMessage: genericMessage,
+            senderID: message.sender!.remoteIdentifier
+        )
 
         // WHEN
         var editedMessage: ZMClientMessage?
         performPretendingUiMocIsSyncMoc {
-            editedMessage = ZMClientMessage.editMessage(withEdit: edited, forConversation: conversation, updateEvent: updateEvent, inContext: self.uiMOC, prefetchResult: ZMFetchRequestBatchResult())
+            editedMessage = ZMClientMessage.editMessage(
+                withEdit: edited,
+                forConversation: conversation,
+                updateEvent: updateEvent,
+                inContext: self.uiMOC,
+                prefetchResult: ZMFetchRequestBatchResult()
+            )
         }
 
         // THEN
@@ -201,7 +212,12 @@ extension ZMClientMessageTests_Editing {
         let fetchLinkPreview = false
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = try! conversation.appendText(content: oldText, mentions: [], fetchLinkPreview: fetchLinkPreview, nonce: UUID.create()) as! ZMClientMessage
+        let message = try! conversation.appendText(
+            content: oldText,
+            mentions: [],
+            fetchLinkPreview: fetchLinkPreview,
+            nonce: UUID.create()
+        ) as! ZMClientMessage
         message.serverTimestamp = Date(timeIntervalSinceNow: -20)
         message.markAsSent()
 
@@ -328,8 +344,23 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(message.underlyingMessage?.edited.replacingMessageID, originalNonce?.transportString())
     }
 
-    private func createMessageEditUpdateEvent(oldNonce: UUID, newNonce: UUID, conversationID: UUID, senderID: UUID, newText: String) -> ZMUpdateEvent? {
-        let genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: oldNonce, text: Text(content: newText, mentions: [], linkPreviews: [], replyingTo: nil)), nonce: newNonce)
+    private func createMessageEditUpdateEvent(
+        oldNonce: UUID,
+        newNonce: UUID,
+        conversationID: UUID,
+        senderID: UUID,
+        newText: String
+    ) -> ZMUpdateEvent? {
+        let genericMessage =
+            GenericMessage(
+                content: MessageEdit(replacingMessageID: oldNonce, text: Text(
+                    content: newText,
+                    mentions: [],
+                    linkPreviews: [],
+                    replyingTo: nil
+                )),
+                nonce: newNonce
+            )
 
         let data = try? genericMessage.serializedData().base64String()
         let payload: NSMutableDictionary = [
@@ -346,7 +377,11 @@ extension ZMClientMessageTests_Editing {
     }
 
     private func createTextAddedEvent(nonce: UUID, conversationID: UUID, senderID: UUID) -> ZMUpdateEvent? {
-        let genericMessage = GenericMessage(content: Text(content: "Yeah!", mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        let genericMessage =
+            GenericMessage(
+                content: Text(content: "Yeah!", mentions: [], linkPreviews: [], replyingTo: nil),
+                nonce: nonce
+            )
 
         let data = try? genericMessage.serializedData().base64String()
         let payload: NSMutableDictionary = [
@@ -371,14 +406,22 @@ extension ZMClientMessageTests_Editing {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         let quotedMessage = try! conversation.appendText(content: "Quote") as! ZMMessage
-        let message = try! conversation.appendText(content: oldText,
-                                                   mentions: [],
-                                                   replyingTo: quotedMessage,
-                                                   fetchLinkPreview: false,
-                                                   nonce: UUID.create()) as! ZMMessage
+        let message = try! conversation.appendText(
+            content: oldText,
+            mentions: [],
+            replyingTo: quotedMessage,
+            fetchLinkPreview: false,
+            nonce: UUID.create()
+        ) as! ZMMessage
         self.uiMOC.saveOrRollback()
 
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: senderID!,
+            newText: newText
+        )
 
         let oldNonce = message.nonce
 
@@ -406,13 +449,24 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         conversation.conversationType = ZMConversationType.oneOnOne
 
-        let message = try! conversation.appendText(content: oldText, mentions: [], fetchLinkPreview: false, nonce: UUID.create()) as! ZMClientMessage
+        let message = try! conversation.appendText(
+            content: oldText,
+            mentions: [],
+            fetchLinkPreview: false,
+            nonce: UUID.create()
+        ) as! ZMClientMessage
         var genericMessage = message.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
 
         try message.setUnderlyingMessage(genericMessage)
 
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: senderID!,
+            newText: newText
+        )
         let oldNonce = message.nonce
 
         // when
@@ -441,7 +495,13 @@ extension ZMClientMessageTests_Editing {
         message.setReactions(["👻"], forUser: self.selfUser)
         self.uiMOC.saveOrRollback()
 
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: senderID!,
+            newText: newText
+        )
         let oldNonce = message.nonce
 
         // when
@@ -483,7 +543,11 @@ extension ZMClientMessageTests_Editing {
         message.visibleInConversation = nil
         message.hiddenInConversation = conversation
 
-        let updateEvent = createTextAddedEvent(nonce: message.nonce!, conversationID: conversation.remoteIdentifier!, senderID: senderID!)
+        let updateEvent = createTextAddedEvent(
+            nonce: message.nonce!,
+            conversationID: conversation.remoteIdentifier!,
+            senderID: senderID!
+        )
 
         // when
         var newMessage: ZMClientMessage?
@@ -514,7 +578,13 @@ extension ZMClientMessageTests_Editing {
         conversation.lastReadServerTimeStamp = oldDate
         XCTAssertEqual(conversation.estimatedUnreadCount, 0)
 
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: sender.remoteIdentifier, newText: newText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: sender.remoteIdentifier,
+            newText: newText
+        )
 
         // when
         var newMessage: ZMClientMessage?
@@ -551,7 +621,13 @@ extension ZMClientMessageTests_Editing {
         ZMMessage.hideMessage(message)
         XCTAssertTrue(message.isZombieObject)
 
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: sender.remoteIdentifier, newText: newText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: sender.remoteIdentifier,
+            newText: newText
+        )
 
         // when
         var newMessage: ZMClientMessage?
@@ -588,11 +664,13 @@ extension ZMClientMessageTests_Editing {
         XCTAssertFalse(message.reactions.isEmpty)
 
         let editedText = "Hello"
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!,
-                                                       newNonce: UUID.create(),
-                                                       conversationID: conversation.remoteIdentifier!,
-                                                       senderID: message.sender!.remoteIdentifier!,
-                                                       newText: editedText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: message.sender!.remoteIdentifier!,
+            newText: editedText
+        )
 
         // when
         var newMessage: ZMClientMessage?
@@ -626,11 +704,13 @@ extension ZMClientMessageTests_Editing {
         message.nonce = oldNonce
 
         let oldIdentifier = message.nonpersistedObjectIdentifer
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!,
-                                                       newNonce: UUID.create(),
-                                                       conversationID: conversation.remoteIdentifier!,
-                                                       senderID: message.sender!.remoteIdentifier!,
-                                                       newText: newText)
+        let updateEvent = createMessageEditUpdateEvent(
+            oldNonce: message.nonce!,
+            newNonce: UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            senderID: message.sender!.remoteIdentifier!,
+            newText: newText
+        )
 
         // when
         var newMessage: ZMClientMessage?

@@ -19,16 +19,40 @@
 import Foundation
 
 extension ZMConversation {
-    public class func existingConversation(in moc: NSManagedObjectContext, service: ServiceUser, team: Team?) -> ZMConversation? {
+    public class func existingConversation(
+        in moc: NSManagedObjectContext,
+        service: ServiceUser,
+        team: Team?
+    ) -> ZMConversation? {
         guard let team else { return nil }
         guard let serviceID = service.serviceIdentifier else { return nil }
         let sameTeam = predicateForConversations(in: team)
-        let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
-        let selfIsActiveMember = NSPredicate(format: "ANY %K.user == %@", ZMConversationParticipantRolesKey, ZMUser.selfUser(in: moc))
+        let groupConversation = NSPredicate(
+            format: "%K == %d",
+            ZMConversationConversationTypeKey,
+            ZMConversationType.group.rawValue
+        )
+        let selfIsActiveMember = NSPredicate(
+            format: "ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            ZMUser.selfUser(in: moc)
+        )
         let onlyOneOtherParticipant = NSPredicate(format: "%K.@count == 2", ZMConversationParticipantRolesKey)
-        let hasParticipantWithServiceIdentifier = NSPredicate(format: "ANY %K.user.%K == %@", ZMConversationParticipantRolesKey, #keyPath(ZMUser.serviceIdentifier), serviceID)
+        let hasParticipantWithServiceIdentifier = NSPredicate(
+            format: "ANY %K.user.%K == %@",
+            ZMConversationParticipantRolesKey,
+            #keyPath(ZMUser.serviceIdentifier),
+            serviceID
+        )
         let noUserDefinedName = NSPredicate(format: "%K == nil", #keyPath(ZMConversation.userDefinedName))
-        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [sameTeam, groupConversation, selfIsActiveMember, onlyOneOtherParticipant, hasParticipantWithServiceIdentifier, noUserDefinedName])
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            sameTeam,
+            groupConversation,
+            selfIsActiveMember,
+            onlyOneOtherParticipant,
+            hasParticipantWithServiceIdentifier,
+            noUserDefinedName,
+        ])
 
         let fetchRequest = sortedFetchRequest(with: predicate)
 

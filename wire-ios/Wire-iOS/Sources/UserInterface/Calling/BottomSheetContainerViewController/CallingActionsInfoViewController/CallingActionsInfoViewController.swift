@@ -125,7 +125,10 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             actionsViewHeightConstraint,
 
             participantsHeaderView.heightAnchor.constraint(equalToConstant: participantsHeaderHeight),
-            participantsHeaderLabel.leadingAnchor.constraint(equalTo: participantsHeaderView.leadingAnchor, constant: 16.0),
+            participantsHeaderLabel.leadingAnchor.constraint(
+                equalTo: participantsHeaderView.leadingAnchor,
+                constant: 16.0
+            ),
             participantsHeaderLabel.centerYAnchor.constraint(equalTo: participantsHeaderView.centerYAnchor),
 
             collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),

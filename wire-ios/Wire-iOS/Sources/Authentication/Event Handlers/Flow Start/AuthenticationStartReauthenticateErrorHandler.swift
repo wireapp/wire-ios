@@ -26,7 +26,10 @@ import WireSyncEngine
 final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (optionalError, numberOfAccounts) = context
 
         // Only handle errors on launch
@@ -60,7 +63,11 @@ final class AuthenticationStartReauthenticateErrorHandler: AuthenticationEventHa
         }
 
         // Prepare the next step
-        let nextStep = AuthenticationFlowStep.reauthenticate(credentials: loginCredentials, numberOfAccounts: numberOfAccounts, isSignedOut: true)
+        let nextStep = AuthenticationFlowStep.reauthenticate(
+            credentials: loginCredentials,
+            numberOfAccounts: numberOfAccounts,
+            isSignedOut: true
+        )
         return [.transition(nextStep, mode: .reset)]
     }
 }

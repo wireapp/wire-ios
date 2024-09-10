@@ -28,7 +28,11 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         sut.performRemoteChanges { session in
             self.selfUser = session.insertSelfUser(withName: "me")
             self.team = session.insertTeam(withName: "A Team", isBound: true)
-            self.conversation = session.insertTeamConversation(to: self.team, with: [session.insertUser(withName: "some")], creator: self.selfUser)
+            self.conversation = session.insertTeamConversation(
+                to: self.team,
+                with: [session.insertUser(withName: "some")],
+                creator: self.selfUser
+            )
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -42,7 +46,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
 
     func testThatSettingAccessModeReturnsErrorWhenConversationDoesNotExist() {
         // when
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/123456/access", method: .put, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/123456/access",
+            method: .put,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -55,7 +64,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/\(self.conversation.identifier)/access", method: .put, apiVersion: .v0)
+        let response = self.response(
+            forPayload: payload,
+            path: "/conversations/\(self.conversation.identifier)/access",
+            method: .put,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 400)
@@ -68,7 +82,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/\(self.conversation.identifier)/access", method: .put, apiVersion: .v0)
+        let response = self.response(
+            forPayload: payload,
+            path: "/conversations/\(self.conversation.identifier)/access",
+            method: .put,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 400)
@@ -86,7 +105,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         ] as ZMTransportData
 
         // when
-        let response = self.response(forPayload: payload, path: "/conversations/\(self.conversation.identifier)/access", method: .put, apiVersion: .v0)
+        let response = self.response(
+            forPayload: payload,
+            path: "/conversations/\(self.conversation.identifier)/access",
+            method: .put,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -107,7 +131,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         // given
         self.conversation.accessMode = ["code", "invite"]
         // when
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .post, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(self.conversation.identifier)/code",
+            method: .post,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 201)
@@ -127,7 +156,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         // given
         self.conversation.accessMode = ["invite"]
         // when
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .post, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(self.conversation.identifier)/code",
+            method: .post,
+            apiVersion: .v0
+        )
         // then
         XCTAssertEqual(response?.httpStatus, 403)
     }
@@ -138,7 +172,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         self.conversation.accessMode = ["code", "invite"]
         self.conversation.link = existingLink
         // when
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .post, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(self.conversation.identifier)/code",
+            method: .post,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -155,7 +194,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         let status = self.conversation.guestLinkFeatureStatus
 
         // WHEN
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/features/conversationGuestLinks", method: .get, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(self.conversation.identifier)/features/conversationGuestLinks",
+            method: .get,
+            apiVersion: .v0
+        )
 
         // THEN
         XCTAssertEqual(response?.httpStatus, 200)
@@ -169,7 +213,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         self.conversation.guestLinkFeatureStatus = "enabled"
 
         // WHEN
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(UUID.create())/features/conversationGuestLinks", method: .get, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(UUID.create())/features/conversationGuestLinks",
+            method: .get,
+            apiVersion: .v0
+        )
 
         // THEN
         XCTAssertEqual(response?.httpStatus, 404)
@@ -182,7 +231,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         self.conversation.accessMode = ["code", "invite"]
         self.conversation.link = existingLink
         // when
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .get, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(self.conversation.identifier)/code",
+            method: .get,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)
@@ -199,7 +253,12 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         self.conversation.accessMode = ["code", "invite"]
         self.conversation.link = existingLink
         // when
-        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .delete, apiVersion: .v0)
+        let response = self.response(
+            forPayload: [:] as ZMTransportData,
+            path: "/conversations/\(self.conversation.identifier)/code",
+            method: .delete,
+            apiVersion: .v0
+        )
 
         // then
         XCTAssertEqual(response?.httpStatus, 200)

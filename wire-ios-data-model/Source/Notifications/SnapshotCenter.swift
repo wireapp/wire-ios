@@ -58,7 +58,8 @@ public class SnapshotCenter {
         let attributes = Array(object.entity.attributesByName.keys)
         let relationships = object.entity.relationshipsByName
 
-        let attributesDict = attributes.mapToDictionaryWithOptionalValue { object.primitiveValue(forKey: $0) as? NSObject }
+        let attributesDict = attributes
+            .mapToDictionaryWithOptionalValue { object.primitiveValue(forKey: $0) as? NSObject }
 
         let toManyRelationshipsDict: [String: Int] = relationships.reduce(into: .init()) { partialResult, item in
             guard
@@ -70,15 +71,16 @@ public class SnapshotCenter {
             partialResult[item.key] = newValue
         }
 
-        let toOneRelationshipsDict: [String: NSManagedObjectID] = relationships.reduce(into: .init()) { partialResult, item in
-            guard
-                !item.value.isToMany,
-                let newValue = (object.primitiveValue(forKey: item.key) as? NSManagedObject)?.objectID
-            else {
-                return
+        let toOneRelationshipsDict: [String: NSManagedObjectID] = relationships
+            .reduce(into: .init()) { partialResult, item in
+                guard
+                    !item.value.isToMany,
+                    let newValue = (object.primitiveValue(forKey: item.key) as? NSManagedObject)?.objectID
+                else {
+                    return
+                }
+                partialResult[item.key] = newValue
             }
-            partialResult[item.key] = newValue
-        }
 
         return Snapshot(
             attributes: attributesDict,

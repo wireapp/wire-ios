@@ -59,7 +59,11 @@ final class ConnectRequestsCell: UICollectionViewCell, SectionListCellType {
         updateAppearance()
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserverToken = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserverToken = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
         }
 
         setNeedsUpdateConstraints()

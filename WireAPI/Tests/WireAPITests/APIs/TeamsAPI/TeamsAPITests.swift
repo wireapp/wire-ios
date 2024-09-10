@@ -192,7 +192,10 @@ final class TeamsAPITests: XCTestCase {
             try [
                 TeamMember(
                     userID: XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
-                    creationDate: XCTUnwrap(ISO8601DateFormatter.fractionalInternetDateTime.date(from: "2024-05-14T08:55:04.779Z")),
+                    creationDate: XCTUnwrap(
+                        ISO8601DateFormatter.fractionalInternetDateTime
+                            .date(from: "2024-05-14T08:55:04.779Z")
+                    ),
                     creatorID: XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
                     legalholdStatus: .pending,
                     permissions: TeamMemberPermissions(

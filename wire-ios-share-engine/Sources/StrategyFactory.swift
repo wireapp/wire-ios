@@ -30,16 +30,21 @@ final class StrategyFactory {
 
     private var tornDown = false
 
-    init(syncContext: NSManagedObjectContext,
-         applicationStatus: ApplicationStatus,
-         linkPreviewPreprocessor: LinkPreviewPreprocessor,
-         transportSession: TransportSessionType
+    init(
+        syncContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        linkPreviewPreprocessor: LinkPreviewPreprocessor,
+        transportSession: TransportSessionType
     ) {
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
-        let quickSyncObserver = QuickSyncObserver(context: syncContext, applicationStatus: applicationStatus, notificationContext: syncContext.notificationContext)
+        let quickSyncObserver = QuickSyncObserver(
+            context: syncContext,
+            applicationStatus: applicationStatus,
+            notificationContext: syncContext.notificationContext
+        )
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
@@ -49,7 +54,8 @@ final class StrategyFactory {
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
             quickSyncObserver: quickSyncObserver,
-            context: syncContext)
+            context: syncContext
+        )
         self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
@@ -104,7 +110,8 @@ final class StrategyFactory {
 
     // MARK: – Link Previews
 
-    private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> LinkPreviewAssetUploadRequestStrategy {
+    private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor)
+        -> LinkPreviewAssetUploadRequestStrategy {
         LinkPreviewAssetUploadRequestStrategy(
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,
@@ -120,7 +127,10 @@ final class StrategyFactory {
     // MARK: - Asset V3
 
     private func createAssetV3UploadRequestStrategy() -> AssetV3UploadRequestStrategy {
-        let strategy = AssetV3UploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+        let strategy = AssetV3UploadRequestStrategy(
+            withManagedObjectContext: syncContext,
+            applicationStatus: applicationStatus
+        )
 
         // WORKAROUND:
         // There are some issues with uploading file using a background session from the share extension.

@@ -39,7 +39,11 @@ extension ZMUserSession {
      * - parameter error: The error that prevented the approval of legal hold.
      */
 
-    public func accept(legalHoldRequest: LegalHoldRequest, password: String?, completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void) {
+    public func accept(
+        legalHoldRequest: LegalHoldRequest,
+        password: String?,
+        completionHandler: @escaping (_ error: LegalHoldActivationError?) -> Void
+    ) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completionHandler(.missingAPIVersion)
         }
@@ -76,7 +80,12 @@ extension ZMUserSession {
             payload["password"] = password
 
             let path = "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())/approve"
-            let request = ZMTransportRequest(path: path, method: .put, payload: payload as NSDictionary, apiVersion: apiVersion.rawValue)
+            let request = ZMTransportRequest(
+                path: path,
+                method: .put,
+                payload: payload as NSDictionary,
+                apiVersion: apiVersion.rawValue
+            )
             let response = await self.transportSession.enqueue(request, queue: self.syncManagedObjectContext)
 
             if response.httpStatus == 200 {

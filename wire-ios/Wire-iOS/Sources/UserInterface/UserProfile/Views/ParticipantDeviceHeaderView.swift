@@ -33,7 +33,10 @@ final class ParticipantDeviceHeaderView: UIView {
     weak var delegate: ParticipantDeviceHeaderViewDelegate?
     var showUnencryptedLabel = false {
         didSet {
-            textView.attributedText = attributedExplanationText(for: userName, showUnencryptedLabel: showUnencryptedLabel)
+            textView.attributedText = attributedExplanationText(
+                for: userName,
+                showUnencryptedLabel: showUnencryptedLabel
+            )
         }
     }
 
@@ -67,17 +70,22 @@ final class ParticipantDeviceHeaderView: UIView {
 
     // MARK: Attributed Text
 
-    func attributedExplanationText(for userName: String,
-                                   showUnencryptedLabel unencrypted: Bool) -> NSAttributedString? {
+    func attributedExplanationText(
+        for userName: String,
+        showUnencryptedLabel unencrypted: Bool
+    ) -> NSAttributedString? {
         typealias ProfileDevices = L10n.Localizable.Profile.Devices
 
         if unencrypted {
-            let message = userName.isEmpty ? ProfileDevices.noDeviceData : ProfileDevices.fingerprintMessageUnencrypted(userName)
+            let message = userName.isEmpty ? ProfileDevices.noDeviceData : ProfileDevices
+                .fingerprintMessageUnencrypted(userName)
             return attributedFingerprint(forMessage: message)
         } else {
-            let message = "\(ProfileDevices.FingerprintMessage.title(userName))\(L10n.Localizable.General.spaceBetweenWords)"
+            let message =
+                "\(ProfileDevices.FingerprintMessage.title(userName))\(L10n.Localizable.General.spaceBetweenWords)"
 
-            let mutableAttributedString = NSMutableAttributedString(attributedString: attributedFingerprint(forMessage: message))
+            let mutableAttributedString =
+                NSMutableAttributedString(attributedString: attributedFingerprint(forMessage: message))
 
             let fingerprintLearnMoreLink = ProfileDevices.FingerprintMessage.link && linkAttributes
 
@@ -128,7 +136,12 @@ final class ParticipantDeviceHeaderView: UIView {
 }
 
 extension ParticipantDeviceHeaderView: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith URL: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         delegate?.participantsDeviceHeaderViewDidTapLearnMore(self)
 
         return false

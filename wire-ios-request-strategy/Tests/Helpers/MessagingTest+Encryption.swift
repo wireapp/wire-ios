@@ -99,7 +99,10 @@ extension MessagingTestBase {
                 }
             } else {
                 do {
-                    plainText = try session.createClientSessionAndReturnPlaintext(for: selfClient.sessionIdentifier!, prekeyMessage: cypherText)
+                    plainText = try session.createClientSessionAndReturnPlaintext(
+                        for: selfClient.sessionIdentifier!,
+                        prekeyMessage: cypherText
+                    )
                 } catch {
                     XCTFail("Decryption error: \(error)")
                 }
@@ -117,7 +120,8 @@ extension MessagingTestBase {
 
     /// Returns the folder where the encryption contexts for other test clients are stored
     var otherClientsEncryptionContextsURL: URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("OtherClients")
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("OtherClients")
     }
 
     /// Returns the encryption context to use for a given client. There are extra cryptobox sessions

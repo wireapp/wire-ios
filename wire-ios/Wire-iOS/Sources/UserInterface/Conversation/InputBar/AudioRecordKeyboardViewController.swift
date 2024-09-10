@@ -78,11 +78,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
-        self.init(audioRecorder: AudioRecorder(
-            format: .wav,
-            maxRecordingDuration: userSession.maxAudioMessageLength,
-            maxFileSize: userSession.maxUploadFileSize),
-        userSession: userSession
+        self.init(
+            audioRecorder: AudioRecorder(
+                format: .wav,
+                maxRecordingDuration: userSession.maxAudioMessageLength,
+                maxFileSize: userSession.maxUploadFileSize
+            ),
+            userSession: userSession
         )
     }
 
@@ -129,11 +131,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.audioPreviewView.gradientWidth = 20
         self.audioPreviewView.gradientColor = backgroundColor
 
-        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
-            if let color {
-                self.audioPreviewView.color = color
+        self.accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(self, userSession: userSession) { [unowned self] color, _ in
+                if let color {
+                    self.audioPreviewView.color = color
+                }
             }
-        }
 
         self.timeLabel.font = FontSpec(.small, .light).font!
         self.timeLabel.textColor = textColor
@@ -145,11 +148,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
         createButtons()
 
-        [self.recordButton,
-         self.stopRecordButton,
-         self.confirmButton,
-         self.redoButton,
-         self.cancelButton].forEach(self.bottomToolbar.addSubview)
+        [
+            self.recordButton,
+            self.stopRecordButton,
+            self.confirmButton,
+            self.redoButton,
+            self.cancelButton,
+        ].forEach(self.bottomToolbar.addSubview)
 
         self.topSeparator.backgroundColor = separatorColor
 
@@ -211,7 +216,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.confirmButton.setIcon(.checkmark, size: .tiny, for: [])
         self.confirmButton.setIconColor(.white, for: [])
         self.confirmButton.addTarget(self, action: #selector(confirmButtonPressed), for: .touchUpInside)
-        self.confirmButton.setBackgroundImageColor(SemanticColors.Button.backgroundconfirmSendingAudioMessage, for: .normal)
+        self.confirmButton.setBackgroundImageColor(
+            SemanticColors.Button.backgroundconfirmSendingAudioMessage,
+            for: .normal
+        )
         self.confirmButton.layer.masksToBounds = true
 
         self.redoButton.setIcon(.undo, size: .tiny, for: [])
@@ -346,7 +354,8 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
             state = .effects
 
-            if case let .failure(error) = result, let error = error as? RecordingError, let alert = recorder.alertForRecording(error: error) {
+            if case let .failure(error) = result, let error = error as? RecordingError,
+               let alert = recorder.alertForRecording(error: error) {
                 present(alert, animated: true, completion: .none)
             }
         }
@@ -394,7 +403,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
                 self.closeEffectsPicker(animated: false)
             }
 
-            let picker = AudioEffectsPickerViewController(recordingPath: noizeReducePath, duration: self.recorder.currentDuration)
+            let picker = AudioEffectsPickerViewController(
+                recordingPath: noizeReducePath,
+                duration: self.recorder.currentDuration
+            )
             self.addChild(picker)
             picker.delegate = self
             picker.view.alpha = 0
@@ -484,7 +496,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 // MARK: - AudioEffectsPickerDelegate
 
 extension AudioRecordKeyboardViewController: AudioEffectsPickerDelegate {
-    func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String) {
+    func audioEffectsPickerDidPickEffect(
+        _ picker: AudioEffectsPickerViewController,
+        effect: AVSAudioEffectType,
+        resultFilePath: String
+    ) {
         self.currentEffectFilePath = resultFilePath
         self.currentEffect = effect
     }

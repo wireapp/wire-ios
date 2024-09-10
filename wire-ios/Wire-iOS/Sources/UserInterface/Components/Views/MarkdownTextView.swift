@@ -60,8 +60,10 @@ final class MarkdownTextView: NextResponderTextView {
         setText(draft.text, withMentions: draft.mentions)
     }
 
-    override func canPerformAction(_ action: Selector,
-                                   withSender sender: Any?) -> Bool {
+    override func canPerformAction(
+        _ action: Selector,
+        withSender sender: Any?
+    ) -> Bool {
         if !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).canUseClipboard {
             let validActions = [
                 #selector(UIResponderStandardEditActions.select(_:)),
@@ -112,7 +114,10 @@ final class MarkdownTextView: NextResponderTextView {
         return textWithPlainTextMentions as String
     }
 
-    private func mentionAttachmentsWithRange(from attributedText: NSAttributedString) -> [(MentionTextAttachment, NSRange)] {
+    private func mentionAttachmentsWithRange(from attributedText: NSAttributedString) -> [(
+        MentionTextAttachment,
+        NSRange
+    )] {
         var result = [(MentionTextAttachment, NSRange)]()
         attributedText.enumerateAttributes(in: attributedText.wholeRange, options: []) { attributes, range, _ in
             if let attachment = attributes[.attachment] as? MentionTextAttachment {
@@ -198,7 +203,12 @@ final class MarkdownTextView: NextResponderTextView {
         currentAttributes = attributes(for: activeMarkdown)
         typingAttributes = currentAttributes
 
-        NotificationCenter.default.addObserver(self, selector: #selector(textViewDidChange), name: UITextView.textDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textViewDidChange),
+            name: UITextView.textDidChangeNotification,
+            object: nil
+        )
         setupGestureRecognizer()
     }
 

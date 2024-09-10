@@ -31,9 +31,14 @@ final class GuestsBarController: UIViewController {
 
     private let label = UILabel()
     private let container = UIView()
-    private lazy var containerHeightConstraint: NSLayoutConstraint = container.heightAnchor.constraint(equalToConstant: GuestsBarController.expandedHeight)
-    private lazy var heightConstraint: NSLayoutConstraint = view.heightAnchor.constraint(equalToConstant: GuestsBarController.expandedHeight)
-    private lazy var bottomLabelConstraint: NSLayoutConstraint = label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -3)
+    private lazy var containerHeightConstraint: NSLayoutConstraint = container.heightAnchor
+        .constraint(equalToConstant: GuestsBarController.expandedHeight)
+    private lazy var heightConstraint: NSLayoutConstraint = view.heightAnchor
+        .constraint(equalToConstant: GuestsBarController.expandedHeight)
+    private lazy var bottomLabelConstraint: NSLayoutConstraint = label.bottomAnchor.constraint(
+        equalTo: view.bottomAnchor,
+        constant: -3
+    )
 
     private static let collapsedHeight: CGFloat = 2
     private static let expandedHeight: CGFloat = 20
@@ -105,21 +110,29 @@ final class GuestsBarController: UIViewController {
 
         let change = {
             if !collapsed {
-                self.heightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController.expandedHeight
+                self.heightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController
+                    .expandedHeight
             }
 
-            self.containerHeightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController.expandedHeight
+            self.containerHeightConstraint.constant = collapsed ? GuestsBarController
+                .collapsedHeight : GuestsBarController.expandedHeight
             self.bottomLabelConstraint.constant = collapsed ? -GuestsBarController.expandedHeight : -3
             self.label.alpha = collapsed ? 0 : 1
         }
 
         let completion: (Bool) -> Void = { _ in
             guard collapsed else { return }
-            self.containerHeightConstraint.constant = collapsed ? GuestsBarController.collapsedHeight : GuestsBarController.expandedHeight
+            self.containerHeightConstraint.constant = collapsed ? GuestsBarController
+                .collapsedHeight : GuestsBarController.expandedHeight
         }
 
         if animated {
-            UIView.animate(easing: collapsed ? .easeOutQuad : .easeInQuad, duration: 0.4, animations: change, completion: completion)
+            UIView.animate(
+                easing: collapsed ? .easeOutQuad : .easeInQuad,
+                duration: 0.4,
+                animations: change,
+                completion: completion
+            )
         } else {
             change()
             completion(true)

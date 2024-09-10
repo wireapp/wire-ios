@@ -52,7 +52,12 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         ]
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(_ team: Team, modifier: (Team) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ team: Team,
+        modifier: (Team) -> Void,
+        expectedChangedFields: Set<String>,
+        customAffectedKeys: AffectedKeys? = nil
+    ) {
         // given
         self.uiMOC.saveOrRollback()
 
@@ -74,8 +79,10 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(teamObserver.notifications.count, changeCount, "Should not have changed further once")
 
         guard let changes = teamObserver.notifications.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
-                                             expectedChangedFields: expectedChangedFields)
+        changes.checkForExpectedChangeFields(
+            userInfoKeys: userInfoKeys,
+            expectedChangedFields: expectedChangedFields
+        )
     }
 
     func testThatItNotifiesTheObserverOfChangedName() {
@@ -85,9 +92,10 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(team,
-                                                     modifier: { $0.name = "foo" },
-                                                     expectedChangedFields: [#keyPath(TeamChangeInfo.nameChanged)]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            team,
+            modifier: { $0.name = "foo" },
+            expectedChangedFields: [#keyPath(TeamChangeInfo.nameChanged)]
         )
     }
 
@@ -97,9 +105,10 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(team,
-                                                     modifier: { $0.imageData = Data("image".utf8) },
-                                                     expectedChangedFields: [#keyPath(TeamChangeInfo.imageDataChanged)]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            team,
+            modifier: { $0.imageData = Data("image".utf8) },
+            expectedChangedFields: [#keyPath(TeamChangeInfo.imageDataChanged)]
         )
     }
 
@@ -109,12 +118,13 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(team,
-                                                     modifier: {
-                                                         let member = Member.insertNewObject(in: uiMOC)
-                                                         member.team = $0
-                                                     },
-                                                     expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            team,
+            modifier: {
+                let member = Member.insertNewObject(in: uiMOC)
+                member.team = $0
+            },
+            expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
         )
     }
 
@@ -126,14 +136,15 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(team,
-                                                     modifier: {
-                                                         guard let member = $0.members.first else {
-                                                             return XCTFail("No member? :(")
-                                                         }
-                                                         self.uiMOC.delete(member)
-                                                     },
-                                                     expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            team,
+            modifier: {
+                guard let member = $0.members.first else {
+                    return XCTFail("No member? :(")
+                }
+                self.uiMOC.delete(member)
+            },
+            expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
         )
     }
 }

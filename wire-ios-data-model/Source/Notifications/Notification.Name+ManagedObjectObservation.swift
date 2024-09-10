@@ -29,7 +29,8 @@ extension Notification.Name {
     static let NewUnreadKnock = Notification.Name("ZMNewUnreadKnockNotification")
     static let NewUnreadUnsentMessage = Notification.Name("ZMNewUnreadUnsentMessageNotification")
     static let VoiceChannelStateChange = Notification.Name("ZMVoiceChannelStateChangeNotification")
-    static let VoiceChannelParticipantStateChange = Notification.Name("ZMVoiceChannelParticipantStateChangeNotification")
+    static let VoiceChannelParticipantStateChange = Notification
+        .Name("ZMVoiceChannelParticipantStateChangeNotification")
     static let TeamChange = Notification.Name("TeamChangeNotification")
     static let LabelChange = Notification.Name("LabelChangeNotification")
     static let ParticipantRoleChange = Notification.Name("ParticipantRoleChange")

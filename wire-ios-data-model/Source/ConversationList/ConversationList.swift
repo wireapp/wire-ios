@@ -109,7 +109,12 @@ public final class ConversationList: NSObject {
     }
 
     private func sortInsertConversation(_ conversation: ZMConversation) {
-        let index = (items as NSArray).index(of: conversation, inSortedRange: NSRange(location: 0, length: items.count), options: .insertionIndex, usingComparator: comparator)
+        let index = (items as NSArray).index(
+            of: conversation,
+            inSortedRange: NSRange(location: 0, length: items.count),
+            options: .insertionIndex,
+            usingComparator: comparator
+        )
         items.insert(conversation, at: index)
     }
 

@@ -147,7 +147,8 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         XCTAssertEqual(classification, .notClassified)
     }
 
-    func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil() {
+    func testThatItReturnsNotClassified_WhenFederationIsEnabled_WhenFeatureIsEnabled_WhenAtLeastOneOtherUserDomainIsNil(
+    ) {
         let federationFlagBackup = BackendInfo.isFederationEnabled
         let backendDomainBackup = BackendInfo.domain
         defer {

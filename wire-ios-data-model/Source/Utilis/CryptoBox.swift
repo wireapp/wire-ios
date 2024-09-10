@@ -56,7 +56,10 @@ extension NSManagedObjectContext {
             fatal("Can't initiliazie crypto box on non-sync context")
         }
 
-        let newKeyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
+        let newKeyStore = UserClientKeysStore(
+            accountDirectory: accountDirectory,
+            applicationContainer: applicationContainer
+        )
         self.userInfo[NSManagedObjectContext.ZMUserClientKeysStoreKey] = newKeyStore
     }
 
@@ -112,7 +115,10 @@ open class UserClientKeysStore: NSObject {
 
     /// Loads new key store (if not present) or load an existing one
     public init(accountDirectory: URL, applicationContainer: URL) {
-        self.cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
+        self.cryptoboxDirectory = FileManager.keyStoreURL(
+            accountDirectory: accountDirectory,
+            createParentIfNeeded: true
+        )
         self.applicationContainer = applicationContainer
         self.encryptionContext = UserClientKeysStore.setupContext(in: self.cryptoboxDirectory)!
     }

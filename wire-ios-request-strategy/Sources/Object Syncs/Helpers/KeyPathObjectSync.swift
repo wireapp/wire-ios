@@ -82,10 +82,12 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let keypathExpression = NSExpression(forKeyPath: keyPath)
         let valueExpression = NSExpression(forConstantValue: true)
-        let predicate = NSComparisonPredicate(leftExpression: keypathExpression,
-                                              rightExpression: valueExpression,
-                                              modifier: .direct,
-                                              type: .equalTo)
+        let predicate = NSComparisonPredicate(
+            leftExpression: keypathExpression,
+            rightExpression: valueExpression,
+            modifier: .direct,
+            type: .equalTo
+        )
 
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         fetchRequest.predicate = predicate

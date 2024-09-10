@@ -94,17 +94,21 @@ final class UserClientCellTests: XCTestCase {
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsValid() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .valid)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .valid
+        )
         snapshotHelper
             .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsValid_inDarkMode() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .valid)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .valid
+        )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
@@ -112,16 +116,20 @@ final class UserClientCellTests: XCTestCase {
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsExpired() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .expired)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .expired
+        )
         snapshotHelper.verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsExpired_inDarkMode() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .expired)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .expired
+        )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)
@@ -129,32 +137,40 @@ final class UserClientCellTests: XCTestCase {
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsRevoked() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .revoked)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .revoked
+        )
         snapshotHelper.verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsRevoked_inDarkMode() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .revoked)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .revoked
+        )
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsNotActivated() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .notActivated)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .notActivated
+        )
         snapshotHelper.verify(matching: container)
     }
 
     func testThatE2EIStatusAndProteusBadgeIsDisplayed_whenProteusIsNotVerifiedAndE2EIStatusIsNotActivated_inDarkMode() {
-        prepareSut(shouldDisplayMLSInfo: true,
-                   isProteusVerified: true,
-                   e2EIdentityCertificateStatus: .notActivated)
+        prepareSut(
+            shouldDisplayMLSInfo: true,
+            isProteusVerified: true,
+            e2EIdentityCertificateStatus: .notActivated
+        )
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)

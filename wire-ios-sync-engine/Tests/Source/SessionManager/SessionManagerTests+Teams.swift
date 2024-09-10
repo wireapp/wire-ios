@@ -28,7 +28,10 @@ final class SessionManagerTeamsTests: IntegrationTest {
     func testThatItUpdatesAccountAfterLoginWithTeamName() {
         // given
         let teamName = "Wire"
-        let image = MockAsset(in: mockTransportSession.managedObjectContext, forID: selfUser.previewProfileAssetIdentifier!)
+        let image = MockAsset(
+            in: mockTransportSession.managedObjectContext,
+            forID: selfUser.previewProfileAssetIdentifier!
+        )
         self.mockTransportSession.performRemoteChanges { session in
             let team = session.insertTeam(withName: teamName, isBound: true, users: [self.selfUser])
             team.creator = self.selfUser
@@ -42,9 +45,11 @@ final class SessionManagerTeamsTests: IntegrationTest {
         _ = MockAsset(in: mockTransportSession.managedObjectContext, forID: selfUser.previewProfileAssetIdentifier!)
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
         let manager = AccountManager(sharedDirectory: sharedContainer)
-        guard let account = manager.accounts.first, manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+        guard let account = manager.accounts.first,
+              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
         XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
         XCTAssertEqual(account.teamName, teamName)
         XCTAssertEqual(account.imageData, image?.data)
@@ -58,13 +63,18 @@ final class SessionManagerTeamsTests: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
         let manager = AccountManager(sharedDirectory: sharedContainer)
-        guard let account = manager.accounts.first, manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+        guard let account = manager.accounts.first,
+              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
         XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, self.selfUser.name)
-        let image = MockAsset(in: mockTransportSession.managedObjectContext, forID: selfUser.previewProfileAssetIdentifier!)
+        let image = MockAsset(
+            in: mockTransportSession.managedObjectContext,
+            forID: selfUser.previewProfileAssetIdentifier!
+        )
 
         XCTAssertEqual(account.imageData, image?.data)
     }
@@ -81,13 +91,18 @@ final class SessionManagerTeamsTests: IntegrationTest {
         XCTAssert(login())
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
         let manager = AccountManager(sharedDirectory: sharedContainer)
-        guard let account = manager.accounts.first, manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+        guard let account = manager.accounts.first,
+              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
         XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, self.selfUser.name)
-        let image = MockAsset(in: mockTransportSession.managedObjectContext, forID: selfUser.previewProfileAssetIdentifier!)
+        let image = MockAsset(
+            in: mockTransportSession.managedObjectContext,
+            forID: selfUser.previewProfileAssetIdentifier!
+        )
 
         XCTAssertEqual(account.imageData, image?.data)
     }
@@ -103,9 +118,11 @@ final class SessionManagerTeamsTests: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
         let manager = AccountManager(sharedDirectory: sharedContainer)
-        guard let account = manager.accounts.first, manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
+        guard let account = manager.accounts.first,
+              manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
         XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, selfUser.name)

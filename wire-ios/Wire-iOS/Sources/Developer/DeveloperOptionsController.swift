@@ -73,9 +73,16 @@ final class DeveloperOptionsController: UIViewController {
     func forwardLogCell() -> UITableViewCell {
         createCellWithButton(labelText: "Forward log records") { sender in
 
-            let alertController = UIAlertController(title: "Add explanation", message: "Please explain the problem that made you send the logs", preferredStyle: .alert)
+            let alertController = UIAlertController(
+                title: "Add explanation",
+                message: "Please explain the problem that made you send the logs",
+                preferredStyle: .alert
+            )
 
-            let fallbackActivityConfiguration: PopoverPresentationControllerConfiguration = .superviewAndFrame(of: sender, insetBy: (dx: -4, dy: -4))
+            let fallbackActivityConfiguration: PopoverPresentationControllerConfiguration = .superviewAndFrame(
+                of: sender,
+                insetBy: (dx: -4, dy: -4)
+            )
 
             alertController.addAction(UIAlertAction(title: "Send to Devs", style: .default) { _ in
                 guard let text = alertController.textFields?.first?.text else { return }
@@ -113,7 +120,8 @@ final class DeveloperOptionsController: UIViewController {
         button.titleLabel?.textAlignment = .right
         button.setTitleColor(
             SemanticColors.Label.textDefault,
-            for: .normal)
+            for: .normal
+        )
         if let titleLabel = button.titleLabel {
             NSLayoutConstraint.activate([
                 titleLabel.rightAnchor.constraint(equalTo: button.rightAnchor),
@@ -125,11 +133,19 @@ final class DeveloperOptionsController: UIViewController {
     }
 
     /// Creates and sets the layout of a cell with a UISwitch
-    func createCellWithSwitch(labelText: String, isOn: Bool, onValueChange: @escaping (Bool) -> Void) -> UITableViewCell {
+    func createCellWithSwitch(
+        labelText: String,
+        isOn: Bool,
+        onValueChange: @escaping (Bool) -> Void
+    ) -> UITableViewCell {
         let toggle = Switch(style: .default)
         toggle.translatesAutoresizingMaskIntoConstraints = false
         toggle.isOn = isOn
-        toggle.addTarget(self, action: #selector(DeveloperOptionsController.switchDidChange(sender:)), for: .valueChanged)
+        toggle.addTarget(
+            self,
+            action: #selector(DeveloperOptionsController.switchDidChange(sender:)),
+            for: .valueChanged
+        )
         uiSwitchToAction[toggle] = onValueChange
         return createCellWithLabelAndView(labelText: labelText, view: toggle)
     }

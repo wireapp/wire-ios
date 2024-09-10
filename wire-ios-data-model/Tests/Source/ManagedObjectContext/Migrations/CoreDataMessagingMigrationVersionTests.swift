@@ -25,6 +25,9 @@ final class CoreDataMessagingMigrationVersionTests: XCTestCase {
         let migrationVersion = CoreDataMessagingMigrationVersion.allCases.first { version in
             version.dataModelVersion == currentModelVersion
         }
-        XCTAssertNotNil(migrationVersion, "if you added a new model, you MUST add the case in the enum. and update the nextVersion method")
+        XCTAssertNotNil(
+            migrationVersion,
+            "if you added a new model, you MUST add the case in the enum. and update the nextVersion method"
+        )
     }
 }

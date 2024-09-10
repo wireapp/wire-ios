@@ -65,7 +65,8 @@ final class ServiceDetailView: UIView {
             descriptionTextView.leadingAnchor.constraint(equalTo: leadingAnchor),
             descriptionTextView.trailingAnchor.constraint(equalTo: trailingAnchor),
             descriptionTextView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            descriptionTextView.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 16)])
+            descriptionTextView.topAnchor.constraint(equalTo: serviceView.bottomAnchor, constant: 16),
+        ])
     }
 
     private func updateForService() {

@@ -45,7 +45,10 @@ class RoundedBadge: UIButton {
         translatesAutoresizingMaskIntoConstraints = false
 
         leadingConstraint = containedView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: contentInset.left)
-        trailingConstraint = containedView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -contentInset.right)
+        trailingConstraint = containedView.trailingAnchor.constraint(
+            equalTo: trailingAnchor,
+            constant: -contentInset.right
+        )
         widthGreaterThanHeightConstraint = widthAnchor.constraint(greaterThanOrEqualTo: heightAnchor)
 
         NSLayoutConstraint.activate([
@@ -89,7 +92,10 @@ class RoundedBadge: UIButton {
 final class RoundedTextBadge: RoundedBadge {
     var textLabel = UILabel()
 
-    init(contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4), font: UIFont = .smallSemiboldFont) {
+    init(
+        contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4),
+        font: UIFont = .smallSemiboldFont
+    ) {
         super.init(view: self.textLabel, contentInset: contentInset)
         textLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         textLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)

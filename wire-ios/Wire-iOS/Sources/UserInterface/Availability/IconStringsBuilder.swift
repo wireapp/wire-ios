@@ -41,13 +41,16 @@ enum IconStringsBuilder {
             if let titleFont {
                 let iconImage: UIImage = StyleKitIcon.downArrow.makeImage(
                     size: .custom(15),
-                    color: SemanticColors.Icon.foregroundPlainDownArrow).withRenderingMode(.alwaysTemplate)
+                    color: SemanticColors.Icon.foregroundPlainDownArrow
+                ).withRenderingMode(.alwaysTemplate)
 
                 let icon = NSTextAttachment()
-                let iconBounds = CGRect(x: 0,
-                                        y: (titleFont.capHeight - iconImage.size.height).rounded() / 2,
-                                        width: iconImage.size.width,
-                                        height: iconImage.size.height)
+                let iconBounds = CGRect(
+                    x: 0,
+                    y: (titleFont.capHeight - iconImage.size.height).rounded() / 2,
+                    width: iconImage.size.width,
+                    height: iconImage.size.height
+                )
 
                 icon.bounds = iconBounds
                 icon.image = iconImage
@@ -64,7 +67,10 @@ enum IconStringsBuilder {
         }
 
         // Add a padding and combine the final attributed string
-        let attributedTitle = NSMutableAttributedString(attributedString: components.joined(separator: .init(string: "  ")))
+        let attributedTitle = NSMutableAttributedString(
+            attributedString: components
+                .joined(separator: .init(string: "  "))
+        )
         let totalRange = NSRange(location: 0, length: attributedTitle.length)
         attributedTitle.addAttributes([.foregroundColor: color], range: totalRange)
         return NSAttributedString(attributedString: attributedTitle)

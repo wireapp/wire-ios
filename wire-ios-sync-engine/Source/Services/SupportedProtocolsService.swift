@@ -58,7 +58,10 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         let migrationState = currentMigrationState()
         let allClientsMLSReady = allSelfUserClientsAreActiveMLSClients()
 
-        logger.debug("remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)")
+        logger
+            .debug(
+                "remote protocols: \(remoteProtocols), migration state: \(migrationState), allClientsMLSReady: \(allClientsMLSReady)"
+            )
 
         var result = Set<MessageProtocol>()
 

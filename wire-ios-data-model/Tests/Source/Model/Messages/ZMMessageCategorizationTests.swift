@@ -73,7 +73,8 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesATextMessageWithLink() {
         // GIVEN
-        let message = try! self.conversation.appendText(content: "ramble on https://en.wikipedia.org/wiki/Ramble_On here")
+        let message = try! self.conversation
+            .appendText(content: "ramble on https://en.wikipedia.org/wiki/Ramble_On here")
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.link])
@@ -89,12 +90,18 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
         )
         article.title = "title"
         article.summary = "summary"
-        let genericMessage = GenericMessage(content: Text(content: "foo", mentions: [], linkPreviews: [article], replyingTo: nil), nonce: UUID.create())
+        let genericMessage = GenericMessage(
+            content: Text(content: "foo", mentions: [], linkPreviews: [article], replyingTo: nil),
+            nonce: UUID.create()
+        )
         let message = try self.conversation.appendClientMessage(with: genericMessage)
         message.linkPreviewState = .processed
 
         // THEN
-        XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.link, MessageCategory.linkPreview])
+        XCTAssertEqual(
+            message.categorization,
+            [MessageCategory.text, MessageCategory.link, MessageCategory.linkPreview]
+        )
     }
 
     func testThatItCategorizesAnImageMessage() {
@@ -133,7 +140,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")))
+        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+            forResource: "Lorem Ipsum",
+            extension: "txt"
+        )))
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.file)
@@ -141,7 +151,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItDoesCategorizeAFailedToUploadFile_ExcludedFromCollection() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMAssetClientMessage
+        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+            forResource: "Lorem Ipsum",
+            extension: "txt"
+        ))) as! ZMAssetClientMessage
         message.transferState = .uploadingFailed
         message.updateCategoryCache()
 
@@ -151,7 +164,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItDoesNotCategorizeACancelledToUploadFile_ExcludedFromCollection() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMAssetClientMessage
+        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+            forResource: "Lorem Ipsum",
+            extension: "txt"
+        ))) as! ZMAssetClientMessage
         message.transferState = .uploadingCancelled
         message.updateCategoryCache()
 
@@ -161,7 +177,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesAudioFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMAudioMetadata(fileURL: self.fileURL(forResource: "audio", extension: "m4a"), duration: 12.2))
+        let message = try! self.conversation.appendFile(with: ZMAudioMetadata(
+            fileURL: self.fileURL(forResource: "audio", extension: "m4a"),
+            duration: 12.2
+        ))
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.audio])
@@ -169,7 +188,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesVideoFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData()))
+        let message = try! self.conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: self.verySmallJPEGData()
+        ))
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.video])
@@ -177,7 +199,12 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesLocation() throws {
         // GIVEN
-        let message = try self.conversation.appendLocation(with: LocationData.locationData(withLatitude: 40.42, longitude: 50.2, name: "Fooland", zoomLevel: Int32(2)))
+        let message = try self.conversation.appendLocation(with: LocationData.locationData(
+            withLatitude: 40.42,
+            longitude: 50.2,
+            name: "Fooland",
+            zoomLevel: Int32(2)
+        ))
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.location)
@@ -214,7 +241,10 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesLikedFileMessageWhenLikedBySelfUser() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMAssetClientMessage
+        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+            forResource: "Lorem Ipsum",
+            extension: "txt"
+        ))) as! ZMAssetClientMessage
         message.delivered = true
         ZMMessage.addReaction("❤️", to: message)
         XCTAssertFalse(message.usersReaction.isEmpty)
@@ -253,7 +283,10 @@ extension ZMMessageCategorizationTests {
 
         // THEN
         XCTAssertEqual(category, MessageCategory.text)
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.text.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.text.rawValue)
+        )
     }
 
     func testThatItUsedCachedCategoryValueIfPresent() {
@@ -268,7 +301,10 @@ extension ZMMessageCategorizationTests {
 
         // THEN
         XCTAssertEqual(category, MessageCategory.audio)
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.audio.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.audio.rawValue)
+        )
     }
 
     func testThatItComputestheCachedCategoryWhenAsked() {
@@ -402,7 +438,10 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [[MessageCategory.text, MessageCategory.reacted], MessageCategory.knock])
+        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [
+            [MessageCategory.text, MessageCategory.reacted],
+            MessageCategory.knock,
+        ])
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -433,7 +472,10 @@ extension ZMMessageCategorizationTests {
         self.conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text], excluding: [MessageCategory.link, MessageCategory.reacted])
+        let fetchRequest = ZMMessage.fetchRequestMatching(
+            categories: [MessageCategory.text],
+            excluding: [MessageCategory.link, MessageCategory.reacted]
+        )
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -489,7 +531,10 @@ extension ZMMessageCategorizationTests {
         textMessage2.serverTimestamp = Date(timeIntervalSince1970: 300)
 
         // WHEN
-        let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text], conversation: otherConversation)
+        let fetchRequest = ZMMessage.fetchRequestMatching(
+            categories: [MessageCategory.text],
+            conversation: otherConversation
+        )
         let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
@@ -510,22 +555,36 @@ extension ZMMessageCategorizationTests {
         let message = try! self.conversation.appendText(content: "hey Jean!") as! ZMMessage
 
         // then
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.text.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.text.rawValue)
+        )
     }
 
     func testThatItCategorizesALocationMessageOnInsert() throws {
         // when
-        let message = try self.conversation.appendLocation(with: LocationData.locationData(withLatitude: 40.42, longitude: 50.2, name: "Fooland", zoomLevel: Int32(2))) as! ZMMessage
+        let message = try self.conversation.appendLocation(with: LocationData.locationData(
+            withLatitude: 40.42,
+            longitude: 50.2,
+            name: "Fooland",
+            zoomLevel: Int32(2)
+        )) as! ZMMessage
 
         // then
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.location.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.location.rawValue)
+        )
     }
 
     func testThatItCategorizesAKnockMessageOnInsert() throws {
         // when
         let message = try self.conversation.appendKnock() as! ZMMessage
         // then
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.knock.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.knock.rawValue)
+        )
     }
 
     func testThatItCategorizesAnImageMessageOnInsert() {
@@ -533,32 +592,53 @@ extension ZMMessageCategorizationTests {
         let message = try! self.conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
 
         // then
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.image.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.image.rawValue)
+        )
     }
 
     func testThatItCategorizesAVideoMessageOnInsert() {
         // when
-        let message = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMMessage
+        let message = try! self.conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: self.verySmallJPEGData()
+        )) as! ZMMessage
 
         // then
         let category = MessageCategory.file.union(MessageCategory.video)
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: category.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: category.rawValue)
+        )
     }
 
     func testThatItCategorizesAnAudioFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMAudioMetadata(fileURL: self.fileURL(forResource: "audio", extension: "m4a"), duration: 12.2)) as! ZMMessage
+        let message = try! self.conversation.appendFile(with: ZMAudioMetadata(
+            fileURL: self.fileURL(forResource: "audio", extension: "m4a"),
+            duration: 12.2
+        )) as! ZMMessage
 
         // THEN
         let category = MessageCategory.file.union(MessageCategory.audio)
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: category.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: category.rawValue)
+        )
     }
 
     func testThatItCategorizesAFileOnInsert() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt"))) as! ZMMessage
+        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+            forResource: "Lorem Ipsum",
+            extension: "txt"
+        ))) as! ZMMessage
 
         // THEN
-        XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.file.rawValue))
+        XCTAssertEqual(
+            message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
+            NSNumber(value: MessageCategory.file.rawValue)
+        )
     }
 }

@@ -22,14 +22,15 @@ import XCTest
 @testable import WireDataModel
 
 final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
-    func appendSystemMessage(conversation: ZMConversation,
-                             type: ZMSystemMessageType,
-                             sender: ZMUser,
-                             users: Set<ZMUser>?,
-                             addedUsers: Set<ZMUser> = Set(),
-                             clients: Set<UserClient>?,
-                             timestamp: Date?,
-                             duration: TimeInterval? = nil
+    func appendSystemMessage(
+        conversation: ZMConversation,
+        type: ZMSystemMessageType,
+        sender: ZMUser,
+        users: Set<ZMUser>?,
+        addedUsers: Set<ZMUser> = Set(),
+        clients: Set<UserClient>?,
+        timestamp: Date?,
+        duration: TimeInterval? = nil
     ) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
         systemMessage.systemMessageType = type
@@ -47,23 +48,28 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
         return systemMessage
     }
 
-    func addedOrRemovedSystemMessages(conversation: ZMConversation,
-                                      client: UserClient
+    func addedOrRemovedSystemMessages(
+        conversation: ZMConversation,
+        client: UserClient
     ) -> [ZMSystemMessage] {
-        let addedMessage = self.appendSystemMessage(conversation: conversation,
-                                                    type: .newClient,
-                                                    sender: ZMUser.selfUser(in: self.moc),
-                                                    users: [client.user!],
-                                                    addedUsers: [client.user!],
-                                                    clients: [client],
-                                                    timestamp: Date())
+        let addedMessage = self.appendSystemMessage(
+            conversation: conversation,
+            type: .newClient,
+            sender: ZMUser.selfUser(in: self.moc),
+            users: [client.user!],
+            addedUsers: [client.user!],
+            clients: [client],
+            timestamp: Date()
+        )
 
-        let ignoredMessage = self.appendSystemMessage(conversation: conversation,
-                                                      type: .ignoredClient,
-                                                      sender: ZMUser.selfUser(in: self.moc),
-                                                      users: [client.user!],
-                                                      clients: [client],
-                                                      timestamp: Date())
+        let ignoredMessage = self.appendSystemMessage(
+            conversation: conversation,
+            type: .ignoredClient,
+            sender: ZMUser.selfUser(in: self.moc),
+            users: [client.user!],
+            clients: [client],
+            timestamp: Date()
+        )
 
         return [addedMessage, ignoredMessage]
     }

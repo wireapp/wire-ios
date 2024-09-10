@@ -166,7 +166,11 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         guard let item = navigationController?.navigationBar.items?.first else { return }
         item.rightBarButtonItem?.action = #selector(appendPostTapped)
         item.rightBarButtonItem?.title = L10n.ShareExtension.SendButton.title
-        item.titleView = UIImageView(image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel).downscaling(to: iconSize))
+        item
+            .titleView = UIImageView(
+                image: WireStyleKit.imageOfLogo(color: UIColor.Wire.primaryLabel)
+                    .downscaling(to: iconSize)
+            )
     }
 
     private var authenticatedAccounts: [Account] {
@@ -255,25 +259,29 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
 
-        urlItems.first?.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil, completionHandler: { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            guard let url = url as? URL, url.isFileURL else { return }
+        urlItems.first?.loadItem(
+            forTypeIdentifier: UTType.fileURL.identifier,
+            options: nil,
+            completionHandler: { url, error in
+                error?.log(message: "Unable to fetch URL for type URL")
+                guard let url = url as? URL, url.isFileURL else { return }
 
-            let filename = url.lastPathComponent
-            let separator = self.textView.text.isEmpty ? "" : "\n"
+                let filename = url.lastPathComponent
+                let separator = self.textView.text.isEmpty ? "" : "\n"
 
-            DispatchQueue.main.async {
-                self.textView.text += separator + filename
-                self.textView.delegate?.textViewDidChange?(self.textView)
+                DispatchQueue.main.async {
+                    self.textView.text += separator + filename
+                    self.textView.delegate?.textViewDidChange?(self.textView)
+                }
             }
-
-        })
+        )
     }
 
     /// Invoked when the user wants to post.
     @objc
     private func appendPostTapped() {
-        WireLogger.shareExtension.info("user wants to send content with \(postContent?.attachments.count ?? 0) attachments")
+        WireLogger.shareExtension
+            .info("user wants to send content with \(postContent?.attachments.count ?? 0) attachments")
 
         guard let sharingSession else {
             WireLogger.shareExtension.error("failed to send attachments: no sharing session")
@@ -318,7 +326,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 if let conversation = postContent.target {
                     self.conversationDidDegrade(
                         change: ConversationDegradationInfo(conversation: conversation, users: users),
-                        callback: strategyChoice)
+                        callback: strategyChoice
+                    )
                 }
 
             case .timedOut:
@@ -436,7 +445,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     // MARK: - Transitions
 
     private func presentSendingProgress(mode: SendingProgressViewController.ProgressMode) {
-        let progressSendingViewController = SendingProgressViewController(networkStatusObservable: networkStatusObservable)
+        let progressSendingViewController =
+            SendingProgressViewController(networkStatusObservable: networkStatusObservable)
         progressViewController?.mode = mode
 
         progressSendingViewController.cancelHandler = { [weak self] in
@@ -522,7 +532,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     func showChooseConversation() {
         guard let sharingSession else { return }
 
-        let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession.writebleArchivedConversations
+        let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession
+            .writebleArchivedConversations
         let conversationSelectionViewController = ConversationSelectionViewController(conversations: allConversations)
 
         conversationSelectionViewController.selectionHandler = { [weak self] conversation in
@@ -536,8 +547,10 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     func showChooseAccount() {
         guard let accountManager else { return }
-        let accountSelectionViewController = AccountSelectionViewController(accounts: accountManager.accounts,
-                                                                            current: currentAccount)
+        let accountSelectionViewController = AccountSelectionViewController(
+            accounts: accountManager.accounts,
+            current: currentAccount
+        )
 
         accountSelectionViewController.selectionHandler = { [weak self] account in
             self?.updateAccount(account)
@@ -548,7 +561,10 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         pushConfigurationViewController(accountSelectionViewController)
     }
 
-    private func conversationDidDegrade(change: ConversationDegradationInfo, callback: @escaping DegradationStrategyChoice) {
+    private func conversationDidDegrade(
+        change: ConversationDegradationInfo,
+        callback: @escaping DegradationStrategyChoice
+    ) {
         typealias MetaDegradedLocale = L10n.ShareExtension.Meta.Degraded
 
         let title = titleForMissingClients(causedBy: change)
@@ -557,15 +573,27 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         self.present(alert, animated: true)
     }
 
-    private func createDegradationAlert(title: String, message: String, callback: @escaping DegradationStrategyChoice) -> UIAlertController {
+    private func createDegradationAlert(
+        title: String,
+        message: String,
+        callback: @escaping DegradationStrategyChoice
+    ) -> UIAlertController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.sendAnywayButton, style: .destructive, handler: { _ in
-            self.handleSendAnyway(callback)
-        }))
-        alert.addAction(UIAlertAction(title: L10n.ShareExtension.Meta.Degraded.cancelSendingButton, style: .cancel, handler: { _ in
-            self.handleCancelSending(callback)
-        }))
+        alert.addAction(UIAlertAction(
+            title: L10n.ShareExtension.Meta.Degraded.sendAnywayButton,
+            style: .destructive,
+            handler: { _ in
+                self.handleSendAnyway(callback)
+            }
+        ))
+        alert.addAction(UIAlertAction(
+            title: L10n.ShareExtension.Meta.Degraded.cancelSendingButton,
+            style: .cancel,
+            handler: { _ in
+                self.handleCancelSending(callback)
+            }
+        ))
 
         return alert
     }
@@ -594,7 +622,8 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func degradationMessageForUsers(_ users: String, count: Int) -> String {
         typealias DegradationReasonMessageLocale = L10n.ShareExtension.Meta.Degraded.DegradationReasonMessage
-        let messageKey = count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale.singular(users)
+        let messageKey = count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale
+            .singular(users)
         return messageKey
     }
 }

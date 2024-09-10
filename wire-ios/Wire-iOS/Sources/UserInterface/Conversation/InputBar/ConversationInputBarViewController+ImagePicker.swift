@@ -55,7 +55,8 @@ extension ConversationInputBarViewController {
                 pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
             }
 
-            if sourceType != .camera, let popoverPresentationController = pickerController.popoverPresentationController {
+            if sourceType != .camera,
+               let popoverPresentationController = pickerController.popoverPresentationController {
                 popoverPresentationController.sourceView = pointToView.superview
                 popoverPresentationController.sourceRect = pointToView.frame
                 popoverPresentationController.backgroundColor = .white
@@ -72,8 +73,10 @@ extension ConversationInputBarViewController {
         }
     }
 
-    func processVideo(info: [UIImagePickerController.InfoKey: Any],
-                      picker: UIImagePickerController) {
+    func processVideo(
+        info: [UIImagePickerController.InfoKey: Any],
+        picker: UIImagePickerController
+    ) {
         guard let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL else {
             parent?.dismiss(animated: true)
             zmLog.error("Video not provided form \(picker): info \(info)")
@@ -84,8 +87,11 @@ extension ConversationInputBarViewController {
             return
         }
 
-        let videoTempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
-                               isDirectory: true).appendingPathComponent(String.filename(for: selfUser)).appendingPathExtension(videoURL.pathExtension)
+        let videoTempURL = URL(
+            fileURLWithPath: NSTemporaryDirectory(),
+            isDirectory: true
+        ).appendingPathComponent(String.filename(for: selfUser))
+            .appendingPathExtension(videoURL.pathExtension)
 
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
@@ -94,18 +100,28 @@ extension ConversationInputBarViewController {
             return
         }
 
-        if picker.sourceType == UIImagePickerController.SourceType.camera, UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
+        if picker.sourceType == UIImagePickerController.SourceType.camera,
+           UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
            MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
-            UISaveVideoAtPathToSavedPhotosAlbum(videoTempURL.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
+            UISaveVideoAtPathToSavedPhotosAlbum(
+                videoTempURL.path,
+                self,
+                #selector(video(_:didFinishSavingWithError:contextInfo:)),
+                nil
+            )
         }
 
-        AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { resultURL, _, error in
-            if error == nil,
-               let resultURL {
-                self.uploadFile(at: resultURL)
+        AVURLAsset
+            .convertVideoToUploadFormat(
+                at: videoTempURL,
+                fileLengthLimit: Int64(userSession.maxUploadFileSize)
+            ) { resultURL, _, error in
+                if error == nil,
+                   let resultURL {
+                    self.uploadFile(at: resultURL)
+                }
+
+                self.parent?.dismiss(animated: true)
             }
-
-            self.parent?.dismiss(animated: true)
-        }
     }
 }

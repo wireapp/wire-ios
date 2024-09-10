@@ -62,8 +62,10 @@ final class ConfirmAssetViewController: UIViewController {
     private var imageToolbarView: ImageToolbarView?
 
     private let topPanel = UIView()
-    private let titleLabel = DynamicFontLabel(fontSpec: .headerSemiboldFont,
-                                              color: SemanticColors.Label.textDefault)
+    private let titleLabel = DynamicFontLabel(
+        fontSpec: .headerSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
     private let bottomPanel = UIView()
     private let confirmButtonsStack = UIStackView()
     private let acceptImageButton = ZMButton(
@@ -203,8 +205,16 @@ final class ConfirmAssetViewController: UIViewController {
         if showEditingOptions, imageToolbarFitsInsideImage {
             let imageToolbarViewInsideImage = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarViewInsideImage.isPlacedOnImage = true
-            imageToolbarViewInsideImage.sketchButton.addTarget(self, action: #selector(sketchEdit(_:)), for: .touchUpInside)
-            imageToolbarViewInsideImage.emojiButton.addTarget(self, action: #selector(emojiEdit(_:)), for: .touchUpInside)
+            imageToolbarViewInsideImage.sketchButton.addTarget(
+                self,
+                action: #selector(sketchEdit(_:)),
+                for: .touchUpInside
+            )
+            imageToolbarViewInsideImage.emojiButton.addTarget(
+                self,
+                action: #selector(emojiEdit(_:)),
+                for: .touchUpInside
+            )
             imagePreviewView.addSubview(imageToolbarViewInsideImage)
 
             self.imageToolbarViewInsideImage = imageToolbarViewInsideImage
@@ -352,7 +362,10 @@ final class ConfirmAssetViewController: UIViewController {
             if let imagePreviewView {
                 constraints += [
                     // dimension
-                    imagePreviewView.heightAnchor.constraint(equalTo: imagePreviewView.widthAnchor, multiplier: imageSize.height / imageSize.width),
+                    imagePreviewView.heightAnchor.constraint(
+                        equalTo: imagePreviewView.widthAnchor,
+                        multiplier: imageSize.height / imageSize.width
+                    ),
 
                     // centering
                     imagePreviewView.centerXAnchor.constraint(equalTo: contentLayoutGuide.centerXAnchor),
@@ -360,9 +373,15 @@ final class ConfirmAssetViewController: UIViewController {
 
                     // limits
                     imagePreviewView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
-                    imagePreviewView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor, constant: margin),
+                    imagePreviewView.topAnchor.constraint(
+                        greaterThanOrEqualTo: contentLayoutGuide.topAnchor,
+                        constant: margin
+                    ),
                     imagePreviewView.trailingAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.trailingAnchor),
-                    imagePreviewView.bottomAnchor.constraint(lessThanOrEqualTo: contentLayoutGuide.bottomAnchor, constant: -margin),
+                    imagePreviewView.bottomAnchor.constraint(
+                        lessThanOrEqualTo: contentLayoutGuide.bottomAnchor,
+                        constant: -margin
+                    ),
                 ]
 
                 // Image Toolbar Inside Image

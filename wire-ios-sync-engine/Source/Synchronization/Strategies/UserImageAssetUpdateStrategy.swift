@@ -36,7 +36,8 @@ enum AssetTransportError: Error {
     }
 }
 
-public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
+public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
     let requestFactory = AssetRequestFactory()
     var upstreamRequestSyncs = [ProfileImageSize: ZMSingleRequestSync]()
     var deleteRequestSync: ZMSingleRequestSync?
@@ -46,13 +47,23 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     fileprivate var observers: [Any] = []
 
-    @objc public convenience init(managedObjectContext: NSManagedObjectContext,
-                                  applicationStatusDirectory: ApplicationStatusDirectory,
-                                  userProfileImageUpdateStatus: UserProfileImageUpdateStatus) {
-        self.init(managedObjectContext: managedObjectContext, applicationStatus: applicationStatusDirectory, imageUploadStatus: userProfileImageUpdateStatus)
+    @objc public convenience init(
+        managedObjectContext: NSManagedObjectContext,
+        applicationStatusDirectory: ApplicationStatusDirectory,
+        userProfileImageUpdateStatus: UserProfileImageUpdateStatus
+    ) {
+        self.init(
+            managedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatusDirectory,
+            imageUploadStatus: userProfileImageUpdateStatus
+        )
     }
 
-    init(managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, imageUploadStatus: UserProfileImageUploadStatusProtocol) {
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        imageUploadStatus: UserProfileImageUploadStatusProtocol
+    ) {
         self.moc = managedObjectContext
         self.imageUploadStatus = imageUploadStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -70,13 +81,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         observers.append(NotificationInContext.addObserver(
             name: .userDidRequestCompleteAsset,
             context: managedObjectContext.notificationContext,
-            using: { [weak self] in self?.requestAssetForNotification(note: $0) })
-        )
+            using: { [weak self] in self?.requestAssetForNotification(note: $0) }
+        ))
         observers.append(NotificationInContext.addObserver(
             name: .userDidRequestPreviewAsset,
             context: managedObjectContext.notificationContext,
-            using: { [weak self] in self?.requestAssetForNotification(note: $0) })
-        )
+            using: { [weak self] in self?.requestAssetForNotification(note: $0) }
+        ))
     }
 
     fileprivate func whitelistUserImageSync(for size: ProfileImageSize) -> ZMDownstreamObjectSyncWithWhitelist {
@@ -87,10 +98,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             ZMUser.completeImageDownloadFilter
         }
 
-        return ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
-                                                   entityName: ZMUser.entityName(),
-                                                   predicateForObjectsToDownload: predicate,
-                                                   managedObjectContext: moc)
+        return ZMDownstreamObjectSyncWithWhitelist(
+            transcoder: self,
+            entityName: ZMUser.entityName(),
+            predicateForObjectsToDownload: predicate,
+            managedObjectContext: moc
+        )
     }
 
     func size(for requestSync: ZMDownstreamObjectSyncWithWhitelist) -> ProfileImageSize? {
@@ -142,7 +155,8 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             return deleteRequestSync?.nextRequest(for: apiVersion)
         }
 
-        let sync = ProfileImageSize.allSizes.filter(updateStatus.hasImageToUpload).compactMap { upstreamRequestSyncs[$0] }.first
+        let sync = ProfileImageSize.allSizes.filter(updateStatus.hasImageToUpload)
+            .compactMap { upstreamRequestSyncs[$0] }.first
         sync?.readyForNextRequestIfNotBusy()
         return sync?.nextRequest(for: apiVersion)
     }
@@ -155,7 +169,11 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
         guard let whitelistSync = downstreamSync as? ZMDownstreamObjectSyncWithWhitelist else { return nil }
         guard let user = object as? ZMUser else { return nil }
         guard let size = size(for: whitelistSync) else { return nil }
@@ -212,7 +230,12 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         if let size = size(for: sync), let image = imageUploadStatus?.consumeImage(for: size) {
-            let request = requestFactory.upstreamRequestForAsset(withData: image, shareable: true, retention: .eternal, apiVersion: apiVersion)
+            let request = requestFactory.upstreamRequestForAsset(
+                withData: image,
+                shareable: true,
+                retention: .eternal,
+                apiVersion: apiVersion
+            )
 
             // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
             // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
@@ -236,7 +259,8 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             imageUploadStatus?.uploadingFailed(imageSize: size, error: error)
             return
         }
-        guard let payload = response.payload?.asDictionary(), let assetId = payload["key"] as? String else { fatal("No asset ID present in payload") }
+        guard let payload = response.payload?.asDictionary(),
+              let assetId = payload["key"] as? String else { fatal("No asset ID present in payload") }
         imageUploadStatus?.uploadingDone(imageSize: size, assetId: assetId)
     }
 }

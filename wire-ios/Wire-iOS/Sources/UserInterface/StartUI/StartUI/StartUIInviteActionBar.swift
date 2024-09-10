@@ -33,7 +33,12 @@ final class StartUIInviteActionBar: UIView {
         createInviteButton()
         createConstraints()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.keyboardFrameWillChange(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -68,10 +73,16 @@ final class StartUIInviteActionBar: UIView {
         NSLayoutConstraint.activate([
             inviteButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding * 2),
             inviteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -(padding * 2)),
-            inviteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -(padding + UIScreen.safeArea.bottom)),
+            inviteButton.bottomAnchor.constraint(
+                equalTo: bottomAnchor,
+                constant: -(padding + UIScreen.safeArea.bottom)
+            ),
             inviteButton.topAnchor.constraint(equalTo: topAnchor, constant: padding),
         ])
-        bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -(padding + UIScreen.safeArea.bottom))
+        bottomEdgeConstraint = inviteButton.bottomAnchor.constraint(
+            equalTo: bottomAnchor,
+            constant: -(padding + UIScreen.safeArea.bottom)
+        )
         bottomEdgeConstraint.isActive = true
 
         inviteButton.heightAnchor.constraint(equalToConstant: 56).isActive = true

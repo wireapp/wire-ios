@@ -76,11 +76,13 @@ final class StartUIViewController: UIViewController {
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
-        self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
-                                                                       userSession: userSession,
-                                                                       isAddingParticipants: false,
-                                                                       shouldIncludeGuests: true,
-                                                                       isFederationEnabled: isFederationEnabled)
+        self.searchResultsViewController = SearchResultsViewController(
+            userSelection: UserSelection(),
+            userSession: userSession,
+            isAddingParticipants: false,
+            shouldIncludeGuests: true,
+            isFederationEnabled: isFederationEnabled
+        )
         self.userSession = userSession
         profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
@@ -126,8 +128,10 @@ final class StartUIViewController: UIViewController {
 
     func setupViews() {
         configGroupSelector()
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: userSession.selfUser.canManageTeam,
-                                                 isFederationEnabled: isFederationEnabled)
+        emptyResultView = EmptySearchResultsView(
+            isSelfUserAdmin: userSession.selfUser.canManageTeam,
+            isFederationEnabled: isFederationEnabled
+        )
 
         emptyResultView.delegate = self
 
@@ -173,7 +177,8 @@ final class StartUIViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [searchHeaderViewController.view, groupSelector, searchResultsViewController.view].forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
+        [searchHeaderViewController.view, groupSelector, searchResultsViewController.view]
+            .forEach { $0?.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             searchHeaderViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -193,7 +198,8 @@ final class StartUIViewController: UIViewController {
             ])
         } else {
             NSLayoutConstraint.activate([
-                searchResultsViewController.view.topAnchor.constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
+                searchResultsViewController.view.topAnchor
+                    .constraint(equalTo: searchHeaderViewController.view.bottomAnchor),
             ])
         }
 
@@ -253,8 +259,10 @@ final class StartUIViewController: UIViewController {
         } else {
             searchResults.searchForServices(withQuery: searchString)
         }
-        emptyResultView.updateStatus(searchingForServices: groupSelector.group == .services,
-                                     hasFilter: !searchString.isEmpty)
+        emptyResultView.updateStatus(
+            searchingForServices: groupSelector.group == .services,
+            hasFilter: !searchString.isEmpty
+        )
     }
 
     // MARK: - Action bar
@@ -270,7 +278,10 @@ final class StartUIViewController: UIViewController {
 }
 
 extension StartUIViewController: SearchHeaderViewControllerDelegate {
-    func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
+    func searchHeaderViewController(
+        _ searchHeaderViewController: SearchHeaderViewController,
+        updatedSearchQuery query: String
+    ) {
         searchResults.cancelPreviousSearch()
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(performSearch), object: nil)
         perform(#selector(performSearch), with: nil, afterDelay: 0.2)

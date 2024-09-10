@@ -72,7 +72,11 @@ final class LegalHoldDetailsViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) -> UINavigationController? {
-        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(user: user, userSession: userSession, mainCoordinator: mainCoordinator) else { return nil }
+        guard let legalHoldDetailsViewController = LegalHoldDetailsViewController(
+            user: user,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        ) else { return nil }
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }
@@ -84,7 +88,11 @@ final class LegalHoldDetailsViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) -> UINavigationController {
-        let legalHoldDetailsViewController = LegalHoldDetailsViewController(conversation: conversation, userSession: userSession, mainCoordinator: mainCoordinator)
+        let legalHoldDetailsViewController = LegalHoldDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
 
         return legalHoldDetailsViewController.wrapInNavigationControllerAndPresent(from: parentViewController)
     }

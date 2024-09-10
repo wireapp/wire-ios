@@ -21,7 +21,8 @@ import WireTransport
 
 private let log = ZMSLog(tag: "Accounts")
 
-public let AccountManagerDidUpdateAccountsNotificationName = Notification.Name("AccountManagerDidUpdateAccountsNotification")
+public let AccountManagerDidUpdateAccountsNotificationName = Notification
+    .Name("AccountManagerDidUpdateAccountsNotification")
 
 extension UserDefaults {
     private var selectedAccountKey: String { "AccountManagerSelectedAccountKey" }

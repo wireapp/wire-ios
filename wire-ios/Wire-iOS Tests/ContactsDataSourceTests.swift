@@ -71,7 +71,10 @@ final class ContactsDataSourceTests: XCTestCase {
         XCTAssertEqual(numberOfRawsInFirstSection, 20, "")
 
         let numberOfSections: Int? = dataSource?.numberOfSections(in: UITableView())
-        let numberOfRawsInLastSection: Int? = dataSource?.tableView(UITableView(), numberOfRowsInSection: (numberOfSections ?? 0) - 2)
+        let numberOfRawsInLastSection: Int? = dataSource?.tableView(
+            UITableView(),
+            numberOfRowsInSection: (numberOfSections ?? 0) - 2
+        )
         XCTAssertEqual(numberOfRawsInLastSection, 3, "")
     }
 

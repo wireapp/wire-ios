@@ -84,7 +84,10 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
 
     private static let BaseLocalizationString = "content.system.cannot_decrypt"
 
-    private static func makeAttributedString(systemMessage: ZMSystemMessageData, sender: UserType) -> NSAttributedString {
+    private static func makeAttributedString(
+        systemMessage: ZMSystemMessageData,
+        sender: UserType
+    ) -> NSAttributedString {
         let messageString = self.messageString(systemMessage.systemMessageType, sender: sender)
         let resetSessionString = self.resetSessionString()
         let errorDetailsString = self.errorDetailsString(
@@ -133,7 +136,10 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         return localizationKey
     }
 
-    private static func messageString(_ systemMessageType: ZMSystemMessageType, sender: UserType) -> NSAttributedString {
+    private static func messageString(
+        _ systemMessageType: ZMSystemMessageType,
+        sender: UserType
+    ) -> NSAttributedString {
         let name = sender.name ?? ""
         var localizationKey = self.localizationKey(systemMessageType)
 
@@ -149,17 +155,25 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     private static func resetSessionString() -> NSAttributedString {
         let string = L10n.Localizable.Content.System.CannotDecrypt.resetSession
 
-        return NSAttributedString(string: string.localizedUppercase,
-                                  attributes: [.link: resetSessionURL,
-                                               .foregroundColor: UIColor.accent(),
-                                               .font: UIFont.mediumSemiboldFont])
+        return NSAttributedString(
+            string: string.localizedUppercase,
+            attributes: [
+                .link: resetSessionURL,
+                .foregroundColor: UIColor.accent(),
+                .font: UIFont.mediumSemiboldFont,
+            ]
+        )
     }
 
     private static func errorDetailsString(errorCode: Int, clientIdentifier: String) -> NSAttributedString {
         let string = L10n.Localizable.Content.System.CannotDecrypt.errorDetails(errorCode, clientIdentifier)
 
-        return NSAttributedString(string: string.localizedUppercase,
-                                  attributes: [.foregroundColor: LabelColors.textDefault,
-                                               .font: UIFont.mediumFont])
+        return NSAttributedString(
+            string: string.localizedUppercase,
+            attributes: [
+                .foregroundColor: LabelColors.textDefault,
+                .font: UIFont.mediumFont,
+            ]
+        )
     }
 }

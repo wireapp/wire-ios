@@ -53,7 +53,11 @@ extension TextFieldDescription: ViewDescriptor {
         textField.placeholder = self.placeholder
         textField.delegate = self
         textField.textFieldValidationDelegate = self
-        textField.confirmButton.addTarget(self, action: #selector(TextFieldDescription.confirmButtonTapped(_:)), for: .touchUpInside)
+        textField.confirmButton.addTarget(
+            self,
+            action: #selector(TextFieldDescription.confirmButtonTapped(_:)),
+            for: .touchUpInside
+        )
         textField.addTarget(self, action: #selector(TextFieldDescription.editingChanged), for: .editingChanged)
         textField.confirmButton.accessibilityLabel = self.actionDescription
         textField.showConfirmButton = showConfirmButton
@@ -97,7 +101,11 @@ extension TextFieldDescription: UITextFieldDelegate {
         self.valueValidated?(nil)
     }
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         guard !acceptInvalidInput else { return acceptsInput }
 
         let editedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string)

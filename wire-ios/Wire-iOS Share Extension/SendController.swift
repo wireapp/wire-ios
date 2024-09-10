@@ -31,7 +31,10 @@ enum SendingState {
     case startingSending // The messages are about to be appended, the callback will always be invoked axecatly once.
     case sending(Float) // The progress of the sending operation.
     case timedOut // Fired when the connection is lost, e.g. with bad network connection
-    case conversationDidDegrade((Set<ZMUser>, DegradationStrategyChoice)) // In case the conversation degrades this case will be passed.
+    case conversationDidDegrade((
+        Set<ZMUser>,
+        DegradationStrategyChoice
+    )) // In case the conversation degrades this case will be passed.
     case done // Sending either was cancelled (due to degradation for example) or finished.
     case error(Error) // When error occurs, e.g. file is over the size limit/conversation does not exist
     case fileSharingRestriction // Fired when the selfUser isn't allowed to share files
@@ -56,12 +59,21 @@ final class SendController {
 
     var sentAllSendables = false
 
-    init(text: String, attachments: [NSItemProvider], conversation: WireShareEngine.Conversation, sharingSession: SharingSession) {
+    init(
+        text: String,
+        attachments: [NSItemProvider],
+        conversation: WireShareEngine.Conversation,
+        sharingSession: SharingSession
+    ) {
         var linkAttachment: NSItemProvider?
 
         var sendables: [UnsentSendable] = attachments.compactMap {
             if $0.hasGifImage {
-                return UnsentGifImageSendable(conversation: conversation, sharingSession: sharingSession, attachment: $0)
+                return UnsentGifImageSendable(
+                    conversation: conversation,
+                    sharingSession: sharingSession,
+                    attachment: $0
+                )
             } else if $0.hasImage {
                 return UnsentImageSendable(conversation: conversation, sharingSession: sharingSession, attachment: $0)
             } else if $0.hasURL {
@@ -72,15 +84,26 @@ final class SendController {
             }
         }
 
-        sendables.insert(UnsentTextSendable(conversation: conversation, sharingSession: sharingSession, text: text, attachment: linkAttachment), at: 0)
+        sendables
+            .insert(
+                UnsentTextSendable(
+                    conversation: conversation,
+                    sharingSession: sharingSession,
+                    text: text,
+                    attachment: linkAttachment
+                ),
+                at: 0
+            )
 
         self.sharingSession = sharingSession
         unsentSendables = sendables
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(SendController.networkStatusDidChange(_:)),
-                                               name: Notification.Name.NetworkStatus,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(SendController.networkStatusDidChange(_:)),
+            name: Notification.Name.NetworkStatus,
+            object: nil
+        )
     }
 
     @objc
@@ -186,8 +209,10 @@ final class SendController {
         preparationGroup.notify(queue: .main, execute: completion)
     }
 
-    private func append(unsentSendables: [UnsentSendable],
-                        completion: @escaping SendableCompletion) {
+    private func append(
+        unsentSendables: [UnsentSendable],
+        completion: @escaping SendableCompletion
+    ) {
         guard !isCancelled else {
             return completion(.success([]))
         }

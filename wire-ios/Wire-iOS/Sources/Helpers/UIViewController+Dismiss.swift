@@ -23,12 +23,18 @@ extension UIViewController {
     var canBeDismissed: Bool {
         presentedViewController != nil ||
             presentingViewController?.presentedViewController == self
-            || (navigationController != nil && navigationController?.presentingViewController?.presentedViewController == navigationController)
+            ||
+            (
+                navigationController != nil && navigationController?.presentingViewController?
+                    .presentedViewController == navigationController
+            )
     }
 
     /// Dismisses the view controller if needed before performing the specified actions.
-    func dismissIfNeeded(animated: Bool = true,
-                         completion: (() -> Void)? = nil) {
+    func dismissIfNeeded(
+        animated: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
         if canBeDismissed {
             dismiss(animated: animated, completion: completion)
         } else {

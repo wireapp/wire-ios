@@ -28,7 +28,11 @@ extension ConversationActionType {
         case .left: localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
         case .added(herself: true): "content.system.conversation.guest.joined"
         case .added(herself: false): localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
-        case .removed(reason: .legalHoldPolicyConflict): localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold"
+        case .removed(reason: .legalHoldPolicyConflict): localizationKey(
+                with: "removed",
+                senderIsSelfUser: senderIsSelfUser
+            ) +
+                ".legalhold"
         case .removed: localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
         case .started(withName: .none), .none: localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
         case .started(withName: .some): "content.system.conversation.with_name.participants"
@@ -121,7 +125,8 @@ final class ParticipantsStringFormatter {
         convName: String
     ) -> NSAttributedString {
         // "You/Bob started the conversation"
-        let key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n.Localizable.Content.System.Conversation.WithName.title(senderName)
+        let key = senderIsSelf ? L10n.Localizable.Content.System.Conversation.WithName.titleYou(senderName) : L10n
+            .Localizable.Content.System.Conversation.WithName.title(senderName)
         let text = key && font
 
         // "Italy Trip"
@@ -146,7 +151,12 @@ final class ParticipantsStringFormatter {
     }
 
     /// Title when the subject (sender) performing the action on objects (names).
-    func title(senderName: String, senderIsSelf: Bool, names: NameList, isSelfIncludedInUsers: Bool = false) -> NSAttributedString? {
+    func title(
+        senderName: String,
+        senderIsSelf: Bool,
+        names: NameList,
+        isSelfIncludedInUsers: Bool = false
+    ) -> NSAttributedString? {
         guard !names.names.isEmpty else { return nil }
 
         var result: NSAttributedString
@@ -164,14 +174,21 @@ final class ParticipantsStringFormatter {
             let formatString = "content.system.conversation.\(senderPath).removed.legalhold"
             result = formatString.localized(args: nameSequence.string) && font && textColor
 
-            let learnMore = NSAttributedString(string: L10n.Localizable.Content.System.MessageLegalHold.learnMore.uppercased(),
-                                               attributes: [.font: font,
-                                                            .link: WireURLs.shared.legalHoldInfo.absoluteString as AnyObject,
-                                                            .foregroundColor: SemanticColors.Label.textDefault])
+            let learnMore = NSAttributedString(
+                string: L10n.Localizable.Content.System.MessageLegalHold.learnMore
+                    .uppercased(),
+                attributes: [
+                    .font: font,
+                    .link: WireURLs.shared.legalHoldInfo
+                        .absoluteString as AnyObject,
+                    .foregroundColor: SemanticColors.Label.textDefault,
+                ]
+            )
             return result += " " + learnMore
 
         case .removed(reason: .federationTermination):
-            let formatString = "content.system.federation_termination.participants_removed".localized(args: names.totalUsers, nameSequence.string)
+            let formatString = "content.system.federation_termination.participants_removed"
+                .localized(args: names.totalUsers, nameSequence.string)
             result = .markdown(from: formatString, style: .systemMessage)
 
             return result
@@ -180,7 +197,8 @@ final class ParticipantsStringFormatter {
             result = formatKey(senderIsSelf).localized(args: senderName, nameSequence.string) && font && textColor
 
         case .started(withName: .some):
-            result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" && font && textColor
+            result = "\(L10n.Localizable.Content.System.Conversation.WithName.participants) \(nameSequence.string)" &&
+                font && textColor
 
         default: return nil
         }
@@ -222,7 +240,8 @@ final class ParticipantsStringFormatter {
                 // "you/z, "
                 result.append(names.last! + ", ", with: attrsForLastName)
                 // "and X others
-                let linkText = L10n.Localizable.Content.System.StartedConversation.TruncatedPeople.others(nameList.collapsed)
+                let linkText = L10n.Localizable.Content.System.StartedConversation.TruncatedPeople
+                    .others(nameList.collapsed)
                 let linkPart = L10n.Localizable.Content.System.StartedConversation.truncatedPeople(linkText)
                 result.append(linkPart, with: normalAttributes)
                 result.define(linkAttributes, forComponent: linkText)
@@ -250,7 +269,8 @@ final class ParticipantsStringFormatter {
         }
 
         if systemMessage.numberOfGuestsAdded > 0 {
-            return L10n.Localizable.Content.System.StartedConversation.CompleteTeam.guests(String(systemMessage.numberOfGuestsAdded))
+            return L10n.Localizable.Content.System.StartedConversation.CompleteTeam
+                .guests(String(systemMessage.numberOfGuestsAdded))
         } else {
             return L10n.Localizable.Content.System.StartedConversation.completeTeam
         }

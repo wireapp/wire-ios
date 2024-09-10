@@ -41,8 +41,10 @@ final class CollectionLinkCell: CollectionCell {
         articleView.imageHeight = 0
         articleView.messageLabel.numberOfLines = 1
         articleView.authorLabel.numberOfLines = 1
-        articleView.configure(withTextMessageData: textMessageData,
-                              obfuscated: false)
+        articleView.configure(
+            withTextMessageData: textMessageData,
+            obfuscated: false
+        )
         secureContentsView.addSubview(articleView)
         // Reconstraint the header
         headerView.removeFromSuperview()

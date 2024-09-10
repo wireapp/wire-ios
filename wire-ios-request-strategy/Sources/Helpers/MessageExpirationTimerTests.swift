@@ -28,7 +28,11 @@ final class MessageExpirationTimerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         self.localNotificationDispatcher = MockPushMessageHandler()
-        self.sut = MessageExpirationTimer(moc: self.uiMOC, entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()], localNotificationDispatcher: self.localNotificationDispatcher)
+        self.sut = MessageExpirationTimer(
+            moc: self.uiMOC,
+            entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()],
+            localNotificationDispatcher: self.localNotificationDispatcher
+        )
     }
 
     override func tearDown() {

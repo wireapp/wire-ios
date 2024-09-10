@@ -137,7 +137,8 @@ public final class MessageSender: MessageSenderInterface {
 
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: message)
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
+                .broadcastProteusMessage(message: message)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -172,7 +173,11 @@ public final class MessageSender: MessageSenderInterface {
         }
     }
 
-    private func handleProteusSuccess(message: any ProteusMessage, messageSendingStatus: Payload.MessageSendingStatus, response: ZMTransportResponse) async {
+    private func handleProteusSuccess(
+        message: any ProteusMessage,
+        messageSendingStatus: Payload.MessageSendingStatus,
+        response: ZMTransportResponse
+    ) async {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug(
             "send message - via proteus succeeded",
@@ -189,7 +194,10 @@ public final class MessageSender: MessageSenderInterface {
         )
     }
 
-    private func handleProteusFailure(message: any ProteusMessage, _ failure: NetworkError) async throws -> Set<QualifiedClientID> {
+    private func handleProteusFailure(
+        message: any ProteusMessage,
+        _ failure: NetworkError
+    ) async throws -> Set<QualifiedClientID> {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
 
         switch failure {
@@ -267,9 +275,11 @@ public final class MessageSender: MessageSenderInterface {
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
-            .sendMLSMessage(message: encryptedData,
-                            conversationID: conversationID,
-                            expirationDate: context.perform { message.expirationDate })
+            .sendMLSMessage(
+                message: encryptedData,
+                conversationID: conversationID,
+                expirationDate: context.perform { message.expirationDate }
+            )
 
         await context.perform {
             self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)
@@ -303,7 +313,8 @@ extension Payload.ClientListByQualifiedUserID {
                             QualifiedClientID(
                                 userID: userUuid,
                                 domain: domain,
-                                clientID: clientID)
+                                clientID: clientID
+                            )
                         }
                     )
                 }

@@ -145,8 +145,10 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
         func updateFieldRegion(at corner: Corner, point: CGPoint) {
             let field = fieldBehaviors[corner.rawValue]
             field.position = point
-            field.region = UIRegion(size: CGSize(width: maxX - (horizontalPosition * 2),
-                                                 height: maxY - (verticalPosition * 2)))
+            field.region = UIRegion(size: CGSize(
+                width: maxX - (horizontalPosition * 2),
+                height: maxY - (verticalPosition * 2)
+            ))
         }
 
         updateFieldRegion(at: .topLeft, point: topLeft)

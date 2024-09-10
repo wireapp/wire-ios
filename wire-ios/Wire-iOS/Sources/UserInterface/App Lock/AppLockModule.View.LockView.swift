@@ -51,7 +51,11 @@ extension AppLockModule.View {
 
         private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
 
-        private let actionButton = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
+        private let actionButton = ZMButton(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .mediumSemiboldFont
+        )
 
         private var contentWidthConstraint: NSLayoutConstraint!
         private var contentCenterConstraint: NSLayoutConstraint!
@@ -142,10 +146,20 @@ extension AppLockModule.View {
 
                 // authenticateButton
                 actionButton.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.buttonHeight),
-                actionButton.leadingAnchor.constraint(equalTo: contentContainerView.leadingAnchor, constant: CGFloat.PasscodeUnlock.buttonPadding),
+                actionButton.leadingAnchor.constraint(
+                    equalTo: contentContainerView.leadingAnchor,
+                    constant: CGFloat.PasscodeUnlock.buttonPadding
+                ),
                 actionButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 24),
-                actionButton.trailingAnchor.constraint(equalTo: contentContainerView.trailingAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding),
-                actionButton.bottomAnchor.constraint(equalTo: contentContainerView.safeBottomAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding)])
+                actionButton.trailingAnchor.constraint(
+                    equalTo: contentContainerView.trailingAnchor,
+                    constant: -CGFloat.PasscodeUnlock.buttonPadding
+                ),
+                actionButton.bottomAnchor.constraint(
+                    equalTo: contentContainerView.safeBottomAnchor,
+                    constant: -CGFloat.PasscodeUnlock.buttonPadding
+                ),
+            ])
         }
 
         override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

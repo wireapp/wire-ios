@@ -63,7 +63,8 @@ extension ConversationViewController {
             alertContent = legalHoldPrivacyWarningAlertContent()
         } else if conversation.securityLevel == .secureWithIgnored {
             alertContent = clientVerificationPrivacyWarningAlertContent(
-                degradedUsers: changeInfo.usersThatCausedConversationToDegrade)
+                degradedUsers: changeInfo.usersThatCausedConversationToDegrade
+            )
         } else {
             // no-op: there is no privacy warning
             return
@@ -76,7 +77,10 @@ extension ConversationViewController {
         let alert = UIAlertController(title: alertContent.title, message: alertContent.message, preferredStyle: .alert)
 
         for action in alertContent.actions {
-            let alertAction = UIAlertAction(title: action.localizedTitle, style: action.preferredStyle) { [weak self] _ in
+            let alertAction = UIAlertAction(
+                title: action.localizedTitle,
+                style: action.preferredStyle
+            ) { [weak self] _ in
                 self?.performPrivacyAction(action)
             }
 

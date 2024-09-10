@@ -60,7 +60,11 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: textMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: textMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -72,13 +76,18 @@ class DeleteMessagesTests: ConversationTestsBase {
         guard let conversation = self.conversation(for: selfToUser1Conversation) else { return XCTFail() }
         XCTAssertEqual(conversation.allMessages.count, 1) // inserted message
 
-        guard let message = conversation.lastMessage as? ZMClientMessage, message.textMessageData?.messageText == "Hello" else { return XCTFail() }
+        guard let message = conversation.lastMessage as? ZMClientMessage,
+              message.textMessageData?.messageText == "Hello" else { return XCTFail() }
         let genericMessage = GenericMessage(content: MessageDelete(messageId: message.nonce!))
 
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -106,7 +115,11 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         self.mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.groupConversation.encryptAndInsertData(from: firstClient, to: selfClient, data: textMessage.serializedData())
+                try self.groupConversation.encryptAndInsertData(
+                    from: firstClient,
+                    to: selfClient,
+                    data: textMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -117,13 +130,18 @@ class DeleteMessagesTests: ConversationTestsBase {
         // then
         guard let conversation = self.conversation(for: self.groupConversation) else { return XCTFail() }
         XCTAssertEqual(conversation.allMessages.count, 2) // system message & inserted message
-        guard let message = conversation.lastMessage, message.textMessageData?.messageText == "Hello" else { return XCTFail() }
+        guard let message = conversation.lastMessage,
+              message.textMessageData?.messageText == "Hello" else { return XCTFail() }
 
         let genericMessage = GenericMessage(content: MessageDelete(messageId: message.nonce!))
 
         self.mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.groupConversation.encryptAndInsertData(from: secondClient, to: selfClient, data: genericMessage.serializedData())
+                try self.groupConversation.encryptAndInsertData(
+                    from: secondClient,
+                    to: selfClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -155,10 +173,14 @@ class DeleteMessagesTests: ConversationTestsBase {
         var requestCount = 0
 
         mockTransportSession.responseGeneratorBlock = { request in
-            guard request.path == "/conversations/\(self.selfToUser1Conversation.identifier)/otr/messages" else { return nil }
+            guard request.path == "/conversations/\(self.selfToUser1Conversation.identifier)/otr/messages"
+            else { return nil }
             if requestCount < 4 {
                 requestCount += 1
-                return ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError() as Error, apiVersion: APIVersion.v0.rawValue)
+                return ZMTransportResponse(
+                    transportSessionError: NSError.tryAgainLaterError() as Error,
+                    apiVersion: APIVersion.v0.rawValue
+                )
             }
 
             return nil
@@ -190,7 +212,11 @@ class DeleteMessagesTests: ConversationTestsBase {
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: textMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: textMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -202,13 +228,18 @@ class DeleteMessagesTests: ConversationTestsBase {
         // then
         XCTAssertEqual(conversation.allMessages.count, 1) // inserted message
 
-        guard let message = conversation.lastMessage as? ZMClientMessage, message.textMessageData?.messageText == "Hello" else { return XCTFail() }
+        guard let message = conversation.lastMessage as? ZMClientMessage,
+              message.textMessageData?.messageText == "Hello" else { return XCTFail() }
         let genericMessage = GenericMessage(content: MessageDelete(messageId: message.nonce!))
 
         // when
         mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.selfToUser1Conversation.encryptAndInsertData(from: fromClient, to: toClient, data: genericMessage.serializedData())
+                try self.selfToUser1Conversation.encryptAndInsertData(
+                    from: fromClient,
+                    to: toClient,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }

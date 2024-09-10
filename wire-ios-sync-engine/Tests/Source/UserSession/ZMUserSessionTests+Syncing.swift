@@ -123,9 +123,10 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
         let token = NotificationInContext.addObserver(
             name: .initialSync,
-            context: uiMOC.notificationContext) { _ in
-                didNotify = true
-            }
+            context: uiMOC.notificationContext
+        ) { _ in
+            didNotify = true
+        }
 
         startSlowSync()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

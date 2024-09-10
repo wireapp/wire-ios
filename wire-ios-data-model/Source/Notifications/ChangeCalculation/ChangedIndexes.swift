@@ -112,14 +112,24 @@ public struct ChangedIndexes<T: Hashable> {
     /// @param endState: State after the updates
     /// @param updatedObjects: Objects that need to be reloaded
     /// @param moveType: depending on viewController, default is uiCollectionView
-    public init(start: OrderedSetState<T>, end: OrderedSetState<T>, updated: Set<T>, moveType: SetChangeMoveType = .uiCollectionView) {
+    public init(
+        start: OrderedSetState<T>,
+        end: OrderedSetState<T>,
+        updated: Set<T>,
+        moveType: SetChangeMoveType = .uiCollectionView
+    ) {
         self.startState = start
         self.endState = end
         self.updatedObjects = updated
         self.moveType = moveType
 
         let result = type(of: self).calculateDeletesInsertsUpdates(start: start, end: end, updated: updated)
-        let movedIndexes = type(of: self).calculateMoves(start: start, end: end, afterDeletesAndInserts: result.intermediateState, moveType: moveType)
+        let movedIndexes = type(of: self).calculateMoves(
+            start: start,
+            end: end,
+            afterDeletesAndInserts: result.intermediateState,
+            moveType: moveType
+        )
         self.movedIndexes = movedIndexes
 
         self.updatedIndexes = result.updatedIndexes
@@ -157,7 +167,12 @@ public struct ChangedIndexes<T: Hashable> {
         return (insertedObjects, deletedObjects, updatedIndexes, intermediateState)
     }
 
-    static func calculateMoves(start: OrderedSetState<T>, end: OrderedSetState<T>, afterDeletesAndInserts: [T], moveType: SetChangeMoveType) -> [MovedIndex] {
+    static func calculateMoves(
+        start: OrderedSetState<T>,
+        end: OrderedSetState<T>,
+        afterDeletesAndInserts: [T],
+        moveType: SetChangeMoveType
+    ) -> [MovedIndex] {
         var intermediateState = afterDeletesAndInserts
         var movedIndexes = [MovedIndex]()
 

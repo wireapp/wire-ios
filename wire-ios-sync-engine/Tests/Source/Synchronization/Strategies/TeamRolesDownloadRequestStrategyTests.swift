@@ -31,7 +31,11 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             managedObjectContext: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
-        sut = TeamRolesDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
+        sut = TeamRolesDownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncStatus: mockSyncStatus
+        )
 
         syncMOC.performGroupedAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
@@ -140,7 +144,12 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
-            let response = ZMTransportResponse(payload: self.sampleResponse as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: self.sampleResponse as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
         }
 
@@ -178,7 +187,12 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
-            let response = ZMTransportResponse(payload: self.sampleResponse as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: self.sampleResponse as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
         }
 
@@ -199,7 +213,12 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
-            let response = ZMTransportResponse(payload: self.sampleResponse as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: self.sampleResponse as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
         }
 
@@ -237,7 +256,12 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
 
             // when
-            let response = ZMTransportResponse(payload: self.sampleResponse as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: self.sampleResponse as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
         }
 

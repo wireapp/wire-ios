@@ -38,7 +38,10 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
 
         let result = try context.fetch(request)
         for object in result {
-            WireLogger.localStorage.warn("remove zombie object 'ParticipantRole' without conversation", attributes: .safePublic)
+            WireLogger.localStorage.warn(
+                "remove zombie object 'ParticipantRole' without conversation",
+                attributes: .safePublic
+            )
             context.delete(object)
         }
     }
@@ -51,7 +54,10 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
             by: #keyPath(UserClient.remoteIdentifier)
         )
 
-        WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate clients", attributes: .safePublic)
+        WireLogger.localStorage.info(
+            "found (\(duplicates.count)) occurences of duplicate clients",
+            attributes: .safePublic
+        )
 
         for (_, clients) in duplicates {
             guard clients.count > 1 else {

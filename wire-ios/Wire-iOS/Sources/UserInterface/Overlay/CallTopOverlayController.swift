@@ -209,7 +209,11 @@ final class CallTopOverlayController: UIViewController {
         default:
             let initiator = self.conversation.voiceChannel?.initiator?.name ?? ""
             let conversation = self.conversation.displayNameWithFallback
-            return state.description(callee: initiator, conversation: conversation, isGroup: self.conversation.conversationType == .group)
+            return state.description(
+                callee: initiator,
+                conversation: conversation,
+                isGroup: self.conversation.conversationType == .group
+            )
         }
     }
 
@@ -250,7 +254,13 @@ final class CallTopOverlayController: UIViewController {
 // MARK: - CallTopOverlayController: WireCallCenterCallStateObserver
 
 extension CallTopOverlayController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateCallDurationTimer(for: callState)
     }
 }

@@ -37,8 +37,10 @@ import Foundation
     /// Managed object context used to execute on the right thread
     fileprivate var moc: NSManagedObjectContext
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                application: ZMApplication) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        application: ZMApplication
+    ) {
         self.moc = managedObjectContext
         self.isSyncing = true
         self.isInBackground = false

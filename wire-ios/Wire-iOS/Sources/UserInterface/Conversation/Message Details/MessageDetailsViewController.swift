@@ -32,7 +32,10 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
 
     enum ViewControllers {
         /// We are displaying the combined view.
-        case combinedView(readReceipts: MessageDetailsContentViewController, reactions: MessageDetailsContentViewController)
+        case combinedView(
+            readReceipts: MessageDetailsContentViewController,
+            reactions: MessageDetailsContentViewController
+        )
 
         /// We are displaying the single view.
         case singleView(MessageDetailsContentViewController)
@@ -132,7 +135,10 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 userSession: userSession,
                 mainCoordinator: mainCoordinator
             )
-            viewControllers = .combinedView(readReceipts: readReceiptsViewController, reactions: reactionsViewController)
+            viewControllers = .combinedView(
+                readReceipts: readReceiptsViewController,
+                reactions: reactionsViewController
+            )
 
         case .reactions:
             let reactionsViewController = MessageDetailsContentViewController(

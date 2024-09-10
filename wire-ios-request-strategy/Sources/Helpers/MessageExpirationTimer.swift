@@ -29,7 +29,12 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         fatalError("Should not use this init")
     }
 
-    public init(moc: NSManagedObjectContext, entityNames: [String], localNotificationDispatcher: PushMessageHandler, filter: NSPredicate? = nil) {
+    public init(
+        moc: NSManagedObjectContext,
+        entityNames: [String],
+        localNotificationDispatcher: PushMessageHandler,
+        filter: NSPredicate? = nil
+    ) {
         self.localNotificationsDispatcher = localNotificationDispatcher
         self.entityNames = entityNames
         self.filter = filter

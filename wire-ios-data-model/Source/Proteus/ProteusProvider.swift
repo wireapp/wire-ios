@@ -48,9 +48,11 @@ public class ProteusProvider: ProteusProviding {
         context: NSManagedObjectContext,
         proteusViaCoreCrypto: Bool = DeveloperFlag.proteusViaCoreCrypto.isOn
     ) {
-        self.init(proteusService: context.proteusService,
-                  keyStore: context.zm_cryptKeyStore,
-                  proteusViaCoreCrypto: proteusViaCoreCrypto)
+        self.init(
+            proteusService: context.proteusService,
+            keyStore: context.zm_cryptKeyStore,
+            proteusViaCoreCrypto: proteusViaCoreCrypto
+        )
     }
 
     public init(

@@ -32,10 +32,15 @@ extension ZMOperationLoopTests {
     func testThatMOCIsSavedOnSuccessfulRequest() {
         // given
         let request = ZMTransportRequest(path: "/boo", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
-        request.add(ZMCompletionHandler(on: syncMOC,
-                                        block: { [weak self] _ in
-                                            _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: self!.syncMOC)
-                                        }))
+        request.add(ZMCompletionHandler(
+            on: syncMOC,
+            block: { [weak self] _ in
+                _ = ZMClientMessage(
+                    nonce: NSUUID.create(),
+                    managedObjectContext: self!.syncMOC
+                )
+            }
+        ))
         mockRequestStrategy.mockRequest = request
 
         RequestAvailableNotification.notifyNewRequestsAvailable(self) // this will enqueue `request`
@@ -45,10 +50,16 @@ extension ZMOperationLoopTests {
         customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
-            handler: nil)
+            handler: nil
+        )
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -59,10 +70,15 @@ extension ZMOperationLoopTests {
     func testThatMOCIsSavedOnFailedRequest() {
         // given
         let request = ZMTransportRequest(path: "/boo", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
-        request.add(ZMCompletionHandler(on: syncMOC,
-                                        block: { [weak self] _ in
-                                            _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: self!.syncMOC)
-                                        }))
+        request.add(ZMCompletionHandler(
+            on: syncMOC,
+            block: { [weak self] _ in
+                _ = ZMClientMessage(
+                    nonce: NSUUID.create(),
+                    managedObjectContext: self!.syncMOC
+                )
+            }
+        ))
         mockRequestStrategy.mockRequest = request
 
         RequestAvailableNotification.notifyNewRequestsAvailable(self) // this will enqueue `request`
@@ -72,10 +88,16 @@ extension ZMOperationLoopTests {
         customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
-            handler: nil)
+            handler: nil
+        )
 
         // when
-        request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request.complete(with: ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // then

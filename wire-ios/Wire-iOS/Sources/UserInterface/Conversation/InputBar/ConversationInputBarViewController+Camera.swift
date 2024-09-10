@@ -44,7 +44,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         return cameraKeyboardViewController
     }
 
-    func cameraKeyboardViewController(_ controller: CameraKeyboardViewController, didSelectVideo videoURL: URL, duration: TimeInterval) {
+    func cameraKeyboardViewController(
+        _ controller: CameraKeyboardViewController,
+        didSelectVideo videoURL: URL,
+        duration: TimeInterval
+    ) {
         // Video can be longer than allowed to be uploaded. Then we need to add user the possibility to trim it.
         if duration > userSession.maxVideoLength {
             let videoEditor = StatusBarVideoEditorController()
@@ -76,17 +80,19 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 self.present(videoEditor, animated: true) {}
             }
         } else {
-            let context = ConfirmAssetViewController.Context(asset: .video(url: videoURL),
-                                                             onConfirm: { [unowned self] _ in
-                                                                 self.dismiss(animated: true)
-                                                                 self.uploadFile(at: videoURL)
-                                                             },
-                                                             onCancel: { [unowned self] in
-                                                                 self.dismiss(animated: true) {
-                                                                     self.mode = .camera
-                                                                     self.inputBar.textView.becomeFirstResponder()
-                                                                 }
-                                                             })
+            let context = ConfirmAssetViewController.Context(
+                asset: .video(url: videoURL),
+                onConfirm: { [unowned self] _ in
+                    self.dismiss(animated: true)
+                    self.uploadFile(at: videoURL)
+                },
+                onCancel: { [unowned self] in
+                    self.dismiss(animated: true) {
+                        self.mode = .camera
+                        self.inputBar.textView.becomeFirstResponder()
+                    }
+                }
+            )
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
             confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
@@ -95,10 +101,12 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
-    func cameraKeyboardViewController(_ controller: CameraKeyboardViewController,
-                                      didSelectImageData imageData: Data,
-                                      isFromCamera: Bool,
-                                      uti: String?) {
+    func cameraKeyboardViewController(
+        _ controller: CameraKeyboardViewController,
+        didSelectImageData imageData: Data,
+        isFromCamera: Bool,
+        uti: String?
+    ) {
         showConfirmationForImage(imageData, isFromCamera: isFromCamera, uti: uti)
     }
 
@@ -142,9 +150,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
-    func showConfirmationForImage(_ imageData: Data,
-                                  isFromCamera: Bool,
-                                  uti: String?) {
+    func showConfirmationForImage(
+        _ imageData: Data,
+        isFromCamera: Bool,
+        uti: String?
+    ) {
         let mediaAsset: MediaAsset = if uti == UTType.gif.identifier,
                                         let gifImage = FLAnimatedImage(animatedGIFData: imageData),
                                         gifImage.frameCount > 1 {
@@ -153,21 +163,28 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             UIImage(data: imageData) ?? UIImage()
         }
 
-        let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: mediaAsset),
-                                                         onConfirm: { [weak self] (editedImage: UIImage?) in
-                                                             guard let self else { return }
-                                                             self.dismiss(animated: true) {
-                                                                 self.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
-                                                                                                        isFromCamera: isFromCamera)
-                                                                 self.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData, userSession: self.userSession)
-                                                             }
-                                                         },
-                                                         onCancel: { [weak self] in
-                                                             self?.dismiss(animated: true) {
-                                                                 self?.mode = .camera
-                                                                 self?.inputBar.textView.becomeFirstResponder()
-                                                             }
-                                                         })
+        let context = ConfirmAssetViewController.Context(
+            asset: .image(mediaAsset: mediaAsset),
+            onConfirm: { [weak self] (editedImage: UIImage?) in
+                guard let self else { return }
+                self.dismiss(animated: true) {
+                    self.writeToSavedPhotoAlbumIfNecessary(
+                        imageData: imageData,
+                        isFromCamera: isFromCamera
+                    )
+                    self.sendController.sendMessage(
+                        withImageData: editedImage?.pngData() ?? imageData,
+                        userSession: self.userSession
+                    )
+                }
+            },
+            onCancel: { [weak self] in
+                self?.dismiss(animated: true) {
+                    self?.mode = .camera
+                    self?.inputBar.textView.becomeFirstResponder()
+                }
+            }
+        )
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
@@ -201,20 +218,29 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         UIImageWriteToSavedPhotosAlbum(image, self, selector, nil)
     }
 
-    func convertVideoAtPath(_ inputPath: String, completion: @escaping (_ success: Bool, _ resultPath: String?, _ duration: TimeInterval) -> Void) {
+    func convertVideoAtPath(
+        _ inputPath: String,
+        completion: @escaping (_ success: Bool, _ resultPath: String?, _ duration: TimeInterval)
+            -> Void
+    ) {
         let lastPathComponent = (inputPath as NSString).lastPathComponent
 
-        let filename: String = ((lastPathComponent as NSString).deletingPathExtension as NSString).appendingPathExtension("mp4") ?? "video.mp4"
+        let filename: String = ((lastPathComponent as NSString).deletingPathExtension as NSString)
+            .appendingPathExtension("mp4") ?? "video.mp4"
 
         let videoURLAsset = AVURLAsset(url: NSURL(fileURLWithPath: inputPath) as URL)
 
-        videoURLAsset.convert(filename: filename, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { URL, videoAsset, error in
-            guard let resultURL = URL, error == nil else {
-                completion(false, .none, 0)
-                return
+        videoURLAsset
+            .convert(
+                filename: filename,
+                fileLengthLimit: Int64(userSession.maxUploadFileSize)
+            ) { URL, videoAsset, error in
+                guard let resultURL = URL, error == nil else {
+                    completion(false, .none, 0)
+                    return
+                }
+                completion(true, resultURL.path, CMTimeGetSeconds((videoAsset?.duration)!))
             }
-            completion(true, resultURL.path, CMTimeGetSeconds((videoAsset?.duration)!))
-        }
     }
 }
 
@@ -240,8 +266,10 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
         }
     }
 
-    func videoEditorController(_ editor: UIVideoEditorController,
-                               didFailWithError error: Error) {
+    func videoEditorController(
+        _ editor: UIVideoEditorController,
+        didFailWithError error: Error
+    ) {
         editor.dismiss(animated: true, completion: .none)
         zmLog.error("Video editor failed with error: \(error)")
     }

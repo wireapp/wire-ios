@@ -42,8 +42,14 @@ extension NewUnreadMessagesChangeInfo {
     /// Adds a ZMNewUnreadMessagesObserver
     /// You must hold on to the token and use it to unregister
     @objc(addNewMessageObserver:forManagedObjectContext:)
-    public static func add(observer: ZMNewUnreadMessagesObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .NewUnreadMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
+    public static func add(
+        observer: ZMNewUnreadMessagesObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .NewUnreadMessage,
+            managedObjectContext: managedObjectContext
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadMessagesChangeInfo
             else { return }
@@ -76,8 +82,14 @@ extension NewUnreadKnockMessagesChangeInfo {
     /// Adds a ZMNewUnreadKnocksObserver
     /// You must hold on to the token and use it to unregister
     @objc(addNewKnockObserver:forManagedObjectContext:)
-    public static func add(observer: ZMNewUnreadKnocksObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .NewUnreadKnock, managedObjectContext: managedObjectContext) { [weak observer] note in
+    public static func add(
+        observer: ZMNewUnreadKnocksObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .NewUnreadKnock,
+            managedObjectContext: managedObjectContext
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadKnockMessagesChangeInfo
             else { return }
@@ -110,8 +122,14 @@ extension NewUnreadUnsentMessageChangeInfo {
     /// Adds a ZMNewUnreadUnsentMessageObserver
     /// You must hold on to the token and use it to unregister
     @objc(addNewUnreadUnsentMessageObserver:forManagedObjectContext:)
-    public static func add(observer: ZMNewUnreadUnsentMessageObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .NewUnreadUnsentMessage, managedObjectContext: managedObjectContext) { [weak observer] note in
+    public static func add(
+        observer: ZMNewUnreadUnsentMessageObserver,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .NewUnreadUnsentMessage,
+            managedObjectContext: managedObjectContext
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? NewUnreadUnsentMessageChangeInfo
             else { return }

@@ -273,8 +273,10 @@ extension ZMUserTests_Swift {
         let noteExpectation = customExpectation(description: "PreviewAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
 
-        let token = ManagedObjectObserverToken(name: .userDidRequestPreviewAsset,
-                                               managedObjectContext: self.uiMOC) { note in
+        let token = ManagedObjectObserverToken(
+            name: .userDidRequestPreviewAsset,
+            managedObjectContext: self.uiMOC
+        ) { note in
             let objectId = note.object as? NSManagedObjectID
             XCTAssertNotNil(objectId)
             XCTAssertEqual(objectId, userObjectId)
@@ -296,8 +298,10 @@ extension ZMUserTests_Swift {
         let noteExpectation = customExpectation(description: "CompleteAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID?
 
-        let token = ManagedObjectObserverToken(name: .userDidRequestCompleteAsset,
-                                               managedObjectContext: self.uiMOC) { note in
+        let token = ManagedObjectObserverToken(
+            name: .userDidRequestCompleteAsset,
+            managedObjectContext: self.uiMOC
+        ) { note in
             let objectId = note.object as? NSManagedObjectID
             XCTAssertNotNil(objectId)
             XCTAssertEqual(objectId, userObjectId)
@@ -318,7 +322,13 @@ extension ZMUserTests_Swift {
 
 extension ZMUser {
     @discardableResult
-    static func insert(in moc: NSManagedObjectContext, id: UUID = .create(), name: String, handle: String? = nil, connectionStatus: ZMConnectionStatus = .accepted) -> ZMUser {
+    static func insert(
+        in moc: NSManagedObjectContext,
+        id: UUID = .create(),
+        name: String,
+        handle: String? = nil,
+        connectionStatus: ZMConnectionStatus = .accepted
+    ) -> ZMUser {
         let user = ZMUser.insertNewObject(in: moc)
         user.remoteIdentifier = id
         user.name = name
@@ -424,14 +434,21 @@ extension ZMUserTests_Swift {
         XCTAssertTrue(filename.contains("body"))
 
         let regexp = try! NSRegularExpression(pattern: pattern, options: [])
-        let matches = regexp.matches(in: filename as String, options: [], range: NSRange(location: 0, length: filename.count))
+        let matches = regexp.matches(
+            in: filename as String,
+            options: [],
+            range: NSRange(location: 0, length: filename.count)
+        )
 
         XCTAssertTrue(matches.count > 0)
     }
 
     func testFilenameForUser() throws {
         // Given
-        let user = ZMUser.insert(in: self.uiMOC, name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge")
+        let user = ZMUser.insert(
+            in: self.uiMOC,
+            name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge"
+        )
 
         // When
         let filename = user.filename()
@@ -444,7 +461,10 @@ extension ZMUserTests_Swift {
 
     func testFilenameWithSuffixForUser() throws {
         // Given
-        let user = ZMUser.insert(in: self.uiMOC, name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge")
+        let user = ZMUser.insert(
+            in: self.uiMOC,
+            name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge"
+        )
 
         // When
         let suffix = "-Jellyfish"
@@ -638,7 +658,10 @@ extension ZMUserTests_Swift {
         let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: uiMOC, maxCount: 50)
 
         // then
-        XCTAssertEqual(recipients, Set([selfUser, selfTeamUser1, selfTeamUser2, connectedTeamUser1, connectedTeamUser2]))
+        XCTAssertEqual(
+            recipients,
+            Set([selfUser, selfTeamUser1, selfTeamUser2, connectedTeamUser1, connectedTeamUser2])
+        )
     }
 
     func testThatReturnsExpectedRecipientsForBroadcast_WhenFederationIsEnabled() {
@@ -839,8 +862,14 @@ extension ZMUserTests_Swift {
         sut.markAccountAsDeleted(at: Date())
 
         // then
-        XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) // FIXME: -> It was XCTAssertNotNil
-        XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) // FIXME: -> It was XCTAssertNotNil
+        XCTAssertNil(
+            conversation1.participantRoles
+                .first(where: { $0.user == sut })
+        ) // FIXME: -> It was XCTAssertNotNil
+        XCTAssertNil(
+            conversation2.participantRoles
+                .first(where: { $0.user == sut })
+        ) // FIXME: -> It was XCTAssertNotNil
     }
 
     func testThatUserIsNotRemovedFromTeamOneToOneConversationsWhenAccountIsDeleted() {
@@ -1042,7 +1071,11 @@ extension ZMUserTests_Swift {
             user.supportedProtocols = [.proteus, .mls]
             user.connection = ZMConnection.insertNewObject(in: syncMOC)
 
-            let proteusConversation = ZMConversation.insertConversation(moc: syncMOC, participants: [], type: .connection)
+            let proteusConversation = ZMConversation.insertConversation(
+                moc: syncMOC,
+                participants: [],
+                type: .connection
+            )
             proteusConversation?.remoteIdentifier = proteusConversationID.uuid
             proteusConversation?.domain = proteusConversation?.domain
             proteusConversation?.messageProtocol = .proteus

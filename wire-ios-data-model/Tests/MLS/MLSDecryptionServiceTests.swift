@@ -169,7 +169,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let messageData = Data.random()
         let sender = MLSClientID.random()
 
-        mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
+        mockSubconversationGroupIDRepository
+            .fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subconversationGroupID
 
         var mockDecryptMessageCount = 0
         self.mockMLSActionExecutor.mockDecryptMessage = {
@@ -202,7 +203,10 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
 
-        XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
+        XCTAssertEqual(
+            mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count,
+            1
+        )
     }
 
     func test_Decrypt_ReturnsBufferedMessages() async throws {
@@ -239,7 +243,8 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                         senderClientId: sender.rawValue.data(using: .utf8)!,
                         hasEpochChanged: false,
                         identity: .withBasicCredentials(),
-                        crlNewDistributionPoints: nil),
+                        crlNewDistributionPoints: nil
+                    ),
                 ], crlNewDistributionPoints: nil
             )
         }

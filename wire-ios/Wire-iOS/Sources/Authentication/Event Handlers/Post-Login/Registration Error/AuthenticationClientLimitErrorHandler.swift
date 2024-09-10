@@ -27,7 +27,10 @@ import WireSyncEngine
 final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError, UUID)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError, UUID)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle canNotRegisterMoreClients errors
@@ -47,7 +50,10 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
             return nil
         }
 
-        guard let nextStep = AuthenticationFlowStep.makeClientManagementStep(from: error, statusProvider: self.statusProvider) else {
+        guard let nextStep = AuthenticationFlowStep.makeClientManagementStep(
+            from: error,
+            statusProvider: self.statusProvider
+        ) else {
             return nil
         }
 

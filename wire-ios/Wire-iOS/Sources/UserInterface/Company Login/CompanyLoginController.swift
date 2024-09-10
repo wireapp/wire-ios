@@ -171,7 +171,8 @@ extension CompanyLoginController {
     private func presentCompanyLoginAlert(
         prefilledInput: String? = nil,
         error: UIAlertController.CompanyLoginError? = nil,
-        ssoOnly: Bool = false) {
+        ssoOnly: Bool = false
+    ) {
         // Do not repeatly show alert if exist
         guard ssoAlert == nil else { return }
 

@@ -23,7 +23,9 @@ import Foundation
     /// prevent the request from being completed - it will be in a suspended state until
     /// `completeAllBlockedRequests` is called.
     public static let ResponseNotCompleted = ZMTransportResponse(
-        payload: ["label": "This will prevent the response from being completed. The completion handler won't be called at all."] as ZMTransportData,
+        payload: [
+            "label": "This will prevent the response from being completed. The completion handler won't be called at all.",
+        ] as ZMTransportData,
         httpStatus: 500,
         transportSessionError: nil,
         apiVersion: 0

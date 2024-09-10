@@ -100,9 +100,15 @@ final class AnimatedListMenuView: UIView {
         dotViews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         translatesAutoresizingMaskIntoConstraints = false
 
-        centerToRightDistanceConstraint = centerDotView.rightAnchor.constraint(equalTo: rightDotView.leftAnchor, constant: centerToRightDistance(forProgress: progress))
+        centerToRightDistanceConstraint = centerDotView.rightAnchor.constraint(
+            equalTo: rightDotView.leftAnchor,
+            constant: centerToRightDistance(forProgress: progress)
+        )
 
-        leftToCenterDistanceConstraint = leftDotView.rightAnchor.constraint(equalTo: centerDotView.leftAnchor, constant: leftToCenterDistance(forProgress: progress))
+        leftToCenterDistanceConstraint = leftDotView.rightAnchor.constraint(
+            equalTo: centerDotView.leftAnchor,
+            constant: leftToCenterDistance(forProgress: progress)
+        )
 
         let leftDotLeftConstraint = leftDotView.leftAnchor.constraint(equalTo: self.leftAnchor)
 

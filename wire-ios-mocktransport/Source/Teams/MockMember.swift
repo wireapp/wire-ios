@@ -41,8 +41,21 @@ public struct MockPermissions: OptionSet {
 
     // MARK: - Common Combined Values
 
-    public static let member: MockPermissions = [.createConversation, .deleteConversation, .addConversationMember, .removeConversationMember, .getTeamConversations, .getMemberPermissions]
-    public static let admin: MockPermissions  = [.member, .addTeamMember, .removeTeamMember, .setTeamData, .setMemberPermissions]
+    public static let member: MockPermissions = [
+        .createConversation,
+        .deleteConversation,
+        .addConversationMember,
+        .removeConversationMember,
+        .getTeamConversations,
+        .getMemberPermissions,
+    ]
+    public static let admin: MockPermissions  = [
+        .member,
+        .addTeamMember,
+        .removeTeamMember,
+        .setTeamData,
+        .setMemberPermissions,
+    ]
     public static let owner: MockPermissions  = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
 

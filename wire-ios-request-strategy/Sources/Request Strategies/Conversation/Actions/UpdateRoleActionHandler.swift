@@ -38,7 +38,12 @@ class UpdateRoleActionHandler: ActionHandler<UpdateRoleAction> {
 
         let path = "/conversations/\(conversationId.transportString())/members/\(userId.transportString())"
 
-        let request = ZMTransportRequest(path: path, method: .put, payload: payloadString as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: path,
+            method: .put,
+            payload: payloadString as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
         return request
     }
 

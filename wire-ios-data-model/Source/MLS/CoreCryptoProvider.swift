@@ -37,7 +37,8 @@ public protocol CoreCryptoProviderProtocol {
     /// - parameters:
     ///   - enrollment: enrollment instance which was used to establish end to end identity
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
-    func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints?
+    func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws
+        -> CRLsDistributionPoints?
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -54,12 +55,14 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var hasInitialisedMLS = false
     private var coreCryptoContinuations: [CheckedContinuation<SafeCoreCrypto, Error>] = []
 
-    public init(selfUserID: UUID,
-                sharedContainerURL: URL,
-                accountDirectory: URL,
-                syncContext: NSManagedObjectContext,
-                cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
-                allowCreation: Bool = true) {
+    public init(
+        selfUserID: UUID,
+        sharedContainerURL: URL,
+        accountDirectory: URL,
+        syncContext: NSManagedObjectContext,
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        allowCreation: Bool = true
+    ) {
         self.selfUserID = selfUserID
         self.sharedContainerURL = sharedContainerURL
         self.accountDirectory = accountDirectory
@@ -86,7 +89,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints? {
+    public func initialiseMLSWithEndToEndIdentity(
+        enrollment: E2eiEnrollment,
+        certificateChain: String
+    ) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
         return try await coreCrypto().perform { coreCrypto in
             let crlsDistributionPoints = try await coreCrypto.e2eiMlsInitOnly(
@@ -182,7 +188,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             try await coreCrypto.perform { try await $0.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
                 ciphersuites: [cipherSuite],
-                nbKeyPackage: nil) }
+                nbKeyPackage: nil
+            ) }
         }
     }
 
@@ -239,7 +246,10 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    private func generateClientPublicKeys(with coreCrypto: CoreCryptoProtocol, credentialType: MlsCredentialType) async throws {
+    private func generateClientPublicKeys(
+        with coreCrypto: CoreCryptoProtocol,
+        credentialType: MlsCredentialType
+    ) async throws {
         WireLogger.mls.info("generating public key")
         let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         let keyBytes = try await coreCrypto.clientPublicKey(
@@ -283,7 +293,9 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             )
         } catch {
             WireLogger.proteus.critical("cryptobox migration failed: \(error.localizedDescription)")
-            fatalError("Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)")
+            fatalError(
+                "Failed to migrate data from CryptoBox to CoreCrypto keystore, error : \(error.localizedDescription)"
+            )
         }
 
         WireLogger.proteus.info("cryptobox migration success")

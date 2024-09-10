@@ -340,7 +340,8 @@ final class ConversationGuestOptionsViewModel {
                     case .normal:
                         createLink()
                     }
-                })
+                }
+            )
         } else {
             createLink()
         }
@@ -388,7 +389,8 @@ final class ConversationGuestOptionsViewModel {
                     self.link = nil
                     self.securedLink = nil
                     _setAllowGuests()
-                })
+                }
+            )
         } else {
             _setAllowGuests()
         }

@@ -29,7 +29,11 @@ import Foundation
     public let kind: Kind
     public let timestamp = Date()
 
-    public static func createIfNeeded(team: MockTeam, changedValues: [String: Any], selfUser: MockUser) -> [MockTeamMemberEvent] {
+    public static func createIfNeeded(
+        team: MockTeam,
+        changedValues: [String: Any],
+        selfUser: MockUser
+    ) -> [MockTeamMemberEvent] {
         let membersKey = #keyPath(MockTeam.members)
         let oldMembers = team.committedValues(forKeys: [membersKey])
 

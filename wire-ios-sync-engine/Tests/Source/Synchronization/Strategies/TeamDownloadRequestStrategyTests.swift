@@ -33,7 +33,11 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             managedObjectContext: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
-        sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
+        sut = TeamDownloadRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncStatus: mockSyncStatus
+        )
 
         syncMOC.performGroupedAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
@@ -50,9 +54,11 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     func sampleResponse(team: Team, creatorId: UUID, isBound: Bool = true) -> [String: Any] {
-        sampleResponse(teamID: team.remoteIdentifier!,
-                       creatorId: creatorId,
-                       isBound: isBound)
+        sampleResponse(
+            teamID: team.remoteIdentifier!,
+            creatorId: creatorId,
+            isBound: isBound
+        )
     }
 
     func sampleResponse(teamID: UUID, creatorId: UUID, isBound: Bool = true) -> [String: Any] {
@@ -147,7 +153,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             // when
             let payload = self.sampleResponse(team: team, creatorId: creatorId)
-            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -181,7 +192,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             // when
             let payload = self.sampleResponse(team: team, creatorId: creatorId, isBound: false)
-            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
 
             // when
             request.complete(with: response)
@@ -211,7 +227,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
             // when
             let payload = self.sampleResponse(team: team, creatorId: UUID(), isBound: false)
-            let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
             request.complete(with: response)
         }
 
@@ -299,7 +320,8 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             // then
             XCTAssertNil(Team.fetch(with: teamId, in: self.syncMOC))
 
-            guard let conversation = ZMConversation.fetch(with: conversationId, in: self.syncMOC) else { return XCTFail("No conversation") }
+            guard let conversation = ZMConversation.fetch(with: conversationId, in: self.syncMOC)
+            else { return XCTFail("No conversation") }
             XCTAssertEqual(conversation.teamRemoteIdentifier, teamId)
             XCTAssert(ZMUser.selfUser(in: self.syncMOC).isGuest(in: conversation))
         }
@@ -478,7 +500,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
             ],
         ]
 
-        request.complete(with: .init(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request.complete(with: .init(
+            payload: payload as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -499,7 +526,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         guard let request = sutNextRequest(for: .v0) else { return XCTFail("No request generated") }
 
         // when
-        let response = ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        let response = ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         request.complete(with: response)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -519,7 +551,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
                 "has_more": false,
                 "teams": [sampleResponse(teamID: UUID(), creatorId: UUID())],
             ]
-            request.complete(with: .init(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: .init(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         }
 
@@ -539,7 +576,12 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
                 "has_more": false,
                 "teams": [],
             ]
-            request.complete(with: .init(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: .init(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         }
 

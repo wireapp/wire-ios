@@ -152,7 +152,10 @@ final class ConversationListViewController: UIViewController {
 
         setupObservers()
 
-        listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
+        listContentController.collectionView.scrollRectToVisible(
+            CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1),
+            animated: false
+        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -311,7 +314,12 @@ final class ConversationListViewController: UIViewController {
         setState(.peoplePicker, animated: true, completion: completion)
     }
 
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) -> Bool {
         listContentController.select(
             conversation,
             scrollTo: message,
@@ -321,7 +329,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(
+            presentViewController: self,
+            completionHandler: completionHandler
+        )
     }
 }
 

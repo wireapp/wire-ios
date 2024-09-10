@@ -23,9 +23,11 @@ extension MessageChangeInfo {
     /// To observe messages and their users (senders, systemMessage users), observe the conversation window instead
     /// Messages observed with this call will not contain information about user changes
     /// You must hold on to the token and use it to unregister
-    public static func add(observer: ZMMessageObserver,
-                           for message: ZMConversationMessage,
-                           userSession: ZMUserSession) -> NSObjectProtocol {
+    public static func add(
+        observer: ZMMessageObserver,
+        for message: ZMConversationMessage,
+        userSession: ZMUserSession
+    ) -> NSObjectProtocol {
         self.add(observer: observer, for: message, managedObjectContext: userSession.managedObjectContext)
     }
 }

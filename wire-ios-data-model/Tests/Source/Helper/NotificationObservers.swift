@@ -51,7 +51,8 @@ class MessageObserver: NSObject, ZMMessageObserver {
         token = MessageChangeInfo.add(
             observer: self,
             for: message,
-            managedObjectContext: message.managedObjectContext!)
+            managedObjectContext: message.managedObjectContext!
+        )
     }
 
     var notifications: [MessageChangeInfo] = []
@@ -107,7 +108,11 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
     init(conversationList: ConversationList, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
         super.init()
-        self.token = ConversationListChangeInfo.addListObserver(self, for: conversationList, managedObjectContext: managedObjectContext)
+        self.token = ConversationListChangeInfo.addListObserver(
+            self,
+            for: conversationList,
+            managedObjectContext: managedObjectContext
+        )
     }
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {

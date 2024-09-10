@@ -28,7 +28,11 @@ final class MockAttachmentDetector: LinkAttachmentDetectorType {
     var downloadCount = 0
     var excludedRanges: [NSRange] = []
 
-    func downloadLinkAttachments(inText text: String, excluding: [NSRange], completion: @escaping ([LinkAttachment]) -> Void) {
+    func downloadLinkAttachments(
+        inText text: String,
+        excluding: [NSRange],
+        completion: @escaping ([LinkAttachment]) -> Void
+    ) {
         downloadCount += 1
         excludedRanges = excluding
         completion(nextResult)
@@ -53,7 +57,12 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func createMessage(text: String = "text message 123", mentions: [Mention] = [], needsUpdate: Bool = true, isEphemeral: Bool = false) -> ZMClientMessage {
+    func createMessage(
+        text: String = "text message 123",
+        mentions: [Mention] = [],
+        needsUpdate: Bool = true,
+        isEphemeral: Bool = false
+    ) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
@@ -69,10 +78,13 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
     }
 
     func createAttachment(withCachedImage: Bool = true) -> LinkAttachment {
-        let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
-                                        permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
-                                        thumbnails: [thumbnailURL],
-                                        originalRange: NSRange(location: 20, length: 43))
+        let attachment = LinkAttachment(
+            type: .youTubeVideo,
+            title: "Pingu Season 1 Episode 1",
+            permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+            thumbnails: [thumbnailURL],
+            originalRange: NSRange(location: 20, length: 43)
+        )
 
         return attachment
     }
@@ -89,7 +101,12 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait {
             // THEN
             let callCount: Int = needsUpdate ? 1 : 0
-            XCTAssertEqual(self.mockDetector.downloadCount, callCount, "Failure processing for update state \(needsUpdate)", line: line)
+            XCTAssertEqual(
+                self.mockDetector.downloadCount,
+                callCount,
+                "Failure processing for update state \(needsUpdate)",
+                line: line
+            )
             self.mockDetector.downloadCount = 0
         }
     }
@@ -167,7 +184,13 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         syncMOC.performGroupedAndWait {
             // GIVEN
             let text = "@john - www.sunet.se hello"
-            let message = self.createMessage(text: text, mentions: [Mention(range: NSRange(location: 0, length: 20), user: self.otherUser)])
+            let message = self.createMessage(
+                text: text,
+                mentions: [Mention(
+                    range: NSRange(location: 0, length: 20),
+                    user: self.otherUser
+                )]
+            )
 
             // WHEN
             self.sut.processMessage(message)

@@ -58,18 +58,21 @@ final class CallDegradationController: UIViewController {
         case let .outgoing(reason: degradationReason):
             switch degradationReason {
             case .invalidCertificate:
-                visibleAlertController = UIAlertController.makeOutgoingDegradedMLSCall { [weak self] continueDegradedCall in
-                    continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
-                }
+                visibleAlertController = UIAlertController
+                    .makeOutgoingDegradedMLSCall { [weak self] continueDegradedCall in
+                        continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?
+                            .cancelDegradedCall()
+                    }
             case let .degradedUser(user: degradeduser):
                 visibleAlertController = UIAlertController.makeOutgoingDegradedProteusCall(
-                    degradedUser: degradeduser?.value) { [weak self] continueDegradedCall in
-                        if continueDegradedCall {
-                            self?.delegate?.continueDegradedCall()
-                        } else {
-                            self?.delegate?.cancelDegradedCall()
-                        }
+                    degradedUser: degradeduser?.value
+                ) { [weak self] continueDegradedCall in
+                    if continueDegradedCall {
+                        self?.delegate?.continueDegradedCall()
+                    } else {
+                        self?.delegate?.cancelDegradedCall()
                     }
+                }
             }
         case .none, .incoming, .terminating:
             return

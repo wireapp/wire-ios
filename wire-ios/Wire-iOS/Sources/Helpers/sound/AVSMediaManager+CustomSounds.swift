@@ -76,12 +76,14 @@ extension AVSMediaManager {
         }
 
         // Unregister all previous custom sounds
-        let sounds: [MediaManagerSound] = [.firstMessageReceivedSound,
-                                           .messageReceivedSound,
-                                           .ringingFromThemInCallSound,
-                                           .ringingFromThemSound,
-                                           .outgoingKnockSound,
-                                           .incomingKnockSound]
+        let sounds: [MediaManagerSound] = [
+            .firstMessageReceivedSound,
+            .messageReceivedSound,
+            .ringingFromThemInCallSound,
+            .ringingFromThemSound,
+            .outgoingKnockSound,
+            .incomingKnockSound,
+        ]
         for sound in sounds {
             mediaManager.unregisterMedia(byName: sound.rawValue)
         }
@@ -103,9 +105,24 @@ extension AVSMediaManager {
     }
 
     func observeSoundConfigurationChanges() {
-        NotificationCenter.default.addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.messageSoundName.changeNotificationName), object: .none)
-        NotificationCenter.default.addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.callSoundName.changeNotificationName), object: .none)
-        NotificationCenter.default.addObserver(self, selector: #selector(AVSMediaManager.didUpdateSound(_:)), name: NSNotification.Name(rawValue: SettingsPropertyName.pingSoundName.changeNotificationName), object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.messageSoundName.changeNotificationName),
+            object: .none
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.callSoundName.changeNotificationName),
+            object: .none
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(AVSMediaManager.didUpdateSound(_:)),
+            name: NSNotification.Name(rawValue: SettingsPropertyName.pingSoundName.changeNotificationName),
+            object: .none
+        )
     }
 
     private func configureCustomSounds() {

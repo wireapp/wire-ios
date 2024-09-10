@@ -34,7 +34,8 @@ extension MentionsHandler {
         let replacementRange = textView.textRange(from: selectionPosition, to: selectionPosition)!
         textView.replace(replacementRange, withText: text)
 
-        let positionWithOffset = textView.position(from: selectionPosition, offset: cursorOffset) ?? textView.endOfDocument
+        let positionWithOffset = textView.position(from: selectionPosition, offset: cursorOffset) ?? textView
+            .endOfDocument
 
         let newSelectionRange = textView.textRange(from: positionWithOffset, to: positionWithOffset)
         textView.selectedTextRange = newSelectionRange

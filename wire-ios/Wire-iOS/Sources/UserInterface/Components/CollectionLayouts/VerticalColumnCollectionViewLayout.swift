@@ -81,10 +81,12 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The current positioning context.
     private var positioningContext: VerticalColumnPositioningContext {
-        VerticalColumnPositioningContext(contentWidth: contentWidth,
-                                         numberOfColumns: numberOfColumns,
-                                         interItemSpacing: interItemSpacing,
-                                         interColumnSpacing: interColumnSpacing)
+        VerticalColumnPositioningContext(
+            contentWidth: contentWidth,
+            numberOfColumns: numberOfColumns,
+            interItemSpacing: interItemSpacing,
+            interColumnSpacing: interColumnSpacing
+        )
     }
 
     override func prepare() {

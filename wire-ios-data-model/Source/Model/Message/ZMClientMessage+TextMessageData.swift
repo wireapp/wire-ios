@@ -45,14 +45,23 @@ extension ZMClientMessage: TextMessageData {
     }
 
     public var mentions: [Mention] {
-        Mention.mentions(from: underlyingMessage?.textData?.mentions, messageText: messageText, moc: managedObjectContext)
+        Mention.mentions(
+            from: underlyingMessage?.textData?.mentions,
+            messageText: messageText,
+            moc: managedObjectContext
+        )
     }
 
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
         guard let nonce, isEditableMessage else { return }
 
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
-        let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
+        let editedText = Text(
+            content: text,
+            mentions: mentions,
+            linkPreviews: [],
+            replyingTo: self.quote as? ZMOTRMessage
+        )
         let editNonce = UUID()
         let content = MessageEdit(replacingMessageID: nonce, text: editedText)
         let updatedMessage = GenericMessage(content: content, nonce: editNonce)

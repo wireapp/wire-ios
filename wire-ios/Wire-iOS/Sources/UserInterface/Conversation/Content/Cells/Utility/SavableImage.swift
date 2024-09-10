@@ -37,9 +37,11 @@ protocol AssetChangeRequestProtocol: AnyObject {
 
 protocol AssetCreationRequestProtocol: AnyObject {
     static func forAsset() -> Self
-    func addResource(with type: PHAssetResourceType,
-                     data: Data,
-                     options: PHAssetResourceCreationOptions?)
+    func addResource(
+        with type: PHAssetResourceType,
+        data: Data,
+        options: PHAssetResourceCreationOptions?
+    )
 }
 
 extension PHAssetChangeRequest: AssetChangeRequestProtocol {}
@@ -123,7 +125,11 @@ final class SavableImage: NSObject {
         case let .gif(url):
             _ = assetChangeRequestType.creationRequestForAssetFromImage(atFileURL: url)
         case let .image(data):
-            assetCreationRequestType.forAsset().addResource(with: .photo, data: data, options: PHAssetResourceCreationOptions())
+            assetCreationRequestType.forAsset().addResource(
+                with: .photo,
+                data: data,
+                options: PHAssetResourceCreationOptions()
+            )
         }
     }
 

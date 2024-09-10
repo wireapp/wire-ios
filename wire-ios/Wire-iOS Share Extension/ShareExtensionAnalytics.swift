@@ -79,6 +79,7 @@ extension NSItemProvider {
     }
 
     var hasRawFile: Bool {
-        hasItemConformingToTypeIdentifier(UTType.content.identifier) && !hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
+        hasItemConformingToTypeIdentifier(UTType.content.identifier) &&
+            !hasItemConformingToTypeIdentifier(UTType.plainText.identifier)
     }
 }

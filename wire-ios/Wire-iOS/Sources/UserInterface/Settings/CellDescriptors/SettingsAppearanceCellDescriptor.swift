@@ -41,10 +41,12 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         text
     }
 
-    init(text: String,
-         previewGenerator: PreviewGeneratorType? = .none,
-         presentationStyle: PresentationStyle,
-         presentationAction: @escaping () -> (UIViewController?)) {
+    init(
+        text: String,
+        previewGenerator: PreviewGeneratorType? = .none,
+        presentationStyle: PresentationStyle,
+        presentationAction: @escaping () -> (UIViewController?)
+    ) {
         self.text = text
         self.previewGenerator = previewGenerator
         self.presentationStyle = presentationStyle

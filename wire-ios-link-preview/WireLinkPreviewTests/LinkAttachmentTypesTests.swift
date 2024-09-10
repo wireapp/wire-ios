@@ -22,8 +22,13 @@ import XCTest
 class LinkAttachmentTypesTests: XCTestCase {
     func testThatItEncodesAndDecodesWithNSCoder() {
         // GIVEN
-        let youtube = LinkAttachment(type: .youTubeVideo, title: "iPhone X - Reveal", permalink: URL(string: "https://www.youtube.com/watch?v=sRIQsy2PGyM")!,
-                                     thumbnails: [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!], originalRange: NSRange(location: 10, length: 43))
+        let youtube = LinkAttachment(
+            type: .youTubeVideo,
+            title: "iPhone X - Reveal",
+            permalink: URL(string: "https://www.youtube.com/watch?v=sRIQsy2PGyM")!,
+            thumbnails: [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!],
+            originalRange: NSRange(location: 10, length: 43)
+        )
 
         // WHEN
         let encodedData = NSKeyedArchiver.archivedData(withRootObject: youtube)
@@ -33,22 +38,38 @@ class LinkAttachmentTypesTests: XCTestCase {
         XCTAssertEqual(decodedAttachment?.type, .youTubeVideo)
         XCTAssertEqual(decodedAttachment?.title, "iPhone X - Reveal")
         XCTAssertEqual(decodedAttachment?.permalink, URL(string: "https://www.youtube.com/watch?v=sRIQsy2PGyM")!)
-        XCTAssertEqual(decodedAttachment?.thumbnails, [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!])
+        XCTAssertEqual(
+            decodedAttachment?.thumbnails,
+            [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!]
+        )
         XCTAssertEqual(decodedAttachment?.originalRange, NSRange(location: 10, length: 43))
     }
 
     func testThatItDecodesYouTubeFromOpenGraph() {
         // GIVEN
-        let openGraphData = OpenGraphData(title: "iPhone X - Reveal", type: "video.other", url: "https://www.youtube.com/watch?v=sRIQsy2PGyM", resolvedURL: "https://www.youtube.com/watch?v=sRIQsy2PGyM", imageUrls: ["https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg"])
+        let openGraphData = OpenGraphData(
+            title: "iPhone X - Reveal",
+            type: "video.other",
+            url: "https://www.youtube.com/watch?v=sRIQsy2PGyM",
+            resolvedURL: "https://www.youtube.com/watch?v=sRIQsy2PGyM",
+            imageUrls: ["https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg"]
+        )
 
         // WHEN
-        let decodedAttachment = LinkAttachment(openGraphData: openGraphData, detectedType: .youTubeVideo, originalRange: NSRange(location: 10, length: 43))
+        let decodedAttachment = LinkAttachment(
+            openGraphData: openGraphData,
+            detectedType: .youTubeVideo,
+            originalRange: NSRange(location: 10, length: 43)
+        )
 
         // THEN
         XCTAssertEqual(decodedAttachment?.type, .youTubeVideo)
         XCTAssertEqual(decodedAttachment?.title, "iPhone X - Reveal")
         XCTAssertEqual(decodedAttachment?.permalink, URL(string: "https://www.youtube.com/watch?v=sRIQsy2PGyM")!)
-        XCTAssertEqual(decodedAttachment?.thumbnails, [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!])
+        XCTAssertEqual(
+            decodedAttachment?.thumbnails,
+            [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!]
+        )
         XCTAssertEqual(decodedAttachment?.originalRange, NSRange(location: 10, length: 43))
     }
 }

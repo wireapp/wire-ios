@@ -28,7 +28,10 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
 
     public var shouldUseBackgroundSession = true
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -53,7 +56,9 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     }
 
     private static var updatePredicate: NSPredicate {
-        NSPredicate(format: "version >= 3 && delivered == NO && transferState == \(AssetTransferState.uploading.rawValue)")
+        NSPredicate(
+            format: "version >= 3 && delivered == NO && transferState == \(AssetTransferState.uploading.rawValue)"
+        )
     }
 
     private static var filterPredicate: NSPredicate {
@@ -93,7 +98,11 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
 }
 
 extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
+    public func request(
+        forInserting managedObject: ZMManagedObject,
+        forKeys keys: Set<String>?,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
         nil // no-op
     }
 
@@ -101,22 +110,40 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
     }
 
-    public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
+    public func updateInsertedObject(
+        _ managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse
+    ) {
         // no-op
     }
 
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? AssetMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
-        guard let asset = message.assets.first(where: { !$0.isUploaded }) else { return nil } // TODO: jacob are we sure we only have one upload per message active?
+    public func request(
+        forUpdating managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
+        guard let message = managedObject as? AssetMessage
+        else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
+        guard let asset = message.assets.first(where: { !$0.isUploaded })
+        else { return nil } // TODO: jacob are we sure we only have one upload per message active?
 
         return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage, apiVersion: apiVersion)
     }
 
-    private func requestForUploadingAsset(_ asset: AssetType, for message: ZMAssetClientMessage, apiVersion: APIVersion) -> ZMUpstreamRequest {
+    private func requestForUploadingAsset(
+        _ asset: AssetType,
+        for message: ZMAssetClientMessage,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
-        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
+        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init)
+        else { fatal("Trying to send message that doesn't have a conversation") }
 
-        WireLogger.assets.debug("sending request for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+        WireLogger.assets.debug(
+            "sending request for asset",
+            attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+        )
         var request: ZMTransportRequest? = if shouldUseBackgroundSession {
             requestFactory.backgroundUpstreamRequestForAsset(
                 message: message,
@@ -165,7 +192,10 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
-        WireLogger.assets.debug("processing response for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+        WireLogger.assets.debug(
+            "processing response for asset",
+            attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+        )
         guard
             let payload = response.payload?.asDictionary(),
             let assetId = payload["key"] as? String
@@ -182,17 +212,26 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             domain: domain
         )
 
-        WireLogger.assets.debug("processed response for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+        WireLogger.assets.debug(
+            "processed response for asset",
+            attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+        )
 
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
 
         if message.processingState == .done {
             message.updateTransferState(.uploaded, synchronize: false)
-            WireLogger.assets.debug("message with asset uploaded", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+            WireLogger.assets.debug(
+                "message with asset uploaded",
+                attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+            )
             return false
         } else {
             // There are more assets to upload
-            WireLogger.assets.debug("more assets to upload", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
+            WireLogger.assets.debug(
+                "more assets to upload",
+                attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"]
+            )
 
             return true
         }

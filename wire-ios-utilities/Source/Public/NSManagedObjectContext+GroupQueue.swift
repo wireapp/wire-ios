@@ -41,13 +41,23 @@ extension NSManagedObjectContext {
     @objc
     public var pendingSaveCounter: Int {
         get { objc_getAssociatedObject(self, &AssociatedPendingSaveCountKey) as? Int ?? 0 }
-        set { objc_setAssociatedObject(self, &AssociatedPendingSaveCountKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set { objc_setAssociatedObject(
+            self,
+            &AssociatedPendingSaveCountKey,
+            newValue,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        ) }
     }
 
     @objc
     public var dispatchGroupContext: DispatchGroupContext? {
         get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as? DispatchGroupContext }
-        set { objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+        set { objc_setAssociatedObject(
+            self,
+            &AssociatedDispatchGroupContextKey,
+            newValue,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        ) }
     }
 
     /// List of all groups associated with this context

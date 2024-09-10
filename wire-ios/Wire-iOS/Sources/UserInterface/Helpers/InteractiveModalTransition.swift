@@ -76,9 +76,11 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     private let interactionController = ModalInteractionController()
     private let configuration: ModalPresentationConfiguration
 
-    init(viewController: UIViewController,
-         configuration: ModalPresentationConfiguration = .init(alpha: 0.3, duration: 0.3),
-         enableDismissOnPan: Bool = true) {
+    init(
+        viewController: UIViewController,
+        configuration: ModalPresentationConfiguration = .init(alpha: 0.3, duration: 0.3),
+        enableDismissOnPan: Bool = true
+    ) {
         self.viewController = viewController
         self.configuration = configuration
         super.init(nibName: nil, bundle: nil)
@@ -135,7 +137,11 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
         dismiss(animated: true)
     }
 
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController,
+        source: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
         nil
     }
 
@@ -143,7 +149,8 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
         nil
     }
 
-    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
+        -> UIViewControllerInteractiveTransitioning? {
         interactionController.interactionInProgress ? interactionController : nil
     }
 }

@@ -166,7 +166,10 @@ struct ConversationEventPayloadProcessor {
 
             // Idea for improvement, return removed users from this call to benefit from
             // checking that the participants are in the conversation before being removed
-            conversation.removeParticipantsAndUpdateConversationState(users: Set(removedUsers), initiatingUser: initiatingUser)
+            conversation.removeParticipantsAndUpdateConversationState(
+                users: Set(removedUsers),
+                initiatingUser: initiatingUser
+            )
 
             let isSelfUserRemoved = removedUsers.contains(where: \.isSelfUser)
             return (isSelfUserRemoved, conversation.messageProtocol)
@@ -241,7 +244,8 @@ struct ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser), conversation.conversationType == .group {
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser),
+               conversation.conversationType == .group {
                 // TODO: jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -264,7 +268,8 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        if conversation.userDefinedName != payload.data.name || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
+        if conversation.userDefinedName != payload.data
+            .name || ((conversation.modifiedKeys?.contains(ZMConversationUserDefinedNameKey)) != nil) {
             // TODO: jacob refactor to append method on conversation
             _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
         }
@@ -288,7 +293,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            WireLogger.eventProcessing.error("Conversation member update missing conversation or target user, aborting...")
+            WireLogger.eventProcessing
+                .error("Conversation member update missing conversation or target user, aborting...")
             return
         }
 
@@ -325,7 +331,8 @@ struct ConversationEventPayloadProcessor {
 
         if let accessRoles = payload.data.accessRoleV2 {
             conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles)
-        } else if let accessRole = payload.data.accessRole, let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
+        } else if let accessRole = payload.data.accessRole,
+                  let legacyAccessRole = ConversationAccessRole(rawValue: accessRole) {
             let accessRoles = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
             conversation.updateAccessStatus(accessModes: payload.data.access, accessRoles: accessRoles.map(\.rawValue))
         }
@@ -347,7 +354,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )
         else {
-            WireLogger.eventProcessing.error("Conversation message timer update missing sender or conversation, aborting...")
+            WireLogger.eventProcessing
+                .error("Conversation message timer update missing sender or conversation, aborting...")
             return
         }
 
@@ -377,7 +385,8 @@ struct ConversationEventPayloadProcessor {
                 in: context
             ),
             let timestamp = payload.timestamp,
-            conversation.lastServerTimeStamp == nil || conversation.lastServerTimeStamp! < timestamp // Discard event if it has already been applied
+            conversation.lastServerTimeStamp == nil || conversation
+            .lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
             WireLogger.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return
@@ -407,7 +416,10 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         guard let qualifiedID = payload.qualifiedID else {
-            WireLogger.eventProcessing.error("processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting...")
+            WireLogger.eventProcessing
+                .error(
+                    "processPayload of event type \(originalEvent.type): Conversation qualifiedID missing, aborting..."
+                )
             return
         }
 
@@ -415,7 +427,10 @@ struct ConversationEventPayloadProcessor {
             var action = SyncConversationAction(qualifiedID: qualifiedID)
             try await action.perform(in: context.notificationContext)
         } catch {
-            WireLogger.eventProcessing.error("processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)")
+            WireLogger.eventProcessing
+                .error(
+                    "processPayload of event type \(originalEvent.type): sync conversation failed with error: \(error)"
+                )
         }
     }
 
@@ -514,7 +529,10 @@ struct ConversationEventPayloadProcessor {
                 self.updateMessageProtocol(from: payload, for: conversation, in: context)
             }
 
-            Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
+            Flow.createGroup
+                .checkpoint(
+                    description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
+                )
 
             return conversation
         }
@@ -615,7 +633,10 @@ struct ConversationEventPayloadProcessor {
             return
         }
 
-        WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
+        WireLogger.mls
+            .debug(
+                "createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))"
+            )
 
         if await context.perform({ conversation.epoch <= 0 }) {
             let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
@@ -867,7 +888,10 @@ struct ConversationEventPayloadProcessor {
         case .mixed:
             switch newMessageProtocol {
             case .proteus:
-                WireLogger.updateEvent.warn("update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!")
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from \(conversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
+                    )
             case .mixed:
                 break // no update, ignore
             case .mls:
@@ -878,7 +902,10 @@ struct ConversationEventPayloadProcessor {
         case .mls:
             switch newMessageProtocol {
             case .proteus, .mixed:
-                WireLogger.updateEvent.warn("update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!")
+                WireLogger.updateEvent
+                    .warn(
+                        "update message protocol from '\(conversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
+                    )
             case .mls:
                 break // no update, ignore
             }
@@ -951,7 +978,11 @@ struct ConversationEventPayloadProcessor {
         from payload: Payload.UpdateConverationMemberLeave,
         in context: NSManagedObjectContext
     ) -> [ZMUser]? {
-        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(with: $0.uuid, domain: $0.domain, in: context) }) {
+        if let users = payload.qualifiedUserIDs?.map({ ZMUser.fetchOrCreate(
+            with: $0.uuid,
+            domain: $0.domain,
+            in: context
+        ) }) {
             return users
         }
 

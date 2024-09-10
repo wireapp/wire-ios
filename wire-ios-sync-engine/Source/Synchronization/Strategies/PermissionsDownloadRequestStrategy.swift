@@ -67,13 +67,20 @@ extension MembershipPayload {
 }
 
 extension Member {
-    fileprivate static let predicateForObjectsNeedingToBeUpdated = NSPredicate(format: "%K == YES", #keyPath(Member.needsToBeUpdatedFromBackend))
+    fileprivate static let predicateForObjectsNeedingToBeUpdated = NSPredicate(
+        format: "%K == YES",
+        #keyPath(Member.needsToBeUpdatedFromBackend)
+    )
 }
 
-public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
+public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource,
+    ZMRequestGeneratorSource, ZMDownstreamTranscoder {
     fileprivate var sync: ZMDownstreamObjectSync!
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
         sync = ZMDownstreamObjectSync(
@@ -99,9 +106,17 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
 
     // MARK: - ZMDownstreamTranscoder
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest! {
-        guard let member = object as? Member, downstreamSync as? ZMDownstreamObjectSync == sync else { fatal("Wrong object: \(object.safeForLoggingDescription)") }
-        guard let identifier = member.remoteIdentifier, let teamId = member.team?.remoteIdentifier else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest! {
+        guard let member = object as? Member,
+              downstreamSync as? ZMDownstreamObjectSync == sync
+        else { fatal("Wrong object: \(object.safeForLoggingDescription)") }
+        guard let identifier = member.remoteIdentifier,
+              let teamId = member.team?.remoteIdentifier
+        else { fatal("No ids to sync: \(object.safeForLoggingDescription)") }
         return TeamDownloadRequestFactory.getSingleMemberRequest(for: identifier, in: teamId, apiVersion: apiVersion)
     }
 

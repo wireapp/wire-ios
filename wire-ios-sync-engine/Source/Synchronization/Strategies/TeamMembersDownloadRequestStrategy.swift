@@ -24,13 +24,17 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
     let syncStatus: SyncStatus
     var sync: ZMSingleRequestSync!
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatus,
-                syncStatus: SyncStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus,
+        syncStatus: SyncStatus
+    ) {
         self.syncStatus = syncStatus
 
-        super.init(withManagedObjectContext: managedObjectContext,
-                   applicationStatus: applicationStatus)
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
 
         configuration = [.allowsRequestsDuringSlowSync]
         sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
@@ -53,7 +57,11 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         }
 
         let maxResults = 2000
-        let request = ZMTransportRequest(getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)", apiVersion: apiVersion.rawValue)
+        let request =
+            ZMTransportRequest(
+                getFromPath: "/teams/\(teamID.transportString())/members?maxResults=\(maxResults)",
+                apiVersion: apiVersion.rawValue
+            )
         return request
     }
 

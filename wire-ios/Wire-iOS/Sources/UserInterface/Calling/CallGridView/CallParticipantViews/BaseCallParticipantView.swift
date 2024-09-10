@@ -84,11 +84,13 @@ class BaseCallParticipantView: OrientableView {
 
     // MARK: - View Life Cycle
 
-    init(stream: Stream,
-         isCovered: Bool,
-         shouldShowActiveSpeakerFrame: Bool,
-         shouldShowBorderWhenVideoIsStopped: Bool,
-         pinchToZoomRule: PinchToZoomRule) {
+    init(
+        stream: Stream,
+        isCovered: Bool,
+        shouldShowActiveSpeakerFrame: Bool,
+        shouldShowBorderWhenVideoIsStopped: Bool,
+        pinchToZoomRule: PinchToZoomRule
+    ) {
         self.stream = stream
         self.isCovered = isCovered
         self.shouldShowActiveSpeakerFrame = shouldShowActiveSpeakerFrame
@@ -104,7 +106,12 @@ class BaseCallParticipantView: OrientableView {
         updateBorderStyle()
         hideVideoViewsIfNeeded()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUserDetailsVisibility), name: .videoGridVisibilityChanged, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateUserDetailsVisibility),
+            name: .videoGridVisibilityChanged,
+            object: nil
+        )
         setupAccessibility()
     }
 
@@ -117,7 +124,10 @@ class BaseCallParticipantView: OrientableView {
 
     func updateUserDetails() {
         userDetailsView.name = stream.user?.name
-        userDetailsView.microphoneIconStyle = MicrophoneIconStyle(state: stream.microphoneState, shouldPulse: stream.activeSpeakerState.isSpeakingNow)
+        userDetailsView.microphoneIconStyle = MicrophoneIconStyle(
+            state: stream.microphoneState,
+            shouldPulse: stream.activeSpeakerState.isSpeakingNow
+        )
         userDetailsView.callState = stream.callParticipantState
         userDetailsView.alpha = userDetailsAlpha
     }
@@ -132,7 +142,8 @@ class BaseCallParticipantView: OrientableView {
         isAccessibilityElement = true
         accessibilityTraits = .button
         let microphoneState = userDetailsView.microphoneIconStyle.accessibilityLabel
-        let cameraState = (stream.isSharingVideo && !stream.isScreenSharing) ? Calling.CameraOn.description : Calling.CameraOff.description
+        let cameraState = (stream.isSharingVideo && !stream.isScreenSharing) ? Calling.CameraOn.description : Calling
+            .CameraOff.description
         let activeSpeaker = stream.isParticipantUnmutedAndSpeakingNow ? Calling.ActiveSpeaker.description : ""
         let screenSharing = stream.isScreenSharing ? Calling.SharesScreen.description : ""
         accessibilityLabel = "\(userName), \(microphoneState), \(cameraState), \(activeSpeaker), \(screenSharing)"
@@ -249,8 +260,10 @@ class BaseCallParticipantView: OrientableView {
         borderLayer.frame = bounds
     }
 
-    func layout(forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
-                deviceOrientation: UIDeviceOrientation) {
+    func layout(
+        forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
+        deviceOrientation: UIDeviceOrientation
+    ) {
         guard let superview else { return }
 
         delta = .equal
@@ -274,7 +287,8 @@ class BaseCallParticipantView: OrientableView {
             options: [.curveEaseInOut, .beginFromCurrentState],
             animations: {
                 self.userDetailsView.alpha = self.userDetailsAlpha
-            })
+            }
+        )
     }
 
     // MARK: - Accessibility for automation

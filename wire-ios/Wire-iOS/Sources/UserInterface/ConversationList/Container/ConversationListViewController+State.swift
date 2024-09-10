@@ -19,9 +19,11 @@
 import UIKit
 
 extension ConversationListViewController {
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion? = nil) {
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion? = nil
+    ) {
         if self.state == state {
             completion?()
             return
@@ -40,7 +42,8 @@ extension ConversationListViewController {
 
         case .peoplePicker:
             let startUIViewController = createPeoplePickerController()
-            let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
+            let navigationWrapper = startUIViewController
+                .wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
             show(navigationWrapper, animated: true) {
                 startUIViewController.showKeyboardIfNeeded()

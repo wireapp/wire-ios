@@ -48,7 +48,11 @@ public struct AuthenticationContext: AuthenticationContextProtocol {
         storedContext().canEvaluatePolicy(policy, error: error)
     }
 
-    public func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void) {
+    public func evaluatePolicy(
+        _ policy: LAPolicy,
+        localizedReason: String,
+        reply: @escaping (Bool, (any Error)?) -> Void
+    ) {
         WireLogger.ear.info("AuthenticationContext: evaluatePolicy")
         storedContext().evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
     }

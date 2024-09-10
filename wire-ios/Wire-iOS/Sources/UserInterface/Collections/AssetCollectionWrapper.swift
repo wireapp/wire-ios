@@ -40,7 +40,11 @@ class MulticastDelegate<T: Any>: NSObject {
 final class AssetCollectionMulticastDelegate: MulticastDelegate<AssetCollectionDelegate> {}
 
 extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
+    func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    ) {
         self.call {
             $0.assetCollectionDidFetch(collection: collection, messages: messages, hasMore: hasMore)
         }
@@ -59,25 +63,45 @@ final class AssetCollectionWrapper: NSObject {
     let assetCollectionDelegate: AssetCollectionMulticastDelegate
     let matchingCategories: [CategoryMatch]
 
-    init(conversation: GroupDetailsConversationType, assetCollection: ZMCollection, assetCollectionDelegate: AssetCollectionMulticastDelegate, matchingCategories: [CategoryMatch]) {
+    init(
+        conversation: GroupDetailsConversationType,
+        assetCollection: ZMCollection,
+        assetCollectionDelegate: AssetCollectionMulticastDelegate,
+        matchingCategories: [CategoryMatch]
+    ) {
         self.conversation = conversation
         self.assetCollection = assetCollection
         self.assetCollectionDelegate = assetCollectionDelegate
         self.matchingCategories = matchingCategories
     }
 
-    convenience init(conversation: GroupDetailsConversationType,
-                     matchingCategories: [CategoryMatch]) {
+    convenience init(
+        conversation: GroupDetailsConversationType,
+        matchingCategories: [CategoryMatch]
+    ) {
         let assetCollection: ZMCollection
         let delegate = AssetCollectionMulticastDelegate()
 
         let enableBatchCollections: Bool? = Settings.shared[.enableBatchCollections]
         if enableBatchCollections == true {
-            assetCollection = AssetCollectionBatched(conversation: conversation, matchingCategories: matchingCategories, delegate: delegate)
+            assetCollection = AssetCollectionBatched(
+                conversation: conversation,
+                matchingCategories: matchingCategories,
+                delegate: delegate
+            )
         } else {
-            assetCollection = AssetCollection(conversation: conversation, matchingCategories: matchingCategories, delegate: delegate)
+            assetCollection = AssetCollection(
+                conversation: conversation,
+                matchingCategories: matchingCategories,
+                delegate: delegate
+            )
         }
-        self.init(conversation: conversation, assetCollection: assetCollection, assetCollectionDelegate: delegate, matchingCategories: matchingCategories)
+        self.init(
+            conversation: conversation,
+            assetCollection: assetCollection,
+            assetCollectionDelegate: delegate,
+            matchingCategories: matchingCategories
+        )
     }
 
     deinit {

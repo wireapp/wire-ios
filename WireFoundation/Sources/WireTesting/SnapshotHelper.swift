@@ -195,7 +195,10 @@ public struct SnapshotHelper {
 
         let failure = verifySnapshot(
             of: value,
-            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(perceptualPrecision: perceptualPrecision, traits: traits),
+            as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
+                perceptualPrecision: perceptualPrecision,
+                traits: traits
+            ),
             named: name,
             record: recording,
             snapshotDirectory: snapshotDirectory(file: file),

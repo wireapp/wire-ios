@@ -121,10 +121,12 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             self?.dismiss(animated: true, completion: nil)
         }, accessibilityLabel: L10n.Accessibility.Sketch.CloseButton.description)
 
-        let undoButtonItem = UIBarButtonItem(image: undoImage,
-                                             style: .plain,
-                                             target: canvas,
-                                             action: #selector(Canvas.undo))
+        let undoButtonItem = UIBarButtonItem(
+            image: undoImage,
+            style: .plain,
+            target: canvas,
+            action: #selector(Canvas.undo)
+        )
         undoButtonItem.isEnabled = false
         undoButtonItem.accessibilityIdentifier = "undoButton"
         undoButtonItem.accessibilityLabel = L10n.Accessibility.Sketch.UndoButton.description
@@ -153,7 +155,8 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         photoButton.hitAreaPadding = hitAreaPadding
         photoButton.accessibilityIdentifier = "photoButton"
         photoButton.accessibilityLabel = Sketch.SelectPictureButton.description
-        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll
+        photoButton.isHidden = !MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
+            .hasAccessToCameraRoll
 
         emojiButton.setIcon(.emoji, size: .tiny, for: .normal)
         emojiButton.addTarget(self, action: #selector(openEmojiKeyboard), for: .touchUpInside)
@@ -311,15 +314,17 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
             emojiKeyboardViewController.view.transform = offscreen
             view.layoutIfNeeded()
 
-            UIView.animate(withDuration: 0.25,
-                           delay: 0,
-                           options: UIView.AnimationOptions(rawValue: UInt(7)),
-                           animations: {
-                               self.emojiKeyboardViewController.view.transform = CGAffineTransform.identity
-                           },
-                           completion: { _ in
-                               self.isEmojiKeyboardInTransition = false
-                           })
+            UIView.animate(
+                withDuration: 0.25,
+                delay: 0,
+                options: UIView.AnimationOptions(rawValue: UInt(7)),
+                animations: {
+                    self.emojiKeyboardViewController.view.transform = CGAffineTransform.identity
+                },
+                completion: { _ in
+                    self.isEmojiKeyboardInTransition = false
+                }
+            )
         }
     }
 
@@ -336,17 +341,23 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
         if animated {
             isEmojiKeyboardInTransition = true
 
-            UIView.animate(withDuration: 0.25,
-                           delay: 0,
-                           options: UIView.AnimationOptions(rawValue: UInt(7)),
-                           animations: {
-                               let offscreen = CGAffineTransform(translationX: 0, y: self.emojiKeyboardViewController.view.bounds.size.height)
-                               self.emojiKeyboardViewController.view.transform = offscreen
-                           },
-                           completion: { _ in
-                               self.isEmojiKeyboardInTransition = false
-                               removeEmojiKeyboardViewController()
-                           })
+            UIView.animate(
+                withDuration: 0.25,
+                delay: 0,
+                options: UIView.AnimationOptions(rawValue: UInt(7)),
+                animations: {
+                    let offscreen = CGAffineTransform(
+                        translationX: 0,
+                        y: self.emojiKeyboardViewController.view.bounds.size
+                            .height
+                    )
+                    self.emojiKeyboardViewController.view.transform = offscreen
+                },
+                completion: { _ in
+                    self.isEmojiKeyboardInTransition = false
+                    removeEmojiKeyboardViewController()
+                }
+            )
         } else {
             removeEmojiKeyboardViewController()
         }
@@ -358,7 +369,13 @@ extension CanvasViewController: EmojiPickerViewControllerDelegate {
         let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 82)]
 
         if let image = emoji.value.image(renderedWithAttributes: attributes)?.imageWithAlphaTrimmed {
-            canvas.insert(image: image, at: CGPoint(x: canvas.center.x - image.size.width / 2, y: canvas.center.y - image.size.height / 2))
+            canvas.insert(
+                image: image,
+                at: CGPoint(
+                    x: canvas.center.x - image.size.width / 2,
+                    y: canvas.center.y - image.size.height / 2
+                )
+            )
         }
 
         hideEmojiKeyboard(animated: true)
@@ -374,7 +391,10 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
         present(imagePickerController, animated: true, completion: nil)
     }
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
         defer {
             picker.dismiss(animated: true, completion: nil)
         }

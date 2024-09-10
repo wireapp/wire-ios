@@ -73,7 +73,12 @@ final class ConversationListItemView: UIView {
     init() {
         super.init(frame: .zero)
         setupConversationListItemView()
-        NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contentSizeCategoryDidChange(_:)),
+            name: UIContentSizeCategory.didChangeNotification,
+            object: nil
+        )
 
         addMediaPlaybackManagerPlayerStateObserver()
 
@@ -112,7 +117,12 @@ final class ConversationListItemView: UIView {
         subtitleField.setContentHuggingPriority(.defaultLow, for: .horizontal)
         createConstraints()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(otherConversationListItemDidScroll(_:)), name: .conversationListItemDidScroll, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(otherConversationListItemDidScroll(_:)),
+            name: .conversationListItemDidScroll,
+            object: nil
+        )
     }
 
     private func createConstraints() {
@@ -123,9 +133,15 @@ final class ConversationListItemView: UIView {
             heightAnchor.constraint(greaterThanOrEqualToConstant: ConversationListItemView.minHeight),
 
             // avatar
-            contentStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: CGFloat.ConversationList.horizontalMargin),
+            contentStack.leadingAnchor.constraint(
+                equalTo: leadingAnchor,
+                constant: CGFloat.ConversationList.horizontalMargin
+            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            contentStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -CGFloat.ConversationList.horizontalMargin),
+            contentStack.trailingAnchor.constraint(
+                equalTo: trailingAnchor,
+                constant: -CGFloat.ConversationList.horizontalMargin
+            ),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
         ])
     }
@@ -200,24 +216,29 @@ final class ConversationListItemView: UIView {
     }
 
     private func addMediaPlaybackManagerPlayerStateObserver() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(mediaPlayerStateChanged(_:)),
-                                               name: .mediaPlaybackManagerPlayerStateChanged,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(mediaPlayerStateChanged(_:)),
+            name: .mediaPlaybackManagerPlayerStateChanged,
+            object: nil
+        )
     }
 
     @objc
     private func mediaPlayerStateChanged(_: Notification?) {
         DispatchQueue.main.async {
             if let conversation = self.conversation as? ZMConversation,
-               AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
+               AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?
+               .conversationLike === conversation {
                 self.update(for: conversation)
             }
         }
     }
 
-    func configure(with title: NSAttributedString?,
-                   subtitle: NSAttributedString?) {
+    func configure(
+        with title: NSAttributedString?,
+        subtitle: NSAttributedString?
+    ) {
         titleText = title
         subtitleAttributedText = subtitle
     }
@@ -282,9 +303,10 @@ final class ConversationListItemView: UIView {
         avatarView.configure(context: .conversation(conversation: conversation))
 
         // Configure the accessory
-        let statusIcon: ConversationStatusIcon? = if let player = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer,
-                                                     let message = player.sourceMessage,
-                                                     message.conversationLike === conversation {
+        let statusIcon: ConversationStatusIcon? = if let player = AppDelegate.shared.mediaPlaybackManager?
+            .activeMediaPlayer,
+            let message = player.sourceMessage,
+            message.conversationLike === conversation {
             .playingMedia
         } else {
             status.icon(for: conversation)

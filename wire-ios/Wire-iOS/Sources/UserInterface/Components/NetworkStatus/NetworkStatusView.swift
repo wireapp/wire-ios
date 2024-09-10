@@ -50,7 +50,11 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
         guard shouldAnimateNetworkStatusView else { return }
 
         if animated {
-            UIView.animate(withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime, delay: 0, options: [.curveEaseInOut, .beginFromCurrentState]) {
+            UIView.animate(
+                withDuration: TimeInterval.NetworkStatusBar.resizeAnimationTime,
+                delay: 0,
+                options: [.curveEaseInOut, .beginFromCurrentState]
+            ) {
                 self.view.layoutIfNeeded()
             }
         } else {
@@ -73,8 +77,10 @@ final class NetworkStatusView: UIView {
     weak var delegate: NetworkStatusViewDelegate?
 
     private lazy var offlineViewTopMargin: NSLayoutConstraint = offlineView.topAnchor.constraint(equalTo: topAnchor)
-    private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor.constraint(equalTo: bottomAnchor)
-    private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor.constraint(equalTo: bottomAnchor)
+    private lazy var offlineViewBottomMargin: NSLayoutConstraint = offlineView.bottomAnchor
+        .constraint(equalTo: bottomAnchor)
+    private lazy var connectingViewBottomMargin: NSLayoutConstraint = connectingView.bottomAnchor
+        .constraint(equalTo: bottomAnchor)
 
     var state: NetworkStatusViewState {
         get { _state }
@@ -116,7 +122,10 @@ final class NetworkStatusView: UIView {
         [offlineView, connectingView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             offlineView.leftAnchor.constraint(equalTo: leftAnchor, constant: CGFloat.NetworkStatusBar.horizontalMargin),
-            offlineView.rightAnchor.constraint(equalTo: rightAnchor, constant: -CGFloat.NetworkStatusBar.horizontalMargin),
+            offlineView.rightAnchor.constraint(
+                equalTo: rightAnchor,
+                constant: -CGFloat.NetworkStatusBar.horizontalMargin
+            ),
             offlineViewTopMargin,
             offlineViewBottomMargin,
 
@@ -195,7 +204,8 @@ final class NetworkStatusView: UIView {
         var networkStatusViewState = state
 
         // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
-        if let activationState = window?.windowScene?.activationState, ![.foregroundActive, .foregroundInactive].contains(activationState) {
+        if let activationState = window?.windowScene?.activationState,
+           ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online
         }
 

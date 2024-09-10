@@ -53,17 +53,21 @@ import WireUtilities
     /// Internal notification
     private let notification: Notification
 
-    public init(name: Notification.Name,
-                context: NotificationContext,
-                object: AnyObject? = nil,
-                userInfo: [String: Any]? = nil) {
+    public init(
+        name: Notification.Name,
+        context: NotificationContext,
+        object: AnyObject? = nil,
+        userInfo: [String: Any]? = nil
+    ) {
         var userInfo = userInfo ?? [:]
         if let object {
             userInfo[NotificationInContext.objectInNotificationKey] = object
         }
-        self.notification = Notification(name: name,
-                                         object: context,
-                                         userInfo: userInfo)
+        self.notification = Notification(
+            name: name,
+            object: context,
+            userInfo: userInfo
+        )
     }
 
     private init(notification: Notification) {
@@ -81,7 +85,8 @@ import WireUtilities
         context: NotificationContext,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
+        using: @escaping (NotificationInContext) -> Void
+    ) -> SelfUnregisteringNotificationCenterToken {
         addUnboundedObserver(name: name, context: context, object: object, queue: queue, using: using)
     }
 
@@ -90,14 +95,17 @@ import WireUtilities
         context: NotificationContext?,
         object: AnyObject? = nil,
         queue: OperationQueue? = nil,
-        using: @escaping (NotificationInContext) -> Void) -> SelfUnregisteringNotificationCenterToken {
-        SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: name,
-                                                                                        object: context,
-                                                                                        queue: queue) { note in
-                let notificationInContext = NotificationInContext(notification: note)
-                guard object == nil || object! === notificationInContext.object else { return }
-                using(notificationInContext)
-            })
+        using: @escaping (NotificationInContext) -> Void
+    ) -> SelfUnregisteringNotificationCenterToken {
+        SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(
+            forName: name,
+            object: context,
+            queue: queue
+        ) { note in
+            let notificationInContext = NotificationInContext(notification: note)
+            guard object == nil || object! === notificationInContext.object else { return }
+            using(notificationInContext)
+        })
     }
 }
 
@@ -107,11 +115,13 @@ extension NotificationInContext {
         case changeInfo
     }
 
-    public convenience init(name: Notification.Name,
-                            context: NotificationContext,
-                            object: AnyObject? = nil,
-                            changeInfo: ObjectChangeInfo,
-                            userInfo: [String: Any]? = nil) {
+    public convenience init(
+        name: Notification.Name,
+        context: NotificationContext,
+        object: AnyObject? = nil,
+        changeInfo: ObjectChangeInfo,
+        userInfo: [String: Any]? = nil
+    ) {
         var userInfo = userInfo ?? [:]
         userInfo[UserInfoKeys.changeInfo.rawValue] = changeInfo
 
@@ -119,14 +129,17 @@ extension NotificationInContext {
             name: name,
             context: context,
             object: object,
-            userInfo: userInfo)
+            userInfo: userInfo
+        )
     }
 
-    public convenience init(name: Notification.Name,
-                            context: NotificationContext,
-                            object: AnyObject? = nil,
-                            changedKeys: [String],
-                            userInfo: [String: Any]? = nil) {
+    public convenience init(
+        name: Notification.Name,
+        context: NotificationContext,
+        object: AnyObject? = nil,
+        changedKeys: [String],
+        userInfo: [String: Any]? = nil
+    ) {
         var userInfo = userInfo ?? [:]
         userInfo[UserInfoKeys.changedKeys.rawValue] = changedKeys
 
@@ -134,7 +147,8 @@ extension NotificationInContext {
             name: name,
             context: context,
             object: object,
-            userInfo: userInfo)
+            userInfo: userInfo
+        )
     }
 
     public var changeInfo: ObjectChangeInfo? {

@@ -28,7 +28,10 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
         .allowsRequestsWhileOnline,
     ]
 
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         self.managedObjectContext = managedObjectContext
         self.applicationStatus = applicationStatus
 
@@ -51,13 +54,17 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
         if prerequisites.isSubset(of: configuration) {
             return nextRequestIfAllowed(for: apiVersion)
         } else {
-            zmLog.debug("Not performing requests since option: \(prerequisites.subtracting(configuration)) is not configured for (\(String(describing: type(of: self))))")
+            zmLog
+                .debug(
+                    "Not performing requests since option: \(prerequisites.subtracting(configuration)) is not configured for (\(String(describing: type(of: self))))"
+                )
         }
 
         return nil
     }
 
-    public class func prerequisites(forApplicationStatus applicationStatus: ApplicationStatus) -> ZMStrategyConfigurationOption {
+    public class func prerequisites(forApplicationStatus applicationStatus: ApplicationStatus)
+        -> ZMStrategyConfigurationOption {
         var prerequisites: ZMStrategyConfigurationOption = []
 
         switch applicationStatus.synchronizationState {

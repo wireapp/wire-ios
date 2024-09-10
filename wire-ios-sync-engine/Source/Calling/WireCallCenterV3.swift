@@ -129,13 +129,15 @@ public class WireCallCenterV3: NSObject {
      * - parameter transport: The object that performs network requests when the call center requests them.
      */
 
-    public required init(userId: AVSIdentifier,
-                         clientId: String,
-                         avsWrapper: AVSWrapperType? = nil,
-                         uiMOC: NSManagedObjectContext,
-                         flowManager: FlowManagerType,
-                         analytics: AnalyticsType? = nil,
-                         transport: WireCallCenterTransport) {
+    public required init(
+        userId: AVSIdentifier,
+        clientId: String,
+        avsWrapper: AVSWrapperType? = nil,
+        uiMOC: NSManagedObjectContext,
+        flowManager: FlowManagerType,
+        analytics: AnalyticsType? = nil,
+        transport: WireCallCenterTransport
+    ) {
         self.selfUserId = userId
         self.uiMOC = uiMOC
         self.flowManager = flowManager
@@ -171,17 +173,30 @@ extension WireCallCenterV3 {
      * - parameter conversationId: The identifier of the conversation that hosts the call.
      */
 
-    func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, conversationType: AVSConversationType) {
+    func createSnapshot(
+        callState: CallState,
+        members: [AVSCallMember],
+        callStarter: AVSIdentifier,
+        video: Bool,
+        for conversationId: AVSIdentifier,
+        conversationType: AVSConversationType
+    ) {
         guard
             let moc = uiMOC,
-            let conversation = ZMConversation.fetch(with: conversationId.identifier,
-                                                    domain: conversationId.domain,
-                                                    in: moc)
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: moc
+            )
         else {
             return
         }
 
-        let callParticipants = CallParticipantsSnapshot(conversationId: conversationId, members: members, callCenter: self)
+        let callParticipants = CallParticipantsSnapshot(
+            conversationId: conversationId,
+            members: members,
+            callCenter: self
+        )
         let token = ConversationChangeInfo.add(observer: self, for: conversation)
         let group = conversation.conversationType == .group
 
@@ -288,7 +303,11 @@ extension WireCallCenterV3 {
         guard
             isEnabled,
             let uiMOC,
-            let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC)
+            let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain,
+                in: uiMOC
+            )
         else {
             return  false
         }
@@ -319,9 +338,11 @@ extension WireCallCenterV3 {
         let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, value: CallState) -> ZMConversation? in
             switch value {
             case .establishedDataChannel, .established, .answered, .outgoing:
-                return ZMConversation.fetch(with: key.identifier,
-                                            domain: key.domain,
-                                            in: userSession.managedObjectContext)
+                return ZMConversation.fetch(
+                    with: key.identifier,
+                    domain: key.domain,
+                    in: userSession.managedObjectContext
+                )
             default:
                 return nil
             }
@@ -333,9 +354,11 @@ extension WireCallCenterV3 {
     /// Returns conversations with a non idle call state.
     public func nonIdleCallConversations(in userSession: ZMUserSession) -> [ZMConversation] {
         let conversations = nonIdleCalls.compactMap { (key: AVSIdentifier, _: CallState) -> ZMConversation? in
-            ZMConversation.fetch(with: key.identifier,
-                                 domain: key.domain,
-                                 in: userSession.managedObjectContext)
+            ZMConversation.fetch(
+                with: key.identifier,
+                domain: key.domain,
+                in: userSession.managedObjectContext
+            )
         }
 
         return conversations
@@ -375,9 +398,11 @@ extension WireCallCenterV3 {
     ///   - kind: the kind of participants expected in return
     ///   - activeSpeakersLimit: the limit of active speakers to be included
     /// - Returns: the callParticipants currently in the conversation, according to the specified kind
-    func callParticipants(conversationId: AVSIdentifier,
-                          kind: CallParticipantsListKind,
-                          activeSpeakersLimit limit: Int? = nil) -> [CallParticipant] {
+    func callParticipants(
+        conversationId: AVSIdentifier,
+        kind: CallParticipantsListKind,
+        activeSpeakersLimit limit: Int? = nil
+    ) -> [CallParticipant] {
         guard isEnabled else { return  [] }
         guard
             let callMembers = callSnapshots[conversationId]?.callParticipants.members.array,
@@ -403,7 +428,10 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func activeSpeakers(conversationId: AVSIdentifier, limitedBy limit: Int? = nil) -> [AVSActiveSpeakersChange.ActiveSpeaker] {
+    private func activeSpeakers(
+        conversationId: AVSIdentifier,
+        limitedBy limit: Int? = nil
+    ) -> [AVSActiveSpeakersChange.ActiveSpeaker] {
         guard isEnabled else { return [] }
         guard let activeSpeakers = callSnapshots[conversationId]?.activeSpeakers else {
             return []
@@ -428,7 +456,8 @@ extension WireCallCenterV3 {
         let shouldEndCall = shouldEndCall(
             conversationId: conversationId,
             previousParticipants: callSnapshots[conversationId]?.callParticipants.members.array ?? [],
-            newParticipants: participants)
+            newParticipants: participants
+        )
         guard !shouldEndCall else {
             endAllCalls()
             return
@@ -466,7 +495,8 @@ extension WireCallCenterV3 {
               let conversation = ZMConversation.fetch(
                   with: conversationId.identifier,
                   domain: conversationId.domain,
-                  in: context),
+                  in: context
+              ),
               conversation.conversationType == .oneOnOne,
               callSnapshots[conversationId]?.callState == .established
         else {
@@ -477,11 +507,13 @@ extension WireCallCenterV3 {
         case .mls:
             return shouldEndCallForMLS(
                 previousParticipants: previousParticipants,
-                newParticipants: newParticipants)
+                newParticipants: newParticipants
+            )
         case .mixed, .proteus:
             return shouldEndCallForProteus(
                 previousParticipants: previousParticipants,
-                newParticipants: newParticipants)
+                newParticipants: newParticipants
+            )
         }
     }
 
@@ -795,7 +827,11 @@ extension WireCallCenterV3 {
 
         if let previousSnapshot = callSnapshots[conversationId] {
             if previousSnapshot.isGroup {
-                let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+                let callState: CallState = .incoming(
+                    video: previousSnapshot.isVideo,
+                    shouldRing: false,
+                    degraded: isDegraded(conversationId: conversationId)
+                )
                 callSnapshots[conversationId] = previousSnapshot.update(with: callState)
             } else {
                 callSnapshots[conversationId] = previousSnapshot.update(with: .terminating(reason: reason))
@@ -814,7 +850,8 @@ extension WireCallCenterV3 {
                   let conversation = ZMConversation.fetch(
                       with: mlsParentIDs.qualifiedID.uuid,
                       domain: mlsParentIDs.qualifiedID.domain,
-                      in: viewContext),
+                      in: viewContext
+                  ),
                   conversation.conversationType == .group
             else {
                 deleteSubconversation(conversationID: conversationId)
@@ -838,7 +875,11 @@ extension WireCallCenterV3 {
         avsWrapper.rejectCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
-            let callState: CallState = .incoming(video: previousSnapshot.isVideo, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+            let callState: CallState = .incoming(
+                video: previousSnapshot.isVideo,
+                shouldRing: false,
+                degraded: isDegraded(conversationId: conversationId)
+            )
             callSnapshots[conversationId] = previousSnapshot.update(with: callState)
         }
     }
@@ -890,7 +931,10 @@ extension WireCallCenterV3 {
         flowManager.setVideoCaptureDevice(captureDevice, for: conversationId)
     }
 
-    public func setVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode, for conversationId: AVSIdentifier) {
+    public func setVideoGridPresentationMode(
+        _ presentationMode: VideoGridPresentationMode,
+        for conversationId: AVSIdentifier
+    ) {
         if let snapshot = callSnapshots[conversationId] {
             callSnapshots[conversationId] = snapshot.updateVideoGridPresentationMode(presentationMode)
         }
@@ -905,7 +949,11 @@ extension WireCallCenterV3 {
         avsWrapper.requestVideoStreams(videoStreams, conversationId: conversationId)
     }
 
-    private func callType(for conversation: ZMConversation, startedWithVideo: Bool, isConferenceCall: Bool) -> AVSCallType {
+    private func callType(
+        for conversation: ZMConversation,
+        startedWithVideo: Bool,
+        isConferenceCall: Bool
+    ) -> AVSCallType {
         if !isConferenceCall, conversation.localParticipants.count > legacyVideoParticipantsLimit {
             .audioOnly
         } else {
@@ -918,12 +966,25 @@ extension WireCallCenterV3 {
 
 extension WireCallCenterV3 {
     /// Sends a call OTR message when requested by AVS through `wcall_send_h`.
-    func send(token: WireCallMessageToken, conversationId: AVSIdentifier, targets: AVSClientList?, data: Data, dataLength: Int, overMLSSelfConversation: Bool = false) {
+    func send(
+        token: WireCallMessageToken,
+        conversationId: AVSIdentifier,
+        targets: AVSClientList?,
+        data: Data,
+        dataLength: Int,
+        overMLSSelfConversation: Bool = false
+    ) {
         Self.logger.info("sending call message for AVS")
         zmLog.debug("\(self): send call message, transport = \(String(describing: transport))")
-        transport?.send(data: data, conversationId: conversationId, targets: targets.map(\.clients), overMLSSelfConversation: overMLSSelfConversation, completionHandler: { [weak self] status in
-            self?.avsWrapper.handleResponse(httpStatus: status, reason: "", context: token)
-        })
+        transport?.send(
+            data: data,
+            conversationId: conversationId,
+            targets: targets.map(\.clients),
+            overMLSSelfConversation: overMLSSelfConversation,
+            completionHandler: { [weak self] status in
+                self?.avsWrapper.handleResponse(httpStatus: status, reason: "", context: token)
+            }
+        )
     }
 
     /// Sends an SFT call message when requested by AVS through `wcall_sft_req_h`.
@@ -964,7 +1025,13 @@ extension WireCallCenterV3 {
         zmLog.debug("missed call")
 
         if let context = uiMOC {
-            WireCallCenterMissedCallNotification(context: context, conversationId: conversationId, callerId: userId, timestamp: timestamp, video: isVideoCall).post(in: context.notificationContext)
+            WireCallCenterMissedCallNotification(
+                context: context,
+                conversationId: conversationId,
+                callerId: userId,
+                timestamp: timestamp,
+                video: isVideoCall
+            ).post(in: context.notificationContext)
         }
 
         updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
@@ -1042,7 +1109,12 @@ extension WireCallCenterV3 {
     ///     - conversationId: The id of the conversation where teh calling state has changed.
     ///     - messageTime: The timestamp of the event.
 
-    func handle(callState: CallState, conversationId: AVSIdentifier, messageTime: Date? = nil, userId: AVSIdentifier? = nil) {
+    func handle(
+        callState: CallState,
+        conversationId: AVSIdentifier,
+        messageTime: Date? = nil,
+        userId: AVSIdentifier? = nil
+    ) {
         callState.logState()
 
         var callState = callState
@@ -1077,12 +1149,14 @@ extension WireCallCenterV3 {
         }
 
         if let context = uiMOC, let callerId {
-            let notification = WireCallCenterCallStateNotification(context: context,
-                                                                   callState: callState,
-                                                                   conversationId: conversationId,
-                                                                   callerId: callerId,
-                                                                   messageTime: messageTime,
-                                                                   previousCallState: previousCallState)
+            let notification = WireCallCenterCallStateNotification(
+                context: context,
+                callState: callState,
+                conversationId: conversationId,
+                callerId: callerId,
+                messageTime: messageTime,
+                previousCallState: previousCallState
+            )
             notification.post(in: context.notificationContext)
         }
     }

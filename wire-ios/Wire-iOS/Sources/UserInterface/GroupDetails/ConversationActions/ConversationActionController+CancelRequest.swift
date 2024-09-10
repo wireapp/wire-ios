@@ -46,7 +46,10 @@ enum CancelConnectionRequestResult {
         [.cancelRequest, .cancel]
     }
 
-    static func controller(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) -> UIAlertController {
+    static func controller(
+        for user: UserType,
+        handler: @escaping (CancelConnectionRequestResult) -> Void
+    ) -> UIAlertController {
         let title = L10n.Localizable.Profile.CancelConnectionRequestDialog.title
         let controller = UIAlertController(title: title, message: message(for: user), preferredStyle: .alert)
         all.map { $0.action(handler) }.forEach(controller.addAction)
@@ -63,7 +66,10 @@ extension UIAlertController {
 }
 
 extension ConversationActionController {
-    func requestCancelConnectionRequestResult(for user: UserType, handler: @escaping (CancelConnectionRequestResult) -> Void) {
+    func requestCancelConnectionRequestResult(
+        for user: UserType,
+        handler: @escaping (CancelConnectionRequestResult) -> Void
+    ) {
         let controller = CancelConnectionRequestResult.controller(for: user, handler: handler)
         present(controller)
     }

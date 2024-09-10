@@ -72,7 +72,8 @@ enum DebugAlert {
         cancelText: String? = "Cancel"
     ) {
         guard Bundle.developerModeEnabled else { return }
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false), !isShown else { return }
+        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
+              !isShown else { return }
         isShown = true
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -107,7 +108,10 @@ enum DebugAlert {
             preferredStyle: .alert
         )
         alert.addAction(.cancel())
-        alert.addAction(makeFallbackAlertAction(from: controller, popoverPresentationConfiguration: popoverPresentationConfiguration))
+        alert.addAction(makeFallbackAlertAction(
+            from: controller,
+            popoverPresentationConfiguration: popoverPresentationConfiguration
+        ))
         controller.present(alert, animated: true, completion: nil)
     }
 
@@ -125,7 +129,10 @@ enum DebugAlert {
                 return
             }
 
-            let activityViewController = UIActivityViewController(activityItems: [logsFileURL], applicationActivities: nil)
+            let activityViewController = UIActivityViewController(
+                activityItems: [logsFileURL],
+                applicationActivities: nil
+            )
             activityViewController.configurePopoverPresentationController(using: popoverPresentationConfiguration)
             activityViewController.completionWithItemsHandler = { _, _, _, _ in
                 do {

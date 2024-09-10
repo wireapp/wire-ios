@@ -43,7 +43,11 @@ public protocol LinkAttachmentDetectorType {
      * - parameter detectedAttachments: The attachments that were detected in the text message.
      */
 
-    func downloadLinkAttachments(inText text: String, excluding excludedRanges: [NSRange], completion: @escaping (_ detectedAttachments: [LinkAttachment]) -> Void)
+    func downloadLinkAttachments(
+        inText text: String,
+        excluding excludedRanges: [NSRange],
+        completion: @escaping (_ detectedAttachments: [LinkAttachment]) -> Void
+    )
 }
 
 /**
@@ -73,12 +77,18 @@ public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType 
         super.init()
     }
 
-    public func downloadLinkAttachments(inText text: String, excluding excludedRanges: [NSRange] = [], completion: @escaping ([LinkAttachment]) -> Void) {
-        guard let (url, (type, range)) = linkDetector?.detectLinkAttachments(in: text, excluding: excludedRanges).first else { return completion([]) }
+    public func downloadLinkAttachments(
+        inText text: String,
+        excluding excludedRanges: [NSRange] = [],
+        completion: @escaping ([LinkAttachment]) -> Void
+    ) {
+        guard let (url, (type, range)) = linkDetector?.detectLinkAttachments(in: text, excluding: excludedRanges).first
+        else { return completion([]) }
 
         previewDownloader.requestOpenGraphData(fromURL: url) { openGraphData in
             guard let data = openGraphData else { return completion([]) }
-            guard let linkAttachment = LinkAttachment(openGraphData: data, detectedType: type, originalRange: range) else { return }
+            guard let linkAttachment = LinkAttachment(openGraphData: data, detectedType: type, originalRange: range)
+            else { return }
             completion([linkAttachment])
         }
     }

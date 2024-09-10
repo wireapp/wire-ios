@@ -127,9 +127,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         setIsRemoteCommandCenterEnabled(false)
     }
 
-    func load(_ track: AudioTrack,
-              sourceMessage: ZMConversationMessage,
-              completionHandler: AudioTrackCompletionHandler? = nil) {
+    func load(
+        _ track: AudioTrack,
+        sourceMessage: ZMConversationMessage,
+        completionHandler: AudioTrackCompletionHandler? = nil
+    ) {
         progress = 0
         audioTrack = track
         self.sourceMessage = sourceMessage
@@ -153,7 +155,11 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
                     self?.playRateChanged()
                 }
 
-                playerCurrentItemObserver = avPlayer?.observe(\AVPlayer.currentItem, options: [.new, .initial, .old]) { [weak self] _, _ in
+                playerCurrentItemObserver = avPlayer?.observe(\AVPlayer.currentItem, options: [
+                    .new,
+                    .initial,
+                    .old,
+                ]) { [weak self] _, _ in
                     self?.playCurrentItemChanged()
                 }
             }
@@ -163,23 +169,35 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         }
 
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlay(toEndTime:)), name: .AVPlayerItemDidPlayToEndTime, object: avPlayer?.currentItem)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(itemDidPlay(toEndTime:)),
+            name: .AVPlayerItemDidPlayToEndTime,
+            object: avPlayer?.currentItem
+        )
 
         if let timeObserverToken {
             avPlayer?.removeTimeObserver(timeObserverToken)
         }
 
-        timeObserverToken = avPlayer?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main, using: { [weak self] time in
-            guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
+        timeObserverToken = avPlayer?.addPeriodicTimeObserver(
+            forInterval: CMTimeMake(value: 1, timescale: 60),
+            queue: DispatchQueue.main,
+            using: { [weak self] time in
+                guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
 
-            let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
+                let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
 
-            let normalizedRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: CMTimeMake(value: 1, timescale: 1))
+                let normalizedRange = CMTimeRangeMake(
+                    start: CMTimeMake(value: 0, timescale: 1),
+                    duration: CMTimeMake(value: 1, timescale: 1)
+                )
 
-            let normalizedTime = CMTimeMapTimeFromRangeToRange(time, fromRange: itemRange, toRange: normalizedRange)
+                let normalizedTime = CMTimeMapTimeFromRangeToRange(time, fromRange: itemRange, toRange: normalizedRange)
 
-            progress = CMTimeGetSeconds(normalizedTime)
-        })
+                progress = CMTimeGetSeconds(normalizedTime)
+            }
+        )
 
         messageObserverToken = userSession.addMessageObserver(
             self,
@@ -326,7 +344,8 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
             MPMediaItemPropertyTitle: audioTrack?.title ?? "",
             MPMediaItemPropertyArtist: audioTrack?.author ?? "",
             MPNowPlayingInfoPropertyPlaybackRate: NSNumber(value: avPlayer?.rate ?? 0),
-            MPMediaItemPropertyPlaybackDuration: playbackDuration]
+            MPMediaItemPropertyPlaybackDuration: playbackDuration,
+        ]
 
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
         self.nowPlayingInfo = nowPlayingInfo

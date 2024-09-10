@@ -74,7 +74,10 @@ class AssetRequestFactoryTests: MessagingTestBase {
         user.teamIdentifier = .init()
 
         // when
-        guard let conversation = ZMConversation.insertGroupConversation(session: self.coreDataStack, participants: [user]) else { return XCTFail("no conversation") }
+        guard let conversation = ZMConversation.insertGroupConversation(
+            session: self.coreDataStack,
+            participants: [user]
+        ) else { return XCTFail("no conversation") }
 
         // then
         XCTAssert(conversation.containsTeamUser)

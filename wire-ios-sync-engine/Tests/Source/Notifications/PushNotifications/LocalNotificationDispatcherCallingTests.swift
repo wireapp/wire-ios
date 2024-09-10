@@ -81,7 +81,11 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
     func testThatIncomingCallCreatesCallingNotification() {
         // when
         syncMOC.performAndWait {
-            sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+            sut.process(
+                callState: .incoming(video: false, shouldRing: true, degraded: false),
+                in: conversation,
+                caller: sender
+            )
         }
 
         // then
@@ -90,7 +94,13 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
     }
 
     func testThatIgnoredCallStatesDoesNotCreateCallingNotifications() {
-        let ignoredCallStates: [CallState] = [.established, .answered(degraded: false), .outgoing(degraded: false), .none, .unknown]
+        let ignoredCallStates: [CallState] = [
+            .established,
+            .answered(degraded: false),
+            .outgoing(degraded: false),
+            .none,
+            .unknown,
+        ]
 
         for ignoredCallState in ignoredCallStates {
             // when
@@ -107,7 +117,11 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
     func testThatIncomingCallIsReplacedByCanceledCallNotification() {
         // given
         syncMOC.performAndWait {
-            sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+            sut.process(
+                callState: .incoming(video: false, shouldRing: true, degraded: false),
+                in: conversation,
+                caller: sender
+            )
         }
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
         XCTAssertEqual(scheduledRequests.count, 1)
@@ -128,7 +142,11 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
     func testThatIncomingCallIsClearedWhenCallIsAnsweredElsewhere() {
         // given
         syncMOC.performAndWait {
-            sut.process(callState: .incoming(video: false, shouldRing: true, degraded: false), in: conversation, caller: sender)
+            sut.process(
+                callState: .incoming(video: false, shouldRing: true, degraded: false),
+                in: conversation,
+                caller: sender
+            )
         }
         XCTAssertEqual(sut.callingNotifications.notifications.count, 1)
         XCTAssertEqual(scheduledRequests.count, 1)

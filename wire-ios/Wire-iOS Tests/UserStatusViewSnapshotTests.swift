@@ -85,45 +85,103 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     }
 
     func testThatItRendersCorrectly_Header_AvailableAvailability_Certified_Light() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .available, userInterfaceStyle: .light, isE2EICertified: true)
+        createTest(
+            options: .header,
+            userName: selfUser.name ?? "",
+            availability: .available,
+            userInterfaceStyle: .light,
+            isE2EICertified: true
+        )
     }
 
     func testThatItRendersCorrectly_Header_AvailableAvailability_Certified_Dark() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .available, userInterfaceStyle: .dark, isE2EICertified: true)
+        createTest(
+            options: .header,
+            userName: selfUser.name ?? "",
+            availability: .available,
+            userInterfaceStyle: .dark,
+            isE2EICertified: true
+        )
     }
 
     func testThatItRendersCorrectly_Header_AwayAvailability_Verified_Light() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .away, userInterfaceStyle: .light, isProteusVerified: true)
+        createTest(
+            options: .header,
+            userName: selfUser.name ?? "",
+            availability: .away,
+            userInterfaceStyle: .light,
+            isProteusVerified: true
+        )
     }
 
     func testThatItRendersCorrectly_Header_AwayAvailability_Verified_Dark() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .away, userInterfaceStyle: .dark, isProteusVerified: true)
+        createTest(
+            options: .header,
+            userName: selfUser.name ?? "",
+            availability: .away,
+            userInterfaceStyle: .dark,
+            isProteusVerified: true
+        )
     }
 
     func testThatItRendersCorrectly_Header_BusyAvailability_CertifiedAndVerified_Light() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .busy, userInterfaceStyle: .light, isE2EICertified: true, isProteusVerified: true)
+        createTest(
+            options: .header,
+            userName: selfUser.name ?? "",
+            availability: .busy,
+            userInterfaceStyle: .light,
+            isE2EICertified: true,
+            isProteusVerified: true
+        )
     }
 
     func testThatItRendersCorrectly_Header_BusyAvailability_CertifiedAndVerified_Dark() {
-        createTest(options: .header, userName: selfUser.name ?? "", availability: .busy, userInterfaceStyle: .dark, isE2EICertified: true, isProteusVerified: true)
+        createTest(
+            options: .header,
+            userName: selfUser.name ?? "",
+            availability: .busy,
+            userInterfaceStyle: .dark,
+            isE2EICertified: true,
+            isProteusVerified: true
+        )
     }
 
     // MARK: - Other profile
 
     func testThatItRendersCorrectly_OtherProfile_NoneAvailability() {
-        createTest(options: .hideActionHint, userName: otherUser.name ?? "", availability: .none, userInterfaceStyle: .light)
+        createTest(
+            options: .hideActionHint,
+            userName: otherUser.name ?? "",
+            availability: .none,
+            userInterfaceStyle: .light
+        )
     }
 
     func testThatItRendersCorrectly_OtherProfile_AvailableAvailability() {
-        createTest(options: .hideActionHint, userName: otherUser.name ?? "", availability: .available, userInterfaceStyle: .light)
+        createTest(
+            options: .hideActionHint,
+            userName: otherUser.name ?? "",
+            availability: .available,
+            userInterfaceStyle: .light
+        )
     }
 
     func testThatItRendersCorrectly_OtherProfile_AwayAvailability() {
-        createTest(options: .hideActionHint, userName: otherUser.name ?? "", availability: .away, userInterfaceStyle: .light)
+        createTest(
+            options: .hideActionHint,
+            userName: otherUser.name ?? "",
+            availability: .away,
+            userInterfaceStyle: .light
+        )
     }
 
     func testThatItRendersCorrectly_OtherProfile_BusyAvailability() {
-        createTest(options: .hideActionHint, userName: otherUser.name ?? "", availability: .busy, userInterfaceStyle: .light)
+        createTest(
+            options: .hideActionHint,
+            userName: otherUser.name ?? "",
+            availability: .busy,
+            userInterfaceStyle: .light
+        )
     }
 
     // MARK: - Common methods

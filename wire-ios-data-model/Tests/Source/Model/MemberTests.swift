@@ -201,7 +201,8 @@ extension MemberTests {
             ]
 
             // when
-            guard let member = Member.createOrUpdate(with: payload, in: team, context: self.syncMOC) else { return XCTFail("No member created") }
+            guard let member = Member.createOrUpdate(with: payload, in: team, context: self.syncMOC)
+            else { return XCTFail("No member created") }
 
             // then
             XCTAssertEqual(member.user?.remoteIdentifier, userId)

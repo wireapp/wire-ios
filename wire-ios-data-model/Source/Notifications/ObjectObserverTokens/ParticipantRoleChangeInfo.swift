@@ -22,7 +22,8 @@ import WireSystem
 extension ParticipantRole: ObjectInSnapshot {
     public static var observableKeys: Set<String> {
         [
-            #keyPath(ParticipantRole.role)]
+            #keyPath(ParticipantRole.role),
+        ]
     }
 
     public var notificationName: Notification.Name {
@@ -57,7 +58,10 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addParticipantRoleObserver:forParticipantRole:)
-    public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole) -> NSObjectProtocol {
+    public static func add(
+        observer: ParticipantRoleObserver,
+        for participantRole: ParticipantRole
+    ) -> NSObjectProtocol {
         add(observer: observer, for: participantRole, managedObjectContext: participantRole.managedObjectContext!)
     }
 
@@ -65,8 +69,16 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addParticipantRoleObserver:forParticipantRole:managedObjectContext:)
-    public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] note in
+    public static func add(
+        observer: ParticipantRoleObserver,
+        for participantRole: ParticipantRole?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .ParticipantRoleChange,
+            managedObjectContext: managedObjectContext,
+            object: participantRole
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
             else { return }

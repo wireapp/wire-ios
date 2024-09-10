@@ -98,7 +98,8 @@ extension EnvironmentType {
         if let value = userDefaults.string(forKey: EnvironmentType.defaultsKey) {
             self.init(stringValue: value)
         } else {
-            Logging.backendEnvironment.error("Could not load environment type from user defaults, falling back to production")
+            Logging.backendEnvironment
+                .error("Could not load environment type from user defaults, falling back to production")
             self = .production
         }
     }

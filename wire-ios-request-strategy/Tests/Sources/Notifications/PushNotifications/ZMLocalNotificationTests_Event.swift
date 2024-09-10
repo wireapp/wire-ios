@@ -47,23 +47,43 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         let payload = payloadForConnectionRequest(to: remoteID, status: status)
 
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil) {
-            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
         }
         return note
     }
 
     func reactionEventInOneOnOneConversation() -> ZMUpdateEvent {
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
-        let event = createUpdateEvent(UUID.create(), conversationID: oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: sender.remoteIdentifier!)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(
+            emojis: ["❤️"],
+            messageID: message.nonce!
+        ))
+        let event = createUpdateEvent(
+            UUID.create(),
+            conversationID: oneOnOneConversation.remoteIdentifier!,
+            genericMessage: reaction,
+            senderID: sender.remoteIdentifier!
+        )
         return event
     }
 
     func alertBody(_ conversation: ZMConversation, aSender: ZMUser) -> String? {
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
-        let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(
+            emojis: ["❤️"],
+            messageID: message.nonce!
+        ))
+        let event = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            genericMessage: reaction,
+            senderID: aSender.remoteIdentifier!
+        )
 
         // when
         let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
@@ -76,8 +96,16 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func note(_ conversation: ZMConversation, aSender: ZMUser) -> ZMLocalNotification? {
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
-        let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(
+            emojis: ["❤️"],
+            messageID: message.nonce!
+        ))
+        let event = createUpdateEvent(
+            UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            genericMessage: reaction,
+            senderID: aSender.remoteIdentifier!
+        )
 
         // when
         let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
@@ -92,7 +120,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             // "push.notification.conversation.create" = "%1$@ created a group conversation with you"
 
             // when
-            let note = self.noteWithPayload(nil, from: self.sender, in: self.groupConversation, type: self.EventConversationCreate)
+            let note = self.noteWithPayload(
+                nil,
+                from: self.sender,
+                in: self.groupConversation,
+                type: self.EventConversationCreate
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -105,7 +138,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             // "push.notification.conversation.create.nousername" = "Someone created a group conversation with you"
 
             // when
-            let note = self.noteWithPayload(nil, fromUserID: nil, in: self.groupConversation, type: self.EventConversationCreate)
+            let note = self.noteWithPayload(
+                nil,
+                fromUserID: nil,
+                in: self.groupConversation,
+                type: self.EventConversationCreate
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -118,7 +156,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             // We don't want to create a notification for fake team one-to-one conversations
 
             // when
-            let note = self.noteWithPayload(nil, fromUserID: nil, in: self.oneOnOneConversation, type: self.EventConversationCreate)
+            let note = self.noteWithPayload(
+                nil,
+                fromUserID: nil,
+                in: self.oneOnOneConversation,
+                type: self.EventConversationCreate
+            )
 
             // then
             XCTAssertNil(note)
@@ -132,7 +175,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             // "push.notification.conversation.delete" = "%1$@ deleted the group"
 
             // when
-            let note = self.noteWithPayload(nil, from: self.sender, in: self.groupConversation, type: self.EventConversationDelete)
+            let note = self.noteWithPayload(
+                nil,
+                from: self.sender,
+                in: self.groupConversation,
+                type: self.EventConversationDelete
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -145,7 +193,12 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             // "push.notification.conversation.delete.nousername" = "Someone deleted the group"
 
             // when
-            let note = self.noteWithPayload(nil, fromUserID: nil, in: self.groupConversation, type: self.EventConversationDelete)
+            let note = self.noteWithPayload(
+                nil,
+                fromUserID: nil,
+                in: self.groupConversation,
+                type: self.EventConversationDelete
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -170,7 +223,11 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
             // when
             if let event {
-                note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.uiMOC)
+                note = ZMLocalNotification(
+                    event: event,
+                    conversation: self.oneOnOneConversation,
+                    managedObjectContext: self.uiMOC
+                )
             }
 
             // then
@@ -232,10 +289,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 86_400_000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 86_400_000,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -247,10 +314,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 2_419_200_000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 2_419_200_000,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -261,10 +338,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 10000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversationWithoutName.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 10000,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversationWithoutName,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -276,10 +363,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 300_000, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversationWithoutName.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 300_000,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversationWithoutName,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -290,10 +387,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_Off() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 0,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -305,10 +412,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversation.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversation.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 0,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversation, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -319,10 +436,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesANotificationForMessageTimerUpdateSystemMessages_NoConversationName_Off() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversationWithoutName.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 0,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversationWithoutName,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -334,10 +461,20 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.otherUser1.name = nil
-            let event = self.createMessageTimerUpdateEvent(self.otherUser1.remoteIdentifier, conversationID: self.groupConversationWithoutName.remoteIdentifier!, senderID: self.otherUser1.remoteIdentifier!, timer: 0, timestamp: Date())
+            let event = self.createMessageTimerUpdateEvent(
+                self.otherUser1.remoteIdentifier,
+                conversationID: self.groupConversationWithoutName.remoteIdentifier!,
+                senderID: self.otherUser1.remoteIdentifier!,
+                timer: 0,
+                timestamp: Date()
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.groupConversationWithoutName, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.groupConversationWithoutName,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -350,11 +487,19 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesATextNotification() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire")))
+            let event = self.createUpdateEvent(
+                UUID.create(),
+                conversationID: UUID.create(),
+                genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire"))
+            )
             var note: ZMLocalNotification?
 
             // when
-            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -367,11 +512,19 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             self.oneOnOneConversation.isForcedReadOnly = true
-            let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire")))
+            let event = self.createUpdateEvent(
+                UUID.create(),
+                conversationID: UUID.create(),
+                genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire"))
+            )
             var note: ZMLocalNotification?
 
             // when
-            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNil(note)
@@ -382,10 +535,18 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         syncMOC.performGroupedAndWait {
             let confirmation = GenericMessage(content: Confirmation(messageId: .create()))
-            let event = self.createUpdateEvent(.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, genericMessage: confirmation)
+            let event = self.createUpdateEvent(
+                .create(),
+                conversationID: self.oneOnOneConversation.remoteIdentifier!,
+                genericMessage: confirmation
+            )
 
             // when
-            let note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNil(note)
@@ -417,11 +578,19 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesASystemLocalNotificationForRemovingTheSelfUserEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMemberLeaveUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, users: [self.selfUser])
+            let event = self.createMemberLeaveUpdateEvent(
+                UUID.create(),
+                conversationID: self.oneOnOneConversation.remoteIdentifier!,
+                users: [self.selfUser]
+            )
             var note: ZMLocalNotification?
 
             // when
-            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -433,11 +602,19 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesASystemLocalNotificationForAddingTheSelfUserEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMemberJoinUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!, users: [self.selfUser])
+            let event = self.createMemberJoinUpdateEvent(
+                UUID.create(),
+                conversationID: self.oneOnOneConversation.remoteIdentifier!,
+                users: [self.selfUser]
+            )
             var note: ZMLocalNotification?
 
             // when
-            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)
@@ -449,11 +626,18 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
     func testThatItCreatesASystemLocalNotificationForMessageTimerUpdateEvent() {
         // given
         syncMOC.performGroupedAndWait {
-            let event = self.createMessageTimerUpdateEvent(UUID.create(), conversationID: self.oneOnOneConversation.remoteIdentifier!)
+            let event = self.createMessageTimerUpdateEvent(
+                UUID.create(),
+                conversationID: self.oneOnOneConversation.remoteIdentifier!
+            )
             var note: ZMLocalNotification?
 
             // when
-            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+            note = ZMLocalNotification(
+                event: event,
+                conversation: self.oneOnOneConversation,
+                managedObjectContext: self.syncMOC
+            )
 
             // then
             XCTAssertNotNil(note)

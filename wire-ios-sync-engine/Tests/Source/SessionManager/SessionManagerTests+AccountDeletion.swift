@@ -33,7 +33,10 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
         }
         let account = self.createAccount()
 
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier, applicationContainer: sharedContainer)
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         try FileManager.default.createDirectory(at: accountFolder, withIntermediateDirectories: true, attributes: nil)
 
@@ -50,10 +53,14 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
         // given
         XCTAssert(login())
 
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
 
         let account = sessionManager!.accountManager.selectedAccount!
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier, applicationContainer: sharedContainer)
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         // when
         performIgnoringZMLogError {
@@ -109,8 +116,12 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier, applicationContainer: sharedContainer)
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }
@@ -124,8 +135,12 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
         sessionManager?.passwordVerificationDidFail(with: threshold! - 1)
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier, applicationContainer: sharedContainer)
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         XCTAssertTrue(FileManager.default.fileExists(atPath: accountFolder.path))
     }
@@ -151,8 +166,12 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
         recreateSessionManager()
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier, applicationContainer: sharedContainer)
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }
@@ -163,12 +182,19 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
         let account = sessionManager!.accountManager.selectedAccount!
 
         // when
-        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
+        sessionManager?.authenticationInvalidated(
+            NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil),
+            accountId: account.userIdentifier
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: account.userIdentifier, applicationContainer: sharedContainer)
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: account.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }
@@ -176,7 +202,8 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
     func testThatItDeletesTheAccount_OnAuthentictionFailureForBackgroundSession() {
         // given
         let additionalAccount = Account(userName: "Additional Account", userIdentifier: UUID())
-        sessionManager!.environment.cookieStorage(for: additionalAccount).authenticationCookieData = HTTPCookie.validCookieData()
+        sessionManager!.environment.cookieStorage(for: additionalAccount).authenticationCookieData = HTTPCookie
+            .validCookieData()
         sessionManager!.accountManager.addOrUpdate(additionalAccount)
 
         XCTAssert(login())
@@ -192,12 +219,19 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
         XCTAssertNotNil(sessionManager?.backgroundUserSessions[additionalAccount.userIdentifier])
 
         // when
-        sessionManager?.authenticationInvalidated(NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil), accountId: additionalAccount.userIdentifier)
+        sessionManager?.authenticationInvalidated(
+            NSError(userSessionErrorCode: .accessTokenExpired, userInfo: nil),
+            accountId: additionalAccount.userIdentifier
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: additionalAccount.userIdentifier, applicationContainer: sharedContainer)
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: additionalAccount.userIdentifier,
+            applicationContainer: sharedContainer
+        )
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
     }

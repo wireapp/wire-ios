@@ -61,10 +61,13 @@ extension SettingsCellDescriptorFactory {
 
         sections.append(signOutSection())
 
-        return SettingsGroupCellDescriptor(items: sections,
-                                           title: L10n.Localizable.Self.Settings.accountSection,
-                                           icon: .personalProfile,
-                                           accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: sections,
+            title: L10n.Localizable.Self.Settings.accountSection,
+            icon: .personalProfile,
+            accessibilityBackButtonText: L10n.Accessibility.AccountSettings.BackButton
+                .description
+        )
     }
 
     // MARK: - Sections
@@ -72,15 +75,20 @@ extension SettingsCellDescriptorFactory {
     func infoSection(userSession: UserSession) -> SettingsSectionDescriptorType {
         let federationEnabled = BackendInfo.isFederationEnabled
         var cellDescriptors: [SettingsCellDescriptorType] = []
-        cellDescriptors = [nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
-                           handleElement(
-                               enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
-                               federationEnabled: federationEnabled
-                           )]
+        cellDescriptors = [
+            nameElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editName)),
+            handleElement(
+                enabled: userRightInterfaceType.selfUserIsPermitted(to: .editHandle),
+                federationEnabled: federationEnabled
+            ),
+        ]
 
         if let user = SelfUser.provider?.providedSelfUser {
             if !user.usesCompanyLogin {
-                cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
+                cellDescriptors.append(emailElement(
+                    enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail),
+                    userSession: userSession
+                ))
             }
 
             if user.hasTeam {
@@ -163,7 +171,10 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Elements
 
-    private func textValueCellDescriptor(propertyName: SettingsPropertyName, enabled: Bool = true) -> SettingsPropertyTextValueCellDescriptor {
+    private func textValueCellDescriptor(
+        propertyName: SettingsPropertyName,
+        enabled: Bool = true
+    ) -> SettingsPropertyTextValueCellDescriptor {
         var settingsProperty = settingsPropertyFactory.property(propertyName)
         settingsProperty.enabled = enabled
 
@@ -269,7 +280,8 @@ extension SettingsCellDescriptorFactory {
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.picture.capitalized,
             previewGenerator: previewGenerator,
             presentationStyle: .alert,
-            presentationAction: presentationAction)
+            presentationAction: presentationAction
+        )
     }
 
     private func colorElement() -> SettingsCellDescriptorType {
@@ -281,7 +293,8 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    private func colorElementPreviewGenerator(cellDescriptorType: any SettingsCellDescriptorType) -> SettingsCellPreview {
+    private func colorElementPreviewGenerator(cellDescriptorType: any SettingsCellDescriptorType)
+        -> SettingsCellPreview {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return .none
@@ -305,14 +318,19 @@ extension SettingsCellDescriptorFactory {
     }
 
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
-        SettingsPropertyToggleCellDescriptor(settingsProperty:
+        SettingsPropertyToggleCellDescriptor(
+            settingsProperty:
             self.settingsPropertyFactory.property(.readReceiptsEnabled),
             inverse: false,
-            identifier: "ReadReceiptsSwitch")
+            identifier: "ReadReceiptsSwitch"
+        )
     }
 
     func encryptMessagesAtRestElement() -> SettingsCellDescriptorType {
-        SettingsPropertyToggleCellDescriptor(settingsProperty: self.settingsPropertyFactory.property(.encryptMessagesAtRest))
+        SettingsPropertyToggleCellDescriptor(
+            settingsProperty: self.settingsPropertyFactory
+                .property(.encryptMessagesAtRest)
+        )
     }
 
     func backUpElement() -> SettingsCellDescriptorType {
@@ -336,12 +354,14 @@ extension SettingsCellDescriptorFactory {
                     let actionCancel = UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: nil)
                     alert.addAction(actionCancel)
 
-                    guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return nil }
+                    guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+                    else { return nil }
 
                     controller.present(alert, animated: true)
                     return nil
                 }
-            })
+            }
+        )
     }
 
     func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
@@ -350,9 +370,15 @@ extension SettingsCellDescriptorFactory {
 
     func resetPasswordElement() -> SettingsCellDescriptorType {
         let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
-        return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
-            BrowserViewController(url: WireURLs.shared.passwordReset)
-        }, previewGenerator: .none)
+        return SettingsExternalScreenCellDescriptor(
+            title: resetPasswordTitle,
+            isDestructive: false,
+            presentationStyle: .modal,
+            presentationAction: {
+                BrowserViewController(url: WireURLs.shared.passwordReset)
+            },
+            previewGenerator: .none
+        )
     }
 
     func deleteAccountButtonElement() -> SettingsCellDescriptorType {

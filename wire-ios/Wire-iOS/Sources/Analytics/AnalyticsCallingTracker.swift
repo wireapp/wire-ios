@@ -53,7 +53,11 @@ final class AnalyticsCallingTracker: NSObject {
             return
         }
 
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UserToggledVideoInCall, object: nil, queue: nil) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name.UserToggledVideoInCall,
+            object: nil,
+            queue: nil
+        ) { [weak self] note in
             if let conversationId = note.userInfo?[AnalyticsCallingTracker.conversationIdKey] as? UUID,
                var callInfo = self?.callInfos[conversationId] {
                 callInfo.toggledVideo = true
@@ -66,7 +70,11 @@ final class AnalyticsCallingTracker: NSObject {
 
     static func userToggledVideo(in voiceChannel: VoiceChannel) {
         if let conversationId = voiceChannel.conversation?.remoteIdentifier {
-            NotificationCenter.default.post(name: .UserToggledVideoInCall, object: nil, userInfo: [conversationIdKey: conversationId])
+            NotificationCenter.default.post(
+                name: .UserToggledVideoInCall,
+                object: nil,
+                userInfo: [conversationIdKey: conversationId]
+            )
         }
     }
 }
@@ -74,23 +82,41 @@ final class AnalyticsCallingTracker: NSObject {
 // MARK: - WireCallCenterCallStateObserver
 
 extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState,
-                             conversation: ZMConversation,
-                             caller: UserType,
-                             timestamp: Date?,
-                             previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         let conversationId = conversation.remoteIdentifier!
 
         switch callState {
         case .outgoing:
             let video = conversation.voiceChannel?.isVideoCall ?? false
-            let callInfo = CallInfo(connectingDate: Date(), establishedDate: nil, maximumCallParticipants: 1, toggledVideo: false, outgoing: true, video: video)
+            let callInfo = CallInfo(
+                connectingDate: Date(),
+                establishedDate: nil,
+                maximumCallParticipants: 1,
+                toggledVideo: false,
+                outgoing: true,
+                video: video
+            )
             callInfos[conversationId] = callInfo
-            analytics.tag(callEvent: .initiated,
-                          in: conversation,
-                          callInfo: callInfo)
+            analytics.tag(
+                callEvent: .initiated,
+                in: conversation,
+                callInfo: callInfo
+            )
         case .incoming(video: let video, shouldRing: true, degraded: _):
-            let callInfo = CallInfo(connectingDate: nil, establishedDate: nil, maximumCallParticipants: 1, toggledVideo: false, outgoing: false, video: video)
+            let callInfo = CallInfo(
+                connectingDate: nil,
+                establishedDate: nil,
+                maximumCallParticipants: 1,
+                toggledVideo: false,
+                outgoing: false,
+                video: video
+            )
             callInfos[conversationId] = callInfo
             analytics.tag(callEvent: .received, in: conversation, callInfo: callInfo)
         case .answered:
@@ -102,7 +128,10 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
         case .established:
             if var callInfo = callInfos[conversationId] {
                 defer { callInfos[conversationId] = callInfo }
-                callInfo.maximumCallParticipants = max(callInfo.maximumCallParticipants, (conversation.voiceChannel?.participants.count ?? 0) + 1)
+                callInfo.maximumCallParticipants = max(
+                    callInfo.maximumCallParticipants,
+                    (conversation.voiceChannel?.participants.count ?? 0) + 1
+                )
 
                 // .established is called every time a participant joins the call
                 guard callInfo.establishedDate == nil else { return }
@@ -116,7 +145,11 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
                 return
             }
 
-            callParticipantObserverToken = WireCallCenterV3.addCallParticipantObserver(observer: self, for: conversation, userSession: userSession)
+            callParticipantObserverToken = WireCallCenterV3.addCallParticipantObserver(
+                observer: self,
+                for: conversation,
+                userSession: userSession
+            )
         case let .terminating(reason: reason):
             if let callInfo = callInfos[conversationId] {
                 analytics.tag(callEvent: .ended(reason: reason.analyticsValue), in: conversation, callInfo: callInfo)
@@ -152,8 +185,10 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
 // MARK: - WireCallCenterCallParticipantObserver - tracking share screen
 
 extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
-    func callParticipantsDidChange(conversation: ZMConversation,
-                                   participants: [CallParticipant]) {
+    func callParticipantsDidChange(
+        conversation: ZMConversation,
+        participants: [CallParticipant]
+    ) {
         // record the start/end screen share timing, and tag the event when the call ends
 
         let selfUser = SelfUser.provider?.providedSelfUser as? ZMUser
@@ -162,14 +197,17 @@ extension AnalyticsCallingTracker: WireCallCenterCallParticipantObserver {
         if let participant = participants.first(where: { $0.state.videoState == .screenSharing }),
            screenSharingStartTimes[participant.clientId] == nil {
             screenSharingStartTimes[participant.clientId] = Date()
-        } else if let screenSharedParticipant = participants.first(where: { $0.state.videoState == .stopped && ($0.user as? ZMUser != selfUser) }),
-                  let screenSharingDate = screenSharingStartTimes[screenSharedParticipant.clientId],
-                  let conversationId = conversation.remoteIdentifier,
-                  let callInfo = callInfos[conversationId] {
+        } else if let screenSharedParticipant = participants
+            .first(where: { $0.state.videoState == .stopped && ($0.user as? ZMUser != selfUser) }),
+            let screenSharingDate = screenSharingStartTimes[screenSharedParticipant.clientId],
+            let conversationId = conversation.remoteIdentifier,
+            let callInfo = callInfos[conversationId] {
             // When videoState == .stopped from a remote participant, tag the event if we found a record in screenSharingInfos set with matching clientId
-            analytics.tag(callEvent: .screenSharing(duration: -screenSharingDate.timeIntervalSinceNow),
-                          in: conversation,
-                          callInfo: callInfo)
+            analytics.tag(
+                callEvent: .screenSharing(duration: -screenSharingDate.timeIntervalSinceNow),
+                in: conversation,
+                callInfo: callInfo
+            )
 
             screenSharingStartTimes[screenSharedParticipant.clientId] = nil
         }

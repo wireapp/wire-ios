@@ -208,7 +208,10 @@ class BackgroundActivityFactoryTests: XCTestCase {
         simulateApplicationDidEnterBackground()
         simulateApplicationWillEnterForeground()
         // force a wait
-        _ = XCTWaiter.wait(for: [XCTestExpectation(description: "The expiration handler was not called.")], timeout: 3.0)
+        _ = XCTWaiter.wait(
+            for: [XCTestExpectation(description: "The expiration handler was not called.")],
+            timeout: 3.0
+        )
 
         // THEN
         XCTAssertNil(factory.backgroundTaskTimer)

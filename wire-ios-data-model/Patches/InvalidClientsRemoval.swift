@@ -24,7 +24,10 @@ enum InvalidClientsRemoval {
     static func removeInvalid(in moc: NSManagedObjectContext) {
         // will skip this during test unless on disk
         do {
-            try moc.batchDeleteEntities(named: UserClient.entityName(), matching: NSPredicate(format: "\(ZMUserClientUserKey) == nil"))
+            try moc.batchDeleteEntities(
+                named: UserClient.entityName(),
+                matching: NSPredicate(format: "\(ZMUserClientUserKey) == nil")
+            )
         } catch {
             fatalError("Failed to perform batch update: \(error)")
         }

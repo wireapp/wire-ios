@@ -32,49 +32,67 @@ extension FeatureRepository: FeatureChangeAcknowledger {
 extension UIAlertController {
     private typealias Strings = L10n.Localizable.FeatureConfig
 
-    class func fromFeatureChange(_ change: FeatureRepository.FeatureChange,
-                                 acknowledger: FeatureChangeAcknowledger) -> UIAlertController? {
+    class func fromFeatureChange(
+        _ change: FeatureRepository.FeatureChange,
+        acknowledger: FeatureChangeAcknowledger
+    ) -> UIAlertController? {
         switch change {
         case .conferenceCallingIsAvailable, .e2eIEnabled:
             // Handled elsewhere.
             return nil
 
         case .selfDeletingMessagesIsDisabled:
-            return alertForFeatureChange(message: Strings.Alert.SelfDeletingMessages.Message.disabled,
-                                         onOK: { acknowledger.acknowledgeChange(for: .selfDeletingMessages) })
+            return alertForFeatureChange(
+                message: Strings.Alert.SelfDeletingMessages.Message.disabled,
+                onOK: { acknowledger.acknowledgeChange(for: .selfDeletingMessages) }
+            )
 
         case .selfDeletingMessagesIsEnabled(enforcedTimeout: nil):
-            return alertForFeatureChange(message: Strings.Alert.SelfDeletingMessages.Message.enabled,
-                                         onOK: { acknowledger.acknowledgeChange(for: .selfDeletingMessages) })
+            return alertForFeatureChange(
+                message: Strings.Alert.SelfDeletingMessages.Message.enabled,
+                onOK: { acknowledger.acknowledgeChange(for: .selfDeletingMessages) }
+            )
 
         case let .selfDeletingMessagesIsEnabled(enforcedTimeout?):
             let timeout = MessageDestructionTimeoutValue(rawValue: TimeInterval(enforcedTimeout))
             guard let timeoutString = timeout.displayString else { return nil }
 
-            return alertForFeatureChange(message: Strings.Alert.SelfDeletingMessages.Message.forcedOn(timeoutString),
-                                         onOK: { acknowledger.acknowledgeChange(for: .selfDeletingMessages) })
+            return alertForFeatureChange(
+                message: Strings.Alert.SelfDeletingMessages.Message.forcedOn(timeoutString),
+                onOK: { acknowledger.acknowledgeChange(for: .selfDeletingMessages) }
+            )
 
         case .fileSharingEnabled:
-            return alertForFeatureChange(message: Strings.Update.FileSharing.Alert.Message.enabled,
-                                         onOK: { acknowledger.acknowledgeChange(for: .fileSharing) })
+            return alertForFeatureChange(
+                message: Strings.Update.FileSharing.Alert.Message.enabled,
+                onOK: { acknowledger.acknowledgeChange(for: .fileSharing) }
+            )
 
         case .fileSharingDisabled:
-            return alertForFeatureChange(message: Strings.Update.FileSharing.Alert.Message.disabled,
-                                         onOK: { acknowledger.acknowledgeChange(for: .fileSharing) })
+            return alertForFeatureChange(
+                message: Strings.Update.FileSharing.Alert.Message.disabled,
+                onOK: { acknowledger.acknowledgeChange(for: .fileSharing) }
+            )
 
         case .conversationGuestLinksEnabled:
-            return alertForFeatureChange(message: Strings.Alert.ConversationGuestLinks.Message.enabled,
-                                         onOK: { acknowledger.acknowledgeChange(for: .conversationGuestLinks) })
+            return alertForFeatureChange(
+                message: Strings.Alert.ConversationGuestLinks.Message.enabled,
+                onOK: { acknowledger.acknowledgeChange(for: .conversationGuestLinks) }
+            )
 
         case .conversationGuestLinksDisabled:
-            return alertForFeatureChange(message: Strings.Alert.ConversationGuestLinks.Message.disabled,
-                                         onOK: { acknowledger.acknowledgeChange(for: .conversationGuestLinks) })
+            return alertForFeatureChange(
+                message: Strings.Alert.ConversationGuestLinks.Message.disabled,
+                onOK: { acknowledger.acknowledgeChange(for: .conversationGuestLinks) }
+            )
         }
     }
 
-    class func fromFeatureChangeWithActions(_ change: FeatureRepository.FeatureChange,
-                                            acknowledger: FeatureChangeAcknowledger,
-                                            actionsHandler: E2EINotificationActions) -> UIAlertController? {
+    class func fromFeatureChangeWithActions(
+        _ change: FeatureRepository.FeatureChange,
+        acknowledger: FeatureChangeAcknowledger,
+        actionsHandler: E2EINotificationActions
+    ) -> UIAlertController? {
         switch change {
         case .e2eIEnabled:
             alertForE2EIChangeWithActions { action in

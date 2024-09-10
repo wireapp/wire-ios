@@ -167,7 +167,8 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         selfMessage.sender = selfUser
 
         for index in 1 ... 3 {
-            (try! sut.appendText(content: "Yes, it is true \(index)", replyingTo: selfMessage) as! ZMMessage).sender = self.otherUser
+            (try! sut.appendText(content: "Yes, it is true \(index)", replyingTo: selfMessage) as! ZMMessage)
+                .sender = self.otherUser
         }
         sut.setPrimitiveValue(3, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
 

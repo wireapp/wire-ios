@@ -21,7 +21,10 @@ import Foundation
 final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?
 
-    func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
+    func handleEvent(
+        currentStep: AuthenticationFlowStep,
+        context: (NSError?, Int)
+    ) -> [AuthenticationCoordinatorAction]? {
         let (error, _) = context
 
         // Only handle canNotRegisterMoreClients errors
@@ -30,7 +33,8 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
             error.userSessionErrorCode == .canNotRegisterMoreClients,
             let nextStep = AuthenticationFlowStep.makeClientManagementStep(
                 from: error,
-                statusProvider: self.statusProvider)
+                statusProvider: self.statusProvider
+            )
         else {
             return nil
         }

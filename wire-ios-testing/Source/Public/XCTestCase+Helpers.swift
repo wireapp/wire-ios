@@ -161,7 +161,8 @@ extension XCTestCase {
         result: Result<some Any, Failure>,
         message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) " },
         file: StaticString = #filePath,
-        line: UInt = #line) {
+        line: UInt = #line
+    ) {
         switch result {
         case .success:
             break
@@ -174,7 +175,8 @@ extension XCTestCase {
         result: Result<some Any, Failure>,
         expectedFailure: Failure,
         file: StaticString = #filePath,
-        line: UInt = #line) {
+        line: UInt = #line
+    ) {
         switch result {
         case .success:
             XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)

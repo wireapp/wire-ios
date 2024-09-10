@@ -43,11 +43,17 @@ final class ConversationMissingMessagesSystemMessageCellDescription: Conversatio
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
-        let title = ConversationMissingMessagesSystemMessageCellDescription.makeAttributedString(systemMessageData: data)
-        configuration = View.Configuration(icon: StyleKitIcon.exclamationMark.makeImage(size: .tiny,
-                                                                                        color: IconColors.foregroundExclamationMarkInSystemMessage),
-                                           attributedText: title,
-                                           showLine: true)
+        let title = ConversationMissingMessagesSystemMessageCellDescription
+            .makeAttributedString(systemMessageData: data)
+        configuration = View.Configuration(
+            icon: StyleKitIcon.exclamationMark.makeImage(
+                size: .tiny,
+                color: IconColors
+                    .foregroundExclamationMarkInSystemMessage
+            ),
+            attributedText: title,
+            showLine: true
+        )
         accessibilityLabel = title.string
         actionController = nil
     }

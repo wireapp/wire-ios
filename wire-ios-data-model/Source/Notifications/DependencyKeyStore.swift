@@ -74,10 +74,18 @@ class DependencyKeyStore {
     /// Returns a store mapping observable keys and their affecting keys
     /// @param classIdentifier: Identifiers for each class, e.g. entityName
     init(classIdentifiers: [String]) {
-        let observable = classIdentifiers.mapToDictionary { DependencyKeyStore.setupObservableKeys(classIdentifier: $0) }
-        let affecting = classIdentifiers.mapToDictionary { DependencyKeyStore.setupAffectedKeys(classIdentifier: $0, observableKeys: observable[$0]!) }
-        let all = classIdentifiers.mapToDictionary { DependencyKeyStore.setupAllKeys(observableKeys: observable[$0]!, affectingKeys: affecting[$0]!) }
-        effectedKeys = classIdentifiers.mapToDictionary { DependencyKeyStore.setupEffectedKeys(affectingKeys: affecting[$0]!) }
+        let observable = classIdentifiers
+            .mapToDictionary { DependencyKeyStore.setupObservableKeys(classIdentifier: $0) }
+        let affecting = classIdentifiers.mapToDictionary { DependencyKeyStore.setupAffectedKeys(
+            classIdentifier: $0,
+            observableKeys: observable[$0]!
+        ) }
+        let all = classIdentifiers.mapToDictionary { DependencyKeyStore.setupAllKeys(
+            observableKeys: observable[$0]!,
+            affectingKeys: affecting[$0]!
+        ) }
+        effectedKeys = classIdentifiers
+            .mapToDictionary { DependencyKeyStore.setupEffectedKeys(affectingKeys: affecting[$0]!) }
 
         self.observableKeys = observable
         self.affectingKeys = affecting
@@ -127,7 +135,10 @@ class DependencyKeyStore {
 
     /// Creates a dictionary mapping the observable keys to keys affecting their values
     /// ["foo" : keysAffectingValueForKey(foo), "bar" : keysAffectingValueForKey(bar)]
-    private static func setupAffectedKeys(classIdentifier: String, observableKeys: Set<String>) -> [String: Set<String>] {
+    private static func setupAffectedKeys(
+        classIdentifier: String,
+        observableKeys: Set<String>
+    ) -> [String: Set<String>] {
         switch classIdentifier {
         case ZMConversation.entityName():
             return observableKeys.mapToDictionary { ZMConversation.keyPathsForValuesAffectingValue(forKey: $0) }

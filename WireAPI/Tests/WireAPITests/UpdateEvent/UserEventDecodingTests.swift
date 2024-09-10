@@ -332,9 +332,11 @@ final class UserEventDecodingTests: XCTestCase {
             )
         )
 
-        static let legalholdDisableEvent = UserLegalholdDisableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
+        static let legalholdDisableEvent =
+            UserLegalholdDisableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
 
-        static let legalholdEnableEvent = UserLegalholdEnableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
+        static let legalholdEnableEvent =
+            UserLegalholdEnableEvent(userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!)
 
         static let legalholdRequestEvent = UserLegalholdRequestEvent(
             userID: UUID(uuidString: "539d9183-32a5-4fc4-ba5c-4634454e7585")!,

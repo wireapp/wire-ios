@@ -54,7 +54,12 @@ final class CameraCell: UICollectionViewCell {
         }
 
         UIDevice.current.beginGeneratingDeviceOrientationNotifications()
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange(_:)), name: UIDevice.orientationDidChangeNotification, object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(deviceOrientationDidChange(_:)),
+            name: UIDevice.orientationDidChangeNotification,
+            object: .none
+        )
 
         self.expandButton.setIcon(.fullScreen, size: .tiny, for: [])
         self.expandButton.setIconColor(UIColor.white, for: [])
@@ -104,14 +109,18 @@ final class CameraCell: UICollectionViewCell {
             takePictureButton.widthAnchor.constraint(equalToConstant: 60),
             takePictureButton.widthAnchor.constraint(equalTo: takePictureButton.heightAnchor),
 
-            takePictureButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -(6 + UIScreen.safeArea.bottom)),
+            takePictureButton.bottomAnchor.constraint(
+                equalTo: contentView.bottomAnchor,
+                constant: -(6 + UIScreen.safeArea.bottom)
+            ),
             takePictureButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
 
             changeCameraButton.widthAnchor.constraint(equalToConstant: 40),
             changeCameraButton.widthAnchor.constraint(equalTo: changeCameraButton.heightAnchor),
 
             changeCameraButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 12),
-            changeCameraButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10)])
+            changeCameraButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+        ])
     }
 
     @available(*, unavailable)

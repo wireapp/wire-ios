@@ -36,7 +36,11 @@ extension CellConfiguration {
         )
     }
 
-    static func allowGuestsToogle(get: @escaping () -> Bool, set: @escaping (Bool, UIView) -> Void, isEnabled: Bool) -> CellConfiguration {
+    static func allowGuestsToogle(
+        get: @escaping () -> Bool,
+        set: @escaping (Bool, UIView) -> Void,
+        isEnabled: Bool
+    ) -> CellConfiguration {
         .iconToggle(
             title: L10n.Localizable.GuestRoom.AllowGuests.title,
             subtitle: L10n.Localizable.GuestRoom.AllowGuests.subtitle,
@@ -50,7 +54,10 @@ extension CellConfiguration {
         )
     }
 
-    static func allowServicesToggle(get: @escaping () -> Bool, set: @escaping (Bool, UIView) -> Void) -> CellConfiguration {
+    static func allowServicesToggle(
+        get: @escaping () -> Bool,
+        set: @escaping (Bool, UIView) -> Void
+    ) -> CellConfiguration {
         .iconToggle(
             title: L10n.Localizable.ServicesOptions.AllowServices.title,
             subtitle: L10n.Localizable.ServicesOptions.AllowServices.subtitle,

@@ -31,7 +31,8 @@ typealias HTMLElement = xmlNodePtr
 extension UnsafeMutablePointer where Pointee == xmlDoc {
     /// Tries to create a new HTML document.
     init?(xmlString: String) {
-        let options = Int32(HTML_PARSE_NOWARNING.rawValue) | Int32(HTML_PARSE_NOERROR.rawValue) | Int32(HTML_PARSE_RECOVER.rawValue)
+        let options = Int32(HTML_PARSE_NOWARNING.rawValue) | Int32(HTML_PARSE_NOERROR.rawValue) |
+            Int32(HTML_PARSE_RECOVER.rawValue)
         let data = Data(xmlString.utf8)
 
         let decodedDocument = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> xmlDocPtr? in

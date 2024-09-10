@@ -31,10 +31,12 @@ class KeyboardAvoidingViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardFrameWillChange),
-                                               name: UIWindow.keyboardWillChangeFrameNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardFrameWillChange),
+            name: UIWindow.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -93,7 +95,11 @@ class KeyboardAvoidingViewController: UIViewController {
         topEdgeConstraint = viewController.view.topAnchor.constraint(equalTo: view.topAnchor)
         topEdgeConstraint?.isActive = true
 
-        bottomEdgeConstraint = viewController.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
+        bottomEdgeConstraint = viewController.view.safeAreaLayoutGuide.bottomAnchor
+            .constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: 0
+            )
 
         bottomEdgeConstraint?.isActive = true
     }

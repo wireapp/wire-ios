@@ -50,8 +50,10 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
 
         moc = MockModelObjectContextFactory.testContext()
         transcoder = MockModifiedKeyObjectSyncTranscoder()
-        sut = ModifiedKeyObjectSync(trackedKey: "field",
-                                    modifiedPredicate: modifiedPredicate)
+        sut = ModifiedKeyObjectSync(
+            trackedKey: "field",
+            modifiedPredicate: modifiedPredicate
+        )
         sut.transcoder = transcoder
     }
 

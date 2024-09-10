@@ -39,26 +39,32 @@ extension ApplicationStateObserving {
     func applicationWillEnterForeground() {}
 
     func setupApplicationNotifications() {
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
-                guard let self else { return }
-                applicationDidEnterBackground()
-            })
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            guard let self else { return }
+            applicationDidEnterBackground()
+        })
 
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
-                guard let self else { return }
-                applicationDidBecomeActive()
-            })
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            guard let self else { return }
+            applicationDidBecomeActive()
+        })
 
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
-                guard let self else { return }
-                applicationWillEnterForeground()
-            })
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            guard let self else { return }
+            applicationWillEnterForeground()
+        })
     }
 }
 
@@ -70,12 +76,14 @@ protocol ContentSizeCategoryObserving: ObserverTokenStore {
 
 extension ContentSizeCategoryObserving {
     func setupContentSizeCategoryNotifications() {
-        addObserverToken(NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
-                guard let self else { return }
-                contentSizeCategoryDidChange()
-            })
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: UIContentSizeCategory.didChangeNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            guard let self else { return }
+            contentSizeCategoryDidChange()
+        })
     }
 }
 
@@ -91,10 +99,12 @@ protocol AudioPermissionsObserving: ObserverTokenStore {
 
 extension AudioPermissionsObserving {
     func setupAudioPermissionsNotifications() {
-        addObserverToken(NotificationCenter.default.addObserver(forName: Notification.Name.UserGrantedAudioPermissions,
-                                                                object: nil,
-                                                                queue: nil) { [weak self] _ in
-                self?.userDidGrantAudioPermissions()
-            })
+        addObserverToken(NotificationCenter.default.addObserver(
+            forName: Notification.Name.UserGrantedAudioPermissions,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
+            self?.userDidGrantAudioPermissions()
+        })
     }
 }

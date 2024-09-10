@@ -50,7 +50,10 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         participants(ofKind: .all, activeSpeakersLimit: nil)
     }
 
-    public func participants(ofKind kind: CallParticipantsListKind, activeSpeakersLimit limit: Int?) -> [CallParticipant] {
+    public func participants(
+        ofKind kind: CallParticipantsListKind,
+        activeSpeakersLimit limit: Int?
+    ) -> [CallParticipant] {
         guard
             let callCenter,
             let conversationId = conversation?.avsIdentifier
@@ -250,22 +253,38 @@ extension VoiceChannelV3: CallActionsInternal {
 
 extension VoiceChannelV3: CallObservers {
     public func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any {
-        WireCallCenterV3.addNetworkQualityObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addNetworkQualityObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
     /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should be active.
     public func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any {
-        WireCallCenterV3.addCallStateObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addCallStateObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
     /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer should be active.
     public func addParticipantObserver(_ observer: WireCallCenterCallParticipantObserver) -> Any {
-        WireCallCenterV3.addCallParticipantObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addCallParticipantObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
     /// Add observer of voice gain. Returns a token which needs to be retained as long as the observer should be active.
     public func addVoiceGainObserver(_ observer: VoiceGainObserver) -> Any {
-        WireCallCenterV3.addVoiceGainObserver(observer: observer, for: conversation!, context: conversation!.managedObjectContext!)
+        WireCallCenterV3.addVoiceGainObserver(
+            observer: observer,
+            for: conversation!,
+            context: conversation!.managedObjectContext!
+        )
     }
 
     /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer should be active.
@@ -274,7 +293,10 @@ extension VoiceChannelV3: CallObservers {
     }
 
     /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the observer should be active.
-    public class func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any {
+    public class func addCallStateObserver(
+        _ observer: WireCallCenterCallStateObserver,
+        userSession: ZMUserSession
+    ) -> Any {
         WireCallCenterV3.addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
     }
 

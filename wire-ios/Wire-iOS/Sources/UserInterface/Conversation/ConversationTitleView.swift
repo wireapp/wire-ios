@@ -133,7 +133,10 @@ extension NSTextAttachment {
 
     fileprivate static func legalHold() -> NSTextAttachment {
         let attachment = NSTextAttachment()
-        let legalHold = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
+        let legalHold = StyleKitIcon.legalholdactive.makeImage(
+            size: .tiny,
+            color: SemanticColors.Icon.foregroundDefaultRed
+        )
         attachment.image = legalHold
         let ratio = legalHold.size.width / legalHold.size.height
         let height: CGFloat = 12

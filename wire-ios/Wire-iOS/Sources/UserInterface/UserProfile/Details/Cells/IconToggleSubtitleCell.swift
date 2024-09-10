@@ -29,11 +29,21 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
     private let subtitleLabel = UILabel()
     private var action: ((Bool, UIView) -> Void)?
 
-    private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor.constraint(equalToConstant: CGFloat.IconCell.IconWidth)
-    private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(equalTo: topContainer.leadingAnchor, constant: CGFloat.IconCell.IconSpacing)
+    private lazy var imageContainerWidthConstraint: NSLayoutConstraint = imageContainer.widthAnchor
+        .constraint(equalToConstant: CGFloat.IconCell.IconWidth)
+    private lazy var iconImageViewLeadingConstraint: NSLayoutConstraint = iconImageView.leadingAnchor.constraint(
+        equalTo: topContainer.leadingAnchor,
+        constant: CGFloat.IconCell.IconSpacing
+    )
 
-    private lazy var subtitleTopConstraint: NSLayoutConstraint = subtitleLabel.topAnchor.constraint(equalTo: topContainer.bottomAnchor, constant: subtitleInsets.top)
-    private lazy var subtitleBottomConstraint: NSLayoutConstraint = subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -subtitleInsets.bottom)
+    private lazy var subtitleTopConstraint: NSLayoutConstraint = subtitleLabel.topAnchor.constraint(
+        equalTo: topContainer.bottomAnchor,
+        constant: subtitleInsets.top
+    )
+    private lazy var subtitleBottomConstraint: NSLayoutConstraint = subtitleLabel.bottomAnchor.constraint(
+        equalTo: contentView.bottomAnchor,
+        constant: -subtitleInsets.bottom
+    )
 
     private let subtitleInsets = UIEdgeInsets(top: 16, left: 16, bottom: 24, right: 16)
 
@@ -112,11 +122,17 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
         NSLayoutConstraint.activate([
             imageContainerWidthConstraint,
             iconImageView.centerYAnchor.constraint(equalTo: topContainer.centerYAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: CGFloat.IconCell.IconSpacing),
+            titleLabel.leadingAnchor.constraint(
+                equalTo: iconImageView.trailingAnchor,
+                constant: CGFloat.IconCell.IconSpacing
+            ),
             iconImageViewLeadingConstraint,
 
             toggle.centerYAnchor.constraint(equalTo: topContainer.centerYAnchor),
-            toggle.trailingAnchor.constraint(equalTo: topContainer.trailingAnchor, constant: -CGFloat.IconCell.IconSpacing),
+            toggle.trailingAnchor.constraint(
+                equalTo: topContainer.trailingAnchor,
+                constant: -CGFloat.IconCell.IconSpacing
+            ),
             titleLabel.centerYAnchor.constraint(equalTo: topContainer.centerYAnchor),
 
             topContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -124,8 +140,14 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
             topContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             topContainer.heightAnchor.constraint(equalToConstant: 56),
 
-            subtitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: subtitleInsets.leading),
-            subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -subtitleInsets.trailing),
+            subtitleLabel.leadingAnchor.constraint(
+                equalTo: contentView.leadingAnchor,
+                constant: subtitleInsets.leading
+            ),
+            subtitleLabel.trailingAnchor.constraint(
+                equalTo: contentView.trailingAnchor,
+                constant: -subtitleInsets.trailing
+            ),
             subtitleTopConstraint,
             subtitleBottomConstraint,
         ])

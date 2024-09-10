@@ -40,9 +40,11 @@ extension VoiceChannel {
              .established,
              .incoming(_, shouldRing: false, _):
             return .participantsList(sortedParticipants().map {
-                .callParticipant(user: HashBox(value: $0.user),
-                                 callParticipantState: $0.state,
-                                 activeSpeakerState: $0.activeSpeakerState)
+                .callParticipant(
+                    user: HashBox(value: $0.user),
+                    callParticipantState: $0.state,
+                    activeSpeakerState: $0.activeSpeakerState
+                )
             })
         }
     }
@@ -54,8 +56,10 @@ extension VoiceChannel {
         }
     }
 
-    func canToggleMediaType(with permissions: CallPermissionsConfiguration,
-                            selfUser: UserType) -> Bool {
+    func canToggleMediaType(
+        with permissions: CallPermissionsConfiguration,
+        selfUser: UserType
+    ) -> Bool {
         guard !permissions.isVideoDisabledForever, !permissions.isAudioDisabledForever else { return false }
 
         // The user can only re-enable their video if the conversation allows GVC

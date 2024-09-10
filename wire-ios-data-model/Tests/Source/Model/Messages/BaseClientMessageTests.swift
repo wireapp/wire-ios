@@ -65,20 +65,51 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
             self.syncSelfClient1 = self.createSelfClient(onMOC: self.syncMOC)
             self.syncMOC.setPersistentStoreMetadata(self.syncSelfClient1.remoteIdentifier!, key: ZMPersistedClientIdKey)
 
-            self.syncSelfClient2 = self.createClient(for: self.syncSelfUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            self.syncSelfClient2 = self.createClient(
+                for: self.syncSelfUser,
+                createSessionWithSelfUser: true,
+                onMOC: self.syncMOC
+            )
 
             self.syncUser1 = ZMUser.insertNewObject(in: self.syncMOC)
-            self.syncUser1Client1 = self.createClient(for: self.syncUser1, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            self.syncUser1Client2 = self.createClient(for: self.syncUser1, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            self.syncUser1Client1 = self.createClient(
+                for: self.syncUser1,
+                createSessionWithSelfUser: true,
+                onMOC: self.syncMOC
+            )
+            self.syncUser1Client2 = self.createClient(
+                for: self.syncUser1,
+                createSessionWithSelfUser: true,
+                onMOC: self.syncMOC
+            )
 
             self.syncUser2 = ZMUser.insertNewObject(in: self.syncMOC)
-            self.syncUser2Client1 = self.createClient(for: self.syncUser2, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            self.syncUser2Client2 = self.createClient(for: self.syncUser2, createSessionWithSelfUser: false, onMOC: self.syncMOC)
+            self.syncUser2Client1 = self.createClient(
+                for: self.syncUser2,
+                createSessionWithSelfUser: true,
+                onMOC: self.syncMOC
+            )
+            self.syncUser2Client2 = self.createClient(
+                for: self.syncUser2,
+                createSessionWithSelfUser: false,
+                onMOC: self.syncMOC
+            )
 
             self.syncUser3 = ZMUser.insertNewObject(in: self.syncMOC)
-            self.syncUser3Client1 = self.createClient(for: self.syncUser3, createSessionWithSelfUser: false, onMOC: self.syncMOC)
+            self.syncUser3Client1 = self.createClient(
+                for: self.syncUser3,
+                createSessionWithSelfUser: false,
+                onMOC: self.syncMOC
+            )
 
-            self.syncConversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [self.syncUser1!, self.syncUser2!, self.syncUser3!])
+            self.syncConversation = ZMConversation.insertGroupConversation(
+                moc: self.syncMOC,
+                participants: [
+                    self.syncUser1!,
+                    self.syncUser2!,
+                    self.syncUser3!,
+                ]
+            )
 
             self.syncConversation.remoteIdentifier = UUID.create()
 
@@ -191,18 +222,36 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
         }
     }
 
-    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date = .init(), genericMessage: GenericMessage, senderID: UUID = .create(), senderClientID: String = UUID().transportString(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
+    func createUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        timestamp: Date = .init(),
+        genericMessage: GenericMessage,
+        senderID: UUID = .create(),
+        senderClientID: String = UUID().transportString(),
+        eventSource: ZMUpdateEventSource = .download
+    ) -> ZMUpdateEvent {
         let data = try? genericMessage.serializedData().base64String()
-        return createUpdateEvent(nonce,
-                                 conversationID: conversationID,
-                                 timestamp: timestamp,
-                                 genericMessageData: data ?? "",
-                                 senderID: senderID,
-                                 senderClientID: senderClientID,
-                                 eventSource: eventSource)
+        return createUpdateEvent(
+            nonce,
+            conversationID: conversationID,
+            timestamp: timestamp,
+            genericMessageData: data ?? "",
+            senderID: senderID,
+            senderClientID: senderClientID,
+            eventSource: eventSource
+        )
     }
 
-    private func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date, genericMessageData: String, senderID: UUID, senderClientID: String, eventSource: ZMUpdateEventSource) -> ZMUpdateEvent {
+    private func createUpdateEvent(
+        _ nonce: UUID,
+        conversationID: UUID,
+        timestamp: Date,
+        genericMessageData: String,
+        senderID: UUID,
+        senderClientID: String,
+        eventSource: ZMUpdateEventSource
+    ) -> ZMUpdateEvent {
         let payload: [String: Any] = [
             "conversation": conversationID.transportString(),
             "from": senderID.transportString(),
@@ -217,10 +266,14 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
         case .download:
             return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
         default:
-            let streamPayload = ["payload": [payload],
-                                 "id": UUID.create()] as [String: Any]
-            let event = ZMUpdateEvent.eventsArray(from: streamPayload as ZMTransportData,
-                                                  source: eventSource)!.first!
+            let streamPayload = [
+                "payload": [payload],
+                "id": UUID.create(),
+            ] as [String: Any]
+            let event = ZMUpdateEvent.eventsArray(
+                from: streamPayload as ZMTransportData,
+                source: eventSource
+            )!.first!
             XCTAssertNotNil(event)
             return event
         }

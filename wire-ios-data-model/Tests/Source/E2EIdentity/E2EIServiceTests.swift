@@ -55,10 +55,12 @@ final class E2EIServiceTests: ZMConversationTestsBase {
 
     func testThatItContainsCorrectAcmeDirectoryInTheResponse() async throws {
         // Expectation
-        let expectedacmeDirectory = AcmeDirectory(newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
-                                                  newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
-                                                  newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
-                                                  revokeCert: "")
+        let expectedacmeDirectory = AcmeDirectory(
+            newNonce: "https://acme.elna.wire.link/acme/defaultteams/new-nonce",
+            newAccount: "https://acme.elna.wire.link/acme/defaultteams/new-account",
+            newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
+            revokeCert: ""
+        )
 
         // Given
         var mockDirectoryResponseCount = 0
@@ -192,9 +194,11 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         // Expectation
         let wireDpopChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
         let wireOidcChallenge = AcmeChallenge(delegate: Data(), url: "", target: "")
-        let expectedAcmeOrder = NewAcmeAuthz(identifier: "",
-                                             keyauth: "",
-                                             challenge: wireDpopChallenge)
+        let expectedAcmeOrder = NewAcmeAuthz(
+            identifier: "",
+            keyauth: "",
+            challenge: wireDpopChallenge
+        )
 
         // Given
         var mockSetAuthzResponse = 0
@@ -269,9 +273,11 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        let oidcChallenge = try await sut.getNewOidcChallengeRequest(idToken: "idToken",
-                                                                     refreshToken: "refreshToken",
-                                                                     nonce: "nonce")
+        let oidcChallenge = try await sut.getNewOidcChallengeRequest(
+            idToken: "idToken",
+            refreshToken: "refreshToken",
+            nonce: "nonce"
+        )
 
         // Then
         XCTAssertEqual(mockGetsNewOidcChallengeRequest, 1)

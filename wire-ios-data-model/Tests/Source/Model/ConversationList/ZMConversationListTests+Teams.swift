@@ -268,8 +268,14 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        let unarchivedObserver = ConversationListChangeObserver(conversationList: unarchivedList, managedObjectContext: self.uiMOC)
-        let archivedObserver = ConversationListChangeObserver(conversationList: archivedList, managedObjectContext: self.uiMOC)
+        let unarchivedObserver = ConversationListChangeObserver(
+            conversationList: unarchivedList,
+            managedObjectContext: self.uiMOC
+        )
+        let archivedObserver = ConversationListChangeObserver(
+            conversationList: archivedList,
+            managedObjectContext: self.uiMOC
+        )
 
         // when
         XCTAssert(uiMOC.saveOrRollback())

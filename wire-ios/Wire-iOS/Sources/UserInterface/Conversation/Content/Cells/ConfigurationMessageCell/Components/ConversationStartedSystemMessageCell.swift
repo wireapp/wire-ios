@@ -57,8 +57,17 @@ final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, Con
 // MARK: - UITextViewDelegate
 
 extension ConversationStartedSystemMessageCell {
-    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        delegate?.conversationMessageWantsToOpenParticipantsDetails(self, selectedUsers: selectedUsers, sourceView: self)
+    override func textView(
+        _ textView: UITextView,
+        shouldInteractWith url: URL,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
+        delegate?.conversationMessageWantsToOpenParticipantsDetails(
+            self,
+            selectedUsers: selectedUsers,
+            sourceView: self
+        )
 
         return false
     }

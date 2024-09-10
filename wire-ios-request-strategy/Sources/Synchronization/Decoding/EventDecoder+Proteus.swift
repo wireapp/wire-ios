@@ -21,7 +21,10 @@ import WireCryptobox
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 
-typealias ProteusDecryptionFunction = (ProteusSessionID, Data) async throws -> (didCreateNewSession: Bool, decryptedData: Data)?
+typealias ProteusDecryptionFunction = (ProteusSessionID, Data) async throws -> (
+    didCreateNewSession: Bool,
+    decryptedData: Data
+)?
 
 extension EventDecoder {
     /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
@@ -59,7 +62,12 @@ extension EventDecoder {
                     .selfClientId: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
                     .selfUserId: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>",
                 ]
-                WireLogger.updateEvent.error("decrypting proteus event... failed: is not for self client, dropping...)", attributes: event.logAttributes, additionalInfo, .safePublic)
+                WireLogger.updateEvent.error(
+                    "decrypting proteus event... failed: is not for self client, dropping...)",
+                    attributes: event.logAttributes,
+                    additionalInfo,
+                    .safePublic
+                )
                 return (UserClient?.none, ProteusSessionID?.none)
             }
 
@@ -68,7 +76,10 @@ extension EventDecoder {
         }
 
         guard let senderClient, let senderClientSessionId else {
-            WireLogger.updateEvent.error("decrypting proteus event... failed: couldn't fetch sender client, dropping...", attributes: event.logAttributes)
+            WireLogger.updateEvent.error(
+                "decrypting proteus event... failed: couldn't fetch sender client, dropping...",
+                attributes: event.logAttributes
+            )
             return nil
         }
 
@@ -92,7 +103,10 @@ extension EventDecoder {
                 using: decryptFunction
             ) else {
                 fail()
-                WireLogger.updateEvent.error("decrypting proteus event... failed: could not decrypt, dropping...", attributes: event.logAttributes)
+                WireLogger.updateEvent.error(
+                    "decrypting proteus event... failed: could not decrypt, dropping...",
+                    attributes: event.logAttributes
+                )
                 return nil
             }
 
@@ -101,18 +115,27 @@ extension EventDecoder {
         } catch let error as CBoxResult {
             let proteusError = ProteusError(cboxResult: error)
             fail(error: proteusError)
-            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")", attributes: event.logAttributes)
+            WireLogger.updateEvent.error(
+                "decrypting proteus event... failed with proteus error: \(proteusError?.localizedDescription ?? "?")",
+                attributes: event.logAttributes
+            )
             return nil
 
         } catch let error as ProteusService.DecryptionError {
             let proteusError = error.proteusError
             fail(error: proteusError)
-            WireLogger.updateEvent.error("decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)", attributes: event.logAttributes)
+            WireLogger.updateEvent.error(
+                "decrypting proteus event... failed with proteus error: \(proteusError.localizedDescription)",
+                attributes: event.logAttributes
+            )
             return nil
 
         } catch {
             fail(error: nil)
-            WireLogger.updateEvent.error("decrypting proteus event... failed with unkown error: \(error.localizedDescription)", attributes: event.logAttributes)
+            WireLogger.updateEvent.error(
+                "decrypting proteus event... failed with unkown error: \(error.localizedDescription)",
+                attributes: event.logAttributes
+            )
             return nil
         }
 
@@ -165,9 +188,11 @@ extension EventDecoder {
         sender: UserClient,
         in context: NSManagedObjectContext
     ) {
-        WireLogger.updateEvent.error("Failed to decrypt message with error: \(String(describing: error))",
-                                     attributes: [.senderUserId: sender.safeRemoteIdentifier.value],
-                                     event.logAttributes)
+        WireLogger.updateEvent.error(
+            "Failed to decrypt message with error: \(String(describing: error))",
+            attributes: [.senderUserId: sender.safeRemoteIdentifier.value],
+            event.logAttributes
+        )
         WireLogger.updateEvent.debug("event debug: \(event.debugInformation)")
 
         if error == .outdatedMessage || error == .duplicateMessage {
@@ -239,7 +264,10 @@ extension EventDecoder {
 
         // Check if it's the "bomb" message (gave encrypting on the sender).
         guard encryptedData != ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8) else {
-            zmLog.safePublic("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionID). Current device might have invalid prekeys on the BE.")
+            zmLog
+                .safePublic(
+                    "Received 'failed to encrypt for your client' special payload (bomb) from \(sessionID). Current device might have invalid prekeys on the BE."
+                )
             return nil
         }
 

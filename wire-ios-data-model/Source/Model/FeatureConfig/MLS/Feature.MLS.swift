@@ -78,14 +78,30 @@ extension Feature {
             }
 
             public init(from decoder: any Decoder) throws {
-                let container: KeyedDecodingContainer<Feature.MLS.Config.CodingKeys> = try decoder.container(keyedBy: Feature.MLS.Config.CodingKeys.self)
-                self.protocolToggleUsers = try container.decode([UUID].self, forKey: Feature.MLS.Config.CodingKeys.protocolToggleUsers)
-                self.defaultProtocol = try container.decode(Feature.MLS.Config.MessageProtocol.self, forKey: Feature.MLS.Config.CodingKeys.defaultProtocol)
-                self.allowedCipherSuites = try container.decode([Feature.MLS.Config.MLSCipherSuite].self, forKey: Feature.MLS.Config.CodingKeys.allowedCipherSuites)
-                self.defaultCipherSuite = try container.decode(Feature.MLS.Config.MLSCipherSuite.self, forKey: Feature.MLS.Config.CodingKeys.defaultCipherSuite)
+                let container: KeyedDecodingContainer<Feature.MLS.Config.CodingKeys> = try decoder
+                    .container(keyedBy: Feature.MLS.Config.CodingKeys.self)
+                self.protocolToggleUsers = try container.decode(
+                    [UUID].self,
+                    forKey: Feature.MLS.Config.CodingKeys.protocolToggleUsers
+                )
+                self.defaultProtocol = try container.decode(
+                    Feature.MLS.Config.MessageProtocol.self,
+                    forKey: Feature.MLS.Config.CodingKeys.defaultProtocol
+                )
+                self.allowedCipherSuites = try container.decode(
+                    [Feature.MLS.Config.MLSCipherSuite].self,
+                    forKey: Feature.MLS.Config.CodingKeys.allowedCipherSuites
+                )
+                self.defaultCipherSuite = try container.decode(
+                    Feature.MLS.Config.MLSCipherSuite.self,
+                    forKey: Feature.MLS.Config.CodingKeys.defaultCipherSuite
+                )
 
                 // Supported protocols was added in v4 so we decode if present and provide a default if it's not there.
-                self.supportedProtocols = try container.decodeIfPresent(Set<Feature.MLS.Config.MessageProtocol>.self, forKey: Feature.MLS.Config.CodingKeys.supportedProtocols) ?? [.proteus]
+                self.supportedProtocols = try container.decodeIfPresent(
+                    Set<Feature.MLS.Config.MessageProtocol>.self,
+                    forKey: Feature.MLS.Config.CodingKeys.supportedProtocols
+                ) ?? [.proteus]
             }
 
             public enum MessageProtocol: String, Codable {

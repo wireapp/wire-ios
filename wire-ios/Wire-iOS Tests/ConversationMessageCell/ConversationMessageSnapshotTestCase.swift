@@ -22,18 +22,25 @@ import XCTest
 @testable import Wire
 
 extension ConversationMessageContext {
-    fileprivate static let defaultContext = ConversationMessageContext(isSameSenderAsPrevious: false,
-                                                                       isTimeIntervalSinceLastMessageSignificant: false,
-                                                                       isTimestampInSameMinuteAsPreviousMessage: false,
-                                                                       isFirstMessageOfTheDay: false,
-                                                                       isFirstUnreadMessage: false,
-                                                                       isLastMessage: false,
-                                                                       searchQueries: [],
-                                                                       previousMessageIsKnock: false,
-                                                                       spacing: 0)
+    fileprivate static let defaultContext = ConversationMessageContext(
+        isSameSenderAsPrevious: false,
+        isTimeIntervalSinceLastMessageSignificant: false,
+        isTimestampInSameMinuteAsPreviousMessage: false,
+        isFirstMessageOfTheDay: false,
+        isFirstUnreadMessage: false,
+        isLastMessage: false,
+        searchQueries: [],
+        previousMessageIsKnock: false,
+        spacing: 0
+    )
 }
 
-func XCTAssertArrayEqual(_ descriptions: [Any], _ expectedDescriptions: [Any], file: StaticString = #file, line: UInt = #line) {
+func XCTAssertArrayEqual(
+    _ descriptions: [Any],
+    _ expectedDescriptions: [Any],
+    file: StaticString = #file,
+    line: UInt = #line
+) {
     let classes = descriptions.map { String(describing: $0) }
     let expectedClasses = expectedDescriptions.map { String(describing: $0) }
     XCTAssertEqual(classes, expectedClasses, file: file, line: line)
@@ -55,81 +62,97 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
     /**
      * Performs a snapshot test for a message
      */
-    func verify(message: ConversationMessage,
-                context: ConversationMessageContext? = nil,
-                waitForImagesToLoad: Bool = false,
-                waitForTextViewToLoad: Bool = false,
-                allColorSchemes: Bool = false,
-                allWidths: Bool = true,
-                snapshotBackgroundColor: UIColor? = nil,
-                file: StaticString = #file,
-                testName: String = #function,
-                line: UInt = #line) {
+    func verify(
+        message: ConversationMessage,
+        context: ConversationMessageContext? = nil,
+        waitForImagesToLoad: Bool = false,
+        waitForTextViewToLoad: Bool = false,
+        allColorSchemes: Bool = false,
+        allWidths: Bool = true,
+        snapshotBackgroundColor: UIColor? = nil,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let createSut: () -> UIView = {
             // prevent cache exist and loading image immediately
             if !waitForImagesToLoad {
                 MediaAssetCache.defaultImageCache.cache.removeAllObjects()
             }
-            return self.createUIStackView(message: message,
-                                          context: context,
-                                          waitForImagesToLoad: waitForImagesToLoad,
-                                          waitForTextViewToLoad: waitForTextViewToLoad,
-                                          snapshotBackgroundColor: snapshotBackgroundColor)
+            return self.createUIStackView(
+                message: message,
+                context: context,
+                waitForImagesToLoad: waitForImagesToLoad,
+                waitForTextViewToLoad: waitForTextViewToLoad,
+                snapshotBackgroundColor: snapshotBackgroundColor
+            )
         }
 
         if allColorSchemes {
             ColorScheme.default.variant = .dark
-            verify(createSut: createSut,
-                   snapshotBackgroundColor: snapshotBackgroundColor,
-                   named: "dark",
-                   allWidths: allWidths,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            verify(
+                createSut: createSut,
+                snapshotBackgroundColor: snapshotBackgroundColor,
+                named: "dark",
+                allWidths: allWidths,
+                file: file,
+                testName: testName,
+                line: line
+            )
 
             ColorScheme.default.variant = .light
-            verify(createSut: createSut,
-                   snapshotBackgroundColor: snapshotBackgroundColor,
-                   named: "light",
-                   allWidths: allWidths,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            verify(
+                createSut: createSut,
+                snapshotBackgroundColor: snapshotBackgroundColor,
+                named: "light",
+                allWidths: allWidths,
+                file: file,
+                testName: testName,
+                line: line
+            )
         } else {
-            verify(createSut: createSut,
-                   snapshotBackgroundColor: snapshotBackgroundColor,
-                   allWidths: allWidths,
-                   file: file,
-                   testName: testName,
-                   line: line)
+            verify(
+                createSut: createSut,
+                snapshotBackgroundColor: snapshotBackgroundColor,
+                allWidths: allWidths,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 
-    private func verify(createSut: () -> UIView,
-                        snapshotBackgroundColor: UIColor?,
-                        named name: String? = nil,
-                        allColorSchemes: Bool = false,
-                        allWidths: Bool = true,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
+    private func verify(
+        createSut: () -> UIView,
+        snapshotBackgroundColor: UIColor?,
+        named name: String? = nil,
+        allColorSchemes: Bool = false,
+        allWidths: Bool = true,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
         let backgroundColor = snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black)
 
         if allWidths {
-            verifyInAllPhoneWidths(createSut: createSut,
-                                   snapshotBackgroundColor: backgroundColor,
-                                   named: name,
-                                   file: file,
-                                   testName: testName,
-                                   line: line)
+            verifyInAllPhoneWidths(
+                createSut: createSut,
+                snapshotBackgroundColor: backgroundColor,
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         } else {
-            verifyInWidths(createSut: createSut,
-                           widths: [smallestWidth],
-                           snapshotBackgroundColor: backgroundColor,
-                           named: name,
-                           file: file,
-                           testName: testName,
-                           line: line)
+            verifyInWidths(
+                createSut: createSut,
+                widths: [smallestWidth],
+                snapshotBackgroundColor: backgroundColor,
+                named: name,
+                file: file,
+                testName: testName,
+                line: line
+            )
         }
     }
 

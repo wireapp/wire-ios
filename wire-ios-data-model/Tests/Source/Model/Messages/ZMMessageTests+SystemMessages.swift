@@ -50,14 +50,17 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
         for encryptionError in allEncryptionErrors {
             assertDecryptionErrorIsReportedAsRecoverable(
                 encryptionError,
-                recoverable: recoverableEncryptionErrors.contains(encryptionError))
+                recoverable: recoverableEncryptionErrors.contains(encryptionError)
+            )
         }
     }
 
-    private func assertDecryptionErrorIsReportedAsRecoverable(_ decryptionError: CBoxResult,
-                                                              recoverable: Bool,
-                                                              file: StaticString = #file,
-                                                              line: UInt = #line) {
+    private func assertDecryptionErrorIsReportedAsRecoverable(
+        _ decryptionError: CBoxResult,
+        recoverable: Bool,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // given
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .decryptionFailed
@@ -71,46 +74,60 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
 extension ZMMessageTests_SystemMessages {
     func testThatItGeneratesTheCorrectSystemMessageTypesFromUpdateEvents() {
         // expect a message
-        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberJoin,
-                                                       systemMessageType: .participantsAdded,
-                                                       reason: nil)
+        checkThatUpdateEventTypeGeneratesSystemMessage(
+            updateEventType: .conversationMemberJoin,
+            systemMessageType: .participantsAdded,
+            reason: nil
+        )
 
-        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberLeave,
-                                                       systemMessageType: .participantsRemoved,
-                                                       reason: nil)
-        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberLeave,
-                                                       systemMessageType: .participantsRemoved,
-                                                       reason: .legalHoldPolicyConflict)
+        checkThatUpdateEventTypeGeneratesSystemMessage(
+            updateEventType: .conversationMemberLeave,
+            systemMessageType: .participantsRemoved,
+            reason: nil
+        )
+        checkThatUpdateEventTypeGeneratesSystemMessage(
+            updateEventType: .conversationMemberLeave,
+            systemMessageType: .participantsRemoved,
+            reason: .legalHoldPolicyConflict
+        )
 
-        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationRename,
-                                                       systemMessageType: .conversationNameChanged,
-                                                       reason: nil)
+        checkThatUpdateEventTypeGeneratesSystemMessage(
+            updateEventType: .conversationRename,
+            systemMessageType: .conversationNameChanged,
+            reason: nil
+        )
     }
 
     func testThatItGeneratesTheCorrectSystemMessageTypesFromMemberJoinedUpdateEventWithQualifiedUsers() {
         // expect a message
-        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberJoin,
-                                                       systemMessageType: .participantsAdded,
-                                                       reason: nil,
-                                                       selfUserDomain: "foo.com",
-                                                       otherUserDomain: "bar.com")
+        checkThatUpdateEventTypeGeneratesSystemMessage(
+            updateEventType: .conversationMemberJoin,
+            systemMessageType: .participantsAdded,
+            reason: nil,
+            selfUserDomain: "foo.com",
+            otherUserDomain: "bar.com"
+        )
     }
 
     func testThatItGeneratesTheCorrectSystemMessageTypesFromMemberLeaveMUpdateEventWithQualifiedUsers() {
         // expect a message
-        checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: .conversationMemberLeave,
-                                                       systemMessageType: .participantsRemoved,
-                                                       reason: nil,
-                                                       selfUserDomain: "foo.com",
-                                                       otherUserDomain: "bar.com")
+        checkThatUpdateEventTypeGeneratesSystemMessage(
+            updateEventType: .conversationMemberLeave,
+            systemMessageType: .participantsRemoved,
+            reason: nil,
+            selfUserDomain: "foo.com",
+            otherUserDomain: "bar.com"
+        )
     }
 
-    private func createSystemMessageFrom(updateEventType: ZMUpdateEventType,
-                                         in conversation: ZMConversation,
-                                         with usersIDs: [UUID],
-                                         senderID: UUID?,
-                                         reason: ZMParticipantsRemovedReason?,
-                                         domain: String? = nil) -> ZMSystemMessage? {
+    private func createSystemMessageFrom(
+        updateEventType: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        with usersIDs: [UUID],
+        senderID: UUID?,
+        reason: ZMParticipantsRemovedReason?,
+        domain: String? = nil
+    ) -> ZMSystemMessage? {
         let updateEventTypeDict: [ZMUpdateEventType: String] = [
             .conversationMemberJoin: "conversation.member-join",
             .conversationMemberLeave: "conversation.member-leave",
@@ -120,8 +137,9 @@ extension ZMMessageTests_SystemMessages {
         var data: [String: Any] = if let domain {
             if updateEventType == .conversationMemberJoin {
                 ["users": usersIDs.map {
-                    ["qualified_id":
-                        ["id": $0.transportString(), "domain": domain],
+                    [
+                        "qualified_id":
+                            ["id": $0.transportString(), "domain": domain],
                     ]
                 }] as [String: Any]
             } else {
@@ -149,11 +167,13 @@ extension ZMMessageTests_SystemMessages {
         return result
     }
 
-    private func checkThatUpdateEventTypeGeneratesSystemMessage(updateEventType: ZMUpdateEventType,
-                                                                systemMessageType: ZMSystemMessageType,
-                                                                reason: ZMParticipantsRemovedReason?,
-                                                                selfUserDomain: String? = nil,
-                                                                otherUserDomain: String? = nil) {
+    private func checkThatUpdateEventTypeGeneratesSystemMessage(
+        updateEventType: ZMUpdateEventType,
+        systemMessageType: ZMSystemMessageType,
+        reason: ZMParticipantsRemovedReason?,
+        selfUserDomain: String? = nil,
+        otherUserDomain: String? = nil
+    ) {
         // given
         ZMUser.selfUser(in: uiMOC).domain = selfUserDomain
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -167,12 +187,14 @@ extension ZMMessageTests_SystemMessages {
         // when
         var message: ZMSystemMessage?
         self.performPretendingUiMocIsSyncMoc {
-            message = self.createSystemMessageFrom(updateEventType: updateEventType,
-                                                   in: conversation,
-                                                   with: [userID1, userID2],
-                                                   senderID: nil,
-                                                   reason: reason,
-                                                   domain: otherUserDomain)
+            message = self.createSystemMessageFrom(
+                updateEventType: updateEventType,
+                in: conversation,
+                with: [userID1, userID2],
+                senderID: nil,
+                reason: reason,
+                domain: otherUserDomain
+            )
         }
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

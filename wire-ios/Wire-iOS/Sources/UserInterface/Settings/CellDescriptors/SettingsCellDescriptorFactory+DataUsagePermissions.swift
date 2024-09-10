@@ -24,14 +24,26 @@ extension SettingsCellDescriptorFactory {
 
         // show analytics toggle for team members only
         if isTeamMember {
-            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing), inverse: true)
-            let sendAnalyticsDataSection = SettingsSectionDescriptor(cellDescriptors: [sendAnalyticsData], footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title)
+            let sendAnalyticsData = SettingsPropertyToggleCellDescriptor(
+                settingsProperty: settingsPropertyFactory.property(.disableAnalyticsSharing),
+                inverse: true
+            )
+            let sendAnalyticsDataSection = SettingsSectionDescriptor(
+                cellDescriptors: [sendAnalyticsData],
+                footer: L10n.Localizable.Self.Settings.PrivacyAnalyticsMenu.Description.title
+            )
 
             items.append(sendAnalyticsDataSection)
         }
 
-        let receiveNewsAndOffersData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.receiveNewsAndOffers))
-        let receiveNewsAndOffersSection = SettingsSectionDescriptor(cellDescriptors: [receiveNewsAndOffersData], footer: L10n.Localizable.Self.Settings.ReceiveNewsAndOffers.Description.title)
+        let receiveNewsAndOffersData = SettingsPropertyToggleCellDescriptor(
+            settingsProperty: settingsPropertyFactory
+                .property(.receiveNewsAndOffers)
+        )
+        let receiveNewsAndOffersSection = SettingsSectionDescriptor(
+            cellDescriptors: [receiveNewsAndOffersData],
+            footer: L10n.Localizable.Self.Settings.ReceiveNewsAndOffers.Description.title
+        )
 
         items.append(receiveNewsAndOffersSection)
 

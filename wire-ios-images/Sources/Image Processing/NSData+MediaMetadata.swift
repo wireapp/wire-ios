@@ -71,7 +71,12 @@ extension NSData {
         }
 
         for sourceIndex in 0 ..< count {
-            CGImageDestinationAddImageFromSource(imageDestination, imageSource, sourceIndex, NSData.nullMetadataProperties)
+            CGImageDestinationAddImageFromSource(
+                imageDestination,
+                imageSource,
+                sourceIndex,
+                NSData.nullMetadataProperties
+            )
         }
 
         guard CGImageDestinationFinalize(imageDestination) else {

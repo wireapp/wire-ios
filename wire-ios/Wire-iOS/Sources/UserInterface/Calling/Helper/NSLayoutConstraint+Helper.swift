@@ -24,7 +24,11 @@ extension NSLayoutConstraint {
         return self
     }
 
-    static func forView(view: UIView, inContainer container: UIView, withInsets insets: UIEdgeInsets) -> [NSLayoutConstraint] {
+    static func forView(
+        view: UIView,
+        inContainer container: UIView,
+        withInsets insets: UIEdgeInsets
+    ) -> [NSLayoutConstraint] {
         [
             view.topAnchor.constraint(equalTo: container.topAnchor, constant: insets.top),
             view.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -insets.bottom),

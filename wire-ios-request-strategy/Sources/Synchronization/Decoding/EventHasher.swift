@@ -21,7 +21,10 @@ import Foundation
 /// Computes an hash to compare UpdateEvent and StoredUpdateEvent
 enum EventHasher {
     static func hash(eventId: String, payload: [AnyHashable: Any]) -> Int? {
-        guard let payloadData = try? NSKeyedArchiver.archivedData(withRootObject: payload as NSDictionary, requiringSecureCoding: true) else {
+        guard let payloadData = try? NSKeyedArchiver.archivedData(
+            withRootObject: payload as NSDictionary,
+            requiringSecureCoding: true
+        ) else {
             return nil
         }
         var hasher = Hasher()

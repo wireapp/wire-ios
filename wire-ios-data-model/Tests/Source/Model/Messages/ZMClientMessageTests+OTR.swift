@@ -81,7 +81,10 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let notSelfClients = selfClients.filter { $0 != selfClient }
 
             let nonce = UUID.create()
-            let textMessage = GenericMessage(content: Text(content: self.textMessageRequiringExternalMessage(withNumberOfClients: 2)), nonce: nonce)
+            let textMessage = GenericMessage(
+                content: Text(content: self.textMessageRequiringExternalMessage(withNumberOfClients: 2)),
+                nonce: nonce
+            )
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group
@@ -123,7 +126,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatCorruptedClientsReceiveBogusPayload() async throws {
         let message = try await self.syncMOC.perform {
             // Given
-            let message = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            let message = try self.syncConversation.appendText(
+                content: self.name,
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
             self.syncUser3Client1.failedToEstablishSession = true
             return message
         }
@@ -138,10 +145,14 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             try? $0.merge(serializedData: unwrappedDataAndStrategy.data)
         }
         await syncMOC.perform {
-            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
+            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user })
+            else { return XCTFail() }
 
             XCTAssertEqual(userEntry.clients.count, 1)
-            XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
+            XCTAssertEqual(
+                userEntry.clients.first?.text,
+                ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)
+            )
             XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
         }
     }
@@ -149,7 +160,10 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() async throws {
         // Given
         let message = try await self.syncMOC.perform {
-            let messageRequiringExternal = try XCTUnwrap(self.textMessageRequiringExternalMessage(withNumberOfClients: 6))
+            let messageRequiringExternal = try XCTUnwrap(
+                self
+                    .textMessageRequiringExternalMessage(withNumberOfClients: 6)
+            )
             let message = try self.syncConversation.appendText(content: messageRequiringExternal) as? ZMClientMessage
             self.syncUser3Client1.failedToEstablishSession = true
             return message
@@ -166,10 +180,14 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             let createdMessage = Proteus_NewOtrMessage.with {
                 try? $0.merge(serializedData: dataAndStrategy.data)
             }
-            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
+            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user })
+            else { return XCTFail() }
 
             XCTAssertEqual(userEntry.clients.count, 1)
-            XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
+            XCTAssertEqual(
+                userEntry.clients.first?.text,
+                ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)
+            )
             XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
         }
     }
@@ -188,7 +206,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
         let message = try await self.syncMOC.perform {
             // Given
-            let message = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            let message = try self.syncConversation.appendText(
+                content: self.name,
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
 
             return message
         }
@@ -216,7 +238,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let message = try XCTUnwrap(
-                self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+                self.syncConversation.appendText(
+                    content: self.name,
+                    fetchLinkPreview: true,
+                    nonce: UUID.create()
+                ) as? ZMClientMessage
             )
 
             XCTAssertTrue(message.isEphemeral)
@@ -244,7 +270,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         let syncMessage: ZMClientMessage? = try await self.syncMOC.perform {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-            let syncMessage = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            let syncMessage = try self.syncConversation.appendText(
+                content: self.name,
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
             syncMessage?.sender = self.syncUser1
             XCTAssertTrue(syncMessage?.isEphemeral == true)
             self.syncMOC.saveOrRollback()
@@ -290,7 +320,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         let syncMessage = try await self.syncMOC.perform {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-            let syncMessage = try self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            let syncMessage = try self.syncConversation.appendText(
+                content: self.name,
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
             syncMessage?.sender = self.syncUser1
             XCTAssertTrue(syncMessage?.isEphemeral == true)
             self.syncMOC.saveOrRollback()
@@ -346,7 +380,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             self.syncConversation.remoteIdentifier = UUID()
             let message = try ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation)
 
-            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
+            self
+                .expectedRecipients =
+                [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             return message
         }
 
@@ -372,7 +408,9 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             self.syncConversation.remoteIdentifier = UUID()
             let message = try ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
 
-            self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
+            self
+                .expectedRecipients =
+                [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             return message
         }
 
@@ -409,7 +447,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
             self.syncMOC.saveOrRollback()
 
-            let textMessage = try conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            let textMessage = try conversation.appendText(
+                content: self.stringLargeEnoughToRequireExternal,
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
 
             textMessage?.sender = self.syncUser1
             textMessage?.senderClientID = senderID
@@ -459,7 +501,11 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
 
             self.syncMOC.saveOrRollback()
 
-            let textMessage = try conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            let textMessage = try conversation.appendText(
+                content: self.stringLargeEnoughToRequireExternal,
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
 
             textMessage?.sender = self.syncUser1
             textMessage?.senderClientID = senderID
@@ -477,7 +523,8 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
     }
 
-    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection() async throws {
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderButInferSenderWithConnection(
+    ) async throws {
         let confirmationMessage = try await syncMOC.perform {
             // Given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -508,7 +555,8 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
     }
 
-    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants() async throws {
+    func testThatItCreatesPayloadForConfimationMessageWhenOriginalHasNoSenderAndConnectionButInferSenderOtherActiveParticipants(
+    ) async throws {
         let confirmationMessage = try await syncMOC.perform {
             // Given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -548,7 +596,10 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         let identifier = client.proteusSessionID
 
         // THEN
-        XCTAssertEqual(identifier, ProteusSessionID(userID: user.remoteIdentifier.uuidString, clientID: client.remoteIdentifier!))
+        XCTAssertEqual(
+            identifier,
+            ProteusSessionID(userID: user.remoteIdentifier.uuidString, clientID: client.remoteIdentifier!)
+        )
     }
 
     // MARK: - Helper
@@ -587,9 +638,11 @@ extension DatabaseBaseTest {
     func createSelfUser(in moc: NSManagedObjectContext) -> (ZMUser, ZMConversation) {
         let selfUser = ZMUser.selfUser(in: moc)
         selfUser.remoteIdentifier = UUID()
-        let conversation = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier,
-                                                        domain: nil,
-                                                        in: moc)
+        let conversation = ZMConversation.fetchOrCreate(
+            with: selfUser.remoteIdentifier,
+            domain: nil,
+            in: moc
+        )
         moc.saveOrRollback()
         return (selfUser, conversation)
     }
@@ -603,9 +656,11 @@ extension DatabaseBaseTest {
 
         moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
 
-        let payload = ["id": selfClient.remoteIdentifier!,
-                       "type": "permanent",
-                       "time": Date().transportString()] as [String: AnyObject]
+        let payload = [
+            "id": selfClient.remoteIdentifier!,
+            "type": "permanent",
+            "time": Date().transportString(),
+        ] as [String: AnyObject]
         _ = UserClient.createOrUpdateSelfUserClient(payload, context: moc)
 
         moc.saveOrRollback()

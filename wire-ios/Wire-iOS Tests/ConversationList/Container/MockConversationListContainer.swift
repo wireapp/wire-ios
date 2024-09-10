@@ -38,7 +38,12 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool {
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) -> Bool {
         isSelectedOnListContentController = true
         return false
     }
@@ -85,15 +90,24 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
         // no-op
     }
 
-    func conversationListViewControllerViewModel(_ viewModel: ConversationListViewController.ViewModel, didUpdate selfUserStatus: UserStatus) {
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    ) {
         // no-op
     }
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_: Wire.ConversationListViewController.ViewModel) {
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(
+        _: Wire.ConversationListViewController
+            .ViewModel
+    ) {
         // no-op
     }
 
-    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_: Wire.ConversationListViewController.ViewModel) {
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
+        _: Wire.ConversationListViewController
+            .ViewModel
+    ) {
         // no-op
     }
 }

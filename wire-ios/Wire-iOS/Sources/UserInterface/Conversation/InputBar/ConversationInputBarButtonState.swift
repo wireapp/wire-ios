@@ -56,14 +56,16 @@ final class ConversationInputBarButtonState {
     private var isEphemeralSendingDisabled = false
     private var isEphemeralTimeoutForced = false
 
-    func update(textLength: Int,
-                editing: Bool,
-                markingDown: Bool,
-                destructionTimeout: MessageDestructionTimeoutValue?,
-                mode: ConversationInputBarViewControllerMode,
-                syncedMessageDestructionTimeout: Bool,
-                isEphemeralSendingDisabled: Bool,
-                isEphemeralTimeoutForced: Bool) {
+    func update(
+        textLength: Int,
+        editing: Bool,
+        markingDown: Bool,
+        destructionTimeout: MessageDestructionTimeoutValue?,
+        mode: ConversationInputBarViewControllerMode,
+        syncedMessageDestructionTimeout: Bool,
+        isEphemeralSendingDisabled: Bool,
+        isEphemeralTimeoutForced: Bool
+    ) {
         self.textLength = textLength
         self.editing = editing
         self.markingDown = markingDown

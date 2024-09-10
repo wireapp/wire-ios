@@ -17,11 +17,18 @@
 //
 
 extension CharacterSet {
-    public static let asciiPrintableSet = CharacterSet(charactersIn: "\u{0020}!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~")
-    public static let unicode = CharacterSet(charactersIn: Unicode.Scalar(Int(0x0000))! ..< Unicode.Scalar(Int(0x10FFFF))!)
+    public static let asciiPrintableSet =
+        CharacterSet(
+            charactersIn: "\u{0020}!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+        )
+    public static let unicode = CharacterSet(
+        charactersIn: Unicode.Scalar(Int(0x0000))! ..< Unicode
+            .Scalar(Int(0x10FFFF))!
+    )
     public static let asciiUppercaseLetters = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     public static let asciiLowercaseLetters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz")
-    public static let asciiStandardCharacters = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
+    public static let asciiStandardCharacters =
+        CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
 }
 
 extension Unicode.Scalar {

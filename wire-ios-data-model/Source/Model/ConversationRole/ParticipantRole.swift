@@ -37,9 +37,11 @@ public final class ParticipantRole: ZMManagedObject {
     }
 
     @discardableResult
-    public static func create(managedObjectContext: NSManagedObjectContext,
-                              user: ZMUser,
-                              conversation: ZMConversation) -> ParticipantRole {
+    public static func create(
+        managedObjectContext: NSManagedObjectContext,
+        user: ZMUser,
+        conversation: ZMConversation
+    ) -> ParticipantRole {
         let entry = ParticipantRole.insertNewObject(in: managedObjectContext)
         entry.user = user
         entry.conversation = conversation

@@ -41,7 +41,11 @@ extension ConversationViewController {
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeAudioCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.voiceCallItemTapped(_:)), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(ConversationViewController.voiceCallItemTapped(_:)),
+            for: .touchUpInside
+        )
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
@@ -64,7 +68,11 @@ extension ConversationViewController {
         button.accessibilityTraits.insert(.startsMediaSession)
         button.accessibilityLabel = CallActions.Label.makeVideoCall
 
-        button.addTarget(self, action: #selector(ConversationViewController.videoCallItemTapped(_:)), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(ConversationViewController.videoCallItemTapped(_:)),
+            for: .touchUpInside
+        )
 
         button.backgroundColor = ButtonColors.backgroundBarItem
         button.layer.borderWidth = 1
@@ -240,7 +248,11 @@ extension ConversationViewController {
 }
 
 extension ConversationViewController: CollectionsViewControllerDelegate {
-    func collectionsViewController(_ viewController: CollectionsViewController, performAction action: MessageAction, onMessage message: ZMConversationMessage) {
+    func collectionsViewController(
+        _ viewController: CollectionsViewController,
+        performAction action: MessageAction,
+        onMessage message: ZMConversationMessage
+    ) {
         switch action {
         case .showInConversation:
             viewController.dismissIfNeeded(animated: true) {
@@ -263,7 +275,13 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 }
 
 extension ConversationViewController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         updateRightNavigationItemsButtons()
     }
 }

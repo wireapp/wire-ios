@@ -24,7 +24,10 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
 
     private let processor = ConnectionPayloadProcessor()
 
-    override func request(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func request(
+        for action: ActionHandler<ConnectToUserAction>.Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         switch apiVersion {
         case .v0:
             nonFederatedRequest(for: action, apiVersion: apiVersion)
@@ -33,7 +36,10 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         }
     }
 
-    func nonFederatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func nonFederatedRequest(
+        for action: ActionHandler<ConnectToUserAction>.Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         let payload = Payload.ConnectionRequest(userID: action.userID, name: "default")
 
         guard
@@ -45,13 +51,18 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
             return nil
         }
 
-        return ZMTransportRequest(path: "/connections",
-                                  method: .post,
-                                  payload: payloadAsString as ZMTransportData,
-                                  apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: "/connections",
+            method: .post,
+            payload: payloadAsString as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
-    func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
+    func federatedRequest(
+        for action: ActionHandler<ConnectToUserAction>.Action,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
         let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
         guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")

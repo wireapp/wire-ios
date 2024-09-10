@@ -77,7 +77,8 @@ final class NativePushChannel: NSObject, PushChannelType {
         let sessionConfig = URLSessionConfiguration.ephemeral
         sessionConfig.tlsMinimumSupportedProtocolVersion = self.minTLSVersion.secValue
 
-        if let settings = environment.proxy?.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
+        if let settings = environment.proxy?
+            .socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword) {
             sessionConfig.httpShouldUsePipelining = true
             sessionConfig.connectionProxyDictionary = settings
         }
@@ -231,13 +232,22 @@ extension NativePushChannel: ZMTimerClient {
 }
 
 extension NativePushChannel: URLSessionWebSocketDelegate {
-    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
+    func urlSession(
+        _ session: URLSession,
+        webSocketTask: URLSessionWebSocketTask,
+        didOpenWithProtocol protocol: String?
+    ) {
         WireLogger.pushChannel.info("Push channel did open with protocol \(`protocol` ?? "n/a")")
 
         onOpen()
     }
 
-    func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
+    func urlSession(
+        _ session: URLSession,
+        webSocketTask: URLSessionWebSocketTask,
+        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+        reason: Data?
+    ) {
         WireLogger.pushChannel.info("Push channel did close with code \(closeCode), reason: \(reason ?? Data())")
 
         onClose()
@@ -246,15 +256,18 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 
 extension NativePushChannel: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        WireLogger.pushChannel.error("Websocket open connection task did fail: \(error.map { String(describing: $0) } ?? "n/a")")
+        WireLogger.pushChannel
+            .error("Websocket open connection task did fail: \(error.map { String(describing: $0) } ?? "n/a")")
 
         websocketTask = nil
     }
 
-    func urlSession(_ session: URLSession,
-                    task: URLSessionTask,
-                    didReceive challenge: URLAuthenticationChallenge,
-                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         let protectionSpace = challenge.protectionSpace
 
         guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {

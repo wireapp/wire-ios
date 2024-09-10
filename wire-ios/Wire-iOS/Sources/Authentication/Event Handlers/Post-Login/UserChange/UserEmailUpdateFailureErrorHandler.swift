@@ -41,7 +41,10 @@ final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
             actions.append(feedbackAction)
         }
 
-        let errorAlert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
+        let errorAlert = AuthenticationCoordinatorErrorAlert(
+            error: error,
+            completionActions: [.unwindState(withInterface: false)]
+        )
         actions.append(.presentErrorAlert(errorAlert))
 
         return actions

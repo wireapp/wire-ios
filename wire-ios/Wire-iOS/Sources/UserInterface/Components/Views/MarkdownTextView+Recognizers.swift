@@ -30,7 +30,11 @@ extension MarkdownTextView {
         location.x -= textContainerInset.left
         location.y -= textContainerInset.top
 
-        let characterIndex = layoutManager.characterIndex(for: location, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+        let characterIndex = layoutManager.characterIndex(
+            for: location,
+            in: textContainer,
+            fractionOfDistanceBetweenInsertionPoints: nil
+        )
         selectTextAttachmentIfNeeded(at: characterIndex)
     }
 
@@ -48,7 +52,10 @@ extension MarkdownTextView {
 }
 
 extension MarkdownTextView: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         // prevent recognizing other UIPanGestureRecognizers at the same time, e.g. SplitViewController's panGestureRecognizers will dismiss the keyboard and this MarkdownTextView moves down immediately
         if otherGestureRecognizer is UIPanGestureRecognizer {
             return false

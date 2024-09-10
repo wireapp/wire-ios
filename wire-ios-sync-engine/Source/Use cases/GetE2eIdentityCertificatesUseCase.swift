@@ -22,46 +22,58 @@ import WireDataModel
 
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUseCaseProtocol {
-    func invoke(mlsGroupId: MLSGroupID,
-                clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate]
+    func invoke(
+        mlsGroupId: MLSGroupID,
+        clientIds: [MLSClientID]
+    ) async throws -> [E2eIdentityCertificate]
 }
 
 public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificatesUseCaseProtocol {
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private let syncContext: NSManagedObjectContext
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol,
-                syncContext: NSManagedObjectContext) {
+    public init(
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        syncContext: NSManagedObjectContext
+    ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.syncContext = syncContext
     }
 
-    public func invoke(mlsGroupId: MLSGroupID,
-                       clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
+    public func invoke(
+        mlsGroupId: MLSGroupID,
+        clientIds: [MLSClientID]
+    ) async throws -> [E2eIdentityCertificate] {
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         let clientIds = clientIds.compactMap { $0.rawValue.data(using: .utf8) }
-        let identities = try await getWireIdentity(coreCrypto: coreCrypto,
-                                                   conversationId: mlsGroupId.data,
-                                                   clientIDs: clientIds)
+        let identities = try await getWireIdentity(
+            coreCrypto: coreCrypto,
+            conversationId: mlsGroupId.data,
+            clientIDs: clientIds
+        )
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
 
         return identitiesAndStatus.map { identity, status in
             if let x509Identity = identity.x509Identity {
-                E2eIdentityCertificate(clientId: identity.clientId,
-                                       certificateDetails: x509Identity.certificate,
-                                       mlsThumbprint: identity.thumbprint,
-                                       notValidBefore: Date(timeIntervalSince1970: Double(x509Identity.notBefore)),
-                                       expiryDate: Date(timeIntervalSince1970: Double(x509Identity.notAfter)),
-                                       certificateStatus: status,
-                                       serialNumber: x509Identity.serialNumber)
+                E2eIdentityCertificate(
+                    clientId: identity.clientId,
+                    certificateDetails: x509Identity.certificate,
+                    mlsThumbprint: identity.thumbprint,
+                    notValidBefore: Date(timeIntervalSince1970: Double(x509Identity.notBefore)),
+                    expiryDate: Date(timeIntervalSince1970: Double(x509Identity.notAfter)),
+                    certificateStatus: status,
+                    serialNumber: x509Identity.serialNumber
+                )
             } else {
-                E2eIdentityCertificate(clientId: identity.clientId,
-                                       certificateDetails: "",
-                                       mlsThumbprint: identity.thumbprint,
-                                       notValidBefore: .now,
-                                       expiryDate: .now,
-                                       certificateStatus: .notActivated,
-                                       serialNumber: "")
+                E2eIdentityCertificate(
+                    clientId: identity.clientId,
+                    certificateDetails: "",
+                    mlsThumbprint: identity.thumbprint,
+                    notValidBefore: .now,
+                    expiryDate: .now,
+                    certificateStatus: .notActivated,
+                    serialNumber: ""
+                )
             }
         }
     }
@@ -69,7 +81,10 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     // Core Crypto can't validate the user name and handle because it doesn't know the actual
     // values so we perform additional validation.
 
-    private func validateUserHandleAndName(for identities: [WireIdentity]) async -> [(WireIdentity, E2EIdentityCertificateStatus)] {
+    private func validateUserHandleAndName(for identities: [WireIdentity]) async -> [(
+        WireIdentity,
+        E2EIdentityCertificateStatus
+    )] {
         var validatedIdentities = [(WireIdentity, E2EIdentityCertificateStatus)]()
         for identity in identities {
             // The identity is valid according to CoreCrypto.

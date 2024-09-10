@@ -166,7 +166,8 @@ extension NSData_ZMSCryptoTests {
 
 extension NSData_ZMSCryptoTests {
     var samplePlainData: Data {
-        let text = "A HMAC is a small set of data that helps authenticate the nature of message; it protects the integrity and the authenticity of the message."
+        let text =
+            "A HMAC is a small set of data that helps authenticate the nature of message; it protects the integrity and the authenticity of the message."
         return text.data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
 
@@ -238,7 +239,10 @@ extension NSData_ZMSCryptoTests {
         // given
         let dataPath = Bundle(for: type(of: self)).path(forResource: "data_to_hash", ofType: "enc")
         let inputData = try! Data(contentsOf: URL(fileURLWithPath: dataPath!))
-        let expectedHash = Data(base64Encoded: "qztWViO7awf67Z1EQbGt5ENiHMibJ5j9wc/DP3M6N3Y=", options: NSData.Base64DecodingOptions())!
+        let expectedHash = Data(
+            base64Encoded: "qztWViO7awf67Z1EQbGt5ENiHMibJ5j9wc/DP3M6N3Y=",
+            options: NSData.Base64DecodingOptions()
+        )!
 
         // when
         let digest = inputData.zmSHA256Digest()
@@ -331,7 +335,8 @@ extension NSData_ZMSCryptoTests {
 
     func testThatHexStringWithUnevenNumberOfCharactersCanNotBeDecodedIntoData() {
         // given
-        let hexString = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1" // hex string with an uneven number of characters.
+        let hexString =
+            "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1" // hex string with an uneven number of characters.
 
         // when
         let decoded = Data(hexString: hexString)
@@ -342,7 +347,8 @@ extension NSData_ZMSCryptoTests {
 
     func testThatHexStringWithUppercaseCharactersCanBeDecodedIntoData() {
         // given
-        let hexString = "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F" // hex strings with uppercase characters.
+        let hexString =
+            "000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F" // hex strings with uppercase characters.
 
         // when
         let decoded = Data(hexString: hexString)
@@ -357,7 +363,8 @@ extension NSData_ZMSCryptoTests {
 
     func testThatHexStringWithAMixOfUpperAndLowercaseCharactersCanBeDecodedIntoData() {
         // given
-        let hexString = "000102030405060708090a0b0c0d0e0f101112131415161718191A1b1C1d1E1F" // hex strings with a mix of upper and lowercase characters.
+        let hexString =
+            "000102030405060708090a0b0c0d0e0f101112131415161718191A1b1C1d1E1F" // hex strings with a mix of upper and lowercase characters.
 
         // when
         let decoded = Data(hexString: hexString)

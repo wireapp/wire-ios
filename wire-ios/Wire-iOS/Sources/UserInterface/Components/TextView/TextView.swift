@@ -47,7 +47,11 @@ class TextView: UITextView {
             } else {
                 NSMutableAttributedString()
             }
-            mutableCopy.addAttribute(.foregroundColor, value: placeholderTextColor, range: NSRange(location: 0, length: mutableCopy.length))
+            mutableCopy.addAttribute(
+                .foregroundColor,
+                value: placeholderTextColor,
+                range: NSRange(location: 0, length: mutableCopy.length)
+            )
             placeholderLabel.attributedText = mutableCopy
             placeholderLabel.sizeToFit()
             showOrHidePlaceholder()
@@ -121,7 +125,12 @@ class TextView: UITextView {
     private func setup() {
         placeholderTextContainerInset = textContainerInset
 
-        NotificationCenter.default.addObserver(self, selector: #selector(textChanged(_:)), name: UITextView.textDidChangeNotification, object: self)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textChanged(_:)),
+            name: UITextView.textDidChangeNotification,
+            object: self
+        )
 
         setupPlaceholderLabel()
 
@@ -203,8 +212,14 @@ class TextView: UITextView {
 
         addSubview(placeholderLabel)
 
-        placeholderLabelLeftConstraint = placeholderLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: placeholderTextContainerInset.left + linePadding)
-        placeholderLabelRightConstraint = placeholderLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: placeholderTextContainerInset.right - linePadding)
+        placeholderLabelLeftConstraint = placeholderLabel.leftAnchor.constraint(
+            equalTo: leftAnchor,
+            constant: placeholderTextContainerInset.left + linePadding
+        )
+        placeholderLabelRightConstraint = placeholderLabel.rightAnchor.constraint(
+            equalTo: rightAnchor,
+            constant: placeholderTextContainerInset.right - linePadding
+        )
 
         NSLayoutConstraint.activate([
             placeholderLabelLeftConstraint!,

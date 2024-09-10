@@ -43,7 +43,11 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let conversation = self.conversation(withMessage: message)
 
         uiMOC.performAndWait {
-            let buttonState = WireDataModel.ButtonState.insert(with: buttonItem.button.id, message: message, inContext: self.uiMOC)
+            let buttonState = WireDataModel.ButtonState.insert(
+                with: buttonItem.button.id,
+                message: message,
+                inContext: self.uiMOC
+            )
             buttonState.state = .selected
             self.uiMOC.saveOrRollback()
 

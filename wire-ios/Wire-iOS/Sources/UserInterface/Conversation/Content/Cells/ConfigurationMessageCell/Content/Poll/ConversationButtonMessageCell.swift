@@ -173,16 +173,21 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
 
     var accessibilityLabel: String?
 
-    init(text: String?,
-         state: ButtonMessageState,
-         hasError: Bool,
-         buttonAction: @escaping Completion) {
+    init(
+        text: String?,
+        state: ButtonMessageState,
+        hasError: Bool,
+        buttonAction: @escaping Completion
+    ) {
         configuration = View.Configuration(text: text, state: state, buttonAction: buttonAction, hasError: hasError)
     }
 }
 
 extension ConversationButtonMessageCell.Configuration: Hashable {
-    static func == (lhs: ConversationButtonMessageCell.Configuration, rhs: ConversationButtonMessageCell.Configuration) -> Bool {
+    static func == (
+        lhs: ConversationButtonMessageCell.Configuration,
+        rhs: ConversationButtonMessageCell.Configuration
+    ) -> Bool {
         lhs.hashValue == rhs.hashValue
     }
 

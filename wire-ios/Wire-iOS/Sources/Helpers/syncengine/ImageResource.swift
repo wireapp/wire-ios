@@ -28,7 +28,11 @@ extension ZMConversationMessage {
             return nil
         }
 
-        return LinkAttachmentImageResourceAdaptor(attachment: attachment, textMessageData: textMessage, urlSession: URLSession.shared)
+        return LinkAttachmentImageResourceAdaptor(
+            attachment: attachment,
+            textMessageData: textMessage,
+            urlSession: URLSession.shared
+        )
     }
 }
 
@@ -209,9 +213,11 @@ extension ImageSizeLimit {
 
 extension WireImageResource {
     /// Fetch image data and calls the completion handler when it is available on the main queue.
-    func fetchImage(cache: ImageCache<AnyObject> = MediaAssetCache.defaultImageCache,
-                    sizeLimit: ImageSizeLimit = .deviceOptimized,
-                    completion: @escaping (_ image: MediaAsset?, _ cacheHit: Bool) -> Void) {
+    func fetchImage(
+        cache: ImageCache<AnyObject> = MediaAssetCache.defaultImageCache,
+        sizeLimit: ImageSizeLimit = .deviceOptimized,
+        completion: @escaping (_ image: MediaAsset?, _ cacheHit: Bool) -> Void
+    ) {
         guard let cacheIdentifier = self.cacheIdentifier else {
             return completion(nil, false)
         }

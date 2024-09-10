@@ -68,8 +68,11 @@ public final class ConversationService: ConversationServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(context: NSManagedObjectContext,
-                participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? = nil) {
+    public init(
+        context: NSManagedObjectContext,
+        participantsServiceBuilder: ((NSManagedObjectContext) -> ConversationParticipantsServiceInterface)? =
+            nil
+    ) {
         self.context = context
         self.participantsServiceBuilder = participantsServiceBuilder ?? { syncContext in
             ConversationParticipantsService(context: syncContext)
@@ -202,7 +205,8 @@ public final class ConversationService: ConversationServiceInterface {
         accessRoles: Set<ConversationAccessRoleV2>,
         enableReceipts: Bool,
         messageProtocol: WireDataModel.MessageProtocol,
-        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void) {
+        completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
+    ) {
         func createGroup(
             withUsers users: Set<ZMUser>,
             completion: @escaping (Result<ZMConversation, ConversationCreationFailure>) -> Void
@@ -219,14 +223,20 @@ public final class ConversationService: ConversationServiceInterface {
             )
         }
 
-        createGroupFlow.checkpoint(description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
+        createGroupFlow
+            .checkpoint(
+                description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))"
+            )
         createGroup(withUsers: users) { result in
             switch result {
             case let .failure(.networkError(.unreachableDomains(domains))):
                 let unreachableUsers = users.belongingTo(domains: domains)
                 let reachableUsers = Set(users).subtracting(unreachableUsers)
 
-                self.createGroupFlow.checkpoint(description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
+                self.createGroupFlow
+                    .checkpoint(
+                        description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))"
+                    )
                 createGroup(withUsers: reachableUsers) { retryResult in
 
                     if case let .success(conversation) = retryResult {
@@ -297,7 +307,8 @@ public final class ConversationService: ConversationServiceInterface {
                         do {
                             try await self.handleMLSConversationIfNeeded(
                                 for: objectID,
-                                participantObjectIDs: Set(usersExcludingSelfUser.map(\.objectID)))
+                                participantObjectIDs: Set(usersExcludingSelfUser.map(\.objectID))
+                            )
                         } catch {
                             if error.isFailedToAddSomeUsersError {
                                 // we ignore the error a system message is inserted
@@ -331,8 +342,10 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID,
-                                               participantObjectIDs: Set<NSManagedObjectID>) async throws {
+    private func handleMLSConversationIfNeeded(
+        for conversationObjectId: NSManagedObjectID,
+        participantObjectIDs: Set<NSManagedObjectID>
+    ) async throws {
         guard let syncContext = await context.perform({ self.context.zm_sync }) else {
             assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
             return
@@ -368,7 +381,10 @@ public final class ConversationService: ConversationServiceInterface {
         let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
 
         await syncContext.perform {
-            self.createGroupFlow.checkpoint(description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))")
+            self.createGroupFlow
+                .checkpoint(
+                    description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))"
+                )
 
             // Self user is creator, so we don't need to process a welcome message
             syncConversation.mlsStatus = .ready

@@ -27,9 +27,14 @@ final class TrackingManager: NSObject, TrackingInterface {
     override private init() {
         AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
 
-        flowManagerObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: OperationQueue.main, using: { _ in
-            AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
-        })
+        flowManagerObserver = NotificationCenter.default.addObserver(
+            forName: FlowManager.AVSFlowManagerCreatedNotification,
+            object: nil,
+            queue: OperationQueue.main,
+            using: { _ in
+                AVSFlowManager.getInstance()?.setEnableMetrics(!ExtensionSettings.shared.disableAnalyticsSharing)
+            }
+        )
     }
 
     static let shared = TrackingManager()

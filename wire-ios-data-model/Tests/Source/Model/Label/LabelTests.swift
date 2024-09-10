@@ -66,7 +66,12 @@ class LabelTests: ZMBaseManagedObjectTest {
         let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: uiMOC, created: &created)
 
         // when
-        let fetchedLabel = Label.fetchOrCreate(remoteIdentifier: label!.remoteIdentifier!, create: false, in: uiMOC, created: &created)
+        let fetchedLabel = Label.fetchOrCreate(
+            remoteIdentifier: label!.remoteIdentifier!,
+            create: false,
+            in: uiMOC,
+            created: &created
+        )
 
         // then
         XCTAssertFalse(created)

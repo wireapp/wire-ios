@@ -30,8 +30,10 @@ final class ModalTopBar: UIView {
 
     let titleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
-        let label = DynamicFontLabel(fontSpec: .headerSemiboldFont,
-                                     color: textColor)
+        let label = DynamicFontLabel(
+            fontSpec: .headerSemiboldFont,
+            color: textColor
+        )
         label.textAlignment = .center
         label.accessibilityIdentifier = "Title"
 
@@ -40,8 +42,10 @@ final class ModalTopBar: UIView {
 
     let subtitleLabel: DynamicFontLabel = {
         let textColor = SemanticColors.Label.textDefault
-        let label = DynamicFontLabel(fontSpec: .smallSemiboldFont,
-                                     color: textColor)
+        let label = DynamicFontLabel(
+            fontSpec: .smallSemiboldFont,
+            color: textColor
+        )
         label.textAlignment = .center
         label.accessibilityIdentifier = "Subtitle"
 

@@ -729,7 +729,8 @@ public final class MLSService: MLSServiceInterface {
             }
 
             Task { [context] in
-                let hasRegisteredMLSClient = await context.perform { ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true }
+                let hasRegisteredMLSClient = await context
+                    .perform { ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true }
 
                 guard hasRegisteredMLSClient else {
                     self.logger.info("Skip periodic key material check since MLS is not enabled")
@@ -775,7 +776,10 @@ public final class MLSService: MLSServiceInterface {
             staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
-            WireLogger.mls.warn("failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            WireLogger.mls
+                .warn(
+                    "failed to update key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw error
         }
     }
@@ -885,7 +889,10 @@ public final class MLSService: MLSServiceInterface {
             await conversationEventProcessor.processConversationEvents(events)
 
         } catch {
-            logger.warn("failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            logger
+                .warn(
+                    "failed to add members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw error
         }
     }
@@ -952,7 +959,10 @@ public final class MLSService: MLSServiceInterface {
             let events = try await mlsActionExecutor.removeClients(clientIds, from: groupID)
             await conversationEventProcessor.processConversationEvents(events)
         } catch {
-            logger.warn("failed to remove members from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            logger
+                .warn(
+                    "failed to remove members from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw error
         }
     }
@@ -990,12 +1000,16 @@ public final class MLSService: MLSServiceInterface {
             return logWarn(abortedWithReason: "missing context")
         }
 
-        guard let clientID = await context.perform({ ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier }) else {
+        guard let clientID = await context.perform({ ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier })
+        else {
             return logWarn(abortedWithReason: "failed to get client ID")
         }
 
         do {
-            let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(clientID: clientID, context: context.notificationContext)
+            let unclaimedKeyPackageCount = try await countUnclaimedKeyPackages(
+                clientID: clientID,
+                context: context.notificationContext
+            )
             logger.info("there are \(unclaimedKeyPackageCount) unclaimed key packages")
 
             guard unclaimedKeyPackageCount <= halfOfTargetUnclaimedKeyPackageCount else {
@@ -1005,7 +1019,11 @@ public final class MLSService: MLSServiceInterface {
 
             let amount = UInt32(targetUnclaimedKeyPackageCount)
             let keyPackages = try await generateKeyPackages(amountRequested: amount)
-            try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
+            try await uploadKeyPackages(
+                clientID: clientID,
+                keyPackages: keyPackages,
+                context: context.notificationContext
+            )
             userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             logger.info("success: uploaded key packages for client \(clientID)")
         } catch {
@@ -1206,7 +1224,10 @@ public final class MLSService: MLSServiceInterface {
                         context: context
                     )
                 } catch {
-                    self.logger.warn("failed to repair out of sync conversation (\(conversationInfo.mlsGroupId.safeForLoggingDescription)). error: \(String(reflecting: error))")
+                    self.logger
+                        .warn(
+                            "failed to repair out of sync conversation (\(conversationInfo.mlsGroupId.safeForLoggingDescription)). error: \(String(reflecting: error))"
+                        )
                 }
             }
         }
@@ -1262,7 +1283,10 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
         } catch {
-            logger.warn("failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
+            logger
+                .warn(
+                    "failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))"
+                )
         }
     }
 
@@ -1319,7 +1343,10 @@ public final class MLSService: MLSServiceInterface {
                 subgroup: subgroup,
                 context: context
             ) else {
-                logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
+                logger
+                    .info(
+                        "subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))"
+                    )
                 return
             }
 
@@ -1328,9 +1355,15 @@ public final class MLSService: MLSServiceInterface {
                 subgroupID: subgroup.groupID
             )
 
-            logger.info("repaired out of sync subgroup! (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
+            logger
+                .info(
+                    "repaired out of sync subgroup! (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))"
+                )
         } catch {
-            logger.warn("failed to repair subgroup (parent: \(parentGroupID.safeForLoggingDescription)). error: \(String(describing: error))")
+            logger
+                .warn(
+                    "failed to repair subgroup (parent: \(parentGroupID.safeForLoggingDescription)). error: \(String(describing: error))"
+                )
         }
     }
 
@@ -1349,14 +1382,16 @@ public final class MLSService: MLSServiceInterface {
 
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
-    private func outOfSyncConversations(in context: NSManagedObjectContext) async throws -> [OutOfSyncConversationInfo] {
+    private func outOfSyncConversations(in context: NSManagedObjectContext) async throws
+        -> [OutOfSyncConversationInfo] {
         let conversations = try await coreCrypto.perform { coreCrypto in
 
             let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
             var outOfSyncConversations = [ZMConversation]()
             for conversation in allMLSConversations {
-                guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
+                guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context)
+                else { continue }
                 outOfSyncConversations.append(conversation)
             }
             return outOfSyncConversations
@@ -1398,7 +1433,10 @@ public final class MLSService: MLSServiceInterface {
             logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
             return localEpoch < epoch
         } catch {
-            logger.info("cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))")
+            logger
+                .info(
+                    "cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))"
+                )
             return false
         }
     }
@@ -1426,10 +1464,12 @@ public final class MLSService: MLSServiceInterface {
         do {
             let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let proposal = try await coreCrypto.perform {
-                try await $0.newExternalAddProposal(conversationId: groupID.data,
-                                                    epoch: epoch,
-                                                    ciphersuite: ciphersuite,
-                                                    credentialType: .basic)
+                try await $0.newExternalAddProposal(
+                    conversationId: groupID.data,
+                    epoch: epoch,
+                    ciphersuite: ciphersuite,
+                    credentialType: .basic
+                )
             }
 
             try await sendProposal(proposal, groupID: groupID)
@@ -1459,7 +1499,10 @@ public final class MLSService: MLSServiceInterface {
             await conversationEventProcessor.processConversationEvents(updateEvents)
 
         } catch {
-            logger.warn("failed to send proposal in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            logger
+                .warn(
+                    "failed to send proposal in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw MLSSendProposalError.failedToSendProposal
         }
     }
@@ -1504,7 +1547,8 @@ public final class MLSService: MLSServiceInterface {
         let subgroupID = subgroupIDAndType?.0
         let subgroupType = subgroupIDAndType?.1
 
-        let logInfo = "parent: \(parentID.safeForLoggingDescription), subgroup: \(String(describing: subgroupID?.safeForLoggingDescription)), subgroup type: \(String(describing: subgroupType))"
+        let logInfo =
+            "parent: \(parentID.safeForLoggingDescription), subgroup: \(String(describing: subgroupID?.safeForLoggingDescription)), subgroup type: \(String(describing: subgroupType))"
 
         do {
             logger.info("sending external commit to join group (\(logInfo))")
@@ -1675,8 +1719,10 @@ public final class MLSService: MLSServiceInterface {
 
         for conversation in conversations {
             let (groupID, timestamp) = await context.perform {
-                (conversation.mlsGroupID,
-                 conversation.commitPendingProposalDate)
+                (
+                    conversation.mlsGroupID,
+                    conversation.commitPendingProposalDate
+                )
             }
 
             guard let groupID, let timestamp else {
@@ -1741,7 +1787,10 @@ public final class MLSService: MLSServiceInterface {
             logger.info("no proposals to commit in group (\(groupID.safeForLoggingDescription))...")
             clearPendingProposalCommitDate(for: groupID)
         } catch {
-            logger.info("failed to commit pending proposals in \(groupID.safeForLoggingDescription): \(String(describing: error))")
+            logger
+                .info(
+                    "failed to commit pending proposals in \(groupID.safeForLoggingDescription): \(String(describing: error))"
+                )
             throw error
         }
     }
@@ -1856,7 +1905,10 @@ public final class MLSService: MLSServiceInterface {
 
             return subgroup.groupID
         } catch {
-            logger.error("failed to create or join subgroup in parent conversation (\(parentQualifiedID)): \(String(describing: error))")
+            logger
+                .error(
+                    "failed to create or join subgroup in parent conversation (\(parentQualifiedID)): \(String(describing: error))"
+                )
             throw error
         }
     }
@@ -1888,7 +1940,10 @@ public final class MLSService: MLSServiceInterface {
             _ = try await createGroup(for: id, parentGroupID: parentID)
             try await updateKeyMaterial(for: id)
         } catch {
-            logger.error("failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))")
+            logger
+                .error(
+                    "failed to create subgroup with id (\(id.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw SubgroupFailure.failedToCreateSubgroup
         }
     }
@@ -1906,7 +1961,8 @@ public final class MLSService: MLSServiceInterface {
         try await deleteSubgroup(
             parentID: parentQualifiedID,
             subgroup: subgroup,
-            context: notificationContext)
+            context: notificationContext
+        )
     }
 
     private func deleteSubgroup(
@@ -1935,14 +1991,20 @@ public final class MLSService: MLSServiceInterface {
         subgroupID: MLSGroupID
     ) async throws {
         do {
-            logger.info("joining subgroup (parent: \(parentID.safeForLoggingDescription), subgroup: \(subgroupID.safeForLoggingDescription))")
+            logger
+                .info(
+                    "joining subgroup (parent: \(parentID.safeForLoggingDescription), subgroup: \(subgroupID.safeForLoggingDescription))"
+                )
             try await joinSubgroupByExternalCommit(
                 parentID: parentID,
                 subgroupID: subgroupID,
                 subgroupType: .conference
             )
         } catch {
-            logger.error("failed to join subgroup (parent: \(parentID.safeForLoggingDescription), subgroup: \(subgroupID.safeForLoggingDescription)): \(String(describing: error))")
+            logger
+                .error(
+                    "failed to join subgroup (parent: \(parentID.safeForLoggingDescription), subgroup: \(subgroupID.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw SubgroupFailure.failedToJoinSubgroup
         }
     }
@@ -2031,7 +2093,10 @@ public final class MLSService: MLSServiceInterface {
                 try await $0.wipeConversation(conversationId: subconversationGroupID.data)
             }
         } catch {
-            logger.error("failed to leave subconversation (\(subconversationType)) with parent (\(parentQualifiedID)): \(String(describing: error))")
+            logger
+                .error(
+                    "failed to leave subconversation (\(subconversationType)) with parent (\(parentQualifiedID)): \(String(describing: error))"
+                )
             throw error
         }
     }

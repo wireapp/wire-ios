@@ -52,37 +52,41 @@ class SnapshotCenterTests: BaseZMMessageTests {
         guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot") }
 
         // then
-        let expectedAttributes: [String: NSObject?] = ["userDefinedName": nil,
-                                                       "internalEstimatedUnreadCount": 0 as NSObject?,
-                                                       "hasUnreadUnsentMessage": 0 as NSObject?,
-                                                       "archivedChangedTimestamp": nil,
-                                                       "isSelfAnActiveMember": 1 as NSObject?,
-                                                       "draftMessageText": nil,
-                                                       "modifiedKeys": nil,
-                                                       "securityLevel": 0 as NSObject?,
-                                                       "lastServerTimeStamp": nil,
-                                                       "localMessageDestructionTimeout": 0 as NSObject?,
-                                                       "syncedMessageDestructionTimeout": 0 as NSObject?,
-                                                       "clearedTimeStamp": nil,
-                                                       "needsToBeUpdatedFromBackend": 0 as NSObject?,
-                                                       "lastUnreadKnockDate": nil,
-                                                       "conversationType": 0 as NSObject?,
-                                                       "internalIsArchived": 0 as NSObject?,
-                                                       "lastModifiedDate": nil,
-                                                       "silencedChangedTimestamp": nil,
-                                                       "lastUnreadMissedCallDate": nil,
-                                                       "voiceChannel": nil,
-                                                       "remoteIdentifier_data": nil,
-                                                       "lastReadServerTimeStamp": nil,
-                                                       "normalizedUserDefinedName": nil,
-                                                       "remoteIdentifier": nil,
-                                                       "mutedStatus": 0 as NSObject?]
-        let expectedToManyRelationships = ["hiddenMessages": 0,
-                                           "participantRoles": 0,
-                                           "allMessages": 0,
-                                           "labels": 0,
-                                           "nonTeamRoles": 0,
-                                           "lastServerSyncedActiveParticipants": 0]
+        let expectedAttributes: [String: NSObject?] = [
+            "userDefinedName": nil,
+            "internalEstimatedUnreadCount": 0 as NSObject?,
+            "hasUnreadUnsentMessage": 0 as NSObject?,
+            "archivedChangedTimestamp": nil,
+            "isSelfAnActiveMember": 1 as NSObject?,
+            "draftMessageText": nil,
+            "modifiedKeys": nil,
+            "securityLevel": 0 as NSObject?,
+            "lastServerTimeStamp": nil,
+            "localMessageDestructionTimeout": 0 as NSObject?,
+            "syncedMessageDestructionTimeout": 0 as NSObject?,
+            "clearedTimeStamp": nil,
+            "needsToBeUpdatedFromBackend": 0 as NSObject?,
+            "lastUnreadKnockDate": nil,
+            "conversationType": 0 as NSObject?,
+            "internalIsArchived": 0 as NSObject?,
+            "lastModifiedDate": nil,
+            "silencedChangedTimestamp": nil,
+            "lastUnreadMissedCallDate": nil,
+            "voiceChannel": nil,
+            "remoteIdentifier_data": nil,
+            "lastReadServerTimeStamp": nil,
+            "normalizedUserDefinedName": nil,
+            "remoteIdentifier": nil,
+            "mutedStatus": 0 as NSObject?,
+        ]
+        let expectedToManyRelationships = [
+            "hiddenMessages": 0,
+            "participantRoles": 0,
+            "allMessages": 0,
+            "labels": 0,
+            "nonTeamRoles": 0,
+            "lastServerSyncedActiveParticipants": 0,
+        ]
 
         expectedAttributes.forEach {
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1)
@@ -112,36 +116,45 @@ class SnapshotCenterTests: BaseZMMessageTests {
         guard let snapshot = sut.snapshots[conv.objectID] else { return XCTFail("did not create snapshot") }
 
         // then
-        let expectedAttributes: [String: NSObject?] = ["userDefinedName": conv.userDefinedName as NSObject?,
-                                                       "internalEstimatedUnreadCount": 0 as NSObject?,
-                                                       "hasUnreadUnsentMessage": 0 as NSObject?,
-                                                       "archivedChangedTimestamp": nil,
-                                                       "draftMessageText": nil,
-                                                       "modifiedKeys": nil,
-                                                       "securityLevel": 0 as NSObject?,
-                                                       "lastServerTimeStamp": conv.lastServerTimeStamp as NSObject?,
-                                                       "localMessageDestructionTimeout": 0 as NSObject?,
-                                                       "syncedMessageDestructionTimeout": 0 as NSObject?,
-                                                       "clearedTimeStamp": nil,
-                                                       "needsToBeUpdatedFromBackend": 0 as NSObject?,
-                                                       "lastUnreadKnockDate": conv.lastUnreadKnockDate as NSObject?,
-                                                       "conversationType": conv.conversationType.rawValue as NSObject?,
-                                                       "internalIsArchived": 0 as NSObject?,
-                                                       "lastModifiedDate": conv.lastModifiedDate as NSObject?,
-                                                       "silencedChangedTimestamp": conv.silencedChangedTimestamp as NSObject?,
-                                                       "lastUnreadMissedCallDate": conv.lastUnreadMissedCallDate as NSObject?,
-                                                       "voiceChannel": nil,
-                                                       "remoteIdentifier_data": nil,
-                                                       "lastReadServerTimeStamp": conv.lastReadServerTimeStamp as NSObject?,
-                                                       "normalizedUserDefinedName": conv.normalizedUserDefinedName as NSObject?,
-                                                       "remoteIdentifier": nil,
-                                                       "mutedStatus": (MutedMessageOptionValue.all.rawValue) as NSObject?]
-        let expectedToManyRelationships = ["hiddenMessages": 0,
-                                           "participantRoles": 0,
-                                           "allMessages": 1,
-                                           "labels": 0,
-                                           "nonTeamRoles": 0,
-                                           "lastServerSyncedActiveParticipants": 0]
+        let expectedAttributes: [String: NSObject?] = [
+            "userDefinedName": conv.userDefinedName as NSObject?,
+            "internalEstimatedUnreadCount": 0 as NSObject?,
+            "hasUnreadUnsentMessage": 0 as NSObject?,
+            "archivedChangedTimestamp": nil,
+            "draftMessageText": nil,
+            "modifiedKeys": nil,
+            "securityLevel": 0 as NSObject?,
+            "lastServerTimeStamp": conv.lastServerTimeStamp as NSObject?,
+            "localMessageDestructionTimeout": 0 as NSObject?,
+            "syncedMessageDestructionTimeout": 0 as NSObject?,
+            "clearedTimeStamp": nil,
+            "needsToBeUpdatedFromBackend": 0 as NSObject?,
+            "lastUnreadKnockDate": conv.lastUnreadKnockDate as NSObject?,
+            "conversationType": conv.conversationType.rawValue as NSObject?,
+            "internalIsArchived": 0 as NSObject?,
+            "lastModifiedDate": conv.lastModifiedDate as NSObject?,
+            "silencedChangedTimestamp": conv
+                .silencedChangedTimestamp as NSObject?,
+            "lastUnreadMissedCallDate": conv
+                .lastUnreadMissedCallDate as NSObject?,
+            "voiceChannel": nil,
+            "remoteIdentifier_data": nil,
+            "lastReadServerTimeStamp": conv
+                .lastReadServerTimeStamp as NSObject?,
+            "normalizedUserDefinedName": conv
+                .normalizedUserDefinedName as NSObject?,
+            "remoteIdentifier": nil,
+            "mutedStatus": (MutedMessageOptionValue.all
+                .rawValue) as NSObject?,
+        ]
+        let expectedToManyRelationships = [
+            "hiddenMessages": 0,
+            "participantRoles": 0,
+            "allMessages": 1,
+            "labels": 0,
+            "nonTeamRoles": 0,
+            "lastServerSyncedActiveParticipants": 0,
+        ]
 
         let expectedToOneRelationships: [String: NSManagedObjectID] =
             ["creator": conv.creator.objectID]
@@ -191,12 +204,14 @@ class SnapshotCenterTests: BaseZMMessageTests {
         let changedKeys = sut.extractChangedKeysFromSnapshot(for: conv)
 
         // then
-        XCTAssertEqual(changedKeys, Set(conv.entity.attributesByName.keys).union(["hiddenMessages",
-                                                                                  "participantRoles",
-                                                                                  "allMessages",
-                                                                                  "labels",
-                                                                                  "nonTeamRoles",
-                                                                                  "lastServerSyncedActiveParticipants"]))
+        XCTAssertEqual(changedKeys, Set(conv.entity.attributesByName.keys).union([
+            "hiddenMessages",
+            "participantRoles",
+            "allMessages",
+            "labels",
+            "nonTeamRoles",
+            "lastServerSyncedActiveParticipants",
+        ]))
     }
 
     func testThatItUpatesTheSnapshotForParticipantRole() {

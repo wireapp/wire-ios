@@ -39,7 +39,8 @@ extension UIViewController {
     }
 }
 
-final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UIScrollViewDelegate {
+final class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource,
+    UIScrollViewDelegate {
     weak var delegate: TabBarControllerDelegate?
 
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
@@ -158,14 +159,20 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         let forward = toIndex > fromIndex
         let direction = forward ? UIPageViewController.NavigationDirection.forward : .reverse
 
-        pageViewController.setViewControllers([toViewController], direction: direction, animated: isInteractive) { [delegate, tabBar] complete in
+        pageViewController.setViewControllers([toViewController], direction: direction, animated: isInteractive) { [
+            delegate,
+            tabBar
+        ] complete in
             guard complete else { return }
             tabBar?.setSelectedIndex(index, animated: animated)
             delegate?.tabBarController(self, tabBarDidSelectIndex: index)
         }
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
         viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 + 1
             guard index >= 0, index < viewControllers.count else { return nil }
@@ -173,7 +180,10 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
         }
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
         viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 - 1
             guard index >= 0, index < viewControllers.count else { return nil }

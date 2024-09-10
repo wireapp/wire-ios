@@ -55,7 +55,12 @@ open class ZMAudioMetadata: ZMFileMetadata {
     public let duration: TimeInterval
     public let normalizedLoudness: [Float]
 
-    public required init(fileURL: URL, duration: TimeInterval, normalizedLoudness: [Float] = [], thumbnail: Data? = nil) {
+    public required init(
+        fileURL: URL,
+        duration: TimeInterval,
+        normalizedLoudness: [Float] = [],
+        thumbnail: Data? = nil
+    ) {
         self.duration = duration
         self.normalizedLoudness = normalizedLoudness
 

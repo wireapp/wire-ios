@@ -36,8 +36,10 @@ import WireDataModel
         context: NSManagedObjectContext,
         block: @escaping (ZMClientUpdateNotificationType, [NSManagedObjectID], NSError?) -> Void
     ) -> NSObjectProtocol {
-        NotificationInContext.addObserver(name: self.name,
-                                          context: context.notificationContext) { note in
+        NotificationInContext.addObserver(
+            name: self.name,
+            context: context.notificationContext
+        ) { note in
             guard let type = note.userInfo[self.typeKey] as? ZMClientUpdateNotificationType else { return }
             let clientObjectIDs = (note.userInfo[self.clientObjectIDsKey] as? [NSManagedObjectID]) ?? []
             let error = note.userInfo[self.errorKey] as? NSError

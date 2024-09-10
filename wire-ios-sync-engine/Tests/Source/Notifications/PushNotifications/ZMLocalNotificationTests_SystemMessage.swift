@@ -22,14 +22,32 @@ import WireTesting
 class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     // MARK: - Helpers
 
-    func noteForParticipantAdded(_ conversation: ZMConversation, aSender: ZMUser, otherUsers: Set<ZMUser>) -> ZMLocalNotification? {
-        let event = createMemberJoinUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, users: Array(otherUsers), senderID: aSender.remoteIdentifier)
+    func noteForParticipantAdded(
+        _ conversation: ZMConversation,
+        aSender: ZMUser,
+        otherUsers: Set<ZMUser>
+    ) -> ZMLocalNotification? {
+        let event = createMemberJoinUpdateEvent(
+            UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            users: Array(otherUsers),
+            senderID: aSender.remoteIdentifier
+        )
 
         return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
     }
 
-    func noteForParticipantsRemoved(_ conversation: ZMConversation, aSender: ZMUser, otherUsers: Set<ZMUser>) -> ZMLocalNotification? {
-        let event = createMemberLeaveUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, users: Array(otherUsers), senderID: aSender.remoteIdentifier)
+    func noteForParticipantsRemoved(
+        _ conversation: ZMConversation,
+        aSender: ZMUser,
+        otherUsers: Set<ZMUser>
+    ) -> ZMLocalNotification? {
+        let event = createMemberLeaveUpdateEvent(
+            UUID.create(),
+            conversationID: conversation.remoteIdentifier!,
+            users: Array(otherUsers),
+            senderID: aSender.remoteIdentifier
+        )
 
         return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
     }
@@ -80,14 +98,31 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
         let otherUserOneSet: Set<ZMUser> = [otherUser1]
         let otherUserOneAndOtherUserTwoSet: Set<ZMUser> = [otherUser1, otherUser2]
         XCTAssertNil(noteForParticipantAdded(groupConversation, aSender: sender, otherUsers: otherUserOneSet))
-        XCTAssertNil(noteForParticipantAdded(groupConversation, aSender: sender, otherUsers: otherUserOneAndOtherUserTwoSet))
-        XCTAssertNil(noteForParticipantAdded(groupConversationWithoutName, aSender: sender, otherUsers: otherUserOneSet))
-        XCTAssertNil(noteForParticipantAdded(groupConversationWithoutName, aSender: sender, otherUsers: otherUserOneAndOtherUserTwoSet))
+        XCTAssertNil(noteForParticipantAdded(
+            groupConversation,
+            aSender: sender,
+            otherUsers: otherUserOneAndOtherUserTwoSet
+        ))
+        XCTAssertNil(noteForParticipantAdded(
+            groupConversationWithoutName,
+            aSender: sender,
+            otherUsers: otherUserOneSet
+        ))
+        XCTAssertNil(noteForParticipantAdded(
+            groupConversationWithoutName,
+            aSender: sender,
+            otherUsers: otherUserOneAndOtherUserTwoSet
+        ))
     }
 
     func testThatItDoesNotCreateANotificationWhenTheUserLeaves() {
         // given
-        let event = createMemberLeaveUpdateEvent(UUID.create(), conversationID: self.groupConversation.remoteIdentifier!, users: [otherUser1], senderID: otherUser1.remoteIdentifier)
+        let event = createMemberLeaveUpdateEvent(
+            UUID.create(),
+            conversationID: self.groupConversation.remoteIdentifier!,
+            users: [otherUser1],
+            senderID: otherUser1.remoteIdentifier
+        )
 
         // when
         let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: syncMOC)
@@ -113,8 +148,20 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
 
     func testThatItDoesNotCreateNotificationsForParticipantRemoved_Other() {
         XCTAssertNil(noteForParticipantsRemoved(groupConversation, aSender: sender, otherUsers: [otherUser1]))
-        XCTAssertNil(noteForParticipantsRemoved(groupConversation, aSender: sender, otherUsers: [otherUser1, otherUser2]))
-        XCTAssertNil(noteForParticipantsRemoved(groupConversationWithoutName, aSender: sender, otherUsers: [otherUser1]))
-        XCTAssertNil(noteForParticipantsRemoved(groupConversationWithoutName, aSender: sender, otherUsers: [otherUser1, otherUser2]))
+        XCTAssertNil(noteForParticipantsRemoved(
+            groupConversation,
+            aSender: sender,
+            otherUsers: [otherUser1, otherUser2]
+        ))
+        XCTAssertNil(noteForParticipantsRemoved(
+            groupConversationWithoutName,
+            aSender: sender,
+            otherUsers: [otherUser1]
+        ))
+        XCTAssertNil(noteForParticipantsRemoved(
+            groupConversationWithoutName,
+            aSender: sender,
+            otherUsers: [otherUser1, otherUser2]
+        ))
     }
 }

@@ -71,15 +71,18 @@ final class NavigationTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         containerView.layoutIfNeeded()
 
-        UIView.animate(easing: .easeOutExpo,
-                       duration: transitionDuration(using: transitionContext),
-                       animations: {
-                           fromView.transform = fromViewEndTransform
-                           toView.transform = .identity
-                       }, completion: { _ in
-                           fromView.transform = .identity
-                           transitionContext.completeTransition(true)
-                       })
+        UIView.animate(
+            easing: .easeOutExpo,
+            duration: transitionDuration(using: transitionContext),
+            animations: {
+                fromView.transform = fromViewEndTransform
+                toView.transform = .identity
+            },
+            completion: { _ in
+                fromView.transform = .identity
+                transitionContext.completeTransition(true)
+            }
+        )
     }
 
     private var rightToLeft: Bool {

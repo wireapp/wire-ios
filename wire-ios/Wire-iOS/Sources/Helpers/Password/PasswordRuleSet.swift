@@ -52,13 +52,19 @@ public struct PasswordRuleSet: Decodable, Equatable {
      * not included in `allowedCharacters`, they will be added to that set.
      */
 
-    init(minimumLength: UInt, maximumLength: UInt, allowedCharacters: [PasswordCharacterClass], requiredCharacters: [PasswordCharacterClass]) {
+    init(
+        minimumLength: UInt,
+        maximumLength: UInt,
+        allowedCharacters: [PasswordCharacterClass],
+        requiredCharacters: [PasswordCharacterClass]
+    ) {
         self.minimumLength = minimumLength
         self.maximumLength = maximumLength
 
         // Parse the allowed and required characters
         var allowedCharacters = allowedCharacters
-        var allowedCharacterSet = allowedCharacters.reduce(into: CharacterSet()) { $0.formUnion($1.associatedCharacterSet) }
+        var allowedCharacterSet = allowedCharacters
+            .reduce(into: CharacterSet()) { $0.formUnion($1.associatedCharacterSet) }
         var requiredCharacterSets: [PasswordCharacterClass: CharacterSet] = [:]
 
         for requiredClass in requiredCharacters {
@@ -89,7 +95,12 @@ public struct PasswordRuleSet: Decodable, Equatable {
         let maximumLength = try container.decode(UInt.self, forKey: .maximumLength)
         let allowedCharacters = try container.decode([PasswordCharacterClass].self, forKey: .allowedCharacters)
         let requiredCharacters = try container.decode([PasswordCharacterClass].self, forKey: .requiredCharacters)
-        self.init(minimumLength: minimumLength, maximumLength: maximumLength, allowedCharacters: allowedCharacters, requiredCharacters: requiredCharacters)
+        self.init(
+            minimumLength: minimumLength,
+            maximumLength: maximumLength,
+            allowedCharacters: allowedCharacters,
+            requiredCharacters: requiredCharacters
+        )
     }
 
     // MARK: - Encoding

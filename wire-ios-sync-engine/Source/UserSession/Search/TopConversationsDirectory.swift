@@ -46,9 +46,10 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
     public func refreshTopConversations() {
         syncMOC.performGroupedBlock {
             let conversations = self.fetchOneOnOneConversations()
-            let countByConversation: [ZMConversation: Int] = conversations.reduce(into: .init()) { partialResult, item in
-                partialResult[item] = item.lastMonthMessageCount()
-            }
+            let countByConversation: [ZMConversation: Int] = conversations
+                .reduce(into: .init()) { partialResult, item in
+                    partialResult[item] = item.lastMonthMessageCount()
+                }
             let identifiers = countByConversation
                 .filter { _, value in value > 0 }
                 .sorted { $0.1 > $1.1 }
@@ -90,7 +91,8 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
         guard let ids = self.uiMOC.persistentStoreMetadata(forKey: topConversationsObjectIDKey) as? [String] else {
             return
         }
-        let managedObjectIDs = ids.compactMap(URL.init).compactMap { self.uiMOC.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: $0) }
+        let managedObjectIDs = ids.compactMap(URL.init)
+            .compactMap { self.uiMOC.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: $0) }
         self.topConversationsCache = managedObjectIDs.compactMap { self.uiMOC.object(with: $0) as? ZMConversation }
     }
 }
@@ -107,7 +109,10 @@ struct TopConversationsDirectoryNotification: SelfPostingNotification {
 
 extension TopConversationsDirectory {
     @objc(addObserver:) public func add(observer: TopConversationsDirectoryObserver) -> Any {
-        NotificationInContext.addObserver(name: TopConversationsDirectoryNotification.notificationName, context: uiMOC.notificationContext) { [weak observer] _ in
+        NotificationInContext.addObserver(
+            name: TopConversationsDirectoryNotification.notificationName,
+            context: uiMOC.notificationContext
+        ) { [weak observer] _ in
             observer?.topConversationsDidChange()
         }
     }
@@ -115,8 +120,16 @@ extension TopConversationsDirectory {
 
 extension ZMConversation {
     fileprivate static var predicateForActiveOneOnOneConversations: NSPredicate {
-        let oneOnOnePredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.conversationType), ZMConversationType.oneOnOne.rawValue)
-        let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.oneOnOneUser.connection.status), ZMConnectionStatus.accepted.rawValue)
+        let oneOnOnePredicate = NSPredicate(
+            format: "%K == %d",
+            #keyPath(ZMConversation.conversationType),
+            ZMConversationType.oneOnOne.rawValue
+        )
+        let acceptedPredicate = NSPredicate(
+            format: "%K == %d",
+            #keyPath(ZMConversation.oneOnOneUser.connection.status),
+            ZMConnectionStatus.accepted.rawValue
+        )
         return NSCompoundPredicate(andPredicateWithSubpredicates: [oneOnOnePredicate, acceptedPredicate])
     }
 

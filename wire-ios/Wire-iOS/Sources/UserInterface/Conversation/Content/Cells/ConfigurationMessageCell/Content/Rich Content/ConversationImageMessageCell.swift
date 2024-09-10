@@ -110,8 +110,10 @@ final class ConversationImageMessageCell: UIView,
 
         aspectConstraint.map { containerView.removeConstraint($0) }
         let isRestricted = (!object.message.canBeShared && !object.isObfuscated)
-        aspectConstraint = containerView.heightAnchor.constraint(equalTo: containerView.widthAnchor,
-                                                                 multiplier: !isRestricted ? imageAspectRatio : 9 / 16)
+        aspectConstraint = containerView.heightAnchor.constraint(
+            equalTo: containerView.widthAnchor,
+            multiplier: !isRestricted ? imageAspectRatio : 9 / 16
+        )
         aspectConstraint?.isActive = true
         widthConstraint?.constant = imageSize.width
         heightConstraint?.constant = imageSize.height

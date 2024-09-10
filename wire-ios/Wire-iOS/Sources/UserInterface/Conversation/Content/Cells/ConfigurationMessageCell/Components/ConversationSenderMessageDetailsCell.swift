@@ -145,7 +145,10 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         self.trailingDateLabelConstraint = trailingDateLabelConstraint
         NSLayoutConstraint.activate([
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
-            authorLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: conversationHorizontalMargins.left),
+            authorLabel.leadingAnchor.constraint(
+                equalTo: self.leadingAnchor,
+                constant: conversationHorizontalMargins.left
+            ),
 
             dateLabel.leadingAnchor.constraint(equalTo: authorLabel.trailingAnchor, constant: 8),
             trailingDateLabelConstraint,
@@ -238,10 +241,12 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
 
         let iconSize = icon.size
 
-        let iconBounds = CGRect(x: CGFloat(0),
-                                y: (UIFont.mediumSemiboldFont.capHeight - iconSize.height) / 2.0,
-                                width: iconSize.width,
-                                height: iconSize.height)
+        let iconBounds = CGRect(
+            x: CGFloat(0),
+            y: (UIFont.mediumSemiboldFont.capHeight - iconSize.height) / 2.0,
+            width: iconSize.width,
+            height: iconSize.height
+        )
         attachment.bounds = iconBounds
         attachment.image = icon
 
@@ -326,7 +331,10 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             accessibilityLabel = ConversationAnnouncement.DeletedMessage.description(senderName)
         } else if message.updatedAt != nil {
             if message.isText, let textMessageData = message.textMessageData {
-                let messageText = NSAttributedString.format(message: textMessageData, isObfuscated: message.isObfuscated)
+                let messageText = NSAttributedString.format(
+                    message: textMessageData,
+                    isObfuscated: message.isObfuscated
+                )
                 accessibilityLabel = ConversationAnnouncement.EditedMessage.description(senderName) + messageText.string
             } else {
                 accessibilityLabel = ConversationAnnouncement.EditedMessage.description(senderName)

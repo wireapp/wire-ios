@@ -33,7 +33,10 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
         migrateToMLSUserIDIn_MockError = error
     }
 
-    func setMigrateToMLSUserIDIn_MockMethod(_ method: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?) {
+    func setMigrateToMLSUserIDIn_MockMethod(_ method: (
+        (QualifiedID, NSManagedObjectContext) async throws
+            -> MLSGroupID
+    )?) {
         migrateToMLSUserIDIn_MockMethod = method
     }
 

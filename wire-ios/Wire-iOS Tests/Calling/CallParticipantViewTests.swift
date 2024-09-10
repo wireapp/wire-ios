@@ -39,7 +39,11 @@ class CallParticipantViewTests: XCTestCase {
         super.tearDown()
     }
 
-    private func createView(from stream: Wire.Stream, isCovered: Bool, pinchToZoomRule: PinchToZoomRule = .enableWhenMaximized) -> CallParticipantView {
+    private func createView(
+        from stream: Wire.Stream,
+        isCovered: Bool,
+        pinchToZoomRule: PinchToZoomRule = .enableWhenMaximized
+    ) -> CallParticipantView {
         let view = CallParticipantView(
             stream: stream,
             isCovered: isCovered,

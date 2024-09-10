@@ -21,7 +21,10 @@ import WireTransport
 import XCTest
 @testable import WireRequestStrategy
 
-final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
+final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
+    CreateGroupConversationAction,
+    CreateGroupConversationActionHandler
+> {
     typealias RequestPayload = Payload.NewConversation
     typealias ResponsePayload = Payload.Conversation
     typealias ErrorResponse = CreateGroupConversationActionHandler.ErrorResponse
@@ -40,7 +43,10 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
 
     override func setUp() {
         super.setUp()
-        sut = CreateGroupConversationActionHandler(context: syncMOC, removeLocalConversationUseCase: MockLocalConversationRemovalUseCase())
+        sut = CreateGroupConversationActionHandler(
+            context: syncMOC,
+            removeLocalConversationUseCase: MockLocalConversationRemovalUseCase()
+        )
 
         conversationID = .randomID()
         mlsGroupID = MLSGroupID(.init([1, 2, 3]))

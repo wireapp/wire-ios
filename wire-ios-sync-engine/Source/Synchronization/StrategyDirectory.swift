@@ -112,11 +112,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
-            queue: syncMOC)
+            queue: syncMOC
+        )
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(
             context: syncMOC,
-            apiProvider: apiProvider)
+            apiProvider: apiProvider
+        )
         let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
         let quickSyncObserver = QuickSyncObserver(
             context: syncMOC,
@@ -149,74 +151,95 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 syncStatus: applicationStatusDirectory.syncStatus,
                 operationStatus: applicationStatusDirectory.operationStatus,
                 useLegacyPushNotifications: useLegacyPushNotifications,
-                lastEventIDRepository: lastEventIDRepository),
+                lastEventIDRepository: lastEventIDRepository
+            ),
             FetchingClientRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             VerifyLegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ProxiedRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                requestsStatus: applicationStatusDirectory.proxiedRequestStatus),
+                requestsStatus: applicationStatusDirectory.proxiedRequestStatus
+            ),
             DeleteAccountRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                cookieStorage: cookieStorage),
+                cookieStorage: cookieStorage
+            ),
             AssetV3UploadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             AssetV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             AssetV3DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             AssetClientMessageRequestStrategy(
                 managedObjectContext: syncMOC,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ClientMessageRequestStrategy(
                 context: syncMOC,
                 localNotificationDispatcher: pushMessageHandler,
                 applicationStatus: applicationStatusDirectory,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             DeliveryReceiptRequestStrategy(
                 managedObjectContext: syncMOC,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             AvailabilityRequestStrategy(
                 context: syncMOC,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             UserPropertyRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             UserProfileUpdateRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                userProfileUpdateStatus: applicationStatusDirectory.userProfileUpdateStatus),
+                userProfileUpdateStatus: applicationStatusDirectory.userProfileUpdateStatus
+            ),
             LinkPreviewAssetUploadRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 linkPreviewPreprocessor: nil,
-                previewImagePreprocessor: nil),
+                previewImagePreprocessor: nil
+            ),
             LinkPreviewAssetDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             LinkPreviewUpdateRequestStrategy(
                 managedObjectContext: syncMOC,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             ImageV2DownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             PushTokenStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             TypingStrategy(
                 applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC),
+                managedObjectContext: syncMOC
+            ),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
                 managedObjectContext: syncMOC,
@@ -233,21 +256,25 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
                 mlsService: mlsService,
-                removeLocalConversation: RemoveLocalConversationUseCase()),
+                removeLocalConversation: RemoveLocalConversationUseCase()
+            ),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             ZMLastUpdateEventIDTranscoder(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus,
-                lastEventIDRepository: lastEventIDRepository),
+                lastEventIDRepository: lastEventIDRepository
+            ),
             ZMSelfStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                syncStatus: applicationStatusDirectory.syncStatus) as Any,
+                syncStatus: applicationStatusDirectory.syncStatus
+            ) as Any,
             SelfUserRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
@@ -258,53 +285,67 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
                 flowManager: flowManager,
                 callEventStatus: applicationStatusDirectory.callEventStatus,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             LegalHoldRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             TeamDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             TeamRolesDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             TeamMembersDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             PermissionsDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             TeamInvitationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                teamInvitationStatus: applicationStatusDirectory.teamInvitationStatus),
+                teamInvitationStatus: applicationStatusDirectory.teamInvitationStatus
+            ),
             AssetDeletionRequestStrategy(
                 context: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                identifierProvider: applicationStatusDirectory.assetDeletionStatus),
+                identifierProvider: applicationStatusDirectory.assetDeletionStatus
+            ),
             UserRichProfileRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             TeamImageAssetUpdateStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             LabelDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncStatus: applicationStatusDirectory.syncStatus),
+                syncStatus: applicationStatusDirectory.syncStatus
+            ),
             LabelUpstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ConversationRoleDownstreamRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             SignatureRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -315,7 +356,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 applicationStatus: applicationStatusDirectory
             ),
             ConversationStatusStrategy(
-                managedObjectContext: syncMOC),
+                managedObjectContext: syncMOC
+            ),
             UserClientEventConsumer(
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
@@ -327,7 +369,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
-                messageSender: messageSender),
+                messageSender: messageSender
+            ),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,

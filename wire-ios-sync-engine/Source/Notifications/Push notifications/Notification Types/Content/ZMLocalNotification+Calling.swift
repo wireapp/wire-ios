@@ -20,7 +20,8 @@
 
 extension ZMLocalNotification {
     convenience init?(callState: CallState, conversation: ZMConversation, caller: ZMUser, moc: NSManagedObjectContext) {
-        guard let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation) else { return nil }
+        guard let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation)
+        else { return nil }
         self.init(builder: builder, moc: moc)
     }
 
@@ -45,7 +46,8 @@ extension ZMLocalNotification {
             switch callState {
             case .incoming(let video, shouldRing: true, degraded: _):
                 self.callState = .incomingCall(video: video)
-            case .terminating(reason: .answeredElsewhere), .terminating(reason: .normal), .terminating(reason: .rejectedElsewhere):
+            case .terminating(reason: .answeredElsewhere), .terminating(reason: .normal),
+                 .terminating(reason: .rejectedElsewhere):
                 return nil
             case .terminating(reason: .timeout):
                 self.callState = .missedCall(cancelled: false)

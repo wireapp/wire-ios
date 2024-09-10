@@ -85,7 +85,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
-        WireLogger.backend.debug("reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)")
+        WireLogger.backend
+            .debug(
+                "reachability did change. May be reachable: \(reachability.mayBeReachable), is mobile connection: \(reachability.isMobileConnection)"
+            )
 
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
 
@@ -140,7 +143,10 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         webSocket?.delegate = self
 
         if let proxySettings = environment.proxy {
-            let proxyDictionary = proxySettings.socks5Settings(proxyUsername: proxyUsername, proxyPassword: proxyPassword)
+            let proxyDictionary = proxySettings.socks5Settings(
+                proxyUsername: proxyUsername,
+                proxyPassword: proxyPassword
+            )
 
             let configuration = URLSessionConfiguration.default
             configuration.connectionProxyDictionary = proxyDictionary
@@ -157,8 +163,11 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         let attributes: LogAttributes = [
             .selfClientId: clientID?.redactedAndTruncated(maxVisibleCharacters: 3, length: 8),
         ]
-        WireLogger.pushChannel.info("Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
-                                    attributes: attributes, .safePublic)
+        WireLogger.pushChannel.info(
+            "Connecting websocket with URL: \(websocketURL.endpointRemoteLogDescription)",
+            attributes: attributes,
+            .safePublic
+        )
     }
 
     func scheduleOpen() {

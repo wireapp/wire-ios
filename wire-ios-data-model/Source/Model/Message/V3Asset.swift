@@ -208,17 +208,20 @@ extension V3Asset: AssetProxyType {
 
     public func requestFileDownload() {
         guard !assetClientMessage.objectID.isTemporaryID else { return }
-        NotificationInContext(name: ZMAssetClientMessage.assetDownloadNotificationName,
-                              context: self.moc.notificationContext,
-                              object: assetClientMessage.objectID).post()
+        NotificationInContext(
+            name: ZMAssetClientMessage.assetDownloadNotificationName,
+            context: self.moc.notificationContext,
+            object: assetClientMessage.objectID
+        ).post()
     }
 
     public func requestPreviewDownload() {
         if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
             guard !assetClientMessage.objectID.isTemporaryID else { return }
-            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName,
-                                  context: self.moc.notificationContext,
-                                  object: assetClientMessage.objectID
+            NotificationInContext(
+                name: ZMAssetClientMessage.imageDownloadNotificationName,
+                context: self.moc.notificationContext,
+                object: assetClientMessage.objectID
             ).post()
         } else {
             return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")

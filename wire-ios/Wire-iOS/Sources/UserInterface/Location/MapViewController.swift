@@ -39,8 +39,7 @@ final class MapViewController: UIViewController {
     private let pointAnnotation = MKPointAnnotation()
     private lazy var annotationView = MKPinAnnotationView(
         annotation: pointAnnotation,
-        reuseIdentifier: String(describing: type(of: self)
-        )
+        reuseIdentifier: String(describing: type(of: self))
     )
 
     enum LayoutConstants {
@@ -80,8 +79,14 @@ final class MapViewController: UIViewController {
         mapView.addSubview(annotationView)
         annotationView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
-            annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
+            annotationView.centerXAnchor.constraint(
+                equalTo: mapView.centerXAnchor,
+                constant: LayoutConstants.annotationViewCenterXOffset
+            ),
+            annotationView.bottomAnchor.constraint(
+                equalTo: mapView.centerYAnchor,
+                constant: LayoutConstants.annotationViewBottomOffset
+            ),
             annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
             annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
         ])
@@ -100,8 +105,17 @@ final class MapViewController: UIViewController {
         mapView.addAnnotation(annotation)
     }
 
-    func setRegion(to coordinate: CLLocationCoordinate2D, latitudinalMeters: Double, longitudinalMeters: Double, animated: Bool) {
-        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: latitudinalMeters, longitudinalMeters: longitudinalMeters)
+    func setRegion(
+        to coordinate: CLLocationCoordinate2D,
+        latitudinalMeters: Double,
+        longitudinalMeters: Double,
+        animated: Bool
+    ) {
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            latitudinalMeters: latitudinalMeters,
+            longitudinalMeters: longitudinalMeters
+        )
         mapView.setRegion(region, animated: animated)
     }
 }

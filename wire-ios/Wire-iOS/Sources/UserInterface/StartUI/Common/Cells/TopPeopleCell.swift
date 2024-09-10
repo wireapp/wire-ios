@@ -103,26 +103,40 @@ final class TopPeopleCell: UICollectionViewCell {
             }
 
             var constraints: [NSLayoutConstraint] = []
-            constraints.append(contentsOf: [contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                                            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                                            contentView.topAnchor.constraint(equalTo: topAnchor),
-                                            contentView.bottomAnchor.constraint(equalTo: bottomAnchor)])
+            constraints.append(contentsOf: [
+                contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                contentView.topAnchor.constraint(equalTo: topAnchor),
+                contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            ])
 
-            constraints.append(contentsOf: [badgeUserImageView.trailingAnchor.constraint(equalTo: avatarContainer.trailingAnchor),
-                                            badgeUserImageView.leadingAnchor.constraint(equalTo: avatarContainer.leadingAnchor),
-                                            badgeUserImageView.topAnchor.constraint(equalTo: avatarContainer.topAnchor),
-                                            badgeUserImageView.bottomAnchor.constraint(equalTo: avatarContainer.bottomAnchor)])
+            constraints
+                .append(contentsOf: [
+                    badgeUserImageView.trailingAnchor
+                        .constraint(equalTo: avatarContainer.trailingAnchor),
+                    badgeUserImageView.leadingAnchor
+                        .constraint(equalTo: avatarContainer.leadingAnchor),
+                    badgeUserImageView.topAnchor.constraint(equalTo: avatarContainer.topAnchor),
+                    badgeUserImageView.bottomAnchor
+                        .constraint(equalTo: avatarContainer.bottomAnchor),
+                ])
 
             conversationImageViewSize = conversationImageView.widthAnchor.constraint(equalToConstant: 80)
             avatarViewSizeConstraint = avatarContainer.widthAnchor.constraint(equalToConstant: 80)
             constraints.append(conversationImageViewSize!)
             constraints.append(avatarViewSizeConstraint!)
 
-            constraints.append(contentsOf: [avatarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                            avatarContainer.topAnchor.constraint(equalTo: contentView.topAnchor)])
+            constraints
+                .append(contentsOf: [
+                    avatarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                    avatarContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
+                ])
 
-            constraints.append(contentsOf: [conversationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-                                            conversationImageView.topAnchor.constraint(equalTo: contentView.topAnchor)])
+            constraints
+                .append(contentsOf: [
+                    conversationImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+                    conversationImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
+                ])
 
             constraints.append(nameLabel.topAnchor.constraint(equalTo: avatarContainer.bottomAnchor, constant: 4))
 

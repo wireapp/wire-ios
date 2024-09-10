@@ -36,7 +36,11 @@ final class TestPushDispatcherClient: NSObject, PushDispatcherOptionalClient {
         return canHandleNext
     }
 
-    func receivedPushNotification(with payload: [AnyHashable: Any], from source: ZMPushNotficationType, completion: ZMPushNotificationCompletionHandler?) {
+    func receivedPushNotification(
+        with payload: [AnyHashable: Any],
+        from source: ZMPushNotficationType,
+        completion: ZMPushNotificationCompletionHandler?
+    ) {
         receivedPayloads.append(payload)
     }
 }

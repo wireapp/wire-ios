@@ -205,11 +205,13 @@ extension CallQualityControllerTests {
     }
 
     private func callQualityController_callCenterDidChange(callState: CallState, conversation: ZMConversation) {
-        sut.callCenterDidChange(callState: callState,
-                                conversation: conversation,
-                                caller: otherUser,
-                                timestamp: nil,
-                                previousCallState: nil)
+        sut.callCenterDidChange(
+            callState: callState,
+            conversation: conversation,
+            caller: otherUser,
+            timestamp: nil,
+            previousCallState: nil
+        )
     }
 }
 

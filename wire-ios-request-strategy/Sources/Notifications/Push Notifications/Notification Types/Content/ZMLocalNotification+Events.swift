@@ -21,14 +21,19 @@ import WireDataModel
 extension ZMLocalNotification {
     public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
 
-    public convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
+    public convenience init?(
+        event: ZMUpdateEvent,
+        conversation: ZMConversation?,
+        managedObjectContext moc: NSManagedObjectContext
+    ) {
         var builderType: EventNotificationBuilder.Type?
 
         switch event.type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
             guard conversation?.isForcedReadOnly != true else { break }
             guard let message = GenericMessage(from: event) else { break }
-            builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder.self
+            builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder
+                .self
 
         case .conversationCreate:
             builderType = ConversationCreateEventNotificationBuilder.self
@@ -256,7 +261,11 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
         guard
             let message = GenericMessage(from: event),
-            let contentType = LocalNotificationContentType(message: message, conversation: conversation, in: managedObjectContext)
+            let contentType = LocalNotificationContentType(
+                message: message,
+                conversation: conversation,
+                in: managedObjectContext
+            )
         else {
             return nil
         }
@@ -271,7 +280,8 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func bodyText() -> String {
-        notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {
@@ -293,7 +303,10 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
         if let conversation,
            let senderUUID = event.senderUUID,
            conversation.isMessageSilenced(message, senderID: senderUUID) {
-            Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")
+            Logging.push
+                .safePublic(
+                    "Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced"
+                )
             return false
         }
         if ZMUser.selfUser(in: moc).remoteIdentifier == event.senderUUID {
@@ -315,7 +328,11 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     let contentType: LocalNotificationContentType
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
-        guard let contentType = LocalNotificationContentType(event: event, conversation: conversation, in: managedObjectContext) else {
+        guard let contentType = LocalNotificationContentType(
+            event: event,
+            conversation: conversation,
+            in: managedObjectContext
+        ) else {
             return nil
         }
 
@@ -328,7 +345,8 @@ private class NewSystemMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func bodyText() -> String {
-        notificationType.messageBodyText(sender: sender, conversation: conversation).trimmingCharacters(in: .whitespaces)
+        notificationType.messageBodyText(sender: sender, conversation: conversation)
+            .trimmingCharacters(in: .whitespaces)
     }
 
     override var notificationType: LocalNotificationType {

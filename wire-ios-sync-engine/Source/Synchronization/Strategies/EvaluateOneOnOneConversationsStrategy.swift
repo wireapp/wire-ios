@@ -70,7 +70,10 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
                 }
             } catch {
                 await syncContext.perform {
-                    self.failCurrentSyncPhase(errorMessage: "EvaluateOneOnOneConversationsStrategy: failed to resolve all 1-1 conversations!")
+                    self
+                        .failCurrentSyncPhase(
+                            errorMessage: "EvaluateOneOnOneConversationsStrategy: failed to resolve all 1-1 conversations!"
+                        )
                 }
             }
 

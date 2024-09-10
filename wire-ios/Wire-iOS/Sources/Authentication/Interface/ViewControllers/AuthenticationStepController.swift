@@ -135,8 +135,10 @@ class AuthenticationStepController: AuthenticationStepViewController {
         let textPadding = UIEdgeInsets(top: 0, left: 32, bottom: 0, right: 32)
         let labelColor = SemanticColors.Label.textDefault
 
-        headlineLabel = DynamicFontLabel(fontSpec: .largeLightWithTextStyleFont,
-                                         color: labelColor)
+        headlineLabel = DynamicFontLabel(
+            fontSpec: .largeLightWithTextStyleFont,
+            color: labelColor
+        )
         headlineLabelContainer = ContentInsetView(headlineLabel, inset: textPadding)
         headlineLabel.textAlignment = .center
         headlineLabel.text = stepDescription.headline
@@ -190,7 +192,13 @@ class AuthenticationStepController: AuthenticationStepViewController {
         footerViewStackView.spacing = 26
         footerViewStackView.translatesAutoresizingMaskIntoConstraints = false
 
-        let subviews = [headlineLabelContainer, subtextLabelContainer, mainView, errorLabelContainer, secondaryViewsStackView].compactMap { $0 }
+        let subviews = [
+            headlineLabelContainer,
+            subtextLabelContainer,
+            mainView,
+            errorLabelContainer,
+            secondaryViewsStackView,
+        ].compactMap { $0 }
 
         contentStack = CustomSpacingStackView(customSpacedArrangedSubviews: subviews)
         contentStack.axis = .vertical
@@ -284,7 +292,12 @@ class AuthenticationStepController: AuthenticationStepViewController {
     // MARK: - Customization
 
     func setRightItem(_ title: String, withAction action: AuthenticationCoordinatorAction, accessibilityID: String) {
-        let button = UIBarButtonItem(title: title.localizedUppercase, style: .plain, target: self, action: #selector(rightItemTapped))
+        let button = UIBarButtonItem(
+            title: title.localizedUppercase,
+            style: .plain,
+            target: self,
+            action: #selector(rightItemTapped)
+        )
         button.accessibilityIdentifier = accessibilityID
         rightItemAction = action
         navigationItem.rightBarButtonItem = button
@@ -319,8 +332,18 @@ class AuthenticationStepController: AuthenticationStepViewController {
     // MARK: - Keyboard
 
     private func configureObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboardPresentation),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
 
     @objc private func handleKeyboardPresentation(notification: Notification) {
@@ -345,10 +368,12 @@ class AuthenticationStepController: AuthenticationStepViewController {
         }
 
         // Calculate the height of the content under the keyboard
-        let contentRect = CGRect(x: contentStack.frame.origin.x,
-                                 y: contentStack.frame.origin.y + currentOffset,
-                                 width: contentStack.frame.width,
-                                 height: contentStack.frame.height + minimumKeyboardSpacing)
+        let contentRect = CGRect(
+            x: contentStack.frame.origin.x,
+            y: contentStack.frame.origin.y + currentOffset,
+            width: contentStack.frame.width,
+            height: contentStack.frame.height + minimumKeyboardSpacing
+        )
 
         let offset = keyboardFrame.intersection(contentRect).height
 

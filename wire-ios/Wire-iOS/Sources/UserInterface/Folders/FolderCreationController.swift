@@ -23,14 +23,18 @@ import WireSyncEngine
 protocol FolderCreationControllerDelegate: AnyObject {
     func folderController(
         _ controller: FolderCreationController,
-        didCreateFolder folder: LabelType)
+        didCreateFolder folder: LabelType
+    )
 }
 
 final class FolderCreationController: UIViewController {
     private let collectionViewController = SectionCollectionViewController()
 
-    private lazy var nameSection = FolderCreationNameSectionController(delegate: self,
-                                                                       conversationName: conversation.displayNameWithFallback)
+    private lazy var nameSection = FolderCreationNameSectionController(
+        delegate: self,
+        conversationName: conversation
+            .displayNameWithFallback
+    )
 
     private var folderName = ""
     private var conversation: ZMConversation
@@ -121,7 +125,8 @@ final class FolderCreationController: UIViewController {
             title: FolderCreationName.Button.create,
             action: UIAction { [weak self] _ in
                 self?.tryToProceed()
-            })
+            }
+        )
 
         nextButtonItem.accessibilityIdentifier = "button.newfolder.create"
         nextButtonItem.tintColor = UIColor.accent()

@@ -55,7 +55,11 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
 
     // MARK: - Helper
 
-    private func payloadForConversationMetaData(_ conversation: ZMConversation, activeUsers: [ZMUser], teamId: UUID?) -> [String: Any] {
+    private func payloadForConversationMetaData(
+        _ conversation: ZMConversation,
+        activeUsers: [ZMUser],
+        teamId: UUID?
+    ) -> [String: Any] {
         var payload: [String: Any] = [
             "name": NSNull(),
             "type": NSNumber(value: WireDataModel.BackendConversationType.group.rawValue),

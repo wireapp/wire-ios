@@ -66,7 +66,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -87,7 +91,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         let messages = insertAssetMessages(count: 10)
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -100,7 +108,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
     func testThatItReturnsUIObjects() {
         // given
         insertAssetMessages(count: 1)
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -108,7 +120,8 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
         // then
         XCTAssertEqual(messages.count, 1)
-        guard let message = messages.first as? ZMMessage, let moc = message.managedObjectContext else { return XCTFail() }
+        guard let message = messages.first as? ZMMessage,
+              let moc = message.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(moc.zm_isUserInterfaceContext)
     }
 
@@ -118,7 +131,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -140,7 +157,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -159,7 +180,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItCallsTheDelegateWhenTheMessageCountIsZero() {
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -174,7 +199,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         insertAssetMessages(count: totalMessageCount)
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         sut.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -201,7 +230,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             // when
             self.startMeasuring()
-            self.sut = AssetCollectionBatched(conversation: self.conversation, matchingCategories: [self.defaultMatchPair], delegate: self.delegate)
+            self.sut = AssetCollectionBatched(
+                conversation: self.conversation,
+                matchingCategories: [self.defaultMatchPair],
+                delegate: self.delegate
+            )
             XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
             self.stopMeasuring()
@@ -221,7 +254,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -236,7 +273,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         uiMOC.saveOrRollback()
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -296,7 +337,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         // when
         let textMatchPair = CategoryMatch(including: .text, excluding: .none)
 
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair, textMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair, textMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -322,7 +367,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
         let onlyGif = CategoryMatch(including: .GIF, excluding: .none)
         let allImages = CategoryMatch(including: .image, excluding: .none)
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [excludingGif, onlyGif, allImages], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [excludingGif, onlyGif, allImages],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -345,7 +394,11 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         uiMOC.saveOrRollback()
 
         // when
-        sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
+        sut = AssetCollectionBatched(
+            conversation: conversation,
+            matchingCategories: [defaultMatchPair],
+            delegate: delegate
+        )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -359,8 +412,14 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItDoesNotReturnFailedToUploadAssets_Uncategorized() {
         // given
-        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
-        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: self.verySmallJPEGData()
+        )) as! ZMAssetClientMessage
+        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: self.verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         excludedMessage.transferState = .uploadingFailed
         excludedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
         includedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
@@ -380,8 +439,14 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItDoesNotReturnFailedToUploadAssets_PreCategorized() {
         // given
-        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
-        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: self.verySmallJPEGData()
+        )) as! ZMAssetClientMessage
+        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: self.verySmallJPEGData()
+        )) as! ZMAssetClientMessage
         excludedMessage.transferState = .uploadingFailed
         excludedMessage.updateCategoryCache()
         uiMOC.saveOrRollback()

@@ -55,7 +55,8 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
                 WireLogger.notifications.info("showing notification for request (\(request.identifier))")
                 contentHandler(content)
             } catch {
-                WireLogger.notifications.error("job for request (\(request.identifier)) failed: \(error.localizedDescription)")
+                WireLogger.notifications
+                    .error("job for request (\(request.identifier)) failed: \(error.localizedDescription)")
                 self?.finishWithoutShowingNotification()
             }
             self?.currentTasks[request.identifier] = nil

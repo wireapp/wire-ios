@@ -31,7 +31,10 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         )
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .slowSyncing
-        sut = ConversationRoleDownstreamRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        sut = ConversationRoleDownstreamRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus
+        )
     }
 
     override func tearDown() {
@@ -91,7 +94,9 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
 
             // when
-            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap { $0.fetchRequestForTrackedObjects() }.flatMap { try! self.syncMOC.fetch($0) as! [ZMConversation] }
+            let objs: [ZMConversation] = self.sut.contextChangeTrackers
+                .compactMap { $0.fetchRequestForTrackedObjects() }
+                .flatMap { try! self.syncMOC.fetch($0) as! [ZMConversation] }
 
             // then
             XCTAssertEqual(objs, [convo1])
@@ -124,10 +129,12 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
             // when
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            request.complete(with: ZMTransportResponse(payload: self.sampleRolesPayload as ZMTransportData,
-                                                       httpStatus: 200,
-                                                       transportSessionError: nil,
-                                                       apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: self.sampleRolesPayload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -154,10 +161,12 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
             // when
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            request.complete(with: ZMTransportResponse(payload: nil,
-                                                       httpStatus: 404,
-                                                       transportSessionError: nil,
-                                                       apiVersion: APIVersion.v0.rawValue))
+            request.complete(with: ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))

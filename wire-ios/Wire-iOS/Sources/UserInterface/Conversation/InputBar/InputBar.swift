@@ -152,7 +152,10 @@ final class InputBar: UIView {
     var placeholderColor: UIColor = SemanticColors.SearchBar.textInputViewPlaceholder
     var textColor: UIColor? = SemanticColors.SearchBar.textInputView
 
-    private lazy var rowTopInsetConstraint: NSLayoutConstraint = buttonInnerContainer.topAnchor.constraint(equalTo: buttonContainer.topAnchor, constant: -constants.buttonsBarHeight)
+    private lazy var rowTopInsetConstraint: NSLayoutConstraint = buttonInnerContainer.topAnchor.constraint(
+        equalTo: buttonContainer.topAnchor,
+        constant: -constants.buttonsBarHeight
+    )
 
     // Contains the secondaryButtonsView and buttonsView
     private let buttonInnerContainer = UIView()
@@ -160,7 +163,8 @@ final class InputBar: UIView {
     fileprivate let buttonRowSeparator = UIView()
     fileprivate let constants = InputBarConstants()
 
-    private lazy var leftAccessoryViewWidthConstraint: NSLayoutConstraint = leftAccessoryView.widthAnchor.constraint(equalToConstant: conversationHorizontalMargins.left)
+    private lazy var leftAccessoryViewWidthConstraint: NSLayoutConstraint = leftAccessoryView.widthAnchor
+        .constraint(equalToConstant: conversationHorizontalMargins.left)
 
     var isEditing: Bool {
         inputBarState.isEditing
@@ -189,7 +193,10 @@ final class InputBar: UIView {
 
     override var bounds: CGRect {
         didSet {
-            invisibleInputAccessoryView?.overriddenIntrinsicContentSize = CGSize(width: UIView.noIntrinsicMetric, height: bounds.height)
+            invisibleInputAccessoryView?.overriddenIntrinsicContentSize = CGSize(
+                width: UIView.noIntrinsicMetric,
+                height: bounds.height
+            )
         }
     }
 
@@ -223,11 +230,36 @@ final class InputBar: UIView {
 
         let notificationCenter = NotificationCenter.default
 
-        notificationCenter.addObserver(markdownView, selector: #selector(markdownView.textViewDidChangeActiveMarkdown), name: Notification.Name.MarkdownTextViewDidChangeActiveMarkdown, object: textView)
-        notificationCenter.addObserver(self, selector: #selector(textViewTextDidChange), name: UITextView.textDidChangeNotification, object: textView)
-        notificationCenter.addObserver(self, selector: #selector(textViewDidBeginEditing), name: UITextView.textDidBeginEditingNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(textViewDidEndEditing), name: UITextView.textDidEndEditingNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(sendButtonEnablingDidApplyChanges), name: NSNotification.Name.disableSendButtonChanged, object: nil)
+        notificationCenter.addObserver(
+            markdownView,
+            selector: #selector(markdownView.textViewDidChangeActiveMarkdown),
+            name: Notification.Name.MarkdownTextViewDidChangeActiveMarkdown,
+            object: textView
+        )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(textViewTextDidChange),
+            name: UITextView.textDidChangeNotification,
+            object: textView
+        )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(textViewDidBeginEditing),
+            name: UITextView.textDidBeginEditingNotification,
+            object: nil
+        )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(textViewDidEndEditing),
+            name: UITextView.textDidEndEditingNotification,
+            object: nil
+        )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(sendButtonEnablingDidApplyChanges),
+            name: NSNotification.Name.disableSendButtonChanged,
+            object: nil
+        )
     }
 
     /// Update return key type when receiving a notification (from setting->toggle send key option)
@@ -247,7 +279,12 @@ final class InputBar: UIView {
         updatePlaceholder()
         textView.lineFragmentPadding = 0
         textView.textAlignment = .natural
-        textView.textContainerInset = UIEdgeInsets(top: inputBarVerticalInset / 2, left: 0, bottom: inputBarVerticalInset / 2, right: 4)
+        textView.textContainerInset = UIEdgeInsets(
+            top: inputBarVerticalInset / 2,
+            left: 0,
+            bottom: inputBarVerticalInset / 2,
+            right: 4
+        )
         textView.placeholderTextContainerInset = UIEdgeInsets(top: 21, left: 10, bottom: 21, right: 0)
         textView.keyboardType = .default
         textView.keyboardAppearance = .default
@@ -285,7 +322,8 @@ final class InputBar: UIView {
             leftAccessoryView.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
             leftAccessoryViewWidthConstraint,
 
-            rightAccessoryStackView.trailingAnchor.constraint(equalTo: rightAccessoryStackView.superview!.trailingAnchor),
+            rightAccessoryStackView.trailingAnchor
+                .constraint(equalTo: rightAccessoryStackView.superview!.trailingAnchor),
             rightAccessoryStackView.topAnchor.constraint(equalTo: rightAccessoryStackView.superview!.topAnchor),
             rightAccessoryViewWidthConstraint,
             rightAccessoryStackView.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor),
@@ -299,8 +337,14 @@ final class InputBar: UIView {
             textView.heightAnchor.constraint(lessThanOrEqualToConstant: 120),
 
             buttonRowSeparator.topAnchor.constraint(equalTo: buttonContainer.topAnchor),
-            buttonRowSeparator.leadingAnchor.constraint(equalTo: buttonRowSeparator.superview!.leadingAnchor, constant: 16),
-            buttonRowSeparator.trailingAnchor.constraint(equalTo: buttonRowSeparator.superview!.trailingAnchor, constant: -16),
+            buttonRowSeparator.leadingAnchor.constraint(
+                equalTo: buttonRowSeparator.superview!.leadingAnchor,
+                constant: 16
+            ),
+            buttonRowSeparator.trailingAnchor.constraint(
+                equalTo: buttonRowSeparator.superview!.trailingAnchor,
+                constant: -16
+            ),
             buttonRowSeparator.heightAnchor.constraint(equalToConstant: .hairline),
 
             secondaryButtonsView.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor),

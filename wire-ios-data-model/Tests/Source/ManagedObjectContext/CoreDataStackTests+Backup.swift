@@ -90,7 +90,11 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         return result
     }
 
-    func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) throws -> URL {
+    func createBackupAndDeleteOriginalAccount(
+        accountIdentifier: UUID,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> URL {
         defer { clearStorageFolder() }
 
         // create populated account database
@@ -279,7 +283,10 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
-        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
+        directory.viewContext.setPersistentStoreMetadata(
+            "1234567890",
+            key: PersistentMetadataKey.lastUpdateEventID.rawValue
+        )
         directory.viewContext.forceSaveOrRollback()
 
         let backup = try createBackup(accountIdentifier: uuid).get()
@@ -298,9 +305,18 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
 
         // then
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue))
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue))
-        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))
+        XCTAssertNil(
+            importedDirectory.viewContext
+                .persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue)
+        )
+        XCTAssertNil(
+            importedDirectory.viewContext
+                .persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue)
+        )
+        XCTAssertNil(
+            importedDirectory.viewContext
+                .persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue)
+        )
     }
 
     func testThatItFailsWhenImportingBackupIntoWrongAccount() throws {

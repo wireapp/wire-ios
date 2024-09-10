@@ -31,9 +31,11 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         didUpdate selfUserStatus: UserStatus
     )
 
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion?)
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion?
+    )
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
@@ -42,10 +44,21 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func showPermissionDeniedViewController()
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool) -> Bool
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool
+    ) -> Bool
 
-    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
-    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(
+        _ viewModel: ConversationListViewController
+            .ViewModel
+    )
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(
+        _ viewModel: ConversationListViewController
+            .ViewModel
+    )
 }
 
 extension ConversationListViewController {
@@ -137,9 +150,11 @@ extension ConversationListViewController.ViewModel {
 
         updateObserverTokensForActiveTeam()
 
-        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
-                                                                          object: nil,
-                                                                          queue: .main) { [weak self] _ in
+        didBecomeActiveNotificationToken = notificationCenter.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
 
@@ -175,7 +190,12 @@ extension ConversationListViewController.ViewModel {
         selectedConversation = conversation
 
         viewController?.setState(.conversationList, animated: animated) { [weak self] in
-            self?.viewController?.selectOnListContentController(self?.selectedConversation, scrollTo: message, focusOnView: focus, animated: animated)
+            self?.viewController?.selectOnListContentController(
+                self?.selectedConversation,
+                scrollTo: message,
+                focusOnView: focus,
+                animated: animated
+            )
         }
     }
 
@@ -196,9 +216,14 @@ extension ConversationListViewController.ViewModel {
                         // don't show the alert there is no consent to show
                         break
                     default:
-                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                        })
+                        self?.viewController?
+                            .showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
+                                selfUser.setMarketingConsent(
+                                    to: marketingConsent,
+                                    in: userSession,
+                                    completion: { _ in }
+                                )
+                            })
                     }
                 case .success:
                     // The user already gave a marketing consent, no need to ask for it again.

@@ -80,20 +80,25 @@ extension ZMConversation: ObjectInSnapshot {
     }
 
     public var participantsChanged: Bool {
-        changedKeysContain(keys: #keyPath(ZMConversation.localParticipantRoles),
-                           #keyPath(ZMConversation.isSelfAnActiveMember),
-                           #keyPath(ZMConversation.participantRoles)
+        changedKeysContain(
+            keys: #keyPath(ZMConversation.localParticipantRoles),
+            #keyPath(ZMConversation.isSelfAnActiveMember),
+            #keyPath(ZMConversation.participantRoles)
         )
     }
 
     public var activeParticipantsChanged: Bool {
-        changedKeysContain(keys: #keyPath(ZMConversation.isSelfAnActiveMember),
-                           #keyPath(ZMConversation.localParticipants))
+        changedKeysContain(
+            keys: #keyPath(ZMConversation.isSelfAnActiveMember),
+            #keyPath(ZMConversation.localParticipants)
+        )
     }
 
     public var nameChanged: Bool {
-        changedKeysContain(keys: #keyPath(ZMConversation.displayName),
-                           #keyPath(ZMConversation.userDefinedName)) || activeParticipantsChanged
+        changedKeysContain(
+            keys: #keyPath(ZMConversation.displayName),
+            #keyPath(ZMConversation.userDefinedName)
+        ) || activeParticipantsChanged
     }
 
     public var lastModifiedDateChanged: Bool {
@@ -232,9 +237,11 @@ extension ConversationChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forConversation:)
     public static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .ConversationChange,
-                                   managedObjectContext: conversation.managedObjectContext!,
-                                   object: conversation) { [weak observer] note in
+        ManagedObjectObserverToken(
+            name: .ConversationChange,
+            managedObjectContext: conversation.managedObjectContext!,
+            object: conversation
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? ConversationChangeInfo
             else { return }
@@ -248,11 +255,14 @@ extension ConversationChangeInfo {
 extension ConversationChangeInfo {
     @objc public var causedByConversationPrivacyChange: Bool {
         if mlsVerificationStatusChanged {
-            return conversation.mlsVerificationStatus == .degraded && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+            return conversation.mlsVerificationStatus == .degraded && !self.conversation
+                .messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if securityLevelChanged {
-            return conversation.securityLevel == .secureWithIgnored && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+            return conversation.securityLevel == .secureWithIgnored && !self.conversation
+                .messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if legalHoldStatusChanged {
-            return conversation.legalHoldStatus == .pendingApproval && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+            return conversation.legalHoldStatus == .pendingApproval && !self.conversation
+                .messagesThatCausedSecurityLevelDegradation.isEmpty
         }
 
         return false

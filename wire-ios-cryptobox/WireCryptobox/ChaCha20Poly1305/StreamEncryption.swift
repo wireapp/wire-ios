@@ -63,7 +63,10 @@ extension ChaCha20Poly1305 {
                     }
                 }
 
-                static func partition(buffer: [UInt8], _ into: (_ partition: ArraySlice<UInt8>, _ field: Field) throws -> Void) throws {
+                static func partition(
+                    buffer: [UInt8],
+                    _ into: (_ partition: ArraySlice<UInt8>, _ field: Field) throws -> Void
+                ) throws {
                     guard buffer.count == Field.sizeOfAllFields else {
                         throw EncryptionError.malformedHeader
                     }
@@ -97,7 +100,11 @@ extension ChaCha20Poly1305 {
                     case .emptySpace:
                         break
                     case .version:
-                        guard UInt16(bigEndian: Data(Array(partition)).withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }) == Header.version else {
+                        guard UInt16(
+                            bigEndian: Data(Array(partition))
+                                .withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }
+                        ) == Header
+                            .version else {
                             throw EncryptionError.malformedHeader
                         }
                     case .salt:
@@ -148,14 +155,16 @@ extension ChaCha20Poly1305 {
 
                 let hashSize = 32
                 var hash = [UInt8](repeating: 0, count: hashSize)
-                guard crypto_pwhash_argon2i(&hash,
-                                            UInt64(hashSize),
-                                            uuidAsBytes.map(Int8.init),
-                                            UInt64(uuidAsBytes.count),
-                                            salt,
-                                            UInt64(crypto_pwhash_argon2i_OPSLIMIT_INTERACTIVE),
-                                            Int(crypto_pwhash_argon2i_MEMLIMIT_INTERACTIVE),
-                                            crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
+                guard crypto_pwhash_argon2i(
+                    &hash,
+                    UInt64(hashSize),
+                    uuidAsBytes.map(Int8.init),
+                    UInt64(uuidAsBytes.count),
+                    salt,
+                    UInt64(crypto_pwhash_argon2i_OPSLIMIT_INTERACTIVE),
+                    Int(crypto_pwhash_argon2i_MEMLIMIT_INTERACTIVE),
+                    crypto_pwhash_argon2i_ALG_ARGON2I13
+                ) == 0 else {
                     throw EncryptionError.keyGenerationFailed
                 }
 
@@ -185,13 +194,16 @@ extension ChaCha20Poly1305 {
             public init(password: String, salt: [UInt8]) throws {
                 var buffer = [UInt8](repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_KEYBYTES))
 
-                guard crypto_pwhash_argon2i(&buffer,
-                                            UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
-                                            password, UInt64(password.lengthOfBytes(using: .utf8)),
-                                            salt,
-                                            UInt64(crypto_pwhash_argon2i_OPSLIMIT_MODERATE),
-                                            Int(crypto_pwhash_argon2i_MEMLIMIT_MODERATE),
-                                            crypto_pwhash_argon2i_ALG_ARGON2I13) == 0 else {
+                guard crypto_pwhash_argon2i(
+                    &buffer,
+                    UInt64(crypto_secretstream_xchacha20poly1305_KEYBYTES),
+                    password,
+                    UInt64(password.lengthOfBytes(using: .utf8)),
+                    salt,
+                    UInt64(crypto_pwhash_argon2i_OPSLIMIT_MODERATE),
+                    Int(crypto_pwhash_argon2i_MEMLIMIT_MODERATE),
+                    crypto_pwhash_argon2i_ALG_ARGON2I13
+                ) == 0 else {
                     throw EncryptionError.keyGenerationFailed
                 }
 
@@ -277,7 +289,16 @@ extension ChaCha20Poly1305 {
                 var cipherLength: UInt64 = 0
                 let tag: UInt8 = input.hasBytesAvailable ? 0 : UInt8(crypto_secretstream_xchacha20poly1305_TAG_FINAL)
 
-                guard crypto_secretstream_xchacha20poly1305_push(&state, &cipherBuffer, &cipherLength, messageBuffer, messageLength, nil, 0, tag) == 0 else {
+                guard crypto_secretstream_xchacha20poly1305_push(
+                    &state,
+                    &cipherBuffer,
+                    &cipherLength,
+                    messageBuffer,
+                    messageLength,
+                    nil,
+                    0,
+                    tag
+                ) == 0 else {
                     throw EncryptionError.encryptionFailed
                 }
 
@@ -334,7 +355,8 @@ extension ChaCha20Poly1305 {
             var state = crypto_secretstream_xchacha20poly1305_state()
             var chachaHeader = [UInt8](repeating: 0, count: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES))
 
-            guard input.read(&chachaHeader, maxLength: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES)) > 0  else {
+            guard input.read(&chachaHeader, maxLength: Int(crypto_secretstream_xchacha20poly1305_HEADERBYTES)) > 0
+            else {
                 throw EncryptionError.readError(input.streamError ?? EncryptionError.unexpectedStreamEnd)
             }
 
@@ -355,7 +377,16 @@ extension ChaCha20Poly1305 {
                 var messageLength: UInt64 = 0
                 let cipherLength = UInt64(bytesRead)
 
-                guard crypto_secretstream_xchacha20poly1305_pull(&state, &messageBuffer, &messageLength, &tag, cipherBuffer, cipherLength, nil, 0) == 0 else {
+                guard crypto_secretstream_xchacha20poly1305_pull(
+                    &state,
+                    &messageBuffer,
+                    &messageLength,
+                    &tag,
+                    cipherBuffer,
+                    cipherLength,
+                    nil,
+                    0
+                ) == 0 else {
                     throw EncryptionError.decryptionFailed
                 }
 

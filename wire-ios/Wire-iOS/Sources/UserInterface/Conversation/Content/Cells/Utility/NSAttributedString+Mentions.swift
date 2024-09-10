@@ -66,7 +66,12 @@ extension URL {
 }
 
 extension NSMutableAttributedString {
-    private static func mention(for user: UserType, name: String, link: URL, suggestedAttributes: [NSAttributedString.Key: Any] = [:]) -> NSAttributedString {
+    private static func mention(
+        for user: UserType,
+        name: String,
+        link: URL,
+        suggestedAttributes: [NSAttributedString.Key: Any] = [:]
+    ) -> NSAttributedString {
         let color: UIColor
         let backgroundColor: UIColor
 
@@ -83,10 +88,12 @@ extension NSMutableAttributedString {
         let mentionFont = suggestedFont.isBold ? suggestedFont : suggestedFont.withWeight(.semibold)
         let paragraphStyle = suggestedAttributes[.paragraphStyle] ?? NSParagraphStyle.default
 
-        var atAttributes: [NSAttributedString.Key: Any] = [.font: atFont,
-                                                           .foregroundColor: color,
-                                                           .backgroundColor: backgroundColor,
-                                                           .paragraphStyle: paragraphStyle]
+        var atAttributes: [NSAttributedString.Key: Any] = [
+            .font: atFont,
+            .foregroundColor: color,
+            .backgroundColor: backgroundColor,
+            .paragraphStyle: paragraphStyle,
+        ]
 
         if !user.isSelfUser {
             atAttributes[NSAttributedString.Key.link] = link as NSObject
@@ -94,10 +101,12 @@ extension NSMutableAttributedString {
 
         let atString = "@" && atAttributes
 
-        var mentionAttributes: [NSAttributedString.Key: Any] = [.font: mentionFont,
-                                                                .foregroundColor: color,
-                                                                .backgroundColor: backgroundColor,
-                                                                .paragraphStyle: paragraphStyle]
+        var mentionAttributes: [NSAttributedString.Key: Any] = [
+            .font: mentionFont,
+            .foregroundColor: color,
+            .backgroundColor: backgroundColor,
+            .paragraphStyle: paragraphStyle,
+        ]
 
         if !user.isSelfUser {
             mentionAttributes[NSAttributedString.Key.link] = link as NSObject
@@ -108,8 +117,10 @@ extension NSMutableAttributedString {
         return atString + mentionText
     }
 
-    func highlight(mentions: [TextMarker<Mention>],
-                   paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle) {
+    func highlight(
+        mentions: [TextMarker<Mention>],
+        paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle
+    ) {
         for textObject in mentions {
             let mentionRange = mutableString.range(of: textObject.token)
 
@@ -120,10 +131,12 @@ extension NSMutableAttributedString {
 
             var attributes = self.attributes(at: mentionRange.location, effectiveRange: nil)
             attributes[.paragraphStyle] = paragraphStyle
-            let replacementString = NSMutableAttributedString.mention(for: textObject.value.user,
-                                                                      name: textObject.replacementText,
-                                                                      link: textObject.value.link,
-                                                                      suggestedAttributes: attributes)
+            let replacementString = NSMutableAttributedString.mention(
+                for: textObject.value.user,
+                name: textObject.replacementText,
+                link: textObject.value.link,
+                suggestedAttributes: attributes
+            )
 
             self.replaceCharacters(in: mentionRange, with: replacementString)
         }

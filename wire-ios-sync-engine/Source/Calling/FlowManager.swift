@@ -49,7 +49,13 @@ extension FlowManager: AVSFlowManagerDelegate {
         // no-op
     }
 
-    public func request(withPath path: String!, method: String!, mediaType mtype: String!, content: Data!, context ctx: UnsafeRawPointer!) -> Bool {
+    public func request(
+        withPath path: String!,
+        method: String!,
+        mediaType mtype: String!,
+        content: Data!,
+        context ctx: UnsafeRawPointer!
+    ) -> Bool {
         // no-op
         false
     }

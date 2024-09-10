@@ -23,7 +23,10 @@ extension ConversationListViewController: NetworkStatusBarDelegate {
         CGFloat.NetworkStatusBar.bottomMargin
     }
 
-    func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation) -> Bool {
+    func showInIPad(
+        networkStatusViewController: NetworkStatusViewController,
+        with orientation: UIInterfaceOrientation
+    ) -> Bool {
         // do not show on iPad for any orientation in regular mode
         false
     }

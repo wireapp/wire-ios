@@ -219,7 +219,8 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
             // Notifications, Archive, Delete Contents if available for every 1:1
             if let conversation {
-                let notificationAction: ProfileAction = viewer.isTeamMember ? .manageNotifications : .mute(isMuted: conversation.mutedMessageTypes != .none)
+                let notificationAction: ProfileAction = viewer
+                    .isTeamMember ? .manageNotifications : .mute(isMuted: conversation.mutedMessageTypes != .none)
                 actions.append(contentsOf: [notificationAction, .archive, .deleteContents])
             }
 

@@ -46,7 +46,12 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
         self.identifier = .none
     }
 
-    init(title: String, isDestructive: Bool, selectAction: @escaping (SettingsCellDescriptorType) -> Void, visibilityAction: ((SettingsCellDescriptorType) -> (Bool))? = .none) {
+    init(
+        title: String,
+        isDestructive: Bool,
+        selectAction: @escaping (SettingsCellDescriptorType) -> Void,
+        visibilityAction: ((SettingsCellDescriptorType) -> (Bool))? = .none
+    ) {
         self.title = title
         self.isDestructive = isDestructive
         self.selectAction = selectAction
@@ -54,7 +59,13 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
         self.identifier = .none
     }
 
-    init(title: String, isDestructive: Bool, identifier: String, selectAction: @escaping (SettingsCellDescriptorType) -> Void, visibilityAction: ((SettingsCellDescriptorType) -> (Bool))? = .none) {
+    init(
+        title: String,
+        isDestructive: Bool,
+        identifier: String,
+        selectAction: @escaping (SettingsCellDescriptorType) -> Void,
+        visibilityAction: ((SettingsCellDescriptorType) -> (Bool))? = .none
+    ) {
         self.title = title
         self.isDestructive = isDestructive
         self.selectAction = selectAction

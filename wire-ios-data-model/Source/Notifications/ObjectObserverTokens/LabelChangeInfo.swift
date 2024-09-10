@@ -75,8 +75,16 @@ extension LabelChangeInfo {
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:managedObjectContext:)
-    public static func add(observer: LabelObserver, for label: LabelType?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .LabelChange, managedObjectContext: managedObjectContext, object: label) { [weak observer] note in
+    public static func add(
+        observer: LabelObserver,
+        for label: LabelType?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .LabelChange,
+            managedObjectContext: managedObjectContext,
+            object: label
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? LabelChangeInfo
             else { return }

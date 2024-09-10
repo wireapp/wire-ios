@@ -22,8 +22,7 @@ import UserNotifications
 
 extension Loggable {
     var logger: os.Logger {
-        os.Logger(category: String(describing: type(of: self))
-        )
+        os.Logger(category: String(describing: type(of: self)))
     }
 }
 

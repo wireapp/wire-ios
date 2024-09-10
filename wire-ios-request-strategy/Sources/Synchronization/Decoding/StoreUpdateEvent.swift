@@ -87,11 +87,13 @@ public final class StoredUpdateEvent: NSManagedObject {
             return nil
         }
 
-        guard let storedEvent = StoredUpdateEvent.create(from: event,
-                                                         eventId: eventId,
-                                                         eventHash: eventHash,
-                                                         index: index,
-                                                         context: context) else {
+        guard let storedEvent = StoredUpdateEvent.create(
+            from: event,
+            eventId: eventId,
+            eventHash: eventHash,
+            index: index,
+            context: context
+        ) else {
             WireLogger.updateEvent.error("could not store event", attributes: [.eventId: event.safeUUID])
             return nil
         }
@@ -104,11 +106,13 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    static func create(from event: ZMUpdateEvent,
-                       eventId: String,
-                       eventHash: Int,
-                       index: Int64,
-                       context: NSManagedObjectContext) -> StoredUpdateEvent? {
+    static func create(
+        from event: ZMUpdateEvent,
+        eventId: String,
+        eventHash: Int,
+        index: Int64,
+        context: NSManagedObjectContext
+    ) -> StoredUpdateEvent? {
         let storedEvent = StoredUpdateEvent.insertNewObject(context)
 
         storedEvent?.debugInformation = event.debugInformation
@@ -124,7 +128,11 @@ public final class StoredUpdateEvent: NSManagedObject {
         return storedEvent
     }
 
-    private static func storedEventExists(for eventId: String, eventHash: Int, in context: NSManagedObjectContext) -> Bool {
+    private static func storedEventExists(
+        for eventId: String,
+        eventHash: Int,
+        in context: NSManagedObjectContext
+    ) -> Bool {
         let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
         let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
 
@@ -133,7 +141,10 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         let eventHashOrPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [eventHash, defaultEventHash])
 
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [eventIdPredicate, eventHashOrPredicate])
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            eventIdPredicate,
+            eventHashOrPredicate,
+        ])
 
         let result = context.countOrAssert(request: fetchRequest)
         return result > 0

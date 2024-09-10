@@ -70,7 +70,8 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         for index in 0 ... (maxLength - 1) {
             let characterView = characterViews[index]
 
-            if let character = storage.count > index ? storage[storage.index(storage.startIndex, offsetBy: index)] : nil {
+            if let character = storage
+                .count > index ? storage[storage.index(storage.startIndex, offsetBy: index)] : nil {
                 characterView.character = character
             } else {
                 characterView.character = .none
@@ -168,9 +169,11 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         accessibilityHint = L10n.Localizable.Verification.codeHint
 
         accessibilityCustomActions = [
-            UIAccessibilityCustomAction(name: L10n.Localizable.General.paste,
-                                        target: self,
-                                        selector: #selector(UIResponderStandardEditActions.paste)),
+            UIAccessibilityCustomAction(
+                name: L10n.Localizable.General.paste,
+                target: self,
+                selector: #selector(UIResponderStandardEditActions.paste)
+            ),
         ]
 
         stackView.spacing = 8
@@ -183,8 +186,10 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
 
         createConstraints()
 
-        let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self,
-                                                                      action: #selector(onLongPress(_:)))
+        let longPressGestureRecognizer = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(onLongPress(_:))
+        )
         addGestureRecognizer(longPressGestureRecognizer)
 
         storage = String()

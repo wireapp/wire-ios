@@ -29,9 +29,11 @@ final class ConversationInputBarSendController: NSObject {
         super.init()
     }
 
-    func sendMessage(withImageData imageData: Data,
-                     userSession: UserSession,
-                     completion completionHandler: Completion? = nil) {
+    func sendMessage(
+        withImageData imageData: Data,
+        userSession: UserSession,
+        completion completionHandler: Completion? = nil
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()
@@ -48,17 +50,24 @@ final class ConversationInputBarSendController: NSObject {
         })
     }
 
-    func sendTextMessage(_ text: String,
-                         mentions: [Mention],
-                         userSession: UserSession,
-                         replyingTo message: ZMConversationMessage?) {
+    func sendTextMessage(
+        _ text: String,
+        mentions: [Mention],
+        userSession: UserSession,
+        replyingTo message: ZMConversationMessage?
+    ) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         userSession.enqueue({
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: message, fetchLinkPreview: shouldFetchLinkPreview)
+                try conversation.appendText(
+                    content: text,
+                    mentions: mentions,
+                    replyingTo: message,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
                 conversation.draftMessage = nil
             } catch {
                 Logging.messageProcessing.warn("Failed to append text message. Reason: \(error.localizedDescription)")
@@ -76,11 +85,17 @@ final class ConversationInputBarSendController: NSObject {
 
         userSession.enqueue({
             do {
-                try conversation.appendText(content: text, mentions: mentions, replyingTo: nil, fetchLinkPreview: shouldFetchLinkPreview)
+                try conversation.appendText(
+                    content: text,
+                    mentions: mentions,
+                    replyingTo: nil,
+                    fetchLinkPreview: shouldFetchLinkPreview
+                )
                 try conversation.appendImage(from: data)
                 conversation.draftMessage = nil
             } catch {
-                Logging.messageProcessing.warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
+                Logging.messageProcessing
+                    .warn("Failed to append text message with image data. Reason: \(error.localizedDescription)")
             }
         }, completionHandler: {
             Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)

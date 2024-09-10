@@ -64,7 +64,11 @@ public final class GenericHashBuilder {
     public func append(_ data: Data) {
         assert(state != .done, "This builder cannot be used any more: hash is already calculated")
         state = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> State in
-            crypto_generichash_update(opaqueCryptoState, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), UInt64(data.count))
+            crypto_generichash_update(
+                opaqueCryptoState,
+                bytes.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                UInt64(data.count)
+            )
             return .readyToBuild
         }
     }

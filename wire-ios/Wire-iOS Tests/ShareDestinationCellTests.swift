@@ -90,9 +90,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure
+        )
         // WHEN
         sut.destination = destination
 
@@ -104,10 +106,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -119,10 +123,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Unchecked_LegalHold() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure,
-                                          isUnderLegalHold: true)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure,
+            isUnderLegalHold: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -134,9 +140,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Unchecked() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure
+        )
         // WHEN
         sut.destination = destination
 
@@ -148,10 +156,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Unchecked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -163,9 +173,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Checked() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure
+        )
         // WHEN
         sut.destination = destination
 
@@ -177,10 +189,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_NotSecure_Checked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -192,9 +206,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Checked() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure
+        )
         // WHEN
         sut.destination = destination
 
@@ -206,10 +222,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_NotSecure_Checked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .notSecure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .notSecure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -221,9 +239,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .secure
+        )
         // WHEN
         sut.destination = destination
 
@@ -235,10 +255,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .secure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -250,11 +272,13 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Unchecked_Guest_LegalHold() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure,
-                                          showsGuestIcon: true,
-                                          isUnderLegalHold: true)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .secure,
+            showsGuestIcon: true,
+            isUnderLegalHold: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -266,9 +290,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Unchecked() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .secure
+        )
         // WHEN
         sut.destination = destination
 
@@ -280,10 +306,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Unchecked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .secure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -295,9 +323,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Checked() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .secure
+        )
         // WHEN
         sut.destination = destination
 
@@ -309,10 +339,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithPersonalNameAndPicture_Secure_Checked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "John Burger",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "John Burger",
+            avatarView: mockAvatarView,
+            securityLevel: .secure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 
@@ -324,9 +356,11 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Checked() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .secure
+        )
         // WHEN
         sut.destination = destination
 
@@ -338,10 +372,12 @@ final class ShareDestinationCellTests: XCTestCase {
 
     func testThatItRendersCorrectly_CellWithLongPersonalNameAndPicture_Secure_Checked_Guest() {
         // GIVEN
-        let destination = MockDestination(displayName: "His Majesty John Carl Steven Bob Burger II",
-                                          avatarView: mockAvatarView,
-                                          securityLevel: .secure,
-                                          showsGuestIcon: true)
+        let destination = MockDestination(
+            displayName: "His Majesty John Carl Steven Bob Burger II",
+            avatarView: mockAvatarView,
+            securityLevel: .secure,
+            showsGuestIcon: true
+        )
         // WHEN
         sut.destination = destination
 

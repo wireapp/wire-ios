@@ -50,7 +50,11 @@ import Foundation
 
 extension AddressBookEntry {
     @objc(createFromContact:managedObjectContext:user:)
-    public static func create(from contact: CNContact, managedObjectContext: NSManagedObjectContext, user: ZMUser? = nil) -> AddressBookEntry {
+    public static func create(
+        from contact: CNContact,
+        managedObjectContext: NSManagedObjectContext,
+        user: ZMUser? = nil
+    ) -> AddressBookEntry {
         let entry = AddressBookEntry.insertNewObject(in: managedObjectContext)
         entry.localIdentifier = contact.identifier
         entry.cachedName = CNContactFormatter.string(from: contact, style: .fullName)

@@ -129,7 +129,10 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             XCTAssertEqual(conversation.securityLevel, .secureWithIgnored)
 
             // when
-            conversation.removeParticipantAndUpdateConversationState(user: newUnconnectedUser, initiatingUser: self.selfUser)
+            conversation.removeParticipantAndUpdateConversationState(
+                user: newUnconnectedUser,
+                initiatingUser: self.selfUser
+            )
 
             // then
             XCTAssertTrue(conversation.allUsersTrusted)
@@ -324,12 +327,13 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let expectation = self.customExpectation(description: "Notified")
             token = NotificationInContext.addObserver(
                 name: ZMConversation.isVerifiedNotificationName,
-                context: self.uiMOC.notificationContext) {
-                    XCTAssertEqual($0.object as? ZMConversation, conversation)
-                    if ($0.object as? ZMConversation) == conversation {
-                        expectation.fulfill()
-                    }
+                context: self.uiMOC.notificationContext
+            ) {
+                XCTAssertEqual($0.object as? ZMConversation, conversation)
+                if ($0.object as? ZMConversation) == conversation {
+                    expectation.fulfill()
                 }
+            }
 
             // when
             XCTAssertNotEqual(conversation.securityLevel, .secure)
@@ -470,7 +474,12 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let decryptionError = CBOX_REMOTE_IDENTITY_CHANGED
 
         // when
-        conversation.appendDecryptionFailedSystemMessage(at: Date(), sender: user, client: nil, errorCode: Int(decryptionError.rawValue))
+        conversation.appendDecryptionFailedSystemMessage(
+            at: Date(),
+            sender: user,
+            client: nil,
+            errorCode: Int(decryptionError.rawValue)
+        )
 
         // then
         guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
@@ -489,7 +498,12 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let decryptionError = CBOX_INVALID_MESSAGE
 
         // when
-        conversation.appendDecryptionFailedSystemMessage(at: Date(), sender: user, client: nil, errorCode: Int(decryptionError.rawValue))
+        conversation.appendDecryptionFailedSystemMessage(
+            at: Date(),
+            sender: user,
+            client: nil,
+            errorCode: Int(decryptionError.rawValue)
+        )
 
         // then
         guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
@@ -599,7 +613,8 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
             // WHEN
             conversation.decreaseSecurityLevelIfNeededAfterDiscovering(
-                clients: Set([client]), causedBy: Set([user]))
+                clients: Set([client]), causedBy: Set([user])
+            )
 
             // THEN
             XCTAssertTrue(message1.isExpired)
@@ -749,7 +764,10 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // WHEN
         try await uiMOC.perform {
-            let uiConversation = try XCTUnwrap(self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
+            let uiConversation = try XCTUnwrap(
+                self.uiMOC
+                    .existingObject(with: conversation.objectID) as? ZMConversation
+            )
             uiConversation.acknowledgePrivacyWarningAndResendMessages()
         }
 
@@ -863,7 +881,11 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             for item in users {
                 conversation.addParticipantAndUpdateConversationState(user: item, role: nil)
             }
-            result = ZMSystemMessage.createOrUpdate(from: event, in: conversation.managedObjectContext!, prefetchResult: nil)
+            result = ZMSystemMessage.createOrUpdate(
+                from: event,
+                in: conversation.managedObjectContext!,
+                prefetchResult: nil
+            )
         }
         return result
     }
@@ -883,7 +905,11 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         var result: ZMSystemMessage! = nil
         self.performPretendingUiMocIsSyncMoc {
             conversation.removeParticipantsAndUpdateConversationState(users: users, initiatingUser: actionUser)
-            result = ZMSystemMessage.createOrUpdate(from: event, in: conversation.managedObjectContext!, prefetchResult: nil)
+            result = ZMSystemMessage.createOrUpdate(
+                from: event,
+                in: conversation.managedObjectContext!,
+                prefetchResult: nil
+            )
         }
         return result
     }

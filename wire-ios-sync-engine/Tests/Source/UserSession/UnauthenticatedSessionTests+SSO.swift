@@ -69,49 +69,65 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
     // MARK: Response handling
 
     func testThat404ResponseIsError() {
-        checkThat(statusCode: 404,
-                  isProcessedAs: .failure(SSOSettingsError.unknown),
-                  payload: nil)
+        checkThat(
+            statusCode: 404,
+            isProcessedAs: .failure(SSOSettingsError.unknown),
+            payload: nil
+        )
     }
 
     func testThat500ResponseIsError() {
-        checkThat(statusCode: 500,
-                  isProcessedAs: .failure(SSOSettingsError.networkFailure),
-                  payload: nil)
+        checkThat(
+            statusCode: 500,
+            isProcessedAs: .failure(SSOSettingsError.networkFailure),
+            payload: nil
+        )
     }
 
     func testThat200ResponseIsProcessedAsValid() {
         let ssoCode = UUID()
         let payload = ["default_sso_code": ssoCode.transportString()]
 
-        checkThat(statusCode: 200,
-                  isProcessedAs: .success(SSOSettings(ssoCode: ssoCode)),
-                  payload: payload as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .success(SSOSettings(ssoCode: ssoCode)),
+            payload: payload as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithoutDefaultSSOCodeIsProcessedAsValid() {
         let payload: [String: Any] = [:]
 
-        checkThat(statusCode: 200,
-                  isProcessedAs: .success(SSOSettings(ssoCode: nil)),
-                  payload: payload as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .success(SSOSettings(ssoCode: nil)),
+            payload: payload as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithMalformedPayloadGeneratesParseError() {
-        checkThat(statusCode: 200,
-                  isProcessedAs: .failure(SSOSettingsError.malformedData),
-                  payload: ["default_sso_code": "invalid-uuid"] as ZMTransportData)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .failure(SSOSettingsError.malformedData),
+            payload: ["default_sso_code": "invalid-uuid"] as ZMTransportData
+        )
     }
 
     func testThat200ResponseWithMissingPayloadGeneratesParseError() {
-        checkThat(statusCode: 200,
-                  isProcessedAs: .failure(SSOSettingsError.malformedData),
-                  payload: nil)
+        checkThat(
+            statusCode: 200,
+            isProcessedAs: .failure(SSOSettingsError.malformedData),
+            payload: nil
+        )
     }
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<SSOSettings, Error>, payload: ZMTransportData?) {
+    func checkThat(
+        statusCode: Int,
+        isProcessedAs expectedResult: Result<SSOSettings, Error>,
+        payload: ZMTransportData?
+    ) {
         let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
@@ -132,7 +148,12 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
         }
 
         // when
-        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: payload, httpStatus: statusCode, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(
+            payload: payload,
+            httpStatus: statusCode,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

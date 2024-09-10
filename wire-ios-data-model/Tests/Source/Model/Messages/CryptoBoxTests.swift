@@ -24,11 +24,18 @@ class CryptoBoxTest: OtrBaseTest {
     func testThatCryptoBoxFolderIsForbiddenFromBackup() {
         // when
         let accountId = UUID()
-        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: accountId, applicationContainer: OtrBaseTest.sharedContainerURL)
-        let keyStore = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
+        let accountFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountId,
+            applicationContainer: OtrBaseTest.sharedContainerURL
+        )
+        let keyStore = UserClientKeysStore(
+            accountDirectory: accountFolder,
+            applicationContainer: OtrBaseTest.sharedContainerURL
+        )
 
         // then
-        guard let values = try? keyStore.cryptoboxDirectory.resourceValues(forKeys: [.isExcludedFromBackupKey]) else { return XCTFail() }
+        guard let values = try? keyStore.cryptoboxDirectory.resourceValues(forKeys: [.isExcludedFromBackupKey])
+        else { return XCTFail() }
 
         XCTAssertTrue(values.isExcludedFromBackup!)
     }

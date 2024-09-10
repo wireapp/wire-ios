@@ -48,10 +48,12 @@ final class CompleteReactionPickerViewController: UIViewController {
         setupViews()
         createConstraints()
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(preferredContentSizeChanged(_:)),
-                                               name: UIContentSizeCategory.didChangeNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(preferredContentSizeChanged(_:)),
+            name: UIContentSizeCategory.didChangeNotification,
+            object: nil
+        )
     }
 
     @available(*, unavailable)
@@ -132,7 +134,10 @@ final class CompleteReactionPickerViewController: UIViewController {
     // MARK: - Collection View
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier, for: indexPath) as! EmojiCollectionViewCell
+        let cell = self.collectionView.dequeueReusableCell(
+            withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! EmojiCollectionViewCell
         cell.titleLabel.text = emoji.value
         cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
         cell.isCurrent = selectedReactions.contains(emoji.value)
@@ -175,7 +180,8 @@ extension CompleteReactionPickerViewController: EmojiSectionViewControllerDelega
         if let attributes = collectionView.layoutAttributesForItem(at: indexPath) {
             collectionView.setContentOffset(
                 CGPoint(x: collectionView.contentOffset.x, y: attributes.frame.minY),
-                animated: !scrolling)
+                animated: !scrolling
+            )
         } else {
             collectionView.scrollToItem(at: indexPath, at: .top, animated: !scrolling)
         }
@@ -196,7 +202,11 @@ extension CompleteReactionPickerViewController: UICollectionViewDelegateFlowLayo
         updateSectionSelection()
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         UIEdgeInsets(top: 30.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 }

@@ -157,9 +157,12 @@ final class DeveloperToolsViewModel: ObservableObject {
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
                     .text(TextItem(
                         title: "Supported protocols",
-                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
-                    ),
-                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None")),
+                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", ")
+                    )),
+                    .text(TextItem(
+                        title: "MLS public key",
+                        value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"
+                    )),
                 ]
             ))
         }
@@ -217,7 +220,10 @@ final class DeveloperToolsViewModel: ObservableObject {
                     AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
                 })),
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
-                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
+                        selfClient: self?
+                            .selfClient
+                    )))
                 })),
                 .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))

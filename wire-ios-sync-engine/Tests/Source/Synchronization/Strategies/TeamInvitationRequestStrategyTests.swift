@@ -31,7 +31,11 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
         applicationStatus = MockApplicationStatus()
         teamInvitationStatus = TeamInvitationStatus()
-        sut = TeamInvitationRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus, teamInvitationStatus: teamInvitationStatus)
+        sut = TeamInvitationRequestStrategy(
+            withManagedObjectContext: syncMOC,
+            applicationStatus: applicationStatus,
+            teamInvitationStatus: teamInvitationStatus
+        )
         applicationStatus.mockOperationState = .foreground
         applicationStatus.mockSynchronizationState = .online
     }
@@ -97,7 +101,12 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
 
         // when
         let request = sutNextRequest(for: .v0)
-        request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: nil,
+            httpStatus: 408,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -109,14 +118,16 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
     }
 
     func testInvitationResultParsing() {
-        let responseCases = [(201, ""),
-                             (403, "too-many-team-invitations"),
-                             (403, "blacklisted-email"),
-                             (403, "invalid-email"),
-                             (403, "no-identity"),
-                             (403, "no-email"),
-                             (409, "email-exists"),
-                             (404, "unknown-error")]
+        let responseCases = [
+            (201, ""),
+            (403, "too-many-team-invitations"),
+            (403, "blacklisted-email"),
+            (403, "invalid-email"),
+            (403, "no-identity"),
+            (403, "no-email"),
+            (409, "email-exists"),
+            (404, "unknown-error"),
+        ]
 
         let responses: [ZMTransportResponse] = responseCases.map { value in
             let (httpStatus, label) = value
@@ -125,18 +136,25 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
                 "code": httpStatus,
             ]
 
-            return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: httpStatus, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+            return ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: httpStatus,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
         }
 
         let inviteResults = responses.map { InviteResult(response: $0, email: "") }
-        let expectedResults: [InviteResult] = [.success(email: ""),
-                                               .failure(email: "", error: .tooManyTeamInvitations),
-                                               .failure(email: "", error: .blacklistedEmail),
-                                               .failure(email: "", error: .invalidEmail),
-                                               .failure(email: "", error: .noIdentity),
-                                               .failure(email: "", error: .noEmail),
-                                               .failure(email: "", error: .alreadyRegistered),
-                                               .failure(email: "", error: .unknown)]
+        let expectedResults: [InviteResult] = [
+            .success(email: ""),
+            .failure(email: "", error: .tooManyTeamInvitations),
+            .failure(email: "", error: .blacklistedEmail),
+            .failure(email: "", error: .invalidEmail),
+            .failure(email: "", error: .noIdentity),
+            .failure(email: "", error: .noEmail),
+            .failure(email: "", error: .alreadyRegistered),
+            .failure(email: "", error: .unknown),
+        ]
 
         for tuple in zip(inviteResults, expectedResults) {
             let (result, expectedResult) = tuple

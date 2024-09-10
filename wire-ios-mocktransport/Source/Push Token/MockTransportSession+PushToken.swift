@@ -23,7 +23,12 @@ extension MockTransportSession {
     @objc(processPushTokenRequest:)
     public func processPushTokenRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         guard let apiVersion = APIVersion(rawValue: request.apiVersion) else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: request.apiVersion
+            )
         }
 
         switch (request, request.method) {
@@ -34,7 +39,12 @@ extension MockTransportSession {
         case ("/push/tokens/*", .delete):
             return processDeletePushToken(request.RESTComponents(index: 2), apiVersion: apiVersion)
         default:
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 404,
+                transportSessionError: nil,
+                apiVersion: request.apiVersion
+            )
         }
     }
 
@@ -42,19 +52,39 @@ extension MockTransportSession {
         let payload = [
             "tokens": Array(pushTokens.values),
         ] as NSDictionary
-        return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: payload,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     func processDeletePushToken(_ token: String?, apiVersion: APIVersion) -> ZMTransportResponse {
         if let token {
             if pushTokens[token] != nil {
                 removePushToken(token)
-                return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+                return ZMTransportResponse(
+                    payload: nil,
+                    httpStatus: 204,
+                    transportSessionError: nil,
+                    apiVersion: apiVersion.rawValue
+                )
             } else {
-                return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+                return ZMTransportResponse(
+                    payload: nil,
+                    httpStatus: 404,
+                    transportSessionError: nil,
+                    apiVersion: apiVersion.rawValue
+                )
             }
         }
-        return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     func processPostPushToken(_ payload: ZMTransportData?, apiVersion: APIVersion) -> ZMTransportResponse {
@@ -66,10 +96,20 @@ extension MockTransportSession {
             payload["app"] != nil,
             let transport = payload["transport"], transport == transportType
         else {
-            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportResponse(
+                payload: nil,
+                httpStatus: 400,
+                transportSessionError: nil,
+                apiVersion: apiVersion.rawValue
+            )
         }
 
         addPushToken(token, payload: payload)
-        return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportResponse(
+            payload: payload as NSDictionary,
+            httpStatus: 201,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 }

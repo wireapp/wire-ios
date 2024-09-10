@@ -33,7 +33,12 @@ final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     }
 
     var wantsToSendAudioHitCount = 0
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
+    func audioRecordViewControllerWantsToSendAudio(
+        _ audioRecordViewController: AudioRecordBaseViewController,
+        recordingURL: URL,
+        duration: TimeInterval,
+        filter: AVSAudioEffectType
+    ) {
         wantsToSendAudioHitCount += 1
     }
 }

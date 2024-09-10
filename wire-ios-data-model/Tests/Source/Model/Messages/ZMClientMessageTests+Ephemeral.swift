@@ -163,7 +163,11 @@ extension ZMClientMessageTests_Ephemeral {
             message.senderClientID = "other_client"
 
             let imageData = self.verySmallJPEGData()
-            let assetMessage = GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)), nonce: nonce, expiresAfter: .tenSeconds)
+            let assetMessage = GenericMessage(
+                content: WireProtos.Asset(imageSize: .zero, mimeType: "", size: UInt64(imageData.count)),
+                nonce: nonce,
+                expiresAfter: .tenSeconds
+            )
 
             do {
                 try message.setUnderlyingMessage(assetMessage)
@@ -171,7 +175,11 @@ extension ZMClientMessageTests_Ephemeral {
                 XCTFail()
             }
 
-            let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: self.syncConversation.activeMessageDestructionTimeoutValue)
+            let uploaded = GenericMessage(
+                content: WireProtos.Asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()),
+                nonce: message.nonce!,
+                expiresAfter: self.syncConversation.activeMessageDestructionTimeoutValue
+            )
 
             do {
                 try message.setUnderlyingMessage(uploaded)
@@ -205,7 +213,11 @@ extension ZMClientMessageTests_Ephemeral {
             article.summary = "summary"
 
             do {
-                let genericMessage = GenericMessage(content: Text(content: "foo", mentions: [], linkPreviews: [article], replyingTo: nil), nonce: UUID.create(), expiresAfterTimeInterval: .tenSeconds)
+                let genericMessage = GenericMessage(
+                    content: Text(content: "foo", mentions: [], linkPreviews: [article], replyingTo: nil),
+                    nonce: UUID.create(),
+                    expiresAfterTimeInterval: .tenSeconds
+                )
                 let message = try self.syncConversation.appendClientMessage(with: genericMessage)
                 message.linkPreviewState = .processed
                 XCTAssertEqual(message.linkPreviewState, .processed)
@@ -294,7 +306,13 @@ extension ZMClientMessageTests_Ephemeral {
 
             // when
             let delete = GenericMessage(content: MessageDelete(messageId: message.nonce!), nonce: UUID.create())
-            let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.syncUser1.remoteIdentifier!, eventSource: .download)
+            let event = self.createUpdateEvent(
+                UUID.create(),
+                conversationID: self.syncConversation.remoteIdentifier!,
+                genericMessage: delete,
+                senderID: self.syncUser1.remoteIdentifier!,
+                eventSource: .download
+            )
             _ = ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // then
@@ -318,7 +336,13 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedAndWait {
             // when
             let delete = GenericMessage(content: MessageDelete(messageId: message.nonce!), nonce: UUID.create())
-            let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
+            let event = self.createUpdateEvent(
+                UUID.create(),
+                conversationID: self.syncConversation.remoteIdentifier!,
+                genericMessage: delete,
+                senderID: self.selfUser.remoteIdentifier!,
+                eventSource: .download
+            )
             _ = ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
 
             // then
@@ -343,7 +367,11 @@ extension ZMClientMessageTests_Ephemeral {
 
             self.syncMOC.saveOrRollback()
 
-            return try conversation.appendText(content: "foo", fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            return try conversation.appendText(
+                content: "foo",
+                fetchLinkPreview: true,
+                nonce: UUID.create()
+            ) as? ZMClientMessage
         }
         let message = try XCTUnwrap(textMessage)
 

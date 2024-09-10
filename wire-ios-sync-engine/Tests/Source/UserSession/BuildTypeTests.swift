@@ -24,12 +24,14 @@ import XCTest
 final class BuildTypeTests: ZMTBaseTest {
     func testThatItParsesKnownBundleIDs() {
         // GIVEN
-        let bundleIdsToTypes: [String: WireSyncEngine.BuildType] = ["com.wearezeta.zclient.ios": .production,
-                                                                    "com.wearezeta.zclient.alpha": .alpha,
-                                                                    "com.wearezeta.zclient.development": .development,
-                                                                    "com.wearezeta.zclient.rc": .releaseCandidate,
-                                                                    "com.wearezeta.zclient.internal": .internal,
-                                                                    "com.wearezeta.zclient.ios.beta": .beta]
+        let bundleIdsToTypes: [String: WireSyncEngine.BuildType] = [
+            "com.wearezeta.zclient.ios": .production,
+            "com.wearezeta.zclient.alpha": .alpha,
+            "com.wearezeta.zclient.development": .development,
+            "com.wearezeta.zclient.rc": .releaseCandidate,
+            "com.wearezeta.zclient.internal": .internal,
+            "com.wearezeta.zclient.ios.beta": .beta,
+        ]
 
         for (bundleId, expectedType) in bundleIdsToTypes {
             // WHEN
@@ -50,11 +52,13 @@ final class BuildTypeTests: ZMTBaseTest {
 
     func testThatInternalAppsReturnsBundleIdsForTheCertName() {
         // GIVEN
-        let suts: [BuildType] = [.alpha,
-                                 .beta,
-                                 .internal,
-                                 .releaseCandidate,
-                                 .development]
+        let suts: [BuildType] = [
+            .alpha,
+            .beta,
+            .internal,
+            .releaseCandidate,
+            .development,
+        ]
 
         for type in suts {
             // WHEN

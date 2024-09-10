@@ -63,7 +63,8 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         // WHEN / THEN
         let directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         await directory.eventContext.perform {
-            let events = directory.eventContext.fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
+            let events = directory.eventContext
+                .fetchOrAssert(request: NSFetchRequest<NSManagedObject>(entityName: "StoredUpdateEvent"))
             XCTAssertEqual(events.count, 23)
             for event in events {
                 let eventHash = event.value(forKey: "eventHash") as? Int
@@ -92,7 +93,10 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
 
         let modelVersion = CoreDataStack.loadMessagingModel().version
-        let fixtureVersion = String(Database.messaging.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
+        let fixtureVersion = String(
+            Database.messaging.databaseFixtureFileName(for: modelVersion)
+                .dropFirst("store".count)
+        )
         let accountIdentifier = UUID()
 
         // Check that we have current version fixture file
@@ -105,23 +109,30 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                 versionName: versionsWithoutCurrent.first!
             )
             let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
-            let currentDatabaseURL = try XCTUnwrap(directory.syncContext.persistentStoreCoordinator?.persistentStores.last?.url)
+            let currentDatabaseURL = try XCTUnwrap(
+                directory.syncContext.persistentStoreCoordinator?.persistentStores
+                    .last?.url
+            )
 
-            XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
-                "**HOW TO FIX THIS** \n" +
-                "- Run the test, until you hit the assertion\n" +
-                "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
-                "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
-                "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
-                "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
-                "- Add it to WireDataModel project with the other stores\n\n")
+            XCTFail(
+                "\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
+                    "**HOW TO FIX THIS** \n" +
+                    "- Run the test, until you hit the assertion\n" +
+                    "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
+                    "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
+                    "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
+                    "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
+                    "- Add it to WireDataModel project with the other stores\n\n"
+            )
             assertionFailure()
         }
 
         guard allVersions.contains(fixtureVersion) else {
-            return XCTFail("Current model version '\(fixtureVersion)' is not added to allVersions array. \n" +
-                "Please add it to the array above, so that we are sure it's there when we bump to the next version\n" +
-                "and we don't forget to test the migration from that version")
+            return XCTFail(
+                "Current model version '\(fixtureVersion)' is not added to allVersions array. \n" +
+                    "Please add it to the array above, so that we are sure it's there when we bump to the next version\n" +
+                    "and we don't forget to test the migration from that version"
+            )
         }
 
         try allVersions.forEach { version in
@@ -141,9 +152,11 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             let systemMessageCount = try directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
             let connectionCount = try directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
             let userClientCount = try directory.viewContext.count(for: UserClient.sortedFetchRequest())
-            let assetClientMessagesCount = try directory.viewContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
+            let assetClientMessagesCount = try directory.viewContext
+                .count(for: ZMAssetClientMessage.sortedFetchRequest())
             let messages = try directory.viewContext.fetch(ZMMessage.sortedFetchRequest()) as! [ZMMessage]
-            let users = directory.viewContext.fetchOrAssert(request: NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
+            let users = directory.viewContext
+                .fetchOrAssert(request: NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
 
             let userFetchRequest = ZMUser.sortedFetchRequest()
             userFetchRequest.resultType = .dictionaryResultType
@@ -186,22 +199,26 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
 
         var processedVersions = Set<String>()
 
-        try fm.contentsOfDirectory(atPath: source.path).filter { URL(fileURLWithPath: $0).pathExtension == "mom" }.forEach { modelFileName in
+        try fm.contentsOfDirectory(atPath: source.path).filter { URL(fileURLWithPath: $0).pathExtension == "mom" }
+            .forEach { modelFileName in
 
-            let nameMatches = regex.matches(in: modelFileName, range: NSRange(modelFileName.startIndex..., in: modelFileName)).map {
-                String(modelFileName[Range($0.range, in: modelFileName)!])
+                let nameMatches = regex.matches(
+                    in: modelFileName,
+                    range: NSRange(modelFileName.startIndex..., in: modelFileName)
+                ).map {
+                    String(modelFileName[Range($0.range, in: modelFileName)!])
+                }
+
+                guard let version = nameMatches.first else {
+                    fatal("Wrong name format: \(modelFileName)")
+                }
+
+                XCTAssertFalse(processedVersions.contains(version))
+
+                let store = NSManagedObjectModel(contentsOf: source.appendingPathComponent(modelFileName))!
+                // then
+                XCTAssertTrue(store.versionIdentifiers.contains(version), "\(version) should be contained")
+                processedVersions.insert(version)
             }
-
-            guard let version = nameMatches.first else {
-                fatal("Wrong name format: \(modelFileName)")
-            }
-
-            XCTAssertFalse(processedVersions.contains(version))
-
-            let store = NSManagedObjectModel(contentsOf: source.appendingPathComponent(modelFileName))!
-            // then
-            XCTAssertTrue(store.versionIdentifiers.contains(version), "\(version) should be contained")
-            processedVersions.insert(version)
-        }
     }
 }

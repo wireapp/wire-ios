@@ -240,7 +240,10 @@ extension ZMUser: SelfLegalHoldSubject {
             let legalHoldClient = await context.perform({ self.insertLegalHoldClient(from: request, in: context) })
         else { return nil }
 
-        guard await selfClient.establishSessionWithClient(legalHoldClient, usingPreKey: request.lastPrekey.key.base64String()) else {
+        guard await selfClient.establishSessionWithClient(
+            legalHoldClient,
+            usingPreKey: request.lastPrekey.key.base64String()
+        ) else {
             log.error("Could not establish session with new legal hold device.")
             await context.perform { context.delete(legalHoldClient) }
             return nil
@@ -249,7 +252,10 @@ extension ZMUser: SelfLegalHoldSubject {
         return legalHoldClient
     }
 
-    private func insertLegalHoldClient(from request: LegalHoldRequest, in context: NSManagedObjectContext) -> UserClient? {
+    private func insertLegalHoldClient(
+        from request: LegalHoldRequest,
+        in context: NSManagedObjectContext
+    ) -> UserClient? {
         let legalHoldClient = UserClient.insertNewObject(in: context)
         legalHoldClient.type = .legalHold
         legalHoldClient.deviceClass = .legalHold
@@ -304,7 +310,10 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through proteusService: ProteusServiceInterface) async -> String? {
+    private func fetchFingerprint(
+        for prekey: LegalHoldRequest.Prekey,
+        through proteusService: ProteusServiceInterface
+    ) async -> String? {
         do {
             return try await proteusService.fingerprint(fromPrekey: prekey.key.base64EncodedString())
         } catch {
@@ -313,7 +322,10 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    private func fetchFingerprint(for prekey: LegalHoldRequest.Prekey, through keystore: UserClientKeysStore) -> String? {
+    private func fetchFingerprint(
+        for prekey: LegalHoldRequest.Prekey,
+        through keystore: UserClientKeysStore
+    ) -> String? {
         guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
         return String(decoding: fingerprintData, as: UTF8.self)
     }

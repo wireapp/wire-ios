@@ -31,11 +31,19 @@ extension GenericMessage {
         self = message
     }
 
-    public init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: MessageDestructionTimeoutValue? = nil) {
+    public init(
+        content: EphemeralMessageCapable,
+        nonce: UUID = UUID(),
+        expiresAfter timeout: MessageDestructionTimeoutValue? = nil
+    ) {
         self.init(content: content, nonce: nonce, expiresAfterTimeInterval: timeout?.rawValue)
     }
 
-    public init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
+    public init(
+        content: EphemeralMessageCapable,
+        nonce: UUID = UUID(),
+        expiresAfterTimeInterval timeout: TimeInterval? = nil
+    ) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable = if let timeout, timeout > 0 {
@@ -347,11 +355,13 @@ extension Proteus_UserEntry {
 // MARK: - QualifiedNewOtrMessage
 
 extension Proteus_QualifiedNewOtrMessage {
-    public init(withSender sender: UserClient,
-                nativePush: Bool,
-                recipients: [Proteus_QualifiedUserEntry],
-                missingClientsStrategy: MissingClientsStrategy,
-                blob: Data? = nil) {
+    public init(
+        withSender sender: UserClient,
+        nativePush: Bool,
+        recipients: [Proteus_QualifiedUserEntry],
+        missingClientsStrategy: MissingClientsStrategy,
+        blob: Data? = nil
+    ) {
         self = Proteus_QualifiedNewOtrMessage.with {
             $0.nativePush = nativePush
             $0.sender = sender.clientId
@@ -424,7 +434,12 @@ extension Location {
 // MARK: - Text
 
 extension Text {
-    public init(content: String, mentions: [Mention] = [], linkPreviews: [LinkMetadata] = [], replyingTo: ZMOTRMessage? = nil) {
+    public init(
+        content: String,
+        mentions: [Mention] = [],
+        linkPreviews: [LinkMetadata] = [],
+        replyingTo: ZMOTRMessage? = nil
+    ) {
         self = Text.with {
             $0.content = content
             $0.mentions = mentions.compactMap { WireProtos.Mention.createMention($0) }
@@ -658,7 +673,8 @@ extension LinkPreview {
         } else {
             self = LinkPreview.with {
                 $0.url = linkMetadata.originalURLString
-                $0.permanentURL = linkMetadata.permanentURL?.absoluteString ?? linkMetadata.resolvedURL?.absoluteString ?? linkMetadata.originalURLString
+                $0.permanentURL = linkMetadata.permanentURL?.absoluteString ?? linkMetadata.resolvedURL?
+                    .absoluteString ?? linkMetadata.originalURLString
                 $0.urlOffset = Int32(linkMetadata.characterOffsetInText)
             }
         }
@@ -667,12 +683,17 @@ extension LinkPreview {
     public init(articleMetadata: ArticleMetadata) {
         self = LinkPreview.with {
             $0.url = articleMetadata.originalURLString
-            $0.permanentURL = articleMetadata.permanentURL?.absoluteString ?? articleMetadata.resolvedURL?.absoluteString ?? articleMetadata.originalURLString
+            $0.permanentURL = articleMetadata.permanentURL?.absoluteString ?? articleMetadata.resolvedURL?
+                .absoluteString ?? articleMetadata.originalURLString
             $0.urlOffset = Int32(articleMetadata.characterOffsetInText)
             $0.title = articleMetadata.title ?? ""
             $0.summary = articleMetadata.summary ?? ""
             if let imageData = articleMetadata.imageData.first {
-                $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
+                $0.image = WireProtos.Asset(
+                    imageSize: CGSize(width: 0, height: 0),
+                    mimeType: "image/jpeg",
+                    size: UInt64(imageData.count)
+                )
             }
         }
     }
@@ -680,11 +701,16 @@ extension LinkPreview {
     public init(twitterMetadata: TwitterStatusMetadata) {
         self = LinkPreview.with {
             $0.url = twitterMetadata.originalURLString
-            $0.permanentURL = twitterMetadata.permanentURL?.absoluteString ?? twitterMetadata.resolvedURL?.absoluteString ?? twitterMetadata.originalURLString
+            $0.permanentURL = twitterMetadata.permanentURL?.absoluteString ?? twitterMetadata.resolvedURL?
+                .absoluteString ?? twitterMetadata.originalURLString
             $0.urlOffset = Int32(twitterMetadata.characterOffsetInText)
             $0.title = twitterMetadata.message ?? ""
             if let imageData = twitterMetadata.imageData.first {
-                $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
+                $0.image = WireProtos.Asset(
+                    imageSize: CGSize(width: 0, height: 0),
+                    mimeType: "image/jpeg",
+                    size: UInt64(imageData.count)
+                )
             }
 
             guard let author = twitterMetadata.author,
@@ -697,14 +723,16 @@ extension LinkPreview {
         }
     }
 
-    public init(withOriginalURL originalURL: String,
-                permanentURL: String,
-                offset: Int32,
-                title: String?,
-                summary: String?,
-                imageAsset: WireProtos.Asset?,
-                article: Article? = nil,
-                tweet: Tweet? = nil) {
+    public init(
+        withOriginalURL originalURL: String,
+        permanentURL: String,
+        offset: Int32,
+        title: String?,
+        summary: String?,
+        imageAsset: WireProtos.Asset?,
+        article: Article? = nil,
+        tweet: Tweet? = nil
+    ) {
         self = LinkPreview.with {
             $0.url = originalURL
             $0.permanentURL = permanentURL

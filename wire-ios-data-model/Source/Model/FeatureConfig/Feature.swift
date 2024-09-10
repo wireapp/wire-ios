@@ -124,8 +124,10 @@ public class Feature: ZMManagedObject {
     ///
     /// - Returns: An instance, if it exists, otherwise `nil`.
 
-    public static func fetch(name: Name,
-                             context: NSManagedObjectContext) -> Feature? {
+    public static func fetch(
+        name: Name,
+        context: NSManagedObjectContext
+    ) -> Feature? {
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         fetchRequest.predicate = NSPredicate(format: "nameValue == %@", name.rawValue)
         fetchRequest.fetchLimit = 2

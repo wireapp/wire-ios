@@ -19,7 +19,10 @@
 import XCTest
 @testable import WireRequestStrategy
 
-final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<UpdateConversationProtocolAction, UpdateConversationProtocolActionHandler> {
+final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
+    UpdateConversationProtocolAction,
+    UpdateConversationProtocolActionHandler
+> {
     var uuidString: String!
 
     override func setUp() {

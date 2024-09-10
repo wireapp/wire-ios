@@ -37,7 +37,8 @@ final class VideoMessageView: UIView, TransferView {
         let button = IconButton()
         button.setIconColor(
             SemanticColors.Icon.foregroundDefaultWhite,
-            for: .normal)
+            for: .normal
+        )
         return button
     }()
 
@@ -61,7 +62,11 @@ final class VideoMessageView: UIView, TransferView {
         self.previewImageView.clipsToBounds = true
         self.previewImageView.backgroundColor = SemanticColors.View.backgroundCollectionCell
 
-        self.playButton.addTarget(self, action: #selector(VideoMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
+        self.playButton.addTarget(
+            self,
+            action: #selector(VideoMessageView.onActionButtonPressed(_:)),
+            for: .touchUpInside
+        )
         self.playButton.accessibilityIdentifier = "VideoActionButton"
         self.playButton.accessibilityLabel = L10n.Accessibility.AudioMessage.Play.value
         self.playButton.layer.masksToBounds = true
@@ -70,7 +75,10 @@ final class VideoMessageView: UIView, TransferView {
         self.progressView.accessibilityIdentifier = "VideoProgressView"
         self.progressView.deterministic = true
 
-        self.bottomGradientView.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.4).cgColor]
+        self.bottomGradientView.gradientLayer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.black.withAlphaComponent(0.4).cgColor,
+        ]
 
         self.timeLabel.numberOfLines = 1
         self.timeLabel.accessibilityIdentifier = "VideoActionTimeLabel"

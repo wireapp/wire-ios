@@ -82,7 +82,8 @@ final class DeletionDialogPresenter: NSObject {
         }
 
         if let popoverPresentationController = alert.popoverPresentationController {
-            let sourceView = if let selectableView = sourceView as? SelectableView, let selectionView = selectableView.selectionView {
+            let sourceView = if let selectableView = sourceView as? SelectableView,
+                                let selectionView = selectableView.selectionView {
                 selectionView
             } else {
                 sourceView
@@ -157,24 +158,38 @@ private enum DeletionConfiguration {
 }
 
 extension UIAlertController {
-    fileprivate static func forMessageDeletion(with configuration: DeletionConfiguration, selectedAction: @escaping (AlertAction, UIAlertController) -> Void) -> UIAlertController {
+    fileprivate static func forMessageDeletion(
+        with configuration: DeletionConfiguration,
+        selectedAction: @escaping (AlertAction, UIAlertController) -> Void
+    ) -> UIAlertController {
         let alertTitle = L10n.Localizable.Message.DeleteDialog.message
         let alert = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
 
         if configuration.showHide {
             let hideTitle = L10n.Localizable.Message.DeleteDialog.Action.hide
-            let hideAction = UIAlertAction(title: hideTitle, style: .destructive) { [unowned alert] _ in selectedAction(.delete(.local), alert) }
+            let hideAction = UIAlertAction(title: hideTitle, style: .destructive) { [unowned alert] _ in selectedAction(
+                .delete(.local),
+                alert
+            ) }
             alert.addAction(hideAction)
         }
 
         if configuration.showDelete {
             let deleteTitle = L10n.Localizable.Message.DeleteDialog.Action.delete
-            let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .destructive) { [unowned alert] _ in selectedAction(.delete(.everywhere), alert) }
+            let deleteForEveryoneAction = UIAlertAction(title: deleteTitle, style: .destructive) { [unowned alert] _ in
+                selectedAction(
+                    .delete(.everywhere),
+                    alert
+                )
+            }
             alert.addAction(deleteForEveryoneAction)
         }
 
         let cancelTitle = L10n.Localizable.Message.DeleteDialog.Action.cancel
-        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { [unowned alert] _ in selectedAction(.cancel, alert) }
+        let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { [unowned alert] _ in selectedAction(
+            .cancel,
+            alert
+        ) }
         alert.addAction(cancelAction)
 
         return alert

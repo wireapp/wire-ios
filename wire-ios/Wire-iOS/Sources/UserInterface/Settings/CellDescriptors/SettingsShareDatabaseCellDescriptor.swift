@@ -56,7 +56,8 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
 
         super.init(title: "Share Cryptobox", isDestructive: false) { _ in
             guard let userSession = ZMUserSession.shared() else { return }
-            let fileURL = userSession.managedObjectContext.zm_storeURL!.deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("otr")
+            let fileURL = userSession.managedObjectContext.zm_storeURL!.deletingLastPathComponent()
+                .deletingLastPathComponent().appendingPathComponent("otr")
             let archiveURL = fileURL.appendingPathExtension("zip")
 
             SSZipArchive.createZipFile(atPath: archiveURL.path, withContentsOfDirectory: fileURL.path)

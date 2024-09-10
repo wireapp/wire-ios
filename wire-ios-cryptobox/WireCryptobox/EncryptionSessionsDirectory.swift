@@ -163,7 +163,8 @@ public protocol EncryptionSessionManager {
     /// The session is not saved to disk until the cache is committed
     /// - returns: the plaintext
     /// - throws: CryptoBox error in case of lower-level error
-    func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data
+    func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws
+        -> Data
 
     /// Deletes a session with a client
     func delete(_ identifier: EncryptionSessionIdentifier)
@@ -220,44 +221,56 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
 
         // check if pre-existing
         if let session = clientSession(for: identifier) {
-            zmLog.safePublic("Tried to create session for client \(identifier) with prekey but session already existed - fingerprint \(session.remoteFingerprint)")
+            zmLog
+                .safePublic(
+                    "Tried to create session for client \(identifier) with prekey but session already existed - fingerprint \(session.remoteFingerprint)"
+                )
             return
         }
 
         // init
         let cbsession = _CBoxSession()
         let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in
-            cbox_session_init_from_prekey(context.implementation.ptr,
-                                          identifier.rawValue,
-                                          prekeyDataPointer.bindMemory(to: UInt8.self).baseAddress!,
-                                          prekeyData.count,
-                                          &cbsession.ptr)
+            cbox_session_init_from_prekey(
+                context.implementation.ptr,
+                identifier.rawValue,
+                prekeyDataPointer.bindMemory(to: UInt8.self).baseAddress!,
+                prekeyData.count,
+                &cbsession.ptr
+            )
         }
 
         try result.throwIfError()
 
-        let session = EncryptionSession(id: identifier,
-                                        session: cbsession,
-                                        requiresSave: true,
-                                        cryptoboxPath: self.generatingContext!.path,
-                                        extensiveLogging: self.extensiveLoggingSessions.contains(identifier))
+        let session = EncryptionSession(
+            id: identifier,
+            session: cbsession,
+            requiresSave: true,
+            cryptoboxPath: self.generatingContext!.path,
+            extensiveLogging: self.extensiveLoggingSessions.contains(identifier)
+        )
         self.pendingSessionsCache[identifier] = session
 
         zmLog.safePublic("Created session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
     }
 
-    public func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data {
+    public func createClientSessionAndReturnPlaintext(
+        for identifier: EncryptionSessionIdentifier,
+        prekeyMessage: Data
+    ) throws -> Data {
         let context = self.validateContext()
         let cbsession = _CBoxSession()
         var plainTextBacking: OpaquePointer?
 
         let result = prekeyMessage.withUnsafeBytes { (prekeyMessagePointer: UnsafeRawBufferPointer) -> CBoxResult in
-            cbox_session_init_from_message(context.implementation.ptr,
-                                           identifier.rawValue,
-                                           prekeyMessagePointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
-                                           prekeyMessage.count,
-                                           &cbsession.ptr,
-                                           &plainTextBacking)
+            cbox_session_init_from_message(
+                context.implementation.ptr,
+                identifier.rawValue,
+                prekeyMessagePointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                prekeyMessage.count,
+                &cbsession.ptr,
+                &plainTextBacking
+            )
         }
 
         let extensiveLogging = self.extensiveLoggingSessions.contains(identifier)
@@ -272,14 +285,19 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         try result.throwIfError()
 
         let plainText = Data.moveFromCBoxVector(plainTextBacking)!
-        let session = EncryptionSession(id: identifier,
-                                        session: cbsession,
-                                        requiresSave: true,
-                                        cryptoboxPath: self.generatingContext!.path,
-                                        extensiveLogging: extensiveLogging)
+        let session = EncryptionSession(
+            id: identifier,
+            session: cbsession,
+            requiresSave: true,
+            cryptoboxPath: self.generatingContext!.path,
+            extensiveLogging: extensiveLogging
+        )
         self.pendingSessionsCache[identifier] = session
 
-        zmLog.safePublic("Created session for client \(identifier) from prekey message - fingerprint \(session.remoteFingerprint)")
+        zmLog
+            .safePublic(
+                "Created session for client \(identifier) from prekey message - fingerprint \(session.remoteFingerprint)"
+            )
 
         return plainText
     }
@@ -302,7 +320,10 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
 
         // check cache
         if let transientSession = self.pendingSessionsCache[identifier] {
-            zmLog.safePublic("Tried to load session for client \(identifier), session was already loaded - fingerprint \(transientSession.remoteFingerprint)")
+            zmLog
+                .safePublic(
+                    "Tried to load session for client \(identifier), session was already loaded - fingerprint \(transientSession.remoteFingerprint)"
+                )
             return transientSession
         }
 
@@ -313,11 +334,13 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
             zmLog.safePublic("Tried to load session for client \(identifier), no session found")
             return nil
         case CBOX_SUCCESS:
-            let session = EncryptionSession(id: identifier,
-                                            session: cbsession,
-                                            requiresSave: false,
-                                            cryptoboxPath: self.generatingContext!.path,
-                                            extensiveLogging: self.extensiveLoggingSessions.contains(identifier))
+            let session = EncryptionSession(
+                id: identifier,
+                session: cbsession,
+                requiresSave: false,
+                cryptoboxPath: self.generatingContext!.path,
+                extensiveLogging: self.extensiveLoggingSessions.contains(identifier)
+            )
             self.pendingSessionsCache[identifier] = session
             zmLog.safePublic("Loaded session for client \(identifier) - fingerprint \(session.remoteFingerprint)")
             return session
@@ -483,11 +506,12 @@ class EncryptionSession {
     /// Creates a session from a C-level session pointer
     /// - parameter id: id of the client
     /// - parameter requiresSave: if true, mark this session as having pending changes to save
-    init(id: EncryptionSessionIdentifier,
-         session: _CBoxSession,
-         requiresSave: Bool,
-         cryptoboxPath: URL,
-         extensiveLogging: Bool
+    init(
+        id: EncryptionSessionIdentifier,
+        session: _CBoxSession,
+        requiresSave: Bool,
+        cryptoboxPath: URL,
+        extensiveLogging: Bool
     ) {
         self.id = id
         self.implementation = session
@@ -533,7 +557,8 @@ extension EncryptionSession {
             sessionId: self.id,
             reason: reason,
             data: data,
-            sessionURL: self.path)
+            sessionURL: self.path
+        )
     }
 
     static func logSessionAndCyphertext(
@@ -549,7 +574,8 @@ extension EncryptionSession {
             SanitizedString("Extensive logging (session \(sessionId)): ") +
                 SanitizedString("\(reason): cyphertext: \(encodedData); ") +
                 SanitizedString("session content: \(sessionContent)"),
-            level: .public)
+            level: .public
+        )
     }
 }
 
@@ -602,10 +628,12 @@ extension EncryptionSession {
         zmLog.safePublic("Decrypting with session \(id)")
 
         let result = cypher.withUnsafeBytes { (cypherPointer: UnsafeRawBufferPointer) -> CBoxResult in
-            cbox_decrypt(self.implementation.ptr,
-                         cypherPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
-                         cypher.count,
-                         &vectorBacking)
+            cbox_decrypt(
+                self.implementation.ptr,
+                cypherPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                cypher.count,
+                &vectorBacking
+            )
         }
 
         let resultRequiresLogging = result != CBOX_DUPLICATE_MESSAGE && result != CBOX_SUCCESS
@@ -634,10 +662,12 @@ extension EncryptionSession {
 
         zmLog.safePublic("Encrypting with session \(id)")
         let result = plainText.withUnsafeBytes { (plainTextPointer: UnsafeRawBufferPointer) -> CBoxResult in
-            cbox_encrypt(self.implementation.ptr,
-                         plainTextPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
-                         plainText.count,
-                         &vectorBacking)
+            cbox_encrypt(
+                self.implementation.ptr,
+                plainTextPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
+                plainText.count,
+                &vectorBacking
+            )
         }
 
         try result.throwIfError()

@@ -41,9 +41,11 @@ final class EphemeralKeyboardViewController: UIViewController {
 
     fileprivate let timeouts: [MessageDestructionTimeoutValue?]
 
-    let titleLabel = DynamicFontLabel(text: L10n.Localizable.Input.Ephemeral.title,
-                                      fontSpec: .mediumSemiboldFont,
-                                      color: SemanticColors.Label.textDefault)
+    let titleLabel = DynamicFontLabel(
+        text: L10n.Localizable.Input.Ephemeral.title,
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
     var pickerFont: UIFont? = .normalSemiboldFont
     var pickerColor: UIColor? = SemanticColors.Label.textDefault
     var separatorColor: UIColor? = SemanticColors.View.backgroundSeparatorCell
@@ -127,19 +129,23 @@ final class EphemeralKeyboardViewController: UIViewController {
     fileprivate func displayCustomPicker() {
         delegate?.ephemeralKeyboardWantsToBeDismissed(self)
 
-        UIAlertController.requestCustomTimeInterval(over: UIApplication.shared.topmostViewController(onlyFullScreen: true)!) { [weak self] result in
+        UIAlertController
+            .requestCustomTimeInterval(
+                over: UIApplication.shared
+                    .topmostViewController(onlyFullScreen: true)!
+            ) { [weak self] result in
 
-            guard let self else {
-                return
-            }
+                guard let self else {
+                    return
+                }
 
-            switch result {
-            case let .success(value):
-                self.delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
-            default:
-                break
+                switch result {
+                case let .success(value):
+                    self.delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
+                default:
+                    break
+                }
             }
-        }
     }
 }
 

@@ -38,13 +38,19 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
     ) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
-            queue: syncContext)
+            queue: syncContext
+        )
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(
             context: syncContext,
-            apiProvider: apiProvider)
+            apiProvider: apiProvider
+        )
 
-        self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
+        self.init(
+            proteusProvider: proteusProvider,
+            sessionEstablisher: sessionEstablisher,
+            managedObjectContext: syncContext
+        )
     }
 
     init(
@@ -156,6 +162,9 @@ public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePr
         withProteusService proteusServiceBlock: @escaping ProteusServicePerformAsyncBlock<T>,
         withKeyStore keyStoreBlock: @escaping KeyStorePerformAsyncBlock<T>
     ) async rethrows -> T {
-        try await self.proteusProvider.performAsync(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
+        try await self.proteusProvider.performAsync(
+            withProteusService: proteusServiceBlock,
+            withKeyStore: keyStoreBlock
+        )
     }
 }

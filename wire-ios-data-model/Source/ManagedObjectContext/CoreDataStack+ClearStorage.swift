@@ -23,24 +23,32 @@ extension CoreDataStack {
 
     /// Locations where Wire is or has historically been storing data.
     private var storageLocations: [URL] {
-        var locations = [.cachesDirectory,
-                         .applicationSupportDirectory,
-                         .libraryDirectory].compactMap {
+        var locations = [
+            .cachesDirectory,
+            .applicationSupportDirectory,
+            .libraryDirectory,
+        ].compactMap {
             FileManager.default.urls(for: $0, in: .userDomainMask).first
         }
 
         locations.append(applicationContainer)
 
         if let bundleIdentifier = Bundle.main.bundleIdentifier {
-            locations.append(applicationContainer
-                .appendingPathComponent(bundleIdentifier))
-            locations.append(applicationContainer
-                .appendingPathComponent(bundleIdentifier)
-                .appendingPathComponent(account.userIdentifier.uuidString))
-            locations.append(applicationContainer
-                .appendingPathComponent(bundleIdentifier)
-                .appendingPathComponent(account.userIdentifier.uuidString)
-                .appendingPathComponent("store"))
+            locations.append(
+                applicationContainer
+                    .appendingPathComponent(bundleIdentifier)
+            )
+            locations.append(
+                applicationContainer
+                    .appendingPathComponent(bundleIdentifier)
+                    .appendingPathComponent(account.userIdentifier.uuidString)
+            )
+            locations.append(
+                applicationContainer
+                    .appendingPathComponent(bundleIdentifier)
+                    .appendingPathComponent(account.userIdentifier.uuidString)
+                    .appendingPathComponent("store")
+            )
         }
 
         return locations
@@ -93,7 +101,8 @@ extension CoreDataStack {
     private func accountDataFolderExists() -> Bool {
         let accountsFolder = Self.accountDataFolder(
             accountIdentifier: account.userIdentifier,
-            applicationContainer: applicationContainer)
+            applicationContainer: applicationContainer
+        )
 
         return FileManager.default.fileExists(atPath: accountsFolder.path)
     }

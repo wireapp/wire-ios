@@ -44,9 +44,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
             setAllowGuestAndServicesUseCase = .init()
-            setAllowGuestAndServicesUseCase.invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
-                completion(.success(()))
-            }
+            setAllowGuestAndServicesUseCase
+                .invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
+                    completion(.success(()))
+                }
             sut = CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: setAllowGuestAndServicesUseCase)
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
@@ -88,7 +89,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             // GIVEN
             configureRoleAndAccessForConversation()
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+                result: .success("www.test.com"),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "Guest link creation")
 
@@ -112,8 +116,14 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             // GIVEN
             configureRoleAndAccessForConversation(legacyAccessMode: true)
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
-            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+                result: .success("www.test.com"),
+                context: syncContext.notificationContext
+            )
+            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(
+                result: .success(()),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "Guest link creation")
 
@@ -135,7 +145,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     func testThatLinkGenerationFails() async {
         await syncContext.perform { [self] in
 
-            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .failure(.unknown), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(
+                result: .failure(.unknown),
+                context: syncContext.notificationContext
+            )
 
             let expectation = XCTestExpectation(description: "completion should be called")
 

@@ -326,7 +326,28 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - dummy user names
 
-    static let usernames = ["Anna", "Claire", "Dean", "Erik", "Frank", "Gregor", "Hanna", "Inge", "James",
-                            "Laura", "Klaus", "Lena", "Linea", "Lara", "Elliot", "Francois", "Felix", "Brian",
-                            "Brett", "Hannah", "Ana", "Paula"]
+    static let usernames = [
+        "Anna",
+        "Claire",
+        "Dean",
+        "Erik",
+        "Frank",
+        "Gregor",
+        "Hanna",
+        "Inge",
+        "James",
+        "Laura",
+        "Klaus",
+        "Lena",
+        "Linea",
+        "Lara",
+        "Elliot",
+        "Francois",
+        "Felix",
+        "Brian",
+        "Brett",
+        "Hannah",
+        "Ana",
+        "Paula",
+    ]
 }

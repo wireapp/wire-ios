@@ -96,14 +96,16 @@ final class PotentialChangeDetectorTests: BaseZMMessageTests {
         let object4 = createObject()
 
         // When
-        sut.detectChanges(for:
+        sut.detectChanges(
+            for:
             ModifiedObjects(
                 updated: [object1],
                 refreshed: [object2]
             )
         )
 
-        sut.detectChanges(for:
+        sut.detectChanges(
+            for:
             ModifiedObjects(
                 inserted: [object3],
                 deleted: [object4]

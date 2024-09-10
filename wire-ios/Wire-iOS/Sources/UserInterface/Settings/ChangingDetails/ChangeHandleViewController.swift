@@ -126,7 +126,11 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
         delegate?.tableViewCellDidChangeText(cell: self, text: lowercase)
     }
 
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         guard let delegate else { return false }
         let current = (textField.text ?? "") as NSString
         let replacement = current.replacingCharacters(in: range, with: string)
@@ -261,7 +265,8 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
             title: HandleChange.save,
             action: UIAction { [weak self] _ in
                 self?.saveButtonTapped()
-            })
+            }
+        )
 
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
@@ -307,7 +312,10 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ChangeHandleTableViewCell.zm_reuseIdentifier, for: indexPath) as! ChangeHandleTableViewCell
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: ChangeHandleTableViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as! ChangeHandleTableViewCell
         cell.delegate = self
         cell.handleTextField.text = state.displayHandle
         cell.handleTextField.becomeFirstResponder()

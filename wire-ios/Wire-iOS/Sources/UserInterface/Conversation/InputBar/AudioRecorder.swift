@@ -143,10 +143,12 @@ final class AudioRecorder: NSObject, AudioRecorderType {
             fileURL: fileURL!
         )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleInterruption),
-                                               name: AVAudioSession.interruptionNotification,
-                                               object: AVAudioSession.sharedInstance())
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleInterruption),
+            name: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance()
+        )
 
         self.audioRecorder = audioRecorder
     }
@@ -283,7 +285,10 @@ final class AudioRecorder: NSObject, AudioRecorderType {
               let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
               let size = attribs[.size] as? UInt32,
               size > maxAllowedSize else { return false }
-        WireLogger.ui.debug("Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)")
+        WireLogger.ui
+            .debug(
+                "Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)"
+            )
         return true
     }
 
@@ -379,8 +384,11 @@ final class AudioRecorder: NSObject, AudioRecorderType {
             preferredStyle: .alert
         )
 
-        let actionOk = UIAlertAction(title: L10n.Localizable.General.ok, style: .default,
-                                     handler: nil)
+        let actionOk = UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default,
+            handler: nil
+        )
         alertController.addAction(actionOk)
 
         return alertController

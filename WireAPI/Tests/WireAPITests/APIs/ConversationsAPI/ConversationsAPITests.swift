@@ -81,7 +81,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"),
+            HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"
+            ),
         ]
 
         // when
@@ -102,7 +105,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"),
+            HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetLegacyConversationIdentifiers_givenV0AndSuccessResponse200"
+            ),
         ]
 
         let expectedIDs: [UUID] = try [
@@ -148,7 +154,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"),
+            HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
+            ),
         ]
 
         // when
@@ -169,7 +178,10 @@ final class ConversationsAPITests: XCTestCase {
         // given
         let httpClient = MockHTTPResponsesClient()
         httpClient.httpResponses = try [
-            HTTPResponse.mockJSONResource(code: .ok, name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"),
+            HTTPResponse.mockJSONResource(
+                code: .ok,
+                name: "testGetConversationIdentifiers_givenV1AndSuccessResponse200"
+            ),
         ]
 
         let expectedIDs: [QualifiedID] = try [

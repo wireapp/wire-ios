@@ -20,7 +20,10 @@ import UIKit
 import WireDesign
 
 final class WipeCompletionViewController: UIViewController {
-    let wireLogoInfoView = WireLogoInfoView(title: L10n.Localizable.WipeDatabaseCompletion.title, subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle)
+    let wireLogoInfoView = WireLogoInfoView(
+        title: L10n.Localizable.WipeDatabaseCompletion.title,
+        subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle
+    )
 
     private lazy var loginButton = {
         let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)

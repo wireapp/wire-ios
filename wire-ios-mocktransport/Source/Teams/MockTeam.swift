@@ -53,7 +53,13 @@ extension MockTeam {
     }
 
     @objc
-    public static func insert(in context: NSManagedObjectContext, name: String?, assetId: String?, assetKey: String?, isBound: Bool) -> MockTeam {
+    public static func insert(
+        in context: NSManagedObjectContext,
+        name: String?,
+        assetId: String?,
+        assetKey: String?,
+        isBound: Bool
+    ) -> MockTeam {
         let team: MockTeam = insert(in: context)
         team.name = name
         team.pictureAssetId = assetId ?? ""
@@ -61,9 +67,18 @@ extension MockTeam {
         team.isBound = isBound
         team.roles = Set(
             [
-                MockRole.insert(in: context, name: MockConversation.admin, actions: createAdminActions(context: context)),
-                MockRole.insert(in: context, name: MockConversation.member, actions: createMemberActions(context: context)),
-            ])
+                MockRole.insert(
+                    in: context,
+                    name: MockConversation.admin,
+                    actions: createAdminActions(context: context)
+                ),
+                MockRole.insert(
+                    in: context,
+                    name: MockConversation.member,
+                    actions: createMemberActions(context: context)
+                ),
+            ]
+        )
         return team
     }
 
@@ -84,15 +99,17 @@ extension MockTeam {
 
     @objc
     public static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
-        Set(["add_conversation_member",
-             "remove_conversation_member",
-             "modify_conversation_name",
-             "modify_conversation_message_timer",
-             "modify_conversation_receipt_mode",
-             "modify_conversation_access",
-             "modify_other_conversation_member",
-             "leave_conversation",
-             "delete_conversation"].map { MockAction.insert(in: context, name: $0) })
+        Set([
+            "add_conversation_member",
+            "remove_conversation_member",
+            "modify_conversation_name",
+            "modify_conversation_message_timer",
+            "modify_conversation_receipt_mode",
+            "modify_conversation_access",
+            "modify_other_conversation_member",
+            "leave_conversation",
+            "delete_conversation",
+        ].map { MockAction.insert(in: context, name: $0) })
     }
 
     @objc

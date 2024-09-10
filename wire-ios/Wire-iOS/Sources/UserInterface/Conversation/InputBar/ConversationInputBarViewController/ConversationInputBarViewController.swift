@@ -132,7 +132,10 @@ final class ConversationInputBarViewController: UIViewController,
         let button = IconButton()
         button.setIconColor(UIColor.accent(), for: .selected)
 
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(audioButtonLongPressed(_:)))
+        let longPressRecognizer = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(audioButtonLongPressed(_:))
+        )
         longPressRecognizer.minimumPressDuration = 0.3
         button.addGestureRecognizer(longPressRecognizer)
 
@@ -275,8 +278,10 @@ final class ConversationInputBarViewController: UIViewController,
             let singleTapGestureRecognizerEnabled: Bool
             let selectedButton: IconButton?
 
-            func config(viewController: UIViewController?,
-                        setupClosure: () -> UIViewController) {
+            func config(
+                viewController: UIViewController?,
+                setupClosure: () -> UIViewController
+            ) {
                 if inputController == nil ||
                     inputController != viewController {
                     let newViewController: UIViewController = if let viewController {
@@ -413,9 +418,11 @@ final class ConversationInputBarViewController: UIViewController,
             conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         }
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] note in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -498,14 +505,16 @@ final class ConversationInputBarViewController: UIViewController,
 
         let trimmed = inputBar.textView.text.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
-        sendButtonState.update(textLength: trimmed.count,
-                               editing: nil != editingMessage,
-                               markingDown: inputBar.isMarkingDown,
-                               destructionTimeout: conversation.activeMessageDestructionTimeoutValue,
-                               mode: mode,
-                               syncedMessageDestructionTimeout: conversation.hasSyncedMessageDestructionTimeout,
-                               isEphemeralSendingDisabled: conversation.isSelfDeletingMessageSendingDisabled,
-                               isEphemeralTimeoutForced: conversation.isSelfDeletingMessageTimeoutForced)
+        sendButtonState.update(
+            textLength: trimmed.count,
+            editing: nil != editingMessage,
+            markingDown: inputBar.isMarkingDown,
+            destructionTimeout: conversation.activeMessageDestructionTimeoutValue,
+            mode: mode,
+            syncedMessageDestructionTimeout: conversation.hasSyncedMessageDestructionTimeout,
+            isEphemeralSendingDisabled: conversation.isSelfDeletingMessageSendingDisabled,
+            isEphemeralTimeoutForced: conversation.isSelfDeletingMessageTimeoutForced
+        )
 
         sendButton.isEnabled = sendButtonState.sendButtonEnabled
         sendButton.isHidden = sendButtonState.sendButtonHidden
@@ -554,9 +563,11 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - Security Banner
 
     private func updateClassificationBanner() {
-        securityLevelView.configure(with: conversation.participants,
-                                    conversationDomain: conversation.domain,
-                                    provider: classificationProvider)
+        securityLevelView.configure(
+            with: conversation.participants,
+            conversationDomain: conversation.domain,
+            provider: classificationProvider
+        )
     }
 
     // MARK: - Save draft message
@@ -717,7 +728,11 @@ final class ConversationInputBarViewController: UIViewController,
 
     private func showGiphy(for conversation: ZMConversation) {
         inputBar.textView.resignFirstResponder()
-        let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
+        let giphySearchViewController = GiphySearchViewController(
+            searchTerm: "",
+            conversation: conversation,
+            userSession: userSession
+        )
         giphySearchViewController.delegate = self
 
         let navigationController = UINavigationController(rootViewController: giphySearchViewController)
@@ -740,7 +755,14 @@ final class ConversationInputBarViewController: UIViewController,
         }
 
         UIView.animate(withDuration: 0.1, delay: 0, options: .curveEaseIn, animations: scaleUp) { _ in
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.6, options: .curveEaseOut, animations: scaleDown)
+            UIView.animate(
+                withDuration: 0.3,
+                delay: 0,
+                usingSpringWithDamping: 0.5,
+                initialSpringVelocity: 0.6,
+                options: .curveEaseOut,
+                animations: scaleDown
+            )
         }
     }
 
@@ -763,9 +785,11 @@ final class ConversationInputBarViewController: UIViewController,
     // MARK: - notification center
 
     private func setupNotificationCenter() {
-        NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidHideNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: UIResponder.keyboardDidHideNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
 
             guard let self else { return }
 
@@ -777,16 +801,20 @@ final class ConversationInputBarViewController: UIViewController,
             }
         }
 
-        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
 
             self?.didEnterBackground()
         }
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification,
-                                               object: nil,
-                                               queue: .main) { [weak self] _ in
+        NotificationCenter.default.addObserver(
+            forName: .featureDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
 
             self?.updateViewsForSelfDeletingMessageChanges()
         }
@@ -837,8 +865,10 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         } catch {}
     }
 
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
         let checker = PrivacyWarningChecker(conversation: conversation) {
             self.process(picker: picker, info: info)
         }
@@ -854,17 +884,27 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         if mediaType == UTType.movie.identifier {
             processVideo(info: info, picker: picker)
         } else if mediaType == UTType.image.identifier {
-            let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ?? info[UIImagePickerController.InfoKey.originalImage] as? UIImage
+            let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ??
+                info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
             if let image,
                let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
-                        UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+                        UIImageWriteToSavedPhotosAlbum(
+                            image,
+                            self,
+                            #selector(image(_:didFinishSavingWithError:contextInfo:)),
+                            nil
+                        )
                     }
                     // In case of picking from the camera, the iOS controller is showing it's own confirmation screen.
                     parent?.dismiss(animated: true) {
-                        self.sendController.sendMessage(withImageData: jpegData, userSession: self.userSession, completion: nil)
+                        self.sendController.sendMessage(
+                            withImageData: jpegData,
+                            userSession: self.userSession,
+                            completion: nil
+                        )
                     }
                 } else {
                     parent?.dismiss(animated: true) {
@@ -914,14 +954,15 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
 extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
-        let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
-                                                         onConfirm: { [weak self] editedImage in
-                                                             self?.dismiss(animated: false)
-                                                             self?.postImage(editedImage ?? image)
-                                                         },
-                                                         onCancel: { [weak self] in
-                                                             self?.dismiss(animated: false)
-                                                         }
+        let context = ConfirmAssetViewController.Context(
+            asset: .image(mediaAsset: image),
+            onConfirm: { [weak self] editedImage in
+                self?.dismiss(animated: false)
+                self?.postImage(editedImage ?? image)
+            },
+            onCancel: { [weak self] in
+                self?.dismiss(animated: false)
+            }
         )
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
@@ -958,7 +999,10 @@ extension ConversationInputBarViewController: ZMConversationObserver {
 // MARK: - UIGestureRecognizerDelegate
 
 extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         singleTapGestureRecognizer == gestureRecognizer || singleTapGestureRecognizer == otherGestureRecognizer
     }
 
@@ -970,7 +1014,10 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         return gestureRecognizer.view?.bounds.contains(touch.location(in: gestureRecognizer.view)) ?? false
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         otherGestureRecognizer is UIPanGestureRecognizer
     }
 

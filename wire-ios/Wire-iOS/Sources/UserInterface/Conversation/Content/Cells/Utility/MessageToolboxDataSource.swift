@@ -115,8 +115,10 @@ final class MessageToolboxDataSource {
             case .unknown, .none:
                 FailedToSendMessage.generalReason
             case .federationRemoteError:
-                FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
-                                                                WireURLs.shared.unreachableBackendInfo.absoluteString)
+                FailedToSendMessage.federationRemoteErrorReason(
+                    message.conversationLike?.domain ?? "",
+                    WireURLs.shared.unreachableBackendInfo.absoluteString
+                )
             }
 
             content = .sendFailure(detailsString && attributes)
@@ -140,7 +142,8 @@ final class MessageToolboxDataSource {
 
     /// Create a timestamp list for all calls associated with a call system message
     private func makeCallList() -> NSAttributedString {
-        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty, let timestamp = timestampString(message) {
+        if let childMessages = message.systemMessageData?.childMessages, !childMessages.isEmpty,
+           let timestamp = timestampString(message) {
             let childrenTimestamps = childMessages
                 .compactMap { $0 as? ZMConversationMessage }
                 .sortedAscendingPrependingNil(by: \.serverTimestamp)
@@ -180,7 +183,8 @@ final class MessageToolboxDataSource {
             message.deliveryState != .pending
 
         if let destructionDate = message.destructionDate, showDestructionTimer {
-            let remaining = destructionDate.timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
+            let remaining = destructionDate
+                .timeIntervalSinceNow + 1 // We need to add one second to start with the correct value
 
             if remaining > 0 {
                 if let string = MessageToolboxDataSource.ephemeralTimeFormatter.string(from: remaining) {
@@ -237,8 +241,10 @@ final class MessageToolboxDataSource {
             ]
 
             let imageIcon = seenTextAttachment()
-            let attributedString = NSAttributedString(attachment: imageIcon) + " \(message.readReceipts.count)" && attributes
-            attributedString.accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " \(message.readReceipts.count)"
+            let attributedString = NSAttributedString(attachment: imageIcon) + " \(message.readReceipts.count)" &&
+                attributes
+            attributedString
+                .accessibilityLabel = (imageIcon.accessibilityLabel ?? "") + " \(message.readReceipts.count)"
             return attributedString
 
         case .oneOnOne:

@@ -314,7 +314,8 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                 return XCTFail("Payload is invalid")
             }
 
-            guard let response = self.successfulResponse(for: payload, failed: [failedUser], apiVersion: self.apiVersion) else {
+            guard let response = self
+                .successfulResponse(for: payload, failed: [failedUser], apiVersion: self.apiVersion) else {
                 return XCTFail("Response is invalid")
             }
             request.complete(with: response)
@@ -453,7 +454,8 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                 managedBy: nil, accentColor: nil,
                 isDeleted: nil,
                 expiresAt: nil,
-                legalholdStatus: nil))
+                legalholdStatus: nil
+            ))
 
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
@@ -503,11 +505,13 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             "time": Date(),
         ]
 
-        return ZMUpdateEvent(uuid: UUID(),
-                             payload: payload,
-                             transient: false,
-                             decrypted: true,
-                             source: .webSocket)!
+        return ZMUpdateEvent(
+            uuid: UUID(),
+            payload: payload,
+            transient: false,
+            decrypted: true,
+            source: .webSocket
+        )!
     }
 
     func userUpdateEvent(userProfile: Payload.UserProfile) -> ZMUpdateEvent {
@@ -516,14 +520,20 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             "user": try! JSONSerialization.jsonObject(with: userProfile.payloadData()!, options: []),
         ]
 
-        return ZMUpdateEvent(uuid: UUID(),
-                             payload: payload,
-                             transient: false,
-                             decrypted: true,
-                             source: .webSocket)!
+        return ZMUpdateEvent(
+            uuid: UUID(),
+            payload: payload,
+            transient: false,
+            decrypted: true,
+            source: .webSocket
+        )!
     }
 
-    func successfulResponse(for request: Payload.QualifiedUserIDList, failed: [QualifiedID]? = nil, apiVersion: APIVersion) -> ZMTransportResponse? {
+    func successfulResponse(
+        for request: Payload.QualifiedUserIDList,
+        failed: [QualifiedID]? = nil,
+        apiVersion: APIVersion
+    ) -> ZMTransportResponse? {
         let userProfiles = request.qualifiedIDs.map {
             userProfile(for: $0.uuid, domain: $0.domain)
         }
@@ -543,30 +553,34 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             return nil
         }
 
-        let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
-                                           httpStatus: 200,
-                                           transportSessionError: nil,
-                                           apiVersion: apiVersion.rawValue)
+        let response = ZMTransportResponse(
+            payload: payloadString as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: apiVersion.rawValue
+        )
 
         return response
     }
 
     func userProfile(for uuid: UUID, domain: String?) -> Payload.UserProfile {
-        Payload.UserProfile(id: uuid,
-                            qualifiedID: nil,
-                            teamID: nil,
-                            serviceID: nil,
-                            SSOID: nil,
-                            name: "John Doe",
-                            handle: nil,
-                            phone: nil,
-                            email: nil,
-                            assets: [],
-                            managedBy: nil,
-                            accentColor: nil,
-                            isDeleted: nil,
-                            expiresAt: nil,
-                            legalholdStatus: nil)
+        Payload.UserProfile(
+            id: uuid,
+            qualifiedID: nil,
+            teamID: nil,
+            serviceID: nil,
+            SSOID: nil,
+            name: "John Doe",
+            handle: nil,
+            phone: nil,
+            email: nil,
+            assets: [],
+            managedBy: nil,
+            accentColor: nil,
+            isDeleted: nil,
+            expiresAt: nil,
+            legalholdStatus: nil
+        )
     }
 }
 

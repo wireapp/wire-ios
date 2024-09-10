@@ -32,6 +32,10 @@ public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
     public var accountsURL = URL(string: "http://example.com")!
     public var websiteURL = URL(string: "http://example.com")!
     public var countlyURL: URL? = URL(string: "http://example.com")!
-    public var proxy: ProxySettingsProvider? = ProxySettings(host: "socks5.example.com", port: 8080, needsAuthentication: true)
+    public var proxy: ProxySettingsProvider? = ProxySettings(
+        host: "socks5.example.com",
+        port: 8080,
+        needsAuthentication: true
+    )
     public var environmentType = EnvironmentTypeProvider(environmentType: .production)
 }

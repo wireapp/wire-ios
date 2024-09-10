@@ -61,7 +61,11 @@ class UserRepositoryTests: XCTestCase {
         // Given
         await context.perform { [context] in
             // There is no user in the database.
-            XCTAssertNil(ZMUser.fetch(with: Scaffolding.user1.id.uuid, domain: Scaffolding.user1.id.domain, in: context))
+            XCTAssertNil(ZMUser.fetch(
+                with: Scaffolding.user1.id.uuid,
+                domain: Scaffolding.user1.id.domain,
+                in: context
+            ))
         }
 
         // Mock

@@ -144,8 +144,10 @@ struct SketchColor: Equatable {
 final class SketchColorCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
 
-    var titleLabel = DynamicFontLabel(fontSpec: .smallRegularFont,
-                                      color: SemanticColors.Label.textDefault)
+    var titleLabel = DynamicFontLabel(
+        fontSpec: .smallRegularFont,
+        color: SemanticColors.Label.textDefault
+    )
 
     var contentStackView = UIStackView()
 

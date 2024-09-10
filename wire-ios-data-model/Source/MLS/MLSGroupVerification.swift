@@ -81,7 +81,10 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
         do {
             try await updateVerificationStatus.invoke(for: conversation, groupID: groupID)
         } catch {
-            WireLogger.e2ei.warn("failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))")
+            WireLogger.e2ei
+                .warn(
+                    "failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))"
+                )
         }
     }
 

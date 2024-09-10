@@ -58,7 +58,8 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
     }
 
     private func createConstraints() {
-        [topSeparator, iconImageView, titleLabel, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [topSeparator, iconImageView, titleLabel, subtitleLabel]
+            .forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topSeparator.topAnchor.constraint(equalTo: contentView.topAnchor),

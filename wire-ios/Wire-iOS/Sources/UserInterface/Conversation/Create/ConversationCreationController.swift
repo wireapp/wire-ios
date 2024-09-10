@@ -47,7 +47,10 @@ final class ConversationCreationController: UIViewController {
 
     // MARK: - Sections
 
-    private lazy var nameSection = ConversationCreateNameSectionController(selfUser: userSession.selfUser, delegate: self)
+    private lazy var nameSection = ConversationCreateNameSectionController(
+        selfUser: userSession.selfUser,
+        delegate: self
+    )
     private lazy var errorSection = ConversationCreateErrorSectionController()
 
     private lazy var optionsToggle: ConversationCreateOptionsSectionController = {
@@ -228,7 +231,8 @@ final class ConversationCreationController: UIViewController {
             title: L10n.Localizable.General.next,
             action: UIAction { [weak self] _ in
                 self?.tryToProceed()
-            })
+            }
+        )
 
         nextButtonItem.accessibilityIdentifier = "button.newgroup.next"
         nextButtonItem.tintColor = UIColor.accent()
@@ -276,7 +280,10 @@ final class ConversationCreationController: UIViewController {
 // MARK: - AddParticipantsConversationCreationDelegate
 
 extension ConversationCreationController: AddParticipantsConversationCreationDelegate {
-    func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction) {
+    func addParticipantsViewController(
+        _ addParticipantsViewController: AddParticipantsViewController,
+        didPerform action: AddParticipantsViewController.CreateAction
+    ) {
         switch action {
         case let .updatedUsers(users):
             values.participants = users
@@ -478,12 +485,15 @@ extension ConversationCreationController {
         present(alertController, animated: true)
     }
 
-    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void) -> UIAlertController {
+    func encryptionProtocolPicker(_ completion: @escaping (Feature.MLS.Config.MessageProtocol) -> Void)
+        -> UIAlertController {
         typealias Localizable = L10n.Localizable.Conversation.Create
 
         let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
-        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection.proteusDefault : Localizable.ProtocolSelection.proteus
-        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable.ProtocolSelection.mls
+        let proteus = mlsFeature.config.defaultProtocol == .proteus ? Localizable.ProtocolSelection
+            .proteusDefault : Localizable.ProtocolSelection.proteus
+        let mls = mlsFeature.config.defaultProtocol == .mls ? Localizable.ProtocolSelection.mlsDefault : Localizable
+            .ProtocolSelection.mls
 
         let alert = UIAlertController(
             title: Localizable.Mls.pickerTitle,

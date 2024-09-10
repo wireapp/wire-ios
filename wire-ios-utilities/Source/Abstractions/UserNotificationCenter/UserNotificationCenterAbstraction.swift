@@ -37,7 +37,10 @@ public protocol UserNotificationCenterAbstraction {
     @available(*, noasync)
     func requestAuthorization(completionHandler: @escaping (Bool, (any Error)?) -> Void)
     @available(*, noasync)
-    func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, (any Error)?) -> Void)
+    func requestAuthorization(
+        options: UNAuthorizationOptions,
+        completionHandler: @escaping (Bool, (any Error)?) -> Void
+    )
 
     /// Schedules the request to display a local notification.
     func add(_ request: UNNotificationRequest) async throws

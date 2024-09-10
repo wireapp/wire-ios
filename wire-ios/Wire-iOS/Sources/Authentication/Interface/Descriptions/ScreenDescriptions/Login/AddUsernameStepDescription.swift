@@ -31,9 +31,11 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
     let footerView: AuthenticationFooterViewDescription? = nil
 
     init() {
-        let textField = TextFieldDescription(placeholder: Username.placeholder,
-                                             actionDescription: L10n.Localizable.General.confirm,
-                                             kind: .username)
+        let textField = TextFieldDescription(
+            placeholder: Username.placeholder,
+            actionDescription: L10n.Localizable.General.confirm,
+            kind: .username
+        )
         textField.acceptInvalidInput = false
 
         mainView = textField

@@ -25,7 +25,10 @@ class ProtosTests: XCTestCase {
     func testTextMessageEncodingPerformance() {
         measure {
             for _ in 0 ..< 1000 {
-                let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+                let text =
+                    Text(
+                        content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                    )
                 let message = GenericMessage(content: text, nonce: UUID.create())
                 _ = try? message.serializedData()
             }
@@ -33,7 +36,10 @@ class ProtosTests: XCTestCase {
     }
 
     func testTextMessageDecodingPerformance() {
-        let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+        let text =
+            Text(
+                content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            )
         var message = GenericMessage(content: text, nonce: UUID.create())
 
         measure {
@@ -48,15 +54,28 @@ class ProtosTests: XCTestCase {
         let nonce = UUID()
         let format = ZMImageFormat.preview
 
-        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200_000, mimeType: "fancy image")!
-        let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
+        let mediumProperties = ZMIImageProperties(
+            size: CGSize(width: 10000, height: 20000),
+            length: 200_000,
+            mimeType: "fancy image"
+        )!
+        let processedProperties = ZMIImageProperties(
+            size: CGSize(width: 640, height: 480),
+            length: 200,
+            mimeType: "downsized image"
+        )!
 
         // when
-        let message = GenericMessage(content:
-            ImageAsset(mediumProperties: mediumProperties,
-                       processedProperties: processedProperties,
-                       encryptionKeys: nil,
-                       format: format), nonce: nonce)
+        let message = GenericMessage(
+            content:
+            ImageAsset(
+                mediumProperties: mediumProperties,
+                processedProperties: processedProperties,
+                encryptionKeys: nil,
+                format: format
+            ),
+            nonce: nonce
+        )
 
         // then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -79,17 +98,31 @@ class ProtosTests: XCTestCase {
         let macKey = "MAC KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let mac = "MAC".data(using: String.Encoding.utf8, allowLossyConversion: true)!
 
-        let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200_000, mimeType: "fancy image")!
-        let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
+        let mediumProperties = ZMIImageProperties(
+            size: CGSize(width: 10000, height: 20000),
+            length: 200_000,
+            mimeType: "fancy image"
+        )!
+        let processedProperties = ZMIImageProperties(
+            size: CGSize(width: 640, height: 480),
+            length: 200,
+            mimeType: "downsized image"
+        )!
         _ = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         let format = ZMImageFormat.preview
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
 
         // when
-        let message = GenericMessage(content:
-            ImageAsset(mediumProperties: mediumProperties,
-                       processedProperties: processedProperties,
-                       encryptionKeys: keys, format: format), nonce: nonce)
+        let message = GenericMessage(
+            content:
+            ImageAsset(
+                mediumProperties: mediumProperties,
+                processedProperties: processedProperties,
+                encryptionKeys: keys,
+                format: format
+            ),
+            nonce: nonce
+        )
 
         // then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -119,7 +152,11 @@ class ProtosTests: XCTestCase {
         let conversationID = QualifiedID(uuid: UUID.create(), domain: "")
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = UUID.create()
-        let message = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: timeStamp as Date), nonce: nonce)
+        let message =
+            GenericMessage(
+                content: LastRead(conversationID: conversationID, lastReadTimestamp: timeStamp as Date),
+                nonce: nonce
+            )
 
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead)
@@ -134,7 +171,10 @@ class ProtosTests: XCTestCase {
         let conversationID = UUID.create()
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = UUID.create()
-        let message = GenericMessage(content: Cleared(timestamp: timeStamp as Date, conversationID: conversationID), nonce: nonce)
+        let message = GenericMessage(
+            content: Cleared(timestamp: timeStamp as Date, conversationID: conversationID),
+            nonce: nonce
+        )
 
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasCleared)

@@ -33,12 +33,16 @@ extension SelfProfileViewController {
     }
 
     private func presentReadReceiptsChangedAlert(with newValue: Bool) {
-        let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self.ReadReceiptsDisabled.title
+        let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self
+            .ReadReceiptsDisabled.title
         let description = L10n.Localizable.Self.ReadReceiptsDescription.title
 
         let settingsChangedAlert = UIAlertController(title: title, message: description, preferredStyle: .alert)
 
-        let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak settingsChangedAlert] _ in
+        let okAction = UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .default
+        ) { [weak settingsChangedAlert] _ in
             ZMUserSession.shared()?.perform {
                 ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely = false
             }

@@ -53,7 +53,10 @@ extension ZMLocalNotification {
         }
 
         func bodyText() -> String {
-            notificationType.messageBodyText(sender: ZMUser.selfUser(in: managedObjectContext), conversation: conversation)
+            notificationType.messageBodyText(
+                sender: ZMUser.selfUser(in: managedObjectContext),
+                conversation: conversation
+            )
         }
 
         func userInfo() -> NotificationUserInfo? {

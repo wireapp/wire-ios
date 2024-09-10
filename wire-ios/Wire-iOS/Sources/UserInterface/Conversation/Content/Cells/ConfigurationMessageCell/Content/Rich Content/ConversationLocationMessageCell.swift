@@ -160,7 +160,11 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
             mapView.setCenterCoordinate(locationData.coordinate, zoomLevel: Int(locationData.zoomLevel))
         } else {
             // As the zoom level is optional we use a viewport of 250m x 250m if none is specified
-            let region = MKCoordinateRegion(center: locationData.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
+            let region = MKCoordinateRegion(
+                center: locationData.coordinate,
+                latitudinalMeters: 250,
+                longitudinalMeters: 250
+            )
             mapView.setRegion(region, animated: false)
         }
     }

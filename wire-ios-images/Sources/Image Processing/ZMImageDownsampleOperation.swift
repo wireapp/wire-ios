@@ -29,6 +29,7 @@ extension ZMImageDownsampleOperation {
         return ZMIImageProperties(
             size: imageSize,
             length: UInt(downsampleImageData.count),
-            mimeType: mimeType)
+            mimeType: mimeType
+        )
     }
 }

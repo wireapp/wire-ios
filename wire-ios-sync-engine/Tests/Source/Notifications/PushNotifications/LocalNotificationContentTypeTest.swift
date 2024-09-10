@@ -52,7 +52,11 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheEphemeralMessage() {
         // given
-        let message = GenericMessage(content: Text(content: "Ephemeral Message"), nonce: UUID(), expiresAfterTimeInterval: 100)
+        let message = GenericMessage(
+            content: Text(content: "Ephemeral Message"),
+            nonce: UUID(),
+            expiresAfterTimeInterval: 100
+        )
         let event = createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 
         // when
@@ -90,7 +94,10 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
 
     func testThatItCreatesACorrectLocalNotificationContentTypeForTheVideoMessage() {
         // given
-        let videoMetadata = ZMVideoMetadata(fileURL: fileURL(forResource: "video", extension: "mp4"), thumbnail: verySmallJPEGData())
+        let videoMetadata = ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
+        )
         let message = GenericMessage(content: WireProtos.Asset(videoMetadata))
         let event = createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: message)
 

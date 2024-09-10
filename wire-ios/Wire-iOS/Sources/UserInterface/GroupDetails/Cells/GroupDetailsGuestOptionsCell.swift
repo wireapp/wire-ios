@@ -24,7 +24,8 @@ import WireDesign
 final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
     var isOn = false {
         didSet {
-            let key = isOn ? L10n.Localizable.GroupDetails.GuestOptionsCell.enabled : L10n.Localizable.GroupDetails.GuestOptionsCell.disabled
+            let key = isOn ? L10n.Localizable.GroupDetails.GuestOptionsCell.enabled : L10n.Localizable.GroupDetails
+                .GuestOptionsCell.disabled
             status = key
         }
     }

@@ -80,8 +80,10 @@ final class CheckmarkCell: RightIconDetailsCell {
             SemanticColors.Icon.foregroundPlainCheckMark
         }
 
-        accessory = StyleKitIcon.checkmark.makeImage(size: .tiny,
-                                                     color: color).withRenderingMode(.alwaysTemplate)
+        accessory = StyleKitIcon.checkmark.makeImage(
+            size: .tiny,
+            color: color
+        ).withRenderingMode(.alwaysTemplate)
         accessoryColor = color
     }
 

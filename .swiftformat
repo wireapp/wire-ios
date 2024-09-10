@@ -77,8 +77,9 @@
     trailingSpace, \
     typeSugar, \
     unusedArguments, \
-    void
-
+    void, \
+    wrap, \
+    wrapArguments
 
 # Options
 
@@ -98,3 +99,8 @@
 --redundanttype inferred # redundantType
 --importgrouping testable-last # sortImports
 --stripunusedargs unnamed-only # unusedArguments
+--maxwidth 120 # wrap
+--wraparguments before-first # wrapArguments
+--wrapparameters before-first # wrapArguments
+--wrapcollections before-first # wrapArguments
+--callsiteparen balanced # wrapArguments

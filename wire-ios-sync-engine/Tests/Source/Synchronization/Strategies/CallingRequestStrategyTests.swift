@@ -93,7 +93,12 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // when
         let payload = ["config": true]
-        request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -144,11 +149,21 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // when
         let badPayload = ["error": "not found"]
-        request?.complete(with: ZMTransportResponse(payload: badPayload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: badPayload as ZMTransportData,
+            httpStatus: 412,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // when
         let payload = ["config": true]
-        request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: payload as ZMTransportData,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -187,6 +202,7 @@ class CallingRequestStrategyTests: MessagingTest {
             conversation.needsToBeUpdatedFromBackend = false
             syncMOC.saveOrRollback()
 
+            // swiftformat:disable all
             let payload = """
             {
                 "missing": {
@@ -195,6 +211,7 @@ class CallingRequestStrategyTests: MessagingTest {
                 }
             }
             """
+            // swiftformat:enable all
 
             // Expectation
             let receivedClientList = customExpectation(description: "Received client list")
@@ -224,10 +241,18 @@ class CallingRequestStrategyTests: MessagingTest {
         syncMOC.performAndWait {
             let request = sut.nextRequest(for: .v0)
             XCTAssertNotNil(request)
-            XCTAssertEqual(request?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
+            )
 
             // When
-            request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            ))
         }
 
         // Then
@@ -270,6 +295,7 @@ class CallingRequestStrategyTests: MessagingTest {
             conversation.needsToBeUpdatedFromBackend = false
             syncMOC.saveOrRollback()
 
+            // swiftformat:disable all
             let payload = """
             {
                 "missing": {
@@ -282,6 +308,7 @@ class CallingRequestStrategyTests: MessagingTest {
                 }
             }
             """
+            // swiftformat:enable all
 
             // Expectation
             let receivedClientList = customExpectation(description: "Received client list")
@@ -312,10 +339,18 @@ class CallingRequestStrategyTests: MessagingTest {
             let request = sut.nextRequest(for: .v1)
             XCTAssertNotNil(request)
             XCTAssertEqual(request?.apiVersion, APIVersion.v1.rawValue)
-            XCTAssertEqual(request?.path, "/v1/conversations/foo.com/\(conversation.remoteIdentifier!.transportString())/proteus/messages")
+            XCTAssertEqual(
+                request?.path,
+                "/v1/conversations/foo.com/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
+            )
 
             // When
-            request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 412, transportSessionError: nil, apiVersion: APIVersion.v1.rawValue))
+            request?.complete(with: ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 412,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v1.rawValue
+            ))
         }
 
         // Then
@@ -478,7 +513,10 @@ class CallingRequestStrategyTests: MessagingTest {
             // A conversation with both users and self
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = .create()
-            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+            conversation.addParticipantsAndUpdateConversationState(
+                users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+                role: nil
+            )
             conversation.needsToBeUpdatedFromBackend = false
 
             syncMOC.saveOrRollback()
@@ -498,7 +536,12 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // When we schedule the targeted message
         syncMOC.performGroupedBlock {
-            self.sut.send(data: Data(), conversationId: conversationAVSID, targets: targets, overMLSSelfConversation: false) { _ in }
+            self.sut.send(
+                data: Data(),
+                conversationId: conversationAVSID,
+                targets: targets,
+                overMLSSelfConversation: false
+            ) { _ in }
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -532,35 +575,39 @@ class CallingRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotTargetCallMessagesIfNoTargetClientsAreSpecified() async throws {
-        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC.perform { [self] in
-            // Given
-            let selfClient = createSelfClient()
+        let (user1, user2, client1, client2, client3, client4, conversationAVSID) = try await syncMOC
+            .perform { [self] in
+                // Given
+                let selfClient = createSelfClient()
 
-            // One user with two clients connected to self
-            let user1 = ZMUser.insertNewObject(in: syncMOC)
-            user1.remoteIdentifier = .create()
+                // One user with two clients connected to self
+                let user1 = ZMUser.insertNewObject(in: syncMOC)
+                user1.remoteIdentifier = .create()
 
-            let client1 = createClient(for: user1, connectedTo: selfClient)
-            let client2 = createClient(for: user1, connectedTo: selfClient)
+                let client1 = createClient(for: user1, connectedTo: selfClient)
+                let client2 = createClient(for: user1, connectedTo: selfClient)
 
-            // Another user with two clients connected to self
-            let user2 = ZMUser.insertNewObject(in: syncMOC)
-            user2.remoteIdentifier = .create()
+                // Another user with two clients connected to self
+                let user2 = ZMUser.insertNewObject(in: syncMOC)
+                user2.remoteIdentifier = .create()
 
-            let client3 = createClient(for: user2, connectedTo: selfClient)
-            let client4 = createClient(for: user2, connectedTo: selfClient)
+                let client3 = createClient(for: user2, connectedTo: selfClient)
+                let client4 = createClient(for: user2, connectedTo: selfClient)
 
-            // A conversation with both users and self
-            let conversation = ZMConversation.insertNewObject(in: syncMOC)
-            conversation.remoteIdentifier = .create()
-            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
-            conversation.needsToBeUpdatedFromBackend = false
+                // A conversation with both users and self
+                let conversation = ZMConversation.insertNewObject(in: syncMOC)
+                conversation.remoteIdentifier = .create()
+                conversation.addParticipantsAndUpdateConversationState(
+                    users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+                    role: nil
+                )
+                conversation.needsToBeUpdatedFromBackend = false
 
-            syncMOC.saveOrRollback()
+                syncMOC.saveOrRollback()
 
-            let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
-            return (user1, user2, client1, client2, client3, client4, conversationAVSID)
-        }
+                let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
+                return (user1, user2, client1, client2, client3, client4, conversationAVSID)
+            }
 
         var sentMessage: GenericMessageEntity?
         mockMessageSender.sendMessageMessage_MockMethod = { message in
@@ -643,10 +690,12 @@ class CallingRequestStrategyTests: MessagingTest {
 
     func testThatItAsksCallCenterToMute_WhenReceivingRemoteMuteEvent() {
         // GIVEN
-        let json = ["src_userid": UUID.create().uuidString,
-                    "src_clientid": "clientID",
-                    "resp": false,
-                    "type": "REMOTEMUTE"] as [String: Any]
+        let json = [
+            "src_userid": UUID.create().uuidString,
+            "src_clientid": "clientID",
+            "resp": false,
+            "type": "REMOTEMUTE",
+        ] as [String: Any]
         let data = try! JSONSerialization.data(withJSONObject: json, options: [])
         let content = String(decoding: data, as: UTF8.self)
         let message = GenericMessage(content: Calling(content: content, conversationId: .random()))
@@ -695,7 +744,10 @@ class CallingRequestStrategyTests: MessagingTest {
             conversation.remoteIdentifier = .create()
             conversation.mlsGroupID = MLSGroupID(Data([2, 2, 2]))
             conversation.messageProtocol = .mls
-            conversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: syncMOC), user1, user2], role: nil)
+            conversation.addParticipantsAndUpdateConversationState(
+                users: [ZMUser.selfUser(in: syncMOC), user1, user2],
+                role: nil
+            )
             conversation.needsToBeUpdatedFromBackend = false
 
             syncMOC.saveOrRollback()

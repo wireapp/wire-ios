@@ -41,27 +41,44 @@ final class CreateGroupSection: NSObject, CollectionViewSectionController {
 
     func prepareForUse(in collectionView: UICollectionView?) {
         collectionView?.register(CreateGroupCell.self, forCellWithReuseIdentifier: CreateGroupCell.zm_reuseIdentifier)
-        collectionView?.register(CreateGuestRoomCell.self, forCellWithReuseIdentifier: CreateGuestRoomCell.zm_reuseIdentifier)
+        collectionView?.register(
+            CreateGuestRoomCell.self,
+            forCellWithReuseIdentifier: CreateGuestRoomCell.zm_reuseIdentifier
+        )
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         data.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         switch data[indexPath.row] {
         case .createGroup:
             collectionView.dequeueReusableCell(withReuseIdentifier: CreateGroupCell.zm_reuseIdentifier, for: indexPath)
         case .createGuestRoom:
-            collectionView.dequeueReusableCell(withReuseIdentifier: CreateGuestRoomCell.zm_reuseIdentifier, for: indexPath)
+            collectionView.dequeueReusableCell(
+                withReuseIdentifier: CreateGuestRoomCell.zm_reuseIdentifier,
+                for: indexPath
+            )
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         .zero
     }
 

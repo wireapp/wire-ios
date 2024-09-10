@@ -541,8 +541,10 @@ final class ConversationServiceTests: MessagingTestBase {
         )
 
         let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
-            results: [.failure(.unreachableDomains([unreachableDomain])),
-                      .success(groupConversation.objectID)],
+            results: [
+                .failure(.unreachableDomains([unreachableDomain])),
+                .success(groupConversation.objectID),
+            ],
             context: uiMOC.notificationContext
         )
 

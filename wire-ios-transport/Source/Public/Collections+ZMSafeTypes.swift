@@ -26,7 +26,12 @@ func lastCallstackFrames() -> String {
     return symbols[min(3, symbols.count) ..< min(15, symbols.count)].joined(separator: "\n")
 }
 
-func objectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required: Bool, transform: ((String) -> T?)?) -> T? {
+func objectWhichIsKindOfClass<T>(
+    dictionary: NSDictionary,
+    key: String,
+    required: Bool,
+    transform: ((String) -> T?)?
+) -> T? {
     if let object = dictionary[key] as? T {
         return object
     }
@@ -43,11 +48,19 @@ func objectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, required
     return nil
 }
 
-func requiredObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
+func requiredObjectWhichIsKindOfClass<T>(
+    dictionary: NSDictionary,
+    key: String,
+    transform: ((String) -> T?)? = nil
+) -> T? {
     objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: true, transform: transform)
 }
 
-func optionalObjectWhichIsKindOfClass<T>(dictionary: NSDictionary, key: String, transform: ((String) -> T?)? = nil) -> T? {
+func optionalObjectWhichIsKindOfClass<T>(
+    dictionary: NSDictionary,
+    key: String,
+    transform: ((String) -> T?)? = nil
+) -> T? {
     objectWhichIsKindOfClass(dictionary: dictionary, key: key, required: false, transform: transform)
 }
 

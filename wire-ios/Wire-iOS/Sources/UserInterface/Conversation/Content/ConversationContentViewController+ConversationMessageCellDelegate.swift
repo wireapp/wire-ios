@@ -44,7 +44,10 @@ extension UIView {
 }
 
 extension ConversationContentViewController: ConversationMessageCellDelegate {
-    func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController) {
+    func conversationMessageWantsToShowActionsController(
+        _ cell: UIView,
+        actionsController: MessageActionsViewController
+    ) {
         present(actionsController, animated: true)
     }
 
@@ -60,14 +63,18 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         if messagePresenter.modalTargetController?.presentedViewController != nil,
            shouldDismissModal {
             messagePresenter.modalTargetController?.dismiss(animated: true) {
-                self.messageAction(actionId: action,
-                                   for: message,
-                                   view: actionView)
+                self.messageAction(
+                    actionId: action,
+                    for: message,
+                    view: actionView
+                )
             }
         } else {
-            messageAction(actionId: action,
-                          for: message,
-                          view: actionView)
+            messageAction(
+                actionId: action,
+                for: message,
+                view: actionView
+            )
         }
     }
 
@@ -75,7 +82,11 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         delegate?.didTap(onUserAvatar: user, view: sourceView, frame: frame)
     }
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
+    func conversationMessageWantsToOpenMessageDetails(
+        _ cell: UIView,
+        for message: ZMConversationMessage,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    ) {
         let messageDetailsViewController = MessageDetailsViewController(
             message: message,
             preferredDisplayMode: preferredDisplayMode,
@@ -89,8 +100,16 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         delegate?.conversationContentViewController(self, presentGuestOptionsFrom: sourceView)
     }
 
-    func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView) {
-        delegate?.conversationContentViewController(self, presentParticipantsDetailsWithSelectedUsers: selectedUsers, from: sourceView)
+    func conversationMessageWantsToOpenParticipantsDetails(
+        _ cell: UIView,
+        selectedUsers: [UserType],
+        sourceView: UIView
+    ) {
+        delegate?.conversationContentViewController(
+            self,
+            presentParticipantsDetailsWithSelectedUsers: selectedUsers,
+            from: sourceView
+        )
     }
 
     func conversationMessageShouldUpdate() {

@@ -201,7 +201,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     func findConversationAssociated(
         with contacts: [INPerson],
-        completion: @escaping (ZMConversation) -> Void) {
+        completion: @escaping (ZMConversation) -> Void
+    ) {
         guard
             contacts.count == 1,
             let contact = contacts.first,
@@ -466,7 +467,9 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         guard !callRegister.callExists(for: handle)  else {
             self.logger.warn("fail: report incoming call: call already exists")
-            log("Cannot report incoming call: call already exists, probably b/c it was reported earlier for a push notification")
+            log(
+                "Cannot report incoming call: call already exists, probably b/c it was reported earlier for a push notification"
+            )
             return
         }
 

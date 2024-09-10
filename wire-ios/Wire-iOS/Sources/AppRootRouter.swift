@@ -124,7 +124,13 @@ final class AppRootRouter {
         completion: @escaping () -> Void
     ) {
         mainWindow.rootViewController = viewController
-        UIView.transition(with: mainWindow, duration: 0.2, options: .transitionCrossDissolve, animations: {}, completion: { _ in completion() })
+        UIView.transition(
+            with: mainWindow,
+            duration: 0.2,
+            options: .transitionCrossDissolve,
+            animations: {},
+            completion: { _ in completion() }
+        )
     }
 
     private func setupAppStateCalculator() {
@@ -149,7 +155,8 @@ final class AppRootRouter {
         sessionManager.updateCallNotificationStyleFromSettings()
         sessionManager.updateMuteOtherCallsFromSettings()
         sessionManager.usePackagingFeatureConfig = true
-        let useCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled ? true : Settings.shared[.callingConstantBitRate] ?? false
+        let useCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled ? true : Settings
+            .shared[.callingConstantBitRate] ?? false
         sessionManager.useConstantBitRateAudio = useCBR
     }
 
@@ -189,9 +196,11 @@ final class AppRootRouter {
 // MARK: - AppStateCalculatorDelegate
 
 extension AppRootRouter: AppStateCalculatorDelegate {
-    func appStateCalculator(_: AppStateCalculator,
-                            didCalculate appState: AppState,
-                            completion: @escaping () -> Void) {
+    func appStateCalculator(
+        _: AppStateCalculator,
+        didCalculate appState: AppState,
+        completion: @escaping () -> Void
+    ) {
         enqueueTransition(to: appState, completion: completion)
     }
 
@@ -394,7 +403,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     private func configureUnauthenticatedAppearance() {
         mainWindow.tintColor = UIColor.Wire.primaryLabel
-        ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self]).tintColor = UIColor.Team.activeButton
+        ValidatedTextField.appearance(whenContainedInInstancesOf: [AuthenticationStepController.self])
+            .tintColor = UIColor.Team.activeButton
     }
 
     private func configureAuthenticatedAppearance() {
@@ -614,8 +624,12 @@ extension AppRootRouter: ContentSizeCategoryObserving {
     static func configureAppearance() {
         let navigationBarTitleBaselineOffset: CGFloat = 2.5
 
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 11, weight: .semibold), .baselineOffset: navigationBarTitleBaselineOffset]
-        let barButtonItemAppearance = UIBarButtonItem.appearance(whenContainedInInstancesOf: [DefaultNavigationBar.self])
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 11, weight: .semibold),
+            .baselineOffset: navigationBarTitleBaselineOffset,
+        ]
+        let barButtonItemAppearance = UIBarButtonItem
+            .appearance(whenContainedInInstancesOf: [DefaultNavigationBar.self])
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .normal)
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .highlighted)
         barButtonItemAppearance.setTitleTextAttributes(attributes, for: .disabled)

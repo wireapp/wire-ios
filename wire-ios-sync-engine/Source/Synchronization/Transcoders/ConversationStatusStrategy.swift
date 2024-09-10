@@ -36,7 +36,10 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
                         conv.resetLocallyModifiedKeys(lastReadKeySet)
                         didUpdateConversation = true
                     } catch {
-                        Logging.messageProcessing.warn("Failed to update last read in self conversation. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn(
+                                "Failed to update last read in self conversation. Reason: \(error.localizedDescription)"
+                            )
                         continue
                     }
                 }
@@ -48,7 +51,10 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
                         conv.deleteOlderMessages()
                         didUpdateConversation = true
                     } catch {
-                        Logging.messageProcessing.warn("Failed to update cleared in self conversation. Reason: \(error.localizedDescription)")
+                        Logging.messageProcessing
+                            .warn(
+                                "Failed to update cleared in self conversation. Reason: \(error.localizedDescription)"
+                            )
                         continue
                     }
                 }

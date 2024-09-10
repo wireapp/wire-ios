@@ -53,9 +53,11 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }()
 
     let informationLabel: UILabel = {
-        let label = DynamicFontLabel(text: Login.information,
-                                     fontSpec: .normalSemiboldFont,
-                                     color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(
+            text: Login.information,
+            fontSpec: .normalSemiboldFont,
+            color: SemanticColors.Label.textDefault
+        )
         label.textAlignment = .center
         label.numberOfLines = 0
         label.accessibilityValue = label.text
@@ -113,7 +115,8 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
             // information label
             informationLabel.topAnchor.constraint(equalTo: wireLogoInfoView.subtitleLabel.bottomAnchor, constant: 10),
             informationLabel.leadingAnchor.constraint(equalTo: wireLogoInfoView.contentView.leadingAnchor),
-            informationLabel.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor)])
+            informationLabel.trailingAnchor.constraint(equalTo: wireLogoInfoView.contentView.trailingAnchor),
+        ])
     }
 
     func executeErrorFeedbackAction(_: AuthenticationErrorFeedbackAction) {

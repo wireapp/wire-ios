@@ -112,7 +112,10 @@ final class BackupRestoreController: NSObject {
             }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
+                zmLog.safePublic(
+                    "Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))",
+                    level: .error
+                )
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 Task { @MainActor in self.activityIndicator.stop() }
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
@@ -121,7 +124,10 @@ final class BackupRestoreController: NSObject {
                 }
 
             case let .failure(error):
-                zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+                zmLog.safePublic(
+                    "Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))",
+                    level: .error
+                )
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)

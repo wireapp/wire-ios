@@ -54,7 +54,11 @@ public protocol CancelableTask {
  */
 
 public protocol ZiphyURLRequester {
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
+    )
+        -> ZiphyRequestIdentifier
 
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier)
 }
@@ -64,7 +68,10 @@ public protocol ZiphyURLRequester {
 extension URLSessionDataTask: ZiphyRequestIdentifier, CancelableTask {}
 
 extension URLSession: ZiphyURLRequester {
-    public func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier {
+    public func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
+    ) -> ZiphyRequestIdentifier {
         let task = self.dataTask(with: request, completionHandler: completionHandler)
         task.resume()
         return task

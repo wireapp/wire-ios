@@ -23,7 +23,10 @@ import WireSyncEngine
 
 /// Observes events from the message toolbox.
 protocol MessageToolboxViewDelegate: AnyObject {
-    func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode)
+    func messageToolboxDidRequestOpeningDetails(
+        _ messageToolboxView: MessageToolboxView,
+        preferredDisplayMode: MessageDetailsDisplayMode
+    )
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView)
     func messageToolboxViewDidSelectDelete(_ sender: UIView?)
 }
@@ -166,7 +169,10 @@ final class MessageToolboxView: UIView {
 
             // statusTextView align vertically center
             contentStack.leadingAnchor.constraint(equalTo: separatorView.trailingAnchor),
-            contentStack.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: -conversationHorizontalMargins.right),
+            contentStack.trailingAnchor.constraint(
+                lessThanOrEqualTo: trailingAnchor,
+                constant: -conversationHorizontalMargins.right
+            ),
             contentStack.topAnchor.constraint(equalTo: topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor),
 

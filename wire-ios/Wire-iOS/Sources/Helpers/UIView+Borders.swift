@@ -23,7 +23,8 @@ extension UIView {
     func addBorder(
         for anchor: Anchor,
         color: UIColor = SemanticColors.View.backgroundSeparatorCell,
-        borderWidth: CGFloat = 1.0) {
+        borderWidth: CGFloat = 1.0
+    ) {
         let border = UIView()
         addSubview(border)
         border.addConstraintsForBorder(for: anchor, borderWidth: borderWidth, to: self)

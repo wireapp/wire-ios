@@ -19,7 +19,10 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelfMLSKeyPackagesAction, CountSelfMLSKeyPackagesActionHandler> {
+class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<
+    CountSelfMLSKeyPackagesAction,
+    CountSelfMLSKeyPackagesActionHandler
+> {
     let clientID = "clientID"
     let requestPath = "/v5/mls/key-packages/self/clientID/count"
 

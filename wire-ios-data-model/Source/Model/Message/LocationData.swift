@@ -24,7 +24,12 @@ public final class LocationData: NSObject {
     public let name: String?
     public let zoomLevel: Int32
 
-    public static func locationData(withLatitude latitude: Float, longitude: Float, name: String?, zoomLevel: Int32) -> LocationData {
+    public static func locationData(
+        withLatitude latitude: Float,
+        longitude: Float,
+        name: String?,
+        zoomLevel: Int32
+    ) -> LocationData {
         LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
     }
 

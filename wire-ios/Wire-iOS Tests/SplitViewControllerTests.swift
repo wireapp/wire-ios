@@ -84,10 +84,12 @@ final class SplitViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.rightView.frame.width, compactWidth)
     }
 
-    private func setupLeftView(isLeftViewControllerRevealed: Bool,
-                               animated: Bool = true,
-                               file: StaticString = #file,
-                               line: UInt = #line) {
+    private func setupLeftView(
+        isLeftViewControllerRevealed: Bool,
+        animated: Bool = true,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         sut.leftViewController = UIViewController()
         sut.rightViewController = UIViewController()
 
@@ -97,7 +99,12 @@ final class SplitViewControllerTests: XCTestCase {
         sut.isLeftViewControllerRevealed = isLeftViewControllerRevealed
         sut.setLeftViewControllerRevealed(isLeftViewControllerRevealed, animated: animated)
 
-        XCTAssertEqual(sut.rightView.frame.origin.x, isLeftViewControllerRevealed ? sut.leftView.frame.size.width : 0, file: file, line: line)
+        XCTAssertEqual(
+            sut.rightView.frame.origin.x,
+            isLeftViewControllerRevealed ? sut.leftView.frame.size.width : 0,
+            file: file,
+            line: line
+        )
     }
 
     func testThatPanRightViewToLessThanHalfWouldBounceBack() {
@@ -110,7 +117,12 @@ final class SplitViewControllerTests: XCTestCase {
 
         // if pans less than half of the width, the right view will bounce back
         let panOffset: CGFloat = sut.view.frame.size.width / 2 - 10
-        let gestureRecognizer = MockPanGestureRecognizer(location: nil, translation: CGPoint(x: panOffset, y: 0), view: nil, state: .changed)
+        let gestureRecognizer = MockPanGestureRecognizer(
+            location: nil,
+            translation: CGPoint(x: panOffset, y: 0),
+            view: nil,
+            state: .changed
+        )
         sut.onHorizontalPan(gestureRecognizer)
 
         // THEN
@@ -134,7 +146,12 @@ final class SplitViewControllerTests: XCTestCase {
 
         // if pans more than half of the width, the left view will be revealed
         let panOffset: CGFloat = sut.view.frame.size.width / 2 + 10
-        let gestureRecognizer = MockPanGestureRecognizer(location: nil, translation: CGPoint(x: panOffset, y: 0), view: nil, state: .changed)
+        let gestureRecognizer = MockPanGestureRecognizer(
+            location: nil,
+            translation: CGPoint(x: panOffset, y: 0),
+            view: nil,
+            state: .changed
+        )
         sut.onHorizontalPan(gestureRecognizer)
 
         // THEN

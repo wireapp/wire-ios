@@ -69,7 +69,17 @@ class PermissionsTests: BaseZMClientMessageTests {
     }
 
     func testMemberPermissions() {
-        XCTAssertEqual(Permissions.member, [.createConversation, .deleteConversation, .addRemoveConversationMember, .modifyConversationMetaData, .getMemberPermissions, .getTeamConversations])
+        XCTAssertEqual(
+            Permissions.member,
+            [
+                .createConversation,
+                .deleteConversation,
+                .addRemoveConversationMember,
+                .modifyConversationMetaData,
+                .getMemberPermissions,
+                .getTeamConversations,
+            ]
+        )
     }
 
     func testPartnerPermissions() {

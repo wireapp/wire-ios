@@ -50,11 +50,13 @@ public struct BackendMLSPublicKeys: Equatable {
         let p384: Data?
         let p521: Data?
 
-        public init(ed25519: Data? = nil,
-                    ed448: Data? = nil,
-                    p256: Data? = nil,
-                    p384: Data? = nil,
-                    p521: Data? = nil) {
+        public init(
+            ed25519: Data? = nil,
+            ed448: Data? = nil,
+            p256: Data? = nil,
+            p384: Data? = nil,
+            p521: Data? = nil
+        ) {
             self.ed25519 = ed25519
             self.ed448 = ed448
             self.p256 = p256

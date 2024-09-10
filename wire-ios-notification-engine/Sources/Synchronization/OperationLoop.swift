@@ -109,7 +109,11 @@ final class RequestGeneratorObserver {
 final class OperationLoop: NSObject, RequestAvailableObserver {
     typealias RequestAvailableClosure = () -> Void
     typealias ChangeClosure = (_ changed: Set<NSManagedObject>) -> Void
-    typealias SaveClosure = (_ notification: Notification, _ insertedObjects: Set<NSManagedObject>, _ updatedObjects: Set<NSManagedObject>) -> Void
+    typealias SaveClosure = (
+        _ notification: Notification,
+        _ insertedObjects: Set<NSManagedObject>,
+        _ updatedObjects: Set<NSManagedObject>
+    ) -> Void
 
     private unowned let syncContext: NSManagedObjectContext
     private unowned let userContext: NSManagedObjectContext
@@ -119,7 +123,11 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     public var changeClosure: ChangeClosure?
     public var requestAvailableClosure: RequestAvailableClosure?
 
-    init(userContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, callBackQueue: OperationQueue = .main) {
+    init(
+        userContext: NSManagedObjectContext,
+        syncContext: NSManagedObjectContext,
+        callBackQueue: OperationQueue = .main
+    ) {
         self.userContext = userContext
         self.syncContext = syncContext
         self.callBackQueue = callBackQueue
@@ -142,9 +150,15 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     }
 
     func setupObserver(for context: NSManagedObjectContext, onSave: @escaping SaveClosure) -> NSObjectProtocol {
-        NotificationCenter.default.addObserver(forName: .NSManagedObjectContextDidSave, object: context, queue: callBackQueue) { note in
-            let insertedObjects = (note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>) ?? Set<NSManagedObject>()
-            let updatedObjects = (note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>) ?? Set<NSManagedObject>()
+        NotificationCenter.default.addObserver(
+            forName: .NSManagedObjectContextDidSave,
+            object: context,
+            queue: callBackQueue
+        ) { note in
+            let insertedObjects = (note.userInfo?[NSInsertedObjectsKey] as? Set<NSManagedObject>) ??
+                Set<NSManagedObject>()
+            let updatedObjects = (note.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>) ??
+                Set<NSManagedObject>()
             onSave(note, insertedObjects, updatedObjects)
         }
     }
@@ -157,11 +171,19 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
             context.mergeChanges(fromContextDidSave: notification)
             context.processPendingChanges() // We need this because merging sometimes leaves the MOC in a 'dirty' state
 
-            NotificationCenter.default.post(name: contextWasMergedNotification, object: context, userInfo: notification.userInfo)
+            NotificationCenter.default.post(
+                name: contextWasMergedNotification,
+                object: context,
+                userInfo: notification.userInfo
+            )
         }
     }
 
-    func syncContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
+    func syncContextDidSave(
+        notification: Notification,
+        insertedObjects: Set<NSManagedObject>,
+        updatedObjects: Set<NSManagedObject>
+    ) {
         merge(changes: notification, intoContext: userContext)
 
         syncContext.performGroupedBlock {
@@ -169,7 +191,11 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
         }
     }
 
-    func userInterfaceContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
+    func userInterfaceContextDidSave(
+        notification: Notification,
+        insertedObjects: Set<NSManagedObject>,
+        updatedObjects: Set<NSManagedObject>
+    ) {
         merge(changes: notification, intoContext: syncContext)
 
         let insertedObjectsIds = insertedObjects.map(\.objectID)
@@ -207,7 +233,11 @@ final class RequestGeneratingOperationLoop {
         self.requestGeneratorStore = requestGeneratorStore
         self.requestGeneratorObserver = RequestGeneratorObserver(context: syncContext)
         self.transportSession = transportSession
-        self.operationLoop = OperationLoop(userContext: userContext, syncContext: syncContext, callBackQueue: callBackQueue)
+        self.operationLoop = OperationLoop(
+            userContext: userContext,
+            syncContext: syncContext,
+            callBackQueue: callBackQueue
+        )
 
         operationLoop.changeClosure = { [weak self] changes in self?.objectsDidChange(changes: changes) }
         operationLoop.requestAvailableClosure = { [weak self] in self?.enqueueRequests() }
@@ -231,7 +261,8 @@ final class RequestGeneratingOperationLoop {
         var result: ZMTransportEnqueueResult
 
         repeat {
-            result = transportSession.attemptToEnqueueSyncRequest(generator: { [weak self] in self?.requestGeneratorObserver.nextRequest() })
+            result = transportSession
+                .attemptToEnqueueSyncRequest(generator: { [weak self] in self?.requestGeneratorObserver.nextRequest() })
         } while result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax
     }
 }

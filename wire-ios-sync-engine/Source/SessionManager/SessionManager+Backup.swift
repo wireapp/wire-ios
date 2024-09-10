@@ -102,27 +102,39 @@ extension SessionManager {
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
-    public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    public func restoreFromBackup(
+        at location: URL,
+        password: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         func complete(_ result: Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
             }
         }
 
-        guard let userId = unauthenticatedSession?.authenticationStatus.authenticatedUserIdentifier else { return completion(.failure(BackupError.notAuthenticated)) }
+        guard let userId = unauthenticatedSession?.authenticationStatus.authenticatedUserIdentifier
+        else { return completion(.failure(BackupError.notAuthenticated)) }
 
         // Verify the imported file has the correct file extension.
-        guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension }) else { return completion(.failure(BackupError.invalidFileExtension)) }
+        guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension })
+        else { return completion(.failure(BackupError.invalidFileExtension)) }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
             guard let self else {
-                completion(.failure(NSError(userSessionErrorCode: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
+                completion(.failure(NSError(
+                    userSessionErrorCode: .unknownError,
+                    userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"]
+                )))
                 return
             }
 
             let decryptedURL = SessionManager.temporaryURL(for: location)
 
-            zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"), level: .debug)
+            zmLog.safePublic(
+                SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"),
+                level: .debug
+            )
             WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
 
             do {

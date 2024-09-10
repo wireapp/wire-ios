@@ -40,8 +40,16 @@ extension AddressBookTests {
     func testThatItReturnsAllContactsWhenTheyHaveValidEmailAndPhoneNumbers() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com", "janet@example.com"], phoneNumbers: ["+15550100"]),
-            MockAddressBookContact(firstName: "สยาม", emailAddresses: ["siam@example.com"], phoneNumbers: ["+15550101", "+15550102"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com", "janet@example.com"],
+                phoneNumbers: ["+15550100"]
+            ),
+            MockAddressBookContact(
+                firstName: "สยาม",
+                emailAddresses: ["siam@example.com"],
+                phoneNumbers: ["+15550101", "+15550102"]
+            ),
         ]
 
         // when
@@ -76,7 +84,11 @@ extension AddressBookTests {
     func testThatItFilterlContactsThatHaveNoEmailNorPhone() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550100"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550100"]
+            ),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: []),
         ]
 
@@ -108,7 +120,11 @@ extension AddressBookTests {
     func testThatIgnoresInvalidPhones() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet@example.com"], phoneNumbers: ["aabbccdd"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["janet@example.com"],
+                phoneNumbers: ["aabbccdd"]
+            ),
         ]
 
         // when
@@ -165,7 +181,11 @@ extension AddressBookTests {
     func testThatItNormalizesEmails() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["Olaf Karlsson <janet+1@example.com>"], phoneNumbers: []),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["Olaf Karlsson <janet+1@example.com>"],
+                phoneNumbers: []
+            ),
         ]
 
         // when
@@ -197,7 +217,11 @@ extension AddressBookTests {
     func testThatItEncodesUsers() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550101"]
+            ),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
@@ -206,24 +230,27 @@ extension AddressBookTests {
         let expectation = self.expectation(description: "Callback invoked")
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
+        self.addressBook
+            .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
-            // then
-            if let chunk {
-                XCTAssertEqual(chunk.numberOfTotalContacts, 3)
-                XCTAssertEqual(chunk.includedContacts, UInt(0) ..< UInt(3))
-                let expected = [
-                    self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
-                                                                   "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
-                    self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
-                    self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="],
-                ]
-                checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
-            } else {
-                XCTFail()
+                // then
+                if let chunk {
+                    XCTAssertEqual(chunk.numberOfTotalContacts, 3)
+                    XCTAssertEqual(chunk.includedContacts, UInt(0) ..< UInt(3))
+                    let expected = [
+                        self.addressBook.contacts[0].localIdentifier: [
+                            "BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
+                            "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA=",
+                        ],
+                        self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
+                        self.addressBook.contacts[2].localIdentifier: ["iJXG3rJ3vc8rrh7EgHzbWPZsWOHFJ7mYv/MD6DlY154="],
+                    ]
+                    checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
+                } else {
+                    XCTFail()
+                }
+                expectation.fulfill()
             }
-            expectation.fulfill()
-        }
 
         self.waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
@@ -238,12 +265,13 @@ extension AddressBookTests {
         let expectation = self.expectation(description: "Callback invoked")
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
+        self.addressBook
+            .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
-            // then
-            XCTAssertNil(chunk)
-            expectation.fulfill()
-        }
+                // then
+                XCTAssertNil(chunk)
+                expectation.fulfill()
+            }
 
         self.waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
@@ -253,7 +281,11 @@ extension AddressBookTests {
     func testThatItEncodesOnlyAMaximumNumberOfUsers() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550101"]
+            ),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
@@ -269,8 +301,10 @@ extension AddressBookTests {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
                 XCTAssertEqual(chunk.includedContacts, UInt(0) ..< UInt(2))
                 let expected = [
-                    self.addressBook.contacts[0].localIdentifier: ["BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
-                                                                   "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA="],
+                    self.addressBook.contacts[0].localIdentifier: [
+                        "BSdmiT9F5EtQrsfcGm+VC7Ofb0ZRREtCGCFw4TCimqk=",
+                        "f9KRVqKI/n1886fb6FnP4oIORkG5S2HO0BoCYOxLFaA=",
+                    ],
                     self.addressBook.contacts[1].localIdentifier: ["YCzX+75BaI4tkCJLysNi2y8f8uK6dIfYWFyc4ibLbQA="],
                 ]
                 checkEqual(lhs: chunk.otherContactsHashes, rhs: expected)
@@ -288,7 +322,11 @@ extension AddressBookTests {
     func testThatItEncodesOnlyTheRequestedUsers() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550101"]
+            ),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
             MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: []),
@@ -324,7 +362,11 @@ extension AddressBookTests {
     func testThatItEncodesAsManyContactsAsItCanIfAskedToEncodeTooMany() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550101"]
+            ),
             MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: []),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
@@ -360,7 +402,11 @@ extension AddressBookTests {
     func testThatItEncodesNoContactIfAskedToEncodePastTheLastContact() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550101"]
+            ),
             MockAddressBookContact(firstName: " أميرة", emailAddresses: ["a@example.com"], phoneNumbers: []),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
         ]
@@ -370,18 +416,19 @@ extension AddressBookTests {
         let expectation = self.expectation(description: "Callback invoked")
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 20, maxNumberOfContacts: 20) { chunk in
+        self.addressBook
+            .encodeWithCompletionHandler(queue, startingContactIndex: 20, maxNumberOfContacts: 20) { chunk in
 
-            // then
-            if let chunk {
-                XCTAssertEqual(chunk.numberOfTotalContacts, 3)
-                XCTAssertEqual(chunk.includedContacts, UInt(20) ..< UInt(20))
-                XCTAssertEqual(chunk.otherContactsHashes.count, 0)
-            } else {
-                XCTFail()
+                // then
+                if let chunk {
+                    XCTAssertEqual(chunk.numberOfTotalContacts, 3)
+                    XCTAssertEqual(chunk.includedContacts, UInt(20) ..< UInt(20))
+                    XCTAssertEqual(chunk.otherContactsHashes.count, 0)
+                } else {
+                    XCTFail()
+                }
+                expectation.fulfill()
             }
-            expectation.fulfill()
-        }
 
         self.waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
@@ -391,7 +438,11 @@ extension AddressBookTests {
     func testThatItEncodesTheSameAddressBookInTheSameWay() {
         // given
         self.addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
+            MockAddressBookContact(
+                firstName: "Olaf",
+                emailAddresses: ["olaf@example.com"],
+                phoneNumbers: ["+15550101"]
+            ),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"]),
         ]
@@ -403,22 +454,24 @@ extension AddressBookTests {
         var chunk2: [String: [String]]?
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
+        self.addressBook
+            .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
-            chunk1 = chunk?.otherContactsHashes
-            expectation1.fulfill()
-        }
+                chunk1 = chunk?.otherContactsHashes
+                expectation1.fulfill()
+            }
 
         self.waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
 
         let expectation2 = self.expectation(description: "Callback invoked twice")
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
+        self.addressBook
+            .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
-            chunk2 = chunk?.otherContactsHashes
-            expectation2.fulfill()
-        }
+                chunk2 = chunk?.otherContactsHashes
+                expectation2.fulfill()
+            }
 
         self.waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
@@ -431,7 +484,12 @@ extension AddressBookTests {
 
 // MARK: - Helpers
 
-private func checkEqual(lhs: [String: [String]]?, rhs: [String: [String]]?, line: UInt = #line, file: StaticString = #file) {
+private func checkEqual(
+    lhs: [String: [String]]?,
+    rhs: [String: [String]]?,
+    line: UInt = #line,
+    file: StaticString = #file
+) {
     guard let lhs, let rhs else {
         XCTFail("Value is nil", file: file, line: line)
         return

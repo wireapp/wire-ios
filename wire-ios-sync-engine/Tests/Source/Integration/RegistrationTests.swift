@@ -36,7 +36,14 @@ class RegistrationTests: IntegrationTest {
         sessionManager?.unauthenticatedSession?.registrationStatus.delegate = delegate
         email = "ba@a-team.de"
 
-        teamToRegister = UnregisteredTeam(teamName: "A-Team", email: email, emailCode: "911", fullName: "Bosco B. A. Baracus", password: "BadAttitude", accentColor: .red)
+        teamToRegister = UnregisteredTeam(
+            teamName: "A-Team",
+            email: email,
+            emailCode: "911",
+            fullName: "Bosco B. A. Baracus",
+            password: "BadAttitude",
+            accentColor: .red
+        )
 
         user = UnregisteredUser()
         user.name = "Bosco B. A. Baracus"

@@ -103,17 +103,18 @@ extension Data {
         let encryptedDataBytes = encryptedData.withUnsafeMutableBytes {
             $0.baseAddress
         }
-        let status = CCCrypt(CCOperation(kCCEncrypt),
-                             CCAlgorithm(kCCAlgorithmAES),
-                             CCOptions(kCCOptionPKCS7Padding),
-                             Array(key),
-                             keyLength,
-                             Array(iv),
-                             Array(self),
-                             self.count,
-                             encryptedDataBytes,
-                             encryptedData.count,
-                             &copiedBytes
+        let status = CCCrypt(
+            CCOperation(kCCEncrypt),
+            CCAlgorithm(kCCAlgorithmAES),
+            CCOptions(kCCOptionPKCS7Padding),
+            Array(key),
+            keyLength,
+            Array(iv),
+            Array(self),
+            self.count,
+            encryptedDataBytes,
+            encryptedData.count,
+            &copiedBytes
         )
 
         guard status == kCCSuccess else {

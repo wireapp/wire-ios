@@ -32,8 +32,10 @@ public enum ConsentRequestError: Error {
 extension ZMUser {
     public typealias CompletionFetch = (Result<Bool, Error>) -> Void
 
-    public func fetchMarketingConsent(in userSession: ZMUserSession,
-                                      completion: @escaping CompletionFetch) {
+    public func fetchMarketingConsent(
+        in userSession: ZMUserSession,
+        completion: @escaping CompletionFetch
+    ) {
         fetchConsent(for: .marketing, on: userSession.transportSession, completion: completion)
     }
 
@@ -59,9 +61,11 @@ extension ZMUser {
         return result
     }
 
-    func fetchConsent(for consentType: ConsentType,
-                      on transportSession: TransportSessionType,
-                      completion: @escaping CompletionFetch) {
+    func fetchConsent(
+        for consentType: ConsentType,
+        on transportSession: TransportSessionType,
+        completion: @escaping CompletionFetch
+    ) {
         guard
             let apiVersion = BackendInfo.apiVersion,
             let context = managedObjectContext
@@ -95,16 +99,20 @@ extension ZMUser {
     }
 
     public typealias CompletionSet = (Result<Void, Error>) -> Void
-    public func setMarketingConsent(to value: Bool,
-                                    in userSession: ZMUserSession,
-                                    completion: @escaping CompletionSet) {
+    public func setMarketingConsent(
+        to value: Bool,
+        in userSession: ZMUserSession,
+        completion: @escaping CompletionSet
+    ) {
         setConsent(to: value, for: .marketing, on: userSession.transportSession, completion: completion)
     }
 
-    func setConsent(to value: Bool,
-                    for consentType: ConsentType,
-                    on transportSession: TransportSessionType,
-                    completion: @escaping CompletionSet) {
+    func setConsent(
+        to value: Bool,
+        for consentType: ConsentType,
+        on transportSession: TransportSessionType,
+        completion: @escaping CompletionSet
+    ) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(ConsentRequestError.unknown))
         }
@@ -139,15 +147,21 @@ enum ConsentRequestFactory {
         "iOS " + Bundle.main.version
     }
 
-    static func setConsentRequest(for consentType: ConsentType, value: Bool, apiVersion: APIVersion) -> ZMTransportRequest {
+    static func setConsentRequest(
+        for consentType: ConsentType,
+        value: Bool,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest {
         let payload: [String: Any] = [
             "type": consentType.rawValue,
             "value": value ? 1 : 0,
             "source": sourceString,
         ]
-        return .init(path: consentPath,
-                     method: .put,
-                     payload: payload as ZMTransportData,
-                     apiVersion: apiVersion.rawValue)
+        return .init(
+            path: consentPath,
+            method: .put,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 }

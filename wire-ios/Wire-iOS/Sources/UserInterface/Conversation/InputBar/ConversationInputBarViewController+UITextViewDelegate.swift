@@ -30,7 +30,8 @@ extension ConversationInputBarViewController {
     func hideLeftView() {
         let currentDevice = DeviceWrapper(device: .current)
         guard self.isIPadRegularPortrait(device: currentDevice, application: UIApplication.shared) else { return }
-        guard let splitViewController = wr_splitViewController, splitViewController.isLeftViewControllerRevealed else { return }
+        guard let splitViewController = wr_splitViewController,
+              splitViewController.isLeftViewControllerRevealed else { return }
 
         splitViewController.setLeftViewControllerRevealed(false, animated: true)
     }
@@ -51,7 +52,12 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         updateRightAccessoryView()
     }
 
-    func textView(_ textView: UITextView, shouldInteractWith textAttachment: NSTextAttachment, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    func textView(
+        _ textView: UITextView,
+        shouldInteractWith textAttachment: NSTextAttachment,
+        in characterRange: NSRange,
+        interaction: UITextItemInteraction
+    ) -> Bool {
         textAttachment.image == nil
     }
 
@@ -89,10 +95,17 @@ extension ConversationInputBarViewController: UITextViewDelegate {
 
         // we are deleting text one by one
         if text == "", range.length == 1 {
-            if let cursor = textView.selectedTextRange, let deletionStart = textView.position(from: cursor.start, offset: -1) {
+            if let cursor = textView.selectedTextRange, let deletionStart = textView.position(
+                from: cursor.start,
+                offset: -1
+            ) {
                 if cursor.start == cursor.end, // We have only caret, no selected text
                    textView.attributedText.containsAttachments(in: range) { // Text to be deleted has text attachment
-                    textView.selectedTextRange = textView.textRange(from: deletionStart, to: cursor.start) // Select the text to be deleted and ignore the backspace
+                    textView.selectedTextRange = textView
+                        .textRange(
+                            from: deletionStart,
+                            to: cursor.start
+                        ) // Select the text to be deleted and ignore the backspace
                     return false
                 }
             }

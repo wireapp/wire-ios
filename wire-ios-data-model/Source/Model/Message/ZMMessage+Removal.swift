@@ -64,10 +64,12 @@ extension ZMMessage {
         moc.delete(message)
     }
 
-    static func remove(remotelyDeletedMessage deletedMessage: MessageDelete,
-                       inConversation conversation: ZMConversation,
-                       senderID: UUID,
-                       inContext moc: NSManagedObjectContext) {
+    static func remove(
+        remotelyDeletedMessage deletedMessage: MessageDelete,
+        inConversation conversation: ZMConversation,
+        senderID: UUID,
+        inContext moc: NSManagedObjectContext
+    ) {
         guard
             let messageID = UUID(uuidString: deletedMessage.messageID),
             let message = ZMMessage.fetch(withNonce: messageID, for: conversation, in: moc)

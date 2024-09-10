@@ -64,7 +64,11 @@ final class CallSystemMessageGenerator: NSObject {
     ) -> ZMSystemMessage? {
         var systemMessage: ZMSystemMessage?
 
-        if connectDateByConversation[conversation] == nil, !caller.isSelfUser, reason.isOne(of: .canceled, .timeout, .normal) {
+        if connectDateByConversation[conversation] == nil, !caller.isSelfUser, reason.isOne(
+            of: .canceled,
+            .timeout,
+            .normal
+        ) {
             log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
 
             var isRelevant = true

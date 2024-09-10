@@ -29,7 +29,10 @@ public class FakeGroupContext: NSObject, GroupQueue {
     }
 
     public static var sync: FakeGroupContext {
-        FakeGroupContext(queue: DispatchQueue(label: "FakeGroupContext syncContext"), group: ZMSDispatchGroup(label: "FakeSyncContext"))
+        FakeGroupContext(
+            queue: DispatchQueue(label: "FakeGroupContext syncContext"),
+            group: ZMSDispatchGroup(label: "FakeSyncContext")
+        )
     }
 
     public init(queue: DispatchQueue, group: ZMSDispatchGroup) {
@@ -38,7 +41,10 @@ public class FakeGroupContext: NSObject, GroupQueue {
     }
 
     override public convenience init() {
-        self.init(queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random() % 1000)"), group: ZMSDispatchGroup(label: "FakeGroupContext")) // swiftlint:disable:this legacy_random
+        self.init(
+            queue: DispatchQueue(label: "FakeGroupContextPrivateQueue-\(arc4random() % 1000)"),
+            group: ZMSDispatchGroup(label: "FakeGroupContext")
+        ) // swiftlint:disable:this legacy_random
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {

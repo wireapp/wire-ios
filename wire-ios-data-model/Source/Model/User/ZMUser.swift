@@ -32,7 +32,8 @@ extension ZMUser: UserType {
     public var isTrusted: Bool {
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
         let selfClient = selfUser?.selfClient()
-        let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
+        let hasUntrustedClients = self.clients
+            .contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
 
         return !hasUntrustedClients
     }
@@ -325,11 +326,19 @@ extension ZMUser {
 
         if let uiContext = managedObjectContext?.zm_userInterface {
             let changedKey = size == .preview ? #keyPath(ZMUser.previewImageData) : #keyPath(ZMUser.completeImageData)
-            NotificationDispatcher.notifyNonCoreDataChanges(objectID: objectID, changedKeys: [changedKey], uiContext: uiContext)
+            NotificationDispatcher.notifyNonCoreDataChanges(
+                objectID: objectID,
+                changedKeys: [changedKey],
+                uiContext: uiContext
+            )
         }
     }
 
-    public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
+    public func imageData(
+        for size: ProfileImageSize,
+        queue: DispatchQueue,
+        completion: @escaping (_ imageData: Data?) -> Void
+    ) {
         managedObjectContext?.zm_userImageCache?.userImage(self, size: size, queue: queue, completion: completion)
     }
 
@@ -372,7 +381,10 @@ extension ZMUser {
     }
 
     @objc public func updateAssetData(with assets: NSArray?, authoritative: Bool) {
-        guard !hasLocalModifications(forKeys: [ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey]) else { return }
+        guard !hasLocalModifications(forKeys: [
+            ZMUser.previewProfileAssetIdentifierKey,
+            ZMUser.completeProfileAssetIdentifierKey,
+        ]) else { return }
         guard let assets = assets as? [[String: String]], !assets.isEmpty else {
             if authoritative {
                 previewProfileAssetIdentifier = nil
@@ -397,19 +409,29 @@ extension ZMUser {
     }
 
     @objc public func requestPreviewProfileImage() {
-        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .preview) else { return }
+        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
+            self,
+            size: .preview
+        ) else { return }
 
-        NotificationInContext(name: .userDidRequestPreviewAsset,
-                              context: moc.notificationContext,
-                              object: self.objectID).post()
+        NotificationInContext(
+            name: .userDidRequestPreviewAsset,
+            context: moc.notificationContext,
+            object: self.objectID
+        ).post()
     }
 
     @objc public func requestCompleteProfileImage() {
-        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .complete) else { return }
+        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
+            self,
+            size: .complete
+        ) else { return }
 
-        NotificationInContext(name: .userDidRequestCompleteAsset,
-                              context: moc.notificationContext,
-                              object: self.objectID).post()
+        NotificationInContext(
+            name: .userDidRequestCompleteAsset,
+            context: moc.notificationContext,
+            object: self.objectID
+        ).post()
     }
 
     /// Mark the user's account as having been deleted. This will also remove the user from any conversations he/she

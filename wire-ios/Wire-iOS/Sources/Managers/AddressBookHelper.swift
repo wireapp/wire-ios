@@ -74,7 +74,8 @@ final class AddressBookHelper: AddressBookHelperProtocol {
     }
 
     private var lastAccessStatus: CNAuthorizationStatus? {
-        guard let value = UserDefaults.standard.object(forKey: addressBookLastAccessStatusKey) as? NSNumber else { return nil }
+        guard let value = UserDefaults.standard.object(forKey: addressBookLastAccessStatusKey) as? NSNumber
+        else { return nil }
         return CNAuthorizationStatus(rawValue: value.intValue)
     }
 

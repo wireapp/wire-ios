@@ -55,7 +55,11 @@ extension ZMClientMessage {
     /// - parameter queryComponents: The array of the search terms to match the normalized text against.
     static func predicateForMessagesMatching(_ queryComponents: [String]) -> NSPredicate {
         guard queryComponents.count > 0 else { return NSPredicate(value: false) }
-        let predicates = Set(queryComponents).map { NSPredicate(format: "%K CONTAINS[n] %@", #keyPath(ZMMessage.normalizedText), $0) }
+        let predicates = Set(queryComponents).map { NSPredicate(
+            format: "%K CONTAINS[n] %@",
+            #keyPath(ZMMessage.normalizedText),
+            $0
+        ) }
         return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
 
@@ -174,7 +178,8 @@ public class TextSearchQuery: NSObject {
         self.conversation = conversation
         self.conversationRemoteIdentifier = (conversation as? ZMConversation)!.remoteIdentifier!
         self.originalQuery = query
-        self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines).filter(TextSearchQuery.isValid)
+        self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines)
+            .filter(TextSearchQuery.isValid)
         self.delegate = delegate
         self.fetchConfiguration = configuration
     }
@@ -197,7 +202,10 @@ public class TextSearchQuery: NSObject {
             // This will be used to ensure we only call the delegate with `hasMore = false` once.
             self.indexedMessageCount = self.countForIndexedMessages()
             self.notIndexedMessageCount = self.countForNonIndexedMessages()
-            zmLog.debug("Searching for \"\(self.originalQuery)\", indexed: \(self.indexedMessageCount), not indexed: \(self.notIndexedMessageCount)")
+            zmLog
+                .debug(
+                    "Searching for \"\(self.originalQuery)\", indexed: \(self.indexedMessageCount), not indexed: \(self.notIndexedMessageCount)"
+                )
 
             if self.indexedMessageCount == 0, self.notIndexedMessageCount == 0 {
                 // No need to perform a search if there are not messages.
@@ -235,7 +243,8 @@ public class TextSearchQuery: NSObject {
             request?.fetchOffset = callCount * self.fetchConfiguration.indexedBatchSize
 
             guard let unwrappedRequest = request,
-                  let matches = self.syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage] else { return completion() }
+                  let matches = self.syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage]
+            else { return completion() }
 
             // Notify the delegate
             let nextOffset = (callCount + 1) * self.fetchConfiguration.indexedBatchSize
@@ -263,7 +272,8 @@ public class TextSearchQuery: NSObject {
             request?.fetchLimit = self.fetchConfiguration.notIndexedBatchSize
 
             guard let unwrappedRequest = request,
-                  let messagesToIndex = self.syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage] else { return }
+                  let messagesToIndex = self.syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage]
+            else { return }
             for item in messagesToIndex {
                 // We populate the `normalizedText` field, so the search can be
                 // performed faster on the normalized field the next time.
@@ -295,7 +305,8 @@ public class TextSearchQuery: NSObject {
             let queryResult = self.result?.updated(appending: uiMessages, hasMore: hasMore)
                 ?? TextQueryResult(query: self, matches: uiMessages, hasMore: hasMore)
 
-            zmLog.debug("Notifying delegate with \(uiMessages.count) new and \(queryResult.matches.count) total matches")
+            zmLog
+                .debug("Notifying delegate with \(uiMessages.count) new and \(queryResult.matches.count) total matches")
             self.result = queryResult
             self.delegate?.textSearchQueryDidReceive(result: queryResult)
         }
@@ -324,10 +335,11 @@ public class TextSearchQuery: NSObject {
     ])
 
     /// Predicate matching indexed messages containing the query in the conversation
-    private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-        self.predicateForQueryMatch,
-        ZMClientMessage.predicateForIndexedMessages(),
-    ])
+    private lazy var predicateForIndexedMessagesQueryMatch: NSPredicate =
+        NSCompoundPredicate(andPredicateWithSubpredicates: [
+            self.predicateForQueryMatch,
+            ZMClientMessage.predicateForIndexedMessages(),
+        ])
 
     /// Predicate matching messages without a populated `normalizedText` field in the conversation
     private lazy var predicateForNotIndexedMessages: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [

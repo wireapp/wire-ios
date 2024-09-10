@@ -109,7 +109,8 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
                 try self.groupConversation.encryptAndInsertData(
                     from: self.user1.clients.anyObject() as! MockUserClient,
                     to: self.selfUser.clients.anyObject() as! MockUserClient,
-                    data: message.serializedData())
+                    data: message.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -148,7 +149,8 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
                 try self.groupConversation.encryptAndInsertData(
                     from: self.user1.clients.anyObject() as! MockUserClient,
                     to: self.selfUser.clients.anyObject() as! MockUserClient,
-                    data: message.serializedData())
+                    data: message.serializedData()
+                )
             } catch {
                 XCTFail()
             }

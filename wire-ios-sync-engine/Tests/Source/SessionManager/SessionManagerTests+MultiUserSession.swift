@@ -32,7 +32,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
     func testThatItLoadsAndKeepsBackgroundUserSession() {
         // GIVEN
-        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        else { return XCTFail() }
 
         let manager = AccountManager(sharedDirectory: sharedContainer)
         let account1 = Account(userName: "Test Account 1", userIdentifier: currentUserIdentifier)
@@ -327,7 +328,11 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         _ = createSelfClient(session.managedObjectContext)
 
         session.syncManagedObjectContext.performGroupedBlock {
-            _ = ZMConversation.fetchOrCreate(with: self.currentUserIdentifier, domain: nil, in: session.syncManagedObjectContext)
+            _ = ZMConversation.fetchOrCreate(
+                with: self.currentUserIdentifier,
+                domain: nil,
+                in: session.syncManagedObjectContext
+            )
             session.syncManagedObjectContext.saveOrRollback()
         }
 
@@ -357,7 +362,10 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(self.notificationCenter?.registeredNotificationCategories, WireSyncEngine.PushNotificationCategory.allCategories)
+        XCTAssertEqual(
+            self.notificationCenter?.registeredNotificationCategories,
+            WireSyncEngine.PushNotificationCategory.allCategories
+        )
         XCTAssertEqual(self.notificationCenter?.requestedAuthorizationOptions, [.alert, .badge, .sound])
         XCTAssertNotNil(self.notificationCenter?.delegate)
 
@@ -374,7 +382,11 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         session.isPerformingSync = false
         application?.applicationState = .background
 
-        let selfConversation = ZMConversation.fetch(with: currentUserIdentifier, domain: nil, in: session.managedObjectContext)
+        let selfConversation = ZMConversation.fetch(
+            with: currentUserIdentifier,
+            domain: nil,
+            in: session.managedObjectContext
+        )
 
         let userInfo = NotificationUserInfo()
         userInfo.conversationID = selfConversation?.remoteIdentifier
@@ -386,10 +398,12 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         // WHEN
         self.sessionManager?.handleNotification(with: userInfo) { userSession in
-            userSession.handleNotificationResponse(actionIdentifier: "",
-                                                   categoryIdentifier: category,
-                                                   userInfo: userInfo,
-                                                   completionHandler: {})
+            userSession.handleNotificationResponse(
+                actionIdentifier: "",
+                categoryIdentifier: category,
+                userInfo: userInfo,
+                completionHandler: {}
+            )
         }
 
         wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 5)
@@ -408,7 +422,11 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         session.isPerformingSync = false
         application?.applicationState = .inactive
 
-        let selfConversation = ZMConversation.fetch(with: currentUserIdentifier, domain: nil, in: session.managedObjectContext)
+        let selfConversation = ZMConversation.fetch(
+            with: currentUserIdentifier,
+            domain: nil,
+            in: session.managedObjectContext
+        )
 
         let userInfo = NotificationUserInfo()
         userInfo.conversationID = selfConversation?.remoteIdentifier
@@ -421,10 +439,12 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         // WHEN
         let completionExpectation = self.customExpectation(description: "Completed action")
         self.sessionManager?.handleNotification(with: userInfo) { userSession in
-            userSession.handleNotificationResponse(actionIdentifier: "",
-                                                   categoryIdentifier: category,
-                                                   userInfo: userInfo,
-                                                   completionHandler: completionExpectation.fulfill)
+            userSession.handleNotificationResponse(
+                actionIdentifier: "",
+                categoryIdentifier: category,
+                userInfo: userInfo,
+                completionHandler: completionExpectation.fulfill
+            )
         }
 
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
@@ -445,7 +465,11 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let responder = MockForegroundNotificationResponder()
         self.sessionManager?.foregroundNotificationResponder = responder
 
-        let selfConversation = ZMConversation.fetch(with: currentUserIdentifier, domain: nil, in: session.managedObjectContext)
+        let selfConversation = ZMConversation.fetch(
+            with: currentUserIdentifier,
+            domain: nil,
+            in: session.managedObjectContext
+        )
 
         let userInfo = NotificationUserInfo()
         userInfo.conversationID = selfConversation?.remoteIdentifier
@@ -505,7 +529,13 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
-        sessionManager?.callCenterDidChange(callState: .answered(degraded: false), conversation: conversation!, caller: caller!, timestamp: nil, previousCallState: nil)
+        sessionManager?.callCenterDidChange(
+            callState: .answered(degraded: false),
+            conversation: conversation!,
+            caller: caller!,
+            timestamp: nil,
+            previousCallState: nil
+        )
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN

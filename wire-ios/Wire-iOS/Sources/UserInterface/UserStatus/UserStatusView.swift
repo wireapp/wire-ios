@@ -84,11 +84,13 @@ final class UserStatusView: TitleView {
             var accessibilityLabel = title
             if userStatus.isE2EICertified {
                 trailingIcons += [.e2eiCertifiedShield]
-                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesHaveValidCertificates
+                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesHaveValidCertificates
             }
             if userStatus.isProteusVerified {
                 trailingIcons += [.proteusVerifiedShield]
-                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
+                accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants
+                    .allYourDevicesProteusVerified
             }
             self.accessibilityLabel = accessibilityLabel
         } else if availability == .none, options.contains(.allowSettingStatus) {

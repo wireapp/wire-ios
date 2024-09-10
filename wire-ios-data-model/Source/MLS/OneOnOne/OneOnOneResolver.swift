@@ -196,7 +196,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Helpers
 
-    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws -> [QualifiedID] {
+    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws
+        -> [QualifiedID] {
         try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()

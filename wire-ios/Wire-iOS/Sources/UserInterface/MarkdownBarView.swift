@@ -188,7 +188,8 @@ final class MarkdownBarView: UIView {
         for button in buttons {
             guard let buttonMarkdown = self.markdown(for: button) else { continue }
             let iconColor = markdown.contains(buttonMarkdown) ? highlightedStateIconColor : enabledStateIconColor
-            let backgroundColor = markdown.contains(buttonMarkdown) ? highlightedStateBackgroundColor : enabledStateBackgroundColor
+            let backgroundColor = markdown
+                .contains(buttonMarkdown) ? highlightedStateBackgroundColor : enabledStateBackgroundColor
             let borderColor = markdown.contains(buttonMarkdown) ? highlightedStateBorderColor : enabledStateBorderColor
             button.setIconColor(iconColor, for: .normal)
             button.setBorderColor(borderColor, for: .normal)

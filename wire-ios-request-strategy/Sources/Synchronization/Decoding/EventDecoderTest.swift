@@ -86,8 +86,10 @@ extension EventDecoderTest {
         var didCallBlock = false
         let accountID = UUID.create()
         let keyGenerator = EARKeyGenerator()
-        let primaryKeys = try keyGenerator.generatePrimaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
-        let secondaryKeys = try keyGenerator.generateSecondaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
+        let primaryKeys = try keyGenerator
+            .generatePrimaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).primary")
+        let secondaryKeys = try keyGenerator
+            .generateSecondaryPublicPrivateKeyPair(id: "event-decoder-tests.\(accountID).secondary")
 
         let publicKeys = EARPublicKeys(
             primary: primaryKeys.publicKey,
@@ -236,7 +238,10 @@ extension EventDecoderTest {
 
         // given
         let event1 = await syncMOC.perform {
-            self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: GenericMessage(content: Calling(content: "123", conversationId: .random())))
+            self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: GenericMessage(content: Calling(content: "123", conversationId: .random()))
+            )
         }
 
         let event2 = await syncMOC.perform {
@@ -264,7 +269,11 @@ extension EventDecoderTest {
         let callingBessage = GenericMessage(content: Calling(content: "123", conversationId: .random()))
 
         let event1 = await syncMOC.perform {
-            self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: callingBessage, from: ZMUser.selfUser(in: self.syncMOC))
+            self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: callingBessage,
+                from: ZMUser.selfUser(in: self.syncMOC)
+            )
         }
         let event2 = await syncMOC.perform {
             self.eventStreamEvent()
@@ -288,7 +297,10 @@ extension EventDecoderTest {
 
         // given
         let event1 = await syncMOC.perform {
-            self.eventStreamEvent(conversation: ZMConversation.selfConversation(in: self.syncMOC), genericMessage: GenericMessage(content: WireProtos.Availability(.away)))
+            self.eventStreamEvent(
+                conversation: ZMConversation.selfConversation(in: self.syncMOC),
+                genericMessage: GenericMessage(content: WireProtos.Availability(.away))
+            )
         }
         let event2 = await syncMOC.perform {
             self.eventStreamEvent()
@@ -637,7 +649,8 @@ extension EventDecoderTest {
         let event = await syncMOC.perform { [self] in
             mlsMessageAddEvent(
                 data: Data.random().base64EncodedString(),
-                groupID: nil)
+                groupID: nil
+            )
         }
 
         // When
@@ -729,11 +742,26 @@ extension EventDecoderTest {
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!
     }
 
-    func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
+    func eventStreamEvent(
+        conversation: ZMConversation,
+        genericMessage: GenericMessage,
+        from user: ZMUser? = nil,
+        uuid: UUID? = nil
+    ) -> ZMUpdateEvent {
         var payload: ZMTransportData = if let user {
-            payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
+            payloadForMessage(
+                in: conversation,
+                type: EventConversation.addOTRMessage,
+                data: ["text": try? genericMessage.serializedData().base64EncodedString()],
+                time: nil,
+                from: user
+            )!
         } else {
-            payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!
+            payloadForMessage(
+                in: conversation,
+                type: EventConversation.addOTRMessage,
+                data: ["text": try? genericMessage.serializedData().base64EncodedString()]
+            )!
         }
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!
@@ -786,7 +814,11 @@ extension EventDecoderTest {
     func insert(_ events: [ZMUpdateEvent], startIndex: Int64 = 0) {
         eventMOC.performGroupedAndWait {
             for (index, event) in events.enumerated() {
-                _ = StoredUpdateEvent.encryptAndCreate(event, context: self.eventMOC, index: Int64(startIndex) + Int64(index))
+                _ = StoredUpdateEvent.encryptAndCreate(
+                    event,
+                    context: self.eventMOC,
+                    index: Int64(startIndex) + Int64(index)
+                )
             }
 
             XCTAssert(self.eventMOC.saveOrRollback())

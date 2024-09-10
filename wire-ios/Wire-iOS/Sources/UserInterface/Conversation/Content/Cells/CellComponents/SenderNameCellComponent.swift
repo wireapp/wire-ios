@@ -68,7 +68,10 @@ final class SenderNameCellComponent: UIView {
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         indicatorView.translatesAutoresizingMaskIntoConstraints = false
 
-        indicatorImageViewTrailing = indicatorView.trailingAnchor.constraint(lessThanOrEqualTo: self.trailingAnchor, constant: -conversationHorizontalMargins.right)
+        indicatorImageViewTrailing = indicatorView.trailingAnchor.constraint(
+            lessThanOrEqualTo: self.trailingAnchor,
+            constant: -conversationHorizontalMargins.right
+        )
 
         NSLayoutConstraint.activate([
             // indicatorView

@@ -107,7 +107,12 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     func testThatItReturnAProperRequest() {
-        let sourceRequest = ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let sourceRequest = ZMTransportRequest(
+            path: "some path",
+            method: .get,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         let generator = DummyGenerator(requestBlock: {
             sourceRequest
@@ -124,7 +129,12 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
 
     func testThatItReturnARequestWhenARequestGeneratorIsAddedDirectly() {
         // Given
-        let sourceRequest = ZMTransportRequest(path: "/path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let sourceRequest = ZMTransportRequest(
+            path: "/path",
+            method: .get,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         let strategy = MockRequestStrategy(request: sourceRequest)
         sut = RequestGeneratorStore(strategies: [strategy])
 
@@ -137,7 +147,12 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     func testThatItReturnAProperRequestAndNoRequestAfter() {
-        let sourceRequest = ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let sourceRequest = ZMTransportRequest(
+            path: "some path",
+            method: .get,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         var requestCalled = false
 
@@ -163,8 +178,18 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     func testThatItReturnsRequestFromMultipleGenerators() {
-        let sourceRequest = ZMTransportRequest(path: "some path", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
-        let sourceRequest2 = ZMTransportRequest(path: "some path 2", method: .post, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let sourceRequest = ZMTransportRequest(
+            path: "some path",
+            method: .get,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
+        let sourceRequest2 = ZMTransportRequest(
+            path: "some path 2",
+            method: .post,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
 
         var requestCalled = false
 

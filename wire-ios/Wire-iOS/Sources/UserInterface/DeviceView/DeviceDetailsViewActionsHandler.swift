@@ -105,8 +105,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
                 }
             }, completionHandler: {
                 continuation.resume(returning: self.userClient.verified)
-            }
-            )
+            })
         }
     }
 
@@ -152,8 +151,10 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             logger.error("MLSGroupID for self was not found")
             return nil
         }
-        return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
-                                                                       clientIds: [mlsClientID]).first
+        return try await userSession.getE2eIdentityCertificates.invoke(
+            mlsGroupId: mlsGroupId,
+            clientIds: [mlsClientID]
+        ).first
     }
 
     @MainActor

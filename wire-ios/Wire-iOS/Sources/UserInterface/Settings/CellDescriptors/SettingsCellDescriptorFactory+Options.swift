@@ -59,7 +59,8 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             selectAction: { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [settingsButton],
@@ -67,7 +68,8 @@ extension SettingsCellDescriptorFactory {
             footer: L10n.Localizable.Self.Settings.PrivacyContactsMenu.DescriptionDisabled.title,
             visibilityAction: { _ in
                 AddressBookHelper.sharedHelper.isAddressBookAccessDisabled
-            })
+            }
+        )
     }
 
     private var clearHistorySection: SettingsSectionDescriptorType {
@@ -76,7 +78,8 @@ extension SettingsCellDescriptorFactory {
             isDestructive: false,
             selectAction: { _ in
                 // erase history is not supported yet
-            })
+            }
+        )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [clearHistoryButton],
@@ -234,7 +237,8 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var popularDemandDarkThemeSection: SettingsSectionDescriptorType {
-        let darkThemeSection = SettingsCellDescriptorFactory.darkThemeGroup(for: settingsPropertyFactory.property(.darkMode))
+        let darkThemeSection = SettingsCellDescriptorFactory
+            .darkThemeGroup(for: settingsPropertyFactory.property(.darkMode))
 
         return SettingsSectionDescriptor(
             cellDescriptors: [darkThemeSection],
@@ -243,7 +247,10 @@ extension SettingsCellDescriptorFactory {
     }
 
     private var appLockSection: SettingsSectionDescriptorType {
-        let appLockToggle = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.lockApp))
+        let appLockToggle = SettingsPropertyToggleCellDescriptor(
+            settingsProperty: settingsPropertyFactory
+                .property(.lockApp)
+        )
 
         appLockToggle.settingsProperty.enabled = !settingsPropertyFactory.isAppLockForced
 
@@ -282,14 +289,18 @@ extension SettingsCellDescriptorFactory {
         let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ SettingsColorScheme(rawValue: $0) }) else { return .text(SettingsColorScheme.defaultPreference.displayString) }
+            guard let option = value.flatMap({ SettingsColorScheme(rawValue: $0) })
+            else { return .text(SettingsColorScheme.defaultPreference.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton
+                .description
+        )
     }
 
     func twitterOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
@@ -305,14 +316,18 @@ extension SettingsCellDescriptorFactory {
         let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ TweetOpeningOption(rawValue: $0) }) else { return .text(TweetOpeningOption.none.displayString) }
+            guard let option = value.flatMap({ TweetOpeningOption(rawValue: $0) })
+            else { return .text(TweetOpeningOption.none.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton
+                .description
+        )
     }
 
     func mapsOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
@@ -325,17 +340,26 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: nil, footer: L10n.Localizable.OpenLink.Maps.footer, visibilityAction: nil)
+        let section = SettingsSectionDescriptor(
+            cellDescriptors: cells.map { $0 as SettingsCellDescriptorType },
+            header: nil,
+            footer: L10n.Localizable.OpenLink.Maps.footer,
+            visibilityAction: nil
+        )
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) }) else { return .text(MapsOpeningOption.apple.displayString) }
+            guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) })
+            else { return .text(MapsOpeningOption.apple.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton
+                .description
+        )
     }
 
     func browserOpeningGroup(for property: SettingsProperty) -> SettingsCellDescriptorType {
@@ -351,14 +375,18 @@ extension SettingsCellDescriptorFactory {
         let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
-            guard let option = value.flatMap({ BrowserOpeningOption(rawValue: $0) }) else { return .text(BrowserOpeningOption.safari.displayString) }
+            guard let option = value.flatMap({ BrowserOpeningOption(rawValue: $0) })
+            else { return .text(BrowserOpeningOption.safari.displayString) }
             return .text(option.displayString)
         }
-        return SettingsGroupCellDescriptor(items: [section],
-                                           title: property.propertyName.settingsPropertyLabelText,
-                                           identifier: nil,
-                                           previewGenerator: preview,
-                                           accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description)
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: nil,
+            previewGenerator: preview,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton
+                .description
+        )
     }
 
     static var appLockFormatter: DateComponentsFormatter {

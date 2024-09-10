@@ -56,8 +56,15 @@ extension ZMUser {
         }
 
         if !query.isEmpty {
-            let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName): "%K MATCHES %@"], matchingSearch: query)
-            let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), query.strippingLeadingAtSign())
+            let namePredicate = NSPredicate(
+                formatDictionary: [#keyPath(ZMUser.normalizedName): "%K MATCHES %@"],
+                matchingSearch: query
+            )
+            let handlePredicate = NSPredicate(
+                format: "%K BEGINSWITH %@",
+                #keyPath(ZMUser.handle),
+                query.strippingLeadingAtSign()
+            )
             allPredicates.append([namePredicate, handlePredicate].compactMap { $0 })
         }
 
@@ -90,8 +97,10 @@ extension ZMUser {
 
     public static func predicateForSentAndPendingConnections(hostedOnDomain domain: String) -> NSPredicate {
         NSPredicate.isHostedOnDomain(domain)
-            .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
-                                                            ZMConnectionStatus.sent.rawValue]))
+            .and(predicateForUsers(withConnectionStatuses: [
+                ZMConnectionStatus.pending.rawValue,
+                ZMConnectionStatus.sent.rawValue,
+            ]))
     }
 }
 

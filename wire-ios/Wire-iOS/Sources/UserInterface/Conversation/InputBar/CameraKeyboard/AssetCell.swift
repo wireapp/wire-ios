@@ -89,16 +89,21 @@ final class AssetCell: UICollectionViewCell {
             let maxDimensionRetina = max(bounds.size.width, bounds.size.height) * (window ?? keyWindow).screen.scale
 
             representedAssetIdentifier = asset.localIdentifier
-            imageRequestTag = manager.requestImage(for: asset,
-                                                   targetSize: CGSize(width: maxDimensionRetina, height: maxDimensionRetina),
-                                                   contentMode: .aspectFill,
-                                                   options: type(of: self).imageFetchOptions,
-                                                   resultHandler: { [weak self] result, _ in
-                                                       guard let self,
-                                                             self.representedAssetIdentifier == asset.localIdentifier
-                                                       else { return }
-                                                       self.imageView.image = result
-                                                   })
+            imageRequestTag = manager.requestImage(
+                for: asset,
+                targetSize: CGSize(
+                    width: maxDimensionRetina,
+                    height: maxDimensionRetina
+                ),
+                contentMode: .aspectFill,
+                options: type(of: self).imageFetchOptions,
+                resultHandler: { [weak self] result, _ in
+                    guard let self,
+                          self.representedAssetIdentifier == asset.localIdentifier
+                    else { return }
+                    self.imageView.image = result
+                }
+            )
 
             if asset.mediaType == .video {
                 let duration = Int(ceil(asset.duration))

@@ -102,7 +102,10 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
 
     private func isKeyingMaterialStale(for group: MLSGroup) -> Bool {
         guard let lastUpdateDate = group.lastKeyMaterialUpdate else {
-            WireLogger.mls.info("last key material update date for group (\(String(describing: group.id)) doesn't exist... considering stale")
+            WireLogger.mls
+                .info(
+                    "last key material update date for group (\(String(describing: group.id)) doesn't exist... considering stale"
+                )
             return true
         }
 

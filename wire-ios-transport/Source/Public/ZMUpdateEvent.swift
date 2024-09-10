@@ -195,11 +195,13 @@ extension ZMUpdateEventType {
 }
 
 extension ZMUpdateEvent {
-    @objc(updateEventTypeForEventTypeString:) public static func updateEventType(for string: String) -> ZMUpdateEventType {
+    @objc(updateEventTypeForEventTypeString:) public static func updateEventType(for string: String)
+        -> ZMUpdateEventType {
         ZMUpdateEventType(string: string)
     }
 
-    @objc(eventTypeStringForUpdateEventType:) public static func eventTypeString(for eventType: ZMUpdateEventType) -> String? {
+    @objc(eventTypeStringForUpdateEventType:) public static func eventTypeString(for eventType: ZMUpdateEventType)
+        -> String? {
         eventType.stringValue
     }
 }
@@ -226,7 +228,8 @@ open class ZMUpdateEvent: NSObject {
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
         switch self.type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd, .conversationMLSMessageAdd:
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd,
+             .conversationMLSMessageAdd:
             true
         default:
             false
@@ -238,7 +241,13 @@ open class ZMUpdateEvent: NSObject {
         debugInformationArray.joined(separator: "\n")
     }
 
-    public init?(uuid: UUID?, payload: [AnyHashable: Any]?, transient: Bool, decrypted: Bool, source: ZMUpdateEventSource) {
+    public init?(
+        uuid: UUID?,
+        payload: [AnyHashable: Any]?,
+        transient: Bool,
+        decrypted: Bool,
+        source: ZMUpdateEventSource
+    ) {
         guard let payload else { return nil }
         guard let payloadType = payload["type"] as? String else { return nil }
 
@@ -261,22 +270,42 @@ open class ZMUpdateEvent: NSObject {
     /// Returns an array of @c ZMUpdateEvent from the given push channel data, the source will be set to @c
     /// ZMUpdateEventSourceWebSocket, if a non-nil @c NSUUID is given for the @c pushStartingAt parameter, all
     /// events earlier or equal to this uuid will have a source of @c ZMUpdateEventSourcePushNotification
-    open class func eventsArray(fromPushChannelData transportData: ZMTransportData, pushStartingAt threshold: UUID?) -> [Any]? {
+    open class func eventsArray(
+        fromPushChannelData transportData: ZMTransportData,
+        pushStartingAt threshold: UUID?
+    ) -> [Any]? {
         self.eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
     }
 
-    class func eventsArray(with uuid: UUID, payloadArray: [Any]?, transient: Bool, source: ZMUpdateEventSource, pushStartingAt sourceThreshold: UUID?) -> [ZMUpdateEvent] {
+    class func eventsArray(
+        with uuid: UUID,
+        payloadArray: [Any]?,
+        transient: Bool,
+        source: ZMUpdateEventSource,
+        pushStartingAt sourceThreshold: UUID?
+    ) -> [ZMUpdateEvent] {
         guard let payloads = payloadArray as? [[AnyHashable: AnyHashable]] else {
-            WireLogger.updateEvent.error("Push event payload is invalid", attributes: [.eventId: uuid.transportString().redactedAndTruncated()], .safePublic)
+            WireLogger.updateEvent.error(
+                "Push event payload is invalid",
+                attributes: [.eventId: uuid.transportString().redactedAndTruncated()],
+                .safePublic
+            )
             return []
         }
 
         let events = payloads.compactMap { payload -> ZMUpdateEvent? in
             var actualSource = source
-            if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID, (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
+            if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID,
+               (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
                 actualSource = .pushNotification
             }
-            return ZMUpdateEvent(uuid: uuid, payload: payload, transient: transient, decrypted: false, source: actualSource)
+            return ZMUpdateEvent(
+                uuid: uuid,
+                payload: payload,
+                transient: transient,
+                decrypted: false,
+                source: actualSource
+            )
         }
         return events
     }
@@ -297,8 +326,19 @@ open class ZMUpdateEvent: NSObject {
     }
 
     /// Creates an update event that was encrypted and it's now decrypted
-    open class func decryptedUpdateEvent(fromEventStreamPayload payload: ZMTransportData, uuid: UUID?, transient: Bool, source: ZMUpdateEventSource) -> ZMUpdateEvent? {
-        ZMUpdateEvent(uuid: uuid, payload: payload.asDictionary(), transient: transient, decrypted: true, source: source)
+    open class func decryptedUpdateEvent(
+        fromEventStreamPayload payload: ZMTransportData,
+        uuid: UUID?,
+        transient: Bool,
+        source: ZMUpdateEventSource
+    ) -> ZMUpdateEvent? {
+        ZMUpdateEvent(
+            uuid: uuid,
+            payload: payload.asDictionary(),
+            transient: transient,
+            decrypted: true,
+            source: source
+        )
     }
 
     @objc(eventsArrayFromTransportData:source:)
@@ -306,13 +346,23 @@ open class ZMUpdateEvent: NSObject {
         self.eventsArray(from: transportData, source: source, pushStartingAt: nil)
     }
 
-    open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource, pushStartingAt threshold: UUID?) -> [ZMUpdateEvent]? {
+    open class func eventsArray(
+        from transportData: ZMTransportData,
+        source: ZMUpdateEventSource,
+        pushStartingAt threshold: UUID?
+    ) -> [ZMUpdateEvent]? {
         let dictionary = transportData.asDictionary()
         guard let uuidString = dictionary?["id"] as? String, let uuid = UUID(uuidString: uuidString) else { return nil }
         guard let payloadArray = dictionary?["payload"] as? [Any] else { return nil }
         let transient = (dictionary?["transient"] as? Bool) ?? false
 
-        return eventsArray(with: uuid, payloadArray: payloadArray, transient: transient, source: source, pushStartingAt: threshold)
+        return eventsArray(
+            with: uuid,
+            payloadArray: payloadArray,
+            transient: transient,
+            source: source,
+            pushStartingAt: threshold
+        )
     }
 
     /// Adds debug information

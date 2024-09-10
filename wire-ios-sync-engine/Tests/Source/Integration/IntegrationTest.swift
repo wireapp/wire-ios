@@ -104,15 +104,25 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
     let transportSession: UnauthenticatedTransportSessionProtocol
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol,
-         environment: BackendEnvironmentProvider,
-         reachability: ReachabilityProvider & TearDownCapable) {
+    init(
+        transportSession: UnauthenticatedTransportSessionProtocol,
+        environment: BackendEnvironmentProvider,
+        reachability: ReachabilityProvider & TearDownCapable
+    ) {
         self.transportSession = transportSession
-        super.init(appVersion: "1.0", environment: environment, proxyUsername: nil, proxyPassword: nil, reachability: reachability)
+        super.init(
+            appVersion: "1.0",
+            environment: environment,
+            proxyUsername: nil,
+            proxyPassword: nil,
+            reachability: reachability
+        )
     }
 
-    override func session(delegate: UnauthenticatedSessionDelegate,
-                          authenticationStatusDelegate: ZMAuthenticationStatusDelegate) -> UnauthenticatedSession {
+    override func session(
+        delegate: UnauthenticatedSessionDelegate,
+        authenticationStatusDelegate: ZMAuthenticationStatusDelegate
+    ) -> UnauthenticatedSession {
         .init(
             transportSession: transportSession,
             reachability: reachability,
@@ -154,7 +164,11 @@ extension IntegrationTest {
         application = ApplicationMock()
         notificationCenter = .init()
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
-        mockTransportSession.cookieStorage = ZMPersistentCookieStorage(forServerName: mockEnvironment.backendURL.host!, userIdentifier: currentUserIdentifier, useCache: true)
+        mockTransportSession.cookieStorage = ZMPersistentCookieStorage(
+            forServerName: mockEnvironment.backendURL.host!,
+            userIdentifier: currentUserIdentifier,
+            useCache: true
+        )
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self
         mockTransportSession.cookieStorage.deleteKeychainItems()
         createSessionManager()
@@ -229,7 +243,11 @@ extension IntegrationTest {
     }
 
     private func deleteSharedContainerContent() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerDirectory,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }
@@ -270,7 +288,11 @@ extension IntegrationTest {
         }
 
         let reachability = MockReachability()
-        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession, environment: mockEnvironment, reachability: reachability)
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(
+            transportSession: transportSession,
+            environment: mockEnvironment,
+            reachability: reachability
+        )
         let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
             application: application,
             mediaManager: mockMediaManager,
@@ -395,18 +417,27 @@ extension IntegrationTest {
             user5.accentID = 7
             self.user5 = user5
 
-            let selfToUser1Conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: user1)
+            let selfToUser1Conversation = session.insertOneOnOneConversation(
+                withSelfUser: self.selfUser,
+                otherUser: user1
+            )
             selfToUser1Conversation.creator = self.selfUser
             selfToUser1Conversation.setValue("Connection conversation to user 1", forKey: "name")
             self.selfToUser1Conversation = selfToUser1Conversation
 
-            let selfToUser2Conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: user2)
+            let selfToUser2Conversation = session.insertOneOnOneConversation(
+                withSelfUser: self.selfUser,
+                otherUser: user2
+            )
             selfToUser2Conversation.creator = user2
 
             selfToUser2Conversation.setValue("Connection conversation to user 2", forKey: "name")
             self.selfToUser2Conversation = selfToUser2Conversation
 
-            let groupConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2, user3])
+            let groupConversation = session.insertGroupConversation(
+                withSelfUser: self.selfUser,
+                otherUsers: [user1, user2, user3]
+            )
             groupConversation.creator = user3
             groupConversation.changeName(by: self.selfUser, name: "Group conversation")
             self.groupConversation = groupConversation
@@ -447,32 +478,48 @@ extension IntegrationTest {
             session.addV3ProfilePicture(to: bot)
             self.serviceUser = bot
 
-            let groupConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2, bot])
+            let groupConversation = session.insertGroupConversation(
+                withSelfUser: self.selfUser,
+                otherUsers: [user1, user2, bot]
+            )
             groupConversation.team = team
             groupConversation.creator = user2
             groupConversation.changeName(by: self.selfUser, name: "Group conversation with bot")
             self.groupConversationWithServiceUser = groupConversation
 
-            let teamConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [self.teamUser1!, self.teamUser2!])
+            let teamConversation = session.insertGroupConversation(
+                withSelfUser: self.selfUser,
+                otherUsers: [self.teamUser1!, self.teamUser2!]
+            )
             teamConversation.team = team
             teamConversation.creator = self.selfUser
             teamConversation.changeName(by: self.selfUser, name: "Team Group conversation")
             self.groupConversationWithWholeTeam = teamConversation
             MockRole.createConversationRoles(context: self.mockTransportSession.managedObjectContext)
-            let pc = MockParticipantRole.insert(in: self.mockTransportSession.managedObjectContext, conversation: groupConversation, user: self.selfUser)
+            let pc = MockParticipantRole.insert(
+                in: self.mockTransportSession.managedObjectContext,
+                conversation: groupConversation,
+                user: self.selfUser
+            )
             pc.role = MockRole.adminRole
         }
     }
 
     @objc
     func login() -> Bool {
-        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(
+            email: IntegrationTest.SelfUserEmail,
+            password: IntegrationTest.SelfUserPassword
+        )
         return login(withCredentials: credentials, ignoreAuthenticationFailures: false)
     }
 
     @objc(loginAndIgnoreAuthenticationFailures:)
     func login(ignoreAuthenticationFailures: Bool) -> Bool {
-        let credentials = UserEmailCredentials(email: IntegrationTest.SelfUserEmail, password: IntegrationTest.SelfUserPassword)
+        let credentials = UserEmailCredentials(
+            email: IntegrationTest.SelfUserEmail,
+            password: IntegrationTest.SelfUserPassword
+        )
         return login(withCredentials: credentials, ignoreAuthenticationFailures: ignoreAuthenticationFailures)
     }
 
@@ -522,8 +569,9 @@ extension IntegrationTest {
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
 
-        let result = userSession?.managedObjectContext.performAndWait { try! userSession?.managedObjectContext.fetch(request) as? [ZMConversation]
-        }
+        let result = userSession?.managedObjectContext
+            .performAndWait { try! userSession?.managedObjectContext.fetch(request) as? [ZMConversation]
+            }
 
         if let conversation = result?.first {
             return conversation
@@ -579,7 +627,12 @@ extension IntegrationTest {
             connection.status = status
             connection.lastUpdate = Date(timeIntervalSinceNow: -20000)
 
-            let conversation = session.insertConversation(withSelfUser: self.selfUser, creator: mockUser, otherUsers: [], type: .invalid)
+            let conversation = session.insertConversation(
+                withSelfUser: self.selfUser,
+                creator: mockUser,
+                otherUsers: [],
+                type: .invalid
+            )
             connection.conversation = conversation
         }
 
@@ -601,7 +654,10 @@ extension IntegrationTest {
     }
 
     @objc(performRemoteChangesExludedFromNotificationStream:)
-    func performRemoteChangesExludedFromNotificationStream(_ changes: @escaping (_ session: MockTransportSessionObjectCreation) -> Void) {
+    func performRemoteChangesExludedFromNotificationStream(
+        _ changes: @escaping (_ session: MockTransportSessionObjectCreation)
+            -> Void
+    ) {
         mockTransportSession.performRemoteChanges { session in
             changes(session)
             self.mockTransportSession.saveAndCreatePushChannelEvents()
@@ -610,7 +666,8 @@ extension IntegrationTest {
 
     func simulateNotificationStreamInterruption(
         changesBeforeInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil,
-        changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
+        changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil
+    ) {
         closePushChannelAndWaitUntilClosed()
         changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
         mockTransportSession.performRemoteChanges { session in
@@ -681,10 +738,16 @@ extension IntegrationTest {
 extension IntegrationTest {
     @objc(remotelyAppendSelfConversationWithZMClearedForMockConversation:atTime:)
     func remotelyAppendSelfConversationWithZMCleared(for mockConversation: MockConversation, at time: Date) {
-        let genericMessage = GenericMessage(content: Cleared(timestamp: time, conversationID: UUID(uuidString: mockConversation.identifier)!))
+        let genericMessage = GenericMessage(content: Cleared(
+            timestamp: time,
+            conversationID: UUID(uuidString: mockConversation.identifier)!
+        ))
         mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.selfConversation.insertClientMessage(from: self.selfUser, data: genericMessage.serializedData())
+                try self.selfConversation.insertClientMessage(
+                    from: self.selfUser,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -701,7 +764,10 @@ extension IntegrationTest {
         let genericMessage = GenericMessage(content: LastRead(conversationID: conversationID, lastReadTimestamp: time))
         mockTransportSession.performRemoteChanges { _ in
             do {
-                try self.selfConversation.insertClientMessage(from: self.selfUser, data: genericMessage.serializedData())
+                try self.selfConversation.insertClientMessage(
+                    from: self.selfUser,
+                    data: genericMessage.serializedData()
+                )
             } catch {
                 XCTFail()
             }
@@ -730,7 +796,10 @@ extension IntegrationTest: SessionManagerDelegate {
         }
 
         self.userSession?.syncManagedObjectContext.performGroupedBlock {
-            self.userSession?.syncManagedObjectContext.setPersistentStoreMetadata(NSNumber(value: true), key: ZMSkipHotfix)
+            self.userSession?.syncManagedObjectContext.setPersistentStoreMetadata(
+                NSNumber(value: true),
+                key: ZMSkipHotfix
+            )
         }
 
         setupTimers()
@@ -770,9 +839,11 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
-    public func sessionManagerWillOpenAccount(_ account: Account,
-                                              from selectedAccount: Account?,
-                                              userSessionCanBeTornDown: @escaping () -> Void) {
+    public func sessionManagerWillOpenAccount(
+        _ account: Account,
+        from selectedAccount: Account?,
+        userSessionCanBeTornDown: @escaping () -> Void
+    ) {
         self.userSession = nil
         userSessionCanBeTornDown()
     }

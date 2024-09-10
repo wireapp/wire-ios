@@ -30,7 +30,12 @@ final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper 
     let clientId2 = "ClientId2"
 
     func callParticipant(clientId: String, videoState: VideoState) -> CallParticipant {
-        CallParticipant(user: otherUser, clientId: clientId, state: .connected(videoState: videoState, microphoneState: .unmuted), activeSpeakerState: .inactive)
+        CallParticipant(
+            user: otherUser,
+            clientId: clientId,
+            state: .connected(videoState: videoState, microphoneState: .unmuted),
+            activeSpeakerState: .inactive
+        )
     }
 
     override func setUp() {
@@ -58,13 +63,19 @@ final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper 
         XCTAssert(sut.screenSharingStartTimes.isEmpty)
 
         // WHEN
-        sut.callParticipantsDidChange(conversation: mockConversation, participants: [callParticipant(clientId: clientId1, videoState: .screenSharing)])
+        sut.callParticipantsDidChange(
+            conversation: mockConversation,
+            participants: [callParticipant(clientId: clientId1, videoState: .screenSharing)]
+        )
 
         // THEN
         XCTAssertEqual(sut.screenSharingStartTimes.count, 1)
 
         // WHEN
-        sut.callParticipantsDidChange(conversation: mockConversation, participants: [callParticipant(clientId: clientId2, videoState: .screenSharing)])
+        sut.callParticipantsDidChange(
+            conversation: mockConversation,
+            participants: [callParticipant(clientId: clientId2, videoState: .screenSharing)]
+        )
 
         // THEN
         XCTAssertEqual(sut.screenSharingStartTimes.count, 2)
@@ -151,7 +162,14 @@ final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper 
 
     private func participantStoppedVideo(callParticipant: CallParticipant) {
         // insert an mock callInfo
-        let callInfo = CallInfo(connectingDate: Date(), establishedDate: nil, maximumCallParticipants: 1, toggledVideo: false, outgoing: true, video: true)
+        let callInfo = CallInfo(
+            connectingDate: Date(),
+            establishedDate: nil,
+            maximumCallParticipants: 1,
+            toggledVideo: false,
+            outgoing: true,
+            video: true
+        )
         sut.callInfos[mockConversation.remoteIdentifier!] = callInfo
 
         sut.callParticipantsDidChange(conversation: mockConversation, participants: [callParticipant])

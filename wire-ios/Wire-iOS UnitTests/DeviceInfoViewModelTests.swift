@@ -45,7 +45,8 @@ final class DeviceInfoViewModelTests: XCTestCase {
         )
     }
 
-    func testThatItCallsShowMyDeviceMethodInConversationUserClientDetailsActionsHandler_WhenOnShowMyDeviceTappedIsCalled() {
+    func testThatItCallsShowMyDeviceMethodInConversationUserClientDetailsActionsHandler_WhenOnShowMyDeviceTappedIsCalled(
+    ) {
         let expectation = expectation(description: "copy value should be called")
 
         mockConversationUserClientDetailsActions.showMyDevice_MockMethod = {
@@ -55,7 +56,8 @@ final class DeviceInfoViewModelTests: XCTestCase {
         wait(for: [expectation])
     }
 
-    func testThatItCallsHowToDoThatMethodInConversationUserClientDetailsActionsHandler_WhenOnHowToDoThatTappedIsCalled() {
+    func testThatItCallsHowToDoThatMethodInConversationUserClientDetailsActionsHandler_WhenOnHowToDoThatTappedIsCalled(
+    ) {
         let expectation = expectation(description: "copy value should be called")
 
         mockConversationUserClientDetailsActions.howToDoThat_MockMethod = {

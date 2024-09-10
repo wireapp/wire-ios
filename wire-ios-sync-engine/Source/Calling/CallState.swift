@@ -37,10 +37,12 @@ public struct CallParticipant: Hashable {
     ///   - user: the call participant ZMUser
     ///   - clientId: the call participant's client
     ///   - state: the call participant's state
-    public init(user: ZMUser,
-                clientId: String,
-                state: CallParticipantState,
-                activeSpeakerState: ActiveSpeakerState) {
+    public init(
+        user: ZMUser,
+        clientId: String,
+        state: CallParticipantState,
+        activeSpeakerState: ActiveSpeakerState
+    ) {
         self.user = user
         self.clientId = clientId
         self.userId = user.avsIdentifier
@@ -54,11 +56,13 @@ public struct CallParticipant: Hashable {
     ///   - userId: the call participant user's id
     ///   - clientId: the call participant's client
     ///   - state: the call participant's state
-    public init(user: UserType,
-                userId: AVSIdentifier,
-                clientId: String,
-                state: CallParticipantState,
-                activeSpeakerState: ActiveSpeakerState) {
+    public init(
+        user: UserType,
+        userId: AVSIdentifier,
+        clientId: String,
+        state: CallParticipantState,
+        activeSpeakerState: ActiveSpeakerState
+    ) {
         self.user = user
         self.clientId = clientId
         self.userId = userId
@@ -73,11 +77,13 @@ public struct CallParticipant: Hashable {
             return nil
         }
 
-        self.init(user: user,
-                  userId: userId,
-                  clientId: member.client.clientId,
-                  state: member.callParticipantState,
-                  activeSpeakerState: activeSpeakerState)
+        self.init(
+            user: user,
+            userId: userId,
+            clientId: member.client.clientId,
+            state: member.callParticipantState,
+            activeSpeakerState: activeSpeakerState
+        )
     }
 
     // MARK: - Hashable

@@ -35,8 +35,10 @@ final class MessageSendFailureView: UIView {
 
     private let stackView = UIStackView(axis: .vertical)
     private let titleLabel = WebLinkTextView()
-    private let retryButton = SecondaryTextButton(fontSpec: FontSpec.buttonSmallSemibold,
-                                                  insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
+    private let retryButton = SecondaryTextButton(
+        fontSpec: FontSpec.buttonSmallSemibold,
+        insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+    )
 
     // MARK: - initialization
 

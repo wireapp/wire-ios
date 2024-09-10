@@ -54,8 +54,10 @@ extension URL {
     static func manageTeam(source: TeamSource) -> URL {
         let baseURL = BackendEnvironment.shared.teamsURL
 
-        let queryItems = [URLQueryItem(name: "utm_source", value: source.parameterValue),
-                          URLQueryItem(name: "utm_term", value: "ios")]
+        let queryItems = [
+            URLQueryItem(name: "utm_source", value: source.parameterValue),
+            URLQueryItem(name: "utm_term", value: "ios"),
+        ]
 
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
 

@@ -50,7 +50,10 @@ final class PassthroughTouchesView: UIView {
 
             for subSubview in subview.subviews {
                 let translatedSubSubPoint = convert(point, to: subSubview)
-                if subview.point(inside: translatedPoint, with: event), subSubview.point(inside: translatedSubSubPoint, with: event) {
+                if subview.point(inside: translatedPoint, with: event), subSubview.point(
+                    inside: translatedSubSubPoint,
+                    with: event
+                ) {
                     return true
                 }
             }

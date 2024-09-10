@@ -47,7 +47,12 @@ public final class ZiphyClient {
      * - parameter callbackQueue: The queue where completion handlers will be called.
      */
 
-    public init(host: String, requester: ZiphyURLRequester, downloadSession: ZiphyURLRequester, callbackQueue: DispatchQueue = .main) {
+    public init(
+        host: String,
+        requester: ZiphyURLRequester,
+        downloadSession: ZiphyURLRequester,
+        callbackQueue: DispatchQueue = .main
+    ) {
         self.requester = requester
         self.host = host
         self.callbackQueue = callbackQueue
@@ -70,7 +75,11 @@ extension ZiphyClient {
      */
 
     @discardableResult
-    public func fetchTrending(resultsLimit: Int = 25, offset: Int, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
+    public func fetchTrending(
+        resultsLimit: Int = 25,
+        offset: Int,
+        onCompletion: @escaping ZiphyListRequestCallback
+    ) -> CancelableTask? {
         let request = requestGenerator.makeTrendingImagesRequest(resultsLimit: resultsLimit, offset: offset)
         return performPotentialZiphListRequest(request, onCompletion: onCompletion)
     }
@@ -87,12 +96,21 @@ extension ZiphyClient {
      */
 
     @discardableResult
-    public func search(term: String, resultsLimit: Int = 25, offset: Int = 0, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
+    public func search(
+        term: String,
+        resultsLimit: Int = 25,
+        offset: Int = 0,
+        onCompletion: @escaping ZiphyListRequestCallback
+    ) -> CancelableTask? {
         let request = requestGenerator.makeSearchRequest(term: term, resultsLimit: resultsLimit, offset: offset)
         return performPotentialZiphListRequest(request, onCompletion: onCompletion)
     }
 
-    private func performPotentialZiphListRequest(_ potentialRequest: ZiphyResult<URLRequest>, isPaginated: Bool = true, onCompletion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
+    private func performPotentialZiphListRequest(
+        _ potentialRequest: ZiphyResult<URLRequest>,
+        isPaginated: Bool = true,
+        onCompletion: @escaping ZiphyListRequestCallback
+    ) -> CancelableTask? {
         let completionHandler = makeCompletionHandler(onCompletion)
         let listTask = performDataTask(potentialRequest, errorHandler: completionHandler)
 
@@ -188,7 +206,10 @@ extension ZiphyClient {
     }
 
     /// Performs a data task if the URL request is available, or calls the error otherwise.
-    private func performDataTask<T>(_ potentialRequest: ZiphyResult<URLRequest>, errorHandler: (ZiphyResult<T>) -> Void) -> URLRequestPromise? {
+    private func performDataTask<T>(
+        _ potentialRequest: ZiphyResult<URLRequest>,
+        errorHandler: (ZiphyResult<T>) -> Void
+    ) -> URLRequestPromise? {
         switch potentialRequest {
         case let .failure(error):
             errorHandler(.failure(error))

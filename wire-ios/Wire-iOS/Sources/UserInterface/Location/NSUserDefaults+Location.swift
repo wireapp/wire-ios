@@ -52,6 +52,11 @@ extension LocationData {
             return nil
         }
 
-        return .locationData(withLatitude: latitudeFloat, longitude: longitudeFloat, name: nil, zoomLevel: Int32(zoomLevel))
+        return .locationData(
+            withLatitude: latitudeFloat,
+            longitude: longitudeFloat,
+            name: nil,
+            zoomLevel: Int32(zoomLevel)
+        )
     }
 }

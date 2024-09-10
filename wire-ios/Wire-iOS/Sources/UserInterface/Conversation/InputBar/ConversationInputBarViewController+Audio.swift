@@ -76,7 +76,11 @@ extension ConversationInputBarViewController {
             return
         }
 
-        type(of: self).cancelPreviousPerformRequests(withTarget: self, selector: #selector(hideInlineAudioRecordViewController), object: nil)
+        type(of: self).cancelPreviousPerformRequests(
+            withTarget: self,
+            selector: #selector(hideInlineAudioRecordViewController),
+            object: nil
+        )
 
         switch sender.state {
         case .began:
@@ -101,7 +105,10 @@ extension ConversationInputBarViewController {
     func createAudioViewController(audioRecorder: AudioRecorderType? = nil, userSession: UserSession) {
         removeAudioViewController()
 
-        let audioRecordViewController = AudioRecordViewController(audioRecorder: audioRecorder, userSession: userSession)
+        let audioRecordViewController = AudioRecordViewController(
+            audioRecorder: audioRecorder,
+            userSession: userSession
+        )
         audioRecordViewController.view.translatesAutoresizingMaskIntoConstraints = false
         audioRecordViewController.delegate = self
 
@@ -152,11 +159,17 @@ extension ConversationInputBarViewController {
 
         if animated {
             audioRecordViewController.setOverlayState(.hidden, animated: false)
-            UIView.transition(with: inputBar, duration: 0.1, options: [.transitionCrossDissolve, .allowUserInteraction], animations: {
-                audioRecordViewContainer.isHidden = false
-            }, completion: { _ in
-                audioRecordViewController.setOverlayState(.expanded(0), animated: true)
-            })
+            UIView.transition(
+                with: inputBar,
+                duration: 0.1,
+                options: [.transitionCrossDissolve, .allowUserInteraction],
+                animations: {
+                    audioRecordViewContainer.isHidden = false
+                },
+                completion: { _ in
+                    audioRecordViewController.setOverlayState(.expanded(0), animated: true)
+                }
+            )
         } else {
             audioRecordViewContainer.isHidden = false
             audioRecordViewController.setOverlayState(.expanded(0), animated: false)
@@ -210,7 +223,12 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
         }
     }
 
-    func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
+    func audioRecordViewControllerWantsToSendAudio(
+        _ audioRecordViewController: AudioRecordBaseViewController,
+        recordingURL: URL,
+        duration: TimeInterval,
+        filter: AVSAudioEffectType
+    ) {
         let checker = PrivacyWarningChecker(conversation: self.conversation) { [weak self] in
             self?.uploadFile(at: recordingURL as URL)
 
@@ -221,7 +239,13 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 }
 
 extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) {
         let isRecording = audioRecordKeyboardViewController?.isRecording
 
         switch (callState, isRecording, wasRecordingBeforeCall) {

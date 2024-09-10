@@ -66,25 +66,26 @@ extension Payload {
         var epoch: UInt?
         var epochTimestamp: Date?
 
-        init(qualifiedID: QualifiedID? = nil,
-             id: UUID?  = nil,
-             type: Int? = nil,
-             creator: UUID? = nil,
-             cipherSuite: UInt16? = nil,
-             access: [String]? = nil,
-             legacyAccessRole: String? = nil,
-             accessRoles: [String]? = nil,
-             name: String? = nil,
-             members: ConversationMembers? = nil,
-             lastEvent: String? = nil,
-             lastEventTime: String? = nil,
-             teamID: UUID? = nil,
-             messageTimer: TimeInterval? = nil,
-             readReceiptMode: Int? = nil,
-             messageProtocol: String? = nil,
-             mlsGroupID: String? = nil,
-             epoch: UInt? = nil,
-             epochTimestamp: Date? = nil
+        init(
+            qualifiedID: QualifiedID? = nil,
+            id: UUID?  = nil,
+            type: Int? = nil,
+            creator: UUID? = nil,
+            cipherSuite: UInt16? = nil,
+            access: [String]? = nil,
+            legacyAccessRole: String? = nil,
+            accessRoles: [String]? = nil,
+            name: String? = nil,
+            members: ConversationMembers? = nil,
+            lastEvent: String? = nil,
+            lastEventTime: String? = nil,
+            teamID: UUID? = nil,
+            messageTimer: TimeInterval? = nil,
+            readReceiptMode: Int? = nil,
+            messageProtocol: String? = nil,
+            mlsGroupID: String? = nil,
+            epoch: UInt? = nil,
+            epochTimestamp: Date? = nil
         ) {
             self.qualifiedID = qualifiedID
             self.id = id

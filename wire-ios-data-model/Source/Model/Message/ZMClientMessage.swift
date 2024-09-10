@@ -86,12 +86,15 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public static func keyPathsForValuesAffectingUnderlyingMessage() -> Set<String> {
-        Set([#keyPath(ZMClientMessage.dataSet),
-             #keyPath(ZMClientMessage.dataSet) + ".data"])
+        Set([
+            #keyPath(ZMClientMessage.dataSet),
+            #keyPath(ZMClientMessage.dataSet) + ".data",
+        ])
     }
 
     override public func expire() {
-        WireLogger.messaging.warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
+        WireLogger.messaging
+            .warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
             let genericMessage = self.underlyingMessage,
@@ -112,9 +115,11 @@ public class ZMClientMessage: ZMOTRMessage {
                 let conversation else {
                 return
             }
-            ZMClientMessage.expireButtonState(forButtonAction: genericMessage.buttonAction,
-                                              forConversation: conversation,
-                                              inContext: managedObjectContext)
+            ZMClientMessage.expireButtonState(
+                forButtonAction: genericMessage.buttonAction,
+                forConversation: conversation,
+                inContext: managedObjectContext
+            )
         default:
             break
         }
@@ -125,9 +130,11 @@ public class ZMClientMessage: ZMOTRMessage {
         if let genericMessage = underlyingMessage,
            case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
-            editText(self.textMessageData?.messageText ?? "",
-                     mentions: self.textMessageData?.mentions ?? [],
-                     fetchLinkPreview: true)
+            editText(
+                self.textMessageData?.messageText ?? "",
+                mentions: self.textMessageData?.mentions ?? [],
+                fetchLinkPreview: true
+            )
         }
         super.resend()
     }
@@ -156,7 +163,10 @@ public class ZMClientMessage: ZMOTRMessage {
         case .edited:
             if let nonce = self.nonce(fromPostPayload: payload),
                self.nonce != nonce {
-                WireLogger.messaging.error("sent message response nonce does not match \(nonce)", attributes: logInformation)
+                WireLogger.messaging.error(
+                    "sent message response nonce does not match \(nonce)",
+                    attributes: logInformation
+                )
                 return
             }
 

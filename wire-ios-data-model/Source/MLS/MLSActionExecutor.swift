@@ -221,7 +221,10 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("success: adding members to group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch {
-                WireLogger.mls.info("failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .info(
+                        "failed: adding members to group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    )
                 throw error
             }
         }
@@ -236,7 +239,10 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("success: removing clients from group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch {
-                WireLogger.mls.info("error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .info(
+                        "error: removing clients from group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    )
                 throw error
             }
         }
@@ -251,7 +257,10 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("success: updating key material for group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch {
-                WireLogger.mls.info("error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .info(
+                        "error: updating key material for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    )
                 throw error
             }
         }
@@ -263,12 +272,16 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("committing pending proposals for group (\(groupID.safeForLoggingDescription))...")
                 let bundle = try await commitBundle(for: .proposal, in: groupID)
                 let result = try await commitSender.sendCommitBundle(bundle, for: groupID)
-                WireLogger.mls.info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
+                WireLogger.mls
+                    .info("success: committing pending proposals for group (\(groupID.safeForLoggingDescription))")
                 return result
             } catch CommitError.noPendingProposals {
                 throw CommitError.noPendingProposals
             } catch {
-                WireLogger.mls.info("error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+                WireLogger.mls
+                    .info(
+                        "error: committing pending proposals for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                    )
                 throw error
             }
         }
@@ -283,7 +296,10 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("success: joining group (\(groupID.safeForLoggingDescription)) via external commit")
                 return result
             } catch {
-                WireLogger.mls.info("error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))")
+                WireLogger.mls
+                    .info(
+                        "error: joining group (\(groupID.safeForLoggingDescription)) via external commit: \(String(describing: error))"
+                    )
                 throw error
             }
         }
@@ -303,7 +319,10 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     private func commitBundle(for action: Action, in groupID: MLSGroupID) async throws -> CommitBundle {
         do {
-            WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
+            WireLogger.mls
+                .info(
+                    "generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))..."
+                )
             switch action {
             case let .addMembers(clients):
                 let memberAddMessages = try await coreCrypto.perform {
@@ -380,7 +399,10 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         } catch CommitError.noPendingProposals {
             throw CommitError.noPendingProposals
         } catch {
-            WireLogger.mls.warn("failed: generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            WireLogger.mls
+                .warn(
+                    "failed: generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription)): \(String(describing: error))"
+                )
             throw CommitError.failedToGenerateCommit
         }
     }

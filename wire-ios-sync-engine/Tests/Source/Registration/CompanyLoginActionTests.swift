@@ -38,7 +38,10 @@ final class CompanyLoginActionTests: XCTestCase {
     func testThatItParsesLoginSuccessResponse() throws {
         // GIVEN
         let userID = UUID(uuidString: "0AEF17E9-BBA6-4F6D-BF79-6260AABB5457")!
-        let url = URL(string: "wire-sso://login/success?userid=\(userID)&validation_token=\(currentToken.uuid)&cookie=\(testCookie)")!
+        let url =
+            URL(
+                string: "wire-sso://login/success?userid=\(userID)&validation_token=\(currentToken.uuid)&cookie=\(testCookie)"
+            )!
 
         // WHEN
         guard let action = try URLAction(url: url, validatingIn: userDefaults) else {
@@ -59,7 +62,10 @@ final class CompanyLoginActionTests: XCTestCase {
         // GIVEN
         let unverifiedToken = CompanyLoginVerificationToken()
         let userID = UUID(uuidString: "0AEF17E9-BBA6-4F6D-BF79-6260AABB5457")!
-        let url = URL(string: "wire-sso://login/success?userid=\(userID)&validation_token=\(unverifiedToken.uuid)&cookie=\(testCookie)")!
+        let url =
+            URL(
+                string: "wire-sso://login/success?userid=\(userID)&validation_token=\(unverifiedToken.uuid)&cookie=\(testCookie)"
+            )!
 
         // THEN
         XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { error in
@@ -79,7 +85,8 @@ final class CompanyLoginActionTests: XCTestCase {
 
     func testThatItFallbacksToZeroErrorCodeWhenDecodingUnknownUserLabel() {
         // GIVEN
-        let url = URL(string: "wire-sso://login/failure?label=something_went_wrong&validation_token=\(currentToken.uuid)")!
+        let url =
+            URL(string: "wire-sso://login/failure?label=something_went_wrong&validation_token=\(currentToken.uuid)")!
 
         // THEN
         XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { error in

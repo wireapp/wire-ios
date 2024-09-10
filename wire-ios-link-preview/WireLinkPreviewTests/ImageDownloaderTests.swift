@@ -123,7 +123,11 @@ class ImageDownloaderTests: XCTestCase {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["content-type": "text/html"])
     }
 
-    func assertThatItReturnsTheImageData(_ shouldReturn: Bool, withHeaderFields headers: [String: String], line: UInt = #line) {
+    func assertThatItReturnsTheImageData(
+        _ shouldReturn: Bool,
+        withHeaderFields headers: [String: String],
+        line: UInt = #line
+    ) {
         // given
         let completionExpectation = expectation(description: "It should call the completion handler")
         let url = URL(string: "www.example.com")!

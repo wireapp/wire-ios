@@ -78,8 +78,16 @@ extension TeamChangeInfo {
     ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:managedObjectContext:)
-    public static func add(observer: TeamObserver, for team: Team?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .TeamChange, managedObjectContext: managedObjectContext, object: team) { [weak observer] note in
+    public static func add(
+        observer: TeamObserver,
+        for team: Team?,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .TeamChange,
+            managedObjectContext: managedObjectContext,
+            object: team
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? TeamChangeInfo
             else { return }

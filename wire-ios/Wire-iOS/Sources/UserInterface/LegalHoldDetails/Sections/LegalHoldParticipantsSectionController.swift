@@ -40,7 +40,10 @@ typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
 
 extension ConversationLike {
     fileprivate func createViewModel() -> LegalHoldParticipantsSectionViewModel {
-        LegalHoldParticipantsSectionViewModel(participants: sortedActiveParticipantsUserTypes.filter(\.isUnderLegalHold))
+        LegalHoldParticipantsSectionViewModel(
+            participants: sortedActiveParticipantsUserTypes
+                .filter(\.isUnderLegalHold)
+        )
     }
 }
 
@@ -80,9 +83,15 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         viewModel.participants.count
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let participant = viewModel.participants[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: UserCell.reuseIdentifier,
+            for: indexPath
+        ) as! UserCell
         let showSeparator = (viewModel.participants.count - 1) != indexPath.row
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
@@ -111,7 +120,8 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
 extension LegalHoldParticipantsSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged else { return }
+        guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged
+        else { return }
 
         viewModel = conversation.createViewModel()
         collectionView?.reloadData()

@@ -70,7 +70,9 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         case .mlsMigrationPotentialGap:
             return makePotentialGapAttributedString()
         default:
-            assertionFailure("MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!")
+            assertionFailure(
+                "MLSMigrationCellDescription requires ZMSystemMessageType of MLS, but found \(messageType)!"
+            )
             return nil
         }
     }

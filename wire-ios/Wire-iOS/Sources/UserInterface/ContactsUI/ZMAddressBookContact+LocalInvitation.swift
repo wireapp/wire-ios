@@ -20,14 +20,22 @@ import Foundation
 import MessageUI
 import WireSyncEngine
 
-final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate, MFMessageComposeViewControllerDelegate {
+final class EmailInvitePresenter: NSObject, MFMailComposeViewControllerDelegate,
+    MFMessageComposeViewControllerDelegate {
     static let sharedInstance = EmailInvitePresenter()
 
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         controller.dismiss(animated: true, completion: .none)
     }
 
-    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+    func messageComposeViewController(
+        _ controller: MFMessageComposeViewController,
+        didFinishWith result: MessageComposeResult
+    ) {
         controller.dismiss(animated: true, completion: .none)
     }
 }

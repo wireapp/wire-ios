@@ -34,26 +34,46 @@ final class LinkInteractionTextViewTests: XCTestCase {
     }
 
     func testThatItOpensNormalLinks() {
-        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
+        for item in [
+            "http://www.wire.com",
+            "x-apple-data-detectors:some-detected-data",
+            "tel:12345678",
+            "mailto:bob@example.com",
+        ] {
             // GIVEN
             let str = item
             let url = URL(string: str)!
             sut.attributedText = NSAttributedString(string: str, attributes: [.link: url])
             // WHEN
-            let shouldOpenURL = sut.delegate!.textView!(sut, shouldInteractWith: url, in: NSRange(location: 0, length: str.count), interaction: .invokeDefaultAction)
+            let shouldOpenURL = sut.delegate!.textView!(
+                sut,
+                shouldInteractWith: url,
+                in: NSRange(location: 0, length: str.count),
+                interaction: .invokeDefaultAction
+            )
             // THEN
             XCTAssertTrue(shouldOpenURL)
         }
     }
 
     func testThatItDoesNotPreviewNormalLinks() {
-        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
+        for item in [
+            "http://www.wire.com",
+            "x-apple-data-detectors:some-detected-data",
+            "tel:12345678",
+            "mailto:bob@example.com",
+        ] {
             // GIVEN
             let str = item
             let url = URL(string: str)!
             sut.attributedText = NSAttributedString(string: str, attributes: [.link: url])
             // WHEN
-            let shouldOpenURL = sut.delegate!.textView!(sut, shouldInteractWith: url, in: NSRange(location: 0, length: str.count), interaction: .preview)
+            let shouldOpenURL = sut.delegate!.textView!(
+                sut,
+                shouldInteractWith: url,
+                in: NSRange(location: 0, length: str.count),
+                interaction: .preview
+            )
             // THEN
             XCTAssertFalse(shouldOpenURL)
         }
@@ -63,14 +83,24 @@ final class LinkInteractionTextViewTests: XCTestCase {
     // confirmation from the user.
 
     func testThatItDoesNotOpenMarkdownLinks() {
-        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
+        for item in [
+            "http://www.wire.com",
+            "x-apple-data-detectors:some-detected-data",
+            "tel:12345678",
+            "mailto:bob@example.com",
+        ] {
             // GIVEN
             let str = "I'm a markdown link!"
             let url = URL(string: item)!
             let attrs: [NSAttributedString.Key: Any] = [.markdownID: Markdown.link, .link: url]
             sut.attributedText = NSAttributedString(string: str, attributes: attrs)
             // WHEN
-            let shouldOpenURL = sut.delegate!.textView!(sut, shouldInteractWith: url, in: NSRange(location: 0, length: str.count), interaction: .invokeDefaultAction)
+            let shouldOpenURL = sut.delegate!.textView!(
+                sut,
+                shouldInteractWith: url,
+                in: NSRange(location: 0, length: str.count),
+                interaction: .invokeDefaultAction
+            )
             // THEN
             XCTAssertFalse(shouldOpenURL)
         }
@@ -86,21 +116,36 @@ final class LinkInteractionTextViewTests: XCTestCase {
         sut.attributedText = NSAttributedString(string: str, attributes: attrs)
 
         // WHEN
-        let shouldOpenURL = sut.delegate!.textView!(sut, shouldInteractWith: url, in: NSRange(location: 0, length: str.count), interaction: .invokeDefaultAction)
+        let shouldOpenURL = sut.delegate!.textView!(
+            sut,
+            shouldInteractWith: url,
+            in: NSRange(location: 0, length: str.count),
+            interaction: .invokeDefaultAction
+        )
 
         // THEN
         XCTAssertFalse(shouldOpenURL)
     }
 
     func testThatItDoesNotPreviewMarkdownLinks() {
-        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
+        for item in [
+            "http://www.wire.com",
+            "x-apple-data-detectors:some-detected-data",
+            "tel:12345678",
+            "mailto:bob@example.com",
+        ] {
             // GIVEN
             let str = "I'm a markdown link!"
             let url = URL(string: item)!
             let attrs: [NSAttributedString.Key: Any] = [.markdownID: Markdown.link, .link: url]
             sut.attributedText = NSAttributedString(string: str, attributes: attrs)
             // WHEN
-            let shouldOpenURL = sut.delegate!.textView!(sut, shouldInteractWith: url, in: NSRange(location: 0, length: str.count), interaction: .preview)
+            let shouldOpenURL = sut.delegate!.textView!(
+                sut,
+                shouldInteractWith: url,
+                in: NSRange(location: 0, length: str.count),
+                interaction: .preview
+            )
             // THEN
             XCTAssertFalse(shouldOpenURL)
         }

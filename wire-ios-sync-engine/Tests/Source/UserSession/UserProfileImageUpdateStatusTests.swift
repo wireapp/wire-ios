@@ -63,7 +63,11 @@ class MockOperation: NSObject, ZMImageDownsampleOperationProtocol {
     let format: ZMImageFormat
     let properties: ZMIImageProperties
 
-    init(downsampleImageData: Data = Data(), format: ZMImageFormat = .original, properties: ZMIImageProperties = ZMIImageProperties(size: .zero, length: 0, mimeType: "foo")) {
+    init(
+        downsampleImageData: Data = Data(),
+        format: ZMImageFormat = .original,
+        properties: ZMIImageProperties = ZMIImageProperties(size: .zero, length: 0, mimeType: "foo")
+    ) {
         self.downsampleImageData = downsampleImageData
         self.format = format
         self.properties = properties
@@ -80,9 +84,20 @@ class MockChangeDelegate: WireSyncEngine.UserProfileImageUploadStateChangeDelega
     }
 
     func check(lastStates: [ProfileUpdateState], file: StaticString = #file, line: UInt = #line) {
-        XCTAssert(states.count >= lastStates.count, "Not enough transitions happened. States: \(states)", file: file, line: line)
+        XCTAssert(
+            states.count >= lastStates.count,
+            "Not enough transitions happened. States: \(states)",
+            file: file,
+            line: line
+        )
         let suffix = Array(states.suffix(lastStates.count))
-        XCTAssertEqual(suffix, lastStates, "Expected last transitions: \(lastStates) have \(suffix)", file: file, line: line)
+        XCTAssertEqual(
+            suffix,
+            lastStates,
+            "Expected last transitions: \(lastStates) have \(suffix)",
+            file: file,
+            line: line
+        )
     }
 
     var imageStates = [ProfileImageSize: [ImageState]]()
@@ -125,7 +140,12 @@ extension StateTransition {
         }
     }
 
-    static func canTransition(from oldState: Self, onlyTo newStates: [Self], file: StaticString = #file, line: UInt = #line) {
+    static func canTransition(
+        from oldState: Self,
+        onlyTo newStates: [Self],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         for state in allStates {
             let isValid = newStates.contains(state)
             oldState.checkThatTransition(to: state, isValid: isValid, file: file, line: line)
@@ -136,7 +156,10 @@ extension StateTransition {
 public typealias UserProfileImageUpdateStatus = WireSyncEngine.UserProfileImageUpdateStatus
 
 extension UserProfileImageUpdateStatus.ImageState: Equatable {
-    public static func == (lhs: UserProfileImageUpdateStatus.ImageState, rhs: UserProfileImageUpdateStatus.ImageState) -> Bool {
+    public static func == (
+        lhs: UserProfileImageUpdateStatus.ImageState,
+        rhs: UserProfileImageUpdateStatus.ImageState
+    ) -> Bool {
         String(describing: lhs) == String(describing: rhs)
     }
 }
@@ -170,7 +193,12 @@ class UserProfileImageUpdateStatusTests: MessagingTest {
         super.setUp()
         preprocessor = MockPreprocessor()
         preprocessor.operations = [Operation()]
-        sut = UserProfileImageUpdateStatus(managedObjectContext: syncMOC, preprocessor: preprocessor, queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(), delegate: nil)
+        sut = UserProfileImageUpdateStatus(
+            managedObjectContext: syncMOC,
+            preprocessor: preprocessor,
+            queue: ZMImagePreprocessor.createSuitableImagePreprocessingQueue(),
+            delegate: nil
+        )
         tinyImage = data(forResource: "tiny", extension: "jpg")
         imageOwner = UserProfileImageOwner(imageData: tinyImage)
         changeDelegate = MockChangeDelegate()
@@ -268,7 +296,10 @@ extension UserProfileImageUpdateStatusTests {
             self.sut.setState(state: .uploaded(assetId: completeAssetId), for: .complete)
 
             // THEN
-            self.changeDelegate.check(lastStates: [.update(previewAssetId: previewAssetId, completeAssetId: completeAssetId), .ready])
+            self.changeDelegate.check(lastStates: [
+                .update(previewAssetId: previewAssetId, completeAssetId: completeAssetId),
+                .ready,
+            ])
             XCTAssertEqual(self.sut.imageState(for: .preview), .ready)
             XCTAssertEqual(self.sut.imageState(for: .complete), .ready)
         }
@@ -297,7 +328,10 @@ extension UserProfileImageUpdateStatusTests {
     }
 
     func testProfileUpdateStateTransitions() {
-        ProfileUpdateState.canTransition(from: .ready, onlyTo: [sampleFailedState, samplePreprocessState, sampleUpdateState])
+        ProfileUpdateState.canTransition(
+            from: .ready,
+            onlyTo: [sampleFailedState, samplePreprocessState, sampleUpdateState]
+        )
         ProfileUpdateState.canTransition(from: samplePreprocessState, onlyTo: [sampleFailedState, sampleUpdateState])
         ProfileUpdateState.canTransition(from: sampleUpdateState, onlyTo: [sampleFailedState, .ready])
         ProfileUpdateState.canTransition(from: sampleFailedState, onlyTo: [.ready])
@@ -398,8 +432,14 @@ extension UserProfileImageUpdateStatusTests {
             self.sut.setState(state: .preprocessing, for: .preview)
         }
 
-        let previewOperation = MockOperation(downsampleImageData: Data("preview".utf8), format: ProfileImageSize.preview.imageFormat)
-        let completeOperation = MockOperation(downsampleImageData: Data("complete".utf8), format: ProfileImageSize.complete.imageFormat)
+        let previewOperation = MockOperation(
+            downsampleImageData: Data("preview".utf8),
+            format: ProfileImageSize.preview.imageFormat
+        )
+        let completeOperation = MockOperation(
+            downsampleImageData: Data("complete".utf8),
+            format: ProfileImageSize.complete.imageFormat
+        )
 
         // WHEN
         self.sut.completedDownsampleOperation(previewOperation, imageOwner: self.imageOwner)

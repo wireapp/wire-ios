@@ -138,7 +138,10 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
                 guard let user = user as? ZMUser else { continue }
                 guard let conversation = conversation as? ZMConversation else { continue }
                 do {
-                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(
+                        conversation: conversation,
+                        user: user
+                    )
                     if userStatuses.keys.contains(user.remoteIdentifier) {
                         userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
                     } else {

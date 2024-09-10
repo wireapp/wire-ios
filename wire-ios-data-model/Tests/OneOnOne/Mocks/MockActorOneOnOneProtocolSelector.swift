@@ -30,7 +30,10 @@ actor MockActorOneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
     var getProtocolForUserWithIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async -> MessageProtocol?)?
     var getProtocolForUserWithIn_MockValue: MessageProtocol??
 
-    func setGetProtocolForUserWithIn_MockMethod(_ method: @escaping ((QualifiedID, NSManagedObjectContext) async -> MessageProtocol?)) {
+    func setGetProtocolForUserWithIn_MockMethod(_ method: @escaping (
+        (QualifiedID, NSManagedObjectContext) async
+            -> MessageProtocol?
+    )) {
         getProtocolForUserWithIn_MockMethod = method
     }
 

@@ -149,7 +149,8 @@ final class ClientListViewController: UIViewController,
         self.view.addSubview(self.topSeparator)
         self.createConstraints()
 
-        self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton.description
+        self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton
+            .description
         setColor()
     }
 
@@ -396,7 +397,10 @@ final class ClientListViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
+        if let cell = tableView.dequeueReusableCell(
+            withIdentifier: ClientTableViewCell.zm_reuseIdentifier,
+            for: indexPath
+        ) as? ClientTableViewCell {
             cell.selectionStyle = .none
             cell.showDisclosureIndicator()
 
@@ -422,7 +426,11 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
         switch self.convertSection((indexPath as NSIndexPath).section) {
         case 1:
 
@@ -433,7 +441,8 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell
+        .EditingStyle {
         switch self.convertSection((indexPath as NSIndexPath).section) {
         case 0:
             .none
@@ -479,14 +488,16 @@ final class ClientListViewController: UIViewController,
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
                     self?.editingList = false
-                })
+                }
+            )
             self.navigationItem.rightBarButtonItem = doneButtonItem
         } else {
             let editButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.edit,
                 action: UIAction { [weak self] _ in
                     self?.editingList = true
-                })
+                }
+            )
 
             self.navigationItem.rightBarButtonItem = editButtonItem
         }
@@ -513,12 +524,14 @@ final class ClientListViewController: UIViewController,
                     } else {
                         nil
                     }
-                })
+                }
+        )
 
         do {
             let certificates = try await userSession.getE2eIdentityCertificates.invoke(
                 mlsGroupId: selfMlsGroupID,
-                clientIds: Array(mlsClients.values))
+                clientIds: Array(mlsClients.values)
+            )
 
             for (client, mlsClientId) in mlsClients {
                 if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientId.rawValue }) {

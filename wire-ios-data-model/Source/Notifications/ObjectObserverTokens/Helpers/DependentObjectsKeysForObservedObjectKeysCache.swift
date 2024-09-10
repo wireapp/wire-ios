@@ -28,7 +28,10 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
 
     static var cachedValues: [AnyClassTuple<KeySet>: DependentObjectsKeysForObservedObjectKeysCache] = [:]
 
-    static func mappingForObject(_ observedObject: NSObject, keysToObserve: KeySet) -> DependentObjectsKeysForObservedObjectKeysCache {
+    static func mappingForObject(
+        _ observedObject: NSObject,
+        keysToObserve: KeySet
+    ) -> DependentObjectsKeysForObservedObjectKeysCache {
         let tuple = AnyClassTuple(classOfObject: type(of: observedObject), secondElement: keysToObserve)
 
         if let cachedKeysToPathsToObserve = cachedValues[tuple] {
@@ -45,7 +48,8 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
             var objectKeysWithPathsToObserve: [StringKeyPath: KeySet] = [:]
 
             for keyPath in keyPaths {
-                if let (objectKey, pathToObserveInObject) = keyPath.decompose, let pathToObserve = pathToObserveInObject {
+                if let (objectKey, pathToObserveInObject) = keyPath.decompose,
+                   let pathToObserve = pathToObserveInObject {
                     let previousPathToObserve = objectKeysWithPathsToObserve[objectKey] ?? KeySet()
                     objectKeysWithPathsToObserve[objectKey] = previousPathToObserve.union(KeySet(key: pathToObserve))
                 }
@@ -65,7 +69,10 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
             }
         }
 
-        let result = DependentObjectsKeysForObservedObjectKeysCache(keyPathsOnDependentObjectForKeyOnObservedObject: keysToPathsToObserve, affectedKeysOnObservedObjectForChangedKeysOnDependentObject: observedKeyPathToAffectedKey)
+        let result = DependentObjectsKeysForObservedObjectKeysCache(
+            keyPathsOnDependentObjectForKeyOnObservedObject: keysToPathsToObserve,
+            affectedKeysOnObservedObjectForChangedKeysOnDependentObject: observedKeyPathToAffectedKey
+        )
 
         cachedValues[tuple] = result
         return result

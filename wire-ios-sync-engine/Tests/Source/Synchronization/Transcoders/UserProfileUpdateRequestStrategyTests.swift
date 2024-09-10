@@ -29,10 +29,15 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
 
         self.mockApplicationStatus = MockApplicationStatus()
         self.mockApplicationStatus.mockSynchronizationState = .online
-        self.userProfileUpdateStatus = TestUserProfileUpdateStatus(managedObjectContext: self.uiMOC, analytics: MockAnalytics())
-        self.sut = UserProfileUpdateRequestStrategy(managedObjectContext: self.uiMOC,
-                                                    applicationStatus: self.mockApplicationStatus,
-                                                    userProfileUpdateStatus: self.userProfileUpdateStatus)
+        self.userProfileUpdateStatus = TestUserProfileUpdateStatus(
+            managedObjectContext: self.uiMOC,
+            analytics: MockAnalytics()
+        )
+        self.sut = UserProfileUpdateRequestStrategy(
+            managedObjectContext: self.uiMOC,
+            applicationStatus: self.mockApplicationStatus,
+            userProfileUpdateStatus: self.userProfileUpdateStatus
+        )
     }
 
     override func tearDown() {
@@ -117,7 +122,12 @@ extension UserProfileUpdateRequestStrategyTests {
         let request = self.sut.nextRequest(for: .v0)
 
         // THEN
-        let expected = ZMTransportRequest(path: "/users/handles/\(handle)", method: .head, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let expected = ZMTransportRequest(
+            path: "/users/handles/\(handle)",
+            method: .head,
+            payload: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
         XCTAssertEqual(request, expected)
     }
 
@@ -132,7 +142,12 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // THEN
         let payload: NSDictionary = ["handle": handle]
-        let expected = ZMTransportRequest(path: "/self/handle", method: .put, payload: payload, apiVersion: APIVersion.v0.rawValue)
+        let expected = ZMTransportRequest(
+            path: "/self/handle",
+            method: .put,
+            payload: payload,
+            apiVersion: APIVersion.v0.rawValue
+        )
         XCTAssertEqual(request, expected)
     }
 
@@ -414,7 +429,12 @@ extension UserProfileUpdateRequestStrategyTests {
         // WHEN
         let request = self.sut.nextRequest(for: .v0)
         let handlesInResponse = [handles[5], handles[9], handles[10]]
-        request?.complete(with: ZMTransportResponse(payload: handlesInResponse as NSArray, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: handlesInResponse as NSArray,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -428,7 +448,12 @@ extension UserProfileUpdateRequestStrategyTests {
 
         // WHEN
         let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: ZMTransportResponse(payload: [] as NSArray, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
+        request?.complete(with: ZMTransportResponse(
+            payload: [] as NSArray,
+            httpStatus: 200,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -462,11 +487,12 @@ extension UserProfileUpdateRequestStrategyTests {
             return ZMTransportResponse(originalUrl: url, httpStatus: 400, error: nil)
         }
 
-        return ZMTransportResponse(payload: nil,
-                                   httpStatus: 400,
-                                   transportSessionError: nil,
-                                   headers: nil,
-                                   apiVersion: APIVersion.v0.rawValue
+        return ZMTransportResponse(
+            payload: nil,
+            httpStatus: 400,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
         )
     }
 
@@ -475,61 +501,76 @@ extension UserProfileUpdateRequestStrategyTests {
             return ZMTransportResponse(originalUrl: url, httpStatus: 404, error: nil)
         }
 
-        return ZMTransportResponse(payload: nil,
-                                   httpStatus: 404,
-                                   transportSessionError: nil,
-                                   headers: nil,
-                                   apiVersion: APIVersion.v0.rawValue
+        return ZMTransportResponse(
+            payload: nil,
+            httpStatus: 404,
+            transportSessionError: nil,
+            headers: nil,
+            apiVersion: APIVersion.v0.rawValue
         )
     }
 
     func badRequestResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "bad-request"] as NSDictionary,
-                            httpStatus: 400,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "bad-request"] as NSDictionary,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func handleExistsResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "handle-exists"] as NSDictionary,
-                            httpStatus: 409,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "handle-exists"] as NSDictionary,
+            httpStatus: 409,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func keyExistsResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "key-exists"] as NSDictionary,
-                            httpStatus: 409,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "key-exists"] as NSDictionary,
+            httpStatus: 409,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func invalidPhoneNumberResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "invalid-phone"] as NSDictionary,
-                            httpStatus: 400,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "invalid-phone"] as NSDictionary,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func lastIdentityResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "last-identity"] as NSDictionary,
-                            httpStatus: 403,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "last-identity"] as NSDictionary,
+            httpStatus: 403,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func invalidEmailResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "invalid-email"] as NSDictionary,
-                            httpStatus: 400,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "invalid-email"] as NSDictionary,
+            httpStatus: 400,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func invalidCredentialsResponse() -> ZMTransportResponse {
-        ZMTransportResponse(payload: ["label": "invalid-credentials"] as NSDictionary,
-                            httpStatus: 403,
-                            transportSessionError: nil,
-                            apiVersion: APIVersion.v0.rawValue)
+        ZMTransportResponse(
+            payload: ["label": "invalid-credentials"] as NSDictionary,
+            httpStatus: 403,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        )
     }
 
     func successResponse(path: String? = nil) -> ZMTransportResponse {
@@ -549,7 +590,12 @@ extension UserProfileUpdateRequestStrategyTests {
 extension ZMTransportResponse {
     convenience init(originalUrl: URL, httpStatus: Int, error: Error?) {
         let headers = ["Content-Type": "application/json"]
-        let httpResponse = HTTPURLResponse(url: originalUrl, statusCode: httpStatus, httpVersion: nil, headerFields: headers)
+        let httpResponse = HTTPURLResponse(
+            url: originalUrl,
+            statusCode: httpStatus,
+            httpVersion: nil,
+            headerFields: headers
+        )
         self.init(httpurlResponse: httpResponse!, data: nil, error: error, apiVersion: APIVersion.v0.rawValue)
     }
 }

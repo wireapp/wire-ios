@@ -20,7 +20,10 @@ import Foundation
 import WireRequestStrategy
 
 protocol PushNotificationStrategyDelegate: AnyObject {
-    func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async throws
+    func pushNotificationStrategy(
+        _ strategy: PushNotificationStrategy,
+        didFetchEvents events: [ZMUpdateEvent]
+    ) async throws
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
 }
 
@@ -91,7 +94,10 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
         let latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
         for event in events {
-            event.appendDebugInformation("From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload")
+            event
+                .appendDebugInformation(
+                    "From missing update events transcoder, processUpdateEventsAndReturnLastNotificationIDFromPayload"
+                )
             WireLogger.updateEvent.info("received event", attributes: event.logAttributes)
         }
 
@@ -100,7 +106,11 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 try await delegate?.pushNotificationStrategy(self, didFetchEvents: events)
                 await managedObjectContext.perform {
                     self.isProcessingNotifications = false
-                    self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
+                    self.pushNotificationStatus.didFetch(
+                        eventIds: eventIds,
+                        lastEventId: latestEventId,
+                        finished: !hasMoreToFetch
+                    )
                     RequestAvailableNotification.notifyNewRequestsAvailable(nil)
                 }
 

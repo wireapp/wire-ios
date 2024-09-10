@@ -169,7 +169,10 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     private func clearCache() {
-        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: coreDataStack.applicationContainer)
+        let cachesURL = FileManager.default.cachesURLForAccount(
+            with: userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
         let items = try? FileManager.default.contentsOfDirectory(at: cachesURL, includingPropertiesForKeys: nil)
 
         if let items {

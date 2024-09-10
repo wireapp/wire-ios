@@ -115,7 +115,10 @@ final class AuthenticationInterfaceBuilder {
      * does not support this step.
      */
 
-    private func makeRegistrationStepViewController(for step: IntermediateRegistrationStep, user: UnregisteredUser) -> AuthenticationStepViewController? {
+    private func makeRegistrationStepViewController(
+        for step: IntermediateRegistrationStep,
+        user: UnregisteredUser
+    ) -> AuthenticationStepViewController? {
         switch step {
         case .start:
             nil

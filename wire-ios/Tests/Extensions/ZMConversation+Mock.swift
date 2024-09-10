@@ -50,17 +50,21 @@ extension ZMConversation {
         return conversation
     }
 
-    static func createGroupConversation(moc: NSManagedObjectContext,
-                                        otherUser: ZMUser,
-                                        selfUser: ZMUser) -> ZMConversation {
+    static func createGroupConversation(
+        moc: NSManagedObjectContext,
+        otherUser: ZMUser,
+        selfUser: ZMUser
+    ) -> ZMConversation {
         let conversation = createGroupConversationOnlyAdmin(moc: moc, selfUser: selfUser)
         conversation.addParticipantAndUpdateConversationState(user: otherUser)
         return conversation
     }
 
-    static func createTeamGroupConversation(moc: NSManagedObjectContext,
-                                            otherUser: ZMUser,
-                                            selfUser: ZMUser) -> ZMConversation {
+    static func createTeamGroupConversation(
+        moc: NSManagedObjectContext,
+        otherUser: ZMUser,
+        selfUser: ZMUser
+    ) -> ZMConversation {
         let conversation = createGroupConversation(moc: moc, otherUser: otherUser, selfUser: selfUser)
         conversation.teamRemoteIdentifier = UUID.create()
         conversation.userDefinedName = "Group conversation"

@@ -29,7 +29,11 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         true
     }
 
-    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool {
+    func userAuthorize(
+        conversationId: ConversationId,
+        externalClientId: ClientId,
+        existingClients: [ClientId]
+    ) -> Bool {
         // This check is performed by the backend.
         true
     }

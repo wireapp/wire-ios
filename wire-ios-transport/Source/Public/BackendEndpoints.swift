@@ -27,13 +27,15 @@ final class BackendEndpoints: NSObject, BackendEndpointsProvider, Codable {
     let websiteURL: URL
     let countlyURL: URL?
 
-    init(backendURL: URL,
-         backendWSURL: URL,
-         blackListURL: URL,
-         teamsURL: URL,
-         accountsURL: URL,
-         websiteURL: URL,
-         countlyURL: URL?) {
+    init(
+        backendURL: URL,
+        backendWSURL: URL,
+        blackListURL: URL,
+        teamsURL: URL,
+        accountsURL: URL,
+        websiteURL: URL,
+        countlyURL: URL?
+    ) {
         self.backendURL = backendURL
         self.backendWSURL = backendWSURL
         self.blackListURL = blackListURL

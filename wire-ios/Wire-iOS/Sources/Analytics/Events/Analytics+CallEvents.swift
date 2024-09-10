@@ -51,16 +51,22 @@ extension Analytics {
         tagEvent("calling.call_quality_review", attributes: attributes)
     }
 
-    func tag(callEvent: CallEvent,
-             in conversation: ZMConversation,
-             callInfo: CallInfo) {
-        tagEvent(callEvent.eventName,
-                 attributes: attributes(for: callEvent, callInfo: callInfo, conversation: conversation))
+    func tag(
+        callEvent: CallEvent,
+        in conversation: ZMConversation,
+        callInfo: CallInfo
+    ) {
+        tagEvent(
+            callEvent.eventName,
+            attributes: attributes(for: callEvent, callInfo: callInfo, conversation: conversation)
+        )
     }
 
-    private func attributes(for event: CallEvent,
-                            callInfo: CallInfo,
-                            conversation: ZMConversation) -> [String: Any] {
+    private func attributes(
+        for event: CallEvent,
+        callInfo: CallInfo,
+        conversation: ZMConversation
+    ) -> [String: Any] {
         var attributes = conversation.attributesForConversation
 
         attributes.merge(attributesForUser(in: conversation)) { _, new in new }

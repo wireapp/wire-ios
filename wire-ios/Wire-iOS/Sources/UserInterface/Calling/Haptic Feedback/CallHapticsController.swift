@@ -50,7 +50,10 @@ final class CallHapticsController {
     // MARK: - Private
 
     private func shouldUpdateParticipantsList(_ newParticipants: [CallParticipant]) -> Bool {
-        !(Array(participants).hasMoreThanTwoConnectedParticipants || newParticipants.hasMoreThanTwoConnectedParticipants)
+        !(
+            Array(participants).hasMoreThanTwoConnectedParticipants || newParticipants
+                .hasMoreThanTwoConnectedParticipants
+        )
     }
 
     private func updateParticipantsList(_ newParticipants: [CallParticipant]) {

@@ -97,8 +97,15 @@ extension FontWeight {
 // MARK: -
 
 extension UIFont {
-    public static func systemFont(ofSize size: CGFloat, contentSizeCategory: UIContentSizeCategory, weight: FontWeight) -> UIFont {
-        systemFont(ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)), weight: weight.fontWeight())
+    public static func systemFont(
+        ofSize size: CGFloat,
+        contentSizeCategory: UIContentSizeCategory,
+        weight: FontWeight
+    ) -> UIFont {
+        systemFont(
+            ofSize: round(size * UIFont.wr_preferredContentSizeMultiplier(for: contentSizeCategory)),
+            weight: weight.fontWeight()
+        )
     }
 }
 
@@ -174,10 +181,12 @@ public final class FontScheme {
             (size: .small, point: 18),
         ]
 
-        mapFontTextStyleAndFontSizeAndPoint(fontSizeTuples: largeTitleFontSizeTuples,
-                                            mapping: &fontsByFontSpec,
-                                            fontTextStyle: .largeTitle,
-                                            contentSizeCategory: contentSizeCategory)
+        mapFontTextStyleAndFontSizeAndPoint(
+            fontSizeTuples: largeTitleFontSizeTuples,
+            mapping: &fontsByFontSpec,
+            fontTextStyle: .largeTitle,
+            contentSizeCategory: contentSizeCategory
+        )
 
         let inputTextFontSizeTuples: [FontSizeAndPoint] = [
             (size: .large, point: 21),
@@ -186,65 +195,203 @@ public final class FontScheme {
             (size: .small, point: 10),
         ]
 
-        mapFontTextStyleAndFontSizeAndPoint(fontSizeTuples: inputTextFontSizeTuples,
-                                            mapping: &fontsByFontSpec,
-                                            fontTextStyle: .inputText,
-                                            contentSizeCategory: contentSizeCategory)
+        mapFontTextStyleAndFontSizeAndPoint(
+            fontSizeTuples: inputTextFontSizeTuples,
+            mapping: &fontsByFontSpec,
+            fontTextStyle: .inputText,
+            contentSizeCategory: contentSizeCategory
+        )
 
         // fontTextStyle: none
         // FontSize: Large
-        fontsByFontSpec[FontSpec(.large, .none, .none)] = .systemFont(ofSize: 24, contentSizeCategory: contentSizeCategory, weight: .light)
-        fontsByFontSpec[FontSpec(.large, .medium, .none)] = .systemFont(ofSize: 24, contentSizeCategory: contentSizeCategory, weight: .medium)
-        fontsByFontSpec[FontSpec(.large, .semibold, .none)] = .systemFont(ofSize: 24, contentSizeCategory: contentSizeCategory, weight: .semibold)
-        fontsByFontSpec[FontSpec(.large, .regular, .none)] = .systemFont(ofSize: 24, contentSizeCategory: contentSizeCategory, weight: .regular)
-        fontsByFontSpec[FontSpec(.large, .light, .none)] = .systemFont(ofSize: 24, contentSizeCategory: contentSizeCategory, weight: .light)
-        fontsByFontSpec[FontSpec(.large, .thin, .none)] = .systemFont(ofSize: 24, contentSizeCategory: contentSizeCategory, weight: .thin)
+        fontsByFontSpec[FontSpec(.large, .none, .none)] = .systemFont(
+            ofSize: 24,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
+        fontsByFontSpec[FontSpec(.large, .medium, .none)] = .systemFont(
+            ofSize: 24,
+            contentSizeCategory: contentSizeCategory,
+            weight: .medium
+        )
+        fontsByFontSpec[FontSpec(.large, .semibold, .none)] = .systemFont(
+            ofSize: 24,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
+        fontsByFontSpec[FontSpec(.large, .regular, .none)] = .systemFont(
+            ofSize: 24,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
+        fontsByFontSpec[FontSpec(.large, .light, .none)] = .systemFont(
+            ofSize: 24,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
+        fontsByFontSpec[FontSpec(.large, .thin, .none)] = .systemFont(
+            ofSize: 24,
+            contentSizeCategory: contentSizeCategory,
+            weight: .thin
+        )
 
         // FontSize: Normal
-        fontsByFontSpec[FontSpec(.normal, .none, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .light)
-        fontsByFontSpec[FontSpec(.normal, .light, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .light)
-        fontsByFontSpec[FontSpec(.normal, .thin, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .thin)
-        fontsByFontSpec[FontSpec(.normal, .regular, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .regular)
-        fontsByFontSpec[FontSpec(.normal, .semibold, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .semibold)
-        fontsByFontSpec[FontSpec(.normal, .medium, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .medium)
-        fontsByFontSpec[FontSpec(.normal, .bold, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .bold)
+        fontsByFontSpec[FontSpec(.normal, .none, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
+        fontsByFontSpec[FontSpec(.normal, .light, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
+        fontsByFontSpec[FontSpec(.normal, .thin, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .thin
+        )
+        fontsByFontSpec[FontSpec(.normal, .regular, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
+        fontsByFontSpec[FontSpec(.normal, .semibold, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
+        fontsByFontSpec[FontSpec(.normal, .medium, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .medium
+        )
+        fontsByFontSpec[FontSpec(.normal, .bold, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .bold
+        )
 
         // FontSize: Medium
-        fontsByFontSpec[FontSpec(.medium, .none, .none)] = .systemFont(ofSize: 12, contentSizeCategory: contentSizeCategory, weight: .light)
-        fontsByFontSpec[FontSpec(.medium, .bold, .none)] = .systemFont(ofSize: 12, contentSizeCategory: contentSizeCategory, weight: .bold)
-        fontsByFontSpec[FontSpec(.medium, .medium, .none)] = .systemFont(ofSize: 12, contentSizeCategory: contentSizeCategory, weight: .medium)
-        fontsByFontSpec[FontSpec(.medium, .semibold, .none)] = .systemFont(ofSize: 12, contentSizeCategory: contentSizeCategory, weight: .semibold)
-        fontsByFontSpec[FontSpec(.medium, .regular, .none)] = .systemFont(ofSize: 12, contentSizeCategory: contentSizeCategory, weight: .regular)
+        fontsByFontSpec[FontSpec(.medium, .none, .none)] = .systemFont(
+            ofSize: 12,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
+        fontsByFontSpec[FontSpec(.medium, .bold, .none)] = .systemFont(
+            ofSize: 12,
+            contentSizeCategory: contentSizeCategory,
+            weight: .bold
+        )
+        fontsByFontSpec[FontSpec(.medium, .medium, .none)] = .systemFont(
+            ofSize: 12,
+            contentSizeCategory: contentSizeCategory,
+            weight: .medium
+        )
+        fontsByFontSpec[FontSpec(.medium, .semibold, .none)] = .systemFont(
+            ofSize: 12,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
+        fontsByFontSpec[FontSpec(.medium, .regular, .none)] = .systemFont(
+            ofSize: 12,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
 
         // FontSize: Small
-        fontsByFontSpec[FontSpec(.small, .none, .none)] = .systemFont(ofSize: 11, contentSizeCategory: contentSizeCategory, weight: .light)
-        fontsByFontSpec[FontSpec(.small, .bold, .none)] = .systemFont(ofSize: 11, contentSizeCategory: contentSizeCategory, weight: .bold)
-        fontsByFontSpec[FontSpec(.small, .medium, .none)] = .systemFont(ofSize: 11, contentSizeCategory: contentSizeCategory, weight: .medium)
-        fontsByFontSpec[FontSpec(.small, .semibold, .none)] = .systemFont(ofSize: 11, contentSizeCategory: contentSizeCategory, weight: .semibold)
-        fontsByFontSpec[FontSpec(.small, .regular, .none)] = .systemFont(ofSize: 11, contentSizeCategory: contentSizeCategory, weight: .regular)
-        fontsByFontSpec[FontSpec(.small, .light, .none)] = .systemFont(ofSize: 11, contentSizeCategory: contentSizeCategory, weight: .light)
+        fontsByFontSpec[FontSpec(.small, .none, .none)] = .systemFont(
+            ofSize: 11,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
+        fontsByFontSpec[FontSpec(.small, .bold, .none)] = .systemFont(
+            ofSize: 11,
+            contentSizeCategory: contentSizeCategory,
+            weight: .bold
+        )
+        fontsByFontSpec[FontSpec(.small, .medium, .none)] = .systemFont(
+            ofSize: 11,
+            contentSizeCategory: contentSizeCategory,
+            weight: .medium
+        )
+        fontsByFontSpec[FontSpec(.small, .semibold, .none)] = .systemFont(
+            ofSize: 11,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
+        fontsByFontSpec[FontSpec(.small, .regular, .none)] = .systemFont(
+            ofSize: 11,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
+        fontsByFontSpec[FontSpec(.small, .light, .none)] = .systemFont(
+            ofSize: 11,
+            contentSizeCategory: contentSizeCategory,
+            weight: .light
+        )
 
         // FontSize: Header
-        fontsByFontSpec[FontSpec(.header, .semibold, .none)] = .systemFont(ofSize: 17, contentSizeCategory: contentSizeCategory, weight: .semibold)
-        fontsByFontSpec[FontSpec(.header, .regular, .none)] = .systemFont(ofSize: 17, contentSizeCategory: contentSizeCategory, weight: .regular)
-        fontsByFontSpec[FontSpec(.header, .regular, .none)] = .systemFont(ofSize: 17, contentSizeCategory: contentSizeCategory, weight: .regular)
+        fontsByFontSpec[FontSpec(.header, .semibold, .none)] = .systemFont(
+            ofSize: 17,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
+        fontsByFontSpec[FontSpec(.header, .regular, .none)] = .systemFont(
+            ofSize: 17,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
+        fontsByFontSpec[FontSpec(.header, .regular, .none)] = .systemFont(
+            ofSize: 17,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
 
         // FontSize: TitleThree
-        fontsByFontSpec[FontSpec(.titleThree, .semibold, .none)] = .systemFont(ofSize: 20, contentSizeCategory: contentSizeCategory, weight: .semibold)
+        fontsByFontSpec[FontSpec(.titleThree, .semibold, .none)] = .systemFont(
+            ofSize: 20,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
         // FontSize: SubHeadline
-        fontsByFontSpec[FontSpec(.subHeadline, .regular, .none)] = .systemFont(ofSize: 15, contentSizeCategory: contentSizeCategory, weight: .regular)
+        fontsByFontSpec[FontSpec(.subHeadline, .regular, .none)] = .systemFont(
+            ofSize: 15,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
         // FontSize: BodyTwo
-        fontsByFontSpec[FontSpec(.bodyTwo, .semibold, .none)] = .systemFont(ofSize: 16, contentSizeCategory: contentSizeCategory, weight: .semibold)
+        fontsByFontSpec[FontSpec(.bodyTwo, .semibold, .none)] = .systemFont(
+            ofSize: 16,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
 
         // FontSize: ButtonSmall
-        fontsByFontSpec[FontSpec(.buttonSmall, .bold, .none)] = .systemFont(ofSize: 14, contentSizeCategory: contentSizeCategory, weight: .bold)
-        fontsByFontSpec[FontSpec(.buttonSmall, .semibold, .none)] = .systemFont(ofSize: 14, contentSizeCategory: contentSizeCategory, weight: .semibold)
+        fontsByFontSpec[FontSpec(.buttonSmall, .bold, .none)] = .systemFont(
+            ofSize: 14,
+            contentSizeCategory: contentSizeCategory,
+            weight: .bold
+        )
+        fontsByFontSpec[FontSpec(.buttonSmall, .semibold, .none)] = .systemFont(
+            ofSize: 14,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
 
         // FontSize: Body
-        fontsByFontSpec[FontSpec(.body, .regular, .none)] = .systemFont(ofSize: 17, contentSizeCategory: contentSizeCategory, weight: .regular)
+        fontsByFontSpec[FontSpec(.body, .regular, .none)] = .systemFont(
+            ofSize: 17,
+            contentSizeCategory: contentSizeCategory,
+            weight: .regular
+        )
 
         // FontSize: ButtonBig
-        fontsByFontSpec[FontSpec(.buttonBig, .semibold, .none)] = .systemFont(ofSize: 20, contentSizeCategory: contentSizeCategory, weight: .semibold)
+        fontsByFontSpec[FontSpec(.buttonBig, .semibold, .none)] = .systemFont(
+            ofSize: 20,
+            contentSizeCategory: contentSizeCategory,
+            weight: .semibold
+        )
     }
 
     private func mapFontTextStyleAndFontSizeAndPoint(

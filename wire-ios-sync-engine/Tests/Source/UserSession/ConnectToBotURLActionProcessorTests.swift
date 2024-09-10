@@ -30,9 +30,11 @@ final class ConnectToBotURLActionProcessorTests: IntegrationTest {
         createSelfUserAndConversation()
 
         mockTransportSession.performRemoteChanges { session in
-            session.insertService(withName: self.serviceName,
-                                  identifier: self.serviceIdentifier.transportString(),
-                                  provider: self.serviceProvider.transportString())
+            session.insertService(
+                withName: self.serviceName,
+                identifier: self.serviceIdentifier.transportString(),
+                provider: self.serviceProvider.transportString()
+            )
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -42,7 +44,10 @@ final class ConnectToBotURLActionProcessorTests: IntegrationTest {
         XCTAssertTrue(login())
 
         let presentationDelegate = MockPresentationDelegate()
-        let action = URLAction.connectBot(serviceUser: ServiceUserData(provider: serviceProvider, service: serviceIdentifier))
+        let action = URLAction.connectBot(serviceUser: ServiceUserData(
+            provider: serviceProvider,
+            service: serviceIdentifier
+        ))
         let sut = WireSyncEngine.ConnectToBotURLActionProcessor(
             contextprovider: userSession!,
             transportSession: mockTransportSession,

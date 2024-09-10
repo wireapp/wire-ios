@@ -115,7 +115,11 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
 
             default:
                 let errorInfo = response.errorInfo
-                action.fail(with: .unknownError(code: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
+                action.fail(with: .unknownError(
+                    code: errorInfo.status,
+                    label: errorInfo.label,
+                    message: errorInfo.message
+                ))
             }
         }
     }

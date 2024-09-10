@@ -57,14 +57,20 @@ extension ZMConversation {
     ///   - eventProcessor: Conversation event processor
     ///   - contextProvider: context provider
     ///   - completion: called on the main thread when the user joins the conversation or when it fails. If the completion is a success, it is run in the main thread
-    public static func join(key: String,
-                            code: String,
-                            password: String?,
-                            transportSession: TransportSessionType,
-                            eventProcessor: ConversationEventProcessorProtocol,
-                            contextProvider: ContextProvider,
-                            completion: @escaping (Result<ZMConversation, Error>) -> Void) {
-        guard let request = ConversationJoinRequestFactory.requestForJoinConversation(key: key, code: code, password: password) else {
+    public static func join(
+        key: String,
+        code: String,
+        password: String?,
+        transportSession: TransportSessionType,
+        eventProcessor: ConversationEventProcessorProtocol,
+        contextProvider: ContextProvider,
+        completion: @escaping (Result<ZMConversation, Error>) -> Void
+    ) {
+        guard let request = ConversationJoinRequestFactory.requestForJoinConversation(
+            key: key,
+            code: code,
+            password: password
+        ) else {
             return completion(.failure(ConversationJoinError.unknown))
         }
 
@@ -123,11 +129,16 @@ extension ZMConversation {
     ///   - transportSession: session to handle requests
     ///   - contextProvider: context provider
     ///   - completion: a handler when the network request completes with the response payload that contains the conversation ID and name
-    static func fetchIdAndName(key: String,
-                               code: String,
-                               transportSession: TransportSessionType,
-                               contextProvider: ContextProvider,
-                               completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
+    static func fetchIdAndName(
+        key: String,
+        code: String,
+        transportSession: TransportSessionType,
+        contextProvider: ContextProvider,
+        completion: @escaping (Result<
+            (conversationId: UUID, conversationName: String, hasPassword: Bool),
+            Error
+        >) -> Void
+    ) {
         guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))
             return
@@ -180,7 +191,12 @@ enum ConversationJoinRequestFactory {
             payload[URLQueryItem.Key.password] = password
         }
 
-        return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .post,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {

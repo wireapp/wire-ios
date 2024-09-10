@@ -37,14 +37,27 @@ import UserNotifications
     @objc(initWithManagedObjectContext:)
     public init(in managedObjectContext: NSManagedObjectContext) {
         self.syncMOC = managedObjectContext
-        self.eventNotifications = ZMLocalNotificationSet(archivingKey: "ZMLocalNotificationDispatcherEventNotificationsKey", keyValueStore: managedObjectContext)
-        self.failedMessageNotifications = ZMLocalNotificationSet(archivingKey: "ZMLocalNotificationDispatcherFailedNotificationsKey", keyValueStore: managedObjectContext)
-        self.callingNotifications = ZMLocalNotificationSet(archivingKey: "ZMLocalNotificationDispatcherCallingNotificationsKey", keyValueStore: managedObjectContext)
+        self.eventNotifications = ZMLocalNotificationSet(
+            archivingKey: "ZMLocalNotificationDispatcherEventNotificationsKey",
+            keyValueStore: managedObjectContext
+        )
+        self.failedMessageNotifications = ZMLocalNotificationSet(
+            archivingKey: "ZMLocalNotificationDispatcherFailedNotificationsKey",
+            keyValueStore: managedObjectContext
+        )
+        self.callingNotifications = ZMLocalNotificationSet(
+            archivingKey: "ZMLocalNotificationDispatcherCallingNotificationsKey",
+            keyValueStore: managedObjectContext
+        )
         super.init()
         observers.append(
-            NotificationInContext.addObserver(name: ZMConversation.lastReadDidChangeNotificationName,
-                                              context: managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.cancelNotificationForLastReadChanged(notification: $0) })
+            NotificationInContext.addObserver(
+                name: ZMConversation.lastReadDidChangeNotificationName,
+                context: managedObjectContext.notificationContext,
+                using: { [weak self] in
+                    self?.cancelNotificationForLastReadChanged(notification: $0)
+                }
+            )
         )
     }
 
@@ -85,7 +98,11 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
                 // Fetch the conversation here to avoid refetching every time we try to create a notification
-                conversation = conversationMap[conversationID] ?? ZMConversation.fetch(with: conversationID, domain: event.conversationDomain, in: self.syncMOC)
+                conversation = conversationMap[conversationID] ?? ZMConversation.fetch(
+                    with: conversationID,
+                    domain: event.conversationDomain,
+                    in: self.syncMOC
+                )
             }
 
             if let messageNonce = event.messageNonce {
@@ -160,9 +177,11 @@ extension LocalNotificationDispatcher: PushMessageHandler {
 
 extension LocalNotificationDispatcher {
     private var allNotificationSets: [ZMLocalNotificationSet] {
-        [self.eventNotifications,
-         self.failedMessageNotifications,
-         self.callingNotifications]
+        [
+            self.eventNotifications,
+            self.failedMessageNotifications,
+            self.callingNotifications,
+        ]
     }
 
     /// Can be used for cancelling all conversations if need
@@ -201,7 +220,10 @@ extension LocalNotificationDispatcher {
         self.syncMOC.performGroupedBlock {
             if isUIObject {
                 // clear all notifications for this conversation
-                if let syncConversation = (try? self.syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation {
+                if let syncConversation = (
+                    try? self.syncMOC
+                        .existingObject(with: conversation.objectID)
+                ) as? ZMConversation {
                     self.cancelNotification(for: syncConversation)
                 }
             } else {

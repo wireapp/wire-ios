@@ -65,7 +65,11 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
     // MARK: - Helper
 
     private func missedCallCell(fromSelf: Bool, inGroup: Bool = false) -> UITableViewCell {
-        let message = systemMessage(in: .insertNewObject(in: uiMOC), from: fromSelf ? selfUser : otherUser, inGroup: inGroup)
+        let message = systemMessage(
+            in: .insertNewObject(in: uiMOC),
+            from: fromSelf ? selfUser : otherUser,
+            inGroup: inGroup
+        )
         let cell = createCell(for: message)
 
         return cell
@@ -85,11 +89,21 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     private func createCell(for systemMessage: ZMSystemMessage) -> UITableViewCell {
-        let description = ConversationMissedCallSystemMessageCellDescription(message: systemMessage, data: systemMessage.systemMessageData!)
+        let description = ConversationMissedCallSystemMessageCellDescription(
+            message: systemMessage,
+            data: systemMessage.systemMessageData!
+        )
 
-        let cell = ConversationMessageCellTableViewAdapter<ConversationMissedCallSystemMessageCellDescription>(style: .default, reuseIdentifier: nil)
+        let cell = ConversationMessageCellTableViewAdapter<ConversationMissedCallSystemMessageCellDescription>(
+            style: .default,
+            reuseIdentifier: nil
+        )
         cell.cellDescription = description
-        cell.configure(with: description.configuration, fullWidth: description.isFullWidth, topMargin: description.topMargin)
+        cell.configure(
+            with: description.configuration,
+            fullWidth: description.isFullWidth,
+            topMargin: description.topMargin
+        )
 
         cell.frame = CGRect(origin: .zero, size: CGSize(width: CGSize.iPhoneSize.iPhone4.width, height: 32.5))
 

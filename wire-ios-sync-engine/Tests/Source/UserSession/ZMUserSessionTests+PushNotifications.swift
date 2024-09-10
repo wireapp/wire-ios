@@ -207,7 +207,8 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
     }
 
-    func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() {
+    func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction(
+    ) {
         // given
         syncMOC.performAndWait {
             simulateLoggedInUser()
@@ -317,29 +318,72 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 }
 
 extension ZMUserSessionTests_PushNotifications {
-    func assertHasReadConfirmationForMessage(nonce: UUID, conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) {
+    func assertHasReadConfirmationForMessage(
+        nonce: UUID,
+        conversation: ZMConversation,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         let containsReadConfirmation = conversation.lastMessages().contains { message in
-            if let clientMessage = message as? ZMClientMessage, clientMessage.underlyingMessage?.hasConfirmation == true {
+            if let clientMessage = message as? ZMClientMessage,
+               clientMessage.underlyingMessage?.hasConfirmation == true {
                 clientMessage.underlyingMessage?.confirmation.firstMessageID == nonce.transportString()
             } else {
                 false
             }
         }
 
-        XCTAssertTrue(containsReadConfirmation, "expected read confirmation for message with nonce = \(nonce)", file: file, line: line)
+        XCTAssertTrue(
+            containsReadConfirmation,
+            "expected read confirmation for message with nonce = \(nonce)",
+            file: file,
+            line: line
+        )
     }
 
-    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
-        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText, file: file, line: line)
+    func handle(
+        conversationAction: ConversationAction?,
+        category: Category,
+        userInfo: NotificationUserInfo,
+        userText: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        handle(
+            action: conversationAction?.rawValue ?? "",
+            category: category.rawValue,
+            userInfo: userInfo,
+            userText: userText,
+            file: file,
+            line: line
+        )
     }
 
-    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo, file: StaticString = #filePath, line: UInt = #line) {
+    func handle(
+        callAction: CallAction,
+        category: Category,
+        userInfo: NotificationUserInfo,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo, file: file, line: line)
     }
 
-    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
+    func handle(
+        action: String,
+        category: String,
+        userInfo: NotificationUserInfo,
+        userText: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         uiMOC.performAndWait {
-            sut.handleNotificationResponse(actionIdentifier: action, categoryIdentifier: category, userInfo: userInfo, userText: userText) {}
+            sut.handleNotificationResponse(
+                actionIdentifier: action,
+                categoryIdentifier: category,
+                userInfo: userInfo,
+                userText: userText
+            ) {}
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)

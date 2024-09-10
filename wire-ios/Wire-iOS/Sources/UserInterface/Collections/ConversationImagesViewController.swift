@@ -27,9 +27,11 @@ final class ConversationImagesViewController: UIViewController {
 
     let collection: AssetCollectionWrapper
 
-    var pageViewController = UIPageViewController(transitionStyle: .scroll,
-                                                  navigationOrientation: .horizontal,
-                                                  options: [:])
+    var pageViewController = UIPageViewController(
+        transitionStyle: .scroll,
+        navigationOrientation: .horizontal,
+        options: [:]
+    )
     var buttonsBar: InputBarButtonsView!
     lazy var deleteButton = iconButton(messageAction: .delete)
     let overlay = FeedbackOverlayView()
@@ -160,10 +162,12 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [pageViewController.view,
-         buttonsBar,
-         overlay,
-         separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            pageViewController.view,
+            buttonsBar,
+            overlay,
+            separator,
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         pageViewController.view.fitIn(view: view)
         NSLayoutConstraint.activate([
@@ -185,10 +189,12 @@ final class ConversationImagesViewController: UIViewController {
     private func createPageController() {
         pageViewController.delegate = self
         pageViewController.dataSource = self
-        pageViewController.setViewControllers([self.imageController(for: self.currentMessage)],
-                                              direction: .forward,
-                                              animated: false,
-                                              completion: .none)
+        pageViewController.setViewControllers(
+            [self.imageController(for: self.currentMessage)],
+            direction: .forward,
+            animated: false,
+            completion: .none
+        )
 
         addToSelf(pageViewController)
     }
@@ -315,11 +321,17 @@ final class ConversationImagesViewController: UIViewController {
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemEnabled, for: .normal)
 
         buttonsBar.expandRowButton.setIconColor(ButtonColors.textInputBarItemHighlighted, for: .highlighted)
-        buttonsBar.expandRowButton.setBackgroundImageColor(ButtonColors.backgroundInputBarItemHighlighted, for: .highlighted)
+        buttonsBar.expandRowButton.setBackgroundImageColor(
+            ButtonColors.backgroundInputBarItemHighlighted,
+            for: .highlighted
+        )
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemHighlighted, for: .highlighted)
 
         buttonsBar.expandRowButton.setIconColor(ButtonColors.textInputBarItemHighlighted, for: .selected)
-        buttonsBar.expandRowButton.setBackgroundImageColor(ButtonColors.backgroundInputBarItemHighlighted, for: .selected)
+        buttonsBar.expandRowButton.setBackgroundImageColor(
+            ButtonColors.backgroundInputBarItemHighlighted,
+            for: .selected
+        )
         buttonsBar.expandRowButton.setBorderColor(ButtonColors.borderInputBarItemHighlighted, for: .selected)
     }
 
@@ -364,8 +376,10 @@ final class ConversationImagesViewController: UIViewController {
         guard let sender = currentMessage.senderUser, let serverTimestamp = currentMessage.serverTimestamp else {
             return
         }
-        navigationItem.titleView = TwoLineTitleView(first: (sender.name ?? "").localized.attributedString,
-                                                    second: serverTimestamp.formattedDate.attributedString)
+        navigationItem.titleView = TwoLineTitleView(
+            first: (sender.name ?? "").localized.attributedString,
+            second: serverTimestamp.formattedDate.attributedString
+        )
         navigationItem.titleView?.accessibilityTraits = .header
         navigationItem.titleView?.accessibilityLabel = "\(sender.name ?? ""), \(serverTimestamp.formattedDate)"
     }
@@ -375,26 +389,33 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func updateActionControllerForMessage() {
-        currentActionController = ConversationMessageActionController(responder: messageActionDelegate,
-                                                                      message: currentMessage,
-                                                                      context: .collection,
-                                                                      view: view)
+        currentActionController = ConversationMessageActionController(
+            responder: messageActionDelegate,
+            message: currentMessage,
+            context: .collection,
+            view: view
+        )
     }
 
     var currentController: FullscreenImageViewController? {
-        guard let imageController = self.pageViewController.viewControllers?.first as? FullscreenImageViewController else {
+        guard let imageController = self.pageViewController.viewControllers?.first as? FullscreenImageViewController
+        else {
             return .none
         }
 
         return imageController
     }
 
-    private func perform(action: MessageAction,
-                         for message: ZMConversationMessage? = nil,
-                         sender: AnyObject?) {
-        messageActionDelegate?.perform(action: action,
-                                       for: message ?? currentMessage,
-                                       view: sender as? UIView ?? view)
+    private func perform(
+        action: MessageAction,
+        for message: ZMConversationMessage? = nil,
+        sender: AnyObject?
+    ) {
+        messageActionDelegate?.perform(
+            action: action,
+            for: message ?? currentMessage,
+            view: sender as? UIView ?? view
+        )
     }
 
     // MARK: icon button actions
@@ -442,7 +463,11 @@ extension ConversationImagesViewController: ScreenshotProvider {
 }
 
 extension ConversationImagesViewController: AssetCollectionDelegate {
-    func assetCollectionDidFetch(collection: ZMCollection, messages: [CategoryMatch: [ZMConversationMessage]], hasMore: Bool) {
+    func assetCollectionDidFetch(
+        collection: ZMCollection,
+        messages: [CategoryMatch: [ZMConversationMessage]],
+        hasMore: Bool
+    ) {
         for messageCategory in messages {
             let conversationMessages = messageCategory.value as [ZMConversationMessage]
 
@@ -458,7 +483,8 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
 }
 
 extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPageViewControllerDataSource {
-    func pageViewControllerPreferredInterfaceOrientationForPresentation(_: UIPageViewController) -> UIInterfaceOrientation {
+    func pageViewControllerPreferredInterfaceOrientationForPresentation(_: UIPageViewController)
+        -> UIInterfaceOrientation {
         .portrait
     }
 
@@ -470,7 +496,10 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
         self.imageMessages.count
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerAfter viewController: UIViewController
+    ) -> UIViewController? {
         guard let imageController = viewController as? FullscreenImageViewController else {
             fatal("Unknown controller \(viewController)")
         }
@@ -483,7 +512,10 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
         return self.imageController(for: self.imageMessages[nextIndex])
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        viewControllerBefore viewController: UIViewController
+    ) -> UIViewController? {
         guard let imageController = viewController as? FullscreenImageViewController else {
             fatal("Unknown controller \(viewController)")
         }
@@ -496,7 +528,12 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
         return self.imageController(for: self.imageMessages[previousIndex])
     }
 
-    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+    func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool
+    ) {
         if let currentController = self.currentController,
            finished,
            completed {
@@ -530,7 +567,12 @@ extension ConversationImagesViewController: MenuVisibilityController {
 }
 
 extension ConversationImagesViewController {
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     override var previewActionItems: [UIPreviewActionItem] {
         currentActionController?.previewActionItems ?? []
     }
@@ -539,7 +581,11 @@ extension ConversationImagesViewController {
 // MARK: - Helper
 
 extension UIView {
-    func fadeAndHide(_ hide: Bool, duration: TimeInterval = 0.2, options: UIView.AnimationOptions = UIView.AnimationOptions()) {
+    func fadeAndHide(
+        _ hide: Bool,
+        duration: TimeInterval = 0.2,
+        options: UIView.AnimationOptions = UIView.AnimationOptions()
+    ) {
         if !hide {
             alpha = 0
             isHidden = false
@@ -547,6 +593,12 @@ extension UIView {
 
         let animations = { self.alpha = hide ? 0 : 1 }
         let completion: (Bool) -> Void = { _ in self.isHidden = hide }
-        UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(), animations: animations, completion: completion)
+        UIView.animate(
+            withDuration: duration,
+            delay: 0,
+            options: UIView.AnimationOptions(),
+            animations: animations,
+            completion: completion
+        )
     }
 }

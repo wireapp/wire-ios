@@ -65,7 +65,13 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
      * - parameter originalRange: The range of the attachment in the text.
      */
 
-    @objc public init(type: LinkAttachmentType, title: String, permalink: URL, thumbnails: [URL], originalRange: NSRange) {
+    @objc public init(
+        type: LinkAttachmentType,
+        title: String,
+        permalink: URL,
+        thumbnails: [URL],
+        originalRange: NSRange
+    ) {
         self.type = type
         self.title = title
         self.permalink = permalink
@@ -80,7 +86,8 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
             let type = LinkAttachmentType(rawValue: aDecoder.decodeInteger(forKey: #keyPath(type))),
             let title = aDecoder.decodeObject(of: NSString.self, forKey: #keyPath(title)) as String?,
             let permalink = aDecoder.decodeObject(of: NSURL.self, forKey: #keyPath(permalink)) as URL?,
-            let thumbnails = aDecoder.decodeObject(of: [NSArray.self, NSURL.self], forKey: #keyPath(thumbnails)) as? [URL],
+            let thumbnails = aDecoder
+            .decodeObject(of: [NSArray.self, NSURL.self], forKey: #keyPath(thumbnails)) as? [URL],
             let originalRange = aDecoder.decodeObject(of: NSValue.self, forKey: #keyPath(originalRange))?.rangeValue
         else {
             return nil
@@ -109,9 +116,11 @@ extension LinkAttachment {
     convenience init?(openGraphData: OpenGraphData, detectedType: LinkAttachmentType, originalRange: NSRange) {
         switch detectedType {
         case .soundCloudPlaylist:
-            guard openGraphData.type.hasPrefix("music.playlist") || openGraphData.type.hasPrefix("soundcloud:set") else { return nil }
+            guard openGraphData.type.hasPrefix("music.playlist") || openGraphData.type.hasPrefix("soundcloud:set")
+            else { return nil }
         case .soundCloudTrack:
-            guard openGraphData.type.hasPrefix("music.song") || openGraphData.type.hasPrefix("soundcloud:sound") else { return nil }
+            guard openGraphData.type.hasPrefix("music.song") || openGraphData.type.hasPrefix("soundcloud:sound")
+            else { return nil }
         case .youTubeVideo:
             guard openGraphData.type.hasPrefix("video") else { return nil }
         }
@@ -119,6 +128,12 @@ extension LinkAttachment {
         let thumbnails = openGraphData.imageUrls.compactMap(URL.init)
         guard let permalink = URL(string: openGraphData.resolvedURL) else { return nil }
 
-        self.init(type: detectedType, title: openGraphData.title, permalink: permalink, thumbnails: thumbnails, originalRange: originalRange)
+        self.init(
+            type: detectedType,
+            title: openGraphData.title,
+            permalink: permalink,
+            thumbnails: thumbnails,
+            originalRange: originalRange
+        )
     }
 }

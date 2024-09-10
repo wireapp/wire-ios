@@ -68,8 +68,10 @@ extension ZiphyRequestGenerator {
      */
 
     func makeTrendingImagesRequest(resultsLimit: Int, offset: Int) -> ZiphyResult<URLRequest> {
-        let queryItems = [URLQueryItem(name: "limit", value: String(resultsLimit)),
-                          URLQueryItem(name: "offset", value: String(offset))]
+        let queryItems = [
+            URLQueryItem(name: "limit", value: String(resultsLimit)),
+            URLQueryItem(name: "offset", value: String(offset)),
+        ]
 
         return makeRequest(endpoint: .trending, query: queryItems)
     }
@@ -83,9 +85,11 @@ extension ZiphyRequestGenerator {
      */
 
     func makeSearchRequest(term: String, resultsLimit: Int, offset: Int) -> ZiphyResult<URLRequest> {
-        let queryItems = [URLQueryItem(name: "limit", value: String(resultsLimit)),
-                          URLQueryItem(name: "offset", value: String(offset)),
-                          URLQueryItem(name: "q", value: term)]
+        let queryItems = [
+            URLQueryItem(name: "limit", value: String(resultsLimit)),
+            URLQueryItem(name: "offset", value: String(offset)),
+            URLQueryItem(name: "q", value: term),
+        ]
 
         return makeRequest(endpoint: .search, query: queryItems)
     }

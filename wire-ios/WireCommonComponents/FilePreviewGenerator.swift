@@ -24,7 +24,11 @@ import UIKit
 
 extension URL {
     public func UTI() -> String {
-        guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, self.pathExtension as CFString, .none) else {
+        guard let UTI = UTTypeCreatePreferredIdentifierForTag(
+            kUTTagClassFilenameExtension,
+            self.pathExtension as CFString,
+            .none
+        ) else {
             return kUTTypeItem as String
         }
         return UTI.takeRetainedValue() as String
@@ -73,9 +77,11 @@ final class SharedPreviewGenerator: NSObject {
         let imageGenerator = ImageFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
         let movieGenerator = MovieFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeVideo)
         let pdfGenerator = PDFFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
-        return AggregateFilePreviewGenerator(subGenerators: [imageGenerator, movieGenerator, pdfGenerator],
-                                             callbackQueue: resultQueue,
-                                             thumbnailSize: thumbnailSizeDefault)
+        return AggregateFilePreviewGenerator(
+            subGenerators: [imageGenerator, movieGenerator, pdfGenerator],
+            callbackQueue: resultQueue,
+            thumbnailSize: thumbnailSizeDefault
+        )
     }()
 }
 
@@ -133,7 +139,10 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
         let options: [AnyHashable: Any] = [
             kCGImageSourceCreateThumbnailWithTransform as AnyHashable: true,
             kCGImageSourceCreateThumbnailFromImageAlways as AnyHashable: true,
-            kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(self.thumbnailSize.width, self.thumbnailSize.height),
+            kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(
+                self.thumbnailSize.width,
+                self.thumbnailSize.height
+            ),
         ]
         guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else {
             return
@@ -179,15 +188,24 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
         let bitmapInfo = cgImage.bitmapInfo
         let width = cgImage.width
         let height = cgImage.height
-        let renderRect = AspectFitRectInRect(CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
-                                             into: CGRect(x: 0, y: 0, width: self.thumbnailSize.width, height: self.thumbnailSize.height))
-        guard let context = CGContext(data: nil,
-                                      width: Int(renderRect.size.width),
-                                      height: Int(renderRect.size.height),
-                                      bitsPerComponent: bitsPerComponent,
-                                      bytesPerRow: Int(renderRect.size.width) * 4,
-                                      space: colorSpace,
-                                      bitmapInfo: bitmapInfo.rawValue) else {
+        let renderRect = AspectFitRectInRect(
+            CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
+            into: CGRect(
+                x: 0,
+                y: 0,
+                width: self.thumbnailSize.width,
+                height: self.thumbnailSize.height
+            )
+        )
+        guard let context = CGContext(
+            data: nil,
+            width: Int(renderRect.size.width),
+            height: Int(renderRect.size.height),
+            bitsPerComponent: bitsPerComponent,
+            bytesPerRow: Int(renderRect.size.width) * 4,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo.rawValue
+        ) else {
             return
         }
         context.interpolationQuality = CGInterpolationQuality.high

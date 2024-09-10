@@ -84,7 +84,8 @@ private let ErrorLabel = "label"
 
 extension OTREntity {
     /// Which object this message depends on when sending
-    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation: ZMConversation) -> ZMManagedObject? {
+    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation: ZMConversation)
+        -> ZMManagedObject? {
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
         // Otherwise we end up in an endless loop receiving missing clients error
@@ -118,7 +119,11 @@ extension OTREntity {
 
     typealias ClientChanges = (missingClients: Set<UserClient>, deletedClients: Set<UserClient>)
 
-    func processEmptyUploadResponse(_ response: ZMTransportResponse, in conversation: ZMConversation, clientRegistrationDelegate: ClientRegistrationDelegate) -> ClientChanges {
+    func processEmptyUploadResponse(
+        _ response: ZMTransportResponse,
+        in conversation: ZMConversation,
+        clientRegistrationDelegate: ClientRegistrationDelegate
+    ) -> ClientChanges {
         guard !detectedDeletedSelfClient(in: response) else {
             clientRegistrationDelegate.didDetectCurrentClientDeletion()
             return (missingClients: Set(), deletedClients: Set())
@@ -173,7 +178,10 @@ extension OTREntity {
         return parseMissingClients(clientListByUser, in: conversation)
     }
 
-    private func parseMissingClients(_ clientListByUser: Payload.ClientListByUser, in conversation: ZMConversation) -> ClientChanges {
+    private func parseMissingClients(
+        _ clientListByUser: Payload.ClientListByUser,
+        in conversation: ZMConversation
+    ) -> ClientChanges {
         // 1) Parse the payload
 
         var changes: ZMConversationRemoteClientChangeSet = []
@@ -200,7 +208,11 @@ extension OTREntity {
 
             // Process deletions
             for deletedClientID in deletedClients {
-                if let client = UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: user, createIfNeeded: false) {
+                if let client = UserClient.fetchUserClient(
+                    withRemoteId: deletedClientID,
+                    forUser: user,
+                    createIfNeeded: false
+                ) {
                     allDeletedClients.insert(client)
                 }
             }

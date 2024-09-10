@@ -192,7 +192,10 @@ final class AuthenticationInterfaceBuilder {
      * does not support this step.
      */
 
-    private func makeRegistrationStepViewController(for step: IntermediateRegistrationStep, user: UnregisteredUser) -> AuthenticationStepViewController? {
+    private func makeRegistrationStepViewController(
+        for step: IntermediateRegistrationStep,
+        user: UnregisteredUser
+    ) -> AuthenticationStepViewController? {
         switch step {
         case .setName:
             let nameStep = SetFullNameStepDescription()
@@ -235,7 +238,10 @@ final class AuthenticationInterfaceBuilder {
      * - returns: A credentials input view controller configured with the feature provider.
      */
 
-    private func makeCredentialsViewController(for flowType: AuthenticationCredentialsViewController.FlowType) -> AuthenticationCredentialsViewController {
+    private func makeCredentialsViewController(
+        for flowType: AuthenticationCredentialsViewController
+            .FlowType
+    ) -> AuthenticationCredentialsViewController {
         .init(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
     }
 }

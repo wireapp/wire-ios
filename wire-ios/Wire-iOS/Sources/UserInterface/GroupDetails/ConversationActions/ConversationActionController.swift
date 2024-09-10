@@ -175,7 +175,8 @@ final class ConversationActionController {
 
             context.saveOrRollback()
 
-            WireLogger.conversation.debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
+            WireLogger.conversation
+                .debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
         }
     }
 }

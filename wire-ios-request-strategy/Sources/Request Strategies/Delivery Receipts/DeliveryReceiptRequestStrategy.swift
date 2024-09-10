@@ -21,8 +21,10 @@ import Foundation
 extension ZMUpdateEvent {
     private static let deliveryConfirmationDayThreshold = 7
 
-    func needsDeliveryConfirmation(_ currentDate: Date = Date(),
-                                   managedObjectContext: NSManagedObjectContext) -> Bool {
+    func needsDeliveryConfirmation(
+        _ currentDate: Date = Date(),
+        managedObjectContext: NSManagedObjectContext
+    ) -> Bool {
         guard
             let message = GenericMessage(from: self),
             message.needsDeliveryConfirmation,
@@ -48,8 +50,10 @@ public final class DeliveryReceiptRequestStrategy: NSObject {
 
     // MARK: - Init
 
-    public init(managedObjectContext: NSManagedObjectContext,
-                messageSender: MessageSenderInterface) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        messageSender: MessageSenderInterface
+    ) {
         self.managedObjectContext = managedObjectContext
         self.messageSender = messageSender
     }
@@ -69,16 +73,22 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     }
 
     func sendDeliveryReceipt(_ deliveryReceipt: DeliveryReceipt) {
-        guard let confirmation = Confirmation(messageIds: deliveryReceipt.messageIDs,
-                                              type: .delivered) else { return }
+        guard let confirmation = Confirmation(
+            messageIds: deliveryReceipt.messageIDs,
+            type: .delivered
+        ) else { return }
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
-            try? await messageSender.sendMessage(message: GenericMessageEntity(message: GenericMessage(content: confirmation),
-                                                                               context: managedObjectContext,
-                                                                               conversation: deliveryReceipt.conversation,
-                                                                               targetRecipients: .users(senderUserSet),
-                                                                               completionHandler: nil))
+            try? await messageSender
+                .sendMessage(message: GenericMessageEntity(
+                    message: GenericMessage(content: confirmation),
+                    context: managedObjectContext,
+                    conversation: deliveryReceipt
+                        .conversation,
+                    targetRecipients: .users(senderUserSet),
+                    completionHandler: nil
+                ))
         }
     }
 
@@ -88,8 +98,10 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         var deliveryReceipts: [DeliveryReceipt] = []
 
         eventsByConversation.forEach { (conversationID: UUID, events: [ZMUpdateEvent]) in
-            guard let conversation = ZMConversation.fetch(with: conversationID,
-                                                          in: managedObjectContext) else { return }
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID,
+                in: managedObjectContext
+            ) else { return }
 
             let eventsBySender = events
                 .filter { $0.needsDeliveryConfirmation(managedObjectContext: managedObjectContext) }
@@ -100,17 +112,21 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                 let eventsWithoutDomain = events.filter { $0.senderDomain == nil }
 
                 for (domain, events) in eventsByDomain {
-                    deliveryReceipts.append(deliveryReceipt(for: senderID,
-                                                            domain: domain,
-                                                            conversation: conversation,
-                                                            events: events))
+                    deliveryReceipts.append(deliveryReceipt(
+                        for: senderID,
+                        domain: domain,
+                        conversation: conversation,
+                        events: events
+                    ))
                 }
 
                 if !eventsWithoutDomain.isEmpty {
-                    deliveryReceipts.append(deliveryReceipt(for: senderID,
-                                                            domain: nil,
-                                                            conversation: conversation,
-                                                            events: events))
+                    deliveryReceipts.append(deliveryReceipt(
+                        for: senderID,
+                        domain: nil,
+                        conversation: conversation,
+                        events: events
+                    ))
                 }
             }
         }
@@ -118,16 +134,22 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         return deliveryReceipts
     }
 
-    private func deliveryReceipt(for senderID: UUID,
-                                 domain: String?,
-                                 conversation: ZMConversation,
-                                 events: [ZMUpdateEvent]) -> DeliveryReceipt {
-        let sender = ZMUser.fetchOrCreate(with: senderID,
-                                          domain: domain,
-                                          in: managedObjectContext)
-        return DeliveryReceipt(sender: sender,
-                               conversation: conversation,
-                               messageIDs: events.compactMap(\.messageNonce))
+    private func deliveryReceipt(
+        for senderID: UUID,
+        domain: String?,
+        conversation: ZMConversation,
+        events: [ZMUpdateEvent]
+    ) -> DeliveryReceipt {
+        let sender = ZMUser.fetchOrCreate(
+            with: senderID,
+            domain: domain,
+            in: managedObjectContext
+        )
+        return DeliveryReceipt(
+            sender: sender,
+            conversation: conversation,
+            messageIDs: events.compactMap(\.messageNonce)
+        )
     }
 }
 

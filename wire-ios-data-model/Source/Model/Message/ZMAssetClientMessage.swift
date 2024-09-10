@@ -23,10 +23,12 @@ import Foundation
     /// In memory cache
     var cachedUnderlyingAssetMessage: GenericMessage?
 
-    convenience init(asset: WireProtos.Asset,
-                     nonce: UUID,
-                     managedObjectContext: NSManagedObjectContext,
-                     expiresAfter timeout: TimeInterval?) throws {
+    convenience init(
+        asset: WireProtos.Asset,
+        nonce: UUID,
+        managedObjectContext: NSManagedObjectContext,
+        expiresAfter timeout: TimeInterval?
+    ) throws {
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
 
         transferState = .uploading
@@ -419,7 +421,10 @@ struct CacheAsset: AssetType {
         do {
             try owner.mergeWithExistingData(message: genericMessage)
         } catch {
-            WireLogger.messageProcessing.warn("Failed to update asset id. Reason: \(error.localizedDescription)", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+            WireLogger.messageProcessing.warn(
+                "Failed to update asset id. Reason: \(error.localizedDescription)",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             return
         }
     }
@@ -451,7 +456,8 @@ struct CacheAsset: AssetType {
         do {
             try owner.setUnderlyingMessage(genericMessage)
         } catch {
-            Logging.messageProcessing.warn("Failed to update preprocessed image data. Reason: \(error.localizedDescription)")
+            Logging.messageProcessing
+                .warn("Failed to update preprocessed image data. Reason: \(error.localizedDescription)")
         }
     }
 
@@ -462,10 +468,16 @@ struct CacheAsset: AssetType {
 
         switch type {
         case .file:
-            WireLogger.assets.debug("encrypting file", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+            WireLogger.assets.debug(
+                "encrypting file",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             if let keys = cache.encryptFileAndComputeSHA256Digest(owner) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
-                WireLogger.assets.debug("encrypted file", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+                WireLogger.assets.debug(
+                    "encrypted file",
+                    attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+                )
             }
         case .image:
             if !needsPreprocessing, let original {
@@ -473,23 +485,38 @@ struct CacheAsset: AssetType {
                 cache.storeMediumImage(data: original, for: owner)
             }
 
-            WireLogger.assets.debug("encrypting image", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+            WireLogger.assets.debug(
+                "encrypting image",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
-                WireLogger.assets.debug("encrypted image", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+                WireLogger.assets.debug(
+                    "encrypted image",
+                    attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+                )
             }
         case .thumbnail:
-            WireLogger.assets.debug("encrypting thumbnail", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+            WireLogger.assets.debug(
+                "encrypting thumbnail",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAssetPreview(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
-                WireLogger.assets.debug("encrypted thumbnail", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+                WireLogger.assets.debug(
+                    "encrypted thumbnail",
+                    attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+                )
             }
         }
 
         do {
             try owner.setUnderlyingMessage(genericMessage)
         } catch {
-            WireLogger.messageProcessing.warn("Failed to encrypt asset message data. Reason: \(error.localizedDescription)", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
+            WireLogger.messageProcessing.warn(
+                "Failed to encrypt asset message data. Reason: \(error.localizedDescription)",
+                attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()]
+            )
         }
     }
 }

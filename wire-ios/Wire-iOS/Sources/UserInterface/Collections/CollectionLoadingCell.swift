@@ -49,7 +49,8 @@ final class CollectionLoadingCell: UICollectionViewCell {
         }
     }
 
-    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes)
+        -> UICollectionViewLayoutAttributes {
         var newFrame = layoutAttributes.frame
         newFrame.size.height = 24 + (collapsed ? 0 : 64)
         newFrame.size.width = containerWidth

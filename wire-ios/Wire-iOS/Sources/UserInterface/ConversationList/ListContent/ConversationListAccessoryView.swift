@@ -117,7 +117,8 @@ final class ConversationListAccessoryView: UIView {
         let transparentIconViewTrailing = transparentIconView.trailingAnchor.constraint(equalTo: trailingAnchor)
         transparentIconViewTrailing.priority = UILayoutPriority(999.0)
 
-        expandTransparentIconViewWidthConstraint = transparentIconView.widthAnchor.constraint(greaterThanOrEqualToConstant: defaultViewWidth)
+        expandTransparentIconViewWidthConstraint = transparentIconView.widthAnchor
+            .constraint(greaterThanOrEqualToConstant: defaultViewWidth)
 
         expandWidthConstraint = widthAnchor.constraint(greaterThanOrEqualToConstant: defaultViewWidth)
 
@@ -132,8 +133,7 @@ final class ConversationListAccessoryView: UIView {
             expandWidthConstraint,
             transparentIconView.topAnchor.constraint(equalTo: topAnchor),
             transparentIconView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ]
-        )
+        ])
         badgeView.fitIn(view: self)
     }
 

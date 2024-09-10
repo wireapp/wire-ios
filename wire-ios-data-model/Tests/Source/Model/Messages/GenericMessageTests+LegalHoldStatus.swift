@@ -35,7 +35,10 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
     func testThatItUpdatesLegalHoldStatusFlagForReaction() {
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emojis: ["🤠"], messageID: UUID.create()))
+        var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(
+            emojis: ["🤠"],
+            messageID: UUID.create()
+        ))
 
         // when
         XCTAssertEqual(genericMessage.reaction.legalHoldStatus, .unknown)
@@ -75,7 +78,10 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
 
     func testThatItUpdatesLegalHoldStatusFlagForAsset() {
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123), nonce: UUID.create())
+        var genericMessage = GenericMessage(
+            content: WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123),
+            nonce: UUID.create()
+        )
 
         // when
         XCTAssertEqual(genericMessage.asset.legalHoldStatus, .unknown)

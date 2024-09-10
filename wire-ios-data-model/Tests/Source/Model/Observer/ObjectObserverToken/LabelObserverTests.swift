@@ -49,7 +49,12 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
         ]
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(_ team: Label, modifier: (Label) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ team: Label,
+        modifier: (Label) -> Void,
+        expectedChangedFields: Set<String>,
+        customAffectedKeys: AffectedKeys? = nil
+    ) {
         // given
         self.uiMOC.saveOrRollback()
 
@@ -81,9 +86,10 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(label,
-                                                     modifier: { $0.name = "foo" },
-                                                     expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]
+        self.checkThatItNotifiesTheObserverOfAChange(
+            label,
+            modifier: { $0.name = "foo" },
+            expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]
         )
     }
 }

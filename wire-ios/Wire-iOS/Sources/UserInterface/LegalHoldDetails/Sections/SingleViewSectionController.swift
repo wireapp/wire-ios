@@ -59,14 +59,21 @@ final class SingleViewSectionController: NSObject, CollectionViewSectionControll
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
-        collectionView?.register(CollectionViewCellAdapter.self, forCellWithReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier)
+        collectionView?.register(
+            CollectionViewCellAdapter.self,
+            forCellWithReuseIdentifier: CollectionViewCellAdapter.zm_reuseIdentifier
+        )
     }
 
     var isHidden: Bool {
         false
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         view.size(fittingWidth: collectionView.bounds.size.width)
 
         return view.bounds.size
@@ -76,7 +83,10 @@ final class SingleViewSectionController: NSObject, CollectionViewSectionControll
         1
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: CollectionViewCellAdapter.self, for: indexPath)
 
         cell.wrappedView = view

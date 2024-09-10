@@ -74,7 +74,11 @@ public struct MLSClientID: Equatable, Hashable {
     public init?(rawValue: String) {
         guard
             let regex = try? NSRegularExpression(pattern: "(.+):(.+)@(.+)", options: []),
-            let result = regex.firstMatch(in: rawValue, options: [], range: NSRange(location: 0, length: rawValue.utf16.count)),
+            let result = regex.firstMatch(
+                in: rawValue,
+                options: [],
+                range: NSRange(location: 0, length: rawValue.utf16.count)
+            ),
             let userIDRange = Range(result.range(at: 1), in: rawValue),
             let clientIDRange = Range(result.range(at: 2), in: rawValue),
             let domainRange = Range(result.range(at: 3), in: rawValue)

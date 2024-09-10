@@ -65,7 +65,12 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
             let label: Label? = if conversationLabel.type == Label.Kind.favorite.rawValue {
                 Label.fetchFavoriteLabel(in: context)
             } else {
-                Label.fetchOrCreate(remoteIdentifier: conversationLabel.id, create: true, in: context, created: &created)
+                Label.fetchOrCreate(
+                    remoteIdentifier: conversationLabel.id,
+                    create: true,
+                    in: context,
+                    created: &created
+                )
             }
 
             guard let label else {

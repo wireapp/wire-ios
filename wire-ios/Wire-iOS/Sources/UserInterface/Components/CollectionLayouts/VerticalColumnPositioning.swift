@@ -72,9 +72,12 @@ struct VerticalColumnPositioning {
             adjustedHeight = 0
         }
 
-        let frame = CGRect(x: context.columns[currentColumn],
-                           y: columnHeights[currentColumn] + itemVerticalSpacing,
-                           width: context.columnWidth, height: adjustedHeight)
+        let frame = CGRect(
+            x: context.columns[currentColumn],
+            y: columnHeights[currentColumn] + itemVerticalSpacing,
+            width: context.columnWidth,
+            height: adjustedHeight
+        )
 
         // Create the attributes
 

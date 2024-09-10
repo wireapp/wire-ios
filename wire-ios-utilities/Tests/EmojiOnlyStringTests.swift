@@ -22,14 +22,46 @@ import XCTest
 class EmojiOnlyStringTests: XCTestCase {
     func testThatCommonEmojisAreDetected() {
         // given
-        let commonEmoji = ["©️", "ℹ️", "☘️", "⏰️", "➰️", "♥️", "🀄️", "🇨🇭", "⭔", "⭕",
-                           "😜", "🙏", "🌝", "😘", "👍", "💩", "😂", "😍", "😁",
-                           "❤︎", "❤️", "🈚︎", "🀄︎", // emoji variation
-                           "👩", "👩🏻", "👩🏼", "👩🏽", "👩🏾", "👩🏿", // Fitzpatrick modifiers
-                           "👨‍👩‍👧", "🏳️‍🌈", // Joining
-                           "🧘🏿‍♀️", "🧡", "🦒", "🧦", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🧟‍♂️", // Emoji 5.0
-                           // swiftlint:disable:next todo_requires_jira_link
-                           // TODO: Test for Emoji 11.0 new emoji "🥮" after iOS 12.1 is released
+        let commonEmoji = [
+            "©️",
+            "ℹ️",
+            "☘️",
+            "⏰️",
+            "➰️",
+            "♥️",
+            "🀄️",
+            "🇨🇭",
+            "⭔",
+            "⭕",
+            "😜",
+            "🙏",
+            "🌝",
+            "😘",
+            "👍",
+            "💩",
+            "😂",
+            "😍",
+            "😁",
+            "❤︎",
+            "❤️",
+            "🈚︎",
+            "🀄︎", // emoji variation
+            "👩",
+            "👩🏻",
+            "👩🏼",
+            "👩🏽",
+            "👩🏾",
+            "👩🏿", // Fitzpatrick modifiers
+            "👨‍👩‍👧",
+            "🏳️‍🌈", // Joining
+            "🧘🏿‍♀️",
+            "🧡",
+            "🦒",
+            "🧦",
+            "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+            "🧟‍♂️", // Emoji 5.0
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: Test for Emoji 11.0 new emoji "🥮" after iOS 12.1 is released
         ]
 
         // then
@@ -99,15 +131,21 @@ class EmojiOnlyStringTests: XCTestCase {
         // given
 
         // Notice: "⿆" - Kangxi Radicals, start from U0x2F0x it is not a emoji, but CharacterSet.symbols contains it.
-        let langaugeStrings = ["ḀẀẶỳ", "ठःअठी३", "勺卉善爨", "Ёжик", "한국어",
-                               "ⰀⰁ", // Glagolitic, start from U0x2C0x, containsEmoji return true for this language
-                               "はい", // Hiragana, start from U0x304x
-                               "ブ", // Katakana, start from U0x304x
-                               "ㄅㄆㄇ", // Bopomofo, start from U0x310x
-                               "Ⴀჟჯჰ", // Georgian, updated in uncodie 11.0
-                               "ქართული", // Georgian, updated in uncodie 11.0
-                               " Α α, Β β, Γ γ, Δ δ, Ε ε, Ζ ζ, Η η, Θ θ, Ι ι, Κ κ, Λ λ, Μ μ, Ν ν, Ξ ξ, Ο ο, Π π, Ρ ρ, Σ σ/ς, Τ τ, Υ υ, Φ φ, Χ χ, Ψ ψ, Ω ω.", // Greek
-                               "。，？！", // Chinese punctuation marks
+        let langaugeStrings = [
+            "ḀẀẶỳ",
+            "ठःअठी३",
+            "勺卉善爨",
+            "Ёжик",
+            "한국어",
+            "ⰀⰁ", // Glagolitic, start from U0x2C0x, containsEmoji return true for this language
+            "はい", // Hiragana, start from U0x304x
+            "ブ", // Katakana, start from U0x304x
+            "ㄅㄆㄇ", // Bopomofo, start from U0x310x
+            "Ⴀჟჯჰ", // Georgian, updated in uncodie 11.0
+            "ქართული", // Georgian, updated in uncodie 11.0
+            " Α α, Β β, Γ γ, Δ δ, Ε ε, Ζ ζ, Η η, Θ θ, Ι ι, Κ κ, Λ λ, Μ μ, Ν ν, Ξ ξ, Ο ο, Π π, Ρ ρ, Σ σ/ς, Τ τ, Υ υ, Φ φ, Χ χ, Ψ ψ, Ω ω.",
+            // Greek
+            "。，？！", // Chinese punctuation marks
         ]
         // then
         for langaugeString in langaugeStrings {

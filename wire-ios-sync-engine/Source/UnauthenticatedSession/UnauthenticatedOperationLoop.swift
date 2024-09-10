@@ -29,7 +29,11 @@ class UnauthenticatedOperationLoop: NSObject {
     fileprivate var tornDown = false
     fileprivate var shouldEnqueue = true
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: GroupQueue, requestStrategies: [RequestStrategy]) {
+    init(
+        transportSession: UnauthenticatedTransportSessionProtocol,
+        operationQueue: GroupQueue,
+        requestStrategies: [RequestStrategy]
+    ) {
         self.transportSession = transportSession
         self.requestStrategies = requestStrategies
         self.operationQueue = operationQueue

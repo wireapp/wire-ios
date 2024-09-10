@@ -42,17 +42,33 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             otherUser = session.insertUser(withName: "bar")
             thirdUser = session.insertUser(withName: "foobar")
             selfClient = session.registerClient(for: selfUser!, label: "self1", type: "permanent", deviceClass: "phone")
-            otherUserClient = session.registerClient(for: otherUser!, label: "other1", type: "permanent", deviceClass: "phone")
-            secondOtherUserClient = session.registerClient(for: otherUser!, label: "other2", type: "permanent", deviceClass: "phone")
+            otherUserClient = session.registerClient(
+                for: otherUser!,
+                label: "other1",
+                type: "permanent",
+                deviceClass: "phone"
+            )
+            secondOtherUserClient = session.registerClient(
+                for: otherUser!,
+                label: "other2",
+                type: "permanent",
+                deviceClass: "phone"
+            )
         }
 
         let redunduntClientId: String = .randomClientIdentifier()
         let payload: ZMTransportData = [
             selfUser.identifier: [selfClient.identifier!, redunduntClientId],
             otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!],
-            thirdUser.identifier: [redunduntClientId]] as ZMTransportData
+            thirdUser.identifier: [redunduntClientId],
+        ] as ZMTransportData
 
-        let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .post, apiVersion: .v0)
+        let response: ZMTransportResponse = self.response(
+            forPayload: payload,
+            path: "/users/prekeys",
+            method: .post,
+            apiVersion: .v0
+        )
         XCTAssertEqual(response.httpStatus, 200)
 
         let expectedUsers: NSArray = [selfUser.identifier, otherUser.identifier, thirdUser.identifier]
@@ -62,17 +78,26 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
 
         if let identifier = selfUser?.identifier {
             let expectedClients = [selfClient.identifier!, redunduntClientId]
-            assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
+            assertDictionaryHasKeys(
+                a1: response.payload?.asDictionary()?[identifier] as! NSDictionary,
+                a2: expectedClients as NSArray
+            )
         }
 
         if let identifier = otherUser?.identifier {
             let expectedClients = [otherUserClient?.identifier, secondOtherUserClient?.identifier]
-            assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
+            assertDictionaryHasKeys(
+                a1: response.payload?.asDictionary()?[identifier] as! NSDictionary,
+                a2: expectedClients as NSArray
+            )
         }
 
         if let identifier = thirdUser?.identifier {
             let expectedClients = [redunduntClientId]
-            assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
+            assertDictionaryHasKeys(
+                a1: response.payload?.asDictionary()?[identifier] as! NSDictionary,
+                a2: expectedClients as NSArray
+            )
         }
     }
 
@@ -96,7 +121,12 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0) else { XCTFail(); return }
+        guard let response = self.response(
+            forPayload: nil,
+            path: "/users/\(userId)/rich-info",
+            method: .get,
+            apiVersion: .v0
+        ) else { XCTFail(); return }
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -119,11 +149,17 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0) else { XCTFail(); return }
+        guard let response = self.response(
+            forPayload: nil,
+            path: "/users/\(userId)/rich-info",
+            method: .get,
+            apiVersion: .v0
+        ) else { XCTFail(); return }
 
         // then
         XCTAssertEqual(response.httpStatus, 200)
-        guard let payload = response.payload as? [String: [[String: String]]] else { XCTFail("Malformed response: \(String(describing: response.payload))"); return }
+        guard let payload = response.payload as? [String: [[String: String]]]
+        else { XCTFail("Malformed response: \(String(describing: response.payload))"); return }
 
         guard let fields = payload["fields"] else { XCTFail("Malformed payload: \(payload)"); return }
 
@@ -150,7 +186,12 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0) else { XCTFail(); return }
+        guard let response = self.response(
+            forPayload: nil,
+            path: "/users/\(userId)/rich-info",
+            method: .get,
+            apiVersion: .v0
+        ) else { XCTFail(); return }
 
         // then
         XCTAssertEqual(response.httpStatus, 403)

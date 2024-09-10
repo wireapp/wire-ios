@@ -199,7 +199,8 @@ final class CallingActionsView: UIView {
 
         largeButtonsLandscapeConstraints = [
             largeHangUpButton.centerYAnchor.constraint(equalTo: microphoneButton.centerYAnchor).withPriority(.required),
-            largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor).withPriority(.required),
+            largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor)
+                .withPriority(.required),
             largeHangUpButton.leadingAnchor.constraint(equalTo: safeLeadingAnchor, constant: 20.0),
             largePickUpButton.trailingAnchor.constraint(equalTo: safeTrailingAnchor, constant: -20.0),
         ]
@@ -270,11 +271,15 @@ final class CallingActionsView: UIView {
     private func updateAccessibilityElements(with input: CallActionsViewInputType) {
         typealias Calling = L10n.Accessibility.Calling
 
-        microphoneButton.accessibilityLabel = input.isMuted ? Calling.MicrophoneOnButton.description : Calling.MicrophoneOffButton.description
-        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Calling.SpeakerOffButton.description : Calling.SpeakerOnButton.description
+        microphoneButton.accessibilityLabel = input.isMuted ? Calling.MicrophoneOnButton.description : Calling
+            .MicrophoneOffButton.description
+        speakerButton.accessibilityLabel = input.mediaState.isSpeakerEnabled ? Calling.SpeakerOffButton
+            .description : Calling.SpeakerOnButton.description
         endCallButton.accessibilityLabel = Calling.HangUpButton.description
-        cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Calling.VideoOffButton.description : Calling.VideoOnButton.description
-        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Calling.FlipCameraBackButton.description : Calling.FlipCameraFrontButton.description
+        cameraButton.accessibilityLabel = input.mediaState.isSendingVideo ? Calling.VideoOffButton.description : Calling
+            .VideoOnButton.description
+        flipCameraButton.accessibilityLabel = input.cameraType == .front ? Calling.FlipCameraBackButton
+            .description : Calling.FlipCameraFrontButton.description
         largePickUpButton.accessibilityLabel = Calling.AcceptButton.description
         largeHangUpButton.accessibilityLabel = Calling.HangUpButton.description
     }
@@ -308,7 +313,10 @@ final class CallingActionsView: UIView {
 // MARK: - UILargeContentViewerInteractionDelegate
 
 extension CallingActionsView: UILargeContentViewerInteractionDelegate {
-    func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
+    func largeContentViewerInteraction(
+        _: UILargeContentViewerInteraction,
+        itemAt: CGPoint
+    ) -> UILargeContentViewerItem? {
         let itemWidth = self.frame.width / CGFloat(establishedCallButtons.count)
         let position = Int(itemAt.x / itemWidth)
         largeContentTitle = establishedCallButtons[position].subtitleTransformLabel.text

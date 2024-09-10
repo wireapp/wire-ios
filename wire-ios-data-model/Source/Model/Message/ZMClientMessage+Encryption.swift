@@ -71,7 +71,8 @@ extension ZMClientMessage {
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -79,11 +80,13 @@ extension ZMClientMessage {
         if let legalHoldStatus = conversation?.legalHoldStatus {
             // Update the legalHoldStatus flag to reflect the current known legal hold status
             if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                updatedGenericMessage
+                    .setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -99,7 +102,8 @@ extension ZMAssetClientMessage {
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -107,11 +111,13 @@ extension ZMAssetClientMessage {
         if let legalHoldStatus = conversation?.legalHoldStatus {
             // Update the legalHoldStatus flag to reflect the current known legal hold status
             if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                updatedGenericMessage
+                    .setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
                 do {
                     try setUnderlyingMessage(updatedGenericMessage)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
+                    Logging.messageProcessing
+                        .warn("Failed to update generic message. Reason: \(error.localizedDescription)")
                 }
             }
         }
@@ -147,7 +153,11 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
         }
-        return await underlyingMessage?.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
+        return await underlyingMessage?.encryptForTransport(
+            for: conversation,
+            in: context,
+            useQualifiedIdentifiers: true
+        )
     }
 
     public var debugInfo: String {
@@ -181,7 +191,11 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
         }
-        return await underlyingMessage?.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
+        return await underlyingMessage?.encryptForTransport(
+            for: conversation,
+            in: context,
+            useQualifiedIdentifiers: true
+        )
     }
 
     public var debugInfo: String {
@@ -190,10 +204,12 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 }
 
 extension GenericMessage {
-    public func encryptForProteus(for recipients: [ZMUser: Set<UserClient>],
-                                  with missingClientsStrategy: MissingClientsStrategy,
-                                  externalData: Data? = nil,
-                                  in context: NSManagedObjectContext) {}
+    public func encryptForProteus(
+        for recipients: [ZMUser: Set<UserClient>],
+        with missingClientsStrategy: MissingClientsStrategy,
+        externalData: Data? = nil,
+        in context: NSManagedObjectContext
+    ) {}
 }
 
 extension GenericMessage {
@@ -210,7 +226,10 @@ extension GenericMessage {
         externalData: Data? = nil
     ) async -> EncryptedPayloadGenerator.Payload? {
         let selfUser = await context.perform { ZMUser.selfUser(in: context) }
-        let (users, missingClientsStrategy) = await context.perform { recipientUsersForMessage(in: conversation, selfUser: selfUser) }
+        let (users, missingClientsStrategy) = await context.perform { recipientUsersForMessage(
+            in: conversation,
+            selfUser: selfUser
+        ) }
         let recipients = await context.perform { users.mapToDictionary { $0.clients } }
 
         var encryptedData: Data?
@@ -437,7 +456,8 @@ extension GenericMessage {
                 )
             }
 
-            if useQualifiedIdentifiers, let selfDomain = context.performAndWait({ ZMUser.selfUser(in: context).domain }) {
+            if useQualifiedIdentifiers,
+               let selfDomain = context.performAndWait({ ZMUser.selfUser(in: context).domain }) {
                 let message = legacyProteusMessage(
                     selfClient,
                     selfDomain: selfDomain,
@@ -464,7 +484,8 @@ extension GenericMessage {
             }
 
             // Message too big?
-            if let data = messageData, UInt(data.count) > ZMClientMessage.byteSizeExternalThreshold, externalData == nil {
+            if let data = messageData, UInt(data.count) > ZMClientMessage.byteSizeExternalThreshold,
+               externalData == nil {
                 // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
                 // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
                 sessionsDirectory.discardCache()
@@ -647,7 +668,10 @@ extension GenericMessage {
                     using: encryptionFunction
                 )
                 if !clientEntries.isEmpty {
-                    let userEntry = await context.perform { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
+                    let userEntry = await context.perform { Proteus_UserEntry(
+                        withUser: user,
+                        clientEntries: clientEntries
+                    ) }
                     userEntries.append(userEntry)
                 }
             }
@@ -817,7 +841,8 @@ extension GenericMessage {
         guard await !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
-            await WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(client.loggedId)")
+            await WireLogger.proteus
+                .error("Failed to encrypt payload: session is not established with client: \(client.loggedId)")
             return await client.proteusClientEntry(with: data)
         }
 
@@ -843,7 +868,11 @@ extension GenericMessage {
         guard !client.failedToEstablishSession else {
             // If the session is corrupted, we will send a special payload.
             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
-            WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: " + String(describing: client.remoteIdentifier))
+            WireLogger.proteus
+                .error(
+                    "Failed to encrypt payload: session is not established with client: " +
+                        String(describing: client.remoteIdentifier)
+                )
             return Proteus_ClientEntry(withClientId: client.clientId, data: data)
         }
 
@@ -858,14 +887,21 @@ extension GenericMessage {
         }
     }
 
-    func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
+    func recipientUsersForMessage(
+        in conversation: ZMConversation,
+        selfUser: ZMUser
+    ) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
         let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
         func recipientForButtonActionMessage() -> Set<ZMUser> {
             guard
                 case .buttonAction? = content,
                 let managedObjectContext = conversation.managedObjectContext,
-                let message = ZMMessage.fetch(withNonce: UUID(uuidString: buttonAction.referenceMessageID), for: conversation, in: managedObjectContext),
+                let message = ZMMessage.fetch(
+                    withNonce: UUID(uuidString: buttonAction.referenceMessageID),
+                    for: conversation,
+                    in: managedObjectContext
+                ),
                 let sender = message.sender
             else {
                 fatal("buttonAction needs a recipient")
@@ -878,7 +914,11 @@ extension GenericMessage {
             guard
                 hasConfirmation,
                 let managedObjectContext = conversation.managedObjectContext,
-                let message = ZMMessage.fetch(withNonce: UUID(uuidString: confirmation.firstMessageID), for: conversation, in: managedObjectContext),
+                let message = ZMMessage.fetch(
+                    withNonce: UUID(uuidString: confirmation.firstMessageID),
+                    for: conversation,
+                    in: managedObjectContext
+                ),
                 let sender = message.sender
             else {
                 return nil
@@ -912,8 +952,14 @@ extension GenericMessage {
             }
 
             guard let sender = message.sender else {
-                zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
-                WireLogger.proteus.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
+                zmLog
+                    .error(
+                        "sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
+                    )
+                WireLogger.proteus
+                    .error(
+                        "sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
+                    )
                 return [selfUser]
             }
 
@@ -929,7 +975,8 @@ extension GenericMessage {
 
             func mentionedServices() -> Set<ZMUser> {
                 services.filter { service in
-                    self.textData?.mentions.contains { $0.userID == service.remoteIdentifier?.transportString() } ?? false
+                    self.textData?.mentions
+                        .contains { $0.userID == service.remoteIdentifier?.transportString() } ?? false
                 }
             }
 
@@ -944,7 +991,9 @@ extension GenericMessage {
         case .confirmation?:
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
                 let confirmationInfo = ", original message: \(String(describing: self.confirmation.firstMessageID))"
-                fatal("confirmation need a recipient\n ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)")
+                fatal(
+                    "confirmation need a recipient\n ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)"
+                )
             }
             recipientUsers = recipients
         case .buttonAction?:
@@ -975,10 +1024,17 @@ extension GenericMessage {
 extension GenericMessage {
     /// Returns a message with recipients, with the content stored externally, and a strategy to handle missing clients.
 
-    private func encryptForTransportWithExternalDataBlob(for conversation: ZMConversation, in context: NSManagedObjectContext) async -> EncryptedPayloadGenerator.Payload? {
+    private func encryptForTransportWithExternalDataBlob(
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) async -> EncryptedPayloadGenerator.Payload? {
         guard let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: self) else { return nil }
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: encryptedDataWithKeys.keys))
-        return await externalGenericMessage.encryptForTransport(for: conversation, in: context, externalData: encryptedDataWithKeys.data)
+        return await externalGenericMessage.encryptForTransport(
+            for: conversation,
+            in: context,
+            externalData: encryptedDataWithKeys.data
+        )
     }
 
     private func encryptForTransportWithExternalDataBlob(
@@ -1129,7 +1185,10 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
 }
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
-    public func encryptForTransport(using encrypt: MLSEncryptedPayloadGenerator.EncryptionFunction) async throws -> Data {
+    public func encryptForTransport(
+        using encrypt: MLSEncryptedPayloadGenerator
+            .EncryptionFunction
+    ) async throws -> Data {
         let unencryptedData = try unencryptedData()
         return try await encrypt(unencryptedData)
     }

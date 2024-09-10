@@ -36,15 +36,25 @@ public enum ReadReceiptModeError: Error {
 
 extension ZMConversation {
     /// Enable or disable read receipts in a group conversation
-    public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func setEnableReadReceipts(
+        _ enabled: Bool,
+        in userSession: ZMUserSession,
+        _ completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(ReadReceiptModeError.unknown))
         }
         guard conversationType == .group else { return  completion(.failure(ReadReceiptModeError.invalidOperation)) }
-        guard let conversationId = remoteIdentifier?.transportString() else { return completion(.failure(ReadReceiptModeError.noConversation)) }
+        guard let conversationId = remoteIdentifier?.transportString()
+        else { return completion(.failure(ReadReceiptModeError.noConversation)) }
 
         let payload = ["receipt_mode": enabled ? 1 : 0] as ZMTransportData
-        let request = ZMTransportRequest(path: "/conversations/\(conversationId)/receipt-mode", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(
+            path: "/conversations/\(conversationId)/receipt-mode",
+            method: .put,
+            payload: payload,
+            apiVersion: apiVersion.rawValue
+        )
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {

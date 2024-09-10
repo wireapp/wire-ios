@@ -191,7 +191,12 @@ extension ZMConversation.Action {
         .init(title: title, style: isDestructive ? .destructive : .default) { _ in handler() }
     }
 
-    @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
+    @available(
+        iOS,
+        introduced: 9.0,
+        deprecated: 13.0,
+        message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction."
+    )
     func previewAction(handler: @escaping () -> Void) -> UIPreviewAction {
         .init(title: title, style: isDestructive ? .destructive : .default, handler: { _, _ in handler() })
     }

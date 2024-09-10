@@ -20,7 +20,10 @@ import WireDataModelSupport
 import XCTest
 @testable import WireRequestStrategy
 
-final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<PushSupportedProtocolsAction, PushSupportedProtocolsActionHandler> {
+final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<
+    PushSupportedProtocolsAction,
+    PushSupportedProtocolsActionHandler
+> {
     // MARK: - Properties
 
     private var stack: CoreDataStack!

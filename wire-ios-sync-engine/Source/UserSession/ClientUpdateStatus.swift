@@ -113,12 +113,21 @@ public enum ClientUpdateError: NSInteger {
             if needsToVerifySelfClient {
                 do {
                     excludingSelfClient = try filterSelfClientIfValid(excludingSelfClient)
-                    ZMClientUpdateNotification.notifyFetchingClientsCompleted(userClients: excludingSelfClient, context: syncManagedObjectContext)
+                    ZMClientUpdateNotification.notifyFetchingClientsCompleted(
+                        userClients: excludingSelfClient,
+                        context: syncManagedObjectContext
+                    )
                 } catch let error as NSError {
-                    ZMClientUpdateNotification.notifyFetchingClientsDidFail(error: error, context: syncManagedObjectContext)
+                    ZMClientUpdateNotification.notifyFetchingClientsDidFail(
+                        error: error,
+                        context: syncManagedObjectContext
+                    )
                 }
             } else {
-                ZMClientUpdateNotification.notifyFetchingClientsCompleted(userClients: clients, context: syncManagedObjectContext)
+                ZMClientUpdateNotification.notifyFetchingClientsCompleted(
+                    userClients: clients,
+                    context: syncManagedObjectContext
+                )
             }
         }
     }
@@ -173,7 +182,10 @@ public enum ClientUpdateError: NSInteger {
                 // this should not happen since we just fetched the clients
                 // however if it happens and there is no other client to delete we should notify that all clients where deleted
                 internalCredentials = nil
-                ZMClientUpdateNotification.notifyDeletionCompleted(remainingClients: selfUserClientsExcludingSelfClient, context: syncManagedObjectContext)
+                ZMClientUpdateNotification.notifyDeletionCompleted(
+                    remainingClients: selfUserClientsExcludingSelfClient,
+                    context: syncManagedObjectContext
+                )
             } else if  errorCode == .invalidCredentials {
                 isWaitingToDeleteClients = false
                 internalCredentials = nil
@@ -190,7 +202,10 @@ public enum ClientUpdateError: NSInteger {
         if isWaitingToDeleteClients {
             isWaitingToDeleteClients = false
             internalCredentials = nil
-            ZMClientUpdateNotification.notifyDeletionCompleted(remainingClients: selfUserClientsExcludingSelfClient, context: syncManagedObjectContext)
+            ZMClientUpdateNotification.notifyDeletionCompleted(
+                remainingClients: selfUserClientsExcludingSelfClient,
+                context: syncManagedObjectContext
+            )
         }
     }
 

@@ -29,7 +29,11 @@ import Foundation
 
 extension MockParticipantRole {
     @objc
-    public static func insert(in context: NSManagedObjectContext, conversation: MockConversation, user: MockUser) -> MockParticipantRole {
+    public static func insert(
+        in context: NSManagedObjectContext,
+        conversation: MockConversation,
+        user: MockUser
+    ) -> MockParticipantRole {
         let participantRole: MockParticipantRole = insert(in: context)
         participantRole.conversation = conversation
         participantRole.user = user

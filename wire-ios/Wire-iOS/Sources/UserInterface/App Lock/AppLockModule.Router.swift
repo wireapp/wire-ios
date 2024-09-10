@@ -54,7 +54,8 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     private func presentCreatePasscodeModule(shouldInform: Bool) {
         let passcodeSetupViewController = PasscodeSetupViewController.createKeyboardAvoidingFullScreenView(
             context: shouldInform ? .forcedForTeam : .createPasscode,
-            delegate: view)
+            delegate: view
+        )
 
         view.present(passcodeSetupViewController, animated: true)
     }
@@ -67,7 +68,8 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
 
         let unlockViewController = UnlockViewController(selfUser: selfUser, userSession: userSession)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: unlockViewController)
-        let navigationController = keyboardAvoidingViewController.wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
+        let navigationController = keyboardAvoidingViewController
+            .wrapInNavigationController(navigationBarClass: TransparentNavigationBar.self)
         navigationController.modalPresentationStyle = .fullScreen
         unlockViewController.delegate = view
         view.present(navigationController, animated: false)

@@ -21,6 +21,12 @@ import WireTransport
 
 extension ZMUpdateEvent {
     override public convenience init() {
-        self.init(uuid: nil, payload: ["type": "conversation.create"], transient: false, decrypted: false, source: .download)!
+        self.init(
+            uuid: nil,
+            payload: ["type": "conversation.create"],
+            transient: false,
+            decrypted: false,
+            source: .download
+        )!
     }
 }

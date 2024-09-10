@@ -233,13 +233,38 @@ class PBMessageValidationTests: XCTestCase {
 
     func testThatItCreatesMessageWithValidAsset() {
         XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token", assetDomain: "domain", preview: true))
-        XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token=", assetDomain: "domain", preview: false))
+        XCTAssertNotNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "token=",
+            assetDomain: "domain",
+            preview: false
+        ))
 
-        XCTAssertNotNil(genericMessage(assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "aV0TGxF3ugpawm3wAYPmew==", assetDomain: "wire.com", preview: true))
-        XCTAssertNotNil(genericMessage(assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "aV0TGxF3ugpawm3wAYPmew==", assetDomain: "wire.com", preview: false))
+        XCTAssertNotNil(genericMessage(
+            assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew==",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNotNil(genericMessage(
+            assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew==",
+            assetDomain: "wire.com",
+            preview: false
+        ))
 
-        XCTAssertNotNil(genericMessage(assetId: "C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "", assetDomain: "", preview: true))
-        XCTAssertNotNil(genericMessage(assetId: "c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "", assetDomain: "", preview: false))
+        XCTAssertNotNil(genericMessage(
+            assetId: "C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "",
+            assetDomain: "",
+            preview: true
+        ))
+        XCTAssertNotNil(genericMessage(
+            assetId: "c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8",
+            assetToken: "",
+            assetDomain: "",
+            preview: false
+        ))
 
         XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", assetDomain: "", preview: true))
         XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", assetDomain: "", preview: false))
@@ -256,19 +281,54 @@ class PBMessageValidationTests: XCTestCase {
         XCTAssertNil(genericMessage(assetId: "asset{id", assetToken: "token", assetDomain: "domain", preview: true))
 
         // Invalid asset token
-        XCTAssertNil(genericMessage(assetId: "asset-id", assetToken: "5@shay_a3wAY4%$@#$@%)!@-pOe==", assetDomain: "wire.com", preview: true))
-        XCTAssertNil(genericMessage(assetId: "asset-id", assetToken: "aV0TGxF3ugpawm3wAYPmew===", assetDomain: "wire.com", preview: false))
-        XCTAssertNil(genericMessage(assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "aV0TGxF3ugpawm3wAYPmew=Hello", assetDomain: "wire.com", preview: true))
-        XCTAssertNil(genericMessage(assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "aV0TGxF3ugpawm3wAYPmew==Hello", assetDomain: "wire.com", preview: false))
+        XCTAssertNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "5@shay_a3wAY4%$@#$@%)!@-pOe==",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew===",
+            assetDomain: "wire.com",
+            preview: false
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew=Hello",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew==Hello",
+            assetDomain: "wire.com",
+            preview: false
+        ))
 
         // Both
-        XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", assetDomain: "wire.com", preview: true))
-        XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", assetDomain: "wire.com", preview: false))
+        XCTAssertNil(genericMessage(
+            assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "token?name=foo",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "token?name=foo",
+            assetDomain: "wire.com",
+            preview: false
+        ))
     }
 
     // MARK: - Utilities
 
-    private func genericMessage(assetId: String, assetToken: String?, assetDomain: String?, preview: Bool) -> GenericMessage? {
+    private func genericMessage(
+        assetId: String,
+        assetToken: String?,
+        assetDomain: String?,
+        preview: Bool
+    ) -> GenericMessage? {
         var assetPreview: WireProtos.Asset.Preview!
 
         if preview {
@@ -354,7 +414,10 @@ class ModelValidationTests: XCTestCase {
     // MARK: Cleared
 
     func testThatItCreatesClearedWithValidFields() {
-        let cleared = Cleared(timestamp: Date(timeIntervalSince1970: 25000), conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!)
+        let cleared = Cleared(
+            timestamp: Date(timeIntervalSince1970: 25000),
+            conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!
+        )
         let message = GenericMessage(content: cleared).validatingFields()
 
         XCTAssertNotNil(message)
@@ -373,7 +436,10 @@ class ModelValidationTests: XCTestCase {
     // MARK: Message Hide
 
     func testThatItCreatesHideWithValidFields() {
-        let messageHide = MessageHide(conversationId: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!, messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
+        let messageHide = MessageHide(
+            conversationId: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!,
+            messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!
+        )
         let message = GenericMessage(content: messageHide).validatingFields()
 
         XCTAssertNotNil(message)
@@ -422,8 +488,10 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItCreatesMessageEditWithValidFields() {
         let text = Text(content: "Hello")
-        let messageEdit = MessageEdit(replacingMessageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!,
-                                      text: text)
+        let messageEdit = MessageEdit(
+            replacingMessageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!,
+            text: text
+        )
         let message = GenericMessage(content: messageEdit).validatingFields()
         XCTAssertNotNil(message)
     }
@@ -471,7 +539,10 @@ class ModelValidationTests: XCTestCase {
     // MARK: Reaction
 
     func testThatItCreatesReactionWithValidFields() {
-        let reaction = WireProtos.Reaction.createReaction(emojis: ["🤩"], messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
+        let reaction = WireProtos.Reaction.createReaction(
+            emojis: ["🤩"],
+            messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!
+        )
         let message = GenericMessage(content: reaction).validatingFields()
         XCTAssertNotNil(message)
     }
@@ -502,14 +573,44 @@ class ModelValidationTests: XCTestCase {
     // MARK: - Assets
 
     func testThatItCreatesMessageWithValidAsset() {
-        XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token", assetDomain: "wire.com", preview: true))
-        XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token=", assetDomain: "wire.com", preview: false))
+        XCTAssertNotNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "token",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNotNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "token=",
+            assetDomain: "wire.com",
+            preview: false
+        ))
 
-        XCTAssertNotNil(genericMessage(assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "aV0TGxF3ugpawm3wAYPmew==", assetDomain: "wire.com", preview: true))
-        XCTAssertNotNil(genericMessage(assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "aV0TGxF3ugpawm3wAYPmew==", assetDomain: "wire.com", preview: false))
+        XCTAssertNotNil(genericMessage(
+            assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew==",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNotNil(genericMessage(
+            assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew==",
+            assetDomain: "wire.com",
+            preview: false
+        ))
 
-        XCTAssertNotNil(genericMessage(assetId: "C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "", assetDomain: "wire.com", preview: true))
-        XCTAssertNotNil(genericMessage(assetId: "c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "", assetDomain: "wire.com", preview: false))
+        XCTAssertNotNil(genericMessage(
+            assetId: "C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNotNil(genericMessage(
+            assetId: "c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8",
+            assetToken: "",
+            assetDomain: "wire.com",
+            preview: false
+        ))
 
         XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", assetDomain: "wire.com", preview: true))
         XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", assetDomain: "wire.com", preview: false))
@@ -526,19 +627,54 @@ class ModelValidationTests: XCTestCase {
         XCTAssertNil(genericMessage(assetId: "asset{id", assetToken: "token", assetDomain: "wire.com", preview: true))
 
         // Invalid asset token
-        XCTAssertNil(genericMessage(assetId: "asset-id", assetToken: "5@shay_a3wAY4%$@#$@%)!@-pOe==", assetDomain: "wire.com", preview: true))
-        XCTAssertNil(genericMessage(assetId: "asset-id", assetToken: "aV0TGxF3ugpawm3wAYPmew===", assetDomain: "wire.com", preview: false))
-        XCTAssertNil(genericMessage(assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "aV0TGxF3ugpawm3wAYPmew=Hello", assetDomain: "wire.com", preview: true))
-        XCTAssertNil(genericMessage(assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "aV0TGxF3ugpawm3wAYPmew==Hello", assetDomain: "wire.com", preview: false))
+        XCTAssertNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "5@shay_a3wAY4%$@#$@%)!@-pOe==",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "asset-id",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew===",
+            assetDomain: "wire.com",
+            preview: false
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew=Hello",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8",
+            assetToken: "aV0TGxF3ugpawm3wAYPmew==Hello",
+            assetDomain: "wire.com",
+            preview: false
+        ))
 
         // Both
-        XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", assetDomain: "wire.com", preview: true))
-        XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", assetDomain: "wire.com", preview: false))
+        XCTAssertNil(genericMessage(
+            assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "token?name=foo",
+            assetDomain: "wire.com",
+            preview: true
+        ))
+        XCTAssertNil(genericMessage(
+            assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8",
+            assetToken: "token?name=foo",
+            assetDomain: "wire.com",
+            preview: false
+        ))
     }
 
     // MARK: - Utilities
 
-    private func genericMessage(assetId: String, assetToken: String?, assetDomain: String?, preview: Bool) -> GenericMessage? {
+    private func genericMessage(
+        assetId: String,
+        assetToken: String?,
+        assetDomain: String?,
+        preview: Bool
+    ) -> GenericMessage? {
         var asset = WireProtos.Asset()
 
         if preview {
@@ -552,10 +688,12 @@ class ModelValidationTests: XCTestCase {
                 $0.assetID = assetId
                 $0.assetToken = assetToken ?? ""
             }
-            let preview = WireProtos.Asset.Preview(size: 1000,
-                                                   mimeType: "image/png",
-                                                   remoteData: remoteData,
-                                                   imageMetadata: imageMetaData)
+            let preview = WireProtos.Asset.Preview(
+                size: 1000,
+                mimeType: "image/png",
+                remoteData: remoteData,
+                imageMetadata: imageMetaData
+            )
             asset.preview = preview
         }
 

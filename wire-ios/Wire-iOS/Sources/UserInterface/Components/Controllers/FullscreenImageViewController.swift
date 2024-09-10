@@ -51,7 +51,12 @@ final class FullscreenImageViewController: UIViewController {
     let scrollView = UIScrollView()
     var snapshotBackgroundView: UIView?
     private var minimumDismissMagnitude: CGFloat = 0
-    private lazy var actionController = ConversationMessageActionController(responder: self, message: message, context: .collection, view: scrollView)
+    private lazy var actionController = ConversationMessageActionController(
+        responder: self,
+        message: message,
+        context: .collection,
+        view: scrollView
+    )
 
     // MARK: pull to dismiss
 
@@ -121,7 +126,8 @@ final class FullscreenImageViewController: UIViewController {
 
         let isImageZoomedToMax = scrollView.zoomScale == scrollView.maximumZoomScale
 
-        let isImageZoomed = abs(scrollView.minimumZoomScale - scrollView.zoomScale) > FullscreenImageViewController.kZoomScaleDelta
+        let isImageZoomed = abs(scrollView.minimumZoomScale - scrollView.zoomScale) > FullscreenImageViewController
+            .kZoomScaleDelta
         updateScrollViewZoomScale(viewSize: size, imageSize: imageSize)
 
         let animationBlock: () -> Void = {
@@ -234,7 +240,10 @@ final class FullscreenImageViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -inputBarButtonViewHeight),
+            scrollView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -inputBarButtonViewHeight
+            ),
         ])
         scrollView.contentInsetAdjustmentBehavior = .never
 
@@ -373,14 +382,19 @@ final class FullscreenImageViewController: UIViewController {
         isShowingChrome = false
 
         initialImageViewCenter = imageView.center
-        let nearLocationInView = CGPoint(x: (panGestureLocationInView.x - initialImageViewCenter.x) * 0.1 + initialImageViewCenter.x,
-                                         y: (panGestureLocationInView.y - initialImageViewCenter.y) * 0.1 + initialImageViewCenter.y)
+        let nearLocationInView = CGPoint(
+            x: (panGestureLocationInView.x - initialImageViewCenter.x) * 0.1 + initialImageViewCenter.x,
+            y: (panGestureLocationInView.y - initialImageViewCenter.y) * 0.1 + initialImageViewCenter.y
+        )
 
         imageDragStartingPoint = nearLocationInView
         imageDragOffsetFromActualTranslation = translationOffset
 
         let anchor = imageDragStartingPoint
-        let offset = UIOffset(horizontal: nearLocationInView.x - initialImageViewCenter.x, vertical: nearLocationInView.y - initialImageViewCenter.y)
+        let offset = UIOffset(
+            horizontal: nearLocationInView.x - initialImageViewCenter.x,
+            vertical: nearLocationInView.y - initialImageViewCenter.y
+        )
         imageDragOffsetFromImageCenter = offset
 
         // Proxy object is used because the UIDynamics messing up the zoom level transform on imageView
@@ -418,16 +432,23 @@ final class FullscreenImageViewController: UIViewController {
             imageView?.transform = imageViewStartingTransform
             imageView?.center = initialImageViewCenter
         } else {
-            UIView.animate(withDuration: 0.35, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: [.allowUserInteraction, .beginFromCurrentState], animations: { [weak self] in
-                guard let self else { return }
-                if !isDraggingImage {
-                    imageView?.transform = imageViewStartingTransform
-                    updateBackgroundColor(progress: 0)
-                    if !scrollView.isDragging, !scrollView.isDecelerating {
-                        imageView?.center = initialImageViewCenter
+            UIView.animate(
+                withDuration: 0.35,
+                delay: 0,
+                usingSpringWithDamping: 0.7,
+                initialSpringVelocity: 0,
+                options: [.allowUserInteraction, .beginFromCurrentState],
+                animations: { [weak self] in
+                    guard let self else { return }
+                    if !isDraggingImage {
+                        imageView?.transform = imageViewStartingTransform
+                        updateBackgroundColor(progress: 0)
+                        if !scrollView.isDragging, !scrollView.isDecelerating {
+                            imageView?.center = initialImageViewCenter
+                        }
                     }
                 }
-            })
+            )
         }
     }
 
@@ -442,7 +463,13 @@ final class FullscreenImageViewController: UIViewController {
         let push = UIPushBehavior(items: [proxy], mode: .instantaneous)
         push.pushDirection = CGVector(dx: velocity.x * 0.1, dy: velocity.y * 0.1)
         if let attachmentBehavior {
-            push.setTargetOffsetFromCenter(UIOffset(horizontal: attachmentBehavior.anchorPoint.x - initialImageViewCenter.x, vertical: attachmentBehavior.anchorPoint.y - initialImageViewCenter.y), for: imageView)
+            push.setTargetOffsetFromCenter(
+                UIOffset(
+                    horizontal: attachmentBehavior.anchorPoint.x - initialImageViewCenter.x,
+                    vertical: attachmentBehavior.anchorPoint.y - initialImageViewCenter.y
+                ),
+                for: imageView
+            )
         }
 
         push.magnitude = max(minimumDismissMagnitude, abs(velocity.y) / 6)
@@ -526,10 +553,12 @@ final class FullscreenImageViewController: UIViewController {
 
             let layer = CALayer()
             layer.backgroundColor = UIColor.clear.cgColor
-            layer.frame = CGRect(x: 0,
-                                 y: 0,
-                                 width: (imageView?.frame.size.width ?? 0) / scrollView.zoomScale,
-                                 height: (imageView?.frame.size.height ?? 0) / scrollView.zoomScale)
+            layer.frame = CGRect(
+                x: 0,
+                y: 0,
+                width: (imageView?.frame.size.width ?? 0) / scrollView.zoomScale,
+                height: (imageView?.frame.size.height ?? 0) / scrollView.zoomScale
+            )
             imageView?.layer.insertSublayer(layer, at: 0)
 
             let blackLayerClosure: Completion = {
@@ -577,7 +606,12 @@ final class FullscreenImageViewController: UIViewController {
     private func handleLongPress(_ longPressRecognizer: UILongPressGestureRecognizer?) {
         guard longPressRecognizer?.state == .began else { return }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide(_:)), name: UIMenuController.didHideMenuNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(menuDidHide(_:)),
+            name: UIMenuController.didHideMenuNotification,
+            object: nil
+        )
 
         let menuController = UIMenuController.shared
         menuController.menuItems = ConversationMessageActionController.allMessageActions
@@ -617,11 +651,18 @@ final class FullscreenImageViewController: UIViewController {
 
             let zoomLength = image.size.longestLength < 50 ? image.size.longestLength : 50
 
-            let zoomRect = CGRect(x: point.x - zoomLength / 2, y: point.y - zoomLength / 2, width: zoomLength, height: zoomLength)
+            let zoomRect = CGRect(
+                x: point.x - zoomLength / 2,
+                y: point.y - zoomLength / 2,
+                width: zoomLength,
+                height: zoomLength
+            )
             let finalRect = imageView?.convert(zoomRect, from: doubleTapper.view)
 
-            scrollView.zoom(to: finalRect ?? .zero,
-                            animated: true)
+            scrollView.zoom(
+                to: finalRect ?? .zero,
+                animated: true
+            )
         } else {
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         }
@@ -766,7 +807,10 @@ extension FullscreenImageViewController: MessageActionResponder {
 
 extension FullscreenImageViewController: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
-        if ((changeInfo.transferStateChanged || changeInfo.imageChanged) && (message.imageMessageData?.imageData != nil)) || changeInfo.isObfuscatedChanged {
+        if (
+            (changeInfo.transferStateChanged || changeInfo.imageChanged) &&
+                (message.imageMessageData?.imageData != nil)
+        ) || changeInfo.isObfuscatedChanged {
             updateForMessage()
         }
     }
@@ -808,6 +852,11 @@ extension FullscreenImageViewController: UIScrollViewDelegate {
         var verticalInset: CGFloat = (viewHeight - scrollView.zoomScale * imageHeight) / 2
         verticalInset = max(0, verticalInset)
 
-        scrollView.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
+        scrollView.contentInset = UIEdgeInsets(
+            top: verticalInset,
+            left: horizontalInset,
+            bottom: verticalInset,
+            right: horizontalInset
+        )
     }
 }

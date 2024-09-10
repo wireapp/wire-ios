@@ -151,7 +151,10 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         }
 
         let credentials = ProxyCredentials.retrieve(for: proxy)
-        let settings = BackendEnvironment.shared.proxy?.socks5Settings(proxyUsername: credentials?.username, proxyPassword: credentials?.password)
+        let settings = BackendEnvironment.shared.proxy?.socks5Settings(
+            proxyUsername: credentials?.username,
+            proxyPassword: credentials?.password
+        )
 
         let configuration = URLSessionConfiguration.ephemeral
         configuration.connectionProxyDictionary = settings
@@ -225,8 +228,10 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
     // MARK: - Tag events
 
-    func tagEvent(_ event: String,
-                  attributes: [String: Any]) {
+    func tagEvent(
+        _ event: String,
+        attributes: [String: Any]
+    ) {
         // store the event before self user is assigned, send it later when self user is ready.
         guard selfUser != nil else {
             pendingEvents.append(PendingEvent(event, attributes))
@@ -305,8 +310,10 @@ extension [String: Any] {
     }
 
     var countlyStringValueDictionary: [String: String] {
-        let convertedAttributes = [String: String](uniqueKeysWithValues:
-            map { key, value in (key, countlyValue(rawValue: value)) })
+        let convertedAttributes = [String: String](
+            uniqueKeysWithValues:
+            map { key, value in (key, countlyValue(rawValue: value)) }
+        )
 
         return convertedAttributes
     }

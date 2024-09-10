@@ -78,7 +78,12 @@ extension ZMUpdateEvent {
     // MARK: - Helpers
 
     private func decryptedEvent(payload: [String: Any]) -> ZMUpdateEvent? {
-        let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: uuid, transient: false, source: source)
+        let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(
+            fromEventStreamPayload: payload as NSDictionary,
+            uuid: uuid,
+            transient: false,
+            source: source
+        )
 
         if !self.debugInformation.isEmpty {
             decryptedEvent?.appendDebugInformation(debugInformation)

@@ -50,17 +50,23 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     private func cleanUp() {
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+        try? FileManager.default.contentsOfDirectory(
+            at: sharedContainerURL!,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
     }
 
     private func createCoreDataStack() -> CoreDataStack {
         let account = Account(userName: "", userIdentifier: accountId)
-        let stack = CoreDataStack(account: account,
-                                  applicationContainer: sharedContainerURL!,
-                                  inMemoryStore: true,
-                                  dispatchGroup: dispatchGroup)
+        let stack = CoreDataStack(
+            account: account,
+            applicationContainer: sharedContainerURL!,
+            inMemoryStore: true,
+            dispatchGroup: dispatchGroup
+        )
 
         stack.loadStores { error in
             XCTAssertNil(error)
@@ -110,20 +116,34 @@ class DatabaseTest: ZMTBaseTest {
         uiMOC.markAsUIContext()
     }
 
-    func event(withPayload payload: [AnyHashable: Any]?, type: ZMUpdateEventType, in conversation: ZMConversation, user: ZMUser) -> ZMUpdateEvent {
-        ZMUpdateEvent(uuid: nil, payload: eventPayload(content: payload, type: type, in: conversation, from: user), transient: false, decrypted: true, source: .download)!
+    func event(
+        withPayload payload: [AnyHashable: Any]?,
+        type: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        user: ZMUser
+    ) -> ZMUpdateEvent {
+        ZMUpdateEvent(
+            uuid: nil,
+            payload: eventPayload(content: payload, type: type, in: conversation, from: user),
+            transient: false,
+            decrypted: true,
+            source: .download
+        )!
     }
 
-    private func eventPayload(content: [AnyHashable: Any]?,
-                              type: ZMUpdateEventType,
-                              in conversation: ZMConversation,
-                              from user: ZMUser,
-                              timestamp: Date = Date()) -> [AnyHashable: Any] {
-        ["conversation": conversation.remoteIdentifier!.transportString(),
-         "data": conversation,
-         "from": user.remoteIdentifier!.transportString(),
-         "time": timestamp.transportString(),
-         "type": ZMUpdateEvent.eventTypeString(for: type)!,
+    private func eventPayload(
+        content: [AnyHashable: Any]?,
+        type: ZMUpdateEventType,
+        in conversation: ZMConversation,
+        from user: ZMUser,
+        timestamp: Date = Date()
+    ) -> [AnyHashable: Any] {
+        [
+            "conversation": conversation.remoteIdentifier!.transportString(),
+            "data": conversation,
+            "from": user.remoteIdentifier!.transportString(),
+            "time": timestamp.transportString(),
+            "type": ZMUpdateEvent.eventTypeString(for: type)!,
         ]
     }
 }

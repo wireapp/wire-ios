@@ -25,38 +25,52 @@ extension UIAlertController {
     /// email regisration work flow: newsletter subscription dialog appears after conversation list is displayed.)
     static var newsletterSubscriptionDialogWasDisplayed = false
 
-    static func showNewsletterSubscriptionDialog(over viewController: UIViewController, completionHandler: @escaping ResultHandler) {
+    static func showNewsletterSubscriptionDialog(
+        over viewController: UIViewController,
+        completionHandler: @escaping ResultHandler
+    ) {
         guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts, !dataCollectionDisabled else { return }
 
-        let alertController = UIAlertController(title: L10n.Localizable.NewsOffers.Consent.title,
-                                                message: L10n.Localizable.NewsOffers.Consent.message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: L10n.Localizable.NewsOffers.Consent.title,
+            message: L10n.Localizable.NewsOffers.Consent.message,
+            preferredStyle: .alert
+        )
 
         let privacyPolicyActionHandler: ((UIAlertAction) -> Swift.Void) = { _ in
             let browserViewController = BrowserViewController(url: WireURLs.shared.privacyPolicy)
 
             browserViewController.completion = {
-                UIAlertController.showNewsletterSubscriptionDialog(over: viewController, completionHandler: completionHandler)
+                UIAlertController.showNewsletterSubscriptionDialog(
+                    over: viewController,
+                    completionHandler: completionHandler
+                )
             }
 
             viewController.present(browserViewController, animated: true)
         }
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
-                                                style: .default,
-                                                handler: privacyPolicyActionHandler))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
+            style: .default,
+            handler: privacyPolicyActionHandler
+        ))
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.General.decline,
-                                                style: .default,
-                                                handler: { _ in
-                                                    completionHandler(false)
-                                                }))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.decline,
+            style: .default,
+            handler: { _ in
+                completionHandler(false)
+            }
+        ))
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.General.accept,
-                                                style: .cancel,
-                                                handler: { _ in
-                                                    completionHandler(true)
-                                                }))
+        alertController.addAction(UIAlertAction(
+            title: L10n.Localizable.General.accept,
+            style: .cancel,
+            handler: { _ in
+                completionHandler(true)
+            }
+        ))
 
         UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
         viewController.present(alertController, animated: true) {
@@ -72,8 +86,10 @@ extension UIAlertController {
         #endif
     }
 
-    static func showNewsletterSubscriptionDialogIfNeeded(presentViewController: UIViewController,
-                                                         completionHandler: @escaping ResultHandler) {
+    static func showNewsletterSubscriptionDialogIfNeeded(
+        presentViewController: UIViewController,
+        completionHandler: @escaping ResultHandler
+    ) {
         guard !UIAlertController.newsletterSubscriptionDialogWasDisplayed else { return }
 
         showNewsletterSubscriptionDialog(over: presentViewController, completionHandler: completionHandler)
@@ -82,17 +98,23 @@ extension UIAlertController {
 
 extension AuthenticationCoordinatorAlertAction {
     fileprivate static var privacyPolicy: Self {
-        Self(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
-             coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)])
+        Self(
+            title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
+            coordinatorActions: [.showLoadingView, .openURL(WireURLs.shared.privacyPolicy)]
+        )
     }
 
     fileprivate static var decline: Self {
-        Self(title: L10n.Localizable.General.decline,
-             coordinatorActions: [.setMarketingConsent(false)])
+        Self(
+            title: L10n.Localizable.General.decline,
+            coordinatorActions: [.setMarketingConsent(false)]
+        )
     }
 
     fileprivate static var accept: Self {
-        Self(title: L10n.Localizable.General.accept,
-             coordinatorActions: [.setMarketingConsent(true)])
+        Self(
+            title: L10n.Localizable.General.accept,
+            coordinatorActions: [.setMarketingConsent(true)]
+        )
     }
 }

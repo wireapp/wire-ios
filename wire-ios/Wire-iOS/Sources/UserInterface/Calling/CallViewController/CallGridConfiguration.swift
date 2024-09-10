@@ -152,8 +152,10 @@ extension VoiceChannel {
         return Stream(
             streamId: AVSClient(userId: selfUser.avsIdentifier, clientId: clientId),
             user: selfUser,
-            callParticipantState: .connected(videoState: videoState,
-                                             microphoneState: .unmuted),
+            callParticipantState: .connected(
+                videoState: videoState,
+                microphoneState: .unmuted
+            ),
             activeSpeakerState: .inactive,
             isPaused: isPaused
         )

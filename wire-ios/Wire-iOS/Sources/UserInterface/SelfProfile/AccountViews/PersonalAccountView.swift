@@ -48,8 +48,16 @@ final class PersonalAccountView: BaseAccountView {
         }
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.conversations(inUserSession: userSession), userSession: userSession)
-            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
+            conversationListObserver = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.conversations(inUserSession: userSession),
+                userSession: userSession
+            )
+            connectionRequestObserver = ConversationListChangeInfo.add(
+                observer: self,
+                for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
+                userSession: userSession
+            )
         }
 
         self.imageViewContainer.addSubview(userImageView)
@@ -67,7 +75,8 @@ final class PersonalAccountView: BaseAccountView {
     override func update() {
         super.update()
 
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.userName) + " " + accessibilityState
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(account.userName) + " " + accessibilityState
         if let imageData = account.imageData, let avatarImage = UIImage(data: imageData) {
             userImageView.avatar = .image(avatarImage)
         } else {

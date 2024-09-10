@@ -33,7 +33,10 @@ final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
     }
 
     func prepareForUse(in collectionView: UICollectionView?) {
-        collectionView?.register(InviteTeamMemberCell.self, forCellWithReuseIdentifier: InviteTeamMemberCell.zm_reuseIdentifier)
+        collectionView?.register(
+            InviteTeamMemberCell.self,
+            forCellWithReuseIdentifier: InviteTeamMemberCell.zm_reuseIdentifier
+        )
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -48,15 +51,26 @@ final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
         return false
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         collectionView.dequeueReusableCell(withReuseIdentifier: InviteTeamMemberCell.zm_reuseIdentifier, for: indexPath)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         CGSize.zero
     }
 

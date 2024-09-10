@@ -203,7 +203,12 @@ extension StoreUpdateEventTests {
         event.appendDebugInformation("Highly informative description")
 
         // when
-        if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 2, publicKey: self.publicKey) {
+        if let storedEvent = StoredUpdateEvent.encryptAndCreate(
+            event,
+            managedObjectContext: eventMOC,
+            index: 2,
+            publicKey: self.publicKey
+        ) {
             XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
             XCTAssertEqual(storedEvent.isTransient, event.isTransient)
             XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
@@ -213,16 +218,27 @@ extension StoreUpdateEventTests {
             XCTAssertNotNil(storedEvent.payload)
             #if targetEnvironment(simulator) && swift(>=5.4)
                 if #available(iOS 15, *) {
-                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
+                    XCTExpectFailure(
+                        "Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188"
+                    )
                 }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)
             let privateKey = try XCTUnwrap(encryptionKeys?.privateKey)
-            let decryptedData = SecKeyCreateDecryptedData(privateKey,
-                                                          .eciesEncryptionCofactorX963SHA256AESGCM,
-                                                          storedEvent.payload![StoredUpdateEvent.encryptedPayloadKey] as! CFData,
-                                                          nil)
-            let payload: NSDictionary = try JSONSerialization.jsonObject(with: decryptedData! as Data, options: []) as! NSDictionary
+            let decryptedData = SecKeyCreateDecryptedData(
+                privateKey,
+                .eciesEncryptionCofactorX963SHA256AESGCM,
+                storedEvent
+                    .payload![
+                        StoredUpdateEvent
+                            .encryptedPayloadKey
+                    ] as! CFData,
+                nil
+            )
+            let payload: NSDictionary = try JSONSerialization.jsonObject(
+                with: decryptedData! as Data,
+                options: []
+            ) as! NSDictionary
             XCTAssertEqual(payload, event.payload as NSDictionary)
 
         } else {
@@ -241,7 +257,12 @@ extension StoreUpdateEventTests {
         event.appendDebugInformation("Highly informative description")
 
         // when
-        if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 2, publicKey: publicKey) {
+        if let storedEvent = StoredUpdateEvent.encryptAndCreate(
+            event,
+            managedObjectContext: eventMOC,
+            index: 2,
+            publicKey: publicKey
+        ) {
             XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
             XCTAssertEqual(storedEvent.payload, event.payload as NSDictionary)
             XCTAssertEqual(storedEvent.isTransient, event.isTransient)
@@ -263,7 +284,12 @@ extension StoreUpdateEventTests {
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
         event.appendDebugInformation("Highly informative description")
 
-        if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 2, publicKey: publicKey) {
+        if let storedEvent = StoredUpdateEvent.encryptAndCreate(
+            event,
+            managedObjectContext: eventMOC,
+            index: 2,
+            publicKey: publicKey
+        ) {
             XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
             XCTAssertEqual(storedEvent.isTransient, event.isTransient)
             XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
@@ -272,13 +298,18 @@ extension StoreUpdateEventTests {
             XCTAssertNotNil(storedEvent.payload)
             #if targetEnvironment(simulator) && swift(>=5.4)
                 if #available(iOS 15, *) {
-                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
+                    XCTExpectFailure(
+                        "Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188"
+                    )
                 }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)
 
             // when
-            let convertedEvents = StoredUpdateEvent.eventsFromStoredEvents([storedEvent], encryptionKeys: encryptionKeys)
+            let convertedEvents = StoredUpdateEvent.eventsFromStoredEvents(
+                [storedEvent],
+                encryptionKeys: encryptionKeys
+            )
 
             // then
             XCTAssertEqual(convertedEvents.first!.debugInformation, event.debugInformation)
@@ -300,7 +331,12 @@ extension StoreUpdateEventTests {
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
         event.appendDebugInformation("Highly informative description")
 
-        if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 2, publicKey: nil) {
+        if let storedEvent = StoredUpdateEvent.encryptAndCreate(
+            event,
+            managedObjectContext: eventMOC,
+            index: 2,
+            publicKey: nil
+        ) {
             XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
             XCTAssertEqual(storedEvent.payload, event.payload as NSDictionary)
             XCTAssertEqual(storedEvent.isTransient, event.isTransient)
@@ -333,7 +369,12 @@ extension StoreUpdateEventTests {
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID.create())!
         event.appendDebugInformation("Highly informative description")
 
-        if let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 2, publicKey: publicKey) {
+        if let storedEvent = StoredUpdateEvent.encryptAndCreate(
+            event,
+            managedObjectContext: eventMOC,
+            index: 2,
+            publicKey: publicKey
+        ) {
             XCTAssertEqual(storedEvent.debugInformation, event.debugInformation)
             XCTAssertEqual(storedEvent.isTransient, event.isTransient)
             XCTAssertEqual(storedEvent.source, Int16(event.source.rawValue))
@@ -342,7 +383,9 @@ extension StoreUpdateEventTests {
             XCTAssertNotNil(storedEvent.payload)
             #if targetEnvironment(simulator) && swift(>=5.4)
                 if #available(iOS 15, *) {
-                    XCTExpectFailure("Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188")
+                    XCTExpectFailure(
+                        "Expect to fail on iOS 15 simulator. ref: https://wearezeta.atlassian.net/browse/SQCORE-1188"
+                    )
                 }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)

@@ -18,7 +18,11 @@
 
 extension ZMConversation {
     @discardableResult
-    @objc public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date, relevantForStatus: Bool = true) -> ZMSystemMessage {
+    @objc public func appendMissedCallMessage(
+        fromUser user: ZMUser,
+        at timestamp: Date,
+        relevantForStatus: Bool = true
+    ) -> ZMSystemMessage {
         let associatedMessage = associatedSystemMessage(of: .missedCall, sender: user)
 
         let message = appendSystemMessage(

@@ -45,7 +45,10 @@ extension MockUserClient {
     ///   - clients: clients needed to create recipients
     ///   - plainText: plain text
     /// - Returns: OTR asset message
-    public func otrAssetMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> Proteus_OtrAssetMeta {
+    public func otrAssetMessageBuilderWithRecipients(
+        for clients: [MockUserClient],
+        plainText: Data
+    ) -> Proteus_OtrAssetMeta {
         var message = Proteus_OtrAssetMeta()
         var sender = Proteus_ClientId()
 
@@ -58,7 +61,10 @@ extension MockUserClient {
 
     /// Create user entries for all received of a message
     private func userEntries(for clients: [MockUserClient], plainText: Data) -> [Proteus_UserEntry] {
-        MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> Proteus_UserEntry in
+        MockUserClient.createUserToClientMapping(for: clients).map { (
+            user: MockUser,
+            clients: [MockUserClient]
+        ) -> Proteus_UserEntry in
 
             let clientEntries = clients.map { client -> Proteus_ClientEntry in
                 let clientId = Proteus_ClientId.with {

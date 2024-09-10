@@ -28,7 +28,10 @@ extension ConversationInputBarViewController {
         editingMessage = message
         updateRightAccessoryView()
 
-        inputBar.setInputBarState(.editing(originalText: text, mentions: message.textMessageData?.mentions ?? []), animated: true)
+        inputBar.setInputBarState(
+            .editing(originalText: text, mentions: message.textMessageData?.mentions ?? []),
+            animated: true
+        )
         updateMarkdownButton()
 
         NotificationCenter.default.addObserver(

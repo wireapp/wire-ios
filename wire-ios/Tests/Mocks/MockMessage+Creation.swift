@@ -23,8 +23,10 @@ import WireLinkPreview
 @testable import Wire
 
 extension MockMessage {
-    func update(mockSystemMessageData: MockSystemMessageData,
-                userClients: [AnyHashable]) {
+    func update(
+        mockSystemMessageData: MockSystemMessageData,
+        userClients: [AnyHashable]
+    ) {
         mockSystemMessageData.clients = Set(userClients)
 
         backingSystemMessageData = mockSystemMessageData
@@ -46,7 +48,8 @@ final class MockMessageFactory {
         if let conversation {
             message.conversationLike = conversation
         } else {
-            let conversation = MockLoader.mockObjects(of: MockConversation.self, fromFile: "conversations-01.json")[0] as? MockConversation
+            let conversation = MockLoader
+                .mockObjects(of: MockConversation.self, fromFile: "conversations-01.json")[0] as? MockConversation
             message.conversation = (conversation as Any) as? ZMConversation
             message.conversationLike = message.conversation
             mockZMConversation = conversation
@@ -118,7 +121,11 @@ final class MockMessageFactory {
     ) -> (MockMessage?, MockSystemMessageData) {
         let message = MockMessageFactory.messageTemplate(sender: sender, conversation: conversation)
 
-        let mockSystemMessageData = MockSystemMessageData(systemMessageType: systemMessageType, reason: reason, domains: domains)
+        let mockSystemMessageData = MockSystemMessageData(
+            systemMessageType: systemMessageType,
+            reason: reason,
+            domains: domains
+        )
 
         message.serverTimestamp = Date(timeIntervalSince1970: 12_345_678_564)
 
@@ -140,12 +147,14 @@ final class MockMessageFactory {
         reason: ZMParticipantsRemovedReason = .none,
         domains: [String]? = nil
     ) -> MockMessage? {
-        let (message, mockSystemMessageData) = systemMessageAndData(with: systemMessageType,
-                                                                    conversation: conversation,
-                                                                    users: numUsers,
-                                                                    sender: sender,
-                                                                    reason: reason,
-                                                                    domains: domains)
+        let (message, mockSystemMessageData) = systemMessageAndData(
+            with: systemMessageType,
+            conversation: conversation,
+            users: numUsers,
+            sender: sender,
+            reason: reason,
+            domains: domains
+        )
 
         var userClients: [AnyHashable] = []
 
@@ -194,7 +203,9 @@ final class MockMessageFactory {
         let message: T = MockMessageFactory.messageTemplate(sender: sender, conversation: conversation)
 
         let textMessageData = MockTextMessageData()
-        textMessageData.messageText = shouldIncludeRichMedia ? "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
+        textMessageData
+            .messageText = shouldIncludeRichMedia ?
+            "Check this 500lb squirrel! -> https://www.youtube.com/watch?v=0so5er4X3dc" : text!
         message.backingTextMessageData = textMessageData
 
         return message
@@ -204,7 +215,12 @@ final class MockMessageFactory {
         let message = MockMessageFactory.messageTemplate()
 
         let textData = MockTextMessageData()
-        let article = ArticleMetadata(originalURLString: "http://foo.bar/baz", permanentURLString: "http://foo.bar/baz", resolvedURLString: "http://foo.bar/baz", offset: 0)
+        let article = ArticleMetadata(
+            originalURLString: "http://foo.bar/baz",
+            permanentURLString: "http://foo.bar/baz",
+            resolvedURLString: "http://foo.bar/baz",
+            offset: 0
+        )
         textData.backingLinkPreview = article
         message.backingTextMessageData = textData
 

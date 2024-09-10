@@ -35,7 +35,11 @@ final class MockPaginatedRequester: ZiphyURLRequester {
 
     var response: MockPaginatedResponse?
 
-    func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping MockZiphyRequesterCompletionHandler) -> ZiphyRequestIdentifier {
+    func performZiphyRequest(
+        _ request: URLRequest,
+        completionHandler: @escaping MockZiphyRequesterCompletionHandler
+    )
+        -> ZiphyRequestIdentifier {
         self.completionHandler = completionHandler
         self.url = request.url
 
@@ -89,7 +93,12 @@ final class MockPaginatedRequester: ZiphyURLRequester {
             }
 
             let paginatedData = try! JSONEncoder().encode(paginatedResponse)
-            let successResponse = HTTPURLResponse(url: url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
+            let successResponse = HTTPURLResponse(
+                url: url!,
+                statusCode: 200,
+                httpVersion: "HTTP/1.1",
+                headerFields: nil
+            )
             completionHandler(paginatedData, successResponse, nil)
 
         case let .error(error):

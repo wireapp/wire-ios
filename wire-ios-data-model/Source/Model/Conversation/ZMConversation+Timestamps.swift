@@ -30,7 +30,8 @@ extension ZMConversationMessage {
 
 extension ZMMessage {
     fileprivate static func isVisible(_ message: ZMMessage) -> Bool {
-        if let systemMessage = message as? ZMSystemMessage, let parentMessage = systemMessage.parentMessage as? ZMMessage {
+        if let systemMessage = message as? ZMSystemMessage,
+           let parentMessage = systemMessage.parentMessage as? ZMMessage {
             parentMessage.visibleInConversation != nil
         } else {
             message.visibleInConversation != nil
@@ -63,7 +64,12 @@ extension ZMConversation {
                 setLocallyModifiedKeys(Set([ZMConversationLastReadServerTimeStampKey]))
             }
 
-            NotificationInContext(name: ZMConversation.lastReadDidChangeNotificationName, context: managedObjectContext.notificationContext, object: self, userInfo: nil).post()
+            NotificationInContext(
+                name: ZMConversation.lastReadDidChangeNotificationName,
+                context: managedObjectContext.notificationContext,
+                object: self,
+                userInfo: nil
+            ).post()
         }
     }
 
@@ -226,7 +232,9 @@ extension ZMConversation {
             hasUnreadUnsentMessage = false
         }
 
-        guard let unreadTimestamp = message.isSent ? messageTimestamp : unreadMessagesIncludingInvisible(until: messageTimestamp).last?.serverTimestamp else { return }
+        guard let unreadTimestamp = message
+            .isSent ? messageTimestamp : unreadMessagesIncludingInvisible(until: messageTimestamp).last?
+            .serverTimestamp else { return }
 
         enqueueMarkAsReadUpdate(unreadTimestamp)
     }
@@ -247,7 +255,8 @@ extension ZMConversation {
         let groups = managedObjectContext.enterAllGroups()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + lastReadTimestampSaveDelay) { [weak self] in
-            guard currentCount == self?.lastReadTimestampUpdateCounter else { return managedObjectContext.leaveAllGroups(groups) }
+            guard currentCount == self?.lastReadTimestampUpdateCounter
+            else { return managedObjectContext.leaveAllGroups(groups) }
             self?.savePendingLastRead()
             managedObjectContext.leaveAllGroups(groups)
         }
@@ -314,7 +323,8 @@ extension ZMConversation {
                 lastKnockDate = message.serverTimestamp
             }
 
-            if message.isSystem, let systemMessage = message as? ZMSystemMessage, systemMessage.systemMessageType == .missedCall {
+            if message.isSystem, let systemMessage = message as? ZMSystemMessage,
+               systemMessage.systemMessageType == .missedCall {
                 lastMissedCallDate = message.serverTimestamp
             }
 
@@ -335,7 +345,10 @@ extension ZMConversation {
         updateLastUnreadKnock(lastKnockDate)
         updateLastUnreadMissedCall(lastMissedCallDate)
         internalEstimatedUnreadCount = unreadCount
-        WireLogger.badgeCount.info("update internalEstimatedUnreadCount: \(internalEstimatedUnreadCount) in \(String(describing: remoteIdentifier?.uuidString)) timestamp: \(Date())")
+        WireLogger.badgeCount
+            .info(
+                "update internalEstimatedUnreadCount: \(internalEstimatedUnreadCount) in \(String(describing: remoteIdentifier?.uuidString)) timestamp: \(Date())"
+            )
 
         internalEstimatedUnreadSelfMentionCount = unreadSelfMentionCount
         internalEstimatedUnreadSelfReplyCount = unreadSelfReplyCount
@@ -348,7 +361,8 @@ extension ZMConversation {
     @objc
     public var firstUnreadMessage: ZMConversationMessage? {
         let replaceChildWithParent: (ZMMessage) -> ZMMessage = { message in
-            if let systemMessage = message as? ZMSystemMessage, let parentMessage = systemMessage.parentMessage as? ZMMessage {
+            if let systemMessage = message as? ZMSystemMessage,
+               let parentMessage = systemMessage.parentMessage as? ZMMessage {
                 parentMessage
             } else {
                 message
@@ -393,12 +407,19 @@ extension ZMConversation {
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
-        fetchRequest.predicate = NSPredicate(format: "(%K == %@ OR %K == %@) AND %K != %@ AND %K > %@ AND %K <= %@",
-                                             ZMMessageConversationKey, self,
-                                             ZMMessageHiddenInConversationKey, self,
-                                             ZMMessageSenderKey, selfUser,
-                                             ZMMessageServerTimestampKey, range.lowerBound as NSDate,
-                                             ZMMessageServerTimestampKey, range.upperBound as NSDate)
+        fetchRequest.predicate = NSPredicate(
+            format: "(%K == %@ OR %K == %@) AND %K != %@ AND %K > %@ AND %K <= %@",
+            ZMMessageConversationKey,
+            self,
+            ZMMessageHiddenInConversationKey,
+            self,
+            ZMMessageSenderKey,
+            selfUser,
+            ZMMessageServerTimestampKey,
+            range.lowerBound as NSDate,
+            ZMMessageServerTimestampKey,
+            range.upperBound as NSDate
+        )
 
         fetchRequest.sortDescriptors = ZMMessage.defaultSortDescriptors()
 

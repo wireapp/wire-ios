@@ -133,7 +133,11 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Helper
 
-    func insertMessage(with state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) -> ZMClientMessage {
+    func insertMessage(
+        with state: ZMLinkPreviewState,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> ZMClientMessage {
         let message = try! groupConversation.appendText(content: "Test message") as! ZMClientMessage
         message.linkPreviewState = state
         XCTAssert(syncMOC.saveOrRollback(), file: file, line: line)
@@ -141,7 +145,11 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         return message
     }
 
-    func verifyThatItDoesNotScheduleMessageUpdate(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
+    func verifyThatItDoesNotScheduleMessageUpdate(
+        for state: ZMLinkPreviewState,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         self.syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }

@@ -45,7 +45,8 @@ extension BackupRestoreController {
     private func title(for error: Error) -> String {
         switch error {
         case
-            CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
+            CoreDataStack.BackupImportError
+            .incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
             L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.title
         case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.userMismatch):
             L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.title
@@ -56,7 +57,8 @@ extension BackupRestoreController {
 
     private func message(for error: Error) -> String {
         switch error {
-        case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
+        case CoreDataStack.BackupImportError
+            .incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
             L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongVersion.message
         case CoreDataStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.userMismatch):
             L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.WrongAccount.message

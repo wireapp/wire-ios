@@ -135,7 +135,8 @@ extension TextFieldValidator.ValidationError: LocalizedError {
         case let .custom(description):
             description
         case let .invalidPassword(violations):
-            violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet.localizedErrorMessage
+            violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet
+                .localizedErrorMessage
         case .invalidUsername:
             "invalid"
         }
@@ -148,13 +149,23 @@ extension String {
     var isEmail: Bool {
         guard !self.hasPrefix("mailto:") else { return false }
 
-        guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+        guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+        else { return false }
 
-        let stringToMatch = self.trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
+        let stringToMatch = self
+            .trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
         let range = NSRange(location: 0, length: stringToMatch.count)
-        let firstMatch = dataDetector.firstMatch(in: stringToMatch, options: NSRegularExpression.MatchingOptions.reportCompletion, range: range)
+        let firstMatch = dataDetector.firstMatch(
+            in: stringToMatch,
+            options: NSRegularExpression.MatchingOptions.reportCompletion,
+            range: range
+        )
 
-        let numberOfMatches = dataDetector.numberOfMatches(in: stringToMatch, options: NSRegularExpression.MatchingOptions.reportCompletion, range: range)
+        let numberOfMatches = dataDetector.numberOfMatches(
+            in: stringToMatch,
+            options: NSRegularExpression.MatchingOptions.reportCompletion,
+            range: range
+        )
 
         if firstMatch?.range.location == NSNotFound { return false }
         if firstMatch?.url?.scheme != "mailto" { return false }

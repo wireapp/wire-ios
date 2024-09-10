@@ -101,12 +101,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var temporaryFilesService: TemporaryFileServiceInterface = TemporaryFileService()
 
-    func application(_ application: UIApplication,
-                     willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    )
+        -> Bool {
         guard !application.supportsMultipleScenes else {
             fatalError("Multiple scenes are currently not supported")
         }
-        guard application.connectedScenes.count == 1, let windowScene = application.connectedScenes.first as? UIWindowScene else {
+        guard application.connectedScenes.count == 1,
+              let windowScene = application.connectedScenes.first as? UIWindowScene else {
             fatalError("Expected a single scene of type `UIWindowScene`")
         }
         mainWindow = .init(windowScene: windowScene)
@@ -140,27 +144,38 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    )
+        -> Bool {
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()
 
-        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))")
+        WireLogger.appDelegate
+            .info(
+                "application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState))"
+            )
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(userSessionDidBecomeAvailable(_:)),
-                                               name: Notification.Name.ZMUserSessionDidBecomeAvailable,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(userSessionDidBecomeAvailable(_:)),
+            name: Notification.Name.ZMUserSessionDidBecomeAvailable,
+            object: nil
+        )
 
         self.launchOptions = launchOptions ?? [:]
 
         setupWindowAndRootViewController()
 
-        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
+        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage
+            .hasAccessibleAuthenticationCookieData() {
             createAppRootRouterAndInitialiazeOperations(launchOptions ?? [:])
         }
 
-        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
+        WireLogger.appDelegate
+            .info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
         return true
     }
@@ -203,9 +218,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         launchType = .unknown
     }
 
-    func application(_ app: UIApplication,
-                     open url: URL,
-                     options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
         WireLogger.appDelegate.info(
             "application:openURL:options",
             attributes: .safePublic
@@ -220,11 +237,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func application(_ application: UIApplication,
-                     performActionFor shortcutItem: UIApplicationShortcutItem,
-                     completionHandler: @escaping (Bool) -> Void) {
-        appRootRouter?.performQuickAction(for: shortcutItem,
-                                          completionHandler: completionHandler)
+    func application(
+        _ application: UIApplication,
+        performActionFor shortcutItem: UIApplicationShortcutItem,
+        completionHandler: @escaping (Bool) -> Void
+    ) {
+        appRootRouter?.performQuickAction(
+            for: shortcutItem,
+            completionHandler: completionHandler
+        )
     }
 
     @objc
@@ -241,9 +262,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - URL handling
 
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
         WireLogger.appDelegate.info("application:continueUserActivity:restorationHandler: \(userActivity)")
 
         return SessionManager.shared?.continueUserActivity(userActivity) ?? false
@@ -251,13 +274,23 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - BackgroundUpdates
 
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        WireLogger.appDelegate.info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        WireLogger.appDelegate
+            .info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
 
-        launchType = (application.applicationState == .inactive || application.applicationState == .background) ? .push : .direct
+        launchType = (application.applicationState == .inactive || application.applicationState == .background) ?
+            .push :
+            .direct
     }
 
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(
+        _ application: UIApplication,
+        performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:", attributes: .safePublic)
 
         appRootRouter?.performWhenAuthenticated {
@@ -265,11 +298,22 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
-        WireLogger.appDelegate.info("application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)")
+    func application(
+        _ application: UIApplication,
+        handleEventsForBackgroundURLSession identifier: String,
+        completionHandler: @escaping () -> Void
+    ) {
+        WireLogger.appDelegate
+            .info(
+                "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
+            )
 
         appRootRouter?.performWhenAuthenticated {
-            ZMUserSession.shared()?.application(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
+            ZMUserSession.shared()?.application(
+                application,
+                handleEventsForBackgroundURLSession: identifier,
+                completionHandler: completionHandler
+            )
         }
     }
 

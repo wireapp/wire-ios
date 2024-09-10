@@ -31,9 +31,14 @@ final class TestTrustVerificator: NSObject, URLSessionDelegate {
         self.trustProvider = trustProvider
     }
 
-    func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         let protectionSpace = challenge.protectionSpace
-        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else { return callback(false) }
+        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust
+        else { return callback(false) }
         let trusted = trustProvider.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host)
         callback(trusted)
     }

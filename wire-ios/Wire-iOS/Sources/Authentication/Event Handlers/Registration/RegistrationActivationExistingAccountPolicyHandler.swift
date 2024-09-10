@@ -49,9 +49,11 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
         }
 
         var actions: [AuthenticationCoordinatorAction] = [.hideLoadingView]
-        let alert = AuthenticationCoordinatorAlert(title: AlertStrings.AccountExists.title,
-                                                   message: AlertStrings.AccountExists.messageEmail,
-                                                   actions: [.changeEmail, .login(email: unverifiedEmail)])
+        let alert = AuthenticationCoordinatorAlert(
+            title: AlertStrings.AccountExists.title,
+            message: AlertStrings.AccountExists.messageEmail,
+            actions: [.changeEmail, .login(email: unverifiedEmail)]
+        )
         actions.append(.presentAlert(alert))
 
         return actions
@@ -60,8 +62,10 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
 
 extension AuthenticationCoordinatorAlertAction {
     fileprivate static var changeEmail: Self {
-        Self(title: AlertStrings.changeEmailAction,
-             coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])
+        Self(
+            title: AlertStrings.changeEmailAction,
+            coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)]
+        )
     }
 
     fileprivate static func login(email: String) -> Self {

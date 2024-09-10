@@ -48,7 +48,8 @@ final class AccessTokenTests: ZMTBaseTest {
         XCTAssertEqual(
             accessToken.expirationDate.timeIntervalSinceReferenceDate,
             expiration.timeIntervalSinceReferenceDate,
-            accuracy: 0.1)
+            accuracy: 0.1
+        )
     }
 
     func testThatItReturnsHTTPHeaders() {

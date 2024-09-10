@@ -44,12 +44,18 @@ public class MockCryptoboxMigrationManagerInterface: CryptoboxMigrationManagerIn
 
     // MARK: - performMigration
 
-    public var performMigrationAccountDirectorySyncContext_Invocations: [(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol)] = []
+    public var performMigrationAccountDirectorySyncContext_Invocations: [(
+        accountDirectory: URL,
+        coreCrypto: SafeCoreCryptoProtocol
+    )] = []
     public var performMigrationAccountDirectorySyncContext_MockError: Error?
     public var performMigrationAccountDirectorySyncContext_MockMethod: ((URL, SafeCoreCryptoProtocol) throws -> Void)?
 
     public func performMigration(accountDirectory: URL, coreCrypto: SafeCoreCryptoProtocol) throws {
-        performMigrationAccountDirectorySyncContext_Invocations.append((accountDirectory: accountDirectory, coreCrypto: coreCrypto))
+        performMigrationAccountDirectorySyncContext_Invocations.append((
+            accountDirectory: accountDirectory,
+            coreCrypto: coreCrypto
+        ))
 
         if let error = performMigrationAccountDirectorySyncContext_MockError {
             throw error

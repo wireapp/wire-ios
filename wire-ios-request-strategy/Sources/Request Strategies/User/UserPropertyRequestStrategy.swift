@@ -128,8 +128,10 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
     fileprivate var propertiesToFetch: Set<UserProperty> = Set()
     fileprivate var fetchedProperty: UserProperty?
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                         applicationStatus: ApplicationStatus) {
+    override public init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let allProperties = UserProperty.allCases.map(\.propertyName)
@@ -138,15 +140,19 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
             initializePropertiesToFetch()
         }
 
-        self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self,
-                                                         entityName: ZMUser.entityName(),
-                                                         update: nil,
-                                                         filter: ZMUser.predicateForSelfUser(),
-                                                         keysToSync: allProperties,
-                                                         managedObjectContext: managedObjectContext)
+        self.modifiedSync = ZMUpstreamModifiedObjectSync(
+            transcoder: self,
+            entityName: ZMUser.entityName(),
+            update: nil,
+            filter: ZMUser.predicateForSelfUser(),
+            keysToSync: allProperties,
+            managedObjectContext: managedObjectContext
+        )
 
-        self.downstreamSync = ZMSingleRequestSync(singleRequestTranscoder: self,
-                                                  groupQueue: managedObjectContext)
+        self.downstreamSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: managedObjectContext
+        )
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -160,7 +166,11 @@ public class UserPropertyRequestStrategy: AbstractRequestStrategy {
 }
 
 extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
+    public func request(
+        forUpdating managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
         guard let selfUser = managedObject as? ZMUser else { return nil }
 
         let allProperties = Set(UserProperty.allCases.map(\.propertyName))
@@ -184,17 +194,21 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
         nil
     }
 
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject,
-                                    requestUserInfo: [AnyHashable: Any]? = nil,
-                                    response: ZMTransportResponse,
-                                    keysToParse: Set<String>) -> Bool {
+    public func updateUpdatedObject(
+        _ managedObject: ZMManagedObject,
+        requestUserInfo: [AnyHashable: Any]? = nil,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
         false
     }
 
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,
-                                             request upstreamRequest: ZMUpstreamRequest,
-                                             response: ZMTransportResponse,
-                                             keysToParse keys: Set<String>) -> Bool {
+    public func shouldRetryToSyncAfterFailed(
+        toUpdate managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse,
+        keysToParse keys: Set<String>
+    ) -> Bool {
         false
     }
 
@@ -202,13 +216,19 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
         false
     }
 
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
+    public func request(
+        forInserting managedObject: ZMManagedObject,
+        forKeys keys: Set<String>?,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
         nil // we will never insert objects
     }
 
-    public func updateInsertedObject(_ managedObject: ZMManagedObject,
-                                     request upstreamRequest: ZMUpstreamRequest,
-                                     response: ZMTransportResponse) {
+    public func updateInsertedObject(
+        _ managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse
+    ) {
         // we will never insert objects
     }
 
@@ -237,9 +257,11 @@ extension UserPropertyRequestStrategy: ZMEventConsumer {
 
             let value = event.payload[UserPropertyRequestStrategy.UpdateEventValue]
 
-            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
-                                 updateType: (.notificationStream, .init(eventType: event.type)),
-                                 payload: value)
+            property.parseUpdate(
+                for: ZMUser.selfUser(in: managedObjectContext),
+                updateType: (.notificationStream, .init(eventType: event.type)),
+                payload: value
+            )
         }
     }
 }
@@ -277,13 +299,17 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
         }
 
         if response.result == .permanentError {
-            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
-                                 updateType: (.slowSync, .delete),
-                                 payload: nil)
+            property.parseUpdate(
+                for: ZMUser.selfUser(in: managedObjectContext),
+                updateType: (.slowSync, .delete),
+                payload: nil
+            )
         } else if response.result == .success, let payload = response.payload {
-            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
-                                 updateType: (.slowSync, .set),
-                                 payload: payload)
+            property.parseUpdate(
+                for: ZMUser.selfUser(in: managedObjectContext),
+                updateType: (.slowSync, .set),
+                payload: payload
+            )
         }
     }
 }

@@ -63,11 +63,13 @@ final class GetFeatureConfigsActionHandler: ActionHandler<GetFeatureConfigsActio
                 case .v0, .v1, .v2, .v3, .v4, .v5:
                     try processor.processActionPayload(
                         data: data,
-                        repository: repository)
+                        repository: repository
+                    )
                 case .v6:
                     try processor.processActionPayloadAPIV6(
                         data: data,
-                        repository: repository)
+                        repository: repository
+                    )
                 }
 
                 action.succeed()

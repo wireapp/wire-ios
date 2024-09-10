@@ -55,6 +55,7 @@ final class ConversationListOnboardingHint: UIView {
             messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
 
             arrowView.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: margin),
-            arrowView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin)])
+            arrowView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin),
+        ])
     }
 }

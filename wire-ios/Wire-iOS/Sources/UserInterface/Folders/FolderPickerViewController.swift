@@ -31,8 +31,10 @@ final class FolderPickerViewController: UIViewController {
     private var conversationDirectory: ConversationDirectoryType
     private var items: [LabelType] = []
     private let conversation: ZMConversation
-    private let hintLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
-                                             color: SemanticColors.Label.textDefault)
+    private let hintLabel = DynamicFontLabel(
+        fontSpec: .mediumSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
     private let collectionViewLayout = UICollectionViewFlowLayout()
 
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.collectionViewLayout)
@@ -63,11 +65,14 @@ final class FolderPickerViewController: UIViewController {
         let navigationTitleLabel = DynamicFontLabel(
             text: L10n.Localizable.Folder.Picker.title.capitalized,
             fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault)
+            color: SemanticColors.Label.textDefault
+        )
 
-        let newFolderItem = UIBarButtonItem(icon: .plus,
-                                            target: self,
-                                            action: #selector(createNewFolder))
+        let newFolderItem = UIBarButtonItem(
+            icon: .plus,
+            target: self,
+            action: #selector(createNewFolder)
+        )
         newFolderItem.accessibilityIdentifier = "button.newfolder.create"
 
         navigationItem.titleView = navigationTitleLabel
@@ -110,9 +115,12 @@ final class FolderPickerViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: view)
 
-        NSLayoutConstraint.activate([hintLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
-                                     hintLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
-                                     hintLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)])
+        NSLayoutConstraint.activate([
+            hintLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            hintLabel.trailingAnchor
+                .constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            hintLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
     }
 
     @objc private func createNewFolder() {
@@ -133,7 +141,10 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
         items.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: CheckmarkCell.self, for: indexPath)
         let item = items[indexPath.row]
         cell.title = item.name
@@ -160,7 +171,11 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
 
     // MARK: Layout
 
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: collectionView.bounds.size.width, height: 56)
     }
 }

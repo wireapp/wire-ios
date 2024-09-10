@@ -45,8 +45,10 @@ extension MessagePresenter {
 
         let imagesCategoryMatch = CategoryMatch(including: .image, excluding: .none)
 
-        let collection = AssetCollectionWrapper(conversation: conversation,
-                                                matchingCategories: [imagesCategoryMatch])
+        let collection = AssetCollectionWrapper(
+            conversation: conversation,
+            matchingCategories: [imagesCategoryMatch]
+        )
 
         let imagesController = ConversationImagesViewController(
             collection: collection,
@@ -73,9 +75,12 @@ extension MessagePresenter {
         }
         imagesController.modalTransitionStyle = .crossDissolve
 
-        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
-            self?.modalTargetController?.dismiss(animated: true)
-        }, accessibilityLabel: L10n.Localizable.General.close)
+        imagesController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.modalTargetController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Localizable.General.close
+        )
 
         imagesController.messageActionDelegate = actionResponder
         imagesController.swipeToDismiss = true
@@ -83,7 +88,8 @@ extension MessagePresenter {
             self?.modalTargetController?.dismiss(animated: true, completion: completion)
         }
 
-        return isPreviewing ? imagesController : imagesController.wrapInNavigationController(navigationBarClass: UINavigationBar.self)
+        return isPreviewing ? imagesController : imagesController
+            .wrapInNavigationController(navigationBarClass: UINavigationBar.self)
     }
 
     @objc

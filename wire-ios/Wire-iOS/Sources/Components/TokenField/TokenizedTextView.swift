@@ -31,7 +31,10 @@ protocol TokenizedTextViewDelegate: AnyObject {
 class TokenizedTextView: TextView {
     weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
 
-    private lazy var tapSelectionGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapText(_:)))
+    private lazy var tapSelectionGestureRecognizer = UITapGestureRecognizer(
+        target: self,
+        action: #selector(didTapText(_:))
+    )
 
     convenience init() {
         self.init(frame: .zero)
@@ -77,10 +80,18 @@ class TokenizedTextView: TextView {
         var fraction: CGFloat = 0
 
         withUnsafePointer(to: &fraction) {
-            characterIndex = layoutManager.characterIndex(for: location, in: textContainer, fractionOfDistanceBetweenInsertionPoints: UnsafeMutablePointer<CGFloat>(mutating: $0))
+            characterIndex = layoutManager.characterIndex(
+                for: location,
+                in: textContainer,
+                fractionOfDistanceBetweenInsertionPoints: UnsafeMutablePointer<CGFloat>(mutating: $0)
+            )
         }
 
-        tokenizedTextViewDelegate?.tokenizedTextView(self, didTapTextRange: NSRange(location: characterIndex, length: 1), fraction: fraction)
+        tokenizedTextViewDelegate?.tokenizedTextView(
+            self,
+            didTapTextRange: NSRange(location: characterIndex, length: 1),
+            fraction: fraction
+        )
     }
 
     override func copy(_ sender: Any?) {
@@ -116,7 +127,11 @@ class TokenizedTextView: TextView {
             }
 
             if nsstring.character(at: i) == NSTextAttachment.character {
-                if let tokenAttachemnt = attributedText?.attribute(.attachment, at: i, effectiveRange: nil) as? TokenTextAttachment {
+                if let tokenAttachemnt = attributedText?.attribute(
+                    .attachment,
+                    at: i,
+                    effectiveRange: nil
+                ) as? TokenTextAttachment {
                     string += tokenAttachemnt.token.title
                     if i < NSMaxRange(range) - 1 {
                         string += ", "
@@ -133,7 +148,10 @@ class TokenizedTextView: TextView {
 // MARK: - UIGestureRecognizerDelegate
 
 extension TokenizedTextView: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
         true
     }
 }

@@ -42,15 +42,17 @@ extension ZMMessage: ObjectInSnapshot {
 extension ZMAssetClientMessage {
     override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
-        let additionalKeys = [#keyPath(ZMAssetClientMessage.transferState),
-                              MessageKey.previewGenericMessage.rawValue,
-                              MessageKey.mediumGenericMessage.rawValue,
-                              #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
-                              #keyPath(ZMAssetClientMessage.hasDownloadedFile),
-                              #keyPath(ZMAssetClientMessage.isDownloading),
-                              #keyPath(ZMAssetClientMessage.progress),
-                              #keyPath(ZMMessage.reactions),
-                              #keyPath(ZMMessage.confirmations)]
+        let additionalKeys = [
+            #keyPath(ZMAssetClientMessage.transferState),
+            MessageKey.previewGenericMessage.rawValue,
+            MessageKey.mediumGenericMessage.rawValue,
+            #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
+            #keyPath(ZMAssetClientMessage.hasDownloadedFile),
+            #keyPath(ZMAssetClientMessage.isDownloading),
+            #keyPath(ZMAssetClientMessage.progress),
+            #keyPath(ZMMessage.reactions),
+            #keyPath(ZMMessage.confirmations),
+        ]
         return keys.union(additionalKeys)
     }
 }
@@ -58,15 +60,17 @@ extension ZMAssetClientMessage {
 extension ZMClientMessage {
     override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
-        let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedPreview),
-                              #keyPath(ZMClientMessage.linkPreviewState),
-                              MessageKey.underlyingMessage.rawValue,
-                              #keyPath(ZMMessage.reactions),
-                              #keyPath(ZMMessage.confirmations),
-                              #keyPath(ZMClientMessage.quote),
-                              MessageKey.linkPreview.rawValue,
-                              #keyPath(ZMMessage.linkAttachments),
-                              #keyPath(ZMClientMessage.buttonStates)]
+        let additionalKeys = [
+            #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
+            #keyPath(ZMClientMessage.linkPreviewState),
+            MessageKey.underlyingMessage.rawValue,
+            #keyPath(ZMMessage.reactions),
+            #keyPath(ZMMessage.confirmations),
+            #keyPath(ZMClientMessage.quote),
+            MessageKey.linkPreview.rawValue,
+            #keyPath(ZMMessage.linkAttachments),
+            #keyPath(ZMClientMessage.buttonStates),
+        ]
         return keys.union(additionalKeys)
     }
 }
@@ -74,9 +78,11 @@ extension ZMClientMessage {
 extension ZMImageMessage {
     override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
-        let additionalKeys = [#keyPath(ZMImageMessage.mediumData),
-                              #keyPath(ZMImageMessage.mediumRemoteIdentifier),
-                              #keyPath(ZMMessage.reactions)]
+        let additionalKeys = [
+            #keyPath(ZMImageMessage.mediumData),
+            #keyPath(ZMImageMessage.mediumRemoteIdentifier),
+            #keyPath(ZMMessage.reactions),
+        ]
         return keys.union(additionalKeys)
     }
 }
@@ -84,8 +90,10 @@ extension ZMImageMessage {
 extension ZMSystemMessage {
     override public class var observableKeys: Set<String> {
         let keys = super.observableKeys
-        let additionalKeys = [#keyPath(ZMSystemMessage.childMessages),
-                              #keyPath(ZMSystemMessage.systemMessageType)]
+        let additionalKeys = [
+            #keyPath(ZMSystemMessage.childMessages),
+            #keyPath(ZMSystemMessage.systemMessageType),
+        ]
         return keys.union(additionalKeys)
     }
 }
@@ -105,21 +113,22 @@ extension ZMSystemMessage {
     }
 
     override public var debugDescription: String {
-        ["deliveryStateChanged: \(deliveryStateChanged)",
-         "reactionsChanged: \(reactionsChanged)",
-         "confirmationsChanged: \(confirmationsChanged)",
-         "childMessagesChanged: \(childMessagesChanged)",
-         "quoteChanged: \(quoteChanged)",
-         "imageChanged: \(imageChanged)",
-         "fileAvailabilityChanged: \(fileAvailabilityChanged)",
-         "usersChanged: \(usersChanged)",
-         "linkPreviewChanged: \(linkPreviewChanged)",
-         "transferStateChanged: \(transferStateChanged)",
-         "senderChanged: \(senderChanged)",
-         "isObfuscatedChanged: \(isObfuscatedChanged)",
-         "underlyingMessageChanged: \(underlyingMessageChanged)",
-         "linkAttachmentsChanged: \(linkAttachmentsChanged)",
-         "buttonStatesChanged: \(buttonStatesChanged)",
+        [
+            "deliveryStateChanged: \(deliveryStateChanged)",
+            "reactionsChanged: \(reactionsChanged)",
+            "confirmationsChanged: \(confirmationsChanged)",
+            "childMessagesChanged: \(childMessagesChanged)",
+            "quoteChanged: \(quoteChanged)",
+            "imageChanged: \(imageChanged)",
+            "fileAvailabilityChanged: \(fileAvailabilityChanged)",
+            "usersChanged: \(usersChanged)",
+            "linkPreviewChanged: \(linkPreviewChanged)",
+            "transferStateChanged: \(transferStateChanged)",
+            "senderChanged: \(senderChanged)",
+            "isObfuscatedChanged: \(isObfuscatedChanged)",
+            "underlyingMessageChanged: \(underlyingMessageChanged)",
+            "linkAttachmentsChanged: \(linkAttachmentsChanged)",
+            "buttonStatesChanged: \(buttonStatesChanged)",
         ].joined(separator: ", ")
     }
 
@@ -150,12 +159,14 @@ extension ZMSystemMessage {
 
     /// Whether the image data on disk changed
     public var imageChanged: Bool {
-        changedKeysContain(keys: #keyPath(ZMImageMessage.mediumData),
-                           #keyPath(ZMImageMessage.mediumRemoteIdentifier),
-                           #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
-                           #keyPath(ZMAssetClientMessage.hasDownloadedFile),
-                           MessageKey.previewGenericMessage.rawValue,
-                           MessageKey.mediumGenericMessage.rawValue)
+        changedKeysContain(
+            keys: #keyPath(ZMImageMessage.mediumData),
+            #keyPath(ZMImageMessage.mediumRemoteIdentifier),
+            #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
+            #keyPath(ZMAssetClientMessage.hasDownloadedFile),
+            MessageKey.previewGenericMessage.rawValue,
+            MessageKey.mediumGenericMessage.rawValue
+        )
     }
 
     /// Whether the file on disk changed
@@ -191,7 +202,8 @@ extension ZMSystemMessage {
     }
 
     public var buttonStatesChanged: Bool {
-        changedKeysContain(keys: #keyPath(ZMClientMessage.buttonStates)) || changeInfos[MessageChangeInfo.ButtonStateChangeInfoKey] != nil
+        changedKeysContain(keys: #keyPath(ZMClientMessage.buttonStates)) ||
+            changeInfos[MessageChangeInfo.ButtonStateChangeInfoKey] != nil
     }
 
     public var userChangeInfo: UserChangeInfo? {
@@ -211,12 +223,16 @@ extension MessageChangeInfo {
     /// Messages observed with this call will not contain information about user changes
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forMessage:managedObjectContext:)
-    public static func add(observer: ZMMessageObserver,
-                           for message: ZMConversationMessage,
-                           managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        ManagedObjectObserverToken(name: .MessageChange,
-                                   managedObjectContext: managedObjectContext,
-                                   object: message) { [weak observer] note in
+    public static func add(
+        observer: ZMMessageObserver,
+        for message: ZMConversationMessage,
+        managedObjectContext: NSManagedObjectContext
+    ) -> NSObjectProtocol {
+        ManagedObjectObserverToken(
+            name: .MessageChange,
+            managedObjectContext: managedObjectContext,
+            object: message
+        ) { [weak observer] note in
             guard let observer,
                   let changeInfo = note.changeInfo as? MessageChangeInfo
             else { return }

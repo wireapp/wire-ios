@@ -36,7 +36,9 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String { // TODO: move constant into shared framework
+        if let clientId = context
+            .persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
+            // TODO: move constant into shared framework
             return !clientId.isEmpty
         }
 
@@ -67,7 +69,11 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
         let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: false)
+        return ZMPersistentCookieStorage(
+            forServerName: backendURL,
+            userIdentifier: account.userIdentifier,
+            useCache: false
+        )
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {
@@ -86,7 +92,12 @@ final class ApplicationStatusDirectory: ApplicationStatus {
 
     public let linkPreviewDetector: LinkPreviewDetectorType
 
-    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
+    public init(
+        transportSession: ZMTransportSession,
+        authenticationStatus: AuthenticationStatusProvider,
+        clientRegistrationStatus: ClientRegistrationStatus,
+        linkPreviewDetector: LinkPreviewDetectorType
+    ) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
@@ -97,7 +108,12 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
-        self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
+        self.init(
+            transportSession: transportSession,
+            authenticationStatus: authenticationStatus,
+            clientRegistrationStatus: clientRegistrationStatus,
+            linkPreviewDetector: linkPreviewDetector
+        )
     }
 
     public var synchronizationState: SynchronizationState {
@@ -171,7 +187,8 @@ public final class SharingSession {
 
     /// Whether all prerequsisties for sharing are met
     public var canShare: Bool {
-        applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
+        applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory
+            .clientRegistrationStatus.clientIsReadyForRequests
     }
 
     /// List of non-archived conversations in which the user can write
@@ -218,8 +235,10 @@ public final class SharingSession {
     ) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
-        let coreDataStack = CoreDataStack(account: Account(userName: "", userIdentifier: accountIdentifier),
-                                          applicationContainer: sharedContainerURL)
+        let coreDataStack = CoreDataStack(
+            account: Account(userName: "", userIdentifier: accountIdentifier),
+            applicationContainer: sharedContainerURL
+        )
 
         guard coreDataStack.storesExists else {
             throw InitializationError.missingSharedContainer
@@ -238,7 +257,11 @@ public final class SharingSession {
 
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
+        let cookieStorage = ZMPersistentCookieStorage(
+            forServerName: environment.backendURL.host!,
+            userIdentifier: accountIdentifier,
+            useCache: false
+        )
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap(\.host)
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
@@ -262,7 +285,10 @@ public final class SharingSession {
             coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
+            accountContainer: CoreDataStack.accountDataFolder(
+                accountIdentifier: accountIdentifier,
+                applicationContainer: sharedContainerURL
+            ),
             appLockConfig: appLockConfig,
             sharedUserDefaults: sharedUserDefaults
         )
@@ -305,7 +331,8 @@ public final class SharingSession {
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
-        guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
+        guard applicationStatusDirectory.authenticationStatus.state == .authenticated
+        else { throw InitializationError.loggedOut }
 
         let accountDirectory = coreDataStack.accountContainer
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
@@ -335,8 +362,14 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         sharedUserDefaults: UserDefaults
     ) throws {
-        let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
-        let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
+        let applicationStatusDirectory = ApplicationStatusDirectory(
+            syncContext: coreDataStack.syncContext,
+            transportSession: transportSession
+        )
+        let linkPreviewPreprocessor = LinkPreviewPreprocessor(
+            linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector,
+            managedObjectContext: coreDataStack.syncContext
+        )
 
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
@@ -388,7 +421,10 @@ public final class SharingSession {
             authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
-        let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
+        let mlsDecryptionService = MLSDecryptionService(
+            context: coreDataStack.syncContext,
+            mlsActionExecutor: mlsActionExecutor
+        )
 
         try self.init(
             accountIdentifier: accountIdentifier,
@@ -456,8 +492,16 @@ public final class SharingSession {
 }
 
 extension SharingSession: LinkPreviewDetectorType {
-    public func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
-        applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excluding, completion: completion)
+    public func downloadLinkPreviews(
+        inText text: String,
+        excluding: [NSRange],
+        completion: @escaping ([LinkMetadata]) -> Void
+    ) {
+        applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews(
+            inText: text,
+            excluding: excluding,
+            completion: completion
+        )
     }
 }
 

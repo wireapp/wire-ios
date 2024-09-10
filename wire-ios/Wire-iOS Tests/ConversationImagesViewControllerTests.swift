@@ -134,13 +134,25 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
         // THEN
         XCTAssertEqual(
             sut.buttonsBar.buttons.map(\.accessibilityLabel),
-            ["Sketch over picture", "Sketch emoji over picture", "Copy picture", "Save picture", "Reveal in conversation", "Delete picture"]
+            [
+                "Sketch over picture",
+                "Sketch emoji over picture",
+                "Copy picture",
+                "Save picture",
+                "Reveal in conversation",
+                "Delete picture",
+            ]
         )
         print(sut.buttonsBar.buttons.map(\.accessibilityLabel))
 
         // WHEN
         message.isEphemeral = true
-        sut.pageViewController(UIPageViewController(), didFinishAnimating: true, previousViewControllers: [], transitionCompleted: true)
+        sut.pageViewController(
+            UIPageViewController(),
+            didFinishAnimating: true,
+            previousViewControllers: [],
+            transitionCompleted: true
+        )
 
         // THEN
         XCTAssertEqual(sut.buttonsBar.buttons.count, 1)

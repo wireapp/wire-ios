@@ -19,6 +19,14 @@
 import WireDataModel
 
 protocol ConversationListContentDelegate: AnyObject {
-    func conversationList(_ controller: ConversationListContentController?, didSelect conversation: ZMConversation?, focusOnView focus: Bool)
-    func conversationListContentController(_ controller: ConversationListContentController?, wantsActionMenuFor conversation: ZMConversation?, fromSourceView sourceView: UIView?)
+    func conversationList(
+        _ controller: ConversationListContentController?,
+        didSelect conversation: ZMConversation?,
+        focusOnView focus: Bool
+    )
+    func conversationListContentController(
+        _ controller: ConversationListContentController?,
+        wantsActionMenuFor conversation: ZMConversation?,
+        fromSourceView sourceView: UIView?
+    )
 }

@@ -53,8 +53,10 @@ extension RemoveClientsViewController {
                 throw RemoveUserClientError.clientDoesNotExistLocally
             }
 
-            try await removeUserClientUseCase?.invoke(clientId: clientId,
-                                                      password: password)
+            try await removeUserClientUseCase?.invoke(
+                clientId: clientId,
+                password: password
+            )
         }
     }
 }

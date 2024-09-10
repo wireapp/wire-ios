@@ -29,9 +29,11 @@ class ZMAuthenticationStatusTestsPhoneAndEmailVerification: XCTestCase {
         userInfoParser = MockUserInfoParser()
 
         let groupQueue = DispatchGroupQueue(queue: DispatchQueue.main)
-        sut = ZMAuthenticationStatus(delegate: delegate,
-                                     groupQueue: groupQueue,
-                                     userInfoParser: userInfoParser)
+        sut = ZMAuthenticationStatus(
+            delegate: delegate,
+            groupQueue: groupQueue,
+            userInfoParser: userInfoParser
+        )
     }
 
     func testThatItCanRequestEmailVerificationCodeForLoginAfterRequestingTheCode() {

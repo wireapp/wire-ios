@@ -50,7 +50,11 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         configuration.timeoutIntervalForResource = 20
         configuration.httpShouldSetCookies = false
         configuration.isDiscretionary = false
-        session = urlSession ?? Foundation.URLSession(configuration: configuration, delegate: self, delegateQueue: parsingQueue)
+        session = urlSession ?? Foundation.URLSession(
+            configuration: configuration,
+            delegate: self,
+            delegateQueue: parsingQueue
+        )
     }
 
     func requestOpenGraphData(fromURL url: URL, completion: @escaping DownloadCompletion) {
@@ -66,7 +70,11 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        urlSession(session as URLSessionType, task: task as URLSessionDataTaskType, didCompleteWithError: error as NSError?)
+        urlSession(
+            session as URLSessionType,
+            task: task as URLSessionDataTaskType,
+            didCompleteWithError: error as NSError?
+        )
     }
 
     func urlSession(_ session: URLSessionType, task: URLSessionDataTaskType, didCompleteWithError error: NSError?) {
@@ -86,9 +94,19 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         }
     }
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+    func urlSession(
+        _ session: URLSession,
+        dataTask: URLSessionDataTask,
+        didReceive response: URLResponse,
+        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+    ) {
         guard let httpResponse = response as? HTTPURLResponse else { return }
-        urlSession(session as URLSessionType, dataTask: dataTask as URLSessionDataTaskType, didReceiveHTTPResponse: httpResponse, completionHandler: completionHandler)
+        urlSession(
+            session as URLSessionType,
+            dataTask: dataTask as URLSessionDataTaskType,
+            didReceiveHTTPResponse: httpResponse,
+            completionHandler: completionHandler
+        )
     }
 
     func processReceivedData(_ data: Data, forTask task: URLSessionDataTaskType, withIdentifier identifier: Int) {
@@ -146,7 +164,12 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 extension PreviewDownloader {
     /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
     /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
-    func urlSession(_ session: URLSessionType, dataTask: URLSessionDataTaskType, didReceiveHTTPResponse response: HTTPURLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
+    func urlSession(
+        _ session: URLSessionType,
+        dataTask: URLSessionDataTaskType,
+        didReceiveHTTPResponse response: HTTPURLResponse,
+        completionHandler: (URLSession.ResponseDisposition) -> Void
+    ) {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String

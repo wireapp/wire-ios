@@ -56,29 +56,37 @@ extension ZMUser {
     @objc(canAddServiceToConversation:)
     public func canAddService(to conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.addConversationMember.name,
-                                 conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.addConversationMember.name,
+            conversation: conversation
+        )
     }
 
     @objc(canRemoveServiceFromConversation:)
     public func canRemoveService(from conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.removeConversationMember.name,
-                                 conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.removeConversationMember.name,
+            conversation: conversation
+        )
     }
 
     @objc(canAddUserToConversation:)
     public func canAddUser(to conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.addConversationMember.name,
-                                 conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.addConversationMember.name,
+            conversation: conversation
+        )
     }
 
     @objc(canRemoveUserFromConversation:)
     public func canRemoveUser(from conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.removeConversationMember.name,
-                                 conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.removeConversationMember.name,
+            conversation: conversation
+        )
     }
 
     @objc(canDeleteConversation:)
@@ -86,29 +94,38 @@ extension ZMUser {
         guard conversation.conversationType == .group else { return false }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
 
-        return hasRoleWithAction(actionName: ConversationAction.deleteConvesation.name,
-                                 conversation: conversation) && conversation.creator == self
+        return hasRoleWithAction(
+            actionName: ConversationAction.deleteConvesation.name,
+            conversation: conversation
+        ) && conversation.creator == self
             && selfUser.hasTeam && selfUser.teamIdentifier == self.teamIdentifier
     }
 
     @objc(canModifyOtherMemberInConversation:)
     public func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.modifyOtherConversationMember.name,
-                                 conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.modifyOtherConversationMember.name,
+            conversation: conversation
+        )
     }
 
     @objc(canModifyReadReceiptSettingsInConversation:)
     public func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.modifyConversationReceiptMode.name,
-                                 conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.modifyConversationReceiptMode.name,
+            conversation: conversation
+        )
     }
 
     @objc(canModifyEphemeralSettingsInConversation:)
     public func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool {
         if conversation.conversationType == .group {
-            return hasRoleWithAction(actionName: ConversationAction.modifyConversationMessageTimer.name, conversation: conversation)
+            return hasRoleWithAction(
+                actionName: ConversationAction.modifyConversationMessageTimer.name,
+                conversation: conversation
+            )
         } else {
             guard
                 conversation.teamRemoteIdentifier == nil || !isGuest(in: conversation),
@@ -131,7 +148,10 @@ extension ZMUser {
               conversation.teamRemoteIdentifier != nil
         else { return false }
 
-        return hasRoleWithAction(actionName: ConversationAction.modifyConversationAccess.name, conversation: conversation)
+        return hasRoleWithAction(
+            actionName: ConversationAction.modifyConversationAccess.name,
+            conversation: conversation
+        )
     }
 
     @objc(canModifyTitleInConversation:)

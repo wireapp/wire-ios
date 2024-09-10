@@ -77,7 +77,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.valuesHTTPStatus200
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -158,7 +161,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.empty
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then
@@ -356,7 +362,10 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
             let payloadString = JSONPayload.mlsConfigV3
 
             // When
-            sut.handleResponse(self.mockResponse(status: 200, payload: payloadString as ZMTransportData), action: action)
+            sut.handleResponse(
+                self.mockResponse(status: 200, payload: payloadString as ZMTransportData),
+                action: action
+            )
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
 
             // Then

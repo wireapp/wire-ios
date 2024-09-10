@@ -212,32 +212,28 @@ extension FeatureConfigsAPITests {
                 status: .enabled,
                 isMandatory: true,
                 inactivityTimeoutInSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .classifiedDomains(.init(
                 status: .enabled,
                 domains: ["example.com"]
-            )
-            ),
+            )),
             .conferenceCalling(.init(
                 status: .enabled,
                 useSFTForOneToOneCalls: false
-            )
-            ),
+            )),
             .conversationGuestLinks(.init(
-                status: .enabled)
-            ),
+                status: .enabled
+            )),
             .digitalSignature(.init(
-                status: .enabled)
-            ),
+                status: .enabled
+            )),
             .fileSharing(.init(
-                status: .enabled)
-            ),
+                status: .enabled
+            )),
             .selfDeletingMessages(.init(
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
-            )
-            ),
+            )),
         ]
 
         static let featureConfigsV1: [FeatureConfig] = [
@@ -245,32 +241,28 @@ extension FeatureConfigsAPITests {
                 status: .enabled,
                 isMandatory: true,
                 inactivityTimeoutInSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .classifiedDomains(.init(
                 status: .enabled,
                 domains: ["example.com"]
-            )
-            ),
+            )),
             .conferenceCalling(.init(
                 status: .enabled,
                 useSFTForOneToOneCalls: false
-            )
-            ),
+            )),
             .conversationGuestLinks(.init(
-                status: .enabled)
-            ),
+                status: .enabled
+            )),
             .digitalSignature(.init(
-                status: .enabled)
-            ),
+                status: .enabled
+            )),
             .fileSharing(.init(
-                status: .enabled)
-            ),
+                status: .enabled
+            )),
             .selfDeletingMessages(.init(
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .mls(.init(
                 status: .enabled,
                 protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
@@ -282,8 +274,7 @@ extension FeatureConfigsAPITests {
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
-            )
-            ),
+            )),
         ]
 
         static let featureConfigsV4: [FeatureConfig] = [
@@ -291,26 +282,22 @@ extension FeatureConfigsAPITests {
                 status: .enabled,
                 isMandatory: true,
                 inactivityTimeoutInSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .classifiedDomains(.init(
                 status: .enabled,
                 domains: ["example.com"]
-            )
-            ),
+            )),
             .conferenceCalling(.init(
                 status: .enabled,
                 useSFTForOneToOneCalls: false
-            )
-            ),
+            )),
             .conversationGuestLinks(.init(status: .enabled)),
             .digitalSignature(.init(status: .enabled)),
             .fileSharing(.init(status: .enabled)),
             .selfDeletingMessages(.init(
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .mls(.init(
                 status: .enabled,
                 protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
@@ -322,22 +309,19 @@ extension FeatureConfigsAPITests {
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
-            )
-            ),
+            )),
             .mlsMigration(.init(
                 status: .enabled,
                 startTime: dateV4(from: "2021-05-12T10:52:02.671Z"),
                 finaliseRegardlessAfter: dateV4(from: "2021-05-12T10:52:02.671Z")
-            )
-            ),
+            )),
             .endToEndIdentity(.init(
                 status: .enabled,
                 acmeDiscoveryURL: "https://example.com",
                 verificationExpiration: 9_223_372_036_854_776_000,
                 crlProxy: nil,
                 useProxyOnMobile: false
-            )
-            ),
+            )),
         ]
 
         static let featureConfigsV6: [FeatureConfig] = [
@@ -345,26 +329,24 @@ extension FeatureConfigsAPITests {
                 status: .enabled,
                 isMandatory: true,
                 inactivityTimeoutInSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .classifiedDomains(.init(
                 status: .enabled,
                 domains: ["example.com"]
-            )
-            ),
+            )),
             .conferenceCalling(
-                .init(status: .enabled,
-                      useSFTForOneToOneCalls: true)
+                .init(
+                    status: .enabled,
+                    useSFTForOneToOneCalls: true
+                )
             ),
-            .conversationGuestLinks(.init(status: .enabled)
-            ),
+            .conversationGuestLinks(.init(status: .enabled)),
             .digitalSignature(.init(status: .enabled)),
             .fileSharing(.init(status: .enabled)),
             .selfDeletingMessages(.init(
                 status: .enabled,
                 enforcedTimeoutSeconds: 2_147_483_647
-            )
-            ),
+            )),
             .mls(.init(
                 status: .enabled,
                 protocolToggleUsers: [UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!],
@@ -376,22 +358,19 @@ extension FeatureConfigsAPITests {
                 ],
                 defaultCipherSuite: .MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
                 supportedProtocols: [.proteus]
-            )
-            ),
+            )),
             .mlsMigration(.init(
                 status: .enabled,
                 startTime: dateV6(from: "2021-05-12T10:52:02Z"),
                 finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z")
-            )
-            ),
+            )),
             .endToEndIdentity(.init(
                 status: .enabled,
                 acmeDiscoveryURL: "https://example.com",
                 verificationExpiration: 9_223_372_036_854_776_000,
                 crlProxy: "https://example.com",
                 useProxyOnMobile: true
-            )
-            ),
+            )),
         ]
     }
 }

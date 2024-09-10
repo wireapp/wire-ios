@@ -68,10 +68,12 @@ final class SettingsPropertyTests: XCTestCase {
         super.tearDown()
     }
 
-    func saveAndCheck<T>(_ property: SettingsProperty,
-                         value: T,
-                         file: String = #file,
-                         line: UInt = #line) throws where T: Equatable {
+    func saveAndCheck<T>(
+        _ property: SettingsProperty,
+        value: T,
+        file: String = #file,
+        line: UInt = #line
+    ) throws where T: Equatable {
         var property = property
         try property << value
         if let readValue: T = property.rawValue() as? T {
@@ -123,7 +125,13 @@ final class SettingsPropertyTests: XCTestCase {
         let mediaManager = ZMMockAVSMediaManager()
         let tracking = ZMMockTracking()
 
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, tracking: tracking, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
+        let factory = SettingsPropertyFactory(
+            userDefaults: self.userDefaults,
+            tracking: tracking,
+            mediaManager: mediaManager,
+            userSession: userSession,
+            selfUser: selfUser
+        )
 
         let property = factory.property(SettingsPropertyName.profileName)
         // when & then

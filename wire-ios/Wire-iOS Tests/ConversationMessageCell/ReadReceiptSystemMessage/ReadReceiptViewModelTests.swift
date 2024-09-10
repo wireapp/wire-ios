@@ -37,10 +37,12 @@ final class ReadReceiptViewModelTests: XCTestCase {
     }
 
     private func createSut(type: ZMSystemMessageType) {
-        sut = ReadReceiptViewModel(icon: .eye,
-                                   iconColor: SemanticColors.Label.textSettingsPasswordPlaceholder,
-                                   systemMessageType: type,
-                                   sender: mockMessage.senderUser!)
+        sut = ReadReceiptViewModel(
+            icon: .eye,
+            iconColor: SemanticColors.Label.textSettingsPasswordPlaceholder,
+            systemMessageType: type,
+            sender: mockMessage.senderUser!
+        )
     }
 
     func testThatSelfUserSwitchOffReceiptOption() {

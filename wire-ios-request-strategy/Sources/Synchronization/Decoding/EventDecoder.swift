@@ -174,7 +174,12 @@ extension EventDecoder {
                 if DeveloperFlag.decryptAndStoreEventsSleep.isOn {
                     try await Task.sleep(nanoseconds: 1_000_000_000)
                 }
-                await decryptedEvents += self.decryptAndStoreEvent(event: event, at: index, publicKeys: publicKeys, proteusService: proteusService)
+                await decryptedEvents += self.decryptAndStoreEvent(
+                    event: event,
+                    at: index,
+                    publicKeys: publicKeys,
+                    proteusService: proteusService
+                )
                 index += 1
             }
         }
@@ -214,12 +219,13 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         switch event.type {
         case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-            let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                try await proteusService.decrypt(
-                    data: encryptedData,
-                    forSession: sessionID
-                )
-            }
+            let proteusEvent = await self
+                .decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                    try await proteusService.decrypt(
+                        data: encryptedData,
+                        forSession: sessionID
+                    )
+                }
             return proteusEvent.map { [$0] } ?? []
 
         case .conversationMLSWelcome:
@@ -248,12 +254,13 @@ extension EventDecoder {
             for event in events {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                        try sessionsDirectory.decryptData(
-                            encryptedData,
-                            for: sessionID.mapToEncryptionSessionID()
-                        )
-                    }
+                    let proteusEvent = await self
+                        .decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
+                            try sessionsDirectory.decryptData(
+                                encryptedData,
+                                for: sessionID.mapToEncryptionSessionID()
+                            )
+                        }
                     if let proteusEvent {
                         decryptedEvents.append(proteusEvent)
                     }
@@ -332,7 +339,10 @@ extension EventDecoder {
             return
         }
 
-        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events", attributes: .safePublic)
+        WireLogger.updateEvent.debug(
+            "EventDecoder: process batch of \(events.storedEvents.count) events",
+            attributes: .safePublic
+        )
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
 
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
@@ -341,7 +351,10 @@ extension EventDecoder {
     /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
-    private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
+    private func fetchNextEventsBatch(
+        with privateKeys: EARPrivateKeys?,
+        callEventsOnly: Bool
+    ) async -> EventsWithStoredEvents {
         var (storedEvents, updateEvents) = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         await eventMOC.perform {
@@ -383,7 +396,8 @@ extension EventDecoder {
             do {
                 try eventMOC.save()
             } catch {
-                WireLogger.eventProcessing.critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
+                WireLogger.eventProcessing
+                    .critical("failed to save eventMoc after deleting stored events: \(error.localizedDescription)")
             }
         }
     }
@@ -394,12 +408,14 @@ extension EventDecoder {
 extension EventDecoder {
     /// Filters out events that shouldn't be processed
     private func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
-        let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
+        let selfConversationID = await syncMOC
+            .perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
         let selfUserID = await syncMOC.perform { ZMUser.selfUser(in: self.syncMOC).remoteIdentifier }
 
         return events.filter { event in
             // The only message we process arriving in the self conversation from other users is availability updates
-            if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID, let genericMessage = GenericMessage(from: event) {
+            if event.conversationUUID == selfConversationID, event.senderUUID != selfUserID,
+               let genericMessage = GenericMessage(from: event) {
                 let included = genericMessage.hasAvailability
                 if !included {
                     WireLogger.updateEvent.warn("dropping stored event", attributes: event.logAttributes)

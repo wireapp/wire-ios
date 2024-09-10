@@ -36,15 +36,21 @@ extension SearchResult {
         let addressBook = AddressBookSearch(addressBook: debug_searchResultAddressBookOverride)
 
         // I don't need to find the address book contacts of users that I already found
-        let identifiersOfAlreadyFoundUsers = contacts.compactMap { $0.user?.addressBookEntry?.localIdentifier } + self.directory.compactMap { $0.user?.addressBookEntry?.localIdentifier }
-        let allMatchingAddressBookContacts = addressBook.contactsMatchingQuery(query, identifiersToExclude: identifiersOfAlreadyFoundUsers)
+        let identifiersOfAlreadyFoundUsers = contacts.compactMap { $0.user?.addressBookEntry?.localIdentifier } + self
+            .directory.compactMap { $0.user?.addressBookEntry?.localIdentifier }
+        let allMatchingAddressBookContacts = addressBook.contactsMatchingQuery(
+            query,
+            identifiersToExclude: identifiersOfAlreadyFoundUsers
+        )
 
         // There might also be contacts for which the local address book name match and which are also Wire users, but on Wire their name doesn't match,
         // so the Wire search did not return them. If I figure out which Wire users they match, I want to include those users into
         // the result as Wire user results, not an non-Wire address book results
 
-        let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(contacts: allMatchingAddressBookContacts,
-                                                                                                        managedObjectContext: contextProvider.viewContext)
+        let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(
+            contacts: allMatchingAddressBookContacts,
+            managedObjectContext: contextProvider.viewContext
+        )
         let searchUsersFromAddressBook = addressBookContactsWithoutUser.compactMap {
             ZMSearchUser(
                 contextProvider: contextProvider,
@@ -85,7 +91,13 @@ extension SearchResult {
     }
 
     /// Returns users that are linked to the given address book contacts
-    private func contactsThatAreAlsoUsers(contacts: [ZMAddressBookContact], managedObjectContext: NSManagedObjectContext) -> (users: [ZMUser], nonMatchedContacts: [ZMAddressBookContact]) {
+    private func contactsThatAreAlsoUsers(
+        contacts: [ZMAddressBookContact],
+        managedObjectContext: NSManagedObjectContext
+    )
+        -> (users: [ZMUser], nonMatchedContacts: [
+            ZMAddressBookContact
+        ]) {
         guard !contacts.isEmpty else {
             return (users: [], nonMatchedContacts: [])
         }

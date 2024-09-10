@@ -112,12 +112,13 @@ extension IntegrationTest {
             let localUser = ZMUser.fetchOrCreate(with: remoteUserIdentifier, domain: nil, in: context)
 
             // create client
-            let localClient = localUser.clients.first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { () -> UserClient in
-                let newClient = UserClient.insertNewObject(in: context)
-                newClient.user = localUser
-                newClient.remoteIdentifier = remoteClientIdentifier
-                return newClient
-            }()
+            let localClient = localUser.clients
+                .first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { () -> UserClient in
+                    let newClient = UserClient.insertNewObject(in: context)
+                    newClient.user = localUser
+                    newClient.remoteIdentifier = remoteClientIdentifier
+                    return newClient
+                }()
             context.saveOrRollback()
 
             var lastPrekey: String!
@@ -158,7 +159,10 @@ extension IntegrationTest {
                 }
             } else {
                 do {
-                    plainText = try session.createClientSessionAndReturnPlaintext(for: selfClient.sessionIdentifier!, prekeyMessage: cypherText)
+                    plainText = try session.createClientSessionAndReturnPlaintext(
+                        for: selfClient.sessionIdentifier!,
+                        prekeyMessage: cypherText
+                    )
                 } catch {
                     XCTFail("Decryption error: \(error)")
                 }
@@ -176,7 +180,8 @@ extension IntegrationTest {
 
     /// Returns the folder where the encryption contexts for other test clients are stored
     var otherClientsEncryptionContextsURL: URL {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("OtherClients")
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("OtherClients")
     }
 
     /// Returns the encryption context to use for a given client. There are extra cryptobox sessions

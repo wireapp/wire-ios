@@ -98,7 +98,13 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     }
 
     func testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersWithGuests() {
-        let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .many, allTeamUsers: true, numberOfGuests: 5)
+        let message = cell(
+            for: .newConversation,
+            text: "Italy Trip",
+            fillUsers: .many,
+            allTeamUsers: true,
+            numberOfGuests: 5
+        )
         verify(message: message)
     }
 
@@ -108,7 +114,13 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     }
 
     func testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersFromSmallTeamWithManyGuests() {
-        let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .some, allTeamUsers: true, numberOfGuests: 10)
+        let message = cell(
+            for: .newConversation,
+            text: "Italy Trip",
+            fillUsers: .some,
+            allTeamUsers: true,
+            numberOfGuests: 10
+        )
         verify(message: message)
     }
 
@@ -170,13 +182,15 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 
     // MARK: - Helper
 
-    private func cell(for type: ZMSystemMessageType,
-                      text: String? = nil,
-                      fromSelf: Bool = false,
-                      fillUsers: Users = .one,
-                      allowGuests: Bool = false,
-                      allTeamUsers: Bool = false,
-                      numberOfGuests: Int16 = 0) -> ConversationMessage {
+    private func cell(
+        for type: ZMSystemMessageType,
+        text: String? = nil,
+        fromSelf: Bool = false,
+        fillUsers: Users = .one,
+        allowGuests: Bool = false,
+        allTeamUsers: Bool = false,
+        numberOfGuests: Int16 = 0
+    ) -> ConversationMessage {
         let message = MockMessageFactory.systemMessage(with: type)!
         message.senderUser = fromSelf ? mockSelfUser : mockOtherUser
 

@@ -44,9 +44,11 @@ final class TeamAccountView: BaseAccountView {
         selectionView.pathGenerator = { size in
             let radius = 6
             let radii = CGSize(width: radius, height: radius)
-            let path = UIBezierPath(roundedRect: CGRect(origin: .zero, size: size),
-                                    byRoundingCorners: UIRectCorner.allCorners,
-                                    cornerRadii: radii)
+            let path = UIBezierPath(
+                roundedRect: CGRect(origin: .zero, size: size),
+                byRoundingCorners: UIRectCorner.allCorners,
+                cornerRadii: radii
+            )
             return path
         }
 
@@ -84,7 +86,8 @@ final class TeamAccountView: BaseAccountView {
     override func update() {
         super.update()
 
-        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam.accessibilityValue(account.teamName ?? "") + " " + accessibilityState
+        accessibilityValue = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(account.teamName ?? "") + " " + accessibilityState
         accessibilityIdentifier = "\(account.teamName ?? "") team"
     }
 
