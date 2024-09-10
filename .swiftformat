@@ -14,7 +14,8 @@
     braces, \
     conditionalAssignment, \
     consistentSwitchCaseSpacing, \
-    duplicateImports
+    duplicateImports, \
+    elseOnSameLine
 
 # Options
 
@@ -22,3 +23,5 @@
 --typeblanklines remove # blankLinesAtStartOfScope
 --allman false # braces
 --condassignment after-property # conditionalAssignment
+--elseposition same-line # elseOnSameLine
+--guardelse auto # elseOnSameLine
