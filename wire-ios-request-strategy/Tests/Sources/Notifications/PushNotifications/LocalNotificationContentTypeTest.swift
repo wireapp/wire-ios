@@ -167,12 +167,10 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
     }
 
     private func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
-        let fileURL: URL
-
-        if let fileName = filename {
-            fileURL = testURLWithFilename(fileName)
+        let fileURL: URL = if let fileName = filename {
+            testURLWithFilename(fileName)
         } else {
-            fileURL = testURLWithFilename("file.dat")
+            testURLWithFilename("file.dat")
         }
 
         _ = createTestFile(at: fileURL)

@@ -24,15 +24,13 @@ import WireUtilities
     case unknown, encryptionFailed, decryptionFailed
 
     internal var userInfo: [String: AnyObject] {
-        var info: String
-
-        switch self {
+        var info: String = switch self {
         case .unknown:
-            info = "Unknown EncryptionSessionError"
+            "Unknown EncryptionSessionError"
         case .encryptionFailed:
-            info = "Encryption Failed"
+            "Encryption Failed"
         case .decryptionFailed:
-            info = "Decryption Failed"
+            "Decryption Failed"
         }
 
         return [kCFErrorLocalizedDescriptionKey as String: info as AnyObject]

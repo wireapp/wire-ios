@@ -80,12 +80,11 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     }
 
     fileprivate func whitelistUserImageSync(for size: ProfileImageSize) -> ZMDownstreamObjectSyncWithWhitelist {
-        let predicate: NSPredicate
-        switch size {
+        let predicate: NSPredicate = switch size {
         case .preview:
-            predicate = ZMUser.previewImageDownloadFilter
+            ZMUser.previewImageDownloadFilter
         case .complete:
-            predicate = ZMUser.completeImageDownloadFilter
+            ZMUser.completeImageDownloadFilter
         }
 
         return ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
@@ -161,12 +160,11 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
         guard let user = object as? ZMUser else { return nil }
         guard let size = size(for: whitelistSync) else { return nil }
 
-        let remoteId: String?
-        switch size {
+        let remoteId: String? = switch size {
         case .preview:
-            remoteId = user.previewProfileAssetIdentifier
+            user.previewProfileAssetIdentifier
         case .complete:
-            remoteId = user.completeProfileAssetIdentifier
+            user.completeProfileAssetIdentifier
         }
         guard let assetId = remoteId else { return nil }
 

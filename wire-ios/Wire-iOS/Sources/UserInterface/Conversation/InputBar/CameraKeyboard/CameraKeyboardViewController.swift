@@ -289,13 +289,12 @@ class CameraKeyboardViewController: UIViewController {
         let completeBlock = { (data: Data?, uti: String?) in
             guard let data else { return }
 
-            let returnData: Data
-            if (uti == "public.heif") ||
+            let returnData: Data = if (uti == "public.heif") ||
                 (uti == "public.heic"),
                let convertedJPEGData = data.convertHEIFToJPG() {
-                returnData = convertedJPEGData
+                convertedJPEGData
             } else {
-                returnData = data
+                data
             }
 
             DispatchQueue.main.async(execute: {

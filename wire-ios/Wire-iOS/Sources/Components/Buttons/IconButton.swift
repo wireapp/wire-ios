@@ -215,12 +215,11 @@ class IconButton: ButtonWithLargerHitArea {
 
         iconDefinitionsByState[state.rawValue] = newIcon
 
-        let color: UIColor
-        if renderingMode == .alwaysOriginal,
+        let color: UIColor = if renderingMode == .alwaysOriginal,
            let iconColor = iconColor(for: .normal) {
-            color = iconColor
+            iconColor
         } else {
-            color = .black
+            .black
         }
 
         let image = UIImage.imageForIcon(iconType, size: iconSize, color: color)

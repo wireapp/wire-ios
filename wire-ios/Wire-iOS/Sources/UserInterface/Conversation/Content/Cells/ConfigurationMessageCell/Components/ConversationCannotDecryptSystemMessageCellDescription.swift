@@ -45,14 +45,13 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
     let accessibilityLabel: String?
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
-        let icon: UIImage
-        if data.systemMessageType == .decryptionFailedResolved {
-            icon = StyleKitIcon.checkmark.makeImage(
+        let icon: UIImage = if data.systemMessageType == .decryptionFailedResolved {
+            StyleKitIcon.checkmark.makeImage(
                 size: 16,
                 color: IconColors.foregroundCheckMarkInSystemMessage
             )
         } else {
-            icon = StyleKitIcon.exclamationMark.makeImage(
+            StyleKitIcon.exclamationMark.makeImage(
                 size: 16,
                 color: IconColors.foregroundExclamationMarkInSystemMessage
             )

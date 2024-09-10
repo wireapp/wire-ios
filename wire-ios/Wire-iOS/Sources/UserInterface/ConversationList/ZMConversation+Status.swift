@@ -343,13 +343,12 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
             return false
         })
 
-        let text: String
-        if let textItem,
+        let text: String = if let textItem,
            case let .text(data) = textItem,
            let messageText = data.messageText {
-            text = messageText
+            messageText
         } else {
-            text = ""
+            ""
         }
 
         return text && Swift.type(of: self).regularStyle

@@ -316,11 +316,10 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     // MARK: - MPNowPlayingInfoCenter
 
     func populateNowPlayingState() {
-        let playbackDuration: NSNumber
-        if let duration: CMTime = avPlayer?.currentItem?.asset.duration {
-            playbackDuration = NSNumber(value: CMTimeGetSeconds(duration))
+        let playbackDuration: NSNumber = if let duration: CMTime = avPlayer?.currentItem?.asset.duration {
+            NSNumber(value: CMTimeGetSeconds(duration))
         } else {
-            playbackDuration = 0
+            0
         }
 
         let nowPlayingInfo: [String: Any] = [

@@ -639,23 +639,21 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
     }
 
     private func kind(of conversationListType: ConversationListType) -> Section.Kind? {
-        let kind: Section.Kind?
-
-        switch conversationListType {
+        let kind: Section.Kind? = switch conversationListType {
         case .unarchived:
-            kind = .conversations
+            .conversations
         case .contacts:
-            kind = .contacts
+            .contacts
         case .pending:
-            kind = .contactRequests
+            .contactRequests
         case .groups:
-            kind = .groups
+            .groups
         case .favorites:
-            kind = .favorites
+            .favorites
         case .folder(let label):
-            kind = .folder(label: label)
+            .folder(label: label)
         case .archived:
-            kind = nil
+            nil
         }
 
         return kind

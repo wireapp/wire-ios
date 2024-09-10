@@ -93,13 +93,11 @@ class BaseAccountView: UIView {
 
         let containerInset: CGFloat = 6
 
-        let iconWidth: CGFloat
-
-        switch displayContext {
+        let iconWidth: CGFloat = switch displayContext {
         case .conversationListHeader:
-            iconWidth = CGFloat.ConversationListHeader.avatarSize
+            CGFloat.ConversationListHeader.avatarSize
         case .accountSelector:
-            iconWidth = CGFloat.AccountView.iconWidth
+            CGFloat.AccountView.iconWidth
         }
 
         [self, dotView, selectionView, imageViewContainer].forEach {

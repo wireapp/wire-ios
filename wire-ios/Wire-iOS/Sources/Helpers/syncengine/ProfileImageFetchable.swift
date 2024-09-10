@@ -59,11 +59,10 @@ extension ProfileImageFetchable where Self: UserType {
                            completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void) {
         let screenScale = UIScreen.main.scale
         let previewSizeLimit: CGFloat = 280
-        let size: ProfileImageSize
-        if let sizeLimit {
-            size = CGFloat(sizeLimit) * screenScale < previewSizeLimit ? .preview : .complete
+        let size: ProfileImageSize = if let sizeLimit {
+            CGFloat(sizeLimit) * screenScale < previewSizeLimit ? .preview : .complete
         } else {
-            size = .complete
+            .complete
         }
 
         guard let cacheKey = cacheKey(for: size, sizeLimit: sizeLimit, desaturate: desaturate) as NSString? else {
@@ -88,11 +87,10 @@ extension ProfileImageFetchable where Self: UserType {
                 }
             }
 
-            var image: UIImage?
-            if let sizeLimit {
-                image = UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * screenScale)
+            var image: UIImage? = if let sizeLimit {
+                UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * screenScale)
             } else {
-                image = UIImage(data: imageData)?.decoded
+                UIImage(data: imageData)?.decoded
             }
 
             if desaturate {

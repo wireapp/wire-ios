@@ -123,11 +123,10 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         attributedSenderNames = attributedSenderNames.setAttributes(attributes.linkAttributes, toSubstring: userClientString)
         let attributedText = attributedSenderNames
 
-        var linkTarget: View.LinkTarget
-        if let user = users.first, users.count == 1 {
-            linkTarget = .user(user)
+        var linkTarget: View.LinkTarget = if let user = users.first, users.count == 1 {
+            .user(user)
         } else {
-            linkTarget = .conversation(conversation)
+            .conversation(conversation)
         }
 
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: linkTarget)

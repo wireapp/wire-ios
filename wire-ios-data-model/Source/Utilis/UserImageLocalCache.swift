@@ -148,12 +148,11 @@ extension NSManagedObjectContext {
 
     open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
         guard let cacheKey = user.imageCacheKey(for: size) else { return nil }
-        let data: Data?
-        switch size {
+        let data: Data? = switch size {
         case .preview:
-            data = smallUserImageCache.object(forKey: cacheKey) as? Data
+            smallUserImageCache.object(forKey: cacheKey) as? Data
         case .complete:
-            data = largeUserImageCache.object(forKey: cacheKey) as? Data
+            largeUserImageCache.object(forKey: cacheKey) as? Data
         }
         if let data {
             log.info("Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")

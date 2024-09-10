@@ -86,11 +86,10 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
         for labelUpdate in response.labels {
             var created = false
 
-            let label: Label?
-            if labelUpdate.type == Label.Kind.favorite.rawValue {
-                label = Label.fetchFavoriteLabel(in: managedObjectContext)
+            let label: Label? = if labelUpdate.type == Label.Kind.favorite.rawValue {
+                Label.fetchFavoriteLabel(in: managedObjectContext)
             } else {
-                label = Label.fetchOrCreate(remoteIdentifier: labelUpdate.id, create: true, in: managedObjectContext, created: &created)
+                Label.fetchOrCreate(remoteIdentifier: labelUpdate.id, create: true, in: managedObjectContext, created: &created)
             }
 
             label?.kind = Label.Kind(rawValue: labelUpdate.type) ?? .folder

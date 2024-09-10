@@ -281,12 +281,11 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateGroupRoleIndicator() {
-        let groupRoleIndicatorHidden: Bool
-        switch conversation?.conversationType {
+        let groupRoleIndicatorHidden: Bool = switch conversation?.conversationType {
         case .group?:
-            groupRoleIndicatorHidden = !(conversation.map(user.isGroupAdmin) ?? false)
+            !(conversation.map(user.isGroupAdmin) ?? false)
         default:
-            groupRoleIndicatorHidden = true
+            true
         }
         groupRoleIndicator.isHidden = groupRoleIndicatorHidden
     }

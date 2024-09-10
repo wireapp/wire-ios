@@ -119,11 +119,10 @@ extension UserType {
                 }
             }
 
-            var image: UIImage?
-            if let sizeLimit {
-                image = UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
+            var image: UIImage? = if let sizeLimit {
+                UIImage(from: imageData, withMaxSize: CGFloat(sizeLimit) * UIScreen.main.scale)
             } else {
-                image = UIImage(data: imageData)?.decoded
+                UIImage(data: imageData)?.decoded
             }
 
             if isDesaturated, image != nil {

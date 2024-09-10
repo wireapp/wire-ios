@@ -28,11 +28,10 @@ extension ZMConversationMessage {
             }
         } else if isImage,
                   let imageData = imageMessageData?.imageData {
-            let mediaAsset: MediaAsset?
-            if imageMessageData?.isAnimatedGIF == true {
-                mediaAsset = FLAnimatedImage(animatedGIFData: imageData)
+            let mediaAsset: MediaAsset? = if imageMessageData?.isAnimatedGIF == true {
+                FLAnimatedImage(animatedGIFData: imageData)
             } else {
-                mediaAsset = UIImage(data: imageData)
+                UIImage(data: imageData)
             }
 
             UIPasteboard.general.setMediaAsset(mediaAsset)

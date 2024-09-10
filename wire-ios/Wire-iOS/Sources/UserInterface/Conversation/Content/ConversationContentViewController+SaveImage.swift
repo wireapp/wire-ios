@@ -26,12 +26,10 @@ extension ConversationContentViewController {
         let savableImage = SavableImage(data: imageData, isGIF: imageMessageData.isAnimatedGIF)
 
         if let view {
-            let sourceView: UIView
-
-            if let selectableView = view as? SelectableView {
-                sourceView = selectableView.selectionView
+            let sourceView: UIView = if let selectableView = view as? SelectableView {
+                selectableView.selectionView
             } else {
-                sourceView = view
+                view
             }
 
             let snapshot = sourceView.snapshotView(afterScreenUpdates: true)

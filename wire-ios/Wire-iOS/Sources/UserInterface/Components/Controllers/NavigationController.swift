@@ -93,11 +93,10 @@ final class NavigationController: UINavigationController {
     }
 
     private func updateGesture(for viewController: UIViewController) {
-        let translucentBackground: Bool
-        if let alpha = viewController.view.backgroundColor?.alpha, alpha < 1.0 {
-            translucentBackground = true
+        let translucentBackground: Bool = if let alpha = viewController.view.backgroundColor?.alpha, alpha < 1.0 {
+            true
         } else {
-            translucentBackground = false
+            false
         }
 
         useDefaultPopGesture = !translucentBackground

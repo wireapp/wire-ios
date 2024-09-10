@@ -38,11 +38,10 @@ public extension GenericMessage {
     init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfterTimeInterval timeout: TimeInterval? = nil) {
         self = GenericMessage.with {
             $0.messageID = nonce.transportString()
-            let messageContent: MessageCapable
-            if let timeout, timeout > 0 {
-                messageContent = Ephemeral(content: content, expiresAfter: timeout)
+            let messageContent: MessageCapable = if let timeout, timeout > 0 {
+                Ephemeral(content: content, expiresAfter: timeout)
             } else {
-                messageContent = content
+                content
             }
             messageContent.setContent(on: &$0)
         }

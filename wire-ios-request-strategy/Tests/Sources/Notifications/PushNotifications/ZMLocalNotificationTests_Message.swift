@@ -601,14 +601,13 @@ extension ZMLocalNotificationTests_Message {
     // MARK: Helpers
 
     func assetNote(_ fileType: FileType, conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> ZMLocalNotification? {
-        var asset: WireProtos.Asset
-        switch fileType {
+        var asset: WireProtos.Asset = switch fileType {
         case .video:
-            asset = WireProtos.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
+            WireProtos.Asset(ZMVideoMetadata(fileURL: fileType.testURL))
         case .audio:
-            asset = WireProtos.Asset(ZMAudioMetadata(fileURL: fileType.testURL))
+            WireProtos.Asset(ZMAudioMetadata(fileURL: fileType.testURL))
         default:
-            asset = WireProtos.Asset(ZMFileMetadata(fileURL: fileType.testURL))
+            WireProtos.Asset(ZMFileMetadata(fileURL: fileType.testURL))
         }
         let expiresAfter: TimeInterval = isEphemeral ? 10 : 0
         let assetMessage = GenericMessage(content: asset, nonce: UUID.create(), expiresAfterTimeInterval: expiresAfter)

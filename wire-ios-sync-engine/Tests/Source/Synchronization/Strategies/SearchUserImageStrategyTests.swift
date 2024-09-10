@@ -273,14 +273,13 @@ final class SearchUserImageStrategyTests: MessagingTest {
         XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
-        let expectedPath: String
-        switch apiVersion {
+        let expectedPath: String = switch apiVersion {
         case .v0:
-            expectedPath = "/assets/v3/\(assetID)"
+            "/assets/v3/\(assetID)"
         case .v1:
-            expectedPath = "/v1/assets/v4/\(domain)/\(assetID)"
+            "/v1/assets/v4/\(domain)/\(assetID)"
         case .v2, .v3, .v4, .v5, .v6:
-            expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
+            "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
         }
 
         XCTAssertEqual(request.path, expectedPath)

@@ -145,39 +145,38 @@ enum MessageAction: CaseIterable, Equatable {
     }
 
     private func imageSystemName() -> String? {
-        let imageName: String?
-        switch self {
+        let imageName: String? = switch self {
         case .copy:
-            imageName = "doc.on.doc"
+            "doc.on.doc"
         case .reply:
-            imageName = "arrow.uturn.left"
+            "arrow.uturn.left"
         case .openDetails:
-            imageName = "info.circle"
+            "info.circle"
         case .edit:
-            imageName = "pencil"
+            "pencil"
         case .delete:
-            imageName = "trash"
+            "trash"
         case .save:
-            imageName = "arrow.down.to.line"
+            "arrow.down.to.line"
         case .cancel:
-            imageName = "xmark"
+            "xmark"
         case .download:
-            imageName = "chevron.down"
+            "chevron.down"
         case .resend:
-            imageName = "arrow.clockwise"
+            "arrow.clockwise"
         case .showInConversation:
-            imageName = "eye.fill"
+            "eye.fill"
         case .sketchDraw:
-            imageName = "scribble"
+            "scribble"
         case .sketchEmoji:
-            imageName = "smiley.fill"
+            "smiley.fill"
         case .present,
                 .openQuote,
                 .digitallySign,
                 .resetSession,
                 .react,
                 .visitLink:
-            imageName = nil
+            nil
         }
 
         return imageName

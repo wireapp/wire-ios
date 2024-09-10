@@ -201,11 +201,10 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
             for (expectedBody, arguments) in cases {
                 // when
-                var note: ZMLocalNotification?
-                if arguments.count == 2 {
-                    note = self.noteForConnectionRequestEvent(to: arguments[0] as? ZMUser, status: arguments[1] as! String)
+                var note: ZMLocalNotification? = if arguments.count == 2 {
+                    self.noteForConnectionRequestEvent(to: arguments[0] as? ZMUser, status: arguments[1] as! String)
                 } else {
-                    note = self.noteForConnectionRequestEvent(to: nil, status: arguments[0] as! String)
+                    self.noteForConnectionRequestEvent(to: nil, status: arguments[0] as! String)
                 }
 
                 // then

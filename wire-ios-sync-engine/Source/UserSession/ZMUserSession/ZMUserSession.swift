@@ -740,16 +740,14 @@ extension ZMUserSession: ZMNetworkStateDelegate {
     }
 
     func updateNetworkState() {
-        let state: NetworkState
-
-        if isNetworkOnline {
+        let state: NetworkState = if isNetworkOnline {
             if isPerformingSync {
-                state = .onlineSynchronizing
+                .onlineSynchronizing
             } else {
-                state = .online
+                .online
             }
         } else {
-            state = .offline
+            .offline
         }
 
         networkState = state

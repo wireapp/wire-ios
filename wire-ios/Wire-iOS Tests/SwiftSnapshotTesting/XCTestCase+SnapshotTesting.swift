@@ -61,11 +61,10 @@ extension XCTestCase {
                                        file: StaticString = #file,
                                        testName: String = #function,
                                        line: UInt = #line) {
-        let nameWithProperty: String
-        if let name {
-            nameWithProperty = "\(name)-\(width)"
+        let nameWithProperty: String = if let name {
+            "\(name)-\(width)"
         } else {
-            nameWithProperty = "\(width)"
+            "\(width)"
         }
 
         verify(

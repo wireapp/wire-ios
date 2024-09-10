@@ -43,12 +43,11 @@ final class RequestPasswordController {
         self.callback = callback
         self.inputValidation = inputValidation
 
-        let okTitle: String
-        switch context {
+        let okTitle: String = switch context {
         case .wiping:
-            okTitle = L10n.Localizable.WipeDatabase.Alert.confirm
+            L10n.Localizable.WipeDatabase.Alert.confirm
         default:
-            okTitle = L10n.Localizable.General.ok
+            L10n.Localizable.General.ok
         }
 
         let cancelTitle: String = L10n.Localizable.General.cancel

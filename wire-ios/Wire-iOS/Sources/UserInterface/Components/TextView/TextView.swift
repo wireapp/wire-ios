@@ -42,11 +42,10 @@ class TextView: UITextView {
 
     var attributedPlaceholder: NSAttributedString? {
         didSet {
-            let mutableCopy: NSMutableAttributedString
-            if let attributedPlaceholder {
-                mutableCopy = NSMutableAttributedString(attributedString: attributedPlaceholder)
+            let mutableCopy: NSMutableAttributedString = if let attributedPlaceholder {
+                NSMutableAttributedString(attributedString: attributedPlaceholder)
             } else {
-                mutableCopy = NSMutableAttributedString()
+                NSMutableAttributedString()
             }
             mutableCopy.addAttribute(.foregroundColor, value: placeholderTextColor, range: NSRange(location: 0, length: mutableCopy.length))
             placeholderLabel.attributedText = mutableCopy

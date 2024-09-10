@@ -65,15 +65,14 @@ extension BackendEnvironment {
                 countlyURL: endpoints.countlyURL
             )
 
-            let proxy: ProxySettings?
-            if let proxySettings {
-                proxy = ProxySettings(
+            let proxy: ProxySettings? = if let proxySettings {
+                ProxySettings(
                     host: proxySettings.host,
                     port: proxySettings.port,
                     needsAuthentication: proxySettings.needsAuthentication
                 )
             } else {
-                proxy = nil
+                nil
             }
 
             let data = SerializedData(title: title, endpoints: backendEndpoints, apiProxy: proxy)

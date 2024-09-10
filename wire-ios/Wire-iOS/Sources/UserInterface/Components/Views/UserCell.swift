@@ -378,11 +378,10 @@ extension UserCell {
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
         self.userIsServiceUser = user.isServiceUser
 
-        let subtitle: NSAttributedString?
-        if overrideSubtitle == nil {
-            subtitle = self.subtitle(for: user)
+        let subtitle: NSAttributedString? = if overrideSubtitle == nil {
+            self.subtitle(for: user)
         } else {
-            subtitle = overrideSubtitle
+            overrideSubtitle
         }
 
         avatarImageView.user = user

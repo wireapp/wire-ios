@@ -92,11 +92,10 @@ extension ZMUserSession {
             return
         }
 
-        let payload: [String: Any]
-        if let password = credentials.password, !password.isEmpty {
-            payload = ["password": password]
+        let payload: [String: Any] = if let password = credentials.password, !password.isEmpty {
+            ["password": password]
         } else {
-            payload = [:]
+            [:]
         }
 
         let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
@@ -116,23 +115,22 @@ extension ZMUserSession {
     }
 
     func errorFromFailedDeleteResponse(_ response: ZMTransportResponse!) -> NSError {
-        var errorCode: UserSessionErrorCode
-        switch response.result {
+        var errorCode: UserSessionErrorCode = switch response.result {
         case .permanentError:
                 switch response.payload?.asDictionary()?["label"] as? String {
                 case "client-not-found":
-                    errorCode = .clientDeletedRemotely
+                    .clientDeletedRemotely
                 case "invalid-credentials",
                      "missing-auth",
                      "bad-request": // in case the password not matching password format requirement
-                    errorCode = .invalidCredentials
+                    .invalidCredentials
                 default:
-                    errorCode = .unknownError
+                    .unknownError
                 }
         case .temporaryError, .tryAgainLater, .expired:
-            errorCode = .networkError
+            .networkError
         default:
-            errorCode = .unknownError
+            .unknownError
         }
 
         var userInfo: [String: Any]?

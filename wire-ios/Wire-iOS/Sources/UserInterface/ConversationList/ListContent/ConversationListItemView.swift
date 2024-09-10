@@ -187,11 +187,10 @@ final class ConversationListItemView: UIView {
             return
         }
 
-            var fraction: CGFloat
-            if bounds.size.width != 0 {
-                fraction = 1 - otherItem.visualDrawerOffset / bounds.size.width
+            var fraction: CGFloat = if bounds.size.width != 0 {
+                1 - otherItem.visualDrawerOffset / bounds.size.width
             } else {
-                fraction = 1
+                1
             }
 
             if fraction > 1.0 {
@@ -285,13 +284,12 @@ final class ConversationListItemView: UIView {
         avatarView.configure(context: .conversation(conversation: conversation))
 
         // Configure the accessory
-        let statusIcon: ConversationStatusIcon?
-        if let player = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer,
+        let statusIcon: ConversationStatusIcon? = if let player = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer,
             let message = player.sourceMessage,
             message.conversationLike === conversation {
-            statusIcon = .playingMedia
+            .playingMedia
         } else {
-            statusIcon = status.icon(for: conversation)
+            status.icon(for: conversation)
         }
         rightAccessory.icon = statusIcon
 

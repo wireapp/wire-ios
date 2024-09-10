@@ -415,12 +415,12 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             let previewImage: UIImage?
 
             // Size the image to fill the image view
-            if let imageData = previews.first?.imageData.first,
+            = if let imageData = previews.first?.imageData.first,
                let image = UIImage(data: imageData),
                let requiredSize = self.preview?.frame.size.shortestLength {
-                previewImage = image.downsized(shorterSizeLength: requiredSize)
+                image.downsized(shorterSizeLength: requiredSize)
             } else {
-                previewImage = nil
+                nil
             }
 
             DispatchQueue.main.async {
@@ -618,14 +618,12 @@ extension ShareExtensionViewController {
         let appLock = sharingSession.appLockController
 
         let description = L10n.ShareExtension.PrivacySecurity.LockApp.description
-        let passcodePreference: AppLockPasscodePreference
-
-        if sharingSession.encryptMessagesAtRest {
-            passcodePreference = .deviceOnly
+        let passcodePreference: AppLockPasscodePreference = if sharingSession.encryptMessagesAtRest {
+            .deviceOnly
         } else if appLock.requireCustomPasscode {
-            passcodePreference = .customOnly
+            .customOnly
         } else {
-            passcodePreference = .deviceThenCustom
+            .deviceThenCustom
         }
 
         appLock.evaluateAuthentication(

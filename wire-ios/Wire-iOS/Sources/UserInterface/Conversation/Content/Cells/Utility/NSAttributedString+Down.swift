@@ -23,12 +23,10 @@ extension NSAttributedString {
     @objc
     static func markdown(from text: String, style: DownStyle) -> NSMutableAttributedString {
         let down = Down(markdownString: text)
-        let result: NSMutableAttributedString
-
-        if let attrStr = try? down.toAttributedString(using: style) {
-            result = .init(attributedString: attrStr)
+        let result: NSMutableAttributedString = if let attrStr = try? down.toAttributedString(using: style) {
+            .init(attributedString: attrStr)
         } else {
-            result = NSMutableAttributedString(string: text)
+            NSMutableAttributedString(string: text)
         }
 
         if result.string.last == "\n" {

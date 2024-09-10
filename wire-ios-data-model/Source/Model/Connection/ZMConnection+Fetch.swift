@@ -61,15 +61,14 @@ extension ZMConnection {
                               domain: String?,
                               searchingLocalDomain: Bool,
                               in context: NSManagedObjectContext) -> ZMConnection? {
-        let predicate: NSPredicate
-        if searchingLocalDomain {
+        let predicate: NSPredicate = if searchingLocalDomain {
             if let domain {
-                predicate = NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
+                NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
             } else {
-                predicate = NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
+                NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)
             }
         } else {
-            predicate = NSPredicate(format: "to.remoteIdentifier_data == %@ AND to.domain == %@", userID.uuidData as NSData, domain ?? NSNull.init())
+            NSPredicate(format: "to.remoteIdentifier_data == %@ AND to.domain == %@", userID.uuidData as NSData, domain ?? NSNull.init())
         }
 
         let fetchRequest = ZMConnection.sortedFetchRequest(with: predicate)

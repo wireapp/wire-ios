@@ -83,11 +83,10 @@ final class AuthenticationInterfaceBuilder {
                 viewController = makeViewController(for: companyLoginStep)
 
             } else {
-                let prefill: AuthenticationPrefilledCredentials?
-                if let credentials, credentials.emailAddress != nil {
-                    prefill = AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
+                let prefill: AuthenticationPrefilledCredentials? = if let credentials, credentials.emailAddress != nil {
+                    AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
                 } else {
-                    prefill = nil
+                    nil
                 }
 
                 viewController = makeCredentialsViewController(for: .reauthentication(prefill))

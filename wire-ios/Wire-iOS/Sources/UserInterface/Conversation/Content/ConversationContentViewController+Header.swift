@@ -30,11 +30,10 @@ extension ConversationContentViewController {
 
         var headerView: UIView?
 
-        let otherParticipant: ZMUser?
-        if conversation.conversationType == .connection {
-            otherParticipant = conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
+        let otherParticipant: ZMUser? = if conversation.conversationType == .connection {
+            conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser
         } else {
-            otherParticipant = conversation.firstActiveParticipantOtherThanSelf
+            conversation.firstActiveParticipantOtherThanSelf
         }
 
         let connectionOrOneOnOne = conversation.conversationType == .connection || conversation.conversationType == .oneOnOne

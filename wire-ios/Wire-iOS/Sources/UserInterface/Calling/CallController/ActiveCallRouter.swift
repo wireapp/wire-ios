@@ -186,10 +186,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert: UIAlertController
-            switch reason {
+            let alert: UIAlertController = switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeOutgoingDegradedProteusCall(
+                UIAlertController.makeOutgoingDegradedProteusCall(
                     degradedUser: user?.value,
                     callEnded: true,
                     confirmationBlock: { continueDegradedCall in
@@ -197,7 +196,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                         postCallActionCompletion()
                 })
             case .invalidCertificate:
-                alert = UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
+                UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
                     completion(.ok)
                     postCallActionCompletion()
                 })
@@ -217,10 +216,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert: UIAlertController
-            switch reason {
+            let alert: UIAlertController = switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeIncomingDegradedProteusCall(
+                UIAlertController.makeIncomingDegradedProteusCall(
                     degradedUser: user?.value,
                     callEnded: false,
                     confirmationBlock: { continueDegradedCall in
@@ -228,7 +226,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                         postCallActionCompletion()
                     })
             case .invalidCertificate:
-                alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
+                UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
                 })

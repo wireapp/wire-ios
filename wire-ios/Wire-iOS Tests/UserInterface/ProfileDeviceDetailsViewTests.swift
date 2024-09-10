@@ -54,16 +54,15 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixture
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
-        var certificate: E2eIdentityCertificate
-        switch status {
+        var certificate: E2eIdentityCertificate = switch status {
         case .notActivated:
-            certificate = .mockNotActivated
+            .mockNotActivated
         case .revoked:
-            certificate = .mockRevoked
+            .mockRevoked
         case .expired:
-            certificate = .mockExpired
+            .mockExpired
         case .valid:
-            certificate = .mockValid
+            .mockValid
         }
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 

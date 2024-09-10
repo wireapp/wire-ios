@@ -117,21 +117,20 @@ extension ZMMessageTests_SystemMessages {
             .conversationRename: "conversation.rename"
         ]
 
-        var data: [String: Any]
-        if let domain {
+        var data: [String: Any] = if let domain {
             if updateEventType == .conversationMemberJoin {
-                data = ["users": usersIDs.map {
+                ["users": usersIDs.map {
                     ["qualified_id":
                         ["id": $0.transportString(), "domain": domain]
                     ]
                 } ] as [String: Any]
             } else {
-                data = ["qualified_user_ids": usersIDs.map {
+                ["qualified_user_ids": usersIDs.map {
                     ["id": $0.transportString(), "domain": domain]
                 } ] as [String: Any]
             }
         } else {
-            data = ["user_ids": usersIDs.map { $0.transportString() }] as [String: Any]
+            ["user_ids": usersIDs.map { $0.transportString() }] as [String: Any]
         }
 
         if reason != nil {

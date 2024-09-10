@@ -101,12 +101,10 @@ extension ZiphyClient {
         }
 
         listTask?.successHandler = {
-            let imageList: [Ziph]
-
-            if isPaginated {
-                imageList = try self.decodePaginatedResponse($0)
+            let imageList: [Ziph] = if isPaginated {
+                try self.decodePaginatedResponse($0)
             } else {
-                imageList = try self.decodeDataResponse($0)
+                try self.decodeDataResponse($0)
             }
 
             completionHandler(.success(imageList))

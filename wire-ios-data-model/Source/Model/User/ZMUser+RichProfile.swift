@@ -45,11 +45,10 @@ extension ZMUser {
     public var richProfile: [UserRichProfileField] {
         get {
             self.willAccessValue(forKey: ZMUserKeys.RichProfile)
-            let fields: [UserRichProfileField]
-            if let data = primitiveRichProfile {
-                fields = (try? JSONDecoder().decode([UserRichProfileField].self, from: data)) ?? []
+            let fields: [UserRichProfileField] = if let data = primitiveRichProfile {
+                (try? JSONDecoder().decode([UserRichProfileField].self, from: data)) ?? []
             } else {
-                fields = []
+                []
             }
             self.didAccessValue(forKey: ZMUserKeys.RichProfile)
             return fields

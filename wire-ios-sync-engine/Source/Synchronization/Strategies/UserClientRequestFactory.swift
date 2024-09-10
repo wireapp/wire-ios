@@ -200,17 +200,15 @@ extension UserClientRequestFactory {
 
     /// Password needs to be set
     public func deleteClientRequest(_ client: UserClient, credentials: UserEmailCredentials?, apiVersion: APIVersion) -> ZMUpstreamRequest {
-        let payload: [AnyHashable: Any]
-
-        if let credentials,
+        let payload: [AnyHashable: Any] = if let credentials,
             let email = credentials.email,
             let password = credentials.password {
-            payload = [
+            [
                 "email": email,
                 "password": password
             ]
         } else {
-            payload = [:]
+            [:]
         }
 
         let request = ZMTransportRequest(path: "/clients/\(client.remoteIdentifier!)", method: ZMTransportRequestMethod.delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)

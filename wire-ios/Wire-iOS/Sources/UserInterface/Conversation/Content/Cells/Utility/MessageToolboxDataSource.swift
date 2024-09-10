@@ -111,13 +111,11 @@ final class MessageToolboxDataSource {
         }
         // 2) Failed to send
         else if failedToSend, isSentBySelfUser {
-            var detailsString: String
-
-            switch message.failedToSendReason {
+            var detailsString: String = switch message.failedToSendReason {
             case .unknown, .none:
-                detailsString = FailedToSendMessage.generalReason
+                FailedToSendMessage.generalReason
             case .federationRemoteError:
-                detailsString = FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
+                FailedToSendMessage.federationRemoteErrorReason(message.conversationLike?.domain ?? "",
                                                                                 WireURLs.shared.unreachableBackendInfo.absoluteString)
             }
 

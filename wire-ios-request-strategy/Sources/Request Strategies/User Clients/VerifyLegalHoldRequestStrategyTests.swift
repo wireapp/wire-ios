@@ -108,12 +108,11 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             self.sut.objectsDidChange(conversationSet)
 
             // THEN
-            var expectedPath: String
-            switch apiVersion {
+            var expectedPath: String = switch apiVersion {
             case .v0:
-                expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
+                "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
             case .v1, .v2, .v3, .v4, .v5, .v6:
-                expectedPath = "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
+                "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
             }
 
             XCTAssertEqual(self.sut.nextRequest(for: apiVersion)?.path, expectedPath)
@@ -162,14 +161,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: apiVersion)
             let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [clientID]]
 
-            var transportData: ZMTransportData
-            switch apiVersion {
+            var transportData: ZMTransportData = switch apiVersion {
             case .v0:
-                transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
+                ClientUpdateResponse(missing: clientListByUserID).transportData
             case .v1, .v2, .v3:
-                transportData = Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             case .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
             // WHEN
@@ -207,14 +205,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: apiVersion)
             let clientListByUserID = [self.otherUser.remoteIdentifier.transportString(): [existingClientID]]
 
-            var transportData: ZMTransportData
-            switch apiVersion {
+            var transportData: ZMTransportData = switch apiVersion {
             case .v0:
-                transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
+                ClientUpdateResponse(missing: clientListByUserID).transportData
             case .v1, .v2, .v3:
-                transportData = Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                Payload.MessageSendingStatusV1(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             case .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
+                Payload.MessageSendingStatusV4(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
             // WHEN
@@ -250,14 +247,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
             let request = self.sut.nextRequest(for: apiVersion)
 
-            var transportData: ZMTransportData
-            switch apiVersion {
+            var transportData: ZMTransportData = switch apiVersion {
             case .v0:
-                transportData = ClientUpdateResponse(missing: ClientListByUser()).transportData
+                ClientUpdateResponse(missing: ClientListByUser()).transportData
             case .v1, .v2, .v3:
-                transportData = Payload.MessageSendingStatusV1(missing: UserListByDomain()).transportData
+                Payload.MessageSendingStatusV1(missing: UserListByDomain()).transportData
             case .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatusV4(missing: UserListByDomain()).transportData
+                Payload.MessageSendingStatusV4(missing: UserListByDomain()).transportData
             }
 
             // WHEN
@@ -292,14 +288,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: apiVersion)
             let clientListByUserID = [selfUser.remoteIdentifier.transportString(): [selfClientID]]
 
-            var transportData: ZMTransportData
-            switch apiVersion {
+            var transportData: ZMTransportData = switch apiVersion {
             case .v0:
-                transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
+                ClientUpdateResponse(missing: clientListByUserID).transportData
             case .v1, .v2, .v3:
-                transportData = Payload.MessageSendingStatusV1(missing: [selfUser.domain!: clientListByUserID]).transportData
+                Payload.MessageSendingStatusV1(missing: [selfUser.domain!: clientListByUserID]).transportData
             case .v4, .v5, .v6:
-                transportData = Payload.MessageSendingStatusV4(missing: [selfUser.domain!: clientListByUserID]).transportData
+                Payload.MessageSendingStatusV4(missing: [selfUser.domain!: clientListByUserID]).transportData
             }
 
             // WHEN

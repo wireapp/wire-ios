@@ -44,12 +44,11 @@ final class ConversationActionController {
     }
 
     func presentMenu(from sourceView: UIView, context: Context) {
-        let actions: [ZMConversation.Action]
-        switch context {
+        let actions: [ZMConversation.Action] = switch context {
         case .details:
-            actions = (conversation as? ZMConversation)?.detailActions ?? []
+            (conversation as? ZMConversation)?.detailActions ?? []
         case .list:
-            actions = (conversation as? ZMConversation)?.listActions ?? []
+            (conversation as? ZMConversation)?.listActions ?? []
         }
 
         let title = context == .list ? conversation.displayName : nil

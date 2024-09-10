@@ -66,11 +66,10 @@ final class ProfileViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) {
-        let profileViewControllerContext: ProfileViewControllerContext
-        if let context {
-            profileViewControllerContext = context
+        let profileViewControllerContext: ProfileViewControllerContext = if let context {
+            context
         } else {
-            profileViewControllerContext = conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
+            conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
         }
 
         let profileActionsFactory = ProfileActionsFactory(
@@ -363,11 +362,10 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
     private func openSelfProfile() {
         // Do not reveal list view for iPad regular mode
-        let leftViewControllerRevealed: Bool
-        if let presentingViewController {
-            leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: .current)
+        let leftViewControllerRevealed: Bool = if let presentingViewController {
+            !presentingViewController.isIPadRegular(device: .current)
         } else {
-            leftViewControllerRevealed = true
+            true
         }
 
         dismiss(animated: true) {

@@ -130,30 +130,28 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func addContent(context: ConversationMessageContext, isSenderVisible: Bool) {
         messageCellIndex = cellDescriptions.count
 
-        let contentCellDescriptions: [AnyConversationMessageCellDescription]
-
-        if message.isKnock {
-            contentCellDescriptions = addPingMessageCells()
+        let contentCellDescriptions: [AnyConversationMessageCellDescription] = if message.isKnock {
+            addPingMessageCells()
         } else if message.isComposite {
-            contentCellDescriptions = addCompositeMessageCells
+            addCompositeMessageCells
         } else if message.isText {
-            contentCellDescriptions = ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
+            ConversationTextMessageCellDescription.cells(for: message, searchQueries: context.searchQueries)
         } else if message.isImage {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(message: message, image: message.imageMessageData!))]
+            [AnyConversationMessageCellDescription(ConversationImageMessageCellDescription(message: message, image: message.imageMessageData!))]
         } else if message.isLocation {
-            contentCellDescriptions = addLocationMessageCells()
+            addLocationMessageCells()
         } else if message.isAudio {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationAudioMessageCellDescription(message: message))]
         } else if message.isVideo {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationVideoMessageCellDescription(message: message))]
         } else if message.isFile {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
+            [AnyConversationMessageCellDescription(ConversationFileMessageCellDescription(message: message))]
         } else if message.isSystem {
-            contentCellDescriptions = ConversationSystemMessageCellDescription.cells(for: message,
+            ConversationSystemMessageCellDescription.cells(for: message,
                                                                                      isCollapsed: isCollapsed,
                                                                                      buttonAction: buttonAction)
         } else {
-            contentCellDescriptions = [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
+            [AnyConversationMessageCellDescription(UnknownMessageCellDescription())]
         }
 
         if let topContentCellDescription = contentCellDescriptions.first {

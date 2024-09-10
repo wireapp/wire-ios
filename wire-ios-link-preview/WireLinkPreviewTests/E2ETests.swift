@@ -154,12 +154,10 @@ final class E2ETests: XCTestCase {
 
         // when
 
-        var resolvedURL: URL
-
-        if let version = mockData.urlVersion {
-            resolvedURL = URL(string: "http://web.archive.org/web/\(version)/\(mockData.urlString)")!
+        var resolvedURL: URL = if let version = mockData.urlVersion {
+            URL(string: "http://web.archive.org/web/\(version)/\(mockData.urlString)")!
         } else {
-            resolvedURL = URL(string: mockData.urlString)!
+            URL(string: mockData.urlString)!
         }
 
         var result: OpenGraphData?

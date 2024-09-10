@@ -117,10 +117,8 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
 
         WireLogger.assets.debug("sending request for asset", attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"])
-        var request: ZMTransportRequest?
-
-        if shouldUseBackgroundSession {
-            request = requestFactory.backgroundUpstreamRequestForAsset(
+        var request: ZMTransportRequest? = if shouldUseBackgroundSession {
+            requestFactory.backgroundUpstreamRequestForAsset(
                 message: message,
                 withData: data,
                 shareable: false,
@@ -128,7 +126,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
                 apiVersion: apiVersion
             )
         } else {
-            request = requestFactory.upstreamRequestForAsset(
+            requestFactory.upstreamRequestForAsset(
                 withData: data,
                 shareable: false,
                 retention: retention,

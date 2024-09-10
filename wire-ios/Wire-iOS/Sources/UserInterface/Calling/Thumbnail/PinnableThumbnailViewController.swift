@@ -204,13 +204,11 @@ final class PinnableThumbnailViewController: UIViewController {
             return center
         }
 
-        let frame: CGRect
-
-        if UIApplication.isLeftToRightLayout {
-            frame = CGRect(x: parentSize.width - size.width - edgeInsets.x, y: edgeInsets.y,
+        let frame: CGRect = if UIApplication.isLeftToRightLayout {
+            CGRect(x: parentSize.width - size.width - edgeInsets.x, y: edgeInsets.y,
                            width: size.width, height: size.height)
         } else {
-            frame = CGRect(x: edgeInsets.x, y: edgeInsets.y, width: size.width, height: size.height)
+            CGRect(x: edgeInsets.x, y: edgeInsets.y, width: size.width, height: size.height)
         }
 
         return CGPoint(x: frame.midX, y: frame.midY)

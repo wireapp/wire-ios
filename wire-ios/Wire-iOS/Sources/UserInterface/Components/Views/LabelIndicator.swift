@@ -73,17 +73,15 @@ final class LabelIndicator: UIView {
     }
 
     private func setupViews() {
-        var accessibilityString: String
-
-        switch context {
+        var accessibilityString: String = switch context {
         case .guest:
-            accessibilityString = "guest"
+            "guest"
         case .groupRole:
-            accessibilityString = "group_role"
+            "group_role"
         case .external:
-            accessibilityString = "team_role"
+            "team_role"
         case .federated:
-            accessibilityString = "federated"
+            "federated"
         }
 
         titleLabel.accessibilityIdentifier = "label." + accessibilityString

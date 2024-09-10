@@ -367,11 +367,10 @@ extension EventDecoderTest {
     }
 
     func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
-        var payload: ZMTransportData
-        if let user {
-            payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
+        var payload: ZMTransportData = if let user {
+            payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
         } else {
-            payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!
+            payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!
         }
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: uuid ?? UUID.create())!

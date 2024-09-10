@@ -103,12 +103,11 @@ final class SpinnerButton: LegacyButton {
 
         let states: [UIControl.State] = [.normal, .highlighted, .disabled]
         states.forEach {
-            let color: UIColor
-            switch variant {
+            let color: UIColor = switch variant {
             case .dark:
-                color = .white
+                .white
             case .light:
-                color = UIColor.AlarmButton.alarmRed
+                UIColor.AlarmButton.alarmRed
             }
 
             setTitleColor(color, for: $0)

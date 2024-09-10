@@ -40,12 +40,11 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let mention = Mention(range: NSRange(location: 0, length: 4), user: user1)
 
         let text = Text(content: "@joe example.com/article/original", mentions: [mention], linkPreviews: [article], replyingTo: nil)
-        var genericMessage: GenericMessage!
-        switch contentType {
+        var genericMessage: GenericMessage! = switch contentType {
         case .textMessage:
-            genericMessage = GenericMessage(content: text, nonce: nonce)
+            GenericMessage(content: text, nonce: nonce)
         case .editMessage:
-            genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
+            GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
         }
         do {
             try clientMessage.setUnderlyingMessage(genericMessage)

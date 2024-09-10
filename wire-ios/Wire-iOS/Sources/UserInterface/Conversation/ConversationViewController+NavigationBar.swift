@@ -127,12 +127,10 @@ extension ConversationViewController {
     }
 
     private func backButtonIcon(hasUnreadInOtherConversations: Bool) -> StyleKitIcon {
-        var arrowIcon: StyleKitIcon
-
-        if view.isRightToLeft {
-            arrowIcon = hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
+        var arrowIcon: StyleKitIcon = if view.isRightToLeft {
+            hasUnreadInOtherConversations ? .forwardArrowWithDot : .forwardArrow
         } else {
-            arrowIcon = hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
+            hasUnreadInOtherConversations ? .backArrowWithDot : .backArrow
         }
 
         let isLayoutSizeCompact = parent?.wr_splitViewController?.layoutSize == .compact

@@ -11,10 +11,12 @@
     blankLinesAtStartOfScope, \
     blankLinesBetweenChainedFunctions, \
     blankLinesBetweenScopes, \
-    braces
+    braces, \
+    conditionalAssignment
 
 # Options
 
 --lineaftermarks true # blankLinesAroundMark
 --typeblanklines remove # blankLinesAtStartOfScope
 --allman false # braces
+--condassignment after-property # conditionalAssignment

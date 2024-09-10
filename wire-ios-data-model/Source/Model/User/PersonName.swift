@@ -117,13 +117,12 @@
         schemeTagger.string = string
         let tags = schemeTagger.tags(in: NSRange(location: 0, length: schemeTagger.string!.count), scheme: NSLinguisticTagScheme.script.rawValue, options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
 
-        let nameOrder: NameOrder
-        if tags.contains("Arab") {
-            nameOrder = .arabicGivenName
+        let nameOrder: NameOrder = if tags.contains("Arab") {
+            .arabicGivenName
         } else if tags.contains(where: { ["Hani", "Jpan", "Deva", "Gurj"].contains($0) }) {
-            nameOrder = tags.contains("Latn") ? .givenNameFirst : .givenNameLast
+            tags.contains("Latn") ? .givenNameFirst : .givenNameLast
         } else {
-            nameOrder = .givenNameFirst
+            .givenNameFirst
         }
         return nameOrder
     }

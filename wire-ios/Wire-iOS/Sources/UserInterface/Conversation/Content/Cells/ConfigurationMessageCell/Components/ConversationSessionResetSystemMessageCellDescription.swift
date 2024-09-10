@@ -48,11 +48,10 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     }
 
     static func makeAttributedString(_ sender: UserType) -> NSAttributedString {
-        let string: String
-        if sender.isSelfUser {
-            string = L10n.Localizable.Content.System.SessionReset.`self`
+        let string: String = if sender.isSelfUser {
+            L10n.Localizable.Content.System.SessionReset.`self`
         } else {
-            string = L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
+            L10n.Localizable.Content.System.SessionReset.other(sender.name ?? "")
         }
 
         return NSMutableAttributedString.markdown(from: string, style: .systemMessage)

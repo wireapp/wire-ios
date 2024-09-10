@@ -68,13 +68,12 @@ public final class AssetRequestFactory: NSObject {
             return nil
         }
 
-        let path: String
-        switch apiVersion {
+        let path: String = switch apiVersion {
         case .v0, .v1:
-            path = "/assets/v3"
+            "/assets/v3"
 
         case .v2, .v3, .v4, .v5, .v6:
-            path = "/assets"
+            "/assets"
         }
 
         let request = ZMTransportRequest.uploadRequest(withFileURL: uploadURL, path: path, contentType: Constant.ContentType.multipart, apiVersion: apiVersion.rawValue)
@@ -90,13 +89,12 @@ public final class AssetRequestFactory: NSObject {
     public func upstreamRequestForAsset(withData data: Data, shareable: Bool = true, retention: Retention, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
 
-        let path: String
-        switch apiVersion {
+        let path: String = switch apiVersion {
         case .v0, .v1:
-            path = "/assets/v3"
+            "/assets/v3"
 
         case .v2, .v3, .v4, .v5, .v6:
-            path = "/assets"
+            "/assets"
         }
 
         return ZMTransportRequest(path: path, method: .post, binaryData: multipartData, type: Constant.ContentType.multipart, contentDisposition: nil, apiVersion: apiVersion.rawValue)
