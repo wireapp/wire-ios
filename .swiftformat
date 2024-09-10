@@ -10,9 +10,11 @@
     blankLinesAtEndOfScope, \
     blankLinesAtStartOfScope, \
     blankLinesBetweenChainedFunctions, \
-    blankLinesBetweenScopes
+    blankLinesBetweenScopes, \
+    braces
 
 # Options
 
 --lineaftermarks true # blankLinesAroundMark
 --typeblanklines remove # blankLinesAtStartOfScope
+--allman false # braces

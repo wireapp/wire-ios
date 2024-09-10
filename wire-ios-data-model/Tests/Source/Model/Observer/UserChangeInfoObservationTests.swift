@@ -482,7 +482,8 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
                                                         let team = Team.insertNewObject(in: self.uiMOC)
                                                         let member = Member.insertNewObject(in: self.uiMOC)
                                                         member.user = $0
-                                                        member.team = team },
+                                                        member.team = team
+                                                     },
                                                      expectedChangedField: .teams)
     }
 

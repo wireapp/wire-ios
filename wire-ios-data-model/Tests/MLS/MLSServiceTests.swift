@@ -1393,7 +1393,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                     where: { element in
                         self.uiMOC.performGroupedAndWait {
                             element.conversation.mlsGroupID?.data
-                        } == groupID }
+                        } == groupID
+                    }
                 ) else {
                     return 1
                 }

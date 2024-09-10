@@ -40,7 +40,8 @@ extension ConversationObserverTests {
 
         checkThatItNotifiesTheObserverOfAChange(conversation,
                                                 modifier: { conversation, _ in
-                                                    conversation.minus(user: ZMUser.selfUser(in: uiMOC), isFromLocal: true)},
+                                                    conversation.minus(user: ZMUser.selfUser(in: uiMOC), isFromLocal: true)
+                                                },
                                                 expectedChangedFields: ["nameChanged",
                                                                         "participantsChanged",
                                                                         "activeParticipantsChanged"],

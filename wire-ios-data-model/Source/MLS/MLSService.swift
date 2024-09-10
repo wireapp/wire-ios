@@ -1077,7 +1077,8 @@ public final class MLSService: MLSServiceInterface {
                     ciphersuite: ciphersuite,
                     credentialType: e2eiIsEnabled ? .x509 : .basic,
                     amountRequested: amountRequested
-                ) }
+                )
+            }
 
         } catch {
             logger.warn("failed to generate new key packages: \(String(describing: error))")

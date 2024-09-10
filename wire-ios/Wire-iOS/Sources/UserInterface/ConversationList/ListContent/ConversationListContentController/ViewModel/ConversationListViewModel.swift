@@ -567,7 +567,8 @@ final class ConversationListViewModel: NSObject {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .sortedKeys
             guard let jsonData = try? encoder.encode(self) else {
-                return nil }
+                return nil
+            }
 
             return String(decoding: jsonData, as: UTF8.self)
         }

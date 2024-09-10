@@ -294,7 +294,8 @@ final class SettingsPropertyFactory {
                 propertyName: propertyName,
                 getAction: { _ in
                     let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
-                    return SettingsPropertyValue(disableSendButton ?? false) },
+                    return SettingsPropertyValue(disableSendButton ?? false)
+                },
                 setAction: { _, value in
                     switch value {
                     case .number(value: let number):
@@ -330,7 +331,8 @@ final class SettingsPropertyFactory {
                 propertyName: propertyName,
                 getAction: { _ in
                     let callingConstantBitRate: Bool = Settings.shared[.callingConstantBitRate] ?? false
-                    return SettingsPropertyValue(callingConstantBitRate) },
+                    return SettingsPropertyValue(callingConstantBitRate)
+                },
                 setAction: { _, value in
                     if case .number(let enabled) = value {
                         Settings.shared[.callingConstantBitRate] = enabled.boolValue
@@ -354,7 +356,8 @@ final class SettingsPropertyFactory {
                 propertyName: propertyName,
                 getAction: { _ in
                     let disableCallKit: Bool = Settings.shared[.disableCallKit] ?? false
-                    return SettingsPropertyValue(disableCallKit) },
+                    return SettingsPropertyValue(disableCallKit)
+                },
                 setAction: { _, value in
                     if case .number(let disabled) = value {
                         Settings.shared[.disableCallKit] = disabled.boolValue
@@ -365,7 +368,8 @@ final class SettingsPropertyFactory {
                 propertyName: propertyName,
                 getAction: { _ in
                     let muteIncomingCallsWhileInACall: Bool = Settings.shared[.muteIncomingCallsWhileInACall] ?? false
-                    return SettingsPropertyValue(muteIncomingCallsWhileInACall) },
+                    return SettingsPropertyValue(muteIncomingCallsWhileInACall)
+                },
                 setAction: { _, value in
                     if case .number(let shouldMute) = value {
                         Settings.shared[.muteIncomingCallsWhileInACall] = shouldMute.boolValue
