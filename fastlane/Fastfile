@@ -41,7 +41,7 @@ platform :ios do
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
             if !File.exist?(appstoreconnect_api_key_file_path) && !encoded_key.nil?
-                puts "Setting AppStoreConnect API Key"
+                UI.message("Setting AppStoreConnect API Key")
                 File.open(appstoreconnect_api_key_file_path, 'w+') {|f| f.write(Base64.decode64(encoded_key)) }
             end
         end
@@ -51,13 +51,13 @@ platform :ios do
         begin
             delete_keychain if is_running_on_ci
         rescue
-            puts "No keychain found, skipping deletion..."
+            UI.warning("No keychain found, skipping deletion...") 
         end
     end
 
     desc "Test frameworks given folders"
     lane :test_frameworks do |options|
-        if options[:all] == "true"
+        if options[:all] == "true" || options[:all] == "1" 
             schemas = Framework.all.values.map { |f| f.scheme }
         else
             if options[:folders] == nil || options[:folders].empty?
@@ -85,7 +85,7 @@ platform :ios do
     
         selected_choice = UI.select("Select a framework for testing:", framework_options)
         if selected_choice == select_all 
-            test_frameworks(all: true)
+            test_frameworks(all: "true")
         else 
             framework = frameworks.find { |framework| framework.scheme == selected_choice }
 
@@ -299,7 +299,9 @@ platform :ios do
             path: './wire-ios/Configuration/Release.xcconfig',
             name: 'WIRE_BUNDLE_ID'
         )
-        puts "downloading provisioning profiles for bundle id: #{app_bundle_id}"
+
+        UI.message("downloading provisioning profiles for bundle id: #{app_bundle_id}")
+        
         sigh(
             adhoc: build.should_sigh_adhoc,
             readonly: true,
@@ -436,7 +438,7 @@ platform :ios do
     def create_simulator_if_needed
         # Check if the simulator already exists
         existing_simulator = `xcrun simctl list devices | grep "#{iPhoneNameForTesting}" | grep "iOS#{ios_version}" | awk -F '[()]' '{print $2}'`.chomp
-        puts existing_simulator.inspect
+
         if existing_simulator.empty?
             UI.message "create simulator #{iPhoneNameForTesting} - iOS#{ios_version}"
             existing_simulator = `xcrun simctl create "#{iPhoneNameForTesting} - iOS#{ios_version}" "#{iPhoneNameForTesting}" "iOS#{ios_version}"`
