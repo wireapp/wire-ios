@@ -4,4 +4,5 @@
     andOperator, \
     anyObjectProtocol, \
     applicationMain, \
-    assertionFailures
+    assertionFailures, \
+    blankLineAfterImports
