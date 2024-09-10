@@ -116,6 +116,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     // MARK: - View Creation
+
     private func createContentLayoutGuide() {
         view.addLayoutGuide(contentLayoutGuide)
     }
@@ -189,6 +190,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     // MARK: - View Creation
+
     private func createPreviewPanel(image: MediaAsset) {
         let imagePreviewView = FLAnimatedImageView()
 
@@ -242,6 +244,7 @@ final class ConfirmAssetViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     @objc
     private func acceptImage(_ sender: Any?) {
         context.onConfirm?(nil)

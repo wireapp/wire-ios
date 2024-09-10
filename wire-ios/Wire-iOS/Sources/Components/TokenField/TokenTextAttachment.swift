@@ -86,6 +86,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     }
 
     // MARK: - String formatting
+
     private var titleColor: UIColor? {
         if isSelected {
             return tokenField.tokenSelectedTitleColor
@@ -126,6 +127,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     }
 
     // MARK: - String shortening
+
     static let appendixString: String = "…"
 
     func shortenedText(forText text: String, withAttributes attributes: [NSAttributedString.Key: Any]?, toFitMaxWidth maxWidth: CGFloat) -> String {
@@ -175,6 +177,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
     }
 
     // MARK: - Description
+
     override var description: String {
         return String(format: "<\(type(of: self)): \(self), name \(token.title)>")
     }

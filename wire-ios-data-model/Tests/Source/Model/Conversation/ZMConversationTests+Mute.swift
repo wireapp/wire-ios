@@ -281,6 +281,7 @@ extension ZMConversationTests_Mute {
 }
 
 // MARK: - Alarming messages
+
 class ZMConversationTest_Mute_Alarming: BaseCompositeMessageTests {
 
     func testCompositeMessageShouldCreateNotification_AvailabilityBusy() {

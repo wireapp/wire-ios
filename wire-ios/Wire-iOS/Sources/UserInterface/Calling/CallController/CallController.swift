@@ -22,10 +22,12 @@ import WireSyncEngine
 final class CallController: NSObject {
 
     // MARK: - Public Implentation
+
     weak var router: ActiveCallRouterProtocol?
     var callConversationProvider: CallConversationProvider?
 
     // MARK: - Private Implentation
+
     private var observerTokens: [Any] = []
     private var minimizedCall: ZMConversation?
 
@@ -37,6 +39,7 @@ final class CallController: NSObject {
     private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
 
     // MARK: - Init
+
     init(userSession: UserSession) {
         super.init()
         addObservers(userSession: userSession)
@@ -47,6 +50,7 @@ final class CallController: NSObject {
     }
 
     // MARK: - Public Implementation
+
     func updateActiveCallPresentationState() {
         guard let priorityCallConversation else {
             dismissCall()
@@ -57,6 +61,7 @@ final class CallController: NSObject {
     }
 
     // MARK: - Private Implementation
+
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
@@ -137,6 +142,7 @@ final class CallController: NSObject {
 }
 
 // MARK: - WireCallCenterCallStateObserver
+
 extension CallController: WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState,
@@ -211,6 +217,7 @@ extension CallController: WireCallCenterCallStateObserver {
 }
 
 // MARK: - ActiveCallViewControllerDelegate
+
 extension CallController: ActiveCallViewControllerDelegate {
     func activeCallViewControllerDidDisappear(_ activeCallViewController: UIViewController,
                                               for conversation: ZMConversation?) {
@@ -220,6 +227,7 @@ extension CallController: ActiveCallViewControllerDelegate {
 }
 
 // MARK: - WireCallCenterCallErrorObserver
+
 extension CallController: WireCallCenterCallErrorObserver {
     func callCenterDidReceiveCallError(_ error: CallError, conversationId: AVSIdentifier) {
         guard

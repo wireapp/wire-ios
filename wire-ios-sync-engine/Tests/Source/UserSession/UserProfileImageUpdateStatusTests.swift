@@ -191,6 +191,7 @@ class UserProfileImageUpdateStatusTests: MessagingTest {
 }
 
 // MARK: Image state transitions
+
 extension UserProfileImageUpdateStatusTests {
     func testThatImageStateStartsWithReadyState() {
         syncMOC.performGroupedAndWait {
@@ -284,6 +285,7 @@ extension UserProfileImageUpdateStatusTests {
 }
 
 // MARK: Main state transitions
+
 extension UserProfileImageUpdateStatusTests {
     func testThatProfileUpdateStateStartsWithReadyState() {
         syncMOC.performGroupedAndWait {
@@ -336,6 +338,7 @@ extension UserProfileImageUpdateStatusTests {
 }
 
 // MARK: Preprocessing
+
 extension UserProfileImageUpdateStatusTests {
     func testThatItSetsPreprocessorDelegateWhenProcessing() {
         // WHEN
@@ -454,6 +457,7 @@ extension UserProfileImageUpdateStatusTests {
 }
 
 // MARK: - Image upload status
+
 extension UserProfileImageUpdateStatusTests {
 
     func testThatItReturnsImageToUploadOnlyWhenInUploadState() {
@@ -536,6 +540,7 @@ extension UserProfileImageUpdateStatusTests {
 }
 
 // MARK: - User profile update
+
 extension UserProfileImageUpdateStatusTests {
     func testThatItUpdatesUserProfileAndMarksPropertiesToBeUploaded() {
         syncMOC.performGroupedAndWait {

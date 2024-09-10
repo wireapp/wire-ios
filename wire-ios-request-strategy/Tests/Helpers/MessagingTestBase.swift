@@ -109,6 +109,7 @@ class MessagingTestBase: ZMTBaseTest {
 }
 
 // MARK: - Messages 
+
 extension MessagingTestBase {
 
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
@@ -312,6 +313,7 @@ extension MessagingTestBase {
 }
 
 // MARK: - Internal data provisioning
+
 extension MessagingTestBase {
 
     func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
@@ -466,6 +468,7 @@ extension MessagingTestBase {
 }
 
 // MARK: - Internal helpers
+
 extension MessagingTestBase {
 
     func setupTimers() {
@@ -489,6 +492,7 @@ extension MessagingTestBase {
 }
 
 // MARK: - Contexts
+
 extension MessagingTestBase {
 
     override var allDispatchGroups: [ZMSDispatchGroup] {
@@ -505,6 +509,7 @@ extension MessagingTestBase {
 }
 
 // MARK: - Cache cleaning
+
 extension MessagingTestBase {
 
     private var cacheFolder: URL {
@@ -524,6 +529,7 @@ extension MessagingTestBase {
 }
 
 // MARK: - Payload for message
+
 extension MessagingTestBase {
     public func payloadForMessage(in conversation: ZMConversation?,
                                   type: String,

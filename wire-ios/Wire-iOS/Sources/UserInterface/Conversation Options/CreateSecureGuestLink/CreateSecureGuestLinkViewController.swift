@@ -39,6 +39,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }()
 
     // MARK: - Initializer
+
     init(conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol, conversation: ZMConversation) {
         self.conversationSecureGuestLinkUseCase = conversationSecureGuestLinkUseCase
         self.conversation = conversation

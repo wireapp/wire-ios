@@ -403,6 +403,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
 extension AccountManager {
     // MARK: - Host App State
+
     static var sharedAccountManager: AccountManager? {
         guard let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return nil }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)

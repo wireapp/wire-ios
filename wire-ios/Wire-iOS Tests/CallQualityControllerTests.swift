@@ -101,6 +101,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - CallQualitySurvey Presentation Tests
+
     func testThatCallQualitySurveyIsPresented_WhenCallStateIsTerminating_AndReasonIsNormal() {
 
         // GIVEN
@@ -202,6 +203,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 }
 
 // MARK: - Helpers
+
 extension CallQualityControllerTests {
     private func configure(view: UIView, isTablet: Bool) {
         callQualityViewController?.dimmingView.alpha = 1
@@ -218,6 +220,7 @@ extension CallQualityControllerTests {
 }
 
 // MARK: - ActiveCallRouterMock
+
 final class MockCallQualityController: CallQualityController {
     override var canPresentCallQualitySurvey: Bool {
         return true

@@ -19,6 +19,7 @@
 @testable import WireDataModel
 
 // MARK: - Participants
+
 extension ConversationObserverTests {
 
     func testThatItRecalculatesActiveParticipantsWhenIsSelfActiveUserKeyChanges() {

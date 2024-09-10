@@ -23,9 +23,11 @@ import WireDesign
 final class ConversationCreateOptionsCell: RightIconDetailsCell {
 
     // MARK: - Properties
+
     var expanded = false
 
     // MARK: - Override Properties for Accessibility
+
     override var accessibilityLabel: String? {
         get {
             return title
@@ -58,6 +60,7 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
     }
 
     // MARK: - Overrides
+
     override func setUp() {
         super.setUp()
         title = L10n.Localizable.Conversation.Create.Options.title
@@ -69,6 +72,7 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
     }
 
     // MARK: Methods
+
     /// Sets up the icon and its color.
     private func setupIcon() {
         let color = SemanticColors.Icon.foregroundPlainDownArrow
@@ -96,6 +100,7 @@ final class ConversationCreateOptionsCell: RightIconDetailsCell {
 }
 
 // MARK: - ConversationCreateOptionsCell Extension
+
 extension ConversationCreateOptionsCell: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {
         let guests = values.allowGuests.localized.capitalized

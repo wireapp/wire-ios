@@ -39,6 +39,7 @@ enum OpenGraphPropertyType: String {
     case userGeneratedImage = "og:image:user_generated"
 
     // MARK: Foursquare
+
     case latitudeFSQ = "playfoursquare:location:latitude"
     case longitudeFSQ = "playfoursquare:location:longitude"
 }

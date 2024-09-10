@@ -55,6 +55,7 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
     }
 
     // MARK: - Methods
+
     public func fetchLastAlertDate() -> Date? {
         storage.date(forKey: .lastE2EIdenityUpdateDate)
     }

@@ -94,6 +94,7 @@ extension MockUserClient {
 }
 
 // MARK: - JSON de/serialization
+
 @objc extension MockUserClient {
 
     /// Creates a new client from JSON payload
@@ -203,6 +204,7 @@ extension MockUserClient {
 }
 
 // MARK: - Encryption and sessions
+
 @objc extension MockUserClient {
 
     public static var mockEncryptionSessionDirectory: URL {

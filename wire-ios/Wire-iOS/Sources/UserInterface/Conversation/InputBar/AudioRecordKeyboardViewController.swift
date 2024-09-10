@@ -75,6 +75,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var isAppLockActive: Bool {
         return userSession.isAppLockActive
     }
+
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {

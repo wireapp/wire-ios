@@ -412,6 +412,7 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     // MARK: - Audio state observer
+
     private func audioProgressChanged() {
         DispatchQueue.main.async {
             if self.isOwnTrackPlayingInAudioPlayer() {

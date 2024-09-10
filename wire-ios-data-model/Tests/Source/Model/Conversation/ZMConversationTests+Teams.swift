@@ -111,6 +111,7 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
 }
 
 // MARK: - System messages
+
 extension ConversationTests_Teams {
     func testThatItCreatesSystemMessageWithTeamMemberLeave() {
         // given

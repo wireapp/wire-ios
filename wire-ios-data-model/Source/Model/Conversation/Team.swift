@@ -105,6 +105,7 @@ extension Team {
 }
 
 // MARK: - Logo Image
+
 extension Team {
 
     @objc static let pictureAssetIdKey = #keyPath(Team.pictureAssetId)

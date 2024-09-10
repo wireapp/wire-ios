@@ -199,6 +199,7 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     // MARK: - state
+
     func testThatSectionIsExpandedAfterSelected() {
         // GIVEN
         sut.folderEnabled = true

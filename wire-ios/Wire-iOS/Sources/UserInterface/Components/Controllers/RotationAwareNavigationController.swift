@@ -57,6 +57,7 @@ final class RotationAwareNavigationController: UINavigationController {
     }
 
     // MARK: - status bar
+
     override var childForStatusBarStyle: UIViewController? {
         return topViewController
     }

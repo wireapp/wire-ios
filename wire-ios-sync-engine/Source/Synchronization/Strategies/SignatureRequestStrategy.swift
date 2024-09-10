@@ -22,15 +22,18 @@ import Foundation
 public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 
     // MARK: - Private Property
+
     private let syncContext: NSManagedObjectContext
     private var signatureResponse: SignatureResponse?
     private var retrieveResponse: SignatureRetrieveResponse?
 
     // MARK: - Public Property
+
     var requestSync: ZMSingleRequestSync?
     var retrieveSync: ZMSingleRequestSync?
 
     // MARK: - AbstractRequestStrategy
+
     @objc
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                          applicationStatus: ApplicationStatus) {
@@ -130,6 +133,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
     }
 
     // MARK: - Helpers
+
     private func makeSignatureRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             let signatureStatus = syncContext.signatureStatus,
@@ -199,6 +203,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
 }
 
 // MARK: - SignaturePayload
+
 private struct SignaturePayload: Codable, Equatable {
     let documentID: String?
     let fileName: String?
@@ -228,6 +233,7 @@ private struct SignaturePayload: Codable, Equatable {
 }
 
 // MARK: - SignatureResponse
+
 private struct SignatureResponse: Codable, Equatable {
     let responseID: String?
     let consentURL: URL?
@@ -253,6 +259,7 @@ private struct SignatureResponse: Codable, Equatable {
 }
 
 // MARK: - SignatureRetrieveResponse
+
 private struct SignatureRetrieveResponse: Codable, Equatable {
     let documentId: String?
     let cms: Data?

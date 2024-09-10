@@ -22,6 +22,7 @@ import WireDataModel
 private let zmLog = ZMSLog(tag: "Dependencies")
 
 // MARK: - Dependent objects
+
 extension ZMOTRMessage: OTREntity {
 
     public var context: NSManagedObjectContext {

@@ -32,6 +32,7 @@ class BaseFetchMLSGroupInfoActionHandlerTests<
         action = nil
         super.tearDown()
     }
+
     // MARK: - Request generation
 
     func test_itDoesntGenerateRequests_APIBelowV5() {

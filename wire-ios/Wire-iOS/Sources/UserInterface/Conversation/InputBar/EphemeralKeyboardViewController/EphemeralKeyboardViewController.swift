@@ -37,6 +37,7 @@ protocol EphemeralKeyboardViewControllerDelegate: AnyObject {
 final class EphemeralKeyboardViewController: UIViewController {
 
     // MARK: - Properties
+
     weak var delegate: EphemeralKeyboardViewControllerDelegate?
 
     fileprivate let timeouts: [MessageDestructionTimeoutValue?]
@@ -52,6 +53,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     private let picker = PickerView()
 
     // MARK: - Initialization
+
     /// Allow conversation argument is nil for testing
     ///
     /// - Parameter conversation: nil for testing only
@@ -71,6 +73,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Override methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -89,6 +92,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Setup views and constraints
+
     private func setupViews() {
         picker.delegate = self
         picker.dataSource = self
@@ -116,6 +120,7 @@ final class EphemeralKeyboardViewController: UIViewController {
     }
 
     // MARK: - Methods
+
     func dismissKeyboardIfNeeded() {
         delegate?.ephemeralKeyboardWantsToBeDismissed(self)
     }

@@ -30,6 +30,7 @@ extension ZMClientMessage: ConversationCompositeMessage {
 }
 
 // MARK: - CompositeMessageData
+
 extension ZMClientMessage: CompositeMessageData {
     public var items: [CompositeMessageItem] {
         guard let message = underlyingMessage, case .some(.composite) = message.content else {
@@ -45,6 +46,7 @@ extension ZMClientMessage: CompositeMessageData {
 }
 
 // MARK: - ButtonStates Interface
+
 extension ZMClientMessage {
     static func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation,
                                    forConversation conversation: ZMConversation,
@@ -64,6 +66,7 @@ extension ZMClientMessage {
 }
 
 // MARK: - ButtonStates Helpers
+
 extension ZMClientMessage {
     private func updateButtonStates(withConfirmation confirmation: ButtonActionConfirmation) {
         guard let moc = managedObjectContext else { return }

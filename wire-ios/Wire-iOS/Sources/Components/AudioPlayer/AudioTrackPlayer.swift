@@ -282,6 +282,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     // MARK: - MPNowPlayingInfoCenter
+
     private func clearNowPlayingState() {
         let info = MPNowPlayingInfoCenter.default()
         info.nowPlayingInfo = nil
@@ -301,6 +302,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     }
 
     // MARK: AVPlayer notifications
+
     @objc
     private func itemDidPlay(toEndTime notification: Notification?) {
         // AUDIO-557 workaround for AVSMediaManager trying to pause already paused tracks.
@@ -334,6 +336,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
 }
 
 // MARK: - ZMMessageObserver
+
 extension AudioTrackPlayer: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if changeInfo.message.hasBeenDeleted {

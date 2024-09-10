@@ -117,6 +117,7 @@ final class RandomHandleGeneratorTests: XCTestCase {
 }
 
 // MARK: - Helpers
+
 extension NSRegularExpression {
 
     /// Check if the string has a match for this regex

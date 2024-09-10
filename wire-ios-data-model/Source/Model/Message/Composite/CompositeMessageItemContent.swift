@@ -140,6 +140,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
 }
 
 // MARK: - Helpers
+
 extension CompositeMessageItemContent {
     private var hasSelectedButton: Bool {
         return parentMessage.buttonStates?.contains(where: { $0.state == .selected }) ?? false

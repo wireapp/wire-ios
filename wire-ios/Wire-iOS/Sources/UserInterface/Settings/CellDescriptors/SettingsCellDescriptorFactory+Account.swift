@@ -163,6 +163,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Elements
+
     private func textValueCellDescriptor(propertyName: SettingsPropertyName, enabled: Bool = true) -> SettingsPropertyTextValueCellDescriptor {
         var settingsProperty = settingsPropertyFactory.property(propertyName)
         settingsProperty.enabled = enabled

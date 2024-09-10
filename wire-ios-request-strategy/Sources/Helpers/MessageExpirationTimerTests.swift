@@ -184,6 +184,7 @@ extension MessageExpirationTimerTests {
 }
 
 // MARK: - Slow sync
+
 extension MessageExpirationTimerTests {
 
     func testThatItReturnsCorrectFetchRequest() {
@@ -214,6 +215,7 @@ extension MessageExpirationTimerTests {
 }
 
 // MARK: - Helpers
+
 extension MessageExpirationTimerTests {
 
     /// Creates a message with expiration time

@@ -33,6 +33,7 @@ protocol ConnectedUserProvider {
 }
 
 // MARK: - ZMConversation extension from sync engine
+
 protocol TypingStatusProvider {
     var typingUsers: [UserType] { get }
     func setIsTyping(_ isTyping: Bool)

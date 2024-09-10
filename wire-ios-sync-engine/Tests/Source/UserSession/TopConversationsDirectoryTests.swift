@@ -249,6 +249,7 @@ class TopConversationsDirectoryTests: MessagingTest {
 }
 
 // MARK: - Observation
+
 extension TopConversationsDirectoryTests {
 
     func testThatItDoesNotNotifyTheObserverIfTheTopConversationsDidNotChange() {
@@ -326,6 +327,7 @@ extension TopConversationsDirectoryTests {
 }
 
 // MARK: - Helpers
+
 extension TopConversationsDirectoryTests {
 
     @discardableResult

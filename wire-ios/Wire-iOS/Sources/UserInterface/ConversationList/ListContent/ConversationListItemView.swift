@@ -27,6 +27,7 @@ extension Notification.Name {
 
 final class ConversationListItemView: UIView {
     // MARK: UI constants
+
     static let minHeight: CGFloat = 64
 
     // Please use `updateForConversation:` to set conversation.
@@ -173,6 +174,7 @@ final class ConversationListItemView: UIView {
     }
 
     // MARK: - Observer
+
     @objc
     private func contentSizeCategoryDidChange(_ notification: Notification?) {
         configureFont()

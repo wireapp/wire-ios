@@ -69,6 +69,7 @@ extension NSManagedObjectContext {
 }
 
 // MARK: Group Calling V3
+
 // This needs to be set to display the correct conversationListIndicator
 extension ZMConversation {
 

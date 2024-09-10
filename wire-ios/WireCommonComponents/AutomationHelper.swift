@@ -177,6 +177,7 @@ protocol ArgumentsType {
 }
 
 // MARK: - default implementation
+
 extension ArgumentsType {
 
     var flagPrefix: String { return "--" }
@@ -222,6 +223,7 @@ private struct FileArguments: ArgumentsType {
 }
 
 // MARK: - Debug
+
 extension AutomationHelper {
     /// Takes all files in the folder pointed at by `debugDataToInstall` and installs them
     /// in the shared folder, erasing any other file in that folder.

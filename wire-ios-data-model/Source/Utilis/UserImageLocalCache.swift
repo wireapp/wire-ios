@@ -23,6 +23,7 @@ import WireTransport
 private let MEGABYTE = UInt(1 * 1000 * 1000)
 
 // MARK: ZMUser
+
 extension ZMUser {
     private func cacheIdentifier(suffix: String?) -> String? {
         guard let userRemoteId = remoteIdentifier?.transportString(), let suffix else { return nil }
@@ -56,6 +57,7 @@ extension NSManagedObjectContext {
 }
 
 // MARK: Cache
+
 @objcMembers open class UserImageLocalCache: NSObject {
 
     fileprivate let log = ZMSLog(tag: "UserImageCache")

@@ -76,6 +76,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
 }
 
 // MARK: - Merge tests
+
 extension DuplicatedEntityRemovalTests {
 
     func testThatItMergesTwoUserClients() {

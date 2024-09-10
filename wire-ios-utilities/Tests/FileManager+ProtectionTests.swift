@@ -35,6 +35,7 @@ class FileManagerProtectionTests: XCTestCase {
 }
 
 // MARK: - Create and protect
+
 extension FileManagerProtectionTests {
 
     func testThatItCreatesAndProtectedFolder() throws {
@@ -66,6 +67,7 @@ extension FileManagerProtectionTests {
 }
 
 // MARK: - Backup exclusion
+
 extension FileManagerProtectionTests {
 
     func testThatItCreatesAndExcludesAFolderFromBackup() throws {
@@ -104,6 +106,7 @@ extension FileManagerProtectionTests {
 }
 
 // MARK: - Protection until unlocked
+
 extension FileManagerProtectionTests {
 
     func testThatItProtectsAFolder() throws {
@@ -120,6 +123,7 @@ extension FileManagerProtectionTests {
 }
 
 // MARK: - Helpers
+
 extension FileManagerProtectionTests {
 
     func createTestFolder() throws {

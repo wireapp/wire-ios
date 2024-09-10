@@ -118,6 +118,7 @@ class TextView: UITextView {
     }
 
     // MARK: Setup
+
     private func setup() {
         placeholderTextContainerInset = textContainerInset
 
@@ -141,6 +142,7 @@ class TextView: UITextView {
     }
 
     // MARK: - Copy/Pasting
+
     override func paste(_ sender: Any?) {
         let pasteboard = UIPasteboard.general
         zmLog.debug("types available: \(pasteboard.types)")
@@ -178,6 +180,7 @@ class TextView: UITextView {
     }
 
     // MARK: Language
+
     override var textInputMode: UITextInputMode? {
         return overriddenTextInputMode
     }

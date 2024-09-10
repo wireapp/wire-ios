@@ -121,6 +121,7 @@ extension MockUser {
 }
 
 // MARK: - Broadcasting
+
 extension MockUser {
 
     @objc public var connectionsAndTeamMembers: Set<MockUser> {
@@ -152,6 +153,7 @@ extension MockUser {
 }
 
 // MARK: - Images
+
 extension MockUser {
     @objc public var mediumImageIdentifier: String? {
         return mediumImage?.identifier
@@ -185,6 +187,7 @@ extension MockUser {
 }
 
 // MARK: - Transport data
+
 extension MockUser {
 
     @objc public var selfUserTransportData: ZMTransportData {
@@ -304,6 +307,7 @@ extension MockUser {
 }
 
 // MARK: - Participant Roles
+
 extension MockUser {
 
     @objc public func role(in conversation: MockConversation) -> MockRole? {

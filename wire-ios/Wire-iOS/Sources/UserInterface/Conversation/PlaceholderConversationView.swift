@@ -23,6 +23,7 @@ import WireDesign
 final class PlaceholderConversationView: UIView {
 
     // MARK: - Properties
+
     var shieldImageView: UIImageView!
     let imageColor = SemanticColors.Label.textDefault
 
@@ -40,6 +41,7 @@ final class PlaceholderConversationView: UIView {
     }
 
     // MARK: Configure Subviews and layout
+
     private func configureSubviews() {
         backgroundColor = SemanticColors.View.backgroundDefault
         let image = WireStyleKit.imageOfShield(color: imageColor).withRenderingMode(.alwaysTemplate)

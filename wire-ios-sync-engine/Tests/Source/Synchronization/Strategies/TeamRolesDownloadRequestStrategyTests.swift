@@ -66,6 +66,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     ]
 
     // MARK: - Helper
+
     fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange(Set(objects))

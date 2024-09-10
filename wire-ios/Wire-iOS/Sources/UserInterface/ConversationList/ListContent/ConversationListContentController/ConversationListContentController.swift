@@ -258,6 +258,7 @@ final class ConversationListContentController: UICollectionViewController {
     }
 
     // MARK: context menu
+
     override func collectionView(_ collectionView: UICollectionView,
                                  willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration,
                                  animator: UIContextMenuInteractionCommitAnimating) {
@@ -442,6 +443,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 }
 
 // MARK: iOS 12- peek pop
+
 extension ConversationListContentController: UIViewControllerPreviewingDelegate {
 
     @available(iOS, introduced: 9.0, deprecated: 13.0, renamed: "UIContextMenuInteraction")

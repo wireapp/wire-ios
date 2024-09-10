@@ -173,6 +173,7 @@ final class AccountViewSnapshotTests: XCTestCase {
     }
 
     // MARK: - smaller icon for conversation list
+
     func testThatItShowsBasicAccount_Team_conversationListContext() throws {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: "Wire", imageData: nil)

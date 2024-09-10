@@ -19,6 +19,7 @@
 import WireSyncEngine
 
 // MARK: - AppLock helper
+
 extension SettingsPropertyFactory {
 
     var isAppLockActive: Bool {

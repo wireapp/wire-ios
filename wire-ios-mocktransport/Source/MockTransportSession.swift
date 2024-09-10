@@ -68,6 +68,7 @@ public extension MockTransportSession {
 }
 
 // MARK: - Conversations
+
 extension MockTransportSession {
 
     func relevant(conversations: Set<NSManagedObject>) -> [MockConversation] {
@@ -144,6 +145,7 @@ extension MockTransportSession: UnauthenticatedTransportSessionProtocol {
 }
 
 // MARK: - Email activation
+
 public extension MockTransportSession {
     @objc var emailActivationCode: String {
         return "123456"

@@ -23,6 +23,7 @@ import WireDesign
 class TitleView: UIView, DynamicTypeCapable {
 
     // MARK: - Properties
+
     var titleColor: UIColor?
     var titleFont: FontSpec?
     var tapHandler: ((UIButton) -> Void)?
@@ -32,6 +33,7 @@ class TitleView: UIView, DynamicTypeCapable {
     private let subtitleLabel = UILabel()
 
     // MARK: - Initialization
+
     init(color: UIColor? = nil, fontSpec: FontSpec? = nil) {
         super.init(frame: CGRect.zero)
         isAccessibilityElement = true
@@ -47,6 +49,7 @@ class TitleView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Private methods
+
     private func createConstraints() {
 
         stackView.fitIn(view: self)
@@ -61,6 +64,7 @@ class TitleView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Methods
+
     @objc
     func titleButtonTapped(_ sender: UIButton) {
         tapHandler?(sender)

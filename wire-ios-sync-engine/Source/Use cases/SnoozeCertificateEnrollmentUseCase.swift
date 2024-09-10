@@ -58,6 +58,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     }
 
     // MARK: - Helpers
+
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
         let isE2EIEnabled = await featureRepositoryContext.perform {
             self.featureRepository.fetchE2EI().isEnabled

@@ -20,6 +20,7 @@ import Foundation
 import WireUtilities
 
 // MARK: - Observer
+
 @objc public protocol UserProfileUpdateObserver: NSObjectProtocol {
 
     /// Invoked when the password could not be set on the backend
@@ -52,6 +53,7 @@ import WireUtilities
 }
 
 // MARK: - Notification
+
 enum UserProfileUpdateNotificationType {
     case passwordUpdateDidFail
     case emailUpdateDidFail(error: Error)

@@ -33,6 +33,7 @@ final class ConversationStatusLineTests_Muting: CoreDataSnapshotTestCase {
 }
 
 // MARK: - Only replies
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSpecialSummaryForSingleEphemeralReplyWhenOnlyReplies_oneToOne() {
         // GIVEN
@@ -154,6 +155,7 @@ extension ConversationStatusLineTests_Muting {
 }
 
 // MARK: - mentions & replies
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSummaryForMultipleMentionsAndRepliesAndMultipleMessagesWhenOnlyMentionsAndReplies() {
         // GIVEN
@@ -185,6 +187,7 @@ extension ConversationStatusLineTests_Muting {
 }
 
 // MARK: - Only mentions
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSummaryForSingleMessageWhenOnlyMentions() {
         // GIVEN
@@ -299,6 +302,7 @@ extension ConversationStatusLineTests_Muting {
 }
 
 // MARK: - No notifications
+
 extension ConversationStatusLineTests_Muting {
     func testStatusShowSummaryForSingleMentionWhenNoNotifications() {
         // GIVEN

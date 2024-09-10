@@ -23,6 +23,7 @@ import WireDesign
 import WireSyncEngine
 
 // MARK: - AppRootRouter
+
 final class AppRootRouter {
 
     // MARK: - Private Property
@@ -188,6 +189,7 @@ final class AppRootRouter {
 }
 
 // MARK: - AppStateCalculatorDelegate
+
 extension AppRootRouter: AppStateCalculatorDelegate {
     func appStateCalculator(_: AppStateCalculator,
                             didCalculate appState: AppState,

@@ -49,6 +49,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
     }
 
     // MARK: - Team Create
+
     // The team.create update event is only sent to the creator of the team
 
     func testThatItDoesNotCreateALocalTeamWhenReceivingTeamCreateUpdateEvent() {

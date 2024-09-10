@@ -258,6 +258,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         if let user = SelfUser.provider?.providedSelfUser {
             // MARK: options sections
+
             let optionsSectionController = GroupOptionsSectionController(
                 conversation: conversation,
                 user: user,

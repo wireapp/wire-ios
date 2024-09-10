@@ -21,6 +21,7 @@ import Foundation
 import XCTest
 
 // MARK: - Teams
+
 class MockTransportSessionTeamTests: MockTransportSessionTests {
 
     func checkThat(response: ZMTransportResponse?, contains teams: [MockTeam], hasMore: Bool = false, file: StaticString = #file, line: UInt = #line) {
@@ -161,6 +162,7 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
 }
 
 // MARK: - Team permissions
+
 extension MockTransportSessionTeamTests {
 
     func testThatItReturnsErrorForNonExistingTeam() {

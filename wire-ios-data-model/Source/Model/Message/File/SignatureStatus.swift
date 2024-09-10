@@ -19,6 +19,7 @@
 import Foundation
 
 // MARK: - SignatureObserver
+
 @objc(ZMSignatureObserver)
 public protocol SignatureObserver: NSObjectProtocol {
     func willReceiveSignatureURL()
@@ -28,6 +29,7 @@ public protocol SignatureObserver: NSObjectProtocol {
 }
 
 // MARK: - SignatureStatus
+
 public enum PDFSigningState {
     case initial
     case waitingForConsentURL
@@ -49,16 +51,19 @@ public final class SignatureStatus: NSObject {
     }
 
     // MARK: - Private Property
+
     private(set) var asset: WireProtos.Asset?
     private(set) var managedObjectContext: NSManagedObjectContext
 
     // MARK: - Public Property
+
     public var state: PDFSigningState = .initial
     public var documentID: String?
     public var fileName: String?
     public var encodedHash: String?
 
     // MARK: - Init
+
     public init(asset: WireProtos.Asset?,
                 data: Data?,
                 managedObjectContext: NSManagedObjectContext) {
@@ -74,6 +79,7 @@ public final class SignatureStatus: NSObject {
     }
 
     // MARK: - Public Method
+
     public func signDocument() {
         guard encodedHash != nil else {
             return
@@ -131,6 +137,7 @@ public final class SignatureStatus: NSObject {
     }
 
     // MARK: - Private Method
+
     private func writeCMSSignatureFile(for data: Data) -> CMSFileMetadataInfo? {
         guard
             let fileName = fileName?.replacingOccurrences(of: ".pdf", with: ""),
@@ -154,6 +161,7 @@ public final class SignatureStatus: NSObject {
 }
 
 // MARK: - Observable
+
 public extension SignatureStatus {
     static func addObserver(_ observer: SignatureObserver,
                             context: NSManagedObjectContext) -> Any {
@@ -177,9 +185,11 @@ public extension SignatureStatus {
 }
 
 // MARK: - DigitalSignatureNotification
+
 public class DigitalSignatureNotification: NSObject {
 
     // MARK: - State
+
     public enum State {
         case consentURLPending
         case consentURLReceived(_ consentURL: URL)
@@ -188,18 +198,21 @@ public class DigitalSignatureNotification: NSObject {
     }
 
     // MARK: - Public Property
+
     public static let notificationName = Notification.Name("DigitalSignatureNotification")
     public static let userInfoKey = notificationName.rawValue
 
     public let state: State
 
     // MARK: - Init
+
     public init(state: State) {
         self.state = state
         super.init()
     }
 
     // MARK: - Public Method
+
     public func post(in context: NotificationContext) {
         NotificationInContext(name: DigitalSignatureNotification.notificationName,
                               context: context,
@@ -208,6 +221,7 @@ public class DigitalSignatureNotification: NSObject {
 }
 
 // MARK: - CMSFileMetadataInfo
+
 private struct CMSFileMetadataInfo {
     let url: URL
     let fileName: String
@@ -219,6 +233,7 @@ private struct CMSFileMetadataInfo {
 }
 
 // MARK: - NSManagedObjectContext
+
 extension NSManagedObjectContext {
     private static let signatureStatusKey = "SignatureStatus"
 

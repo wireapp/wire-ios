@@ -50,6 +50,7 @@ struct RandomHandleGenerator {
 }
 
 // MARK: - Random generation
+
 extension RandomHandleGenerator {
 
     /// Generates some random combinations of words
@@ -92,6 +93,7 @@ extension String {
 }
 
 // MARK: - Helpers
+
 extension RandomHandleGenerator {
 
     /// Load a list of words from a file
@@ -125,6 +127,7 @@ extension Array {
 }
 
 // MARK: - String normalization
+
 extension String {
 
     /// Normalized user handle form

@@ -56,6 +56,7 @@ final class FullscreenImageViewController: UIViewController {
     }()
 
     // MARK: pull to dismiss
+
     private var isDraggingImage = false
     private var imageViewStartingTransform: CGAffineTransform = .identity
     private var imageDragStartingPoint: CGPoint = .zero
@@ -83,6 +84,7 @@ final class FullscreenImageViewController: UIViewController {
     private var messageObserverToken: NSObjectProtocol?
 
     // MARK: - init
+
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -108,6 +110,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     // MARK: - View life cycle
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -276,6 +279,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     // MARK: - Utilities, custom UI
+
     func performSaveImageAnimation(from saveView: UIView) {
         guard let imageView else { return }
 
@@ -323,6 +327,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     // MARK: - PullToDismiss
+
     @objc
     private func dismissingPanGestureRecognizerPanned(_ panner: UIPanGestureRecognizer) {
 
@@ -366,6 +371,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     // MARK: - Dynamic Image Dragging
+
     private func initiateImageDrag(fromLocation panGestureLocationInView: CGPoint, translationOffset: UIOffset) {
         guard let imageView else { return }
         setupSnapshotBackgroundView()
@@ -497,6 +503,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     // MARK: - Gesture Handling
+
     private let fadeAnimationDuration: TimeInterval = 0.33
 
     private var isImageViewHightlighted: Bool {
@@ -711,6 +718,7 @@ extension FullscreenImageViewController: UIGestureRecognizerDelegate {
     }
 
     // MARK: - Actions
+
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         return actionController.canPerformAction(action)
     }

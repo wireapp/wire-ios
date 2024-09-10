@@ -112,6 +112,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     // MARK: - Video save callback
+
     @objc
     func video(_ image: UIImage?, didFinishSavingWithError error: NSError?, contextInfo: AnyObject) {
         if let error {

@@ -464,6 +464,7 @@ extension ZMClientMessageTests_Deletion {
 }
 
 // MARK: - Ephemeral
+
 extension ZMClientMessageTests_Deletion {
 
     func testThatItStopsDeletionTimerForEphemeralMessages() {

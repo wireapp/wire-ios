@@ -157,6 +157,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
 }
 
 // MARK: - Helper
+
  extension UIControl.State {
     static let disabledAndSelected: UIControl.State = [.disabled, .selected]
     static let selectedAndHighlighted: UIControl.State = [.highlighted, .selected]

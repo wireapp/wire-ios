@@ -231,6 +231,7 @@ extension LinkPreviewPreprocessorTests {
 }
 
 // MARK: - Ephemeral
+
 extension LinkPreviewPreprocessorTests {
 
     func testThatItReturnsAnEphemeralMessageAfterPreProcessingAnEphemeral() {

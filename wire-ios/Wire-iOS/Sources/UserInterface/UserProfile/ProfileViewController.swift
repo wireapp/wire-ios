@@ -126,12 +126,14 @@ final class ProfileViewController: UIViewController {
     }
 
     // MARK: - Header
+
     private func setupHeader() {
         securityLevelView.configure(with: viewModel.classification)
         view.addSubview(securityLevelView)
     }
 
     // MARK: - Actions
+
     private func bringUpConversationCreationFlow() {
 
         let controller = ConversationCreationController(

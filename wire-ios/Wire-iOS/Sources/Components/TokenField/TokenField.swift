@@ -160,6 +160,7 @@ final class TokenField: UIView {
     var isCollapsed = false
 
     // MARK: - Init
+
     init() {
         super.init(frame: .zero)
         setup()
@@ -171,6 +172,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - Setup
+
     private func setup() {
         setupSubviews()
         setupConstraints()
@@ -382,6 +384,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - Layout
+
     var fontLineHeight: CGFloat {
         return font.lineHeight
     }
@@ -407,6 +410,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - Utility
+
     var collapsedString: NSAttributedString? {
         let collapsedText = " ...".localized
 
@@ -492,6 +496,7 @@ final class TokenField: UIView {
     }
 
     // MARK: - UIScrollViewDelegate
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == textView {
             updateExcludePath()

@@ -69,6 +69,7 @@ final class MediaBarViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     @objc
     private func playPause(_ sender: Any?) {
         if mediaPlaybackManager?.activeMediaPlayer?.state == .playing {

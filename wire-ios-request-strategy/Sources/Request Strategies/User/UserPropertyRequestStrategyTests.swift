@@ -121,6 +121,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
 }
 
 // MARK: - Downstream sync
+
 extension UserPropertyRequestStrategyTests {
     func testThatItIsFetchingPropertyValue() {
         self.syncMOC.performGroupedAndWait {

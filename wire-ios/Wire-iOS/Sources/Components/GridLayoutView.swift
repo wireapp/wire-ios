@@ -57,6 +57,7 @@ final class GridLayoutView: UIView {
     }
 
     // MARK: - Layout
+
     func prepareForReuse() {
         stackView.removeArrangedSubviews()
         views.removeAll(keepingCapacity: true)

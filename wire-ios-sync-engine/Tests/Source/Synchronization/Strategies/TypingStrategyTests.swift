@@ -614,6 +614,7 @@ final class TypingStrategyTests: MessagingTest {
 }
 
 // MARK: - Sending multiple requests
+
 extension TypingStrategyTests {
 
     func requestsForSendingNotifications(isTyping: [Bool], delay: TestTyping) throws -> (ZMConversation, [ZMTransportRequest?]) {

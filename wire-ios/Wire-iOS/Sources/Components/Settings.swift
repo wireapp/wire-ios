@@ -55,12 +55,14 @@ enum SettingKey: String, CaseIterable {
     case sendButtonDisabled = "SendButtonDisabled"
 
     // MARK: Features disable keys
+
     case disableCallKit = "UserDefaultDisableCallKit"
     case muteIncomingCallsWhileInACall = "MuteIncomingCallsWhileInACall"
     case enableBatchCollections = "UserDefaultEnableBatchCollections"
     case callingProtocolStrategy = "CallingProtocolStrategy"
 
     // MARK: Link opening options
+
     case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
@@ -71,6 +73,7 @@ enum SettingKey: String, CaseIterable {
 /// Model object for locally stored (not in SE or AVS) user app settings
 class Settings {
     // MARK: - subscript
+
     subscript<T>(index: SettingKey) -> T? {
         get {
             return defaults.value(forKey: index.rawValue) as? T
@@ -175,6 +178,7 @@ class Settings {
     }
 
     // MARK: - MediaManager
+
     func restoreLastUsedAVSSettings() {
         if let savedIntensity = defaults.object(forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue) as? NSNumber,
             let intensityLevel = AVSIntensityLevel(rawValue: UInt(savedIntensity.intValue)) {

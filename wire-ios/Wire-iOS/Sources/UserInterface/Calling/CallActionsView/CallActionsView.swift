@@ -182,6 +182,7 @@ final class CallActionsView: UIView {
         setNeedsLayout()
         layoutIfNeeded()
     }
+
     // MARK: - State Input
 
     // Single entry point for all state changes.

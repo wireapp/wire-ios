@@ -21,6 +21,7 @@ import WireDesign
 
 final class ReplyRoundCornersView: UIControl {
     // MARK: - Properties
+
     typealias ViewColors = SemanticColors.View
 
     let containedView: UIView
@@ -28,6 +29,7 @@ final class ReplyRoundCornersView: UIControl {
     private let highlightLayer = UIView()
 
     // MARK: - Init
+
     init(containedView: UIView) {
         self.containedView = containedView
         super.init(frame: .zero)
@@ -41,6 +43,7 @@ final class ReplyRoundCornersView: UIControl {
     }
 
     // MARK: Setup Subviews and Constraints
+
     private func setupSubviews() {
         layer.cornerRadius = 8
         layer.borderWidth = 1
@@ -79,6 +82,7 @@ final class ReplyRoundCornersView: UIControl {
     }
 
     // MARK: - UIControl
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         setHighlighted(true, animated: false)
         sendActions(for: .touchDown)

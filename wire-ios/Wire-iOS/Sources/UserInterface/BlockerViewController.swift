@@ -231,6 +231,7 @@ final class BlockerViewController: LaunchImageViewController {
 }
 
 // MARK: - Application state observing
+
 extension BlockerViewController: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)

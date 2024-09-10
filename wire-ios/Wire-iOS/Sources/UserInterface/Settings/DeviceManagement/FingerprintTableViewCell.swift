@@ -23,6 +23,7 @@ import WireDesign
 final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
 
     // MARK: - Properties
+
     let titleLabel = DynamicFontLabel(fontSpec: .smallSemiboldFont,
                                       color: SemanticColors.Label.textDefault)
     let fingerprintLabel = CopyableLabel()
@@ -46,6 +47,7 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
     }
 
     // MARK: - Initialization
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         titleLabel.text = L10n.Localizable.Self.Settings.AccountDetails.KeyFingerprint.title
         titleLabel.accessibilityIdentifier = "fingerprint title"
@@ -93,6 +95,7 @@ final class FingerprintTableViewCell: UITableViewCell, DynamicTypeCapable {
     }
 
     // MARK: - Methods
+
     private func setupStyle() {
         fingerprintLabelFont = .normalLightFont
         fingerprintLabelBoldFont = .normalSemiboldFont

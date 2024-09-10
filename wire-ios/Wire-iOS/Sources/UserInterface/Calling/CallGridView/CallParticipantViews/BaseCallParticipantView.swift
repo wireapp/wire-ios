@@ -263,6 +263,7 @@ class BaseCallParticipantView: OrientableView {
     }
 
     // MARK: - Visibility
+
     @objc private func updateUserDetailsVisibility(_ notification: Notification?) {
         guard let isCovered = notification?.userInfo?[CallGridViewController.isCoveredKey] as? Bool else {
             return
@@ -278,6 +279,7 @@ class BaseCallParticipantView: OrientableView {
     }
 
     // MARK: - Accessibility for automation
+
     override var accessibilityIdentifier: String? {
         get {
             let name = stream.user?.name ?? ""
@@ -291,6 +293,7 @@ class BaseCallParticipantView: OrientableView {
 }
 
 // MARK: - User Details Constraints
+
 private struct UserDetailsConstraints {
     private let bottom: NSLayoutConstraint
     private let leading: NSLayoutConstraint

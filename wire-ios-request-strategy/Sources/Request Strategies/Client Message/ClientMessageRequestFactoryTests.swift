@@ -38,6 +38,7 @@ class ClientMessageRequestFactoryTests: MessagingTestBase {
 }
 
 // MARK: - Client discovery
+
 extension ClientMessageRequestFactoryTests {
 
     func testThatPathAndMessageAreCorrect_WhenCreatingRequest_WithoutDomain() {

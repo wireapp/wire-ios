@@ -84,6 +84,7 @@ final class ConversationInputBarViewController: UIViewController,
     lazy var audioSession: AVAudioSessionType = AVAudioSession.sharedInstance()
 
     // MARK: buttons
+
     let photoButton: IconButton = {
         let button = IconButton()
         button.setIconColor(UIColor.accent(), for: UIControl.State.selected)
@@ -157,6 +158,7 @@ final class ConversationInputBarViewController: UIViewController,
     let videoButton: IconButton = IconButton()
 
     // MARK: subviews
+
     lazy var inputBar: InputBar = {
         let inputBar = InputBar(buttons: inputBarButtons)
         if !mediaShareRestrictionManager.canUseSpellChecking {
@@ -179,6 +181,7 @@ final class ConversationInputBarViewController: UIViewController,
     private let securityLevelView = SecurityLevelView()
 
     // MARK: custom keyboards
+
     var audioRecordViewController: AudioRecordViewController?
     var audioRecordViewContainer: UIView?
     var audioRecordKeyboardViewController: AudioRecordKeyboardViewController?
@@ -187,6 +190,7 @@ final class ConversationInputBarViewController: UIViewController,
     var ephemeralKeyboardViewController: EphemeralKeyboardViewController?
 
     // MARK: text input
+
     lazy var sendController: ConversationInputBarSendController = {
         return ConversationInputBarSendController(conversation: conversation)
     }()
@@ -196,6 +200,7 @@ final class ConversationInputBarViewController: UIViewController,
     var replyComposingView: ReplyComposingView?
 
     // MARK: feedback
+
     lazy var impactFeedbackGenerator: UIImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
     private lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator = UINotificationFeedbackGenerator()
 
@@ -477,6 +482,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     // MARK: - setup
+
     private func setupStyle() {
         ephemeralIndicatorButton.borderWidth = 0
         hourglassButton.layer.borderWidth = 1
@@ -561,6 +567,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     // MARK: - Save draft message
+
     func draftMessage(from textView: MarkdownTextView) -> DraftMessage {
         let (text, mentions) = textView.preparedText
 
@@ -727,6 +734,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     // MARK: - Animations
+
     func bounceCameraIcon() {
         let scaleTransform = CGAffineTransform(scaleX: 1.3, y: 1.3)
 
@@ -744,12 +752,14 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     // MARK: - Haptic Feedback
+
     func playInputHapticFeedback() {
         impactFeedbackGenerator.prepare()
         impactFeedbackGenerator.impactOccurred()
     }
 
     // MARK: - Input views handling
+
     @objc
     func onSingleTap(_ recognier: UITapGestureRecognizer?) {
         if recognier?.state == .recognized {
@@ -758,6 +768,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     // MARK: - notification center
+
     private func setupNotificationCenter() {
 
         NotificationCenter.default.addObserver(forName: UIResponder.keyboardDidHideNotification,
@@ -790,6 +801,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     // MARK: - Keyboard Shortcuts
+
     override var canBecomeFirstResponder: Bool {
         return true
     }

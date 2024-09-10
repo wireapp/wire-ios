@@ -5,4 +5,10 @@
     anyObjectProtocol, \
     applicationMain, \
     assertionFailures, \
-    blankLineAfterImports
+    blankLineAfterImports, \
+    blankLinesAroundMark
+
+# Options
+
+--lineaftermarks true
+

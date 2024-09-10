@@ -63,6 +63,7 @@ public final class LegacyPersistedDataPatch {
 let lastDataModelPatchedVersionKey = "zm_lastDataModelVersionKeyThatWasPatched"
 
 // MARK: - Framework version
+
 /// A framework version (major, minor, patch)
 public struct FrameworkVersion: Comparable, Equatable {
 

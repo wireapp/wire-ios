@@ -19,6 +19,7 @@
 import Foundation
 
 // MARK: Base class for observer / change info
+
 public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
 
     var changeInfos: [String: NSObject?] { get set }

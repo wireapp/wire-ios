@@ -21,18 +21,21 @@ import UIKit
 class BottomSheetContainerViewController: UIViewController {
 
     // MARK: - Configuration
+
     struct BottomSheetConfiguration: Equatable {
         let height: CGFloat
         let initialOffset: CGFloat
     }
 
     // MARK: - State
+
     enum BottomSheetState {
         case initial
         case full
     }
 
     // MARK: - Variables
+
     private var topConstraint = NSLayoutConstraint()
     var state: BottomSheetState = .initial {
         didSet {
@@ -134,6 +137,7 @@ class BottomSheetContainerViewController: UIViewController {
     func didChangeState() {} // for overriding
 
     // MARK: - Bottom Sheet Actions
+
     func showBottomSheet(animated: Bool = true) {
         self.topConstraint.constant = -configuration.height
 

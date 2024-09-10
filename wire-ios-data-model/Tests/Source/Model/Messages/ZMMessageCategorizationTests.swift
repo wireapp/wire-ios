@@ -260,6 +260,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 }
 
 // MARK: - Cache
+
 extension ZMMessageCategorizationTests {
 
     func testThatItComputesTheCachedCategoryLazily() {
@@ -314,6 +315,7 @@ extension ZMMessageCategorizationTests {
 }
 
 // MARK: - Fetch request
+
 extension ZMMessageCategorizationTests {
 
     func testThatItCreatesAFetchRequestToFetchText() {

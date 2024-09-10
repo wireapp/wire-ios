@@ -234,6 +234,7 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: keyboard shortcut
+
     override var keyCommands: [UIKeyCommand]? {
         [
             UIKeyCommand(
@@ -251,6 +252,7 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: Status bar
+
     private var child: UIViewController? {
         return topOverlayViewController ?? wireSplitViewController
     }
@@ -405,6 +407,7 @@ final class ZClientViewController: UIViewController {
     }
 
     // MARK: - Animated conversation switch
+
     func dismissAllModalControllers(callback: Completion?) {
         let dismissAction = {
             if let rightViewController = self.wireSplitViewController.rightViewController,

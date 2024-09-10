@@ -25,6 +25,7 @@ import WireLinkPreview
 final class ArticleView: UIView {
 
     // MARK: - Styling
+
     private let containerColor: UIColor = SemanticColors.View.backgroundCollectionCell
     private let titleTextColor: UIColor = SemanticColors.Label.textDefault
     private let titleFont: UIFont = .normalSemiboldFont
@@ -40,6 +41,7 @@ final class ArticleView: UIView {
     }
 
     // MARK: - Views
+
     let messageLabel = UILabel()
     let authorLabel = UILabel()
     let imageView = ImageResourceView()

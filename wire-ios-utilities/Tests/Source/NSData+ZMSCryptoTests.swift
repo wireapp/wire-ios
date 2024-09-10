@@ -46,6 +46,7 @@ class NSData_ZMSCryptoTests: XCTestCase {
 }
 
 // MARK: - Encryption with plaintext IV
+
 extension NSData_ZMSCryptoTests {
 
     func testThatItEncryptsAndDecryptsData_plaintextIV() throws {
@@ -106,6 +107,7 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Encrypted IV
+
 extension NSData_ZMSCryptoTests {
 
     func testThatItEncryptsAndDecryptsData_encryptedIV() {
@@ -143,6 +145,7 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Random data generation
+
 extension NSData_ZMSCryptoTests {
 
     func testThatItGeneratesRandomDataWithTheRightSize() {
@@ -171,6 +174,7 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Hashing
+
 extension NSData_ZMSCryptoTests {
 
     var samplePlainData: Data {
@@ -271,6 +275,7 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Hex encoding
+
 extension NSData_ZMSCryptoTests {
 
     func testThatDataCanBeEncodedIntoHexString() {
@@ -297,6 +302,7 @@ extension NSData_ZMSCryptoTests {
 }
 
 // MARK: - Hex decoding
+
 extension NSData_ZMSCryptoTests {
 
     func testThatHexStringCanBeDecodedIntoData() {

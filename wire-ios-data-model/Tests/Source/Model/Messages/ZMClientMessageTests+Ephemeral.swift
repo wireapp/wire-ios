@@ -56,6 +56,7 @@ class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {
 }
 
 // MARK: Sending
+
 extension ZMClientMessageTests_Ephemeral {
 
     func testThatItCreateAEphemeralMessageWhenAutoDeleteTimeoutIs_SetToBiggerThanZero_OnConversation() {
@@ -355,6 +356,7 @@ extension ZMClientMessageTests_Ephemeral {
 }
 
 // MARK: Receiving
+
 extension ZMClientMessageTests_Ephemeral {
 
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser() {

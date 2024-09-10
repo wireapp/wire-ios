@@ -191,6 +191,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 }
 
 // MARK: - Helpers
+
 extension FeatureTests {
 
     func configData(enforced: Bool) -> Data {

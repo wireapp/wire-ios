@@ -40,6 +40,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     static let informationBlue = UIColor(red: 35 / 255, green: 145 / 255, blue: 211 / 255, alpha: 1)
 
     // MARK: - UI Elements
+
     let wireLogoInfoView = WireLogoInfoView(title: Login.title, subtitle: Login.subtitle)
 
     let progressView: TimedCircularProgressView = {
@@ -63,6 +64,7 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }()
 
     // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = SemanticColors.View.backgroundDefault

@@ -50,6 +50,7 @@ final class GuestsBarController: UIViewController {
             setState(newValue, animated: false)
         }
     }
+
     // MARK: Override Methods
 
     override func viewDidLoad() {
@@ -60,6 +61,7 @@ final class GuestsBarController: UIViewController {
     }
 
     // MARK: UI and Layout
+
     private func setupViews() {
         view.backgroundColor = .clear
         container.backgroundColor = .accent()
@@ -142,6 +144,7 @@ final class GuestsBarController: UIViewController {
 }
 
 // MARK: - Bar
+
 extension GuestsBarController: Bar {
     var weight: Float {
         return 1

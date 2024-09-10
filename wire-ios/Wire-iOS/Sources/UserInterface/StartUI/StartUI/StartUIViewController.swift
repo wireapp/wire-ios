@@ -239,6 +239,7 @@ final class StartUIViewController: UIViewController {
     }
 
     // MARK: - Instance methods
+
     @objc
     func performSearch() {
         let searchString = searchHeader.query

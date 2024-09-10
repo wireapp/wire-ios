@@ -161,6 +161,7 @@ extension Notification.Name {
 }
 
 // MARK: Slow Sync
+
 extension SyncStatus {
 
     public func finishCurrentSyncPhase(phase: SyncPhase) {
@@ -226,6 +227,7 @@ extension SyncStatus {
 }
 
 // MARK: Quick Sync
+
 extension SyncStatus {
 
     public func beganFetchingNotificationStream() {

@@ -22,6 +22,7 @@ import WireSyncEngine
 
 extension ConversationContentViewController {
     // MARK: - EditMessages
+
     func editLastMessage() {
         if let lastEditableMessage = conversation.lastEditableMessage {
             perform(action: .edit, for: lastEditableMessage, view: tableView)
@@ -241,6 +242,7 @@ extension ConversationContentViewController: SignatureObserver {
     }
 
     // MARK: - Helpers
+
     private func presentDigitalSignatureVerification(with url: URL) {
         let digitalSignatureVerification = DigitalSignatureVerificationViewController(url: url) { [weak self] result in
             switch result {

@@ -21,6 +21,7 @@ import Foundation
 import XCTest
 
 // MARK: - Framework comparison
+
 class FrameworkVersionTests: XCTestCase {
 
     func testThatCorrectVersionsAreParsed() {
@@ -116,6 +117,7 @@ class FrameworkVersionTests: XCTestCase {
 }
 
 // MARK: - Test patches
+
 class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     override class func setUp() {

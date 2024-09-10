@@ -107,6 +107,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             XCTAssertNil(request)
         }
     }
+
     // MARK: - Slow Sync
 
     func testThatRequestToFetchConnectedUsersIsGenerated_DuringFetchingUsersSyncPhase() {

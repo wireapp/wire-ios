@@ -324,11 +324,13 @@ final class MockLocationMessageData: NSObject, LocationMessageData {
 
 class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage, SwiftConversationMessage {
     // MARK: - ConversationCompositeMessage
+
     var compositeMessageData: CompositeMessageData?
 
     typealias UsersByReaction = [String: [UserType]]
 
     // MARK: - ZMConversationMessage
+
     var nonce: UUID? = UUID()
     var isEncrypted: Bool = false
     var isPlainText: Bool = true

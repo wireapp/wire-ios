@@ -139,6 +139,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
 }
 
 // MARK: - Company Login
+
 extension CompanyLoginController {
     // MARK: - Login Prompt Presentation
 
@@ -268,6 +269,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - Automatic SSO flow
+
 extension CompanyLoginController {
 
     /// Fetches SSO code and starts flow automatically if code is returned on completion
@@ -289,6 +291,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - Custom Backend Switch
+
 extension CompanyLoginController {
     /// Looks up if the specified domain is registered as custom backend
     ///
@@ -342,6 +345,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - SSO code detection
+
 extension CompanyLoginController {
 
     func detectSSOCode() {
@@ -363,6 +367,7 @@ extension CompanyLoginController {
 }
 
 // MARK: - Flow
+
 extension CompanyLoginController: CompanyLoginFlowHandlerDelegate {
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
         delegate?.controllerDidStartCompanyLoginFlow(self)

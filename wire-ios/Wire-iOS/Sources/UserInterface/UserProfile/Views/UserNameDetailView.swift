@@ -116,15 +116,18 @@ final class UserNameDetailViewModel: NSObject {
 }
 
 // MARK: - UserNameDetailView
+
 final class UserNameDetailView: UIView, DynamicTypeCapable {
 
     // MARK: - Properties
+
     private var model: UserNameDetailViewModel?
 
     let subtitleLabel = UILabel()
     let correlationLabel = UILabel()
 
     // MARK: - Initialization
+
     init() {
         super.init(frame: .zero)
         setupViews()
@@ -137,6 +140,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Configure
+
     func configure(with model: UserNameDetailViewModel) {
         self.model = model
         subtitleLabel.attributedText = model.firstSubtitle
@@ -147,6 +151,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Layout - Private Methods
+
     private func setupViews() {
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = SemanticColors.View.backgroundDefault

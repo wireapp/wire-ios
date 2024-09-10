@@ -439,6 +439,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
     }
 
     // MARK: ChangeInfoConsumer
+
     class ChangeConsumer: NSObject, ChangeInfoConsumer {
         var changes: [ClassIdentifier: [ObjectChangeInfo]]?
         var didCallStopObserving = false

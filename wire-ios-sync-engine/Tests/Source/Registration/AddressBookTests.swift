@@ -36,6 +36,7 @@ final class AddressBookTests: XCTestCase {
 }
 
 // MARK: - Access to AB
+
 extension AddressBookTests {
 
     func testThatItReturnsAllContactsWhenTheyHaveValidEmailAndPhoneNumbers() {
@@ -94,6 +95,7 @@ extension AddressBookTests {
 }
 
 // MARK: - Validation/normalization
+
 extension AddressBookTests {
 
     func testThatItFilterlContactsThatHaveAnInvalidPhoneAndNoEmail() {
@@ -203,6 +205,7 @@ extension AddressBookTests {
 }
 
 // MARK: - Encoding
+
 extension AddressBookTests {
 
     func testThatItEncodesUsers() {
@@ -451,6 +454,7 @@ extension AddressBookTests {
 }
 
 // MARK: - Helpers
+
 private func checkEqual(lhs: [String: [String]]?, rhs: [String: [String]]?, line: UInt = #line, file: StaticString = #file) {
     guard let lhs, let rhs else {
         XCTFail("Value is nil", file: file, line: line)

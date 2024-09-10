@@ -21,6 +21,7 @@ import WebKit
 import WireUtilities
 
 // MARK: - Error states
+
 enum DigitalSignatureVerificationError: Error {
     case postCodeRetry
     case authenticationFailed
@@ -32,12 +33,14 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     typealias DigitalSignatureCompletion = ((_ result: Result<Void, Error>) -> Void)
 
     // MARK: - Private Property
+
     private var completion: DigitalSignatureCompletion?
 
     private var webView = WKWebView(frame: .zero)
     private var url: URL?
 
     // MARK: - Init
+
     init(url: URL, completion: DigitalSignatureCompletion? = nil) {
         self.url = url
         self.completion = completion
@@ -56,6 +59,7 @@ final class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     // MARK: - Private Method
+
     private func setupWebView() {
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
@@ -88,6 +92,7 @@ final class DigitalSignatureVerificationViewController: UIViewController {
 }
 
 // MARK: - WKNavigationDelegate
+
 extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView,
                  decidePolicyFor navigationAction: WKNavigationAction,

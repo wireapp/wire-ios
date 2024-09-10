@@ -30,6 +30,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     }
 
     // MARK: - Request generation
+
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
@@ -58,6 +59,7 @@ class SendMLSMessageActionHandlerTests: ActionHandlerTestBase<SendMLSMessageActi
     }
 
     // MARK: - Response handling
+
     func test_itHandlesSuccess() throws {
         // Given
         let payload: [AnyHashable: Any] = [

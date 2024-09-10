@@ -20,11 +20,13 @@ import UIKit
 import WireSyncEngine
 
 // MARK: - ObserverTokenStore
+
 protocol ObserverTokenStore: AnyObject {
     func addObserverToken(_ token: NSObjectProtocol)
 }
 
 // MARK: - ApplicationStateObserving
+
 protocol ApplicationStateObserving: ObserverTokenStore {
     func applicationDidBecomeActive()
     func applicationDidEnterBackground()
@@ -61,6 +63,7 @@ extension ApplicationStateObserving {
 }
 
 // MARK: - ContentSizeCategoryObserving
+
 protocol ContentSizeCategoryObserving: ObserverTokenStore {
     func contentSizeCategoryDidChange()
 }
@@ -77,6 +80,7 @@ extension ContentSizeCategoryObserving {
 }
 
 // MARK: - AudioPermissionsObserving
+
 extension Notification.Name {
     static let UserGrantedAudioPermissions = Notification.Name("UserGrantedAudioPermissionsNotification")
 }

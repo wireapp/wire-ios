@@ -59,6 +59,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
             try await coreCryptoProvider.coreCrypto()
         }
     }
+
     // MARK: - Message encryption
 
     public enum MLSMessageEncryptionError: Error {

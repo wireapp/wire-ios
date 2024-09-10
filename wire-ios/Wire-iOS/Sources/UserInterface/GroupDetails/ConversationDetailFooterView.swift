@@ -28,6 +28,7 @@ import WireSystem
 class ConversationDetailFooterView: UIView {
 
     // MARK: - Properties
+
     let rightButton = IconButton()
     var leftButton: IconButton
     private let containerView = UIView()
@@ -57,6 +58,7 @@ class ConversationDetailFooterView: UIView {
     }
 
     // MARK: - Initialization
+
     init() {
         self.leftButton = IconButton(fontSpec: .normalSemiboldFont)
         super.init(frame: .zero)
@@ -70,6 +72,7 @@ class ConversationDetailFooterView: UIView {
     }
 
     // MARK: - Layout
+
     private func setupViews() {
         let highlightedStateColor = UIColor.accent()
         let configureButton = { (button: IconButton) in

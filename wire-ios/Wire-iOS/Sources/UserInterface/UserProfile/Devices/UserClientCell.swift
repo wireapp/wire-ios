@@ -34,6 +34,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
     typealias IconColors = SemanticColors.Icon
 
     // MARK: - Properties
+
     let nameLabel = DynamicFontLabel(
         style: .h3,
         color: LabelColors.textDefault
@@ -73,6 +74,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
     private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
 
     // MARK: - Initialization
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         createConstraints()
@@ -85,6 +87,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
     }
 
     // MARK: - Methods
+
     func setupStyle() {
         nameLabel.accessibilityIdentifier = "device name"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"

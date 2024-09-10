@@ -275,6 +275,7 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     // MARK: Provider configuration
+
     func testThatItReturnsTheProviderConfiguration() {
         // when
         let configuration = WireSyncEngine.CallKitManager.providerConfiguration

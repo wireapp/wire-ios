@@ -46,6 +46,7 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
 }
 
 // MARK: - Request generation
+
 extension UserProfileUpdateRequestStrategyTests {
 
     func testThatItDoesNotCreateAnyRequestWhenIdle() {
@@ -178,9 +179,11 @@ extension UserProfileUpdateRequestStrategyTests {
 }
 
 // MARK: - Parsing response
+
 extension UserProfileUpdateRequestStrategyTests {
 
     // MARK: - Setting email and password
+
     func testThatCallsDidUpdatePasswordSuccessfully() {
 
         // GIVEN
@@ -305,6 +308,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Email change
+
     func testThatItCallsDidUpdateEmailSuccessfullyWhenChangingEmail() {
 
         // GIVEN
@@ -323,6 +327,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Check handle availability
+
     func testThatItCallsDidFetchHandle() {
 
         // GIVEN
@@ -372,6 +377,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Setting handle
+
     func testThatItCallsSuccessSetHandle() {
 
         // GIVEN
@@ -421,6 +427,7 @@ extension UserProfileUpdateRequestStrategyTests {
     }
 
     // MARK: - Suggesting handles
+
     func testThatItCallsDidFinddHandleSuggestion() {
 
         // GIVEN
@@ -478,6 +485,7 @@ extension UserProfileUpdateRequestStrategyTests {
 }
 
 // MARK: - Helpers
+
 extension UserProfileUpdateRequestStrategyTests {
 
     func errorResponse(path: String? = nil) -> ZMTransportResponse {

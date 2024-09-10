@@ -385,6 +385,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 }
 
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
+
 public extension UserClient {
 
     @objc static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
@@ -537,6 +538,7 @@ public extension UserClient {
 }
 
 // MARK: - SelfClient methods
+
 public extension UserClient {
 
     @objc func isSelfClient() -> Bool {
@@ -719,6 +721,7 @@ enum SecurityChangeType {
 }
 
 // MARK: - Trusting
+
 extension UserClient {
 
     @objc public func trustClient(_ client: UserClient) {
@@ -812,6 +815,7 @@ extension UserClient {
 }
 
 // MARK: - APSSignaling
+
 extension UserClient {
 
     public static func resetSignalingKeysInContext(_ context: NSManagedObjectContext) {
@@ -829,6 +833,7 @@ extension UserClient {
 }
 
 // MARK: - Update SelfClient Capability
+
 extension UserClient {
 
     public static func triggerSelfClientCapabilityUpdate(_ context: NSManagedObjectContext) {

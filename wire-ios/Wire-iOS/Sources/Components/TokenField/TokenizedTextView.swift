@@ -47,6 +47,7 @@ class TokenizedTextView: TextView {
     }
 
     // MARK: - Actions
+
     override var contentOffset: CGPoint {
         get {
             return super.contentOffset

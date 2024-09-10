@@ -243,6 +243,7 @@ protocol CoreDataFixtureTestHelper {
 }
 
 // MARK: - default implementation for migrating CoreDataSnapshotTestCase to XCTestCase
+
 extension CoreDataFixtureTestHelper {
     var otherUser: ZMUser! {
         return coreDataFixture.otherUser

@@ -21,6 +21,7 @@ import Foundation
 @testable import WireDataModelSupport
 
 // MARK: - Modified keys for profile picture upload
+
 final class ZMUserTests_Swift: ModelObjectsTests {
 
     override func tearDown() {
@@ -191,6 +192,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - AssetV3 filter predicates
+
 extension ZMUserTests_Swift {
     func testThatPreviewImageDownloadFilterPicksUpUser() {
         syncMOC.performGroupedAndWait {
@@ -271,6 +273,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - AssetV3 request notifications
+
 extension ZMUserTests_Swift {
 
     func testThatItPostsPreviewRequestNotifications() {
@@ -336,6 +339,7 @@ extension ZMUser {
 }
 
 // MARK: - Predicates
+
 extension ZMUserTests_Swift {
 
     func testPredicateFilteringConnectedUsersByHandle() {
@@ -417,6 +421,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - Filename
+
 extension ZMUserTests_Swift {
 
     /// check the generated filename matches several critirias and a regex pattern
@@ -785,6 +790,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - Bot support
+
 extension ZMUserTests_Swift {
     func testThatServiceIdentifierAndProviderIdentifierAreNilByDefault() {
         // GIVEN
@@ -797,6 +803,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - Expiration support
+
 extension ZMUserTests_Swift {
     func testIsWirelessUserCalculation_false() {
         // given
@@ -897,6 +904,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - Self user tests
+
 extension ZMUserTests_Swift {
     func testThatItIsPossibleToSetReadReceiptsEnabled() {
         // GIVEN
@@ -1164,6 +1172,7 @@ extension ZMUserTests_Swift {
 }
 
 // MARK: - Domain tests
+
 extension ZMUserTests_Swift {
     func testThatItTreatsEmptyDomainAsNil() {
         // given

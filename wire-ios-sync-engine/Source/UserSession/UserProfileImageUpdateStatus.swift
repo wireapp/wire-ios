@@ -135,6 +135,7 @@ public final class UserProfileImageUpdateStatus: NSObject {
 }
 
 // MARK: Main state transitions
+
 extension UserProfileImageUpdateStatus {
     internal func setState(state newState: ProfileUpdateState) {
         let currentState = self.state
@@ -191,6 +192,7 @@ extension UserProfileImageUpdateStatus {
 }
 
 // MARK: Image state transitions
+
 extension UserProfileImageUpdateStatus {
     internal func imageState(for imageSize: ProfileImageSize) -> ImageState {
         return imageState[imageSize] ?? .ready

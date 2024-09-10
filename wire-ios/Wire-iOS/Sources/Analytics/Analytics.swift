@@ -79,6 +79,7 @@ final class Analytics: NSObject {
     }
 
     // MARK: - OTREvents
+
     func tagCannotDecryptMessage(withAttributes userInfo: [String: Any],
                                  conversation: ZMConversation?) {
         var attributes: [String: Any] = conversation?.attributesForConversation ?? [:]

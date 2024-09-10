@@ -124,6 +124,7 @@ class FileManagerMoveTests: XCTestCase {
 }
 
 // MARK: Copy
+
 extension FileManagerMoveTests {
 
     func testThatItCopiesOneFolder() throws {

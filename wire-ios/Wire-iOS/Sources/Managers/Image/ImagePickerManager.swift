@@ -33,12 +33,14 @@ extension UIImage {
 class ImagePickerManager: NSObject {
 
     // MARK: - Properties
+
     private weak var viewController: UIViewController?
     private var sourceType: UIImagePickerController.SourceType?
     private var completion: ((UIImage) -> Void)?
     private let mediaShareRestrictionManager = MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared())
 
     // MARK: - Methods
+
     func showActionSheet(on viewController: UIViewController? = UIApplication.shared.topmostViewController(onlyFullScreen: false),
                          completion: @escaping (UIImage) -> Void) -> UIAlertController {
         self.completion = completion

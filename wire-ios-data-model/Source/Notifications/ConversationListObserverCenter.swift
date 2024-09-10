@@ -80,6 +80,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     // MARK: Forwarding updates
+
     public func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
 
         let insertedLabels = self.insertedLabels

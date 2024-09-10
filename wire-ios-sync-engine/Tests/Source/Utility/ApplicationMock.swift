@@ -46,6 +46,7 @@ import WireDataModel
 }
 
 // MARK: - Application protocol
+
 extension ApplicationMock: ZMApplication {
 
     public func registerForRemoteNotifications() {
@@ -60,6 +61,7 @@ extension ApplicationMock: ZMApplication {
 }
 
 // MARK: - Observers
+
 extension ApplicationMock {
 
     public func registerObserverForDidBecomeActive(_ object: NSObject, selector: Selector) {
@@ -92,6 +94,7 @@ extension ApplicationMock {
 }
 
 // MARK: - Simulate application state change
+
 extension ApplicationMock {
 
     public func simulateApplicationDidBecomeActive() {

@@ -194,6 +194,7 @@ class LegacyButton: ButtonWithLargerHitArea {
     }
 
     // MARK: - Observing state
+
     override var isHighlighted: Bool {
         didSet {
             updateAppearance(with: previousState)

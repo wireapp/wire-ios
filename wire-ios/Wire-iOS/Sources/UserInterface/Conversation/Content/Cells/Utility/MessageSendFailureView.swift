@@ -24,6 +24,7 @@ import WireDesign
 final class MessageSendFailureView: UIView {
 
     // MARK: - Properties
+
     override var isHidden: Bool {
         didSet {
             titleLabel.isHidden = isHidden
@@ -39,6 +40,7 @@ final class MessageSendFailureView: UIView {
                                            insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
 
     // MARK: - initialization
+
     override init(frame: CGRect) {
         super.init(frame: CGRect.zero)
 
@@ -51,6 +53,7 @@ final class MessageSendFailureView: UIView {
     }
 
     // MARK: - Setup UI
+
     func setTitle(_ errorMessage: String) {
         titleLabel.attributedText = .markdown(from: errorMessage, style: .errorLabelStyle)
     }
@@ -84,6 +87,7 @@ final class MessageSendFailureView: UIView {
     }
 
     // MARK: - Methods
+
     @objc
     func retryButtonTapped(_ sender: UIButton) {
         tapHandler?(sender)
@@ -92,6 +96,7 @@ final class MessageSendFailureView: UIView {
 }
 
 // MARK: - DownStyle extension
+
     extension DownStyle {
 
     static var errorLabelStyle: DownStyle {

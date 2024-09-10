@@ -25,6 +25,7 @@ import XCTest
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     // MARK: - Text Messages
+
     // MARK: Helpers
 
     /**

@@ -212,6 +212,7 @@ public func == (lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Boo
 }
 
 // MARK: - Conversation managed properties
+
 extension ZMMessage {
 
     @NSManaged public var visibleInConversation: ZMConversation?
@@ -399,6 +400,7 @@ extension ZMMessage {
 }
 
 // MARK: - Message send failure properties
+
 extension ZMMessage {
 
     @NSManaged public var failedToSendRecipients: Set<ZMUser>?

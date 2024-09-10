@@ -60,6 +60,7 @@ class EventDecoderTest: MessagingTestBase {
 }
 
 // MARK: - Processing events
+
 extension EventDecoderTest {
 
     func testThatItProcessesEvents() async throws {
@@ -313,6 +314,7 @@ extension EventDecoderTest {
 }
 
 // MARK: - Already seen events
+
 extension EventDecoderTest {
 
     func testThatItProcessesEventsWithDifferentUUIDWhenThroughPushEventsFirst() async throws {

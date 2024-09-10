@@ -41,6 +41,7 @@ extension ZMConversation {
             role.user?.isSelfUser == true
         })
     }
+
     // MARK: - keyPathsForValuesAffecting
 
     static var participantRolesKeys: [String] {
@@ -324,6 +325,7 @@ extension ZMConversation {
     }
 
     // MARK: - Utils
+
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
         guard let userId else { return false }
         return localParticipants.contains { $0.userId == userId }

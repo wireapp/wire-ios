@@ -40,6 +40,7 @@ import WireDataModel
 }
 
 // MARK: - Top conversation
+
 private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
 @objc extension TopConversationsDirectory {
@@ -97,6 +98,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 }
 
 // MARK: – Observation
+
 @objc public protocol TopConversationsDirectoryObserver {
 
     @objc func topConversationsDidChange()

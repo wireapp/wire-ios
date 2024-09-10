@@ -48,6 +48,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     weak var delegate: SplitViewControllerDelegate?
 
     // MARK: - SplitLayoutObservable
+
     var layoutSize: SplitViewControllerLayoutSize = .compact {
         didSet {
             guard oldValue != layoutSize else { return }
@@ -114,6 +115,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     private var futureTraitCollection: UITraitCollection?
 
     // MARK: - init
+
     init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -175,6 +177,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     // MARK: - status bar
+
     private var childViewController: UIViewController? {
         return openPercentage > 0 ? leftViewController : rightViewController
     }
@@ -188,6 +191,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     // MARK: - animator
+
     var animatorForRightView: UIViewControllerAnimatedTransitioning {
         if layoutSize == .compact, isLeftViewControllerRevealed {
             // Right view is not visible so we should not animate.
@@ -200,6 +204,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     // MARK: - left and right view controllers
+
     func setLeftViewControllerRevealed(_ leftViewControllerRevealed: Bool,
                                        animated: Bool,
                                        completion: Completion? = nil) {
@@ -441,6 +446,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
     }
 
     // MARK: - constraints
+
     private func setupInitialConstraints() {
 
         leftViewLeadingConstraint = leftView.leadingAnchor.constraint(equalTo: view.leadingAnchor)

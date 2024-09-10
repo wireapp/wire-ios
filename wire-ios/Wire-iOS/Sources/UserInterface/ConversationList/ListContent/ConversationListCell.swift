@@ -53,6 +53,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     private var typingObserverToken: Any?
 
     // MARK: - SectionListCellType
+
     var sectionName: String?
     var obfuscatedSectionName: String?
     var cellIdentifier: String?
@@ -180,6 +181,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     // MARK: - DrawerOverrides
+
     override func drawerScrollingStarts() {
         overscrollStartDate = nil
     }
@@ -250,6 +252,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     // MARK: - ConversationChangeInfo
+
     func setupConversationObserver(conversation: ZMConversation) {
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }

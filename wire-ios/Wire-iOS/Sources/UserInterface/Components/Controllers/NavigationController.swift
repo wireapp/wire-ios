@@ -105,6 +105,7 @@ final class NavigationController: UINavigationController {
     }
 
     // MARK: - status bar
+
     override var childForStatusBarStyle: UIViewController? {
         return topViewController
     }

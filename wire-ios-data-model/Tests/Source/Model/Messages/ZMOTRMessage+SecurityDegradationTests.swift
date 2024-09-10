@@ -204,6 +204,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 }
 
 // MARK: - Propagation across contexes
+
 extension ZMOTRMessage_SecurityDegradationTests {
 
     func testThatMessageIsNotMarkedOnUIMOCBeforeMerge() {
@@ -260,6 +261,7 @@ extension ZMOTRMessage_SecurityDegradationTests {
 }
 
 // MARK: - Helper
+
 extension ZMOTRMessage_SecurityDegradationTests {
 
     /// Creates a group conversation with two users

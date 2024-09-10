@@ -46,6 +46,7 @@ final class ColorKnobView: UIView {
     private var borderCircleLayer: CALayer = CALayer()
 
     // MARK: - Init
+
     init() {
         super.init(frame: .zero)
 
@@ -83,6 +84,7 @@ final class ColorKnobView: UIView {
     }
 
     // MARK: - Helpers
+
     var knobBorderColor: UIColor? {
         return knobColor == SemanticColors.DrawingColors.white ? .black : knobColor
     }

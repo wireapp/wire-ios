@@ -24,6 +24,7 @@ extension SettingsCellDescriptorFactory {
     typealias SelfSettingsAdvancedLocale = L10n.Localizable.Self.Settings.Advanced
 
     // MARK: - Advanced group
+
     func advancedGroup(userSession: UserSession) -> SettingsCellDescriptorType {
         let items = [
             troubleshootingSection(userSession: userSession),
@@ -40,6 +41,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
+
     private func troubleshootingSection(userSession: UserSession) -> SettingsSectionDescriptor {
         let submitDebugButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
@@ -115,6 +117,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Helpers
+
     private var pushButtonAlertController: UIAlertController {
         let alert = UIAlertController(
             title: SelfSettingsAdvancedLocale.ResetPushTokenAlert.title,

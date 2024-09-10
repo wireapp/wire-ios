@@ -35,6 +35,7 @@ class AddressBookSearch {
 }
 
 // MARK: - Search contacts
+
 extension AddressBookSearch {
 
     /// Returns address book contacts matching the query, excluding the one with the given identifier

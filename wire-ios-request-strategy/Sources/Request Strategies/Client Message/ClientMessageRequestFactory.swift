@@ -102,6 +102,7 @@ public final class ClientMessageRequestFactory: NSObject {
 }
 
 // MARK: - Downloading
+
 extension ClientMessageRequestFactory {
     func downstreamRequestForEcryptedOriginalFileMessage(_ message: ZMAssetClientMessage, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard apiVersion < .v2 else { fatalError("Endpoint not availale in API v2") }

@@ -36,6 +36,7 @@ final class PasscodeSetupInteractor {
 }
 
 // MARK: - Interface
+
 extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
 
     func storePasscode(passcode: String) throws {

@@ -159,6 +159,7 @@ extension ZMMessageTests_Confirmation {
 }
 
 // MARK: - Deletion
+
 extension ZMMessageTests_Confirmation {
 
     func testThatItCanDeleteAMessageThatWasConfirmed() {
@@ -519,6 +520,7 @@ extension ZMMessageTests_Confirmation {
 }
 
 // MARK: - Helpers
+
 extension ZMMessageTests_Confirmation {
 
     func insertMessage(_ conversation: ZMConversation,

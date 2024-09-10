@@ -115,6 +115,7 @@ class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
 }
 
 // MARK: - Payload creation
+
 extension ZMClientMessageTests_Editing {
 
     private func checkThatItCanEditAMessageFrom(sameSender: Bool, shouldEdit: Bool) {

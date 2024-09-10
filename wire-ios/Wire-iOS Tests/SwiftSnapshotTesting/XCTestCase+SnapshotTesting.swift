@@ -182,6 +182,7 @@ extension UIView {
 extension XCTestCase {
 
     // MARK: - verify in different width helper
+
     func containerView(with view: UIView, snapshotBackgroundColor: UIColor?) -> UIView {
         let container = UIView(frame: view.bounds)
         container.backgroundColor = snapshotBackgroundColor
@@ -199,6 +200,7 @@ extension XCTestCase {
     }
 
     // MARK: - UIAlertController hack
+
     func presentViewController(_ controller: UIViewController,
                                completion: Completion? = nil) {
         let window = UIWindow(frame: CGRect(origin: .zero, size: XCTestCase.DeviceSizeIPhone6))

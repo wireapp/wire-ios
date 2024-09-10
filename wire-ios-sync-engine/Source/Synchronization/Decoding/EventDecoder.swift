@@ -62,6 +62,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 }
 
 // MARK: - Process events
+
 extension EventDecoder {
 
     /// Decrypts passed in events and stores them in chronological order in a persisted database,
@@ -186,6 +187,7 @@ extension EventDecoder {
 }
 
 // MARK: - List of already received event IDs
+
 extension EventDecoder {
 
     /// create event ID store if needed

@@ -383,6 +383,7 @@ extension ZMConversation {
 }
 
 // MARK: - Messages resend/expiration
+
 extension ZMConversation {
 
     public var isDegraded: Bool {
@@ -503,6 +504,7 @@ extension ZMConversation {
 }
 
 // MARK: - HotFix
+
 extension ZMConversation {
 
     /// Replaces the first NewClient systemMessage for the selfClient with a UsingNewDevice system message
@@ -532,6 +534,7 @@ extension ZMConversation {
 }
 
 // MARK: - Appending system messages
+
 extension ZMConversation {
 
     fileprivate func appendNewIsSecureSystemMessage(cause: SecurityChangeCause) {
@@ -679,6 +682,7 @@ extension ZMConversation {
 }
 
 // MARK: - Conversation participants status
+
 extension ZMConversation {
 
     /// Returns true if all participants are connected to the self user and all participants are trusted
@@ -737,6 +741,7 @@ extension ZMConversation {
 }
 
 // MARK: - System messages
+
 extension ZMSystemMessage {
 
     /// Fetch the first system message in the conversation about "started to use this device"

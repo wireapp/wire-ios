@@ -23,6 +23,7 @@ import WireDesign
 final class CheckmarkCell: RightIconDetailsCell {
 
     // MARK: - Properties
+
     typealias BackgroundColors = SemanticColors.View
 
     var showCheckmark: Bool = false {
@@ -34,6 +35,7 @@ final class CheckmarkCell: RightIconDetailsCell {
     }
 
     // MARK: - Override methods
+
     override var disabled: Bool {
         didSet {
             updateCheckmark()
@@ -65,6 +67,7 @@ final class CheckmarkCell: RightIconDetailsCell {
     }
 
     // MARK: - Setup Checkmark
+
     /// Updates the color of the checkmark based on the state of the cell
     private func updateCheckmark() {
 
@@ -87,6 +90,7 @@ final class CheckmarkCell: RightIconDetailsCell {
     }
 
     // MARK: - accessibility
+
     override var accessibilityLabel: String? {
         get {
             return title

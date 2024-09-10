@@ -142,10 +142,12 @@ final class AppStateCalculator {
     }
 
     // MARK: - Public Property
+
     weak var delegate: AppStateCalculatorDelegate?
     var wasUnauthenticated: Bool = false
 
     // MARK: - Private Set Property
+
     private(set) var pendingAppState: AppState?
     private(set) var appState: AppState = .headless {
         willSet {
@@ -158,10 +160,12 @@ final class AppStateCalculator {
     }
 
     // MARK: - Private Property
+
     private var observerTokens: [NSObjectProtocol] = []
     private var hasEnteredForeground: Bool = false
 
     // MARK: - Private Implementation
+
     private func transition(
         to appState: AppState,
         completion: (() -> Void)? = nil
@@ -193,6 +197,7 @@ final class AppStateCalculator {
 }
 
 // MARK: - ApplicationStateObserving
+
 extension AppStateCalculator: ApplicationStateObserving {
     func addObserverToken(_ token: NSObjectProtocol) {
         observerTokens.append(token)
@@ -209,6 +214,7 @@ extension AppStateCalculator: ApplicationStateObserving {
 }
 
 // MARK: - SessionManagerDelegate
+
 extension AppStateCalculator: SessionManagerDelegate {
     var isInAuthenticatedAppState: Bool {
         switch appState {
@@ -318,6 +324,7 @@ extension AppStateCalculator: SessionManagerDelegate {
 }
 
 // MARK: - AuthenticationCoordinatorDelegate
+
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
     func userAuthenticationDidComplete(userSession: UserSession) {
         if userSession.isLocked {

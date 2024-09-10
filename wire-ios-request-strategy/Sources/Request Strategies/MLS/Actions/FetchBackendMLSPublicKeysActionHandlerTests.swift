@@ -32,6 +32,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         action = nil
         super.tearDown()
     }
+
     // MARK: - Request generation
 
     func test_itGeneratesARequest_APIV5() throws {

@@ -30,6 +30,7 @@ protocol SimpleTextFieldDelegate: AnyObject {
 final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     // MARK: - Properties
+
     var attribute: [NSAttributedString.Key: Any] = [.foregroundColor: SemanticColors.SearchBar.textInputViewPlaceholder,
                                                     .font: FontSpec.smallRegularFont.font!]
     enum Value {
@@ -57,6 +58,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     var placeholderInsets: UIEdgeInsets
 
     // MARK: Initialization
+
     /// Init with kind for keyboard style and validator type. Default is .unknown
     ///
     /// - Parameter kind: the type of text field
@@ -79,6 +81,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     }
 
     // MARK: - Private methods
+
     private func setupTextFieldProperties() {
         returnKeyType = .next
         autocapitalizationType = .words
@@ -102,6 +105,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     }
 
     // MARK: - Override methods
+
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         let textRect = super.textRect(forBounds: bounds)
 
@@ -156,6 +160,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 }
 
 // MARK: SimpleTextField Extension
+
 extension SimpleTextField: SimpleTextFieldValidatorDelegate {
 
     func textFieldValueChanged(_ text: String?) {

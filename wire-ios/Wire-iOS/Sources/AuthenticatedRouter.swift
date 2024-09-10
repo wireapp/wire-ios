@@ -137,6 +137,7 @@ final class AuthenticatedRouter {
 }
 
 // MARK: - AuthenticatedRouterProtocol
+
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()
@@ -162,6 +163,7 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 }
 
 // MARK: - AuthenticatedWireFrame
+
 struct AuthenticatedWireFrame {
     private var account: Account
     private var userSession: UserSession

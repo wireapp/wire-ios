@@ -124,6 +124,7 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 }
 
 // MARK: Inserting
+
 extension UserClientRequestStrategyTests {
 
     func createSelfClient(_ context: NSManagedObjectContext) -> UserClient {
@@ -421,6 +422,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: Updating
+
 extension UserClientRequestStrategyTests {
 
     func testThatPrekeysAreGeneratedBeforeRefillingPrekeys() {
@@ -576,6 +578,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: Fetching Clients
+
 extension UserClientRequestStrategyTests {
 
     func  payloadForClients() -> ZMTransportData {
@@ -650,6 +653,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: Deleting
+
 extension UserClientRequestStrategyTests {
 
     func testThatItCreatesARequestToDeleteAClient_UpdateStatus() {
@@ -713,6 +717,7 @@ extension UserClientRequestStrategyTests {
 }
 
 // MARK: - Updating from push events
+
 extension UserClientRequestStrategyTests {
 
     func testThatItCreatesARequestForClientsThatNeedToUploadSignalingKeys() {

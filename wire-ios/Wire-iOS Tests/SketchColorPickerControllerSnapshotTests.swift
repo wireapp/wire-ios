@@ -26,6 +26,7 @@ import XCTest
 final class SketchColorPickerControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
+
     typealias SketchColors = SemanticColors.DrawingColors
     var sut: SketchColorPickerController!
     private var snapshotHelper: SnapshotHelper!

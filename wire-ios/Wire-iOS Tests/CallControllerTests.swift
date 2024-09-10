@@ -52,6 +52,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - ActiveCall Presentation Tests
+
     func testThatActiveCallIsPresented_WhenMinimizedCallIsNil() {
         // GIVEN
         let callState: CallState = .established
@@ -91,6 +92,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - CallTopOverlay Presentation Tests
+
     func testThatCallTopOverlayIsShown_WhenPriorityCallConversationIsNotNil() {
         // GIVEN
         let callState: CallState = .established
@@ -116,6 +118,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - Version Alert Presentation Tests
+
     func testThatVersionAlertIsPresented_WhenCallStateIsTerminatedAndReasonIsOutdatedClient() {
         // GIVEN
         let callState: CallState = .terminating(reason: .outdatedClient)
@@ -153,6 +156,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     }
 
     // MARK: - Degradation Alert Presentation Tests
+
     func testThatVersionDegradationAlertIsNotPresented_WhenVoiceChannelHasNotDegradationState() {
         // GIVEN
         let callState: CallState = .established
@@ -168,6 +172,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 }
 
 // MARK: - Helpers
+
 extension CallControllerTests {
     private func callController_callCenterDidChange(callState: CallState, conversation: ZMConversation) {
         sut.callCenterDidChange(callState: callState,
@@ -179,6 +184,7 @@ extension CallControllerTests {
 }
 
 // MARK: - ActiveCallRouterMock
+
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
     var dismissSecurityDegradedAlertIfNeededIsCalled: Bool = false
@@ -237,6 +243,7 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 }
 
 // MARK: - MockCallConversationProvider
+
 final class MockCallConversationProvider: CallConversationProvider {
     var priorityCallConversation: ZMConversation?
     var ongoingCallConversation: ZMConversation?

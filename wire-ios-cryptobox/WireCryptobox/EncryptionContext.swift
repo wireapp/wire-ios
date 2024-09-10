@@ -117,6 +117,7 @@ public final class EncryptionContext: NSObject {
 }
 
 // MARK: - Start and stop using sessions
+
 extension EncryptionContext {
 
     /// Access sessions and other data in this context. While the block is executed,

@@ -111,6 +111,7 @@ extension ZMMessage {
 }
 
 // MARK: - Categories from specific content
+
 let linkParser = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
 
 extension ZMMessage {
@@ -219,6 +220,7 @@ extension ZMMessage {
 }
 
 // MARK: - Categories
+
 /// Type of content in a message
 public struct MessageCategory: OptionSet {
 

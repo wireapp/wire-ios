@@ -68,6 +68,7 @@ final class ConversationListViewControllerViewModelSnapshotTests: XCTestCase {
     }
 
     // MARK: - Action menu
+
     func testForActionMenu() throws {
         try coreDataFixture.teamTest {
             sut.showActionMenu(for: coreDataFixture.otherUserConversation, from: mockViewController.view)

@@ -43,6 +43,7 @@ class EventDecoderTest: MessagingTest {
 }
 
 // MARK: - Processing events
+
 extension EventDecoderTest {
 
     func testThatItProcessesEvents() {
@@ -265,6 +266,7 @@ extension EventDecoderTest {
 }
 
 // MARK: - Already seen events
+
 extension EventDecoderTest {
 
     func testThatItProcessesEventsWithDifferentUUIDWhenThroughPushEventsFirst() {
@@ -372,6 +374,7 @@ extension EventDecoderTest {
 }
 
 // MARK: - Helpers
+
 extension EventDecoderTest {
     /// Returns an event from the notification stream
     func eventStreamEvent(uuid: UUID? = nil) -> ZMUpdateEvent {

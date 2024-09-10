@@ -30,6 +30,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     }
 
     // MARK: - Request generation
+
     func test_itGenerateARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,

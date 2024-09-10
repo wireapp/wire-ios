@@ -24,6 +24,7 @@ import WireSyncEngine
 extension SettingsCellDescriptorFactory {
 
     // MARK: - Options Group
+
     var optionsGroup: SettingsCellDescriptorType {
         let descriptors = [
             shareContactsDisabledSection,
@@ -52,6 +53,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     // MARK: - Sections
+
     private var shareContactsDisabledSection: SettingsSectionDescriptorType {
         let settingsButton = SettingsButtonCellDescriptor(
             title: L10n.Localizable.Self.Settings.PrivacyContactsMenu.SettingsButton.title,
@@ -400,6 +402,7 @@ extension SettingsCellDescriptorFactory {
 }
 
 // MARK: - Helpers
+
 extension SettingsCellDescriptorFactory {
     // Encryption at rest will trigger its own variant of AppLock.
     var isAppLockAvailable: Bool {

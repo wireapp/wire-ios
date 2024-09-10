@@ -627,6 +627,7 @@ extension External {
 }
 
 // MARK: - Mention
+
 public extension WireProtos.Mention {
     static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
         return mention.convertToProtosMention()

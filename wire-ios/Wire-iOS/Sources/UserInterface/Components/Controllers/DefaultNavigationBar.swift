@@ -73,6 +73,7 @@ extension UIViewController {
     }
 
     // MARK: - present
+
     func wrapInNavigationControllerAndPresent(from viewController: UIViewController) -> UINavigationController {
         let navigationController = wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet

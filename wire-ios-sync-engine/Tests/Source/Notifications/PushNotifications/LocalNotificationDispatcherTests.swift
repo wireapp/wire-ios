@@ -491,6 +491,7 @@ extension LocalNotificationDispatcherTests {
 }
 
 // MARK: - Helpers
+
 extension LocalNotificationDispatcherTests {
 
     func payloadForEncryptedOTRMessage(text: String, nonce: UUID) -> [String: Any] {

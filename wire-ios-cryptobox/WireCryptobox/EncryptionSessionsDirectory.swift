@@ -153,6 +153,7 @@ public final class EncryptionSessionsDirectory: NSObject {
 }
 
 // MARK: - Encryption sessions
+
 public protocol EncryptionSessionManager {
     /// Migrate session to a new identifier, if a session with the old identifier exists
     /// and a session with the new identifier does not exist
@@ -382,6 +383,7 @@ public protocol PrekeyGeneratorType {
 }
 
 // MARK: - Prekeys
+
 extension EncryptionSessionsDirectory: PrekeyGeneratorType {
 
     /// Generates one prekey of the given ID. If the prekey exists already,
@@ -446,6 +448,7 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
 }
 
 // MARK: - Fingerprint
+
 extension _CBox {
 
     /// Local fingerprint
@@ -532,6 +535,7 @@ class EncryptionSession {
 }
 
 // MARK: - Logging
+
 extension EncryptionSession {
 
     func logSessionAndCyphertext(
@@ -563,6 +567,7 @@ extension EncryptionSession {
 }
 
 // MARK: - Encryption
+
 public protocol Encryptor: AnyObject {
     /// Encrypts data for a client
     /// It immediately saves the session
@@ -571,6 +576,7 @@ public protocol Encryptor: AnyObject {
 }
 
 // MARK: - Decryption
+
 public protocol Decryptor: AnyObject {
     /// Decrypts data from a client
     /// The session is not saved to disk until the cache is committed
@@ -665,6 +671,7 @@ extension EncryptionSession {
 }
 
 // MARK: - Fingerprint
+
 extension _CBoxSession {
 
     /// Returns the remote fingerprint associated with a session
@@ -679,6 +686,7 @@ extension _CBoxSession {
 }
 
 // MARK: - Backing files
+
 extension EncryptionSession {
 
     /// Returns the expected path of the session file, given the root folder
@@ -701,6 +709,7 @@ extension EncryptionSessionsDirectory {
 }
 
 // MARK: - Session identifier
+
 public struct EncryptionSessionIdentifier: Hashable, Equatable {
 
     public let userId: String

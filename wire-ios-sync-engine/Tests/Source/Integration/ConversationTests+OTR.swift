@@ -474,6 +474,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
     }
 
     // MARK: ConversationTestsOTR (Trust)
+
     func testThatItChangesTheSecurityLevelIfMessageArrivesFromPreviouslyUnknownUntrustedParticipant() {
         // GIVEN
         XCTAssertTrue(login())
@@ -644,6 +645,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
     }
 
     // MARK: - Unable to decrypt message
+
     func testThatItDoesNotInsertASystemMessageWhenItDecryptsADuplicatedMessage() {
         // GIVEN
         XCTAssertTrue(login())

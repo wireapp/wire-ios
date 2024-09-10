@@ -48,6 +48,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     }
 
     // MARK: - tearDown
+
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
@@ -58,6 +59,7 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     }
 
     // MARK: - Helper methods
+
     func createSUT() {
         sut = UserSearchResultsViewController(nibName: nil, bundle: nil)
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault

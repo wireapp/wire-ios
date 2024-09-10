@@ -39,6 +39,7 @@ class AddressBookSearchTests: MessagingTest {
 }
 
 // MARK: - Search query
+
 extension AddressBookSearchTests {
 
     func testThatItSearchesByNameWithMatch() {

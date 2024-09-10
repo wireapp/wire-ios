@@ -103,6 +103,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Prekeys
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatFingerprintExtractedFromPrekeyMatchesLocalFingerprint() throws {
@@ -173,6 +174,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Local fingerprint
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItReturnsTheLocalFingerprint() {
@@ -215,6 +217,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Deletion
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItDeletesASession() {
@@ -243,6 +246,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Session cache management
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatCreatedSessionsAreNotSavedImmediately() {
@@ -464,6 +468,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Session migration tests
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItCanMigrateASessionAndReceive() {
@@ -540,6 +545,7 @@ extension EncryptionSessionsDirectoryTests {
 }
 
 // MARK: - Extended logging
+
 extension EncryptionSessionsDirectoryTests {
 
     func testThatItLogsEncryptionWhenExtendedLoggingIsSet() {

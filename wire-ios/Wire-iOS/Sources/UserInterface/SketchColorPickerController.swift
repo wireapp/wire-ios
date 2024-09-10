@@ -179,6 +179,7 @@ final class SketchColorPickerController: UIViewController {
 
 extension SketchColorPickerController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // MARK: - UICollectionViewDataSource
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return colorToBrushWidthMapper?.count ?? 0
     }
@@ -199,6 +200,7 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
     }
 
     // MARK: - UICollectionViewDelegate
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let brush = sketchColors[indexPath.row]
         if selectedColor == brush {

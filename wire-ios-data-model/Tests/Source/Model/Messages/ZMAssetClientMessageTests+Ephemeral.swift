@@ -56,6 +56,7 @@ class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
 }
 
 // MARK: Sending
+
 extension ZMAssetClientMessageTests_Ephemeral {
 
     func testThatItInsertsAnEphemeralMessageForAssets() {

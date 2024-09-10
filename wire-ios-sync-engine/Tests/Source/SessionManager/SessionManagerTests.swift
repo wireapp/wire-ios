@@ -55,6 +55,7 @@ final class SessionManagerTests: IntegrationTest {
     }
 
     // MARK: max account number
+
     func testThatDefaultMaxAccountNumberIs3_whenDefaultValueIsUsed() {
         // given and when
         let sut = sessionManagerBuilder.build()

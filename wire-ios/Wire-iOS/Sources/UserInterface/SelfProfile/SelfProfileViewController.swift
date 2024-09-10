@@ -46,6 +46,7 @@ final class SelfProfileViewController: UIViewController {
     private lazy var activityIndicator = BlockingActivityIndicator(view: topViewController.view ?? view)
 
     // MARK: - AppLock
+
     private var callback: ResultHandler?
 
     // MARK: - Configuration

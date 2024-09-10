@@ -25,6 +25,7 @@ extension Notification.Name {
 }
 
 // MARK: - URLActionRouterDelegete
+
 protocol URLActionRouterDelegate: AnyObject {
 
     func urlActionRouterWillShowCompanyLoginError()
@@ -39,9 +40,11 @@ protocol URLActionRouterProtocol {
 }
 
 // MARK: - Logging
+
 private let zmLog = ZMSLog(tag: "UI")
 
 // MARK: - URLActionRouter
+
 class URLActionRouter: URLActionRouterProtocol {
 
     // MARK: - Public Properties
@@ -137,6 +140,7 @@ class URLActionRouter: URLActionRouterProtocol {
 }
 
 // MARK: - PresentationDelegate
+
 extension URLActionRouter: PresentationDelegate {
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
@@ -180,6 +184,7 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     // MARK: - Public Implementation
+
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
         presentLocalizedErrorAlert(localizedError)
@@ -232,6 +237,7 @@ extension URLActionRouter: PresentationDelegate {
     }
 
     // MARK: - Private Implementation
+
     private func notifyCompanyLoginCompletion() {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
     }

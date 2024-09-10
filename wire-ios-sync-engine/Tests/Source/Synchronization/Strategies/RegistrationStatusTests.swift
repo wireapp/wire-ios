@@ -125,6 +125,7 @@ class RegistrationStatusTests: MessagingTest {
     }
 
     // MARK: - Check activation code tests
+
     func testThatItAdvancesToCheckActivationCodeStateAfterTriggeringCheck() {
         // when
         sut.checkActivationCode(unverifiedEmail: email, code: code)

@@ -265,6 +265,7 @@ final class ConversationViewController: UIViewController {
     }
 
     // MARK: - Device orientation
+
     override var shouldAutorotate: Bool {
         return true
     }

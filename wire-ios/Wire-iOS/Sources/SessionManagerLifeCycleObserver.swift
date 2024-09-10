@@ -21,18 +21,22 @@ import WireSyncEngine
 final class SessionManagerLifeCycleObserver {
 
     // MARK: - Public Property
+
     var sessionManager: SessionManager?
 
     // MARK: - Private Property
+
     private var observerTokens: [Any] = []
     private var soundEventListeners = [UUID: SoundEventListener]()
 
     // MARK: - Initialization
+
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
 
     // MARK: - Public Implementation
+
     func createLifeCycleObserverTokens() {
         guard let createdSessionObserverToken = sessionManager?.addSessionManagerCreatedSessionObserver(self) else {
             return
@@ -49,6 +53,7 @@ final class SessionManagerLifeCycleObserver {
 extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver, SessionManagerDestroyedSessionObserver {
 
     // MARK: - SessionManagerCreatedSessionObserver
+
     func sessionManagerCreated(userSession: ZMUserSession) {
         setSoundEventListener(for: userSession)
     }
@@ -56,11 +61,13 @@ extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver,
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) { }
 
     // MARK: - SessionManagerDestroyedSessionObserver
+
     func sessionManagerDestroyedUserSession(for accountId: UUID) {
         resetSoundEventListener(for: accountId)
     }
 
     // MARK: - Private Implementation
+
     private func setSoundEventListener(for userSession: ZMUserSession) {
         for (accountId, session) in sessionManager?.backgroundUserSessions ?? [:] where session == userSession {
             soundEventListeners[accountId] = SoundEventListener(userSession: userSession)

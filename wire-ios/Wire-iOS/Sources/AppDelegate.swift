@@ -67,6 +67,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private var appStateCalculator = AppStateCalculator()
 
     // MARK: - Private Set Property
+
     private(set) var appRootRouter: AppRootRouter?
     private(set) var launchType: ApplicationLaunchType = .unknown
 

@@ -317,6 +317,7 @@ extension PasscodeSetupViewController: PasscodeSetupUserInterface {
 }
 
 // MARK: - UIAdaptivePresentationControllerDelegate
+
 extension PasscodeSetupViewController: UIAdaptivePresentationControllerDelegate {
 
     func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {

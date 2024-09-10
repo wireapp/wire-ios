@@ -717,6 +717,7 @@ extension ZMAssetClientMessageTests {
 }
 
 // MARK: - Associated Task Identifier
+
 extension ZMAssetClientMessageTests {
 
     func testThatItStoresTheAssociatedTaskIdentifier() {
@@ -736,6 +737,7 @@ extension ZMAssetClientMessageTests {
 }
 
 // MARK: - Message generation
+
 extension ZMAssetClientMessageTests {
 
     func testThatItSavesTheOriginalFileWhenCreatingMessage() throws {
@@ -760,6 +762,7 @@ extension ZMAssetClientMessageTests {
 }
 
 // MARK: - Post event
+
 extension ZMAssetClientMessageTests {
 
     func testThatItDoesSetConversationLastServerTimestampWhenPostingAsset_MessageIsImage() {
@@ -1134,6 +1137,7 @@ extension ZMAssetClientMessageTests {
 extension ZMAssetClientMessageTests {
 
     // MARK: Helper
+
     func checkThatFileMessageCanBeDeleted(_ canBeDeleted: Bool, _ state: ZMDeliveryState, line: UInt = #line) {
         syncMOC.performAndWait {
             // given
@@ -1410,6 +1414,7 @@ extension ZMAssetClientMessageTests {
 }
 
 // MARK: - isGIF
+
 extension ZMAssetClientMessageTests {
     func testThatItDetectsGIF_MIME() {
         // GIVEN

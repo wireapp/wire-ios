@@ -23,6 +23,7 @@ import WireRequestStrategy
 import XCTest
 
 // MARK: - Tests setup
+
 class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
 
     fileprivate var sut: LinkPreviewAssetUploadRequestStrategy!
@@ -122,6 +123,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
 }
 
 // MARK: - Tests
+
 extension LinkPreviewAssetUploadRequestStrategyTests {
 
     func testThatItCreatesRequestForProcessedLinkPreview() {

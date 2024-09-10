@@ -23,6 +23,7 @@ import WireTesting
 class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     // MARK: - Text Messages
+
     // MARK: Helpers
 
     /**

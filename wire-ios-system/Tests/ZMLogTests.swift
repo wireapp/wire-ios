@@ -154,6 +154,7 @@ class ZMLogTests: XCTestCase {
 }
 
 // MARK: - Log level management
+
 extension ZMLogTests {
 
     func testThatLogIsNotRegisteredIfNoLogIsCalled() {
@@ -202,6 +203,7 @@ extension ZMLogTests {
 }
 
 // MARK: - Debug hook
+
 extension ZMLogTests {
 
     func testThatLogHookIsCalledWithError() {
@@ -516,6 +518,7 @@ extension ZMLogTests {
 }
 
 // MARK: - Save on disk
+
 extension ZMLogTests {
 
     func testThatItSavesLogsOnDisk() {

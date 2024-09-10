@@ -62,6 +62,7 @@ public final class DataBuffer: NSObject {
 @objcMembers public final class NetworkSocket: NSObject {
 
     // MARK: - Public API
+
     public let url: URL
     public let trustProvider: BackendTrustProvider
     public let queue: DispatchQueue
@@ -204,6 +205,7 @@ public final class DataBuffer: NSObject {
     }
 
     // MARK: - Internals
+
     fileprivate enum State {
         case readyToConnect
         case connecting

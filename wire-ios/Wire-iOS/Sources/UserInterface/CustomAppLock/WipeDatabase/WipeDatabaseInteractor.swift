@@ -31,6 +31,7 @@ final class WipeDatabaseInteractor {
 }
 
 // MARK: - Interface
+
 extension WipeDatabaseInteractor: WipeDatabaseInteractorInput {
     func deleteAccount() {
         guard

@@ -44,6 +44,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
     }
 
     // MARK: ZMRequestCancellation
+
     public var cancelledIdentifiers = [ZMTaskIdentifier]()
 
     public func cancelTask(with identifier: ZMTaskIdentifier) {
@@ -51,6 +52,7 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
     }
 
     // MARK: ClientRegistrationDelegate
+
     public var deletionCalls: Int = 0
 
     /// Notify that the current client was deleted remotely

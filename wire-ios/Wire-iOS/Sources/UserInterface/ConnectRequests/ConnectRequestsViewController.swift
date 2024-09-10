@@ -106,6 +106,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - UITableViewDataSource
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return connectionRequests.count
     }
@@ -118,6 +119,7 @@ final class ConnectRequestsViewController: UIViewController,
     }
 
     // MARK: - UITableViewDelegate
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // If there are more than one request, reduce the cell height to give user a hint
 

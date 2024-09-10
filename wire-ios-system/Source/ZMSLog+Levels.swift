@@ -80,6 +80,7 @@ private var logTagToLogger: [String: OSLog] = [:]
 }
 
 // MARK: - Debugging
+
 extension ZMSLog {
 
     static func debug_resetAllLevels() {

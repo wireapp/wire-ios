@@ -21,6 +21,7 @@ import Foundation
 extension Bundle {
 
     // MARK: - Countly
+
     public static var countlyAppKey: String? {
         appMainBundle.infoForKey("CountlyAppKey")
     }

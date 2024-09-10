@@ -25,6 +25,7 @@ enum AlertChoice {
 }
 
 // MARK: - ActiveCallRouterProtocol
+
 protocol ActiveCallRouterProtocol: AnyObject {
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool)
     func dismissActiveCall(animated: Bool, completion: Completion?)
@@ -55,6 +56,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
 where TopOverlayPresenter: TopOverlayPresenting {
 
     // MARK: - Public Property
+
     var isActiveCallShown = false {
         didSet {
             if isActiveCallShown {
@@ -98,15 +100,18 @@ where TopOverlayPresenter: TopOverlayPresenting {
     }
 
     // MARK: - Public Implementation
+
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
 }
 
 // MARK: - ActiveCallRouterProtocol
+
 extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - ActiveCall
+
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         guard
             !isPresentingActiveCall,
@@ -159,6 +164,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - CallTopOverlay
+
     func showCallTopOverlay(for conversation: ZMConversation) {
         guard !isCallTopOverlayShown else { return }
         let callTopOverlayController = CallTopOverlayController(conversation: conversation)
@@ -282,6 +288,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 }
 
 // MARK: - CallQualityRouterProtocol
+
 extension ActiveCallRouter: CallQualityRouterProtocol {
 
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
@@ -359,6 +366,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 }
 
 // MARK: - CallTopOverlayControllerDelegate
+
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
         guard let voiceChannel else { return }

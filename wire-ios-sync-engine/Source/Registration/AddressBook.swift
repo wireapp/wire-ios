@@ -179,6 +179,7 @@ class AddressBook {
 }
 
 // MARK: - Encoded address book chunk
+
 struct EncodedAddressBookChunk {
 
     /// Total number of contacts in the address book
@@ -193,6 +194,7 @@ struct EncodedAddressBookChunk {
 }
 
 // MARK: - Phone number and email normalization
+
 extension NBPhoneNumberUtil {
 
     /// Returns a normalized version of the phone number, or nil

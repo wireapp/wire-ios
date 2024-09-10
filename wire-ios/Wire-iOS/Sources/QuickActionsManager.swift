@@ -31,9 +31,11 @@ extension UIApplicationShortcutItem {
 final class QuickActionsManager: NSObject {
 
     // MARK: - Public Property
+
     var sessionManager: SessionManager?
 
     // MARK: - Initialization
+
     init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
         super.init()

@@ -71,6 +71,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     }
 
     // MARK: - Views
+
     private var tabBar: TabBar!
     private var contentView = UIView()
     private var isSwiping = false

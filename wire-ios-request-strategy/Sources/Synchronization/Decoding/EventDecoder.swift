@@ -395,6 +395,7 @@ extension EventDecoder {
 }
 
 // MARK: - List of already received event IDs
+
 extension EventDecoder {
 
     /// Filters out events that shouldn't be processed

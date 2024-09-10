@@ -205,6 +205,7 @@ class EncryptionContextTests: XCTestCase {
 }
 
 // MARK: - Logging
+
 extension EncryptionContextTests {
 
     func testThatItSetsExtendedLoggingOnSessions() {

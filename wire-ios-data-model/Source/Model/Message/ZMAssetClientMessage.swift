@@ -242,6 +242,7 @@ import Foundation
 }
 
 // MARK: - Core data
+
 extension ZMAssetClientMessage {
 
     override public func awakeFromInsert() {

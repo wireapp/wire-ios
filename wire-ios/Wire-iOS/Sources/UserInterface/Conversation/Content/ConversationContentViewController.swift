@@ -367,6 +367,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     // MARK: - Actions
+
     func highlight(_ message: ZMConversationMessage) {
         dataSource.highlight(message: message)
     }
@@ -413,6 +414,7 @@ final class ConversationContentViewController: UIViewController {
     }
 
     // MARK: - MediaPlayer
+
     /// Update media bar visiblity
     private func updateMediaBar() {
         let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage

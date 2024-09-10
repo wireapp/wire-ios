@@ -120,6 +120,7 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     // MARK: - Observing state
+
     override var isHighlighted: Bool {
         didSet {
             updateForNewStateIfNeeded()
