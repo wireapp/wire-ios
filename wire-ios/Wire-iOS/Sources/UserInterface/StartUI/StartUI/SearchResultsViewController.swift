@@ -326,7 +326,7 @@ final class SearchResultsViewController: UIViewController {
         var sections: [CollectionViewSectionController]
         let team = userSession.selfUser.membership?.team
 
-        switch(self.searchGroup, isAddingParticipants) {
+        switch (self.searchGroup, isAddingParticipants) {
         case (.services, _):
             sections = [servicesSection]
         case (.people, true):

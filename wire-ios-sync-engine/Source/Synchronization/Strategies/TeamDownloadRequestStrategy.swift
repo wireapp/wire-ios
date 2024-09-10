@@ -79,8 +79,8 @@ extension Team {
 /// and for updating it when processing events or when manually requested.
 
 public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMEventConsumer, ZMSingleRequestTranscoder, ZMDownstreamTranscoder {
-    private (set) var downstreamSync: ZMDownstreamObjectSync!
-    private (set) var slowSync: ZMSingleRequestSync!
+    private(set) var downstreamSync: ZMDownstreamObjectSync!
+    private(set) var slowSync: ZMSingleRequestSync!
 
     fileprivate unowned var syncStatus: SyncStatus
 

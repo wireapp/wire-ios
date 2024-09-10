@@ -37,7 +37,7 @@ public protocol MessageSenderInterface {
 }
 
 public final class MessageSender: MessageSenderInterface {
-    public init (
+    public init(
         apiProvider: APIProviderInterface,
         clientRegistrationDelegate: ClientRegistrationDelegate,
         sessionEstablisher: SessionEstablisherInterface,

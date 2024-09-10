@@ -40,7 +40,7 @@ extension ZMConversation {
 
 public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
     fileprivate let jsonDecoder = JSONDecoder()
-    private (set) var downstreamSync: ZMDownstreamObjectSync!
+    private(set) var downstreamSync: ZMDownstreamObjectSync!
 
     @objc
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {

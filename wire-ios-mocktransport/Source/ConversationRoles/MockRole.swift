@@ -60,7 +60,7 @@ extension MockRole {
 
 extension MockRole {
     @objc
-    public static func createConversationRoles (context: NSManagedObjectContext) {
+    public static func createConversationRoles(context: NSManagedObjectContext) {
         adminRole = MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context))
         memberRole = MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
     }

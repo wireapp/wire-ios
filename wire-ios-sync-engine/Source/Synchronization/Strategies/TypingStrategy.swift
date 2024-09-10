@@ -106,7 +106,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     fileprivate var tornDown = false
     fileprivate var observers: [Any] = []
 
-    @available (*, unavailable)
+    @available(*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }

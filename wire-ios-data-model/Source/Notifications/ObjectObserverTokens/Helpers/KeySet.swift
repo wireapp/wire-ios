@@ -74,11 +74,11 @@ public struct KeySet: Sequence {
         backing = Set(a)
     }
 
-    public init (_ set: Set<Key>) {
+    public init(_ set: Set<Key>) {
         backing = set
     }
 
-    public init (_ keys: Set<String>) {
+    public init(_ keys: Set<String>) {
         self.init(Array(keys))
     }
 

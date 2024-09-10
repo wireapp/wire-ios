@@ -55,8 +55,8 @@ public class AssetCollection: NSObject, ZMCollection {
 
     public static let initialFetchCount = 100
     public static let defaultFetchCount = 500
-    public private (set) var doneFetchingAssets = false
-    public private (set) var doneFetchingTexts = false
+    public private(set) var doneFetchingAssets = false
+    public private(set) var doneFetchingTexts = false
 
     private var tornDown = false {
         didSet {

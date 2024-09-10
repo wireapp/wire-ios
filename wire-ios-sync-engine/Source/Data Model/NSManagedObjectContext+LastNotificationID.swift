@@ -34,7 +34,7 @@ extension NSManagedObjectContext: ZMLastNotificationIDStore {
             else { return nil }
             return uuid
         }
-        set (newValue) {
+        set(newValue) {
             if let value = newValue, let previousValue = zm_lastNotificationID,
                value.isType1UUID, previousValue.isType1UUID,
                previousValue.compare(withType1: value) != .orderedAscending {

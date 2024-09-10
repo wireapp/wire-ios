@@ -202,7 +202,7 @@ final class SearchResultTests: DatabaseTest {
         XCTAssertEqual(result?.teamMembers.first!.remoteIdentifier, remoteTeamMemberID)
     }
 
-    func testThatItDoesNotReturnRemoteTeamMembers_WhenSearchOptionsIncludeExcludeNonActiveTeamMembers () {
+    func testThatItDoesNotReturnRemoteTeamMembers_WhenSearchOptionsIncludeExcludeNonActiveTeamMembers() {
         // given
         let team = Team.insertNewObject(in: uiMOC)
         team.remoteIdentifier = UUID()

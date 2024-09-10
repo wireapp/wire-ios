@@ -77,11 +77,11 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
 
     // MARK: - Helpers
 
-    subscript (index: Int) -> Section {
+    subscript(index: Int) -> Section {
         sections[index]
     }
 
-    subscript (indexPath: IndexPath) -> Emoji {
+    subscript(indexPath: IndexPath) -> Emoji {
         sections[indexPath.section].items[indexPath.item]
     }
 

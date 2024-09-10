@@ -19,7 +19,7 @@
 import Foundation
 
 @objc extension ZMConversation {
-    @objc (setIsTyping:)
+    @objc(setIsTyping:)
     public func setIsTyping(_ isTyping: Bool) {
         TypingStrategy.notifyTranscoderThatUser(isTyping: isTyping, in: self)
     }
