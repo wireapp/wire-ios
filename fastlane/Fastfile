@@ -35,7 +35,7 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests, :test_framework, :generate_framework_list].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :test_framework, :generate_framework_list, :test_frameworks].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -52,6 +52,21 @@ platform :ios do
         rescue
             puts "No keychain found, skipping deletion..."
         end
+    end
+
+    desc "Test frameworks given folders"
+    lane :test_frameworks do |options|
+       schemas = generate_framework_list(folders: options[:folders])
+
+       # hardcoded values that are required - not meaningful for testing
+       options[:build_type] = "Development"
+       options[:build_number] = generate_build_number
+       build = Build.new(options: options)
+       
+       testplan = options[:testplan] || "AllTests"
+       schemas.each do |scheme|
+           test_plan(build, scheme, testplan)
+       end
     end
 
     desc "Generate frameworks list"
