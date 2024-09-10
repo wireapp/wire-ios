@@ -34,7 +34,7 @@ enum CallQualitySurveyReview {
 
     enum IgnoreReason: String {
         case callTooShort = "call-too-short"
-        case muted = "muted"
+        case muted
     }
 
     // MARK: - Attributes

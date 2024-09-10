@@ -20,12 +20,12 @@ import Foundation
 
 extension Payload {
     enum ConnectionStatus: String, Codable, CaseIterable {
-        case accepted = "accepted"
-        case blocked = "blocked"
-        case pending = "pending"
-        case ignored = "ignored"
-        case sent = "sent"
-        case cancelled = "cancelled"
+        case accepted
+        case blocked
+        case pending
+        case ignored
+        case sent
+        case cancelled
         case missingLegalholdConsent = "missing-legalhold-consent"
 
         var internalStatus: ZMConnectionStatus {

@@ -46,7 +46,8 @@
     redundantNilInit, \
     redundantObjc, \
     redundantOptionalBinding, \
-    redundantParens
+    redundantParens, \
+    redundantRawValues
 
 # Options
 

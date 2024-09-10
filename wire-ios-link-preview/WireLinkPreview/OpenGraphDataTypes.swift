@@ -58,8 +58,8 @@ enum OpenGraphSiteName: String {
 }
 
 enum OpenGraphTypeType: String {
-    case article = "article"
-    case website = "website"
+    case article
+    case website
     case foursquare = "playfoursquare:venue"
     case instagram = "instapp:photo"
 }

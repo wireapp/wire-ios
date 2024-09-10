@@ -51,9 +51,9 @@ public struct ZiphyAnimatedImage: Codable {
     // MARK: - Codable
 
     public enum CodingKeys: String, CodingKey {
-        case url = "url"
-        case width = "width"
-        case height = "height"
+        case url
+        case width
+        case height
         case fileSize = "size"
     }
 }

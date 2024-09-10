@@ -28,7 +28,7 @@ private enum NotificationUserInfoKey: String {
     case conversationID = "conversationIDString"
     case messageNonce = "messageNonceString"
     case senderID = "senderIDString"
-    case eventTime = "eventTime"
+    case eventTime
     case selfUserID = "selfUserIDString"
     case conversationName = "conversationNameString"
     case teamName = "teamNameString"

@@ -49,8 +49,8 @@ public final class Account: NSObject, Codable {
         case userIdentifier = "identifier"
         case imageData = "image"
         case teamImageData = "teamImage"
-        case unreadConversationCount = "unreadConversationCount"
-        case loginCredentials = "loginCredentials"
+        case unreadConversationCount
+        case loginCredentials
     }
 
     public required init(userName: String,

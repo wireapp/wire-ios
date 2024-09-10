@@ -19,7 +19,7 @@
 import Foundation
 
 private enum PushChannelKeys: String {
-    case data = "data"
+    case data
     case identifier = "id"
     case notificationType = "type"
 }

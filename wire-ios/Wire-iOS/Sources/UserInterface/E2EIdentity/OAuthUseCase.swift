@@ -73,12 +73,12 @@ class OAuthUseCase: OAuthUseCaseInterface {
 
     private func createAdditionalParameters(with keyauth: String, acmeAudience: String) -> [String: String]? {
         enum CodingKeys: String {
-            case claims = "claims"
+            case claims
             case idToken = "id_token"
-            case keyauth = "keyauth"
+            case keyauth
             case acmeAud = "acme_aud"
-            case essential = "essential"
-            case value = "value"
+            case essential
+            case value
         }
 
         let keyauth: [String: Any] = [

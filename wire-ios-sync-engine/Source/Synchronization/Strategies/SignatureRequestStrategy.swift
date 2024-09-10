@@ -212,7 +212,7 @@ private struct SignaturePayload: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case documentID = "documentId"
         case fileName = "name"
-        case hash = "hash"
+        case hash
     }
 
     private func makeJSONDictionary() -> [String: String]? {
@@ -236,7 +236,7 @@ private struct SignatureResponse: Codable, Equatable {
     let consentURL: URL?
 
     private enum CodingKeys: String, CodingKey {
-        case consentURL = "consentURL"
+        case consentURL
         case responseID = "responseId"
     }
 

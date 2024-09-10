@@ -22,15 +22,15 @@ public final class AssetRequestFactory: NSObject {
     public enum Retention: String {
         /// The asset will be automatically removed from the backend
         /// storage after a short-ish amount of time.
-        case volatile = "volatile"
+        case volatile
 
         /// The asset will be automatically removed from the backend storage
         /// after a certain, long-ish amount of time.
-        case expiring = "expiring"
+        case expiring
 
         /// The asset will never be removed from the backend storage unless the
         /// user requests the deletion explicitly. Used for profile pictures.
-        case eternal = "eternal"
+        case eternal
 
         /// The same as eternal, however this is cost-optimized
         /// on the backend for infrequent access. Used for team conversations.

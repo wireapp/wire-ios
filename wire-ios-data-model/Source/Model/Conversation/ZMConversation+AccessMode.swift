@@ -76,13 +76,13 @@ extension ConversationAccessMode {
 /// Defines who can join the conversation.
 public enum ConversationAccessRole: String {
     /// Only the team member can join.
-    case team = "team"
+    case team
     /// Only users who have verified their phone number / email can join.
-    case activated = "activated"
+    case activated
     /// Any user can join.
     case nonActivated = "non_activated"
     // 1:1 conversation
-    case `private` = "private"
+    case `private`
 
     public static func fromAccessRoleV2(_ accessRoles: Set<ConversationAccessRoleV2>) -> ConversationAccessRole {
         if accessRoles.contains(.guest) {
@@ -117,9 +117,9 @@ public enum ConversationAccessRoleV2: String {
     /// Users with Wire accounts belonging to another team or no team.
     case nonTeamMember = "non_team_member"
     /// Users without Wire accounts, or wireless users (i.e users who join with a guest link and temporary account).
-    case guest = "guest"
+    case guest
     /// A service pseudo-user, aka a non-human bot.
-    case service = "service"
+    case service
 
     public static func fromLegacyAccessRole(_ accessRole: ConversationAccessRole) -> Set<Self> {
         switch accessRole {

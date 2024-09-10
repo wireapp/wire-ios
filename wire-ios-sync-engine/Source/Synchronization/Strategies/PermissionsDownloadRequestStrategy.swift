@@ -39,7 +39,7 @@ struct MembershipPayload: Decodable {
         case userID = "user"
         case createdBy = "created_by"
         case createdAt = "created_at"
-        case permissions = "permissions"
+        case permissions
     }
 
     let userID: UUID

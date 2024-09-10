@@ -108,7 +108,7 @@ extension FetchSubgroupActionHandler {
         enum CodingKeys: String, CodingKey {
             case userID = "user_id"
             case clientID = "client_id"
-            case domain = "domain"
+            case domain
         }
 
         let userID: UUID

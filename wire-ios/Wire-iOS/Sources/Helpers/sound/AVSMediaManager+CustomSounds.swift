@@ -32,8 +32,8 @@ enum MediaManagerSound: String {
     case ringingFromThemSound = "ringing_from_them"
     case ringingFromThemInCallSound = "ringing_from_them_incall"
     case callDropped = "call_drop"
-    case alert = "alert"
-    case camera = "camera"
+    case alert
+    case camera
     case someoneLeavesVoiceChannelSound = "talk_later"
 }
 

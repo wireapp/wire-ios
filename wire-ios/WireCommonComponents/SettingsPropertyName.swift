@@ -44,10 +44,10 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
 
     // Profile
     case profileName = "ProfileName"
-    case handle = "handle"
-    case email = "email"
-    case domain = "domain"
-    case team = "team"
+    case handle
+    case email
+    case domain
+    case team
 
     case accentColor = "AccentColor"
 
@@ -76,11 +76,11 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case callingProtocolStrategy = "CallingProtcolStrategy"
     case enableBatchCollections = "EnableBatchCollections"
 
-    case lockApp = "lockApp"
+    case lockApp
 
-    case readReceiptsEnabled = "readReceiptsEnabled"
+    case readReceiptsEnabled
 
-    case encryptMessagesAtRest = "encryptMessagesAtRest"
+    case encryptMessagesAtRest
 
     public var changeNotificationName: String {
         return self.description + "ChangeNotification"

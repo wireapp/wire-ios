@@ -380,7 +380,7 @@ public final class NotificationSession {
     }
 
     private enum PushChannelKeys: String {
-        case data = "data"
+        case data
         case identifier = "id"
     }
 }
