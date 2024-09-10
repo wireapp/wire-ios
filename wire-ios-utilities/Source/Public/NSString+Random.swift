@@ -20,6 +20,8 @@ import Foundation
 
 extension NSString {
 
+    // TODO: [WPB-11016] Move this test code from production targets
+    #if DEBUG
     @objc static func randomAlphanumerical(length: UInt) -> String {
         String.randomAlphanumerical(length: length)
     }
@@ -31,4 +33,5 @@ extension NSString {
     @objc public static func randomRemoteIdentifier() -> String {
         String.randomRemoteIdentifier()
     }
+    #endif
 }

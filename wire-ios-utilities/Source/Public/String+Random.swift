@@ -33,6 +33,8 @@ public extension String {
         return s
     }
 
+    // TODO: [WPB-11016] Move this test code from production targets
+    #if DEBUG
     static func randomClientIdentifier() -> String {
         randomHexadecimal()
     }
@@ -49,4 +51,5 @@ public extension String {
         let value = UInt.random(in: UInt.min...UInt.max)
         return String(value, radix: 16)
     }
+    #endif
 }
