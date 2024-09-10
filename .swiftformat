@@ -58,6 +58,7 @@
     # sortDeclarations, \ TODO
     sortImports, \
     sortTypealiases, \
+    spaceAroundBraces, \
     spaceAroundBrackets
 
 
