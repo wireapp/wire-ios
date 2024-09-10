@@ -183,5 +183,4 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
 
         return mockConversation
     }
-
 }

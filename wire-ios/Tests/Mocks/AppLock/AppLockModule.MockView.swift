@@ -32,7 +32,5 @@ extension AppLockModule {
         func refresh(withModel model: ViewModel) {
             models.append(model)
         }
-
     }
-
 }

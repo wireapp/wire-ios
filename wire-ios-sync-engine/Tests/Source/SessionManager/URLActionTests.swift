@@ -178,5 +178,4 @@ class URLActionTests: ZMTBaseTest {
             XCTAssertEqual(error as? DeepLinkRequestError, .malformedLink)
         }
     }
-
 }

@@ -81,5 +81,4 @@ class ConversationTests_Team: ZMConversationTestsBase {
         // When / Then
         XCTAssertTrue(sut.isTeamConversation)
     }
-
 }

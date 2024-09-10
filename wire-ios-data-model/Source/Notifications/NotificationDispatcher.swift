@@ -396,7 +396,6 @@ import Foundation
             changeInfo: changeInfo
         ).post()
     }
-
 }
 
 // MARK: - Helper extensions
@@ -406,5 +405,4 @@ private extension LazySequenceProtocol {
     func collect() -> [Element] {
         return Array(self)
     }
-
 }

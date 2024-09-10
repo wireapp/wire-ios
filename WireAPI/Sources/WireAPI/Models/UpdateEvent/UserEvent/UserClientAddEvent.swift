@@ -33,5 +33,4 @@ public struct UserClientAddEvent: Equatable, Codable {
     public init(client: UserClient) {
         self.client = client
     }
-
 }

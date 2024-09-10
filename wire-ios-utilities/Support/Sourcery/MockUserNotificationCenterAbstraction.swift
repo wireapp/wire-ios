@@ -223,5 +223,4 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
         mock(identifiers)
     }
-
 }

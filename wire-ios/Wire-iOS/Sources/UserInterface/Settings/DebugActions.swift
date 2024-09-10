@@ -240,7 +240,6 @@ enum DebugActions {
             case .repairInvalidAccessRoles:
                 DebugActions.updateInvalidAccessRoles()
             }
-
         }
     }
 

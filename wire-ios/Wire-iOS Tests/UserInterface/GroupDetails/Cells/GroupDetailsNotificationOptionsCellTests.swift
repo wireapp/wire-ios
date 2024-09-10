@@ -68,5 +68,4 @@ final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
         conversation.mutedMessageTypes = newValue
         cell.configure(with: conversation)
     }
-
 }

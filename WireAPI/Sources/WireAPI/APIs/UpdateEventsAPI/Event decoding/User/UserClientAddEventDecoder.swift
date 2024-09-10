@@ -69,15 +69,11 @@ struct UserClientAddEventDecoder {
             case mlsPublicKeys = "mls_public_keys"
             case cookie
             case capabilities
-
         }
-
     }
 
     private struct CapabilitiesList: Decodable {
 
         let capabilities: [UserClientCapability]
-
     }
-
 }

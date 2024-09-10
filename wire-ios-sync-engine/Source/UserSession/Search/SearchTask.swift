@@ -333,7 +333,6 @@ extension SearchTask {
 
         return matching + nonMatching
     }
-
 }
 
 extension SearchTask {
@@ -376,13 +375,11 @@ extension SearchTask {
 
             transportSession.enqueueOneTime(request)
         }
-
     }
 
     static func searchRequestForUser(withUUID uuid: UUID, apiVersion: APIVersion) -> ZMTransportRequest {
         .init(getFromPath: "/users/\(uuid.transportString())", apiVersion: apiVersion.rawValue)
     }
-
 }
 
 extension SearchTask {
@@ -518,7 +515,6 @@ extension SearchTask {
         request.contentHintForRequestLoop = "\(payload.hashValue)"
         return request
     }
-
 }
 
 extension SearchTask {
@@ -685,5 +681,4 @@ extension ZMSearchUser {
         }
         return name.isEmpty
     }
-
 }

@@ -75,7 +75,6 @@ public enum ClientAction: SwiftProtobuf.Enum {
     case .resetSession: return 0
     }
   }
-
 }
 
 #if swift(>=4.2)
@@ -109,7 +108,6 @@ public enum EncryptionAlgorithm: SwiftProtobuf.Enum {
     case .aesGcm: return 1
     }
   }
-
 }
 
 #if swift(>=4.2)
@@ -146,7 +144,6 @@ public enum LegalHoldStatus: SwiftProtobuf.Enum {
     case .enabled: return 2
     }
   }
-
 }
 
 #if swift(>=4.2)
@@ -863,7 +860,6 @@ public struct Availability {
       case .busy: return 3
       }
     }
-
   }
 
   public init() {}
@@ -1723,7 +1719,6 @@ public struct Confirmation {
       case .read: return 1
       }
     }
-
   }
 
   public init() {}
@@ -2060,7 +2055,6 @@ public struct Asset {
       case .failed: return 1
       }
     }
-
   }
 
   public struct Original {

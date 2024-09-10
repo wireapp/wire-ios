@@ -58,5 +58,4 @@ final class ConversationRenamedCellTests: ConversationMessageSnapshotTestCase {
 
         return message
     }
-
 }

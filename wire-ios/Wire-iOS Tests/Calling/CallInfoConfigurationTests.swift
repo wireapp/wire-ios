@@ -792,5 +792,4 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
         return mockConversation
     }
-
 }

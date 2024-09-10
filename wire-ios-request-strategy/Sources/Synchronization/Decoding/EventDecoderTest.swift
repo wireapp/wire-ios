@@ -310,7 +310,6 @@ extension EventDecoderTest {
         // then
         XCTAssertTrue(didCallBlock)
     }
-
 }
 
 // MARK: - Already seen events
@@ -423,7 +422,6 @@ extension EventDecoderTest {
         // then
         XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }
 
 // MARK: - Proteus via Core Crypto Event Decryption
@@ -518,7 +516,6 @@ extension EventDecoderTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }
 
 // MARK: - MLS Event Decryption
@@ -641,7 +638,6 @@ extension EventDecoderTest {
 
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
-
     }
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenGroupIDIsMissing() async {
@@ -805,5 +801,4 @@ extension EventDecoderTest {
             XCTAssert(self.eventMOC.saveOrRollback())
         }
     }
-
 }

@@ -38,7 +38,6 @@ public final class CreateGroupConversationAction: EntityAction {
         case nonFederatingDomains(Set<String>)
         case proccessingError(String?)
         case unknown(code: Int, label: String, message: String)
-
     }
 
     public var messageProtocol: MessageProtocol
@@ -79,7 +78,6 @@ public final class CreateGroupConversationAction: EntityAction {
         self.isReadReceiptsEnabled = isReadReceiptsEnabled
         self.resultHandler = resultHandler
     }
-
 }
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
@@ -240,7 +238,5 @@ extension CreateGroupConversationActionHandler {
 
         var unreachable_backends: [String]?
         var non_federating_backends: [String]?
-
     }
-
 }

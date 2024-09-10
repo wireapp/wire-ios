@@ -6,9 +6,10 @@
     applicationMain, \
     assertionFailures, \
     blankLineAfterImports, \
-    blankLinesAroundMark
+    blankLinesAroundMark, \
+    blankLinesAtEndOfScope
 
 # Options
 
---lineaftermarks true
+--lineaftermarks true # blankLinesAroundMark
 

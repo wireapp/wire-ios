@@ -53,7 +53,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         }
 
         apiVersion = .v0
-
     }
 
     override func tearDown() {
@@ -73,7 +72,6 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
             fatalError()
         }
     }
-
 }
 
 // MARK: - Request generation
@@ -223,5 +221,4 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertEqual((self.groupConversation.lastMessage as? ZMClientMessage)?.textMessageData?.messageText, text)
         }
     }
-
 }

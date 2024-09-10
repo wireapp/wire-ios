@@ -47,7 +47,6 @@ extension LocalNotificationType {
             return .newMessage
         }
     }
-
 }
 
 private extension PushNotificationCategory {

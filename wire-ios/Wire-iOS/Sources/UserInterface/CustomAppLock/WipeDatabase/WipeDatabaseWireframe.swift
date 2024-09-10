@@ -33,5 +33,4 @@ final class WipeDatabaseWireframe {
 
         return viewController
     }
-
 }

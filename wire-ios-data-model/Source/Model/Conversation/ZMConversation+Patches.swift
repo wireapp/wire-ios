@@ -182,5 +182,4 @@ extension ZMConversation {
     static func introduceAccessRoleV2(in moc: NSManagedObjectContext) {
         forceToFetchConversationAccessRoles(in: moc)
     }
-
 }

@@ -26,7 +26,6 @@ enum AuthenticationType: CaseIterable {
     static var current: AuthenticationType {
         return AuthenticationTypeDetector().current
     }
-
 }
 
 struct AuthenticationTypeDetector: AuthenticationTypeProvider {
@@ -54,11 +53,9 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
             return .passcode
         }
     }
-
 }
 
 protocol AuthenticationTypeProvider {
 
     var current: AuthenticationType { get }
-
 }

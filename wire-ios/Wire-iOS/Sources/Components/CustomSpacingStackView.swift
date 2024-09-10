@@ -79,7 +79,6 @@ final class CustomSpacingStackView: UIView {
         get { return stackView.spacing }
         set { stackView.spacing = newValue }
     }
-
 }
 
 final class SpacingView: UIView {
@@ -105,7 +104,6 @@ final class SpacingView: UIView {
     override var intrinsicContentSize: CGSize {
         return CGSize(width: size, height: size)
     }
-
 }
 
 /**
@@ -141,5 +139,4 @@ final class ContentInsetView: UIView {
     override var intrinsicContentSize: CGSize {
         return view.intrinsicContentSize
     }
-
 }

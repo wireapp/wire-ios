@@ -69,5 +69,4 @@ class MockPresentationDelegate: PresentationDelegate {
         let mockPassword = "mockPassword12345678!3"
         completion(mockPassword)
     }
-
 }

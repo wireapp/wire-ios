@@ -53,7 +53,6 @@ public enum MockConversationAccessRoleV2: String {
             return [teamMember.rawValue, service.rawValue]
         }
     }
-
 }
 
 public struct MockConversationAccessMode: OptionSet {

@@ -1046,7 +1046,6 @@ struct ConversationEventPayloadProcessor {
             conversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
         }
     }
-
 }
 
 // MARK: - Payload parsing utils
@@ -1060,5 +1059,4 @@ private extension ZMConversation {
             in: managedObjectContext!
         )
     }
-
 }

@@ -32,7 +32,6 @@ public final class SyncConversationAction: EntityAction {
         case invalidResponsePayload
         case conversationNotFound
         case unknownError(code: Int, label: String, message: String)
-
     }
 
     // MARK: - Properties
@@ -49,5 +48,4 @@ public final class SyncConversationAction: EntityAction {
         self.qualifiedID = qualifiedID
         self.resultHandler = resultHandler
     }
-
 }

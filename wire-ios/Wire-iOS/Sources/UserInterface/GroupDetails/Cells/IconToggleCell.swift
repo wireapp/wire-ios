@@ -87,5 +87,4 @@ class IconToggleCell: DetailsCollectionViewCell {
     func toggleChanged(_ sender: UISwitch) {
         action?(sender.isOn)
     }
-
 }

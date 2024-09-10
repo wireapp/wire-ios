@@ -40,7 +40,6 @@ protocol LogFilesProviding {
     /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
 
     func clearLogsDirectory() throws
-
 }
 
 /// Generates log files archives.
@@ -171,5 +170,4 @@ struct LogFilesProvider: LogFilesProviding {
 
         return infoFileURL
     }
-
 }

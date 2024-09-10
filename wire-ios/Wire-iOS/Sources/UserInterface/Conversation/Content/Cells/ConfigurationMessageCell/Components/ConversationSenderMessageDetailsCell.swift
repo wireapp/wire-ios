@@ -338,7 +338,6 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
             accessibilityLabel = nil
         }
     }
-
 }
 
 private extension UserType {
@@ -360,5 +359,4 @@ private extension UserType {
             return nil
         }
     }
-
 }

@@ -130,5 +130,4 @@ class PasswordRuleSetTests: XCTestCase {
         // THEN
         XCTAssertEqual(keychainFormat, "minlength: 10; maxlength: 100; allowed: ascii-printable; allowed: [🐼]; required: [🐼];")
     }
-
 }

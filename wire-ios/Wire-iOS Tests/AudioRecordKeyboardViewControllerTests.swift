@@ -92,7 +92,6 @@ final class MockAudioRecorder: AudioRecorderType {
     func alertForRecording(error: RecordingError) -> UIAlertController? {
         return nil
     }
-
 }
 
 final class AudioRecordKeyboardViewControllerTests: XCTestCase {
@@ -201,5 +200,4 @@ final class AudioRecordKeyboardViewControllerTests: XCTestCase {
         XCTAssertEqual(self.mockDelegate.didStartRecordingHitCount, 1)
         XCTAssertEqual(self.mockDelegate.didCancelHitCount, 1)
     }
-
 }

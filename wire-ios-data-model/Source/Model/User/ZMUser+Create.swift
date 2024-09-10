@@ -63,7 +63,6 @@ public extension ZMUser {
             return user
         }
     }
-
 }
 
 extension ZMUser {
@@ -79,5 +78,4 @@ extension ZMUser {
             return oneOnOneConversation
         }
     }
-
 }

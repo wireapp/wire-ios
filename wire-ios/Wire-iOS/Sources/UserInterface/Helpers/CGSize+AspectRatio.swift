@@ -51,5 +51,4 @@ extension CGSize {
         guard orientation.aspectRatio != aspectRatio else { return self }
         return flipped()
     }
-
 }

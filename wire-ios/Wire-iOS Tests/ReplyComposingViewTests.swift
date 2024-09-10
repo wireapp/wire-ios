@@ -64,5 +64,4 @@ final class ReplyComposingViewTests: XCTestCase {
         // THEN
         XCTAssertEqual(delegate.didCancelCalledCount, 1)
     }
-
 }

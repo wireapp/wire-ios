@@ -363,5 +363,4 @@ fileprivate extension UITableViewCell {
         view.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
         return view
     }
-
 }

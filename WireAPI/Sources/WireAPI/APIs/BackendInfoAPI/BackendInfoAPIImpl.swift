@@ -41,7 +41,6 @@ class BackendInfoAPIImpl: BackendInfoAPI {
             .success(code: .ok, type: BackendInfoResponse.self)
             .parse(code: response.statusCode, data: data)
     }
-
 }
 
 private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
@@ -59,5 +58,4 @@ private struct BackendInfoResponse: Decodable, ToAPIModelConvertible {
             developmentVersions: Set(development?.compactMap(APIVersion.init) ?? [])
         )
     }
-
 }

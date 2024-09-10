@@ -61,5 +61,4 @@ class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
         // THEN
         XCTAssertNil(result)
     }
-
 }

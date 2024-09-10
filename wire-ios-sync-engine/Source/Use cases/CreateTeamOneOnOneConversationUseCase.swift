@@ -24,7 +24,6 @@ protocol CreateTeamOneOnOneConversationUseCaseProtocol {
         with user: ZMUser,
         syncContext: NSManagedObjectContext
     ) async throws -> NSManagedObjectID
-
 }
 
 public enum CreateTeamOneOnOneConversationError: Error {
@@ -37,7 +36,6 @@ public enum CreateTeamOneOnOneConversationError: Error {
     case failedToCreateProteusConversation(Error)
     case noCommonProtocols
     case conversationNotFound
-
 }
 
 /// Creates the team one on one conversation with a particular user, depending
@@ -154,5 +152,4 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             }
         }
     }
-
 }

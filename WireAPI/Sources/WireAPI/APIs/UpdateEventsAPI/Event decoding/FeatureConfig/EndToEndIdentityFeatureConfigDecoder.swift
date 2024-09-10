@@ -46,7 +46,5 @@ struct EndToEndIdentityFeatureConfigDecoder {
             case acmeDiscoveryURL = "acmeDiscoveryUrl"
             case verificationExpiration
         }
-
     }
-
 }

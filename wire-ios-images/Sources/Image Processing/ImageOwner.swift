@@ -94,5 +94,4 @@ public final class ImageOwner: NSObject, ZMImageOwner {
     override public var hash: Int {
             return (nonce as NSUUID).hash ^ imageSize.width.hashValue ^ imageSize.height.hashValue
     }
-
 }

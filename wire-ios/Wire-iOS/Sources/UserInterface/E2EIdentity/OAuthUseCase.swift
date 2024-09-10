@@ -25,7 +25,6 @@ import WireUtilities
 protocol OAuthUseCaseInterface {
 
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
-
 }
 
 class OAuthUseCase: OAuthUseCaseInterface {
@@ -136,7 +135,6 @@ class OAuthUseCase: OAuthUseCaseInterface {
                 return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
             })
         }
-
     }
 }
 
@@ -149,5 +147,4 @@ enum OAuthError: Error {
     case missingOIDExternalUserAgent
     case missingIdToken
     case userCancelled
-
 }

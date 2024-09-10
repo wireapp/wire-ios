@@ -237,7 +237,6 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
 
         // It updates conversations verification statuses for dp1
         XCTAssertEqual(mockMLSGroupVerification.updateAllConversations_Invocations.count, 1)
-
     }
 
     // MARK: - Helpers
@@ -280,5 +279,4 @@ final class CertificateRevocationListsCheckerTests: XCTestCase {
             return distributionPoints.contains(distributionPoint.absoluteString)
         }
     }
-
 }

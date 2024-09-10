@@ -93,5 +93,4 @@ extension ContactsViewController {
 
         NSLayoutConstraint.activate(constraints)
     }
-
 }

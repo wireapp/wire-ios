@@ -108,7 +108,6 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
     var selectionRect: CGRect {
         return transferView.bounds
     }
-
 }
 
 extension ConversationAudioMessageCell: TransferViewDelegate {
@@ -144,5 +143,4 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
         self.configuration = View.Configuration(message: message)
         accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
     }
-
 }

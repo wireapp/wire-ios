@@ -107,7 +107,6 @@ final class ProximityMonitorManager: NSObject {
     @objc func handleProximityChange(_ notification: Notification) {
         self.raisedToEar = UIDevice.current.proximityState
     }
-
 }
 
 extension ProximityMonitorManager: WireCallCenterCallStateObserver {
@@ -115,7 +114,6 @@ extension ProximityMonitorManager: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateProximityMonitorState()
     }
-
 }
 
 extension ProximityMonitorManager: AVSMediaManagerClientObserver {
@@ -125,5 +123,4 @@ extension ProximityMonitorManager: AVSMediaManagerClientObserver {
             updateProximityMonitorState()
         }
     }
-
 }

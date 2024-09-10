@@ -34,7 +34,5 @@ struct UserClientRemoveEventDecoder {
     private struct Payload: Decodable {
 
         let id: String
-
     }
-
 }

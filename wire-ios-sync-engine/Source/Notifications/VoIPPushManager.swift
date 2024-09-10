@@ -25,13 +25,11 @@ public protocol VoIPPushManagerDelegate: AnyObject {
 
     func processIncomingRealVoIPPush(payload: [AnyHashable: Any], completion: @escaping () -> Void)
     func processPendingCallEvents(accountID: UUID)
-
 }
 
 extension Logging {
 
     static let push = ZMSLog(tag: "Push")
-
 }
 
 public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {

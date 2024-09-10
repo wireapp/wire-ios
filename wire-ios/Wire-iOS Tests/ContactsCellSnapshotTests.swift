@@ -152,5 +152,4 @@ final class ContactsCellSnapshotTests: XCTestCase {
                 line: #line
             )
     }
-
 }

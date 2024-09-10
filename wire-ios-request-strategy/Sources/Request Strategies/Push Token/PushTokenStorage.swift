@@ -42,5 +42,4 @@ public enum PushTokenStorage {
             storage.set(data, forKey: Keys.pushToken.rawValue)
         }
     }
-
 }

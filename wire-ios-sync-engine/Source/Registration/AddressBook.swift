@@ -218,7 +218,6 @@ extension NBPhoneNumberUtil {
         }
         return normalizedNumber
     }
-
 }
 
 extension String {
@@ -264,7 +263,6 @@ extension String {
     var base64EncodedSHADigest: String {
         return Data(self.utf8).zmSHA256Digest().base64EncodedString(options: [])
     }
-
 }
 
 /// Private AB processing queue
@@ -308,7 +306,6 @@ protocol ContactRecord {
     var nickname: String { get }
     var organization: String { get }
     var localIdentifier: String { get }
-
 }
 
 extension ContactRecord {

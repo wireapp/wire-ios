@@ -116,7 +116,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedField: "nameChanged",
                                                      expectedChangedKeys: ["displayName"]
         )
-
     }
 
     func notifyNameChange(_ user: ZMUser, name: String) {
@@ -142,7 +141,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedField: "nameChanged",
                                                      expectedChangedKeys: ["displayName"]
         )
-
     }
 
     func testThatItNotifiesTheObserverOfANameChangeBecauseAnActiveParticipantWasAdded() {
@@ -165,7 +163,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                                              "activeParticipantsChanged"],
                                                      expectedChangedKeys: ["displayName", "localParticipantRoles"]
         )
-
     }
 
     func testThatItNotifiesTheObserverOfANameChangeBecauseOfActiveParticipantsMultipleTimes() {
@@ -299,7 +296,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                                              "nameChanged",
                                                                              "activeParticipantsChanged"],
                                                      expectedChangedKeys: ["displayName", "localParticipantRoles"])
-
     }
 
     func testThatItNotifiesTheObserverOfARemovedParticipant() {
@@ -328,7 +324,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                     "activeParticipantsChanged"],
             expectedChangedKeys: ["displayName", "localParticipantRoles"]
         )
-
     }
 
     func testThatItNotifiesTheObserverOfAnRemovedParticipant() {
@@ -380,7 +375,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                 modifier: modifier,
                                                 expectedChangedFields: ["participantsChanged"],
                                                 expectedChangedKeys: ["localParticipantRoles"])
-
     }
 
     func testThatItNotifiesTheObserverOfAParticipantRoleChanged() {
@@ -414,7 +408,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                 modifier: modifier,
                                                 expectedChangedFields: ["participantsChanged"],
                                                 expectedChangedKeys: ["localParticipantRoles"])
-
     }
 
     func testThatItNotifiesTheObserverIfTheSelfUserIsAdded() {
@@ -444,7 +437,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 "localParticipants"
             ]
         )
-
     }
 
     func testThatItNotifiesTheObserverWhenTheUserLeavesTheConversation() {
@@ -473,7 +465,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 "displayName",
                 "localParticipants"]
         )
-
     }
 
     func testThatItNotifiesTheObserverOfChangedLastModifiedDate() {
@@ -487,7 +478,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { conversation, _ in conversation.lastModifiedDate = Date() },
                                                      expectedChangedField: "lastModifiedDateChanged",
                                                      expectedChangedKeys: ["lastModifiedDate"])
-
     }
 
     func testThatItNotifiesTheObserverOfChangedUnreadCount() {
@@ -535,7 +525,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
                                      expectedChangedFields: ["unreadCountChanged", "conversationListIndicatorChanged"])
         XCTAssertEqual(changes.changedKeys, Set(["estimatedUnreadCount", "conversationListIndicator"]))
-
     }
 
     func testThatItNotifiesTheObserverOfChangedDisplayName() {
@@ -550,7 +539,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { conversation, _ in conversation.userDefinedName = "Cacao" },
                                                      expectedChangedField: "nameChanged",
                                                      expectedChangedKeys: ["displayName"])
-
     }
 
     func testThatItNotifiesTheObserverOfChangeOneOnOneUser() {
@@ -566,7 +554,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { conversation, _ in conversation.oneOnOneUser = otherUser },
                                                      expectedChangedField: "oneOnOneUserChanged",
                                                      expectedChangedKeys: ["oneOnOneUser"])
-
     }
 
     func testThatAccessModeChangeIsTriggeringObservation() {
@@ -716,7 +703,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { conversation, _ in conversation.isArchived = true },
                                                      expectedChangedField: "isArchivedChanged",
                                                      expectedChangedKeys: ["isArchived"])
-
     }
 
     func testThatItNotifiesTheObserverOfChangedSilencedStatus() {
@@ -730,7 +716,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { conversation, _ in conversation.mutedMessageTypes = .regular },
                                                      expectedChangedField: "mutedMessageTypesChanged",
                                                      expectedChangedKeys: ["mutedStatus"])
-
     }
 
     func addUnreadMissedCall(_ conversation: ZMConversation) {
@@ -817,7 +802,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged", "nameChanged", "participantsChanged", "activeParticipantsChanged"],
                                                      expectedChangedKeys: ["displayName", "allMessages", "localParticipantRoles", "securityLevel"])
-
     }
 
     func testThatItNotifiesAboutSecurityLevelChange_AddingDevice() {
@@ -841,7 +825,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged"],
                                                      expectedChangedKeys: ["securityLevel", "allMessages"])
-
     }
 
     func testThatItNotifiesAboutSecurityLevelChange_SendingMessageToDegradedConversation() {
@@ -1044,7 +1027,6 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                                                 expectedChangedFields: [#keyPath(ConversationChangeInfo.participantsChanged)],
                                                 expectedChangedKeys: [#keyPath(ZMConversation.localParticipantRoles)])
     }
-
 }
 
 // MARK: Performance

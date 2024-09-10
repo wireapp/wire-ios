@@ -139,7 +139,6 @@ final class ConversationTextMessageCell: UIView,
         isAccessibilityElement = true
         accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
     }
-
 }
 
 // MARK: - Description
@@ -240,5 +239,4 @@ extension ConversationTextMessageCellDescription {
 
         return cells
     }
-
 }

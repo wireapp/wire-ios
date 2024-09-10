@@ -77,7 +77,6 @@ final class ConversationListContentController: UICollectionViewController {
         listViewModel.delegate = self
 
         setupViews()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -173,7 +172,6 @@ final class ConversationListContentController: UICollectionViewController {
     private func registerSectionHeader() {
         collectionView?.register(ConversationListHeaderView.self, forSupplementaryViewOfKind:
             UICollectionView.elementKindSectionHeader, withReuseIdentifier: ConversationListHeaderView.reuseIdentifier)
-
     }
 
     /// ensures that the list selection state matches that of the model.

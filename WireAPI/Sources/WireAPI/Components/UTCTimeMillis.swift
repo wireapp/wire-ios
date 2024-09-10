@@ -47,5 +47,4 @@ struct UTCTimeMillis: Codable {
         let string = ISO8601DateFormatter.fractionalInternetDateTime.string(from: date)
         try container.encode(string)
     }
-
 }

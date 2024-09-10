@@ -23,5 +23,4 @@ class UserPropertiesAPIV6: UserPropertiesAPIV5 {
     override var apiVersion: APIVersion {
         .v6
     }
-
 }

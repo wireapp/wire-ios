@@ -30,5 +30,4 @@ struct DigitalSignatureFeatureConfigDecoder {
 
         return DigitalSignatureFeatureConfig(status: payload.status)
     }
-
 }

@@ -31,9 +31,7 @@ extension AppLockModule {
         init(userSession: UserSession) {
             self.userSession = userSession
         }
-
     }
-
 }
 
 // MARK: - Perform action
@@ -88,5 +86,4 @@ extension AppLockModule.Router: AppLockRouterPresenterInterface {
     private func presentDeviceSettings() {
         UIApplication.shared.openSettings()
     }
-
 }

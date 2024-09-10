@@ -60,7 +60,6 @@ final class BasicReactionPicker: UIView {
                                                name: UIContentSizeCategory.didChangeNotification,
                                                object: nil)
     }
-
 }
 
 private extension BasicReactionPicker {

@@ -190,5 +190,4 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
         self.configuration = View.Configuration(image: image, message: message)
         accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
-
 }

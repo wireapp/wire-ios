@@ -77,7 +77,6 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
             self.selfUser.remoteIdentifier = UUID.create()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
     }
 
     override func tearDown() {
@@ -278,7 +277,6 @@ extension LocalNotificationDispatcherTests {
         XCTAssertEqual(self.scheduledRequests.count, 1)
         XCTAssertEqual(self.scheduledRequests[0].content.body, "New message")
         XCTAssertEqual(self.scheduledRequests[0].content.sound, UNNotificationSound(named: convertToUNNotificationSoundName("default")))
-
     }
 
     func testThatItDoesNotCreateNotificationForTwoMessageEventsWithTheSameNonce() {
@@ -305,7 +303,6 @@ extension LocalNotificationDispatcherTests {
         // THEN
         XCTAssertEqual(self.sut.eventNotifications.notifications.count, 1)
         XCTAssertEqual(self.scheduledRequests.count, 1)
-
     }
 
     func testThatItDoesNotCreateNotificationForFileUploadEventsWithTheSameNonce() {
@@ -334,7 +331,6 @@ extension LocalNotificationDispatcherTests {
         // THEN
         XCTAssertEqual(self.sut.eventNotifications.notifications.count, 1)
         XCTAssertEqual(self.scheduledRequests.count, 1)
-
     }
 
     func testThatItCreatesNotificationForSelfGroupParticipation() {
@@ -356,7 +352,6 @@ extension LocalNotificationDispatcherTests {
                 ],
                 "type": "conversation.member-join"
             ]
-
         }
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
         event.source = .pushNotification

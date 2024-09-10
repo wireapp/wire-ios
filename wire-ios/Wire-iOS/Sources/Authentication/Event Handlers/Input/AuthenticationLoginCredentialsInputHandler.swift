@@ -40,7 +40,6 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
             return nil
         }
     }
-
 }
 
 struct EmailPasswordInput {

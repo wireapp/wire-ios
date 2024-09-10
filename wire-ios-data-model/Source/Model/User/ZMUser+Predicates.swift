@@ -94,7 +94,6 @@ extension ZMUser {
                           .and(predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.pending.rawValue,
                                                                           ZMConnectionStatus.sent.rawValue]))
     }
-
 }
 
 // MARK: - Domain
@@ -108,5 +107,4 @@ private extension NSPredicate {
             domain
         )
     }
-
 }

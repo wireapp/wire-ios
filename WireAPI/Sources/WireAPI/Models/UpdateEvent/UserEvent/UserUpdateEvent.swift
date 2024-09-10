@@ -53,5 +53,4 @@ public struct UserUpdateEvent: Equatable, Codable {
     /// The new supported protocols.
 
     public let supportedProtocols: Set<MessageProtocol>?
-
 }

@@ -91,5 +91,4 @@ private extension DownStyle {
 
         return style
     }
-
 }

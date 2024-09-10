@@ -39,5 +39,4 @@ extension ContactsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return CGFloat.StartUI.CellHeight
     }
-
 }

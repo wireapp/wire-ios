@@ -220,7 +220,6 @@ class CollectionCell: UICollectionViewCell {
     func copyDisplayedContent(in pasteboard: UIPasteboard) {
         message?.copy(in: pasteboard)
     }
-
 }
 
 extension CollectionCell: ZMMessageObserver {

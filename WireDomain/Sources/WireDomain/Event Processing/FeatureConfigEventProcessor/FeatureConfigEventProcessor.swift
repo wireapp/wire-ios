@@ -31,7 +31,6 @@ protocol FeatureConfigEventProcessorProtocol {
     /// - Parameter event: A feature config update event.
 
     func processEvent(_ event: FeatureConfigEvent) async throws
-
 }
 
 struct FeatureConfigEventProcessor {
@@ -44,5 +43,4 @@ struct FeatureConfigEventProcessor {
             try await updateEventProcessor.processEvent(event)
         }
     }
-
 }

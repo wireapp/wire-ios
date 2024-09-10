@@ -22,7 +22,6 @@ import Foundation
 struct HTTPClientMockError: Error {
 
     let message: String
-
 }
 
 final class HTTPClientMock: HTTPClient {

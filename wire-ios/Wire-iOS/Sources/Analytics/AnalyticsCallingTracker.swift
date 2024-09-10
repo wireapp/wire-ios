@@ -136,7 +136,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
         default:
             break
         }
-
     }
 
     func presentIOErrorAlertIfAllowed() {
@@ -153,7 +152,6 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
         ))
         alert.presentTopmost()
     }
-
 }
 
 // MARK: - WireCallCenterCallParticipantObserver - tracking share screen

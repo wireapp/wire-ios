@@ -149,7 +149,6 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         XCTAssertNotNil(completeRequest)
         XCTAssertEqual(completeRequest?.path, "/assets/v3")
         XCTAssertEqual(completeRequest?.method, .post)
-
     }
 
     func testThatItCreatesRequestWithExpectedData() {
@@ -215,7 +214,6 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
         // THEN
         XCTAssertEqual(updateStatus.uploadDoneForSize, size)
         XCTAssertEqual(updateStatus.uploadDoneWithAssetId, assetId)
-
     }
 
     // MARK: - Profile image download
@@ -452,5 +450,4 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             XCTAssertNil(sut.nextRequestIfAllowed(for: .v0))
         }
     }
-
 }

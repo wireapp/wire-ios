@@ -44,7 +44,6 @@ extension CallPermissionsConfiguration {
         guard !canAcceptVideoCalls else { return .hidden }
         return isPendingVideoPermissionRequest ? .statusTextHidden : .statusTextDisplayed
     }
-
 }
 
 func == (lhs: CallPermissionsConfiguration, rhs: CallPermissionsConfiguration) -> Bool {

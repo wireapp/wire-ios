@@ -29,7 +29,6 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
         case notifications
         case time
         case hasMore = "has_more"
-
     }
 
     func toAPIModel() -> PayloadPager<UpdateEventEnvelope>.Page {
@@ -47,5 +46,4 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
             nextStart: lastNonTransientEvent?.id.transportString() ?? ""
         )
     }
-
 }

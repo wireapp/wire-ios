@@ -44,5 +44,4 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         // This check is performed by the backend.
         return true
     }
-
 }

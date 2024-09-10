@@ -369,7 +369,6 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
 
         verify(message: message, allWidths: false)
     }
-
 }
 
 extension MockMessage {

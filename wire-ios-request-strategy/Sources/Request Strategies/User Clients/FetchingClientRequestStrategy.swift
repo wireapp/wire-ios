@@ -127,7 +127,6 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         let clients = UserClient.fetchClientsNeedingUpdateFromBackend(in: managedObjectContext)
         fetch(userClients: clients)
     }
-
 }
 
 extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
@@ -295,11 +294,9 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         enum CodingKeys: String, CodingKey {
 
             case qualifiedIDs = "qualified_users"
-
         }
 
         let qualifiedIDs: Set<QualifiedID>
-
     }
 
     public func request(for identifiers: Set<QualifiedID>, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -353,11 +350,9 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         enum CodingKeys: String, CodingKey {
 
             case qualifiedUsers = "qualified_user_map"
-
         }
 
         let qualifiedUsers: Payload.UserClientByDomain
-
     }
 
     public func didReceive(response: ZMTransportResponse, for identifiers: Set<QualifiedID>, completionHandler: @escaping () -> Void) {
@@ -428,7 +423,6 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
 
         managedObjectContext.saveOrRollback()
     }
-
 }
 
 final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {

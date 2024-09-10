@@ -51,7 +51,6 @@ public class Mention: NSObject {
 
         return user.isEqual(otherMention.user) && NSEqualRanges(range, otherMention.range)
     }
-
 }
 
 extension Mention {

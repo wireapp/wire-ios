@@ -45,5 +45,4 @@ public struct TeamMemberPermissions: Equatable {
         self.copyPermissions = copyPermissions
         self.selfPermissions = selfPermissions
     }
-
 }

@@ -52,9 +52,6 @@ public extension Feature {
                 self.enforceAppLock = enforceAppLock
                 self.inactivityTimeoutSecs = inactivityTimeoutSecs
             }
-
         }
-
     }
-
 }

@@ -85,7 +85,5 @@ extension ConversationActionController {
                 conversation.mutedMessageTypes = mutedMessageTypes
             }
         }
-
     }
-
 }

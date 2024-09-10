@@ -23,7 +23,6 @@ public protocol LastE2EIdentityUpdateDateRepositoryInterface {
 
     func fetchLastAlertDate() -> Date?
     func storeLastAlertDate(_ date: Date?)
-
 }
 
 @objc
@@ -63,5 +62,4 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
     public func storeLastAlertDate(_ date: Date?) {
         storage.set(date, forKey: .lastE2EIdenityUpdateDate)
     }
-
 }

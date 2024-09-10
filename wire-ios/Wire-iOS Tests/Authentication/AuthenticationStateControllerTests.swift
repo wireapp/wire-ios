@@ -29,7 +29,6 @@ class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDe
         lastKnownStep = newState
         lastKnownChangeMode = mode
     }
-
 }
 
 class AuthenticationStateControllerTests: XCTestCase {
@@ -79,7 +78,6 @@ class AuthenticationStateControllerTests: XCTestCase {
         XCTAssertEqual(stateController.stack, [.start, emailStep])
         XCTAssertEqual(delegate.lastKnownChangeMode, .normal)
         XCTAssertEqual(delegate.lastKnownStep, emailStep)
-
     }
 
     func testThatItAdvancesStateWithReset() {
@@ -135,5 +133,4 @@ class AuthenticationStateControllerTests: XCTestCase {
         XCTAssertEqual(stateController.currentStep, .start)
         XCTAssertEqual(stateController.stack, [.start])
     }
-
 }

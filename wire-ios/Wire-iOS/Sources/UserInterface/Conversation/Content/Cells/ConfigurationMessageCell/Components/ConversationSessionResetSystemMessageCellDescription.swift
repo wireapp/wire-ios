@@ -58,5 +58,4 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
 
         return NSMutableAttributedString.markdown(from: string, style: .systemMessage)
     }
-
 }

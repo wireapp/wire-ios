@@ -49,7 +49,5 @@ public struct MLSPublicKeys: Equatable, Codable {
         case p256 = "ecdsa_secp256r1_sha256"
         case p384 = "ecdsa_secp384r1_sha384"
         case p512 = "ecdsa_secp512r1_sha512"
-
     }
-
 }

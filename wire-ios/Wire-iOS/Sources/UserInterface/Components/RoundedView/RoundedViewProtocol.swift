@@ -52,5 +52,4 @@ extension RoundedViewProtocol {
     var roundedLayer: ContinuousMaskLayer {
         return layer as! ContinuousMaskLayer
     }
-
 }

@@ -30,7 +30,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertEqual(tuple1, tuple2)
-
     }
 
     func testThatTwoTuplesHaveTheSameHash() {
@@ -42,7 +41,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertEqual(tuple1.hashValue, tuple2.hashValue)
-
     }
 
     func testThatTwoTuplesAreNotEqualOnString() {
@@ -54,7 +52,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertNotEqual(tuple1, tuple2)
-
     }
 
     func testThatTwoTuplesDoNotHaveTheSameHashOnString() {
@@ -66,7 +63,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertNotEqual(tuple1.hashValue, tuple2.hashValue)
-
     }
 
     func testThatTwoTuplesAreNotEqualOnClass() {
@@ -78,7 +74,6 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertNotEqual(tuple1, tuple2)
-
     }
 
     func testThatTwoTuplesDoNotHaveTheSameHashOnClass() {
@@ -90,6 +85,5 @@ class AnyClassTupleTests: ZMBaseManagedObjectTest {
 
         // then
         XCTAssertNotEqual(tuple1.hashValue, tuple2.hashValue)
-
     }
 }

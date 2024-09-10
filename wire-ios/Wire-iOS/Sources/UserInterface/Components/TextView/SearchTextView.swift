@@ -60,5 +60,4 @@ final class SearchTextView: TokenizedTextView {
     func textViewDidEndEditing(_ note: Notification?) {
         isEditing = false
     }
-
 }

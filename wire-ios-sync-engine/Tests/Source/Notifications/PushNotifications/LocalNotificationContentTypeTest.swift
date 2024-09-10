@@ -173,5 +173,4 @@ class LocalNotificationContentTypeTest: ZMLocalNotificationTests {
         try! data.write(to: url, options: [])
         return data
     }
-
 }

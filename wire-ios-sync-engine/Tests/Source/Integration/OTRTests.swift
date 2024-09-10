@@ -128,5 +128,4 @@ class OTRTests: IntegrationTest {
         // then
         XCTAssertEqual(tryCount, 2)
     }
-
 }

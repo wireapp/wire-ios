@@ -366,7 +366,6 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         // Then
         lastEventIDRepository.storeLastEventID_Invocations = [id]
     }
-
 }
 
 private enum Scaffolding {
@@ -479,5 +478,4 @@ private enum Scaffolding {
         hasMore: false,
         nextStart: ""
     )
-
 }

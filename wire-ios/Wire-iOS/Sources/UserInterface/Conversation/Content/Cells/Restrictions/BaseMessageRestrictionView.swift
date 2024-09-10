@@ -95,7 +95,6 @@ class BaseMessageRestrictionView: UIView {
         topLabel.attributedText = titleString
         bottomLabel.attributedText = subtitleString
     }
-
 }
 
 enum RestrictedMessageType: String {

@@ -96,7 +96,6 @@ class ExpiringActivityTests: XCTestCase {
             XCTFail("Expected the activity to end without any error thrown")
         }
     }
-
 }
 
 private class MockExpiringActivityAPI: ExpiringActivityInterface {
@@ -112,5 +111,4 @@ private class MockExpiringActivityAPI: ExpiringActivityInterface {
             fatalError("no mock for `performExpiringActivity(withReason:using:)`")
         }
     }
-
 }

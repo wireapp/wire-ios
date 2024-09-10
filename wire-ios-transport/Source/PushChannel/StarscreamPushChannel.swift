@@ -218,7 +218,6 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         timer?.fire(afterTimeInterval: 30)
         pingTimer = timer
     }
-
 }
 
 extension StarscreamPushChannel: ZMTimerClient {
@@ -228,7 +227,6 @@ extension StarscreamPushChannel: ZMTimerClient {
         webSocket?.write(ping: Data())
         schedulePingTimer()
     }
-
 }
 
 extension StarscreamPushChannel: WebSocketDelegate {
@@ -264,7 +262,6 @@ extension StarscreamPushChannel: WebSocketDelegate {
             onClose()
         }
     }
-
 }
 
 final class StarscreamCertificatePinning: CertificatePinning {
@@ -282,7 +279,6 @@ final class StarscreamCertificatePinning: CertificatePinning {
             completion(.failed(nil))
         }
     }
-
 }
 
 private extension TLSVersion {
@@ -296,5 +292,4 @@ private extension TLSVersion {
             return .v1_3
         }
     }
-
 }

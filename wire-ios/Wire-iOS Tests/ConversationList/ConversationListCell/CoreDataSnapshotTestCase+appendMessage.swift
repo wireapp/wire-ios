@@ -66,5 +66,4 @@ extension CoreDataSnapshotTestCase {
         conversation.append(otherMessage)
         conversation.lastReadServerTimeStamp = Date.distantPast
     }
-
 }

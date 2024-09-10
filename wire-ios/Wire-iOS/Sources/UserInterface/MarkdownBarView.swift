@@ -210,7 +210,6 @@ final class MarkdownBarView: UIView {
     func updateAccessibilityElements(isAccessible: Bool) {
         buttons.forEach { $0.isAccessibilityElement = isAccessible }
     }
-
 }
 
 extension MarkdownBarView: PopUpIconButtonDelegate {

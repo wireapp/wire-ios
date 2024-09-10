@@ -22,7 +22,6 @@ import WireSystem
 public class CoreCryptoKeyProvider {
 
     public init() {
-
     }
 
     public func coreCryptoKey(createIfNeeded: Bool) throws -> Data {
@@ -99,7 +98,6 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
             kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
         ]
     }
-
 }
 
 struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {

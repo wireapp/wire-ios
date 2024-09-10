@@ -76,5 +76,4 @@ class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
                 : CellColors.backgroundUserCell
         }
     }
-
 }

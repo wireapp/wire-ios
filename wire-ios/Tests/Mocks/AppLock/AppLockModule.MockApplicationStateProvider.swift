@@ -24,7 +24,5 @@ extension AppLockModule {
     final class MockApplicationStateProvider: ApplicationStateProvider {
 
         var applicationState = UIApplication.State.active
-
     }
-
 }

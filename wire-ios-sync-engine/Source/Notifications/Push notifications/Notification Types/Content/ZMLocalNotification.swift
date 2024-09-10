@@ -110,7 +110,6 @@ class ZMLocalNotification: NSObject {
     lazy var request: UNNotificationRequest = {
         return UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
     }()
-
 }
 
 // MARK: - Properties
@@ -135,7 +134,6 @@ extension ZMLocalNotification {
         guard case .message(.ephemeral) = type else { return false }
         return true
     }
-
 }
 
 // MARK: - Lookup
@@ -169,7 +167,6 @@ extension ZMLocalNotification {
             conversation?.internalEstimatedUnreadSelfReplyCount += 1
         }
     }
-
 }
 
 extension LocalNotificationType {
@@ -214,7 +211,6 @@ extension LocalNotificationType {
             return false
         }
     }
-
 }
 
 // Helper function inserted by Swift 4.2 migrator.

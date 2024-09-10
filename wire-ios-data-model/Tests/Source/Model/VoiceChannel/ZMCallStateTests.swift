@@ -41,7 +41,6 @@ class ZMCallStateTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(a1 === b1)
         XCTAssertFalse(a2 === b2)
     }
-
 }
 
 // V3 Group calling

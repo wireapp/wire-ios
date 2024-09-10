@@ -25,7 +25,6 @@ protocol AppLocationManagerDelegate: AnyObject {
     func didFailWithError(_ error: Error)
 
     func didChangeAuthorization(status: CLAuthorizationStatus)
-
 }
 
 // sourcery: AutoMockable
@@ -42,7 +41,6 @@ protocol AppLocationManagerProtocol: AnyObject {
     func startUpdatingLocation()
 
     func stopUpdatingLocation()
-
 }
 
 /// The AppLocationManager class is responsible for handling location-related services using CoreLocation.

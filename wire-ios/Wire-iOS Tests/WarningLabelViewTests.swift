@@ -71,5 +71,4 @@ class WarningLabelViewTests: XCTestCase {
         // then
         XCTAssertTrue(sut.isHidden)
     }
-
 }

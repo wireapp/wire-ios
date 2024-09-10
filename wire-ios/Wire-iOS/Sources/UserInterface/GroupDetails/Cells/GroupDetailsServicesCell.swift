@@ -52,5 +52,4 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
             : SemanticColors.View.backgroundUserCell
         }
     }
-
 }

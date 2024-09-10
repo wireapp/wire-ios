@@ -106,5 +106,4 @@ import WireUtilities
             message.linkPreviewState = .uploaded
         }
     }
-
 }

@@ -78,7 +78,6 @@ public extension ZMUser {
         action.onResult(resultHandler: completion)
         action.send(in: managedObjectContext.notificationContext)
     }
-
 }
 
 public extension ZMConnection {
@@ -92,5 +91,4 @@ public extension ZMConnection {
         action.onResult(resultHandler: completion)
         action.send(in: context.notificationContext)
     }
-
 }

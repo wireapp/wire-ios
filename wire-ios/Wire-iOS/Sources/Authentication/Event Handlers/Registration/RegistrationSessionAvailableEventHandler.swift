@@ -30,5 +30,4 @@ final class RegistrationSessionAvailableEventHandler: AuthenticationEventHandler
         guard case .createUser = currentStep else { return nil }
         return [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
     }
-
 }

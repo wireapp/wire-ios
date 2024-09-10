@@ -147,5 +147,4 @@ class CallEventContentTests: XCTestCase {
             XCTAssertNil(sut.callState)
         }
     }
-
 }

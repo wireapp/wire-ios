@@ -506,7 +506,6 @@ final class TypingStrategyTests: MessagingTest {
 
         XCTAssertTrue((request1IsforConv1 && request2IsforConv2) ||
                       (request2IsforConv1 && request1IsforConv2))
-
     }
 
     func testThatItReturns_Two_RequestsWhenReceiving_Two_TypingNotification_ForDifferentsConversation_End() {
@@ -534,7 +533,6 @@ final class TypingStrategyTests: MessagingTest {
 
         XCTAssertTrue((request1IsforConv1 && request2IsforConv2) ||
             (request2IsforConv1 && request1IsforConv2))
-
     }
 
     func testThatItDoesNotReturnARequestsWhenTheConversationsRemoteIdentifierIsNotSet() {
@@ -607,10 +605,8 @@ final class TypingStrategyTests: MessagingTest {
 
             // then
             XCTAssertFalse(typing.isUserTyping(user: userA, in: conversationA)) // user is not typing
-
         }
     }
-
 }
 
 // MARK: - Sending multiple requests
@@ -852,6 +848,5 @@ class TypingEventTests: MessagingTest {
         XCTAssertNil(eventBCopy)
         XCTAssertNotNil(eventADifferent)
         XCTAssertNotNil(eventBDifferent)
-
     }
 }

@@ -382,7 +382,6 @@ extension GroupDetailsViewController {
             mainCoordinator: mainCoordinator
         )
     }
-
 }
 
 // MARK: - Conversation verification status

@@ -55,5 +55,4 @@ public final class CookieLabel: NSObject {
         guard let other = object as? CookieLabel else { return false }
         return value == other.value
     }
-
 }

@@ -124,7 +124,6 @@ extension ZMConversation {
         guard let context = managedObjectContext else { return nil }
         return FeatureRepository(context: context).fetchSelfDeletingMesssages()
     }
-
 }
 
 private extension Feature.SelfDeletingMessages {
@@ -140,5 +139,4 @@ private extension Feature.SelfDeletingMessages {
     var timeoutValue: MessageDestructionTimeoutValue {
         return .init(rawValue: Double(config.enforcedTimeoutSeconds))
     }
-
 }

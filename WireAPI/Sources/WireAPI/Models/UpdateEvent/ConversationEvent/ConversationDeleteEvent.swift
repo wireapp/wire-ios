@@ -50,5 +50,4 @@ public struct ConversationDeleteEvent: Equatable, Codable {
         self.senderID = senderID
         self.timestamp = timestamp
     }
-
 }

@@ -165,5 +165,4 @@ public final class ConversationPredicateFactory: NSObject {
     private func predicateForUnconnectedConversations() -> NSPredicate {
         return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
     }
-
 }

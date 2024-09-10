@@ -261,5 +261,4 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixture
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
     }
-
 }

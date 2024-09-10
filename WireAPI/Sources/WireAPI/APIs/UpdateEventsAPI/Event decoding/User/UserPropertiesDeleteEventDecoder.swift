@@ -30,5 +30,4 @@ struct UserPropertiesDeleteEventDecoder {
 
         return UserPropertiesDeleteEvent(key: key)
     }
-
 }

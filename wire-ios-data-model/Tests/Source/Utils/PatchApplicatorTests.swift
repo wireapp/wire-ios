@@ -163,5 +163,4 @@ struct TestPatch: DataPatchInterface {
     func execute(in context: NSManagedObjectContext) {
         return block(context)
     }
-
 }

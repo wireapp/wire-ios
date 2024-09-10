@@ -76,7 +76,6 @@ protocol UpdateEventsRepositoryProtocol {
     /// - Parameter id: The id to store.
 
     func storeLastEventEnvelopeID(_ id: UUID)
-
 }
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
@@ -267,5 +266,4 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         )
         lastEventIDRepository.storeLastEventID(id)
     }
-
 }

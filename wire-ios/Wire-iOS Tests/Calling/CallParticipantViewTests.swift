@@ -184,5 +184,4 @@ class CallParticipantViewTests: XCTestCase {
         // then
         XCTAssertTrue(sut.scalableView!.isScalingEnabled)
     }
-
 }

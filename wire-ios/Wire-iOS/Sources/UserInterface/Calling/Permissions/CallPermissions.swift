@@ -62,5 +62,4 @@ final class CallPermissions: CallPermissionsConfiguration {
     func requestOrWarnAboutVideoPermission(resultHandler: @escaping (Bool) -> Void) {
         UIApplication.wr_requestOrWarnAboutVideoAccess(resultHandler)
     }
-
 }

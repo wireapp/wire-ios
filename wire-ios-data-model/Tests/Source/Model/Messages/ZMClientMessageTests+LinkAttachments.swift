@@ -75,5 +75,4 @@ class ZMClientMessageTests_LinkAttachments: BaseZMClientMessageTests {
         XCTAssertEqual(fetchedAttachment?.thumbnails, [thumbnail])
         XCTAssertEqual(fetchedAttachment?.originalRange, NSRange(location: 20, length: 43))
     }
-
 }

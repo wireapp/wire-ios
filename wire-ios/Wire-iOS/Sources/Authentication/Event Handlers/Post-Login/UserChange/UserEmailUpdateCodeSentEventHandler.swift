@@ -31,5 +31,4 @@ final class UserEmailUpdateCodeSentEventHandler: AuthenticationEventHandler {
         let nextStep: AuthenticationFlowStep = .pendingEmailLinkVerification(credentials)
         return [.hideLoadingView, .transition(nextStep, mode: .normal)]
     }
-
 }

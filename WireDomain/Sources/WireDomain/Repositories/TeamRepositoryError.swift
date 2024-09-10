@@ -29,5 +29,4 @@ enum TeamRepositoryError: Error {
     /// The local team instance was not found in the database.
 
     case teamNotFoundLocally
-
 }

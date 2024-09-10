@@ -219,5 +219,4 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         XCTAssertEqual(notification!.conversation.objectID, conversationA.objectID)
         XCTAssertEqual(notification!.typingUsers, Set())
     }
-
 }

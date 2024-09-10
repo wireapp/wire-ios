@@ -38,7 +38,6 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
      */
 
     func executeActions(_ actions: [AuthenticationCoordinatorAction])
-
 }
 
 /**
@@ -245,5 +244,4 @@ final class AuthenticationEventResponderChain {
         log.info("Handing event using \(name), and \(actions.count) actions.")
         delegate.executeActions(actions)
     }
-
 }

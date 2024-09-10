@@ -35,5 +35,4 @@ public struct UpdateEventDecodingProxyError: Error, CustomStringConvertible {
     public var description: String {
         "failed to decode event '\(eventType)': \(decodingError)"
     }
-
 }

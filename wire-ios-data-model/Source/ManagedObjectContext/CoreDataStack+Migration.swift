@@ -148,5 +148,4 @@ extension CoreDataStack {
             try context.save()
         }
     }
-
 }

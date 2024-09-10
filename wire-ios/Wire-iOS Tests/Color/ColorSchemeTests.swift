@@ -45,5 +45,4 @@ final class ColorSchemeTests: XCTestCase {
         XCTAssertNotEqual(sut.accentColor, alphaBlack)
         XCTAssertFalse(sut.isCurrentAccentColor(alphaBlack))
     }
-
 }

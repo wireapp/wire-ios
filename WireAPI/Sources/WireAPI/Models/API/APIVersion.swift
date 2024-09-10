@@ -64,7 +64,6 @@ public enum APIVersion: UInt, CaseIterable, Comparable {
     ) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
-
 }
 
 // swiftlint:enable identifier_name

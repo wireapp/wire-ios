@@ -34,5 +34,4 @@ extension ZMConversationMessage {
             needsLinkAttachmentsUpdate = true
         }
     }
-
 }

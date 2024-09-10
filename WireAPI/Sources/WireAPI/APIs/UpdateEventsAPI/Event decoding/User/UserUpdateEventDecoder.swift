@@ -61,9 +61,6 @@ struct UserUpdateEventDecoder {
             case isSSOIDDeleted = "sso_id_deleted"
             case assets
             case supportedProtocols = "supported_protocols"
-
         }
-
     }
-
 }

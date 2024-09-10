@@ -165,9 +165,7 @@ final class ShareViewControllerTests: XCTestCase {
         createSut(message: message)
 
         snapshotHelper.verifyInAllDeviceSizes(matching: sut, file: file, testName: testName, line: line)
-
     }
-
 }
 
 final class MockShareableMessage: MockMessage, Shareable {

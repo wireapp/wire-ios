@@ -95,7 +95,6 @@ final class TopPeopleSectionController: SearchSectionController {
         cell.collectionView = innerCollectionView
         return cell
     }
-
 }
 
 extension TopPeopleSectionController: TopConversationsDirectoryObserver {
@@ -104,7 +103,6 @@ extension TopPeopleSectionController: TopConversationsDirectoryObserver {
         innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
         innerCollectionView.reloadData()
     }
-
 }
 
 extension TopPeopleSectionController: TopPeopleLineCollectionViewControllerDelegate {
@@ -112,5 +110,4 @@ extension TopPeopleSectionController: TopPeopleLineCollectionViewControllerDeleg
     func topPeopleLineCollectionViewControllerDidSelect(_ conversation: ZMConversation) {
         delegate?.searchSectionController(self, didSelectConversation: conversation, at: IndexPath(row: 0, section: 0))
     }
-
 }

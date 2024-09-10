@@ -24,7 +24,6 @@ extension AppLockController.LegacyConfig {
     private struct Container: Decodable {
 
         let legacyAppLockConfig: AppLockController.LegacyConfig?
-
     }
 
     public static func fromBundle() -> Self? {
@@ -38,5 +37,4 @@ extension AppLockController.LegacyConfig {
         let container = try? JSONDecoder().decode(Container.self, from: data)
         return container?.legacyAppLockConfig
     }
-
 }

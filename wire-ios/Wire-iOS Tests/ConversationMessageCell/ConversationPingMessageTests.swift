@@ -30,5 +30,4 @@ final class ConversationPingMessageTests: ConversationMessageSnapshotTestCase {
         // THEN
         verify(message: message)
     }
-
 }

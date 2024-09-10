@@ -36,5 +36,4 @@ extension EncryptionSessionsDirectory {
             return (didCreateNewSession: true, decryptedData: decryptedData)
         }
     }
-
 }

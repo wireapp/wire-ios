@@ -1173,5 +1173,4 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
 
         XCTAssertEqual(controller.contents, expectedContents, file: file, line: line)
     }
-
 }

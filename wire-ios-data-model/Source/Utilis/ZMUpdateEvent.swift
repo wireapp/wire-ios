@@ -143,7 +143,6 @@ extension ZMUpdateEvent {
             } else {
                 return userIDs.compactMap { ZMUser.fetch(with: $0, domain: nil, in: context) }
             }
-
         }
     }
 

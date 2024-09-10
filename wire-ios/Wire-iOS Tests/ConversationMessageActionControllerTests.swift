@@ -108,7 +108,6 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
 
         // THEN
         XCTAssertFalse(supportsReply)
-
     }
 
     // MARK: - Copy

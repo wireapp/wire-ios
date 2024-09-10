@@ -27,5 +27,4 @@ extension UserType {
         return hasTeam
         #endif
     }
-
 }

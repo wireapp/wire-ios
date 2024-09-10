@@ -48,7 +48,6 @@ extension MessageToolboxContent: Comparable {
             return false
         }
     }
-
 }
 
 // MARK: - Data Source
@@ -278,5 +277,4 @@ final class MessageToolboxDataSource {
 
         return timestampString
     }
-
 }

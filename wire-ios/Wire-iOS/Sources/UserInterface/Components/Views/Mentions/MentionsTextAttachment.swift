@@ -92,5 +92,4 @@ final class MentionTextAttachment: NSTextAttachment {
 
         return super.attachmentBounds(for: textContainer, proposedLineFragment: lineFrag, glyphPosition: position, characterIndex: charIndex)
     }
-
 }

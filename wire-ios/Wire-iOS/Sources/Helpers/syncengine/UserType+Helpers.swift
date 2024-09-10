@@ -34,5 +34,4 @@ extension UserType {
     var hasUntrustedClients: Bool {
         return allClients.contains { !$0.verified }
     }
-
 }

@@ -48,5 +48,4 @@ enum CallInfoViewControllerAccessoryType: Equatable {
             return []
         }
     }
-
 }

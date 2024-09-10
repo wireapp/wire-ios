@@ -139,7 +139,6 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
 
             try syncMOC.save()
             return conversations
-
         }
 
         // WHEN
@@ -150,7 +149,6 @@ final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
         // THEN
         XCTAssertEqual(fetchedConversations, [conversations[0]])
     }
-
 }
 
 // MARK: - MLSGroupID Helper
@@ -165,5 +163,4 @@ extension MLSGroupID {
         XCTAssert(managedObjectContext.saveOrRollback())
         return conversation
     }
-
 }

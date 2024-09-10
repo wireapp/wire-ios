@@ -77,5 +77,4 @@ extension UIFont {
         let descriptor = fontDescriptor.addingAttributes([.traits: weightTraits])
         return UIFont(descriptor: descriptor, size: pointSize)
     }
-
 }

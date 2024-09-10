@@ -46,7 +46,6 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
 
         // then
         XCTAssertEqual(sut.previousStoreLocation, FileManager.storeURL(in: .applicationSupportDirectory))
-
     }
 
     func testThatIsNecessaryToRelocateStoreIfItsLocatedInAPreviousLocation_and_newStoreAlreadyExists() {
@@ -89,5 +88,4 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         // then
         XCTAssertNil(sut.previousStoreLocation)
     }
-
 }

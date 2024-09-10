@@ -31,5 +31,4 @@ public struct CRLsDistributionPoints: Equatable {
 
         self.urls = Set(urls)
     }
-
 }

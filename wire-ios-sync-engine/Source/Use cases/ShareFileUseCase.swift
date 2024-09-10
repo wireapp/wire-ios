@@ -32,7 +32,6 @@ public protocol ShareFileUseCaseProtocol {
         fileMetadata: ZMFileMetadata,
         conversations: [ZMConversation]
     )
-
 }
 
 public struct ShareFileUseCase: ShareFileUseCaseProtocol {
@@ -57,5 +56,4 @@ public struct ShareFileUseCase: ShareFileUseCaseProtocol {
             }
         }
     }
-
 }

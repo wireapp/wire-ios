@@ -38,5 +38,4 @@ public struct AccessToken {
     /// The number of seconds the token is valid.
 
     public let validityInSeconds: TimeInterval
-
 }

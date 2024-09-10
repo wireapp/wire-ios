@@ -37,7 +37,5 @@ struct SelfDeletingMessagesFeatureConfigDecoder {
     private struct Payload: Decodable {
 
         let enforcedTimeoutSeconds: UInt
-
     }
-
 }

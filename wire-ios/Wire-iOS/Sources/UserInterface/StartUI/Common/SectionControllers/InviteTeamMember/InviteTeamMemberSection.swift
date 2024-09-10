@@ -64,5 +64,4 @@ final class InviteTeamMemberSection: NSObject, CollectionViewSectionController {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.inviteSectionDidRequestTeamManagement()
     }
-
 }

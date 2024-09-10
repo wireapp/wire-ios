@@ -65,5 +65,4 @@ class PreviewBlackListTests: XCTestCase {
         let metadata = LinkMetadata(originalURLString: "https://www.\(host).com/example", permanentURLString: "https://www.\(host).com/example", resolvedURLString: "https://www.\(host).com/example", offset: 0)
         XCTAssertFalse(metadata.isBlacklisted, line: line)
     }
-
 }

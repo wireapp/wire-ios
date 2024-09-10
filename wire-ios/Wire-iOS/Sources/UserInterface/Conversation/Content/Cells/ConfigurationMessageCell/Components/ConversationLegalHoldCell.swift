@@ -95,7 +95,6 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
             return ""
         }
     }
-
 }
 
 extension ConversationLegalHoldSystemMessageCell {
@@ -118,5 +117,4 @@ extension ConversationLegalHoldSystemMessageCell {
 
         return false
     }
-
 }

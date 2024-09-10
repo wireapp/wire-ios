@@ -23,7 +23,6 @@ protocol IncomingRequestFooterViewDelegate: AnyObject {
 
     /// Called when the user accepts or denies a connection request.
     func footerView(_ footerView: IncomingRequestFooterView, didRespondToRequestWithAction action: IncomingConnectionAction)
-
 }
 
 /**
@@ -89,7 +88,6 @@ class IncomingRequestFooterView: UIView {
         contentStack.addArrangedSubview(titleLabel)
         contentStack.addArrangedSubview(buttonsStack)
         addSubview(contentStack)
-
     }
 
     private func configureConstraints() {
@@ -118,5 +116,4 @@ class IncomingRequestFooterView: UIView {
     private func ignoreButtonTapped() {
         delegate?.footerView(self, didRespondToRequestWithAction: .ignore)
     }
-
 }

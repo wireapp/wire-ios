@@ -21,13 +21,11 @@ import Foundation
 public extension NSNotification.Name {
 
     static let requestAvailableNotification = RequestAvailableNotification.name
-
 }
 
 @objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver: NSObjectProtocol {
 
     func newRequestsAvailable()
-
 }
 
 /// ZMRequestAvailableNotification is used by transport to signal the operation loop that
@@ -64,5 +62,4 @@ public final class RequestAvailableNotification: NSObject {
             object: nil
         )
     }
-
 }

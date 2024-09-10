@@ -19,5 +19,4 @@
 enum HTTPContentType: String {
 
     case json = "application/json"
-
 }

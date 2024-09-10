@@ -48,7 +48,5 @@ class ZMTExpectationTests: ZMTBaseTest {
 
         let receivedAfterSending = self.waitForCustomExpectations(withTimeout: 0.2)
         XCTAssertTrue(receivedAfterSending)
-
     }
-
 }

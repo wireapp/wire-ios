@@ -34,5 +34,4 @@ public struct AppLockFeatureConfig: Codable, Equatable {
     /// the app should relock.
 
     public let inactivityTimeoutInSeconds: UInt
-
 }

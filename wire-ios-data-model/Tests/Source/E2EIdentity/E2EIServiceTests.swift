@@ -399,5 +399,4 @@ final class E2EIServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(mockCreatesCertificateRequest, 1)
         XCTAssertEqual(certificateRequest, expectedCertificateRequest)
     }
-
 }

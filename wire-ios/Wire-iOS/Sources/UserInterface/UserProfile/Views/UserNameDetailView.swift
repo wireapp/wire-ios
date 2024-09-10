@@ -54,7 +54,6 @@ final class AddressBookCorrelationFormatter: NSObject {
 
         return nil
     }
-
 }
 
 final class UserNameDetailViewModel: NSObject {
@@ -184,5 +183,4 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
         subtitleLabel.attributedText = model.firstSubtitle
         correlationLabel.attributedText = model.secondSubtitle
     }
-
 }

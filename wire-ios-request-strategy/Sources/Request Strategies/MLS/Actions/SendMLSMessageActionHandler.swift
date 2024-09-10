@@ -82,7 +82,6 @@ class SendMLSMessageActionHandler: ActionHandler<SendMLSMessageAction> {
 
             action.succeed(with: updateEvents)
         }
-
     }
 }
 
@@ -153,5 +152,4 @@ extension SendMLSMessageAction.Failure {
             )
         }
     }
-
 }

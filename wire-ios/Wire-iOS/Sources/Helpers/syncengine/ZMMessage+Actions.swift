@@ -166,5 +166,4 @@ extension ZMConversationMessage {
     var canBeShared: Bool {
         return !isRestricted
     }
-
 }

@@ -40,5 +40,4 @@ class StartLoginURLActionProcessor: URLActionProcessor {
             break
         }
     }
-
 }

@@ -164,5 +164,4 @@ extension ConversationViewControllerSnapshotTests {
         // then
         snapshotHelper.verify(matching: sut)
     }
-
 }

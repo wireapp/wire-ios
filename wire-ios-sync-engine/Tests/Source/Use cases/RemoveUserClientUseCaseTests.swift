@@ -38,7 +38,6 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         sut = RemoveUserClientUseCase(
             userClientAPI: mockApiProvider.userClientAPIApiVersion_MockValue!,
             syncContext: stack.syncContext)
-
     }
 
     override func tearDown() async throws {
@@ -116,5 +115,4 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
             try self.stack.syncContext.save()
         }
     }
-
 }

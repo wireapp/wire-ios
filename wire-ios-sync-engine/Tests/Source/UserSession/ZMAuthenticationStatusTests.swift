@@ -49,6 +49,5 @@ class ZMAuthenticationStatusTestsPhoneAndEmailVerification: XCTestCase {
         XCTAssertEqual(sut.currentPhase, .requestEmailVerificationCodeForLogin)
         XCTAssertEqual(sut.loginEmailThatNeedsAValidationCode, email as? String)
         XCTAssertEqual(originalEmail, email as? String, "Should not have changed original email")
-
     }
 }

@@ -36,7 +36,6 @@ public protocol EventDecoderProtocol {
         callEventsOnly: Bool,
         _ block: @escaping ([ZMUpdateEvent]) async -> Void
     ) async
-
 }
 
 /// Decodes and stores events from various sources to be processed later

@@ -87,5 +87,4 @@ extension PasswordRuleSet {
 
         return L10n.Localizable.Registration.Password.Rules.withRequirements(minLengthRule, formattedRulesList)
     }()
-
 }

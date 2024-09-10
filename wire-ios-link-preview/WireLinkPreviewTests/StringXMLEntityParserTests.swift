@@ -104,5 +104,4 @@ final class StringXMLEntityParserTests: XCTestCase {
         // when & then
         XCTAssertEqual("Restaurant is €€€", string.removingHTMLEntities())
     }
-
 }

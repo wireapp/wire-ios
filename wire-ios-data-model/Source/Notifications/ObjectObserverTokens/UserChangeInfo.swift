@@ -233,5 +233,4 @@ extension UserChangeInfo {
             observer.userDidChange(changeInfo)
         }
     }
-
 }

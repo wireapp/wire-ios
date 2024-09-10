@@ -35,7 +35,6 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
         secondaryView = nil
         footerView = VerifyEmailStepSecondaryView(canResend: false)
     }
-
 }
 
 final class EmailLinkVerificationMainView: NSObject, ViewDescriptor, ValueSubmission {
@@ -71,5 +70,4 @@ final class EmailLinkVerificationMainView: NSObject, ViewDescriptor, ValueSubmis
 
         return stack
     }
-
 }

@@ -36,5 +36,4 @@ final class SoundEventRulesWatchDog {
 
         return Date().compare(stayQuiteTillTime) == .orderedDescending
     }
-
 }

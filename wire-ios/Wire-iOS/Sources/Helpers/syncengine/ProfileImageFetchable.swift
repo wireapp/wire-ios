@@ -32,7 +32,6 @@ protocol ProfileImageFetchable {
                            sizeLimit: Int?,
                            desaturate: Bool,
                            completion: @escaping (_ image: UIImage?, _ cacheHit: Bool) -> Void)
-
 }
 
 extension ProfileImageFetchable where Self: UserType {

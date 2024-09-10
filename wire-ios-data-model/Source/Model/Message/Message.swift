@@ -168,5 +168,4 @@ public class Message: NSObject {
     public class func isDeleted(_ message: ZMConversationMessage) -> Bool {
         return message.isDeletion
     }
-
 }

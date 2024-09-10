@@ -99,5 +99,4 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
         XCTAssertTrue(message.isExpired)
         XCTAssertEqual(message.failedToSendReason, expectedReason)
     }
-
 }

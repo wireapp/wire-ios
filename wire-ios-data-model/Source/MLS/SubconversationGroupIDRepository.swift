@@ -74,7 +74,6 @@ public final actor SubconversationGroupIDRepository: SubconversationGroupIDRepos
     // MARK: - Life cycle
 
     public init() {
-
     }
 
     // MARK: - Store

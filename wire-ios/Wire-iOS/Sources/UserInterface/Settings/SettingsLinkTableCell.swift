@@ -112,5 +112,4 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
         isAccessibilityElement = true
         accessibilityTraits = .staticText
     }
-
 }

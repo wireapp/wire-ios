@@ -36,5 +36,4 @@ class AuthenticationE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
 
         return [.hideLoadingView, .transition(.enrollE2EIdentity, mode: .reset)]
     }
-
 }

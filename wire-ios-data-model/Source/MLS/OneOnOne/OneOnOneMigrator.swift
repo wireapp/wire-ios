@@ -26,7 +26,6 @@ public protocol OneOnOneMigratorInterface {
         userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MLSGroupID
-
 }
 
 public struct OneOnOneMigrator: OneOnOneMigratorInterface {

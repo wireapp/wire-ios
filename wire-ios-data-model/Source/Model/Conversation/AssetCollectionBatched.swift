@@ -294,5 +294,4 @@ extension AssetCollectionBatched {
 
         return newSortedMessages
     }
-
 }

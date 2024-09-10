@@ -21,7 +21,6 @@ import UIKit
 protocol ApplicationStateProvider {
 
     var applicationState: UIApplication.State { get }
-
 }
 
 extension UIApplication: ApplicationStateProvider {}

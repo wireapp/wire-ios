@@ -183,5 +183,4 @@ final class DeviceInfoViewModel: ObservableObject {
     func onHowToDoThatTapped() {
         conversationClientDetailsActions.howToDoThat()
     }
-
 }

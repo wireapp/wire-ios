@@ -84,7 +84,6 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
 
         return message
     }
-
 }
 
 final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
@@ -104,7 +103,6 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
         // then
         XCTAssertFalse(FileManager.default.fileExists(atPath: tempFolder.path))
     }
-
 }
 
 // MARK: - ZMAsset / ZMFileMessageData
@@ -433,7 +431,6 @@ extension ZMAssetClientMessageTests {
             XCTAssertEqual(uploaded.otrKey, otrKey)
             XCTAssertEqual(uploaded.sha256, sha256)
         }
-
     }
 
     func testThatItCancelsUpload() {
@@ -479,7 +476,6 @@ extension ZMAssetClientMessageTests {
             XCTAssertEqual(sut.transferState, .uploading)
             XCTAssertEqual(sut.progress, 0.0)
         }
-
     }
 
     func testThatItPostsANotificationWhenTheDownloadOfTheMessageIsCancelled() {
@@ -733,7 +729,6 @@ extension ZMAssetClientMessageTests {
         // then
         XCTAssertEqual(sut.associatedTaskIdentifier, identifier)
     }
-
 }
 
 // MARK: - Message generation
@@ -812,7 +807,6 @@ extension ZMAssetClientMessageTests {
             XCTAssertFalse(message.expectsReadConfirmation)
         }
     }
-
 }
 
 // MARK: - Assets V2
@@ -1092,7 +1086,6 @@ extension ZMAssetClientMessageTests {
 
             // then
             XCTAssertEqual(sut?.serverTimestamp, firstDate)
-
         }
     }
 }
@@ -1180,7 +1173,6 @@ extension ZMAssetClientMessageTests {
             message.managedObjectContext?.saveOrRollback()
         }
     }
-
 }
 
 // MARK: - Asset V3
@@ -1410,7 +1402,6 @@ extension ZMAssetClientMessageTests {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }
 
 // MARK: - isGIF

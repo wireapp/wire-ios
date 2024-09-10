@@ -96,7 +96,6 @@ public final class PushTokenService: PushTokenServiceInterface {
 
         onUnregistrationComplete?()
     }
-
 }
 
 // MARK: - Interface
@@ -122,7 +121,6 @@ public protocol PushTokenServiceInterface: AnyObject {
         excluding token: PushToken?,
         in context: NotificationContext
     ) async throws
-
 }
 
 public extension PushTokenServiceInterface {
@@ -145,7 +143,6 @@ public extension PushTokenServiceInterface {
             in: context
         )
     }
-
 }
 
 // MARK: - Helpers
@@ -161,7 +158,6 @@ extension PushToken.TokenType: SafeForLoggingStringConvertible {
             return "voip"
         }
     }
-
 }
 
 // MARK: - Async / Await
@@ -199,5 +195,4 @@ extension EntityAction {
             perform(in: context, resultHandler: continuation.resume(with:))
         }
     }
-
 }

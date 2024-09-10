@@ -156,5 +156,4 @@ extension ZMMessage {
         guard let moc = managedObjectContext else { return }
         oldConfirmations.forEach(moc.delete)
     }
-
 }

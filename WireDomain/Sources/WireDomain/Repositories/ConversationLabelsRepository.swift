@@ -142,5 +142,4 @@ final class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
             context.saveOrRollback()
         }
     }
-
 }

@@ -42,5 +42,4 @@ final class SessionManagerEncryptionAtRestDefaultsTests: IntegrationTest {
         // then
         XCTAssertTrue(sessionManager?.activeUserSession?.encryptMessagesAtRest == true)
     }
-
 }

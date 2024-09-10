@@ -105,7 +105,6 @@ public protocol SessionManagerType: AnyObject {
     func update(credentials: UserCredentials) -> Bool
 
     func passwordVerificationDidFail(with failCount: Int)
-
 }
 
 @objc
@@ -226,7 +225,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 NotificationInContext(name: sessionManagerCreatedUnauthenticatedSessionNotificationName, context: self, object: session).post()
             }
         }
-
     }
     public weak var presentationDelegate: PresentationDelegate?
     public weak var foregroundNotificationResponder: ForegroundNotificationResponder?
@@ -1103,7 +1101,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             completion?()
             self?.dispatchGroup.leave()
         }
-
     }
 
     // Tears down and releases all background user sessions.
@@ -1149,7 +1146,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     public var callNotificationStyle: CallNotificationStyle = .callKit {
         didSet {
             updateCallNotificationStyle()
-
         }
     }
 
@@ -1392,7 +1388,6 @@ extension SessionManager {
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
     }
-
 }
 
 // MARK: - Unread Conversation Count
@@ -1451,7 +1446,6 @@ extension SessionManager: WireCallCenterCallStateObserver {
             return
         }
     }
-
 }
 
 extension SessionManager {
@@ -1487,7 +1481,6 @@ extension SessionManager {
             WireLogger.e2ei.warn("Can't get certificate enrollment status: \(error)")
         }
     }
-
 }
 
 // MARK: - Session manager observer

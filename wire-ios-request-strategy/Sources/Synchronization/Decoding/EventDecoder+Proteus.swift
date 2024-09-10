@@ -246,7 +246,6 @@ extension EventDecoder {
 
         return try await decryptFunction(sessionID, encryptedData)
     }
-
 }
 
 private extension ZMUpdateEvent {
@@ -301,5 +300,4 @@ private extension ZMUpdateEvent {
     var externalStringCount: Int {
         return (eventData?["data"] as? String)?.count ?? 0
     }
-
 }

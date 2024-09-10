@@ -89,5 +89,4 @@ final class OutgoingConnectionViewController: UIViewController {
         default: break
         }
     }
-
 }

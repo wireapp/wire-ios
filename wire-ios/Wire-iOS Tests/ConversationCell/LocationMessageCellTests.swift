@@ -69,5 +69,4 @@ final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
         config?(locationMessage)
         return locationMessage
     }
-
 }

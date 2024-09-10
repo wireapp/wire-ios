@@ -261,5 +261,4 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(message.hasDownloadedFile)
         }
     }
-
 }

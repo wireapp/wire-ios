@@ -29,5 +29,4 @@ public struct Service: Equatable, Codable {
     /// The service's provider id.
 
     public let provider: UUID
-
 }

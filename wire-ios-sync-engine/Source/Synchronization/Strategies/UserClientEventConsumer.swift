@@ -105,5 +105,4 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
             break
         }
     }
-
 }

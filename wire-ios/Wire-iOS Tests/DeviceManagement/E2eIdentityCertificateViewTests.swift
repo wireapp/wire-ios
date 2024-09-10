@@ -106,5 +106,4 @@ final class E2eIdentityCertificateViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
-
 }

@@ -27,7 +27,6 @@ struct NotificationActionTextInputMode {
 
     /// The format string for the localized placeholder text of the input field.
     let placeholderFormat: String
-
 }
 
 /**
@@ -53,7 +52,6 @@ protocol NotificationAction {
 
     /// The optional configuration for text input, if the action supports it.
     var textInputMode: NotificationActionTextInputMode? { get }
-
 }
 
 extension NotificationAction where Self: RawRepresentable, Self.RawValue == String {
@@ -99,7 +97,6 @@ extension NotificationAction {
 
         return rawOptions
     }
-
 }
 
 // MARK: - Concrete Actions

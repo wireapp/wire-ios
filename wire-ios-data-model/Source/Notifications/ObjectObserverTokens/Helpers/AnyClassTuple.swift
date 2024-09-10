@@ -35,7 +35,6 @@ public struct AnyClassTuple<T: Hashable>: Hashable {
         hasher.combine(classHash)
         hasher.combine(elementHash)
     }
-
 }
 
 public func == <T>(lhs: AnyClassTuple<T>, rhs: AnyClassTuple<T>) -> Bool {

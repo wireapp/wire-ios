@@ -53,5 +53,4 @@ public class ManagedObjectObserverToken: NSObject {
             using: block
         )
     }
-
 }

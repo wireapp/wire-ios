@@ -37,7 +37,6 @@ extension AnyConversationMessageCellDescription: Differentiable {
     func isContentEqual(to source: AnyConversationMessageCellDescription) -> Bool {
         return isConfigurationEqual(with: source)
     }
-
 }
 
 extension ZMConversationMessage {
@@ -390,7 +389,6 @@ extension ConversationTableViewDataSource: NSFetchedResultsControllerDelegate {
             currentSections = data
         }
     }
-
 }
 
 extension ConversationTableViewDataSource: UITableViewDataSource {
@@ -461,7 +459,6 @@ extension ConversationTableViewDataSource: ConversationMessageSectionControllerD
     func messageSectionController(_ controller: ConversationMessageSectionController, didRequestRefreshForMessage message: ZMConversationMessage) {
         reloadSections(newSections: calculateSections(updating: controller))
     }
-
 }
 
 extension ConversationTableViewDataSource {
@@ -536,7 +533,6 @@ extension ConversationTableViewDataSource {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }
-
 }
 
 extension Date {
@@ -547,5 +543,4 @@ extension Date {
     let otherComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
     return components == otherComponents
   }
-
 }

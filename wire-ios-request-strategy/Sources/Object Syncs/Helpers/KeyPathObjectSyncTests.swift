@@ -41,7 +41,6 @@ class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
         completionBlock?()
         completionBlock = nil
     }
-
 }
 
 class KeyPathObjectSyncTests: ZMTBaseTest {
@@ -158,5 +157,4 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
         // then
         XCTAssertTrue(fetchRequest.predicate!.evaluate(with: mockEntity))
     }
-
 }

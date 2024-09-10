@@ -499,7 +499,6 @@ class FileAssetCacheTests: XCTestCase {
             XCTAssertFalse(self.sut.hasImageData(for: team))
         }
     }
-
 }
 
 extension FileManager {
@@ -508,5 +507,4 @@ extension FileManager {
         guard fileExists(atPath: url.path) else { return }
         try removeItem(atPath: url.path)
     }
-
 }

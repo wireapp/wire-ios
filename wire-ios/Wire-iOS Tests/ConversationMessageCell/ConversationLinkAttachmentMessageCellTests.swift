@@ -110,5 +110,4 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

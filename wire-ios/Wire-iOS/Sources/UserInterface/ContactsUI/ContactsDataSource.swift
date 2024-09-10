@@ -24,7 +24,6 @@ protocol ContactsDataSourceDelegate: AnyObject {
 
     func dataSource(_ dataSource: ContactsDataSource, cellFor user: UserType, at indexPath: IndexPath) -> UITableViewCell
     func dataSource(_ dataSource: ContactsDataSource, didReceiveSearchResult newUser: [UserType])
-
 }
 
 final class ContactsDataSource: NSObject {

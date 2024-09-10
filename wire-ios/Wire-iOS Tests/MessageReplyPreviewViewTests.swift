@@ -34,7 +34,6 @@ extension UIView {
         container.backgroundColor = SemanticColors.View.backgroundUserCell
         return container
     }
-
 }
 
 // MARK: - MessageReplyPreviewViewTests
@@ -329,5 +328,4 @@ final class MessageReplyPreviewViewTests: XCTestCase {
 
         return message
     }
-
 }

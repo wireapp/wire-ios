@@ -105,5 +105,4 @@ extension ZMUserSession {
             NotificationInContext(name: .calculateBadgeCount, context: self.notificationContext).post()
         }
     }
-
 }

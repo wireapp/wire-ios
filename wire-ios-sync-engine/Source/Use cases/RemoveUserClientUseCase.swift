@@ -22,7 +22,6 @@ import Foundation
 public protocol RemoveUserClientUseCaseProtocol {
 
     func invoke(clientId: String, password: String) async throws
-
 }
 
 class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
@@ -109,5 +108,4 @@ public enum RemoveUserClientError: Error {
     case clientToDeleteNotFound
     case clientDoesNotExistLocally
     case invalidCredentials
-
 }

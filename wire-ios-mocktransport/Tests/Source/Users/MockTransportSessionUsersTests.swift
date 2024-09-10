@@ -156,5 +156,4 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         // then
         XCTAssertEqual(response.httpStatus, 403)
     }
-
 }

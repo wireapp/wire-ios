@@ -255,7 +255,6 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             XCTAssertTrue(conversation.needsToDownloadRoles)
         }
     }
-
 }
 
 extension ZMConversation {

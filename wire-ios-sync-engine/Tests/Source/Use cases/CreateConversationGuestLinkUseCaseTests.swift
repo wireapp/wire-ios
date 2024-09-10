@@ -157,5 +157,4 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             wait(for: [expectation], timeout: 0.5)
         }
     }
-
 }

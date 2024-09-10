@@ -164,5 +164,4 @@ final class AudioButtonOverlay: UIView {
 
         buttonHandler?(type)
     }
-
 }

@@ -97,7 +97,6 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
     var mlsGroupID: MLSGroupID?
 
     var mlsVerificationStatus: MLSVerificationStatus?
-
 }
 
 final class MockInputBarConversationType: SwiftMockConversation, InputBarConversation, TypingStatusProvider {

@@ -89,7 +89,6 @@ extension OpenGraphData {
 
         foursquareMetaData = FoursquareMetaData(propertyMapping: mapping)
     }
-
 }
 
 extension OpenGraphData: Equatable {}
@@ -173,5 +172,4 @@ extension OpenGraphData {
         return TwitterStatusMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset) ??
             ArticleMetadata(openGraphData: self, originalURLString: originalURLString, offset: offset)
     }
-
 }

@@ -257,7 +257,6 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.CreateSecureGuestLink.CloseButton.description)
-
     }
 
     private func setupConstraints() {
@@ -401,11 +400,9 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
             message: SecuredGuestLinkWithPasswordLocale.AlertController.message
         )
-
     }
 
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
-
     }
 
     func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String) {

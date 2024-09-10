@@ -451,5 +451,4 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             XCTAssertTrue(conversation.unreadMessages.contains { $0.nonce == textMessage.nonce })
         }
     }
-
 }

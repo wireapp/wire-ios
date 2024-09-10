@@ -155,7 +155,6 @@ extension ZMMessageTests_Confirmation {
         // then
         XCTAssertTrue(message.needsReadConfirmation)
     }
-
 }
 
 // MARK: - Deletion
@@ -443,7 +442,6 @@ extension ZMMessageTests_Confirmation {
         // then
         XCTAssertEqual(sut.deliveryState, ZMDeliveryState.delivered)
     }
-
 }
 
 // MARK: - Change notifications
@@ -516,7 +514,6 @@ extension ZMMessageTests_Confirmation {
         }
         XCTAssertTrue(messageChangeInfo.deliveryStateChanged)
     }
-
 }
 
 // MARK: - Helpers
@@ -550,7 +547,6 @@ extension ZMMessageTests_Confirmation {
             }
         } else {
             message = ZMOTRMessage.createOrUpdate(from: messageEvent, in: MOC, prefetchResult: nil)
-
         }
         XCTAssertTrue(MOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -566,5 +562,4 @@ extension ZMMessageTests_Confirmation {
         let genericMessage = GenericMessage(content: Confirmation(messageIds: nonces, type: .read)!)
         return createUpdateEvent(UUID(), conversationID: conversationID, timestamp: timestamp, genericMessage: genericMessage, senderID: senderID)
     }
-
 }

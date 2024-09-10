@@ -56,7 +56,5 @@ final class MockPushTokenService: NSObject, PushTokenServiceInterface {
         let existingTokens = registeredTokensByClientID[clientID] ?? []
         registeredTokensByClientID[clientID] = existingTokens.filter { $0 == token }
         onUnregistrationComplete?()
-
     }
-
 }

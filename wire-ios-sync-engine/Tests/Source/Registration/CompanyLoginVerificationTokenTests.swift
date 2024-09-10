@@ -98,5 +98,4 @@ final class CompanyLoginVerificationTokenTests: XCTestCase {
         XCTAssertFalse(token.matches(identifier: uuid))
         XCTAssertFalse(token.matches(identifier: .create()))
     }
-
 }

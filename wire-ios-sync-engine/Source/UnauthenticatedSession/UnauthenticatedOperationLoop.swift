@@ -79,5 +79,4 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
             return request
         }
     }
-
 }

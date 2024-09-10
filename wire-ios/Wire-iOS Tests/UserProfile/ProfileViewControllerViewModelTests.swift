@@ -189,5 +189,4 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 0.5)
         XCTAssertEqual(mockViewModelDelegate.updateFooterActionsViews_Invocations.first, [.openOneToOne])
     }
-
 }

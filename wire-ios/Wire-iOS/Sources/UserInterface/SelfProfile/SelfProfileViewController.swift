@@ -142,7 +142,6 @@ final class SelfProfileViewController: UIViewController {
         createConstraints()
         setupAccessibility()
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
     }
 
     override func viewWillAppear(_ animated: Bool) {

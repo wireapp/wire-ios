@@ -131,7 +131,6 @@ public final class UserProfileImageUpdateStatus: NSObject {
         super.init()
         self.preprocessor?.delegate = self
     }
-
 }
 
 // MARK: Main state transitions

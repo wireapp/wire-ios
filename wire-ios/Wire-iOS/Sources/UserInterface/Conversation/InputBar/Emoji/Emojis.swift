@@ -158,7 +158,6 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         sections.insert(recentlyUsed, at: 0)
         return true
     }
-
 }
 
 extension EmojiDataSource {
@@ -169,7 +168,6 @@ extension EmojiDataSource {
 
         case insert(Int)
         case reload(Int)
-
     }
 
     class Section {
@@ -203,9 +201,7 @@ extension EmojiDataSource {
                 items: filteredItems
             )
         }
-
     }
-
 }
 
 enum EmojiSectionType: Int, CaseIterable {

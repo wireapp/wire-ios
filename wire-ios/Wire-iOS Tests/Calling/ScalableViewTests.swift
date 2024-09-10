@@ -119,5 +119,4 @@ class ScalableViewTests: XCTestCase {
         // then
         XCTAssert(view.transform == .identity)
     }
-
 }

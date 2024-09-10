@@ -35,7 +35,6 @@ public protocol StaleMLSKeyDetectorProtocol {
     ///   - groupID: the ID of the group in which the keying material was updated
 
     func keyingMaterialUpdated(for groupID: MLSGroupID)
-
 }
 
 /// A class responsible for keeping track of groups that have stale key material.
@@ -116,5 +115,4 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         WireLogger.mls.info("key material for group (\(String(describing: group.id))) is stale")
         return true
     }
-
 }

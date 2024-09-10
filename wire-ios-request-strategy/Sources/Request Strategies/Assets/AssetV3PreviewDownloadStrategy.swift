@@ -115,7 +115,6 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [downstreamSync]
     }
-
 }
 
 // MARK: - ZMDownstreamTranscoder
@@ -147,5 +146,4 @@ extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         // no-op
     }
-
 }

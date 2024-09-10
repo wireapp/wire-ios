@@ -297,7 +297,6 @@ extension LocalNotificationType {
         let localizationKey = [baseKey, conversationTypeKey, senderKey, conversationKey, mentionOrReplyKey].compactMap({ $0 }).joined(separator: ".")
         return .localizedStringWithFormat(localizationKey.pushFormatString, arguments: arguments)
     }
-
 }
 
 extension String {
@@ -322,8 +321,6 @@ extension String {
             return String.localizedStringWithFormat(format, arguments[0], arguments[1], arguments[2], arguments[3])
         default:
             return NSLocalizedString(format, comment: "")
-
         }
     }
-
 }

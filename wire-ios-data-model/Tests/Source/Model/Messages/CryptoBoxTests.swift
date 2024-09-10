@@ -49,5 +49,4 @@ class CryptoBoxTest: OtrBaseTest {
             XCTAssertEqual(fileProtectionAttr, NSFileProtectionCompleteUntilFirstUserAuthentication)
         #endif
     }
-
 }

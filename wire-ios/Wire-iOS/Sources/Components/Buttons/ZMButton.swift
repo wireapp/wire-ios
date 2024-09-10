@@ -57,7 +57,6 @@ final class ZMButton: LegacyButton {
             applyStyle(style)
         }
     }
-
 }
 
 enum LegacyButtonStyle: Int {

@@ -42,7 +42,6 @@ import WireUtilities
     var error: NSError {
         return NSError(domain: "EncryptionSessionsDirectoryDomain", code: rawValue, userInfo: userInfo)
     }
-
 }
 
 class _CBoxSession: PointerWrapper {}
@@ -216,7 +215,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         guard (try? FileManager.default.moveItem(at: oldPath, to: newPath)) != nil else {
             fatal("Can't migrate session \(newIdentifier) because the move failed")
         }
-
     }
 
     public func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws {

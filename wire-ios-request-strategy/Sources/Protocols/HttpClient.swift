@@ -21,5 +21,4 @@ import WireTransport
 public protocol HttpClient {
 
     func send(_ request: ZMTransportRequest) async -> ZMTransportResponse
-
 }

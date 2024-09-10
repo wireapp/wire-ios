@@ -45,7 +45,6 @@ extension ZMConversation {
             return false
         }
     }
-
 }
 
 extension UserType {
@@ -56,5 +55,4 @@ extension UserType {
         }
         return name.isEmpty
     }
-
 }

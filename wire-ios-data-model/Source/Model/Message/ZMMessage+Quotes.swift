@@ -24,5 +24,4 @@ extension ZMMessage {
     func updateQuoteRelationships() {
         assertionFailure("Subclasses should override this method")
     }
-
 }

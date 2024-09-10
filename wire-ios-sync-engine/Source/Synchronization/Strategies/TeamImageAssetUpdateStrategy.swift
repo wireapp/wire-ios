@@ -86,5 +86,4 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         team.imageData = response.rawData
     }
-
 }

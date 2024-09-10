@@ -39,5 +39,4 @@ public struct PushChannelAPIBuilder {
     public func makeAPI() -> any PushChannelAPI {
         PushChannelAPIImpl(pushChannelService: pushChannelService)
     }
-
 }

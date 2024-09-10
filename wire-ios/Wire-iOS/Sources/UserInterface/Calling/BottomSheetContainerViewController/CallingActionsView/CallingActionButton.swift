@@ -50,7 +50,6 @@ class CallingActionButton: IconLabelButton {
         iconButton.setIconColor(SemanticColors.Button.iconCallingDisabled, for: .disabled)
         iconButton.setBackgroundImageColor(SemanticColors.Button.backgroundCallingDisabled, for: .disabled)
     }
-
 }
 
 final class EndCallButton: CallingActionButton {

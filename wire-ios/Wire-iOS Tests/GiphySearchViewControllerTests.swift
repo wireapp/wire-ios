@@ -62,5 +62,4 @@ final class GiphySearchViewControllerTests: XCTestCase {
         // THEN
         XCTAssertNil(sut)
     }
-
 }

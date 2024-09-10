@@ -422,7 +422,6 @@ extension ZMClientMessageTests_Ephemeral {
         XCTAssertNil(message.underlyingMessage)
         XCTAssertNil(message.destructionDate)
     }
-
 }
 
 extension ZMClientMessageTests_Ephemeral {
@@ -601,5 +600,4 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItDoesNotObfuscateTheMessageWhenTheTimerWas_Not_Started() {
         XCTAssertFalse(obfuscatedMessagesByTheSelfUser(timerHadStarted: false))
     }
-
 }

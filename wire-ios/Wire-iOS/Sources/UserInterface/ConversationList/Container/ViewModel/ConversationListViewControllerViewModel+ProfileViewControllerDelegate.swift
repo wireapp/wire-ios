@@ -31,5 +31,4 @@ extension ConversationListViewController.ViewModel: ProfileViewControllerDelegat
             )
         }
     }
-
 }

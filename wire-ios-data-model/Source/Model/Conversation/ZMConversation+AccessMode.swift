@@ -43,7 +43,6 @@ extension ConversationAccessMode: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.rawValue)
     }
-
 }
 
 public extension ConversationAccessMode {
@@ -95,7 +94,6 @@ public enum ConversationAccessRole: String {
           return .private
         }
     }
-
 }
 
 /// The issue:
@@ -204,7 +202,6 @@ extension ZMConversation: SwiftConversationLike {
                 accessRoles.remove(.guest)
                 accessRoles.remove(.nonTeamMember)
             }
-
         }
     }
 
@@ -222,7 +219,6 @@ extension ZMConversation: SwiftConversationLike {
                 accessRoles.remove(.service)
             }
         }
-
     }
 
     // The conversation access mode is stored as an array of string in CoreData, cf. `acccessModeStrings`.

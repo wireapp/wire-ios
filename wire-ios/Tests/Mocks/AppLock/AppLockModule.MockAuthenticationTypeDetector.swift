@@ -24,7 +24,5 @@ extension AppLockModule {
     final class MockAuthenticationTypeDetector: AuthenticationTypeProvider {
 
         var current: AuthenticationType = .passcode
-
     }
-
 }

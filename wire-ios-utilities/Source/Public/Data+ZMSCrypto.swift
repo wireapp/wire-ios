@@ -28,7 +28,6 @@ public enum AESError: Error {
 
     /// Encryption failed
     case encryptionFailed
-
 }
 
 // Mapping of @c NSData helper methods to Swift 3 @c Data. See original methods for description.
@@ -128,7 +127,6 @@ public extension Data {
         let output = iv + encryptedData
 
         return output
-
     }
 
     func zmDecryptPrefixedPlainTextIV(key: Data) -> Data? {
@@ -142,7 +140,6 @@ public extension Data {
     static func randomEncryptionKey() -> Data {
         return NSData.randomEncryptionKey()
     }
-
 }
 
 private extension Range where Index == Int {
@@ -159,5 +156,4 @@ private extension Range where Index == Int {
             return start..<end
         }
     }
-
 }

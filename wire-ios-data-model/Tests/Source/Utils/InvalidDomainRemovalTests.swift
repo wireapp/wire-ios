@@ -76,5 +76,4 @@ final class InvalidDomainRemovalTests: DiskDatabaseTest {
             XCTAssertTrue(conversation2.isDeleted)
         }
     }
-
 }

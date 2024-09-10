@@ -109,5 +109,4 @@ extension ZMConversation {
     public var areRemotesPresent: Bool {
         return localParticipants.any(\.isFederated)
     }
-
 }

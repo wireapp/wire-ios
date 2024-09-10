@@ -246,7 +246,6 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [updateSync, modifiedSync]
     }
-
 }
 
 extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
@@ -292,7 +291,6 @@ extension ConversationRequestStrategy: KeyPathObjectSyncTranscoder {
             conversationByIDSync.cancel(identifiers: conversationByIdIdentfiersSet)
         }
     }
-
 }
 
 extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
@@ -318,7 +316,6 @@ extension ConversationRequestStrategy: IdentifierObjectSyncDelegate {
             isFetchingAllConversations = false
         }
     }
-
 }
 
 extension ConversationRequestStrategy: ZMUpstreamTranscoder {
@@ -499,7 +496,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
     ) -> ZMUpstreamRequest? {
         return nil
     }
-
 }
 
 class ConversationByIDTranscoder: IdentifierObjectSyncTranscoder {
@@ -809,7 +805,6 @@ final class ConversationByIDListTranscoder: IdentifierObjectSyncTranscoder {
             conversation?.needsToBeUpdatedFromBackend = true
         }
     }
-
 }
 
 class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
@@ -891,7 +886,6 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
             conversation.needsToBeUpdatedFromBackend = true
         }
     }
-
 }
 
 private extension Collection where Element == ZMConversation {
@@ -907,5 +901,4 @@ private extension Collection where Element == ZMConversation {
             }
         }
     }
-
 }

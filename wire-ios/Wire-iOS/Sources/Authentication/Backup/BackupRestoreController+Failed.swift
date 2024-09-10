@@ -64,5 +64,4 @@ extension BackupRestoreController {
             return L10n.Localizable.Registration.NoHistory.RestoreBackupFailed.message + "\n\(error.localizedDescription)"
         }
     }
-
 }

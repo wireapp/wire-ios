@@ -24,7 +24,6 @@ extension ZMLocalNotification {
         let builder = AvailabilityNotificationBuilder(availability: availability, managedObjectContext: moc)
         self.init(builder: builder, moc: moc)
     }
-
 }
 
 private class AvailabilityNotificationBuilder: NotificationBuilder {

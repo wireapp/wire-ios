@@ -193,7 +193,6 @@ private extension UIViewController {
 protocol FeatureRepositoryProvider {
 
     var featureRepository: FeatureRepository { get }
-
 }
 
 extension ZMUserSession: FeatureRepositoryProvider {}

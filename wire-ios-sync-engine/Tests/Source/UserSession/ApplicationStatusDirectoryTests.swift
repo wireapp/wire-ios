@@ -73,7 +73,6 @@ class ApplicationStatusDirectoryTests: MessagingTest {
         // then
         XCTAssertFalse(sut.operationStatus.hasOngoingCall)
     }
-
 }
 
 extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
@@ -81,5 +80,4 @@ extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) {
         // no-op
     }
-
 }

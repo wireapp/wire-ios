@@ -34,5 +34,4 @@ extension DownStyle {
         style.baseParagraphStyle = paragraphStyle
         return style
     }
-
 }

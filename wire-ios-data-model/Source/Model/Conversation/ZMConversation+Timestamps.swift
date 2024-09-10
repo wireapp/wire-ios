@@ -28,7 +28,6 @@ fileprivate extension ZMConversationMessage {
 
         return serverTimestamp
     }
-
 }
 
 fileprivate extension ZMMessage {
@@ -40,7 +39,6 @@ fileprivate extension ZMMessage {
             return message.visibleInConversation != nil
         }
     }
-
 }
 
 extension ZMConversation {

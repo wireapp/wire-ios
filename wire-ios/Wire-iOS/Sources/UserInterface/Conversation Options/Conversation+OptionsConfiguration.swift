@@ -50,7 +50,6 @@ extension ZMConversation {
                     self?.guestLinkFeatureStatus = .unknown
                 }
             }
-
         }
 
         var isConversationFromSelfTeam: Bool {
@@ -99,7 +98,6 @@ extension ZMConversation {
                     completion(.failure(error))
                 }
             }
-
         }
 
         func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -116,7 +114,6 @@ extension ZMConversation {
                     completion(.failure(error))
                 }
             }
-
         }
 
         func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
@@ -137,7 +134,5 @@ extension ZMConversation {
         func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {
             conversation.deleteWirelessLink(in: userSession, completion)
         }
-
     }
-
 }

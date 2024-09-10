@@ -69,5 +69,4 @@ final class SwitchBackendConfirmationViewModelTests: XCTestCase {
         await fulfillment(of: [done], timeout: 0.5)
         XCTAssertFalse(didConfirm)
     }
-
 }

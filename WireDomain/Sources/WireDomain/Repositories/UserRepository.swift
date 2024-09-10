@@ -42,7 +42,6 @@ public protocol UserRepositoryProtocol {
     ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
-
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -109,5 +108,4 @@ public final class UserRepository: UserRepositoryProtocol {
         persistedUser.supportedProtocols = user.supportedProtocols?.toDomainModel() ?? [.proteus]
         persistedUser.needsToBeUpdatedFromBackend = false
     }
-
 }

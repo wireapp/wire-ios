@@ -293,5 +293,4 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(message.transferState, .uploadingFailed)
         }
     }
-
 }

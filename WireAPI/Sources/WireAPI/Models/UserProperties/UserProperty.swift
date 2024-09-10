@@ -38,7 +38,6 @@ public enum UserProperty: Equatable, Codable {
     /// An unknown property.
 
     case unknown(key: String)
-
 }
 
 public extension UserProperty {
@@ -58,6 +57,5 @@ public extension UserProperty {
         /// Labels
 
         case labels
-
     }
 }

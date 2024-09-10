@@ -77,6 +77,5 @@ final class BackupExcluderTests: XCTestCase {
 
             XCTAssert(url.isExcludedFromBackup)
         }
-
     }
 }

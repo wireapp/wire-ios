@@ -183,7 +183,6 @@ extension EventDecoder {
         }
         return (storedEvents: storedEvents, updateEvents: updateEvents)
     }
-
 }
 
 // MARK: - List of already received event IDs

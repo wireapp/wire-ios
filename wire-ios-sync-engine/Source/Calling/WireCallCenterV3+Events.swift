@@ -106,7 +106,6 @@ extension WireCallCenterV3: ZMConversationObserver {
             closeCall(conversationId: conversationId)
         }
     }
-
 }
 
 // MARK: - AVS Callbacks

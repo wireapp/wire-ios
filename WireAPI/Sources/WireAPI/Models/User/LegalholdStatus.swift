@@ -37,5 +37,4 @@ public enum LegalholdStatus {
     /// The has not consented to be participate in legalhold.
 
     case noConsent
-
 }

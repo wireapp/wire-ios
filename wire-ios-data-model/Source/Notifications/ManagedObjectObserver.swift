@@ -45,5 +45,4 @@ import Foundation
         guard let token else { return }
         NotificationCenter.default.removeObserver(token)
     }
-
 }

@@ -27,7 +27,6 @@ protocol ConversationDeleteEventProcessorProtocol {
     /// - Parameter event: A conversation delete event.
 
     func processEvent(_ event: ConversationDeleteEvent) async throws
-
 }
 
 struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationDeleteEventProcessor: ConversationDeleteEventProcessorProtoco
         // TODO: [WPB-10167]
         assertionFailure("not implemented yet")
     }
-
 }

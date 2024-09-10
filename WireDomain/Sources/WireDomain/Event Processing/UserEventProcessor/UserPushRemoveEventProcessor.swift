@@ -25,7 +25,6 @@ protocol UserPushRemoveEventProcessorProtocol {
     /// Process a user push remove event.
 
     func processEvent() async throws
-
 }
 
 struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
@@ -34,5 +33,4 @@ struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
         // TODO: [WPB-10199]
         assertionFailure("not implemented yet")
     }
-
 }

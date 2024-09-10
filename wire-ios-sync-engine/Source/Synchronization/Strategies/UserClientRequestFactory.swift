@@ -222,7 +222,6 @@ extension UserClientRequestFactory {
     public func fetchClientsRequest(apiVersion: APIVersion) -> ZMTransportRequest! {
         return ZMTransportRequest(getFromPath: "/clients", apiVersion: apiVersion.rawValue)
     }
-
 }
 
 private struct MLSPublicKeyUploadPayload: Encodable {
@@ -230,9 +229,7 @@ private struct MLSPublicKeyUploadPayload: Encodable {
     enum CodingKeys: String, CodingKey {
 
         case keys = "mls_public_keys"
-
     }
 
     let keys: UserClient.MLSPublicKeys
-
 }

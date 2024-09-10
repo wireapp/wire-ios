@@ -108,7 +108,6 @@ public protocol MLSActionExecutorProtocol {
     /// Returns a publisher that emits the new CRL distribution points when they are found
 
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
-
 }
 
 /// An actor responsible for performing commits on MLS groups and decrypting messages in a non-reentrant manner.
@@ -124,7 +123,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         case updateKeyMaterial
         case proposal
         case joinGroup(Data)
-
     }
 
     // MARK: - Properties
@@ -403,7 +401,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
-
 }
 
 extension MLSActionExecutor.Action: CustomDebugStringConvertible {
@@ -426,5 +423,4 @@ extension MLSActionExecutor.Action: CustomDebugStringConvertible {
             return "joinGroup"
         }
     }
-
 }

@@ -261,5 +261,4 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
         }
     }
-
 }

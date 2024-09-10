@@ -71,7 +71,5 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
         }
 
         footerView = BackupRestoreStepDescriptionFooterView()
-
     }
-
 }

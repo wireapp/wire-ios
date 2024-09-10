@@ -87,7 +87,6 @@ extension SimpleTextFieldValidator: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         delegate?.textFieldDidBeginEditing()
     }
-
 }
 
 extension SimpleTextFieldValidator.ValidationError: LocalizedError {

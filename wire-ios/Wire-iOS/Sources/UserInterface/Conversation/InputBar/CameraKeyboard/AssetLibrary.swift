@@ -84,7 +84,6 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
 
         self.fetch = changeDetails.fetchResultAfterChanges
         self.notifyChangeToDelegate()
-
     }
 
     fileprivate var fetch: PHFetchResult<PHAsset>?
@@ -101,7 +100,6 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         } else {
             DispatchQueue.main.async(execute: completion)
         }
-
     }
 
     init(synchronous: Bool = false, photoLibrary: PhotoLibraryProtocol = PHPhotoLibrary.shared()) {

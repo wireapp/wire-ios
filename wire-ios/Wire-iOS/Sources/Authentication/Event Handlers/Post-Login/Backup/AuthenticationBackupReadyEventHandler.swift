@@ -56,5 +56,4 @@ final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
 
         return [.hideLoadingView, .transition(nextStep, mode: .reset)]
     }
-
 }

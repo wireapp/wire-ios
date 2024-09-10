@@ -30,5 +30,4 @@ struct ConversationGuestLinksFeatureConfigDecoder {
 
         return ConversationGuestLinksFeatureConfig(status: payload.status)
     }
-
 }

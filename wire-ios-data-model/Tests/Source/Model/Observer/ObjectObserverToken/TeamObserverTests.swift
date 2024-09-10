@@ -92,7 +92,6 @@ class TeamObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { $0.name = "foo" },
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.nameChanged)]
         )
-
     }
 
     func testThatItNotifiesTheObserverOfChangedImageData() {
@@ -140,5 +139,4 @@ class TeamObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
         )
     }
-
 }

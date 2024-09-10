@@ -31,5 +31,4 @@ extension ZMUpdateEvent: SafeForLoggingStringConvertible {
     public var safeType: String {
         type.stringValue ?? "unknown"
     }
-
 }

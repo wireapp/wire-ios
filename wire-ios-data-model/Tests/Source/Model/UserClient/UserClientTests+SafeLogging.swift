@@ -26,7 +26,6 @@ class UserClientTestsSafeLogging: ZMBaseManagedObjectTest {
             let client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = uuid
             XCTAssertEqual(uuid.redactedAndTruncated(), client.safeRemoteIdentifier.safeForLoggingDescription)
-
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

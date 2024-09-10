@@ -50,7 +50,6 @@ class PrekeyGenerator {
                 return (
                     id: await proteusService.lastPrekeyID,
                     prekey: try await proteusService.lastPrekey()
-
                 )
             },
             withKeyStore: { keyStore in

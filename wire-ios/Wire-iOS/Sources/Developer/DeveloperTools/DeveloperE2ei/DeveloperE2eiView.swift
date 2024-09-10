@@ -45,7 +45,6 @@ struct DeveloperE2eiView: View {
                         .truncationMode(.middle)
                         .foregroundColor(.secondary)
                 }
-
             }
 
             Section("Enroll E2EI Certificate") {

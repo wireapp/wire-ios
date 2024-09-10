@@ -34,7 +34,6 @@ extension Decodable {
             return nil
         }
     }
-
 }
 
 extension Decodable {
@@ -56,7 +55,6 @@ extension Decodable {
             return nil
         }
     }
-
 }
 
 extension DateFormatter {

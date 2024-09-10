@@ -213,5 +213,4 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }

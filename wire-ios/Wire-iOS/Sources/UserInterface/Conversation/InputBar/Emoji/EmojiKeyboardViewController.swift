@@ -123,7 +123,6 @@ final class EmojiKeyboardViewController: UIViewController {
             self.delete()
         }
     }
-
 }
 
 extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
@@ -133,7 +132,6 @@ extension EmojiKeyboardViewController: EmojiSectionViewControllerDelegate {
         let indexPath = IndexPath(item: 0, section: section)
         collectionView.scrollToItem(at: indexPath, at: .left, animated: !scrolling)
     }
-
 }
 
 extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
@@ -219,7 +217,6 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
             titleLabel.rightAnchor.constraint(equalTo: rightAnchor)
         ])
     }
-
 }
 
 final class EmojiCollectionView: UICollectionView {
@@ -251,5 +248,4 @@ final class EmojiCollectionView: UICollectionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }

@@ -108,7 +108,6 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .configureDevice: return false
         }
     }
-
 }
 
 // MARK: - Intermediate Steps

@@ -75,7 +75,6 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
             observer.participantRoleDidChange(changeInfo)
         }
     }
-
 }
 
 @objc public protocol ParticipantRoleObserver: NSObjectProtocol {

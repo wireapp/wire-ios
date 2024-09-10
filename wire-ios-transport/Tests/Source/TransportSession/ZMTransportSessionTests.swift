@@ -57,7 +57,6 @@ public final class MockSessionsDirectory: NSObject, URLSessionsDirectory, TearDo
     public func tearDown() {
         tearDownCalled = true
     }
-
 }
 
 final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
@@ -133,5 +132,4 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
 
         XCTAssertEqual(Set<String>([foregroundSession.identifier, backgroundSession.identifier]).count, 2, "All identifiers should be unique")
     }
-
 }

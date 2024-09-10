@@ -121,5 +121,4 @@ final class EphemeralTimeoutFormatter {
 
         return dayFormatter.string(from: interval)
     }
-
 }

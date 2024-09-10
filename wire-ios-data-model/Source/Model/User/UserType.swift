@@ -277,5 +277,4 @@ public protocol UserConnections {
 
     /// Cancel a pending outgoing connection request to this user
     func cancelConnectionRequest(completion: @escaping (Error?) -> Void)
-
 }

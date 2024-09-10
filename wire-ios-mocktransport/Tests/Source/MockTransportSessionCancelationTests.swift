@@ -112,5 +112,4 @@ class MockTransportSessionCancellationTests: MockTransportSessionTests {
         // THEN
         XCTAssertEqual(requestCompletedCount, 1)
     }
-
 }

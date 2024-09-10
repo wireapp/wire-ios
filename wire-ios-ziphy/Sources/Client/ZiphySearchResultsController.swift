@@ -69,7 +69,6 @@ public final class ZiphySearchResultsController {
             return self.client.search(term: searchTerm, resultsLimit: self.pageSize, offset: offset) { [weak self] result in
                 self?.updatePagination(result)
             }
-
         }
 
         return fetchMoreResults(completion)
@@ -113,5 +112,4 @@ public final class ZiphySearchResultsController {
             return size.rawValue < self.maxImageSize
         })
     }
-
 }

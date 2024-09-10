@@ -197,5 +197,4 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         uiMOC.saveOrRollback()
         XCTAssertEqual(conversation.externalParticipantsState, expectedResult, file: file, line: line)
     }
-
 }

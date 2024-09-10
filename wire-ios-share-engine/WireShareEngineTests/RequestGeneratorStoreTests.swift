@@ -55,7 +55,6 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
             return request
         }
-
     }
 
     var mockStrategy: MockStrategy!
@@ -201,5 +200,4 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         XCTAssertNotNil(sourceRequest)
         XCTAssertEqual(sourceRequest2, secondRequest)
     }
-
 }

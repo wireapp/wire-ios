@@ -143,5 +143,4 @@ struct APISnapshotHelper<API> {
             )
         }
     }
-
 }

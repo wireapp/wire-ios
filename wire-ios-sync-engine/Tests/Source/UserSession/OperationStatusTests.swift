@@ -187,5 +187,4 @@ final class OperationStatusTests: MessagingTest {
         // then
         XCTAssertEqual(sut.operationState, .background)
     }
-
 }

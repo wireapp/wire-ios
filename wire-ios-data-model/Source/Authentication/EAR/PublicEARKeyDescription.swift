@@ -81,5 +81,4 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
             label: Constant.labelPublicSecondary
         )
     }
-
 }

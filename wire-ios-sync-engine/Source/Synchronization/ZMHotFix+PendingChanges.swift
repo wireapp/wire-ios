@@ -34,5 +34,4 @@ extension ZMUserSession {
         // we need to refetch the user to ensure we have its username locally in case it was set on a secondary device.
         return ZMUser.selfUser(in: managedObjectContext).needsToBeUpdatedFromBackend
     }
-
 }

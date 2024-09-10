@@ -127,5 +127,4 @@ final class ZMConversationTests_Services: BaseZMMessageTests {
         XCTAssertNotNil(conversation)
         XCTAssertEqual(existingConversation, conversation)
     }
-
 }

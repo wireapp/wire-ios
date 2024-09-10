@@ -41,7 +41,6 @@ final class CallStateTestObserver: WireCallCenterCallStateObserver {
 
         XCTAssertEqual(lastCallState, callState, file: file, line: line)
     }
-
 }
 
 final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
@@ -56,7 +55,6 @@ final class CallParticipantTestObserver: WireCallCenterCallParticipantObserver {
     func callParticipantsDidChange(conversation: ZMConversation, participants: [(UUID, CallParticipantState)]) {
         changes.append(participants)
     }
-
 }
 
 final class CallingV3Tests: IntegrationTest {
@@ -651,7 +649,6 @@ final class CallingV3Tests: IntegrationTest {
         // then
         XCTAssertEqual(conversationUnderTest.voiceChannel?.state, .terminating(reason: .securityDegraded))
     }
-
 }
 
 // MARK: - SystemMessages
@@ -783,5 +780,4 @@ extension CallingV3Tests {
         let modified = conversationUnderTest.lastModifiedDate!.timeIntervalSince1970
         XCTAssertGreaterThan(modified, timeIntervalBeforeCall)
     }
-
 }

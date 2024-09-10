@@ -87,7 +87,6 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
             return duration
         }
     }
-
 }
 
 public extension MessageDestructionTimeoutValue {
@@ -160,7 +159,6 @@ public extension MessageDestructionTimeoutValue {
     var isYears: Bool {
         return rawValue >= .oneYearFromNow
     }
-
 }
 
 private let longStyleFormatter: DateComponentsFormatter = {

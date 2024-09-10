@@ -53,7 +53,6 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
         let conversation = self.conversation(at: indexPath)
         delegate?.topPeopleLineCollectionViewControllerDidSelect(conversation)
     }
-
 }
 
 // MARK: - Flow Layout

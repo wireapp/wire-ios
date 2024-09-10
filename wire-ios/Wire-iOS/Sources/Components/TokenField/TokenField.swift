@@ -659,7 +659,6 @@ final class TokenField: UIView {
             delegate?.tokenField(self, changedFilterTextTo: filterText)
         }
     }
-
 }
 
 // MARK: - TokenizedTextViewDelegate
@@ -691,7 +690,6 @@ extension TokenField: TokenizedTextViewDelegate {
         updateExcludePath()
         updateLayout()
     }
-
 }
 
 // MARK: - UITextViewDelegate

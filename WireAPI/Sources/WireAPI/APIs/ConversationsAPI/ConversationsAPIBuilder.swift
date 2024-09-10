@@ -52,5 +52,4 @@ public struct ConversationsAPIBuilder {
             ConversationsAPIV6(httpClient: httpClient)
         }
     }
-
 }

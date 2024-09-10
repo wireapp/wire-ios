@@ -113,7 +113,6 @@ final class NavigationController: UINavigationController {
     override var childForStatusBarHidden: UIViewController? {
         return topViewController
     }
-
 }
 
 extension NavigationController: UINavigationControllerDelegate {

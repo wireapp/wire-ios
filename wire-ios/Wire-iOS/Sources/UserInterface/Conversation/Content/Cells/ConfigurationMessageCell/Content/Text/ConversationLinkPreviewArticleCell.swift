@@ -84,7 +84,6 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
         super.traitCollectionDidChange(previousTraitCollection)
         updateImageLayout(isRegular: self.traitCollection.horizontalSizeClass == .regular)
     }
-
 }
 
 extension ConversationLinkPreviewArticleCell: LinkViewDelegate {

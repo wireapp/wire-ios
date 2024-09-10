@@ -70,5 +70,4 @@ class URLWireLocaleTests: XCTestCase {
         XCTAssertTrue(urlComponents.queryItems?.contains(URLQueryItem(name: "hl", value: "en_US")) == true)
         XCTAssertTrue(urlComponents.queryItems?.contains(URLQueryItem(name: "test", value: "1")) == true)
     }
-
 }

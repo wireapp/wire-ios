@@ -25,7 +25,6 @@ public protocol UserSessionAppLockInterface {
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
-
 }
 
 public extension UserSessionAppLockInterface {
@@ -35,7 +34,6 @@ public extension UserSessionAppLockInterface {
     var isLocked: Bool {
         return lock != .none
     }
-
 }
 
 /// The various types of session locks, i.e reasons why the session is inaccessible.
@@ -49,13 +47,11 @@ public enum SessionLock {
     /// The session is locked because the database is locked and not accessible.
 
     case database
-
 }
 
 protocol UserSessionAppLockDelegate: AnyObject {
 
     func userSessionDidUnlock(_ session: ZMUserSession)
-
 }
 
 extension ZMUserSession: AppLockDelegate {
@@ -63,5 +59,4 @@ extension ZMUserSession: AppLockDelegate {
     public func appLockDidOpen(_ appLock: AppLockType) {
         delegate?.userSessionDidUnlock(self)
     }
-
 }

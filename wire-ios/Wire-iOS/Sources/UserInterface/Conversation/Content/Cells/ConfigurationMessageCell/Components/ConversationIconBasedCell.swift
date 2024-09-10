@@ -162,7 +162,6 @@ class ConversationIconBasedCell: UIView {
         textLabelTrailingConstraint.constant = trailingTextMargin
         topContentViewTrailingConstraint.constant = trailingTextMargin
     }
-
 }
 
 extension ConversationIconBasedCell: UITextViewDelegate {

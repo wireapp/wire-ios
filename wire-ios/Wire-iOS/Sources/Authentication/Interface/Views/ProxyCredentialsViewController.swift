@@ -151,7 +151,6 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         self.activeFieldChange(nil)
     }
-
 }
 
 extension ProxyCredentialsViewController: ValidatedTextFieldDelegate {

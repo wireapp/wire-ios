@@ -75,5 +75,4 @@ public extension ZMConversation {
             return nil
         }
     }
-
 }

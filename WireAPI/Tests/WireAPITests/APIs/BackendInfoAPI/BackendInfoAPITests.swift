@@ -103,5 +103,4 @@ final class BackendInfoAPITests: XCTestCase {
             )
         )
     }
-
 }

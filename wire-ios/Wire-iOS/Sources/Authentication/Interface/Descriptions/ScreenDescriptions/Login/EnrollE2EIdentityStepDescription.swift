@@ -43,5 +43,4 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
         let details = [E2ei.subtitle, E2ei.learnMore(WireURLs.shared.endToEndIdentityInfo)].joined(separator: "\n")
         subtext = .markdown(from: details, style: .login)
     }
-
 }

@@ -35,5 +35,4 @@ struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
                         .stroke(Color.secondaryButtonBorder, lineWidth: 1)
                 )
         }
-
 }

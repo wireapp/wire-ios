@@ -42,7 +42,6 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
         self.mockApplicationStatus = nil
         super.tearDown()
     }
-
 }
 
 // MARK: - Request generation
@@ -112,7 +111,6 @@ extension UserProfileUpdateRequestStrategyTests {
             "email": credentials.email!
         ] as NSDictionary, apiVersion: APIVersion.v0.rawValue)
         XCTAssertEqual(request, expected)
-
     }
 
     func testThatItCreatesARequestToCheckHandleAvailability() {
@@ -304,7 +302,6 @@ extension UserProfileUpdateRequestStrategyTests {
         XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
         guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.unknownError.rawValue)
-
     }
 
     // MARK: - Email change
@@ -584,7 +581,6 @@ extension ZMTransportResponse {
         let httpResponse = HTTPURLResponse(url: originalUrl, statusCode: httpStatus, httpVersion: nil, headerFields: headers)
         self.init(httpurlResponse: httpResponse!, data: nil, error: error, apiVersion: APIVersion.v0.rawValue)
     }
-
 }
 
 class TestUserProfileUpdateStatus: UserProfileUpdateStatus {

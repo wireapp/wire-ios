@@ -86,5 +86,4 @@ final class CallSystemMessageGenerator: NSObject {
 
         return systemMessage
     }
-
 }

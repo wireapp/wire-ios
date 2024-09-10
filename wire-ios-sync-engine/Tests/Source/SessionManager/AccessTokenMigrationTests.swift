@@ -43,7 +43,6 @@ class AccessTokenRenewerMock: AccessTokenRenewing {
             calls.setAccessTokenRenewalObserver.last?.accessTokenRenewalDidSucceed()
         }
     }
-
 }
 
 class AccessTokenMigrationTests: XCTestCase {
@@ -83,5 +82,4 @@ class AccessTokenMigrationTests: XCTestCase {
             XCTFail("error is not the one expected")
         }
     }
-
 }

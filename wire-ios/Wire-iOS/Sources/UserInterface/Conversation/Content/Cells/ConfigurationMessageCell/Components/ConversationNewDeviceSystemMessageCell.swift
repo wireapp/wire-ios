@@ -56,7 +56,6 @@ final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, C
         imageView.image = object.icon
         linkTarget = object.linkTarget
     }
-
 }
 
 // MARK: - UITextViewDelegate
@@ -83,5 +82,4 @@ extension ConversationNewDeviceSystemMessageCell {
 
         return false
     }
-
 }

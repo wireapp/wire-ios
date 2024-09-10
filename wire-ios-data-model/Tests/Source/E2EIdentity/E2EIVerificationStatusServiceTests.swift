@@ -63,5 +63,4 @@ class E2EIVerificationStatusServiceTests: ZMConversationTestsBase {
         // Then
         XCTAssertEqual(conversationStatus, .verified)
     }
-
 }

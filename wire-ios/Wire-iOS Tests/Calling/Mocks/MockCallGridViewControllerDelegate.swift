@@ -27,5 +27,4 @@ final class MockCallGridViewControllerDelegate: CallGridViewControllerDelegate {
         guard case let .requestVideoStreamsForClients(clients) = action else { return }
         requestedClients = clients
     }
-
 }

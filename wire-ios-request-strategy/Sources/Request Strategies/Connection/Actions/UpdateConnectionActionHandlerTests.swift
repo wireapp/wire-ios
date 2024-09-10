@@ -189,5 +189,4 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }

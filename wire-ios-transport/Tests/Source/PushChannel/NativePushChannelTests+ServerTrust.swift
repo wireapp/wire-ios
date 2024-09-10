@@ -138,5 +138,4 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
         return authenticationChallenge
     }
-
 }

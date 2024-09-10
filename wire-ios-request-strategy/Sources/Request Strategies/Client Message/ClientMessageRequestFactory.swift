@@ -98,7 +98,6 @@ public final class ClientMessageRequestFactory: NSObject {
         request.forceToBackgroundSession()
         return request
     }
-
 }
 
 // MARK: - Downloading

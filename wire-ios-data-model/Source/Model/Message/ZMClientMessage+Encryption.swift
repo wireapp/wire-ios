@@ -39,7 +39,6 @@ public protocol EncryptedPayloadGenerator {
     func encryptForTransportQualified() async -> Payload?
 
     var debugInfo: String { get }
-
 }
 
 /// Strategy for handling missing clients.
@@ -62,7 +61,6 @@ public enum MissingClientsStrategy: Equatable {
     /// Do not fail the request, no matter which clients are missing.
 
     case ignoreAllMissingClients
-
 }
 
 // FUTUREWORK: remove this code duplication (it's duplicated on ZMAssetClientMessage)
@@ -93,7 +91,6 @@ extension ZMClientMessage {
             }
         }
     }
-
 }
 
 extension ZMAssetClientMessage {
@@ -123,7 +120,6 @@ extension ZMAssetClientMessage {
             }
         }
     }
-
 }
 
 // MARK: - Proteus
@@ -162,7 +158,6 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
     public var debugInfo: String {
         return underlyingMessage?.safeForLoggingDescription ?? ""
     }
-
 }
 
 extension ZMAssetClientMessage: EncryptedPayloadGenerator {
@@ -198,7 +193,6 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
     public var debugInfo: String {
         return "\(String(describing: underlyingMessage))"
     }
-
 }
 
 extension GenericMessage {
@@ -207,9 +201,7 @@ extension GenericMessage {
                                   with missingClientsStrategy: MissingClientsStrategy,
                                   externalData: Data? = nil,
                                   in context: NSManagedObjectContext) {
-
     }
-
 }
 
 extension GenericMessage {
@@ -1109,14 +1101,12 @@ public protocol MLSEncryptedPayloadGenerator {
     ///   the `encrypt` function.
 
     func encryptForTransport(using encrypt: EncryptionFunction) async throws -> Data
-
 }
 
 public enum MLSEncryptedPayloadGeneratorError: Error {
 
     case noContext
     case noUnencryptedData
-
 }
 
 extension ZMClientMessage: MLSEncryptedPayloadGenerator {
@@ -1137,7 +1127,6 @@ extension ZMClientMessage: MLSEncryptedPayloadGenerator {
 
         return try await genericMessage.encryptForTransport(using: encrypt)
     }
-
 }
 
 extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
@@ -1158,7 +1147,6 @@ extension ZMAssetClientMessage: MLSEncryptedPayloadGenerator {
 
         return try await genericMessage.encryptForTransport(using: encrypt)
     }
-
 }
 
 extension GenericMessage: MLSEncryptedPayloadGenerator {
@@ -1176,5 +1164,4 @@ extension GenericMessage: MLSEncryptedPayloadGenerator {
             throw MLSEncryptedPayloadGeneratorError.noUnencryptedData
         }
     }
-
 }

@@ -27,7 +27,6 @@ protocol UserClientAddEventProcessorProtocol {
     /// - Parameter event: A user client add event.
 
     func processEvent(_ event: UserClientAddEvent) async throws
-
 }
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
         // TODO: [WPB-10189]
         assertionFailure("not implemented yet")
     }
-
 }

@@ -33,5 +33,4 @@ enum SyncState {
     /// The app is neither receiving nor processing any events.
 
     case suspended
-
 }

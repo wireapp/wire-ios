@@ -30,5 +30,4 @@ extension ZMOperationLoop: OperationStatusDelegate {
 
         transportSession.pushChannel.keepOpen = state == .foreground || state == .backgroundCall
     }
-
 }

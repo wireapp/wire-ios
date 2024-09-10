@@ -68,7 +68,6 @@ final class UserBlockingReasonCell: UITableViewCell {
         titleLabel.attributedText = .markdown(from: markdownTitle,
                                               style: .labelStyle)
     }
-
 }
 
 private extension DownStyle {
@@ -81,5 +80,4 @@ private extension DownStyle {
 
         return style
     }
-
 }

@@ -48,7 +48,6 @@ struct MembershipPayload: Decodable {
     let createdBy: UUID?
     let createdAt: Date?
     let permissions: PermissionsPayload?
-
 }
 
 extension MembershipPayload {
@@ -68,13 +67,11 @@ extension MembershipPayload {
 
         return member
     }
-
 }
 
 fileprivate extension Member {
 
     static let predicateForObjectsNeedingToBeUpdated = NSPredicate(format: "%K == YES", #keyPath(Member.needsToBeUpdatedFromBackend))
-
 }
 
 public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {

@@ -65,5 +65,4 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
         let payload = Payload.QualifiedUserIDList(payloadData)
         XCTAssertEqual(payload, Payload.QualifiedUserIDList(qualifiedIDs: ids))
     }
-
 }

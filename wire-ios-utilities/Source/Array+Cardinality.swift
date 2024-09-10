@@ -25,7 +25,6 @@ public extension Array {
         case zero
         case singular
         case plural
-
     }
 
     var cardinality: Cardinality {
@@ -40,5 +39,4 @@ public extension Array {
             return .plural
         }
     }
-
 }

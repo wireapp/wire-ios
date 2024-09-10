@@ -183,7 +183,6 @@ class StoreUpdateEventTests: MessagingTest {
         guard let storedEvent = StoredUpdateEvent.encryptAndCreate(event, managedObjectContext: eventMOC, index: 0)
         else {
             return XCTFail("Could not create storedEvents")
-
         }
 
         guard let restoredEvent = StoredUpdateEvent.eventsFromStoredEvents([storedEvent]).first
@@ -197,7 +196,6 @@ class StoreUpdateEventTests: MessagingTest {
         XCTAssertEqual(restoredEvent.isTransient, event.isTransient)
         XCTAssertEqual(restoredEvent.source, event.source)
         XCTAssertEqual(restoredEvent.uuid, event.uuid)
-
     }
 }
 

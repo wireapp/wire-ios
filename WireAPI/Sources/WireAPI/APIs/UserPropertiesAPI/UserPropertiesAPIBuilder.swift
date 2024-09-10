@@ -55,5 +55,4 @@ public struct UserPropertiesBuilder {
             UserPropertiesAPIV6(httpClient: httpClient)
         }
     }
-
 }

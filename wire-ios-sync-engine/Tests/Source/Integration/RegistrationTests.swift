@@ -306,5 +306,4 @@ class RegistrationTests: IntegrationTest {
         XCTAssertNotNil(error)
         XCTAssertEqual(error?.code, ZMUserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
-
 }

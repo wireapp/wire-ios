@@ -123,5 +123,4 @@ final class SecurityLevelViewTests: XCTestCase {
                 line: #line
             )
     }
-
 }

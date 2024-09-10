@@ -61,5 +61,4 @@ struct CallHandle: Hashable {
     var encodedString: String {
         return "\(accountID.transportString())\(Self.separator)\(conversationID.transportString())"
     }
-
 }

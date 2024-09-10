@@ -31,5 +31,4 @@ extension UIViewController {
         item.accessibilityLabel = L10n.Localizable.General.back
         navigationItem.backBarButtonItem = item
     }
-
 }

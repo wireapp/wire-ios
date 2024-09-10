@@ -47,5 +47,4 @@ class PotentialChangeDetector: ChangeDetector {
     func detectChanges(for objects: ModifiedObjects) {
         modifiedObjects = modifiedObjects.merged(with: objects)
     }
-
 }

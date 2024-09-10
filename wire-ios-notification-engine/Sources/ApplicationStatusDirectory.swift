@@ -101,5 +101,4 @@ final class ApplicationStatusDirectory: ApplicationStatus {
     func requestResyncResources() {
         // We don't resync Resources in the notification engine.
     }
-
 }

@@ -23,7 +23,6 @@ protocol BiometricsStateProtocol {
 
    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
    func persistState()
-
 }
 
 final class BiometricsState: BiometricsStateProtocol {
@@ -56,5 +55,4 @@ final class BiometricsState: BiometricsStateProtocol {
      func persistState() {
         lastPolicyDomainState = currentPolicyDomainState
     }
-
 }

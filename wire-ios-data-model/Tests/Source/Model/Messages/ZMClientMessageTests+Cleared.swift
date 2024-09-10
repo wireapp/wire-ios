@@ -28,7 +28,6 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
             message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
-
         }
 
         // given

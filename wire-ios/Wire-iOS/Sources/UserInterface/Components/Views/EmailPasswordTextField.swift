@@ -46,7 +46,6 @@ class RevisedEmailPasswordTextField: EmailPasswordTextField {
             contentStack.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
-
 }
 
 class EmailPasswordTextField: UIView, MagicTappable {
@@ -216,7 +215,6 @@ class EmailPasswordTextField: UIView, MagicTappable {
     var hasValidInput: Bool {
         return emailField.isInputValid && passwordField.isInputValid
     }
-
 }
 
 extension EmailPasswordTextField: UITextFieldDelegate {
@@ -239,7 +237,6 @@ extension EmailPasswordTextField: UITextFieldDelegate {
 
         return true
     }
-
 }
 
 extension EmailPasswordTextField: TextFieldValidationDelegate {

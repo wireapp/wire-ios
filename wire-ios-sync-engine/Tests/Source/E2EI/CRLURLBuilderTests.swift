@@ -70,5 +70,4 @@ final class CRLURLBuilderTests: XCTestCase {
         // THEN
         XCTAssertEqual(distributionPoint, urlToUse)
     }
-
 }

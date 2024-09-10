@@ -272,5 +272,4 @@ final class CallHapticsControllerTests: ZMSnapshotTestCase {
         // then
         XCTAssert(generator.triggeredEvents.isEmpty)
     }
-
 }

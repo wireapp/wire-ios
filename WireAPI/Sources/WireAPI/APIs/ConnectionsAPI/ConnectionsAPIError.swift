@@ -25,5 +25,4 @@ public enum ConnectionsAPIError: Error {
     /// Invalid body
 
     case invalidBody
-
 }

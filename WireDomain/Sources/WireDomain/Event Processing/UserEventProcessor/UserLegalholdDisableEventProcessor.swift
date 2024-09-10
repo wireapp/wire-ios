@@ -27,7 +27,6 @@ protocol UserLegalholdDisableEventProcessorProtocol {
     /// - Parameter event: A user legalhold disable event.
 
     func processEvent(_ event: UserLegalholdDisableEvent) async throws
-
 }
 
 struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorPro
         // TODO: [WPB-10194]
         assertionFailure("not implemented yet")
     }
-
 }

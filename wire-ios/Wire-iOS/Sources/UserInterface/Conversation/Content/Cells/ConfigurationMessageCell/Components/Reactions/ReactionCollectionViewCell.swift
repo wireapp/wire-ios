@@ -62,5 +62,4 @@ final class ReactionCollectionViewCell: UICollectionViewCell {
 
         reactionToggleButton.fitIn(view: self)
     }
-
 }

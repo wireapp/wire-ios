@@ -36,5 +36,4 @@ public enum MessageDestructionTimeoutType {
     /// This has lowest precedence.
 
     case selfUser
-
 }

@@ -19,7 +19,6 @@
 import WireTesting
 
 class ZMClientMessageTests_Reaction: BaseZMClientMessageTests {
-
 }
 
 extension ZMClientMessageTests_Reaction {
@@ -244,5 +243,4 @@ extension ZMClientMessageTests_Reaction {
         // THEN
         XCTAssertEqual(message.otherUsersReactions(), ["🥰"])
     }
-
 }

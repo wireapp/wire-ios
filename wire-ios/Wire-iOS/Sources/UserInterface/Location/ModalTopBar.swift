@@ -167,5 +167,4 @@ final class ModalTopBar: UIView {
     @objc private func dismissButtonTapped(_ sender: IconButton) {
         delegate?.modelTopBarWantsToBeDismissed(self)
     }
-
 }

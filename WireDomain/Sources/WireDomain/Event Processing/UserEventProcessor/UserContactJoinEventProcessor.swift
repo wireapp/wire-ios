@@ -27,7 +27,6 @@ protocol UserContactJoinEventProcessorProtocol {
     /// - Parameter event: A user contact join event.
 
     func processEvent(_ event: UserContactJoinEvent) async throws
-
 }
 
 struct UserContactJoinEventProcessor: UserContactJoinEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserContactJoinEventProcessor: UserContactJoinEventProcessorProtocol {
         // TODO: [WPB-10192]
         assertionFailure("not implemented yet")
     }
-
 }

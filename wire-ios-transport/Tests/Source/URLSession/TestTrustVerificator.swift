@@ -42,5 +42,4 @@ final class TestTrustVerificator: NSObject, URLSessionDelegate {
     func verify(url: URL) {
         session.dataTask(with: url).resume()
     }
-
 }

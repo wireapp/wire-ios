@@ -32,5 +32,4 @@ extension BackupExcluder {
             try url.excludeFromBackupIfExists()
         }
     }
-
 }

@@ -50,5 +50,4 @@ final class AccessoryTextFieldCell: UITableViewCell {
             textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 8)
         ])
     }
-
 }

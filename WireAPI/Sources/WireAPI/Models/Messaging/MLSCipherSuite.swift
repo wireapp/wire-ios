@@ -35,5 +35,4 @@ public enum MLSCipherSuite: Int, Codable {
     case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
 
     case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
-
 }

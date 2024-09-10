@@ -30,5 +30,4 @@ extension MockURLSession: ZiphyURLRequester {
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {
         // no-op
     }
-
 }

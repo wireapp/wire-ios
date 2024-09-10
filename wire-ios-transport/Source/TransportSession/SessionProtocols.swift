@@ -42,5 +42,4 @@ extension URLSession: SessionProtocol {
         ) -> Void) -> DataTaskProtocol {
         return dataTask(with: request, completionHandler: completionHandler) as DataTaskProtocol
     }
-
 }

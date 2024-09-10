@@ -114,9 +114,7 @@ struct ConversationCreateEventDecoder {
             case legacyAccessRole = "access_role"
             case lastEvent = "last_event"
             case lastEventTime = "last_event_time"
-
         }
-
     }
 
     private struct Members: Decodable, ToAPIModelConvertible {
@@ -128,7 +126,6 @@ struct ConversationCreateEventDecoder {
 
             case others
             case selfMember = "self"
-
         }
 
         func toAPIModel() -> Conversation.Members {
@@ -137,7 +134,6 @@ struct ConversationCreateEventDecoder {
                 selfMember: selfMember.toAPIModel()
             )
         }
-
     }
 
     struct Member: Decodable, ToAPIModelConvertible {
@@ -169,7 +165,6 @@ struct ConversationCreateEventDecoder {
             case hiddenReference = "otr_hidden_ref"
             case mutedStatus = "otr_muted_status"
             case mutedReference = "otr_muted_ref"
-
         }
 
         func toAPIModel() -> Conversation.Member {
@@ -188,7 +183,5 @@ struct ConversationCreateEventDecoder {
                 mutedReference: mutedReference?.date
             )
         }
-
     }
-
 }

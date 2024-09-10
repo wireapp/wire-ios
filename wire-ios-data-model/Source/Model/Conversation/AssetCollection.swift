@@ -106,7 +106,6 @@ public class AssetCollection: NSObject, ZMCollection {
             self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .asset, syncConversation: syncConversation)
             self.fetchNextIfNotTornDown(limit: AssetCollection.initialFetchCount, type: .client, syncConversation: syncConversation)
         }
-
     }
 
     /// Cancels further fetch requests
@@ -246,5 +245,4 @@ public class AssetCollection: NSObject, ZMCollection {
         guard let result = conversation.managedObjectContext?.fetchOrAssert(request: request) else {return []}
         return result
     }
-
 }

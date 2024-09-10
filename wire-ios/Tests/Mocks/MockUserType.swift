@@ -169,11 +169,9 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     }
 
     func ignore(completion: @escaping (Error?) -> Void) {
-
     }
 
     func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
-
     }
 
     // MARK: - Wireless

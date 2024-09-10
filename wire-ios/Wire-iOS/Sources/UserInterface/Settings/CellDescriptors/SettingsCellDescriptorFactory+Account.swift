@@ -386,5 +386,4 @@ extension SettingsCellDescriptorFactory {
     func signOutElement() -> SettingsCellDescriptorType {
         return SettingsSignOutCellDescriptor()
     }
-
 }

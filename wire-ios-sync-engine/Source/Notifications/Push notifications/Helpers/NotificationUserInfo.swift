@@ -202,7 +202,6 @@ extension NotificationUserInfo {
 
         return ZMUser.fetch(with: senderID, domain: nil, in: managedObjectContext)
     }
-
 }
 
 // MARK: - Configuration
@@ -240,7 +239,6 @@ extension NotificationUserInfo {
         let selfUser = ZMUser.selfUser(in: context)
         self[.selfUserID] = selfUser.remoteIdentifier
     }
-
 }
 
 // MARK: - Accessors
@@ -251,7 +249,6 @@ extension UNNotification {
     public var userInfo: NotificationUserInfo {
         return NotificationUserInfo(storage: request.content.userInfo)
     }
-
 }
 
 extension UNNotificationResponse {
@@ -260,5 +257,4 @@ extension UNNotificationResponse {
     public var userInfo: NotificationUserInfo {
         return notification.userInfo
     }
-
 }

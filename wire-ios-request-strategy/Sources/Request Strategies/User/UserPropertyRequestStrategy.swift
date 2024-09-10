@@ -220,7 +220,6 @@ extension UserPropertyRequestStrategy: ZMUpstreamTranscoder {
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
         return nil
     }
-
 }
 
 extension UserPropertyRequestStrategy: ZMContextChangeTrackerSource {

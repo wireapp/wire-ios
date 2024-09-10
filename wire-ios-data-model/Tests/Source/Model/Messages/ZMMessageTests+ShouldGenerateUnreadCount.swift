@@ -167,5 +167,4 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
             XCTAssertFalse(systemMessage.shouldGenerateUnreadCount())
         }
     }
-
 }

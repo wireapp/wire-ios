@@ -47,5 +47,4 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
             }
         })
     }
-
 }

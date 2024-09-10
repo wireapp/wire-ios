@@ -266,7 +266,6 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
             }
         }
     }
-
 }
 
 // MARK: - CameraViewController

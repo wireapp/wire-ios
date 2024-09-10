@@ -159,7 +159,6 @@ extension ZMConversation {
 
         transportSession.enqueueOneTime(request)
     }
-
 }
 
 struct ConversationJoinRequestFactory {
@@ -204,5 +203,4 @@ struct ConversationJoinRequestFactory {
 
         return ZMTransportRequest(path: urlString, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
     }
-
 }

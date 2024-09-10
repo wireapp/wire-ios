@@ -418,7 +418,6 @@ extension UserClientRequestStrategyTests {
             XCTAssertEqual(self.clientRegistrationStatus.currentPhase, .fetchingClients)
         }
     }
-
 }
 
 // MARK: Updating
@@ -926,7 +925,6 @@ extension UserClientRequestStrategyTests {
             XCTAssertFalse(existingClient.hasLocalModifications(forKey: UserClient.needsToUploadMLSPublicKeysKey))
         }
     }
-
 }
 
 extension UserClientRequestStrategy {

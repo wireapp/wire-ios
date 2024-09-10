@@ -90,5 +90,4 @@ enum BuildType: Equatable {
             return bundleID
         }
     }
-
 }

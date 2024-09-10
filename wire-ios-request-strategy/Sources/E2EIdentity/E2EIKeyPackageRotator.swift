@@ -28,7 +28,6 @@ public protocol E2EIKeyPackageRotating {
         enrollment: E2eiEnrollmentProtocol,
         certificateChain: String
     ) async throws
-
 }
 
 public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
@@ -161,5 +160,4 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
 
         await conversationEventProcessor.processConversationEvents(events)
     }
-
 }

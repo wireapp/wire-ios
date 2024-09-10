@@ -139,5 +139,4 @@ struct MockOldPushToken: Encodable {
     public let deviceToken: Data
     public let appIdentifier: String
     public let transportType: String
-
 }

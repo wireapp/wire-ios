@@ -29,5 +29,4 @@ extension MockUser: ProfileImageFetchable {
 
         completion(profileImage, false)
     }
-
 }

@@ -94,5 +94,4 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
 
         return viewController
     }
-
 }

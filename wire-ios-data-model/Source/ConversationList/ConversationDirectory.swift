@@ -33,13 +33,11 @@ public struct ConversationDirectoryChangeInfo {
         self.updatedLists = updatedLists
         self.updatedFolders = updatedFolders
     }
-
 }
 
 public protocol ConversationDirectoryObserver: AnyObject {
 
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
-
 }
 
 public protocol ConversationDirectoryType {
@@ -57,7 +55,6 @@ public protocol ConversationDirectoryType {
     ///
     /// NOTE that returned token must be retained for as long you want the observer to be active
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any
-
 }
 
 extension ZMConversationListDirectory: ConversationDirectoryType {
@@ -99,7 +96,6 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
         label?.kind = .folder
         return label
     }
-
 }
 
 private class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver {
@@ -143,5 +139,4 @@ private class ConversationListObserverProxy: NSObject, ZMConversationListObserve
 
         observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
     }
-
 }

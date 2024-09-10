@@ -64,14 +64,12 @@ public protocol MLSDecryptionServiceInterface {
     func processWelcomeMessage(
         welcomeMessage: String
     ) async throws -> MLSGroupID
-
 }
 
 public enum MLSDecryptResult: Equatable {
 
     case message(_ messageData: Data, _ senderClientID: String?)
     case proposal(_ commitDelay: UInt64)
-
 }
 
 protocol DecryptedMessageBundle {
@@ -83,7 +81,6 @@ protocol DecryptedMessageBundle {
     var senderClientId: WireCoreCrypto.ClientId? { get }
     var hasEpochChanged: Bool { get }
     var identity: WireCoreCrypto.WireIdentity { get }
-
 }
 
 extension DecryptedMessage: DecryptedMessageBundle { }
@@ -132,7 +129,6 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case failedToDecryptMessage
         case failedToDecodeSenderClientID
         case wrongEpoch
-
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {

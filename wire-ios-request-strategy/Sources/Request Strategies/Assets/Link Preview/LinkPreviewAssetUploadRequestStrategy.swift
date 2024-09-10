@@ -33,7 +33,6 @@ public final class LinkPreviewDetectorHelper: NSObject {
     public static func tearDown() {
         _test_debug_linkPreviewDetector = nil
     }
-
 }
 
 private let zmLog = ZMSLog(tag: "link previews")
@@ -201,5 +200,4 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
         // nop
     }
-
 }

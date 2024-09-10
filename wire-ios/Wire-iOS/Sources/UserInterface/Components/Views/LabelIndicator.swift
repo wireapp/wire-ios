@@ -50,7 +50,6 @@ enum LabelIndicatorContext {
         case .federated:
             return L10n.Localizable.Profile.Details.federated
         }
-
     }
 }
 

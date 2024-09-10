@@ -153,7 +153,6 @@ final class LegalHoldDisclosureController: UserObserving {
         }
 
         // If there is a current alert, replace it with the latest disclosure
-
     }
 
     private func discloseDisabledStateIfPossible() {
@@ -220,5 +219,4 @@ final class LegalHoldDisclosureController: UserObserving {
             }
         }
     }
-
 }

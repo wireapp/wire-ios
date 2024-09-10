@@ -48,5 +48,4 @@ final class MarkdownTextStorageTests: XCTestCase {
         XCTAssertEqual(.bold, result)
         XCTAssertEqual(wholeRange, effectiveRange)
     }
-
 }

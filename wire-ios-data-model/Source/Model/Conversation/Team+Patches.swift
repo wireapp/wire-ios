@@ -32,5 +32,4 @@ extension Team {
 
         teams.forEach(context.delete)
     }
-
 }

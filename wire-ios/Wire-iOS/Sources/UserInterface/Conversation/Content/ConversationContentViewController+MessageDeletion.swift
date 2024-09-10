@@ -38,7 +38,6 @@ private extension ZMConversationMessage {
 
         return canBeDeletedForEveryone ? .hideAndDelete : .hide
     }
-
 }
 
 protocol SelectableView {

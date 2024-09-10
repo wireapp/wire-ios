@@ -125,7 +125,6 @@ extension ZMConversation {
         })
 
         userSession.transportSession.enqueueOneTime(request)
-
     }
 
     /// Deletes the existing wireless link.
@@ -226,5 +225,4 @@ internal struct WirelessRequestFactory {
 
         return .init(path: path, method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
-
 }

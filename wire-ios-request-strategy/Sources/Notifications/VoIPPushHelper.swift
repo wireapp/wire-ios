@@ -26,7 +26,6 @@ public enum VoIPPushHelper {
         case loadedUserSessions
         case isAVSReady
         case knownCalls
-
     }
 
     public static var storage: UserDefaults = .standard
@@ -80,5 +79,4 @@ public enum VoIPPushHelper {
             storage.set(newValue, forKey: Key.knownCalls.rawValue)
         }
     }
-
 }

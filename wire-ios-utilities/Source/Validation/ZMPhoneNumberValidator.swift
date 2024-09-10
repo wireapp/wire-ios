@@ -82,7 +82,6 @@ public final class ZMPhoneNumberValidator: NSObject, ZMPropertyValidator {
         _ = try? validateValue(&phoneNumber)
         return phoneNumber as? String
     }
-
 }
 
 extension NSString {

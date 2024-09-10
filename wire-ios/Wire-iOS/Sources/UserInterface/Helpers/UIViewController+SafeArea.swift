@@ -36,7 +36,6 @@ extension UIViewController {
     var safeCenterYAnchor: NSLayoutYAxisAnchor {
         return view.safeAreaLayoutGuide.centerYAnchor
     }
-
 }
 
 extension UIView {

@@ -174,7 +174,6 @@ import WireTransport
         case .v2, .v3, .v4, .v5, .v6:
             return nil
         }
-
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

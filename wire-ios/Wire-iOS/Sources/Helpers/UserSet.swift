@@ -28,7 +28,6 @@ struct UserSet {
     typealias Storage = Set<HashBoxUser>
 
     private var storage: Storage
-
 }
 
 // MARK: - Collection
@@ -61,7 +60,6 @@ extension UserSet: Collection {
     __consuming func makeIterator() -> IndexingIterator<[UserType]> {
         return storage.map(\.value).makeIterator()
     }
-
 }
 
 // MARK: - Set Algebra
@@ -119,5 +117,4 @@ extension UserSet: SetAlgebra {
     mutating func formSymmetricDifference(_ other: __owned UserSet) {
         storage.formSymmetricDifference(other.storage)
     }
-
 }

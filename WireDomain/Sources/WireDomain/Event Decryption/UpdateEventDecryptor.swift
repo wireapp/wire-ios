@@ -30,7 +30,6 @@ protocol UpdateEventDecryptorProtocol {
     /// - Returns: A list of decrypted update events.
 
     func decryptEvents(in eventEnvelope: UpdateEventEnvelope) async throws -> [UpdateEvent]
-
 }
 
 struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
@@ -139,5 +138,4 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             )
         }
     }
-
 }

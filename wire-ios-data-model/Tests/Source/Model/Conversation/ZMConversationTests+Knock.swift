@@ -40,7 +40,6 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
             XCTAssertNotNil(knock.knockMessageData)
             XCTAssert(knock.isUserSender(selfUser))
         }
-
     }
 
     private func createConversationWithMessages(context: NSManagedObjectContext) -> ZMConversation? {

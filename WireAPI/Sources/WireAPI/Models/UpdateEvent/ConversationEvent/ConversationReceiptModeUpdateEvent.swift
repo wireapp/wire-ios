@@ -36,5 +36,4 @@ public struct ConversationReceiptModeUpdateEvent: Equatable, Codable {
     /// and any other value indicates receipts are disabled.
 
     public let newRecieptMode: Int
-
 }

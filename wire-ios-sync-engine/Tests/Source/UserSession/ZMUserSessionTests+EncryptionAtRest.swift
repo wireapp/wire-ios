@@ -32,7 +32,6 @@ final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
     }
 
     func userSessionDidUnlock(_ session: ZMUserSession) {
-
     }
 
     func clientRegistrationDidSucceed(accountId: UUID) { }
@@ -363,5 +362,4 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         // then
         XCTAssertNotEqual(sut.lock, .database)
     }
-
 }

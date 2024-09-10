@@ -85,5 +85,4 @@ class ZMClientMessageTests_Prefetching: BaseZMClientMessageTests {
         // then
         XCTAssertTrue(message1 === message2)
     }
-
 }

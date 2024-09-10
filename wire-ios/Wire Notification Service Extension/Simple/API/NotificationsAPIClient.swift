@@ -22,7 +22,6 @@ import WireTransport
 protocol NotificationsAPIClientProtocol {
 
     func fetchEvent(eventID: UUID) async throws -> ZMUpdateEvent
-
 }
 
 final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
@@ -50,7 +49,6 @@ final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
             throw error
         }
     }
-
 }
 
 struct NotificationByIDEndpoint: Endpoint, Loggable {
@@ -66,7 +64,6 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
         case notifcationNotFound
         case incorrectEvent
         case unknownError(ErrorResponse)
-
     }
 
     // MARK: - Properties
@@ -135,5 +132,4 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
             return .failure(.invalidResponse)
         }
     }
-
 }

@@ -94,9 +94,7 @@ open class Flow {
   struct GenericError: Error {
 
     let reason: String
-
   }
-
 }
 
 struct FlowLog: LogConvertible, Encodable {

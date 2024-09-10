@@ -97,7 +97,6 @@ final class CallParticipantsSnapshot {
         WireCallCenterCallParticipantNotification(conversationId: conversationId, participants: participants)
             .post(in: context.notificationContext)
     }
-
 }
 
 extension CallParticipantsSnapshot {

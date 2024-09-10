@@ -103,7 +103,6 @@ extension NSData_ZMSCryptoTests {
             generatedDataSet.insert(data)
         }
     }
-
 }
 
 // MARK: - Encrypted IV
@@ -298,7 +297,6 @@ extension NSData_ZMSCryptoTests {
 
         XCTAssertEqual(encoded, expected)
     }
-
 }
 
 // MARK: - Hex decoding

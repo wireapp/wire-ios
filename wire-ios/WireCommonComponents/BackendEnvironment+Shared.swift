@@ -49,5 +49,4 @@ extension BackendEnvironment {
             environmentType: type
         )
     }
-
 }

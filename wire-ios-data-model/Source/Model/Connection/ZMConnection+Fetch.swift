@@ -82,5 +82,4 @@ extension ZMConnection {
 
         return result.first as? ZMConnection
     }
-
 }

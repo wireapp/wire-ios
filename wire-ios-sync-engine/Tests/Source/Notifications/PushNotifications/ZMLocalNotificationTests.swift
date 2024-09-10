@@ -218,5 +218,4 @@ class ZMLocalNotificationTests: MessagingTest {
        ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
-
 }

@@ -37,5 +37,4 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
         }
         return [.hideLoadingView, .transition(nextStep, mode: .reset)]
     }
-
 }

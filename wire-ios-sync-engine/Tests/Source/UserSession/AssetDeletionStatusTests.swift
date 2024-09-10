@@ -148,7 +148,6 @@ final class AssetDeletionStatusTests: MessagingTest {
         XCTAssertNotEqual(first, second)
         XCTAssertNil(sut.nextIdentifierToDelete())
     }
-
 }
 
 // MARK: - Helper

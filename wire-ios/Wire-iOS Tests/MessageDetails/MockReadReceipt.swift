@@ -29,5 +29,4 @@ final class MockReadReceipt: ReadReceipt {
 		userType = user
         self.serverTimestamp = Date(timeIntervalSince1970: 0)
     }
-
 }

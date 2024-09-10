@@ -256,7 +256,6 @@ final class CallActionsView: UIView {
 
         speakersAllSegmentedView.accessibilityIdentifier = "speakers_and_all_toggle.selected.\(input.videoGridPresentationMode.accessibilityIdentifier)"
     }
-
 }
 
 extension CallActionsView {

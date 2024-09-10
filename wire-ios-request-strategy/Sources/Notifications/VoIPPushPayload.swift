@@ -123,5 +123,4 @@ public struct VoIPPushPayload: Codable {
 
         return dict
     }
-
 }

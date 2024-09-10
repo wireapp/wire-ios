@@ -32,5 +32,4 @@ final class URLsTests: XCTestCase {
         // When / Then
         XCTAssertNoThrow(try fileURL.decode(WireURLs.self))
     }
-
 }

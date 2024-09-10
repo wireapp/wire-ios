@@ -67,7 +67,6 @@ public extension ZMManagedObject {
     enum ObjectError: Error {
         case nonMatchingType
     }
-
 }
 
 public extension Collection where Element == NSManagedObjectID {

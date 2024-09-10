@@ -25,5 +25,4 @@ import Foundation
 
     /// Notify that the current client was deleted remotely
     func didDetectCurrentClientDeletion()
-
 }

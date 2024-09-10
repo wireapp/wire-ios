@@ -164,5 +164,4 @@ final class URLRequestPromise: CancelableTask {
         self.failureError = error
         failureHandler?(error)
     }
-
 }

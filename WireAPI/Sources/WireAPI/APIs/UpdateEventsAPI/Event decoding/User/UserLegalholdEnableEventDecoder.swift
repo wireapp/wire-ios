@@ -30,5 +30,4 @@ struct UserLegalholdEnableEventDecoder {
 
         return UserLegalholdEnableEvent(userID: userID)
     }
-
 }

@@ -93,5 +93,4 @@ class UserRichProfileIntegrationTests: IntegrationTest {
         // then
         XCTAssertEqual(user?.richProfile, [entry1, entry2])
     }
-
 }

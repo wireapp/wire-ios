@@ -31,7 +31,6 @@ final class NSAttributedStringDownTests: XCTestCase {
 
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
-
     }
 
     func testThatItReturnsH2Characters() {
@@ -165,5 +164,4 @@ final class NSAttributedStringDownTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.string, plainTextSymbol)
     }
-
 }

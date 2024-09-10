@@ -141,7 +141,6 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             }
             XCTAssertEqual(Set(admin.actions.map { $0.name }), Set(["leave_conversation", "delete_conversation"]))
             XCTAssertEqual(Set(member.actions.map { $0.name }), Set(["leave_conversation"]))
-
         }
     }
 
@@ -166,7 +165,6 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedAndWait {
             // then
             XCTAssertFalse(convo1!.needsToDownloadRoles)
-
         }
     }
 
@@ -192,6 +190,5 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange(Set(objects))
         }
-
     }
 }

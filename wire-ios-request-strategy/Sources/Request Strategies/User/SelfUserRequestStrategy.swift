@@ -44,5 +44,4 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
     public override func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         actionSync.nextRequest(for: apiVersion)
     }
-
 }

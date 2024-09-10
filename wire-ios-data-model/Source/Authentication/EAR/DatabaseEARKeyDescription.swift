@@ -68,5 +68,4 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
             label: "database"
         )
     }
-
 }

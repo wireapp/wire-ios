@@ -108,7 +108,6 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
         set {
             mockVideoState = newValue
         }
-
     }
 
     var networkQuality: NetworkQuality {

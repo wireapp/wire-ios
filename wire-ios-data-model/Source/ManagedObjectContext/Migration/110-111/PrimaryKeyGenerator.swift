@@ -42,5 +42,4 @@ struct PrimaryKeyGenerator {
             fatal("Entity named \(entityName) is not supported")
         }
     }
-
 }

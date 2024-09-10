@@ -30,5 +30,4 @@ extension UserType {
 
         return domain != otherDomain
     }
-
 }

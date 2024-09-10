@@ -25,5 +25,4 @@ public struct UserContactJoinEvent: Equatable, Codable {
     /// The contact's name.
 
     public let name: String
-
 }

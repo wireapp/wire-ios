@@ -33,7 +33,6 @@ extension UUID {
     static let mockID8 = UUID(uuidString: "d902ed60-b2bf-44e9-b6f3-7281f0aaed36")!
     static let mockID9 = UUID(uuidString: "2fa94c25-2725-4bcb-bcda-ad5a89e62d96")!
     static let mockID10 = UUID(uuidString: "0f970654-995c-4ac6-ae67-a6aafd420b9f")!
-
 }
 
 extension QualifiedID {

@@ -184,7 +184,6 @@ extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
     func didChangeAvailability(newState: NetworkState) {
         enqueue(state: viewState(from: newState))
     }
-
 }
 
 // MARK: - iPad size class and orientation switching
@@ -235,5 +234,4 @@ extension NetworkStatusViewController: ApplicationStateObserving {
         // background, because the view animations would not be applied.
         enqueue(state: pendingState ?? state)
     }
-
 }

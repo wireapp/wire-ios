@@ -303,5 +303,4 @@ private enum MigrationState {
     case notStarted
     case ongoing
     case finalised
-
 }

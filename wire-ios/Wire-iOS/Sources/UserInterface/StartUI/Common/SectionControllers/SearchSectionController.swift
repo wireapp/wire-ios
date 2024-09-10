@@ -28,7 +28,6 @@ protocol SearchSectionControllerDelegate: AnyObject {
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, didSelectRow row: CreateGroupSection.Row, at indexPath: IndexPath)
 
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, wantsToDisplayError error: LocalizedError)
-
 }
 
 class SearchSectionController: NSObject, CollectionViewSectionController {
@@ -101,5 +100,4 @@ class SearchSectionController: NSObject, CollectionViewSectionController {
         // NOTE: workaround for regression in Swift 5
         // https://bugs.swift.org/browse/SR-2919
     }
-
 }

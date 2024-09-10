@@ -33,5 +33,4 @@ public enum APIServiceError: Error {
     /// The response is not an http url response.
 
     case notAHTTPURLResponse
-
 }

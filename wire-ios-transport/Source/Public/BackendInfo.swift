@@ -26,7 +26,6 @@ public enum BackendInfo {
         case preferredAPIVersion = "PreferredAPIVersion"
         case domain = "Domain"
         case isFederationEnabled = "IsFederationEnabled"
-
     }
 
     /// The `UserDefaults` used to store backend configuration info.

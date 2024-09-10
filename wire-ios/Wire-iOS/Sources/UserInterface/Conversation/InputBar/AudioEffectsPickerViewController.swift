@@ -334,13 +334,11 @@ extension AudioEffectsPickerViewController: AudioPlayerControllerDelegate {
     func audioPlayerControllerDidFinishPlaying() {
         setState(.time, animated: true)
     }
-
 }
 
 private protocol AudioPlayerControllerDelegate: AnyObject {
 
     func audioPlayerControllerDidFinishPlaying()
-
 }
 
 private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
@@ -399,5 +397,4 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
             delegate?.audioPlayerControllerDidFinishPlaying()
         }
     }
-
 }

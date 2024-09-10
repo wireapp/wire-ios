@@ -33,5 +33,4 @@ extension ZMUserSession {
         }
         managedObjectContext.zm_teardownMessageDeletionTimer()
     }
-
 }

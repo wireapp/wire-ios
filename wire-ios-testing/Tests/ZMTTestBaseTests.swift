@@ -31,7 +31,6 @@ class ZMTTestBaseTests: ZMTBaseTest {
         // then
         XCTAssertNotNil(data)
         XCTAssertEqual(data, expectedData)
-
     }
 
     func testMediumJPEG() {
@@ -45,7 +44,6 @@ class ZMTTestBaseTests: ZMTBaseTest {
         // then
         XCTAssertNotNil(data)
         XCTAssertEqual(data, expectedData)
-
     }
 
     func testVerySmallJPEG_static() {
@@ -59,7 +57,6 @@ class ZMTTestBaseTests: ZMTBaseTest {
         // then
         XCTAssertNotNil(data)
         XCTAssertEqual(data, expectedData)
-
     }
 
     func testMediumJPEG_static() {
@@ -73,7 +70,5 @@ class ZMTTestBaseTests: ZMTBaseTest {
         // then
         XCTAssertNotNil(data)
         XCTAssertEqual(data, expectedData)
-
     }
-
 }

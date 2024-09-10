@@ -110,7 +110,6 @@ final class ConversationTitleView: TitleView {
         ? Conversation.TitleViewForOneToOne.hint
         : Conversation.TitleViewForGroup.hint
     }
-
 }
 
 extension NSTextAttachment {

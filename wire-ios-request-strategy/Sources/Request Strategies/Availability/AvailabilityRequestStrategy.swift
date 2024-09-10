@@ -83,5 +83,4 @@ extension AvailabilityRequestStrategy: ZMEventConsumer {
             user.updateAvailability(from: message)
         }
     }
-
 }

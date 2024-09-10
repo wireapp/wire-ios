@@ -471,7 +471,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     func textField(_ textField: UITextField, editing: Bool) {
         loginActiveField = editing ? textField : nil
     }
-
 }
 
 extension AuthenticationCredentialsViewController: ValidatedTextFieldDelegate {

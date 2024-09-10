@@ -35,7 +35,6 @@ extension ZMTransportResponse {
     static func conversationNotFound(apiVersion: APIVersion) -> ZMTransportResponse {
         return ZMTransportResponse(payload: ["label": "no-convo"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
-
 }
 
 extension MockTransportSession {
@@ -297,5 +296,4 @@ extension MockTransportSession {
 
         return MockPushEvent(with: payload, uuid: UUID(), isTransient: false, isSilent: false)
     }
-
 }

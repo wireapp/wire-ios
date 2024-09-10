@@ -73,5 +73,4 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
         //
         // TODO: [WPB-6035] Investigate solutions to mock core crypto types
     }
-
 }

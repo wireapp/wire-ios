@@ -45,5 +45,4 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
             : SemanticColors.View.backgroundUserCell
         }
     }
-
 }

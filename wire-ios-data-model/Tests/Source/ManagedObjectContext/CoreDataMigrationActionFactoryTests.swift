@@ -118,5 +118,4 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
                 XCTAssertNil(action)
             }
     }
-
 }

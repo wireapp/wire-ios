@@ -30,7 +30,6 @@ final class AnalyticsConsoleProvider: NSObject {
         super.init()
         ZMSLog.set(level: .info, tag: tag)
     }
-
 }
 
 extension AnalyticsConsoleProvider: AnalyticsProvider {

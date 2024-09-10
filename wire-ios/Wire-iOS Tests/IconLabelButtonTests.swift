@@ -56,7 +56,6 @@ final class IconLabelButtonTests: XCTestCase {
         let name = "testIconLabelButton_\(appearance.description)"
         snapshotHelper.verify(matching: button, file: file, testName: name, line: line)
     }
-
 }
 
 struct IconLabelButtonTestCase {

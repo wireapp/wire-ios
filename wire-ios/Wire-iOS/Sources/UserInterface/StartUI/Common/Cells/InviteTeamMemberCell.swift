@@ -88,7 +88,6 @@ class StartUIIconCell: UICollectionViewCell {
             separator.heightAnchor.constraint(equalToConstant: .hairline)
         ])
     }
-
 }
 
 final class InviteTeamMemberCell: StartUIIconCell {
@@ -102,7 +101,6 @@ final class InviteTeamMemberCell: StartUIIconCell {
         accessibilityTraits.insert(.button)
         accessibilityIdentifier = "button.searchui.invite_team"
     }
-
 }
 
 final class CreateGroupCell: StartUIIconCell {
@@ -116,7 +114,6 @@ final class CreateGroupCell: StartUIIconCell {
         accessibilityTraits.insert(.button)
         accessibilityIdentifier = "button.searchui.creategroup"
     }
-
 }
 
 final class CreateGuestRoomCell: StartUIIconCell {
@@ -130,7 +127,6 @@ final class CreateGuestRoomCell: StartUIIconCell {
         accessibilityTraits.insert(.button)
         accessibilityIdentifier = "button.searchui.createguestroom"
     }
-
 }
 
 final class OpenServicesAdminCell: StartUIIconCell {
@@ -143,5 +139,4 @@ final class OpenServicesAdminCell: StartUIIconCell {
         accessibilityLabel = title
         accessibilityIdentifier = "button.searchui.open-services"
     }
-
 }

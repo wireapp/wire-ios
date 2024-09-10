@@ -38,5 +38,4 @@ extension SettingsPropertyFactory {
     var isAppLockAvailable: Bool {
         return userSession?.isAppLockAvailable ?? false
     }
-
 }

@@ -34,5 +34,4 @@ enum PreviewBlacklist {
             url.absoluteString.lowercased().contains(blacklisted)
         }
     }
-
 }

@@ -55,5 +55,4 @@ public struct SelfUserAPIBuilder {
             SelfUserAPIV6(httpClient: httpClient)
         }
     }
-
 }

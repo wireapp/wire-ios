@@ -79,5 +79,4 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
             .failure(status: 999, error: .unknown(status: 999))
         ])
     }
-
 }

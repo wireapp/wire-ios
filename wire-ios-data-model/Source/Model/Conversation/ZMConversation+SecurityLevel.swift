@@ -379,7 +379,6 @@ extension ZMConversation {
                             clients: nil,
                             timestamp: timestamp.previousNearestTimestamp)
     }
-
 }
 
 // MARK: - Messages resend/expiration
@@ -500,7 +499,6 @@ extension ZMConversation {
             return false
         }
     }
-
 }
 
 // MARK: - HotFix

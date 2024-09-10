@@ -51,14 +51,11 @@ struct UserLegalholdRequestEventDecoder {
     private struct ClientPayload: Decodable {
 
         let id: String
-
     }
 
     private struct PrekeyPayload: Decodable {
 
         let id: Int
         let key: String
-
     }
-
 }

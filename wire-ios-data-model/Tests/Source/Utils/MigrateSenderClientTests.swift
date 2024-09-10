@@ -36,7 +36,5 @@ class MigrateSenderClientTests: DiskDatabaseTest {
 
         // then
         XCTAssertEqual(systemMessage.senderClientID, clientID)
-
     }
-
 }

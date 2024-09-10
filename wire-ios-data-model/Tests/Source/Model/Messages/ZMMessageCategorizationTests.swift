@@ -292,7 +292,6 @@ extension ZMMessageCategorizationTests {
         // THEN
         XCTAssertEqual(category, MessageCategory.audio)
         XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.audio.rawValue))
-
     }
 
     func testThatItComputestheCachedCategoryWhenAsked() {
@@ -602,5 +601,4 @@ extension ZMMessageCategorizationTests {
         // THEN
         XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: MessageCategory.file.rawValue))
     }
-
 }

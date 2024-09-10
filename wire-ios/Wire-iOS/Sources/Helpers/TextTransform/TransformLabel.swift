@@ -58,5 +58,4 @@ final class TransformLabel: UILabel {
             super.attributedText = newValue?.applying(transform: textTransform)
         }
     }
-
 }

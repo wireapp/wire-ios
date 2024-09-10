@@ -94,5 +94,4 @@ final class ChangeUsernameUseCaseTests: XCTestCase {
 
         XCTAssertEqual(userProfile.requestSettingHandleHandle_Invocations.first, username)
     }
-
 }

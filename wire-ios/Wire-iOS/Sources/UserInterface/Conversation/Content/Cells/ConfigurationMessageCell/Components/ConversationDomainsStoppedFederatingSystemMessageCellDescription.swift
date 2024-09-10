@@ -69,7 +69,6 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
 
         return attributedString
     }
-
 }
 
 private extension Array where Element == String {
@@ -77,5 +76,4 @@ private extension Array where Element == String {
     var hasSelfDomain: Bool {
         return self.contains(SelfUser.provider?.providedSelfUser.domain ?? "")
     }
-
 }

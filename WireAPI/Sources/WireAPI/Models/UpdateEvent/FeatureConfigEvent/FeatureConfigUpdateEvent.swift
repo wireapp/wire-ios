@@ -25,5 +25,4 @@ public struct FeatureConfigUpdateEvent: Equatable, Codable {
     /// The updated feature config.
 
     public let featureConfig: FeatureConfig
-
 }

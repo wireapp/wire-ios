@@ -27,5 +27,4 @@ public struct FederationConnectionRemovedEvent: Equatable, Codable {
     /// federating with each other.
 
     public let domains: Set<String>
-
 }

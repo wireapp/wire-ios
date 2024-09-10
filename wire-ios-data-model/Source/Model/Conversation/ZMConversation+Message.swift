@@ -55,7 +55,6 @@ extension ZMConversation {
                 return "File sharing is restricted."
             }
         }
-
     }
 
     /// Appends a button action message.
@@ -404,7 +403,6 @@ extension ZMConversation {
             message.prepareToSend()
         }
     }
-
 }
 
 @objc
@@ -482,5 +480,4 @@ extension ZMConversation {
     public func _appendFile(with fileMetadata: ZMFileMetadata, nonce: UUID) -> ZMConversationMessage? {
         return try? appendFile(with: fileMetadata, nonce: nonce)
     }
-
 }

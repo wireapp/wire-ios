@@ -25,7 +25,6 @@ public enum UpdateAccessRolesError: Error {
     case accessDenied
     case actionDenied
     case conversationNotFound
-
 }
 
 public class UpdateAccessRolesAction: EntityAction {
@@ -54,5 +53,4 @@ public class UpdateAccessRolesAction: EntityAction {
         self.accessRoles = accessRoles
         self.resultHandler = resultHandler
     }
-
 }

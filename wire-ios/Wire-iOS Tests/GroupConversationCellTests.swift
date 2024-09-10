@@ -122,5 +122,4 @@ final class GroupConversationCellTests: XCTestCase {
         // THEN
         verify(conversation: groupConversation)
     }
-
 }

@@ -30,5 +30,4 @@ struct FileSharingFeatureConfigDecoder {
 
         return FileSharingFeatureConfig(status: payload.status)
     }
-
 }

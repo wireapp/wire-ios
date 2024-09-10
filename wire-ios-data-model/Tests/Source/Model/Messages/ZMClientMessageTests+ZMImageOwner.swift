@@ -151,5 +151,4 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         // then
         XCTAssertEqual(imageSize, CGSize(width: 1352, height: 1803))
     }
-
 }

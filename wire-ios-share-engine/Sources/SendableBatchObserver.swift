@@ -73,5 +73,4 @@ public final class SendableBatchObserver {
             self?.progressHandler?(totalProgress)
         }
     }
-
 }

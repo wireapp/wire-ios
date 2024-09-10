@@ -34,5 +34,4 @@ extension ZMUser {
         selfUser.domain = nil
         selfUser.needsToBeUpdatedFromBackend = true
     }
-
 }

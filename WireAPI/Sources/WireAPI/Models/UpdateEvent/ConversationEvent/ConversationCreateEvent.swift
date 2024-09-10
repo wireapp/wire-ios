@@ -37,5 +37,4 @@ public struct ConversationCreateEvent: Equatable, Codable {
     /// The conversation metadata.
 
     public let conversation: Conversation
-
 }

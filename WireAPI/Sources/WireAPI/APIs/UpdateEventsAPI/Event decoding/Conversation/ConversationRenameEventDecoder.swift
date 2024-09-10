@@ -54,7 +54,5 @@ struct ConversationRenameEventDecoder {
     private struct Payload: Decodable {
 
         let name: String
-
     }
-
 }

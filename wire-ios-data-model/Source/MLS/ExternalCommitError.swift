@@ -31,7 +31,6 @@ enum ExternalCommitError: Error, Equatable {
 
         /// Abort the action and log the error
         case giveUp
-
     }
 }
 
@@ -48,5 +47,4 @@ extension ExternalCommitError.RecoveryStrategy {
             return true
         }
     }
-
 }

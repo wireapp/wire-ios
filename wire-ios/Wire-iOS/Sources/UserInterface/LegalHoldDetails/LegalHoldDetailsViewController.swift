@@ -134,7 +134,6 @@ final class LegalHoldDetailsViewController: UIViewController {
 
         return [headerSection, legalHoldParticipantsSection]
     }
-
 }
 
 extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionControllerDelegate {
@@ -154,5 +153,4 @@ extension LegalHoldDetailsViewController: LegalHoldParticipantsSectionController
         )
         show(profileViewController, sender: nil)
     }
-
 }

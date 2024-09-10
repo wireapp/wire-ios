@@ -26,5 +26,4 @@ extension URLRequest {
             forHTTPHeaderField: "Authorization"
         )
     }
-
 }

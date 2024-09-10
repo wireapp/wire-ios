@@ -78,7 +78,6 @@ final class GridView: UICollectionView {
 
         contentInsetAdjustmentBehavior = .never
         backgroundColor = .clear
-
     }
 
     // MARK: - Public Interface
@@ -115,7 +114,6 @@ private extension GridView {
 
         case row
         case column
-
     }
 
     enum ParticipantAmount {
@@ -126,7 +124,6 @@ private extension GridView {
         init(_ amount: Int) {
             self = amount > 2 ? .moreThanTwo : .twoOrLess
         }
-
     }
 
     enum SplitType {
@@ -144,7 +141,6 @@ private extension GridView {
                 fatalError()
             }
         }
-
     }
 
     private func numberOfItemsInPage(indexPath: IndexPath) -> Int {
@@ -279,5 +275,4 @@ extension GridView: UIScrollViewDelegate {
         currentPage = Int(page)
         gridViewDelegate?.gridView(self, didChangePageTo: currentPage)
     }
-
 }

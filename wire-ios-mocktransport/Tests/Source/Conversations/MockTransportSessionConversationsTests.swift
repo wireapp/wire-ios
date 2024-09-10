@@ -173,7 +173,6 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertNotNil(data["access"])
         XCTAssertNotNil(data["access_role"])
         XCTAssertNotNil(data["access_role_v2"])
-
     }
 
     func testThatItReturnsConversationRolesIfConversationIsNotPartOfATeam() {

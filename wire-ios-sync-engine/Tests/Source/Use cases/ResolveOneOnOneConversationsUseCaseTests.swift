@@ -132,5 +132,4 @@ final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
         XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 0)
         XCTAssertEqual(mockOneOnOneResolver.resolveAllOneOnOneConversationsIn_Invocations.count, 1)
     }
-
 }

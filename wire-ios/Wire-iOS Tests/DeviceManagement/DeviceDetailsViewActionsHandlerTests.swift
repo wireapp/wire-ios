@@ -99,7 +99,6 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         let fingerPrint = await deviceActionHandler.getProteusFingerPrint()
         XCTAssertEqual(fingerPrint, testFingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased())
     }
-
 }
 
 extension E2eIdentityCertificate {
@@ -121,5 +120,4 @@ extension E2eIdentityCertificate {
             serialNumber: sertialNumber
         )
     }
-
 }

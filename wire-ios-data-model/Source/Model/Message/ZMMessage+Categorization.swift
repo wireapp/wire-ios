@@ -107,7 +107,6 @@ extension ZMMessage {
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)
     }
-
 }
 
 // MARK: - Categories from specific content
@@ -283,5 +282,4 @@ extension MessageCategory: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.rawValue)
     }
-
 }

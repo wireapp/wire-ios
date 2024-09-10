@@ -61,5 +61,4 @@ final class PerformanceDebugger {
     private func handleMemoryWarning() {
         WireLogger.performance.warn("Application did receive memory warning.")
     }
-
 }

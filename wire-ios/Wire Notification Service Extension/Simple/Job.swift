@@ -29,7 +29,6 @@ final class Job: NSObject, Loggable {
     enum InitializationError: Error {
 
         case invalidEnvironment
-
     }
 
     typealias PushPayload = (userID: UUID, eventID: UUID)
@@ -120,5 +119,4 @@ final class Job: NSObject, Loggable {
         logger.trace("\(self.request.identifier, privacy: .public): fetching event (\(eventID, privacy: .public))")
         return try await notificationsAPIClient.fetchEvent(eventID: eventID)
     }
-
 }

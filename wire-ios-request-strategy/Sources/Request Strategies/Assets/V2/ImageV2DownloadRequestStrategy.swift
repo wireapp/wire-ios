@@ -67,7 +67,6 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return downstreamSync.nextRequest(for: apiVersion)
     }
-
 }
 
 extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
@@ -168,5 +167,4 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
             )
         }
     }
-
 }

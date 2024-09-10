@@ -55,5 +55,4 @@ public struct FeatureConfigsAPIBuilder {
             FeatureConfigsAPIV6(httpClient: httpClient)
         }
     }
-
 }

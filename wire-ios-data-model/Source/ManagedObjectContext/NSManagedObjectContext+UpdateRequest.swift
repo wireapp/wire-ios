@@ -38,5 +38,4 @@ public extension NSManagedObjectContext {
             fatal("Error performing batch update \(error.localizedDescription)")
         }
     }
-
 }

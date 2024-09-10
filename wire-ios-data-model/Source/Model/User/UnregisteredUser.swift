@@ -68,7 +68,6 @@ public class UnregisteredUser {
     public var needsPassword: Bool {
         password == nil
     }
-
 }
 
 // MARK: - Equatable
@@ -84,5 +83,4 @@ extension UnregisteredUser: Equatable {
             && lhs.marketingConsent == rhs.marketingConsent
             && lhs.password == rhs.password
     }
-
 }

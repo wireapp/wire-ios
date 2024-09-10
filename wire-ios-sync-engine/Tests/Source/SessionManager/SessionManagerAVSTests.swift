@@ -28,7 +28,6 @@ class TestAVSLogger: AVSLogger {
     func log(message: String) {
         messages.append(message)
     }
-
 }
 
 class SessionManagerAVSTests: ZMTBaseTest {
@@ -66,5 +65,4 @@ class SessionManagerAVSTests: ZMTBaseTest {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

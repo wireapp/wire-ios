@@ -71,7 +71,6 @@ final class RemoveClientsViewController: UIViewController,
 
         self.createTableView()
         self.createConstraints()
-
     }
 
     // MARK: - Helpers

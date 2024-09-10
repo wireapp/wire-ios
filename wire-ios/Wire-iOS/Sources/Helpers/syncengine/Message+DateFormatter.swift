@@ -49,5 +49,4 @@ extension Message {
         longDateFormatter.timeStyle = .short
         return longDateFormatter
     }()
-
 }

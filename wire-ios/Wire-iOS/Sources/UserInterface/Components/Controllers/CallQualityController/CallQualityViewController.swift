@@ -132,7 +132,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
         view.addSubview(dimmingView)
         view.addSubview(contentView)
         contentView.addSubview(callQualityStackView)
-
     }
 
     private func createConstraints() {
@@ -217,7 +216,6 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     func updateLayout(for traitCollection: UITraitCollection) {
         updateLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
-
 }
 
 // MARK: Call Quality View
@@ -323,7 +321,6 @@ final class QualityScoreSelectorView: UIView {
         } else {
             scoreStackView.spacing = 12
         }
-
     }
 
     func localizedNameForScore(_ score: Int) -> String {

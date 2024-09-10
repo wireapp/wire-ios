@@ -90,5 +90,4 @@ final class TransferAppLockKeychainTests: DiskDatabaseTest {
         try Keychain.deleteItem(item)
         try Keychain.deleteItem(legacyItem)
     }
-
 }

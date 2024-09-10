@@ -667,5 +667,4 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
             XCTAssertFalse(conversation.needsToDownloadRoles)
         }
     }
-
 }

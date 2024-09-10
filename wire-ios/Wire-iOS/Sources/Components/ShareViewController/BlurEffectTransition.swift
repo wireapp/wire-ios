@@ -82,5 +82,4 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
             })
         }
     }
-
 }

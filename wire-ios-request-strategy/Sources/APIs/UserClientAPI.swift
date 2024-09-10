@@ -22,7 +22,6 @@ import Foundation
 public protocol UserClientAPI {
 
     func deleteUserClient(clientId: String, password: String) async throws
-
 }
 
 class UserClientAPIV0: UserClientAPI {

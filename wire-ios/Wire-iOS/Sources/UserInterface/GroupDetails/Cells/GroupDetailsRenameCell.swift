@@ -90,5 +90,4 @@ final class GroupDetailsRenameCell: UICollectionViewCell {
         accessoryIconView.tintColor = SemanticColors.Icon.foregroundDefault
         titleTextField.textColor = SemanticColors.Label.textDefault
     }
-
 }

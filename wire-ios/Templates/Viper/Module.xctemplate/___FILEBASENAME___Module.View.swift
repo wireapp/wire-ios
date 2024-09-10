@@ -33,9 +33,7 @@ extension ___VARIABLE_productName:identifier___Module {
             super.viewDidLoad()
             presenter.processEvent(.viewDidLoad)
         }
-
     }
-
 }
 
 // MARK: - View model
@@ -43,7 +41,6 @@ extension ___VARIABLE_productName:identifier___Module {
 extension ___VARIABLE_productName:identifier___Module {
 
     enum ViewModel: Equatable {}
-
 }
 
 // MARK: - Refresh
@@ -51,7 +48,5 @@ extension ___VARIABLE_productName:identifier___Module {
 extension ___VARIABLE_productName:identifier___Module.View: ___VARIABLE_productName:identifier___ViewPresenterInterface {
 
     func refresh(withModel model: ___VARIABLE_productName:identifier___Module.ViewModel) {
-
     }
-
 }

@@ -297,7 +297,6 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             XCTAssert(member.isZombieObject)
             XCTAssertFalse(conversation.isZombieObject)
             XCTAssertFalse(teamConversation.isZombieObject)
-
         }
     }
 
@@ -439,5 +438,4 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             }
         }
     }
-
 }

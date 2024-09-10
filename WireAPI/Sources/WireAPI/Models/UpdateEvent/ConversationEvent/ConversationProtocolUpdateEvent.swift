@@ -33,5 +33,4 @@ public struct ConversationProtocolUpdateEvent: Equatable, Codable {
     /// The new conversation message protocol.
 
     public let newProtocol: ConversationMessageProtocol
-
 }

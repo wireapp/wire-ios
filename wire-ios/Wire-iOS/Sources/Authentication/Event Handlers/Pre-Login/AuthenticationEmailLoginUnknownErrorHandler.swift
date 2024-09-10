@@ -58,5 +58,4 @@ final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHand
 
         return [.hideLoadingView, .executeFeedbackAction(.showGuidanceDot), .presentErrorAlert(alert)]
     }
-
 }

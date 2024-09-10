@@ -32,7 +32,6 @@ fileprivate extension UIView {
         animation.keyTimes = [0, 0.166, 0.5, 0.833, 1]
         layer.add(animation, forKey: "wiggle-animation")
     }
-
 }
 
 protocol ChangeHandleTableViewCellDelegate: AnyObject {
@@ -198,7 +197,6 @@ struct HandleChangeState {
         guard handle.count <= HandleValidation.allowedLength.upperBound else { throw ValidationError.tooLong }
         guard handle != currentHandle else { throw ValidationError.sameAsPrevious }
     }
-
 }
 
 final class ChangeHandleViewController: SettingsBaseTableViewController {
@@ -272,7 +270,6 @@ final class ChangeHandleViewController: SettingsBaseTableViewController {
 
         saveButtonItem.tintColor = .accent()
         navigationItem.rightBarButtonItem = saveButtonItem
-
     }
 
     func saveButtonTapped() {
@@ -367,7 +364,6 @@ extension ChangeHandleViewController: ChangeHandleTableViewCellDelegate {
     @objc fileprivate func checkAvailability(of handle: String) {
         userProfile?.requestCheckHandleAvailability(handle: handle)
     }
-
 }
 
 extension ChangeHandleViewController: UserProfileUpdateObserver {
@@ -420,5 +416,4 @@ extension String {
     var isEqualToUnicodeName: Bool {
         return applyingTransform(.toUnicodeName, reverse: false) == self
     }
-
 }

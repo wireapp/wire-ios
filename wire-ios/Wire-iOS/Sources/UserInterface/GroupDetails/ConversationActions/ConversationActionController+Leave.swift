@@ -65,5 +65,4 @@ extension ConversationActionController {
             conversation.removeOrShowError(participant: user)
         }
     }
-
 }

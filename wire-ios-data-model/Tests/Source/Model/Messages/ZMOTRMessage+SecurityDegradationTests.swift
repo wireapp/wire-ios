@@ -68,7 +68,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
             XCTAssertTrue(message.causedSecurityLevelDegradation)
             XCTAssertTrue(convo.messagesThatCausedSecurityLevelDegradation.contains(message))
             XCTAssertTrue(self.syncMOC.zm_hasChanges)
-
         }
     }
 
@@ -115,7 +114,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
             XCTAssertFalse(message.causedSecurityLevelDegradation)
             XCTAssertTrue(convo.messagesThatCausedSecurityLevelDegradation.isEmpty)
             XCTAssertTrue(self.syncMOC.zm_hasChanges)
-
         }
     }
 
@@ -146,7 +144,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
             XCTAssertFalse(message2.causedSecurityLevelDegradation)
             XCTAssertTrue(convo.messagesThatCausedSecurityLevelDegradation.isEmpty)
             XCTAssertTrue(self.syncMOC.zm_hasChanges)
-
         }
     }
 
@@ -200,7 +197,6 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
             XCTAssertTrue(otherMessage.causedSecurityLevelDegradation)
         }
     }
-
 }
 
 // MARK: - Propagation across contexes
@@ -273,5 +269,4 @@ extension ZMOTRMessage_SecurityDegradationTests {
         let convo = ZMConversation.insertGroupConversation(moc: moc, participants: [user1, user2], team: nil, participantsRole: nil)!
         return convo
     }
-
 }

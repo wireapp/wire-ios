@@ -221,7 +221,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
         detailsViewController.delegate = self
         navigationController?.pushViewController(detailsViewController, animated: animated)
     }
-
 }
 
 extension GroupParticipantsDetailViewController: ViewControllerDismisser {

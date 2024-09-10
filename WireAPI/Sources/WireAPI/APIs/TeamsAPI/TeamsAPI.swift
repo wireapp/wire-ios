@@ -62,5 +62,4 @@ public protocol TeamsAPI {
         for teamID: Team.ID,
         userID: UUID
     ) async throws -> LegalholdStatus
-
 }

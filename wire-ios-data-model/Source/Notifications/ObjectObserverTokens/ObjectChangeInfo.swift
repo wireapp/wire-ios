@@ -29,7 +29,6 @@ public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
     func setValue(_ value: Any?, forKey key: String)
 
     func value(forKey key: String) -> Any?
-
 }
 
 open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
@@ -81,5 +80,4 @@ extension ObjectChangeInfo {
             return nil
         }
     }
-
 }

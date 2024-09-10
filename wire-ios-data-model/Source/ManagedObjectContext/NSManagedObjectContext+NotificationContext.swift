@@ -30,5 +30,4 @@ public extension NSManagedObjectContext {
     var notificationContext: NotificationContext {
         return persistentStoreCoordinator!
     }
-
 }

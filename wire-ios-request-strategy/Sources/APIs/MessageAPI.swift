@@ -26,7 +26,6 @@ public protocol MessageAPI {
     func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
     func sendMLSMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MLSMessageSendingStatus, ZMTransportResponse)
-
 }
 
 extension Payload.ClientListByUserID {

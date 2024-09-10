@@ -103,7 +103,6 @@ final class NetworkStatusViewControllerTests: XCTestCase {
         let traitCollection = UITraitCollection(horizontalSizeClass: horizontalSizeClass)
         mockConversationList.setOverrideTraitCollection(traitCollection, forChild: sutList)
         mockConversationRoot.setOverrideTraitCollection(traitCollection, forChild: sutRoot)
-
     }
 
     private func checkResult(

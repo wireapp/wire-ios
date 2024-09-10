@@ -44,7 +44,6 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                     // or does not exits, then we open the user profile to let the user
                     // create the conversation
                     await openUserProfile(user)
-
                 }
             } catch {
                 WireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")

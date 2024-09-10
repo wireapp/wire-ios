@@ -35,7 +35,6 @@ public protocol MessageSenderInterface {
     func sendMessage(message: any SendableMessage) async throws
 
     func broadcastMessage(message: any ProteusMessage) async throws
-
 }
 
 public final class MessageSender: MessageSenderInterface {
@@ -315,5 +314,4 @@ private extension Payload.ClientListByQualifiedUserID {
         }
         return qualifiedClientIDs
     }
-
 }

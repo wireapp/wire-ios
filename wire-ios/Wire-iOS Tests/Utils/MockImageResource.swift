@@ -35,5 +35,4 @@ class MockImageResource: NSObject, WireImageResource {
             completionHandler(self.imageData)
         }
     }
-
 }

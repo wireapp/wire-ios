@@ -36,5 +36,4 @@ final class AuthenticationShowCustomBackendInfoHandler: AuthenticationEventHandl
 
         return [.presentCustomBackendAlert]
     }
-
 }

@@ -112,5 +112,4 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
     fileprivate func processLegalHoldRequestEvent(_ event: ZMUpdateEvent) {
         insertLegalHoldRequest(from: event.payload)
     }
-
 }

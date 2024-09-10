@@ -61,7 +61,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         let (data, _) = try await httpClient.send(request)
 
         return data
-
     }
 
     public func getACMENonce(path: String) async throws -> String {
@@ -80,7 +79,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         }
 
         return replayNonce
-
     }
 
     public func getTrustAnchor() async throws -> String {
@@ -146,7 +144,6 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         }
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
         return ACMEResponse(nonce: replayNonce, location: location, response: data)
-
     }
 
     public func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse {
@@ -211,21 +208,17 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         var status: String
         var token: String
         var target: String
-
     }
 
     private struct AuthorizationResponse: Decodable {
 
         var challenges: [AuthorizationChallenge]
-
     }
 
     private struct AuthorizationChallenge: Decodable {
 
         var type: AuthorizationChallengeType
-
     }
-
 }
 
 enum HeaderKey {
@@ -252,7 +245,6 @@ private enum Constant {
 public protocol HttpClientCustom {
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse)
-
 }
 
 public class HttpClientE2EI: NSObject, HttpClientCustom {
@@ -270,7 +262,6 @@ public class HttpClientE2EI: NSObject, HttpClientCustom {
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         return try await urlSession.data(for: request)
     }
-
 }
 
 extension URL {

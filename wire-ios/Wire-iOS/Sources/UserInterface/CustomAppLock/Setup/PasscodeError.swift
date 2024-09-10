@@ -40,7 +40,6 @@ enum PasscodeError: CaseIterable {
         case .noNumber:
             return L10n.Localizable.CreatePasscode.Validation.noNumber
         }
-
     }
 
     private func description(icon: StyleKitIcon, color: UIColor, font: UIFont) -> NSAttributedString {
@@ -53,7 +52,6 @@ enum PasscodeError: CaseIterable {
         let attributedString: NSAttributedString = NSAttributedString(string: message) && font
 
         return NSAttributedString(attachment: textAttachment) + attributedString
-
     }
 
     var descriptionWithInvalidIcon: NSAttributedString {

@@ -87,5 +87,4 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockDelegate.viewModelDidGeneratePassword_Invocations.count, 1)
     }
-
 }

@@ -59,5 +59,4 @@ class RegisterPushTokenActionHandler: ActionHandler<RegisterPushTokenAction> {
             action.notifyResult(.failure(.unknown(status: response.httpStatus)))
         }
     }
-
 }

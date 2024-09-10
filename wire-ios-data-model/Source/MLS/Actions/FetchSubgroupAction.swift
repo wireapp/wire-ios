@@ -52,5 +52,4 @@ public class FetchSubgroupAction: EntityAction {
         self.type = type
         self.resultHandler = resultHandler
     }
-
 }

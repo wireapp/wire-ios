@@ -31,7 +31,6 @@ let StartedKey = "started"
 
     // Used for handling local notifications
     public static let typingChangeNotificationName = Notification.Name(rawValue: "ZMTypingChangeNotification")
-
 }
 
 public struct TypingEvent {
@@ -55,7 +54,6 @@ public struct TypingEvent {
                objectID.isEqual(other.objectID) &&
                fabs(date.timeIntervalSince(other.date)) < Typing.defaultTimeout
     }
-
 }
 
 class TypingEventQueue {

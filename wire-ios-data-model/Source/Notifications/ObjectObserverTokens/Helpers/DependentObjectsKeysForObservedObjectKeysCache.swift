@@ -73,5 +73,4 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
         cachedValues[tuple] = result
         return result
     }
-
 }

@@ -64,7 +64,6 @@ final class MockOTREntity: OTREntity {
     func addFailedToSendRecipients(_ recipients: [ZMUser]) {
         isFailedToSendUsers = true
     }
-
 }
 
 extension MockOTREntity: ProteusMessage {

@@ -36,7 +36,6 @@ final class ColorSchemeController: NSObject {
         }
 
         NotificationCenter.default.addObserver(self, selector: #selector(settingsColorSchemeDidChange), name: .SettingsColorSchemeChanged, object: nil)
-
     }
 
     func notifyColorSchemeChange() {

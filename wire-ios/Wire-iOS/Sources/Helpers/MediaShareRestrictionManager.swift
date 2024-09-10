@@ -109,5 +109,4 @@ class MediaShareRestrictionManager {
             return false
         }
     }
-
 }

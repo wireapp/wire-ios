@@ -56,9 +56,6 @@ public extension Feature {
             public init(enforcedTimeoutSeconds: UInt = 0) {
                 self.enforcedTimeoutSeconds = enforcedTimeoutSeconds
             }
-
         }
-
     }
-
 }

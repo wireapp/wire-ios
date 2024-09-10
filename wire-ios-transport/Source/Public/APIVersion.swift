@@ -30,7 +30,6 @@ public enum APIVersion: Int32 {
     case v4 = 4
     case v5 = 5
     case v6 = 6
-
 }
 
 // MARK: - CaseIterable
@@ -44,5 +43,4 @@ extension APIVersion: Comparable {
     public static func < (lhs: Self, rhs: Self) -> Bool {
         return lhs.rawValue < rhs.rawValue
     }
-
 }

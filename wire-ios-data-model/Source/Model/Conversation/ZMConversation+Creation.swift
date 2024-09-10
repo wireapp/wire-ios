@@ -170,5 +170,4 @@ extension ZMConversation {
 
         return conversation
     }
-
 }

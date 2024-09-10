@@ -67,7 +67,6 @@ class UserClientKeysStoreTests: OtrBaseTest {
 
         } catch let error as NSError {
             XCTAssertNil(error, "Should not return error while generating key")
-
         }
     }
 
@@ -116,9 +115,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
                 XCTFail("Prekey \(String(describing: maxKey)) is too big")
                 return
             }
-
         }
-
     }
 
     fileprivate func createLegacyOTRFolderWithDummyFile(fileName: String, data: Data, folder: URL = OtrBaseTest.legacyOtrDirectory) -> URL {
@@ -126,5 +123,4 @@ class UserClientKeysStoreTests: OtrBaseTest {
         try! data.write(to: folder.appendingPathComponent(fileName))
         return folder
     }
-
 }

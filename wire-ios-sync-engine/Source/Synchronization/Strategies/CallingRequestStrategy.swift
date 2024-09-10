@@ -152,7 +152,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
         default:
             return nil
         }
-
     }
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
@@ -319,7 +318,6 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 self?.callEventStatus.finishedProcessingCallEvent()
             })
         }
-
 }
 
 // MARK: - Wire Call Center Transport
@@ -504,7 +502,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
                 return "Response body missing data"
             }
         }
-
     }
 
     private func recipients(for targets: [AVSClient], in managedObjectContext: NSManagedObjectContext) -> GenericMessageEntity.Recipients {
@@ -515,7 +512,6 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
         return .clients(clientsByUser)
     }
-
 }
 
 // MARK: - Client Discovery Request
@@ -527,7 +523,6 @@ extension CallingRequestStrategy {
         let conversationId: UUID
         let domain: String?
         let completion: ([AVSClient]) -> Void
-
     }
 
     struct ClientDiscoveryResponsePayload: Decodable {

@@ -39,7 +39,6 @@ class FeatureConfigsAPIV4: FeatureConfigsAPIV3 {
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
             .parse(response)
     }
-
 }
 
 struct FeatureConfigsResponseAPIV4: Decodable, ToAPIModelConvertible {

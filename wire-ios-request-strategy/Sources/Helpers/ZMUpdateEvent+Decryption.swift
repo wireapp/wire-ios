@@ -87,5 +87,4 @@ extension ZMUpdateEvent {
 
         return decryptedEvent
     }
-
 }

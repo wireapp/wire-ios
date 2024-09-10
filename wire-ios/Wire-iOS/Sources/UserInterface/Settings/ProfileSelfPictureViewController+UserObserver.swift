@@ -32,5 +32,4 @@ extension ProfileSelfPictureViewController: ZMUserObserver {
             self.selfUserImageView.image = image
         }
     }
-
 }

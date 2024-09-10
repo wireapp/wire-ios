@@ -276,5 +276,4 @@ extension MessageDetailsViewController: MessageDetailsDataSourceObserver {
     func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource) {
         reloadFooters()
     }
-
 }

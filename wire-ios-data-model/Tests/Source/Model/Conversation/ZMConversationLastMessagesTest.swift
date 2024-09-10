@@ -114,7 +114,6 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         let otherLastMessages = otherConversation.lastMessages()
         XCTAssertEqual(otherLastMessages.last?.textMessageData?.messageText, "Other 1")
-
     }
 
     func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() throws {
@@ -130,5 +129,4 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         // then
         XCTAssertEqual(conversation.lastEditableMessage, message)
     }
-
 }

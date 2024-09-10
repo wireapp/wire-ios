@@ -46,5 +46,4 @@ final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEve
 
         return [.startPostLoginFlow, .transition(.enrollE2EIdentity, mode: .reset)]
     }
-
 }

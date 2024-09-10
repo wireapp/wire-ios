@@ -73,5 +73,4 @@ class AvailabilityBehaviourChangeTests: ModelObjectsTests {
         // then
         XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, [.alert, .notification])
     }
-
 }

@@ -39,7 +39,6 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [keyPathSync]
     }
-
 }
 
 extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
@@ -76,7 +75,5 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
     }
 
     func cancel(_ object: UserClient) {
-
     }
-
 }

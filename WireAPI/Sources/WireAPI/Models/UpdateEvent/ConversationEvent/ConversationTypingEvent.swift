@@ -50,5 +50,4 @@ public struct ConversationTypingEvent: Equatable, Codable {
         self.senderID = senderID
         self.isTyping = isTyping
     }
-
 }

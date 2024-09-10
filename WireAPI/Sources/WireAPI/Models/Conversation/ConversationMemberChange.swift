@@ -53,5 +53,4 @@ public struct ConversationMemberChange: Equatable, Codable {
     /// This is only relevant for the self user.
 
     public let archivedStatusReferenceDate: Date?
-
 }

@@ -185,7 +185,6 @@ final class AppRootRouter {
             }
         }
     }
-
 }
 
 // MARK: - AppStateCalculatorDelegate
@@ -507,7 +506,6 @@ extension AppRootRouter {
         UIApplication.shared.windows.forEach { window in
             window.overrideUserInterfaceStyle = Settings.shared.colorScheme.userInterfaceStyle
         }
-
     }
 
     private func presentAlertForDeletedAccountIfNeeded(_ error: NSError?) {
@@ -570,7 +568,6 @@ extension AppRootRouter: URLActionRouterDelegate {
             return false
         }
     }
-
 }
 
 // MARK: - ApplicationStateObserving

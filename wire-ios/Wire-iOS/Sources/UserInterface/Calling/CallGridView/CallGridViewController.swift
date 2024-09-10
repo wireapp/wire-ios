@@ -495,7 +495,6 @@ final class CallGridViewController: UIViewController {
         }
         return viewCache[selfStreamId] as? SelfCallParticipantView
     }
-
 }
 
 // MARK: - UICollectionViewDataSource
@@ -598,13 +597,11 @@ extension CGSize {
             return .floatingPreviewSmall
         }
     }
-
 }
 
 extension Notification.Name {
 
     static let videoGridVisibilityChanged = Notification.Name(rawValue: "VideoGridVisibilityChanged")
-
 }
 
 fileprivate extension CGFloat {

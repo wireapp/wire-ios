@@ -26,7 +26,6 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
     case failedToDecodePayload
     case unknown
     case invalidRequest
-
 }
 
 public struct CreateConversationGuestLinkAction: EntityAction {

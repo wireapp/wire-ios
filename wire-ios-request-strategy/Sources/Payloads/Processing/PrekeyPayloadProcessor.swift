@@ -30,7 +30,6 @@ public protocol PrekeyPayloadProcessorInterface {
 public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
 
     public init() {
-
     }
 
     /// Establish new sessions using the prekeys retreived for each client.
@@ -98,11 +97,9 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
                         missingClient.markClientAsInvalidAfterFailingToRetrievePrekey(selfClient: selfClient)
                     }
                 }
-
             }
         }
     }
-
 }
 
 private extension UserClient {
@@ -142,7 +139,6 @@ private extension UserClient {
             }
         }
     }
-
 }
 
 extension Payload.ClientListByQualifiedUserID {
@@ -211,5 +207,4 @@ extension Payload.ClientListByQualifiedUserID {
 
         return [ZMUser: [UserClient]](userClientsByUserTuples, uniquingKeysWith: +)
     }
-
 }

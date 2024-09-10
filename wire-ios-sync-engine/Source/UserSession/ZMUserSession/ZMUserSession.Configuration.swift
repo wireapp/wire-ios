@@ -37,7 +37,5 @@ public extension ZMUserSession {
             self.appLockConfig = appLockConfig
             self.useLegacyPushNotifications = useLegacyPushNotifications
         }
-
     }
-
 }

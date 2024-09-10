@@ -50,5 +50,4 @@ final class LoadingIndicatorCell: UITableViewCell, CellConfigurationConfigurable
         spinner.isAnimating = false
         spinner.isAnimating = true
     }
-
 }

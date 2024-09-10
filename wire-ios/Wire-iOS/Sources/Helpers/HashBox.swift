@@ -35,5 +35,4 @@ final class HashBox<Type: NSObjectProtocol>: Hashable {
     static func == (lhs: HashBox<Type>, rhs: HashBox<Type>) -> Bool {
         return lhs.value.isEqual(rhs.value)
     }
-
 }

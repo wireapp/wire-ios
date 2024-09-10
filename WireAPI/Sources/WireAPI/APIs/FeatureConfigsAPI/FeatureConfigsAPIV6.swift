@@ -39,7 +39,6 @@ class FeatureConfigsAPIV6: FeatureConfigsAPIV5 {
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
             .parse(response)
     }
-
 }
 
 struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
@@ -114,7 +113,6 @@ struct FeatureConfigsResponseAPIV6: Decodable, ToAPIModelConvertible {
 
         return featureConfigs
     }
-
 }
 
 extension FeatureConfigResponse {
@@ -130,13 +128,10 @@ extension FeatureConfigResponse {
         let verificationExpiration: UInt
         let crlProxy: String? /// Starting api v6
         let useProxyOnMobile: Bool /// Starting api v6
-
     }
 
     struct ConferenceCallingV6: Decodable {
 
         let useSFTForOneToOneCalls: Bool
-
     }
-
 }

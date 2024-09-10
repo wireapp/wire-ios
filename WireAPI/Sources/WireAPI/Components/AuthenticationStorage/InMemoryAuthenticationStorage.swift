@@ -38,5 +38,4 @@ final class InMemoryAuthenticationStorage: AuthenticationStorage {
     func fetchCookieData() -> Data? {
         cookieData
     }
-
 }

@@ -61,9 +61,6 @@ struct ConversationMemberLeaveEventDecoder {
 
             case userIDs = "qualified_user_ids"
             case reason
-
         }
-
     }
-
 }

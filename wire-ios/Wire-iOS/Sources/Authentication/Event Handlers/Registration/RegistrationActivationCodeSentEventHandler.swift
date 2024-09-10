@@ -44,5 +44,4 @@ final class RegistrationActivationCodeSentEventHandler: AuthenticationEventHandl
 
         return actions
     }
-
 }

@@ -29,6 +29,5 @@ enum EventHasher {
         hasher.combine(payloadData)
         hasher.combine(eventId)
         return hasher.finalize()
-
     }
 }

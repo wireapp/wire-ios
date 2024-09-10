@@ -95,5 +95,4 @@ extension SessionManager {
             session.syncManagedObjectContext.leaveAllGroups(groups)
         }
     }
-
 }

@@ -31,5 +31,4 @@ final class MockLabel: NSObject, LabelType {
     var kind: Label.Kind
 
     var name: String?
-
 }

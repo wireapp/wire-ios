@@ -387,7 +387,6 @@ public class EARService: EARServiceInterface {
             WireLogger.ear.error("failed to generate primary public private keypair: \(String(describing: error))")
             throw error
         }
-
     }
 
     private func generateSecondaryKeys() throws -> (publicKey: SecKey, privateKey: SecKey) {
@@ -562,5 +561,4 @@ public class EARService: EARServiceInterface {
             }
         }
     }
-
 }

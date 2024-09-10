@@ -162,7 +162,6 @@ public struct WireCallCenterCallParticipantNotification: SelfPostingNotification
 
     let conversationId: AVSIdentifier
     let participants: [CallParticipant]
-
 }
 
 // MARK: - VoiceGainObserver
@@ -414,5 +413,4 @@ extension WireCallCenterV3 {
                                                  context: userSession.managedObjectContext.notificationContext,
                                                  using: { [weak observer] _ in observer?.callCenterDidNotStartConferenceCall() })
     }
-
 }

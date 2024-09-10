@@ -220,5 +220,4 @@ extension Feature {
         feature.config = config
         return feature
     }
-
 }

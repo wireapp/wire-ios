@@ -75,7 +75,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     func messageToolboxDidRequestOpeningDetails(_ messageToolboxView: MessageToolboxView, preferredDisplayMode: MessageDetailsDisplayMode) {
         guard let message, let delegate else { return }
         delegate.conversationMessageWantsToOpenMessageDetails(self, for: message, preferredDisplayMode: preferredDisplayMode)
-
     }
 
     private func perform(action: MessageAction, sender: UIView? = nil) {
@@ -89,7 +88,6 @@ final class ConversationMessageToolboxCell: UIView, ConversationMessageCell, Mes
     func messageToolboxViewDidSelectResend(_ messageToolboxView: MessageToolboxView) {
         perform(action: .resend)
     }
-
 }
 
 final class ConversationMessageToolboxCellDescription: ConversationMessageCellDescription {
@@ -113,5 +111,4 @@ final class ConversationMessageToolboxCellDescription: ConversationMessageCellDe
         self.message = message
         self.configuration = View.Configuration(message: message, deliveryState: message.deliveryState)
     }
-
 }

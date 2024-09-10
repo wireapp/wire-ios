@@ -138,5 +138,4 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

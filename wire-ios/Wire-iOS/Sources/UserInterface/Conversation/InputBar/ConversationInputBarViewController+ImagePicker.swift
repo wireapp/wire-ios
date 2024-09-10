@@ -110,5 +110,4 @@ extension ConversationInputBarViewController {
             self.parent?.dismiss(animated: true)
         }
     }
-
 }

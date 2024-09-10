@@ -34,5 +34,4 @@ public struct UserLegalholdRequestEvent: Equatable, Codable {
     /// The last prekey of the legalhold device.
 
     public let lastPrekey: Prekey
-
 }

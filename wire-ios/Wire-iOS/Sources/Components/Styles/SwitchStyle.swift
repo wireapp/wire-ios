@@ -33,7 +33,6 @@ struct SwitchStyle {
         enabledOnStateBorderColor: SemanticColors.Switch.borderOnStateEnabled,
         enabledOffStateBorderColor: SemanticColors.Switch.borderOffStateEnabled
     )
-
 }
 
 final class Switch: UISwitch, Stylable {
@@ -79,5 +78,4 @@ final class Switch: UISwitch, Stylable {
         layer.borderWidth = style.borderWidth
         clipsToBounds = true
     }
-
 }

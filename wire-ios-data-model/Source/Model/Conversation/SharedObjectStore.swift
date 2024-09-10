@@ -30,7 +30,6 @@ fileprivate extension Notification {
 
         return changes
     }
-
 }
 
 /// This class is used to persist `NSManagedObjectContext` change
@@ -54,7 +53,6 @@ fileprivate extension Notification {
     public var storedNotifications: [[AnyHashable: AnyObject]] {
         return objectStore.load()
     }
-
 }
 
 @objcMembers public class StorableTrackingEvent: NSObject {
@@ -83,7 +81,6 @@ fileprivate extension Notification {
             StorableTrackingEvent.eventAttributesKey: attributes
         ]
     }
-
 }
 
 @objcMembers public class ShareExtensionAnalyticsPersistence: NSObject {
@@ -184,5 +181,4 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
             zmLog.error("Failed to remove item at url: \(url), error: \(error)")
         }
     }
-
 }

@@ -196,7 +196,6 @@ final class FeatureConfigsAPITests: XCTestCase {
             }
         }
     }
-
 }
 
 extension FeatureConfigsAPITests {
@@ -398,7 +397,6 @@ extension FeatureConfigsAPITests {
             )
         ]
     }
-
 }
 
 private extension APIVersion {
@@ -407,5 +405,4 @@ private extension APIVersion {
         let builder = FeatureConfigsAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)
     }
-
 }

@@ -27,6 +27,5 @@ extension ZMConversation {
                                  users: nil,
                                  clients: nil,
                                  timestamp: date)
-
     }
 }

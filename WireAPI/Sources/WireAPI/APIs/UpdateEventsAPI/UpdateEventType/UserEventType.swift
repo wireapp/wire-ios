@@ -32,5 +32,4 @@ enum UserEventType: String {
     case propertiesDelete = "user.properties-delete"
     case pushRemove = "user.push-remove"
     case update = "user.update"
-
 }

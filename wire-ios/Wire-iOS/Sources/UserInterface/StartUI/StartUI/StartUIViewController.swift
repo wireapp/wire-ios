@@ -118,7 +118,6 @@ final class StartUIViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.onDismissPressed()
         }, accessibilityLabel: L10n.Accessibility.ContactsList.CloseButton.description)
-
     }
 
     private func configGroupSelector() {
@@ -215,7 +214,6 @@ final class StartUIViewController: UIViewController {
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
             _ = searchHeader.tokenField.becomeFirstResponder()
         }
-
     }
 
     func updateActionBar() {

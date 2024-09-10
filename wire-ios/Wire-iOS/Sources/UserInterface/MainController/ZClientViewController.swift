@@ -557,7 +557,6 @@ final class ZClientViewController: UIViewController {
         } else {
             action()
         }
-
     }
 
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
@@ -681,7 +680,6 @@ final class ZClientViewController: UIViewController {
             contentTopRegularConstraint.isActive = false
             contentTopCompactConstraint.isActive = true
         }
-
     }
 
     /// Open the user client list screen

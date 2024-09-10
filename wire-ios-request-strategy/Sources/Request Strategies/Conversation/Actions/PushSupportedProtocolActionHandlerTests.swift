@@ -70,5 +70,4 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Push
         // WHEN, THEN
         XCTAssertNotNil(result)
     }
-
 }

@@ -115,5 +115,4 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
             }
         }
     }
-
 }

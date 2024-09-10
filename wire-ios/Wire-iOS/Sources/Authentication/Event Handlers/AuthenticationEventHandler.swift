@@ -53,7 +53,6 @@ protocol AuthenticationEventHandler: AnyObject {
      */
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Context) -> [AuthenticationCoordinatorAction]?
-
 }
 
 extension AuthenticationEventHandler {

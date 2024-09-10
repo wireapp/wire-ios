@@ -46,9 +46,6 @@ struct TeamMemberLeaveEventDecoder {
         enum CodingKeys: String, CodingKey {
 
             case userID = "user"
-
         }
-
     }
-
 }

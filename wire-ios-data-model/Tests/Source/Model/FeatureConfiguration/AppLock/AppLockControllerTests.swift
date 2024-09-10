@@ -401,7 +401,6 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Clean up
         try sut.deletePasscode()
     }
-
 }
 
 // MARK: - Helpers
@@ -466,7 +465,5 @@ extension AppLockControllerTests {
         func appLockDidOpen(_ appLock: AppLockType) {
             didCallAppLockDidOpen = true
         }
-
     }
-
 }

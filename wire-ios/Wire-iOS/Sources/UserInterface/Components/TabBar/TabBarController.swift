@@ -231,7 +231,6 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
 
         tabBar?.setOffsetPercentage(adjustedPercent)
     }
-
 }
 
 extension TabBarController: TabBarDelegate {
@@ -239,5 +238,4 @@ extension TabBarController: TabBarDelegate {
     func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
         selectIndex(index, animated: tabBar.animatesTransition)
     }
-
 }

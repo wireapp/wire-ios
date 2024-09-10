@@ -34,7 +34,6 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
     /// - parameters:
     ///   - object: Object which no longer needs be synchronized.
     func cancel(_ object: T)
-
 }
 
 /**
@@ -99,5 +98,4 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         objectsDidChange(objects)
     }
-
 }

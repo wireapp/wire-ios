@@ -134,5 +134,4 @@ public final class CompanyLoginRequestDetector: NSObject {
     public static func isValidRequestCode(in string: String) -> Bool {
         return requestCode(in: string) != nil
     }
-
 }

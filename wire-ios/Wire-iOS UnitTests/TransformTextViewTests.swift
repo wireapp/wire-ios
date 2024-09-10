@@ -130,5 +130,4 @@ class TransformTextViewTests: XCTestCase {
         XCTAssertEqual(sut.text, "I Like Capital Letters")
         XCTAssertEqual(sut.attributedText?.string, "I Like Capital Letters")
     }
-
 }

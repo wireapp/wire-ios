@@ -52,5 +52,4 @@ struct URLSessionConfigurationFactory {
         configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
         return configuration
     }
-
 }

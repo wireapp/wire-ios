@@ -22,5 +22,4 @@ protocol PasscodeSetupViewControllerDelegate: AnyObject {
 
     func passcodeSetupControllerDidFinish()
     func passcodeSetupControllerWasDismissed()
-
 }

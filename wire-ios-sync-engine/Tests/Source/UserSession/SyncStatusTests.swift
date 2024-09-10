@@ -140,7 +140,6 @@ final class SyncStatusTests: MessagingTest {
 
         // then
         XCTAssertNotNil(lastEventIDRepository.fetchLastEventID())
-
     }
 
     func testThatItDoesNotSetTheLastNotificationIDIfItHasNone() {
@@ -289,7 +288,6 @@ final class SyncStatusTests: MessagingTest {
 
         // then
         XCTAssertTrue(mockSyncDelegate.didCallStartQuickSync)
-
     }
 
     // MARK: - QuickSync

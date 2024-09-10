@@ -74,5 +74,4 @@ extension WebLinkTextView: UITextDragDelegate {
     func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
         return []
     }
-
 }

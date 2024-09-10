@@ -50,5 +50,4 @@ final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler 
 
         return [.hideLoadingView, .startPostLoginFlow, .transition(.addEmailAndPassword, mode: .reset)]
     }
-
 }

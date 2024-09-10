@@ -57,5 +57,4 @@ public struct ZiphyAnimatedImage: Codable {
         case height = "height"
         case fileSize = "size"
     }
-
 }

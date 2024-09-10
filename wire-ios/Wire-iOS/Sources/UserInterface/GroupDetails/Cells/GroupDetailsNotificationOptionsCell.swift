@@ -48,5 +48,4 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
             : SemanticColors.View.backgroundUserCell
         }
     }
-
 }

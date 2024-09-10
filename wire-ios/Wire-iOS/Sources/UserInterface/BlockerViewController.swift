@@ -261,7 +261,6 @@ extension BlockerViewController {
                 }
             } cancelled: {}
         }
-
     }
 
     private func enrollCertificate() async throws {
@@ -284,5 +283,4 @@ extension BlockerViewController {
         }
         successEnrollmentViewController.presentTopmost()
     }
-
 }

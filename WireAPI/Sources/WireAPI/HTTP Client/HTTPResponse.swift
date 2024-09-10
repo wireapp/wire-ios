@@ -39,5 +39,4 @@ public struct HTTPResponse {
         self.code = code
         self.payload = payload
     }
-
 }

@@ -56,7 +56,6 @@ extension ZMLocalNotification {
             return nil
         }
     }
-
 }
 
 // Base class for event notification builders. Subclass this for each
@@ -191,7 +190,6 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     override func shouldCreateNotification() -> Bool {
         return super.shouldCreateNotification() && conversation?.conversationType == .group
     }
-
 }
 
 // MARK: - Conversation Delete Event
@@ -205,7 +203,6 @@ private class ConversationDeleteEventNotificationBuilder: EventNotificationBuild
     override func shouldCreateNotification() -> Bool {
         return super.shouldCreateNotification() && conversation?.conversationType == .group
     }
-
 }
 
 // MARK: - User Connection Event
@@ -245,7 +242,6 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     override func bodyText() -> String {
         return notificationType.messageBodyText(senderName: senderName)
     }
-
 }
 
 // MARK: - New User Event

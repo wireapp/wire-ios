@@ -27,7 +27,6 @@ protocol FederationDeleteEventProcessorProtocol {
     /// - Parameter event: A federation delete event.
 
     func processEvent(_ event: FederationDeleteEvent) async throws
-
 }
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
         // TODO: [WPB-10188]
         assertionFailure("not implemented yet")
     }
-
 }

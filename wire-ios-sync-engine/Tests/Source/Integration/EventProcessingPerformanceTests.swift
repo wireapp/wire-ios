@@ -109,7 +109,6 @@ class EventProcessingPerformanceTests: IntegrationTest {
             })
         }
     }
-
 }
 
 extension MockConversation {
@@ -127,5 +126,4 @@ extension MockConversation {
             insertClientMessage(from: users.randomElement()!, data: text)
         }
     }
-
 }

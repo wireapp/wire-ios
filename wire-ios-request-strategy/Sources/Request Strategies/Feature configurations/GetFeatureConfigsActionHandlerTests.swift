@@ -373,7 +373,6 @@ final class GetFeatureConfigsActionHandlerTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }
 
 // MARK: - JSONPayload

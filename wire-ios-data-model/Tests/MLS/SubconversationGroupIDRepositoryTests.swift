@@ -79,5 +79,4 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
         XCTAssertNotNil(subgroupInfo)
         XCTAssertEqual(subgroupInfo?.parentID, parentGroupID)
     }
-
 }

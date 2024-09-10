@@ -125,5 +125,4 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
 
         return ZMTransportRequest(path: basePath, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
-
 }

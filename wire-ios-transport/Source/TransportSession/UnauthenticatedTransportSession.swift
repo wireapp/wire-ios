@@ -181,7 +181,6 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         // If you do not invalidate the session, your app leaks memory until it exits."
         self.session = nil
     }
-
 }
 
 // MARK: - SSL Pinning
@@ -196,7 +195,6 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
         }
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
-
 }
 
 // MARK: - Request Configuration
@@ -210,7 +208,6 @@ extension NSMutableURLRequest {
         request.setAdditionalHeaderFieldsOnHTTP(self)
         request.setContentDispositionOnHTTP(self)
     }
-
 }
 
 // MARK: - Cookie Parsing
@@ -248,7 +245,6 @@ extension ZMTransportResponse {
         guard let data = extractCookieData(), let id = extractUserIdentifier() else { return nil }
         return .init(identifier: id, cookieData: data)
     }
-
 }
 
 extension HTTPCookie {
@@ -275,5 +271,4 @@ extension HTTPCookie {
         let key = UserDefaults.cookiesKey()!
         return data.zmEncryptPrefixingIV(key: key).base64EncodedData()
     }
-
 }

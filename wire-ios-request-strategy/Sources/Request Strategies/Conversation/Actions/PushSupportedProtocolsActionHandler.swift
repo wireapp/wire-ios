@@ -51,5 +51,4 @@ final class PushSupportedProtocolsActionHandler: ActionHandler<PushSupportedProt
             action.fail(with: .unknownError(code: error.status, label: error.label, message: error.message))
         }
     }
-
 }

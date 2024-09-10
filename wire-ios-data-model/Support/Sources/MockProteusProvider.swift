@@ -73,5 +73,4 @@ public class MockProteusProvider: ProteusProviding {
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         return url
     }
-
 }

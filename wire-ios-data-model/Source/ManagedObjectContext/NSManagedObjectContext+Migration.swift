@@ -45,5 +45,4 @@ extension NSManagedObjectContext {
         self.setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
         return value == 1
     }
-
 }

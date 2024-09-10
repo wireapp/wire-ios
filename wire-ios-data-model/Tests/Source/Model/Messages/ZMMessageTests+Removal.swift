@@ -240,5 +240,4 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         // then
         XCTAssertTrue(removed)
     }
-
 }

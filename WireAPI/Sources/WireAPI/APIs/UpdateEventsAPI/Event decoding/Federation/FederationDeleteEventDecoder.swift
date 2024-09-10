@@ -34,7 +34,5 @@ struct FederationDeleteEventDecoder {
     private struct Payload: Decodable {
 
         let domain: String
-
     }
-
 }

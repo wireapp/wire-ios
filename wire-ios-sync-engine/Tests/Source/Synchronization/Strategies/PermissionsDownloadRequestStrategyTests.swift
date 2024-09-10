@@ -226,7 +226,5 @@ final class PermissionsDownloadRequestStrategyTests: MessagingTest {
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange(Set(objects))
         }
-
     }
-
 }

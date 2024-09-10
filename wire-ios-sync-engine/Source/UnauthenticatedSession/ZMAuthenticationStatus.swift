@@ -38,5 +38,4 @@ extension ZMAuthenticationStatus: ZMCredentialProvider {
             emailVerificationCode: loginCredentials.emailVerificationCode
         )
     }
-
 }

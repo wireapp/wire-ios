@@ -125,5 +125,4 @@ class UserClientByQualifiedUserIDTranscoderTests: MessagingTestBase {
             XCTAssertFalse(otherClient.needsToBeUpdatedFromBackend)
         }
     }
-
 }

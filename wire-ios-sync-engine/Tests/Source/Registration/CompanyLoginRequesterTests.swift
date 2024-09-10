@@ -183,7 +183,6 @@ final class CompanyLoginRequesterTests: XCTestCase {
         // Then
         waitForExpectations(timeout: 0.5, handler: nil)
     }
-
 }
 
 // MARK: - Helper
@@ -209,5 +208,4 @@ private final class MockSession: NSObject, URLSessionProtocol {
         completionHandler(data, response, error)
         return MockURLSessionDataTask()
     }
-
 }

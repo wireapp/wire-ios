@@ -126,5 +126,4 @@ class NSDataDetectorAttachmentTests: XCTestCase {
             XCTAssertTrue(attachments.isEmpty, "Found a match even though we didn't expect one.", file: file, line: line)
         }
     }
-
 }

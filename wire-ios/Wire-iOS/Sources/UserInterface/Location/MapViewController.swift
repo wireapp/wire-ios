@@ -26,7 +26,6 @@ protocol MapViewControllerDelegate: AnyObject {
     func mapViewController(_ controller: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
     func mapViewController(_ controller: MapViewController, regionDidChangeAnimated animated: Bool)
     func mapViewControllerDidFinishRenderingMap(_ controller: MapViewController, fullyRendered: Bool)
-
 }
 
 // MARK: - MapViewController
@@ -107,7 +106,6 @@ final class MapViewController: UIViewController {
         let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: latitudinalMeters, longitudinalMeters: longitudinalMeters)
         mapView.setRegion(region, animated: animated)
     }
-
 }
 
 // MARK: - MKMapViewDelegate

@@ -29,7 +29,6 @@ public extension Data {
     static func random(byteCount: UInt = 8) -> Data {
         return Data([Byte].random(length: byteCount))
     }
-
 }
 
 public extension [Byte] {
@@ -43,7 +42,6 @@ public extension [Byte] {
             Byte.random()
         }
     }
-
 }
 
 public extension Byte {
@@ -51,5 +49,4 @@ public extension Byte {
     static func random() -> Byte {
         return random(in: (.min)...(.max))
     }
-
 }

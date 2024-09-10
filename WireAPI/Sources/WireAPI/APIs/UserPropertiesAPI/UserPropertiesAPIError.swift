@@ -29,5 +29,4 @@ public enum UserPropertiesAPIError: Error {
     /// Provided key is invalid
 
     case invalidKey
-
 }

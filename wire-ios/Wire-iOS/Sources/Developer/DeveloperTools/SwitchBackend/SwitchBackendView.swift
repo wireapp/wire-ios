@@ -63,5 +63,4 @@ struct SwitchBackendView_Previews: PreviewProvider {
     static var previews: some View {
         SwitchBackendView(viewModel: SwitchBackendViewModel())
     }
-
 }

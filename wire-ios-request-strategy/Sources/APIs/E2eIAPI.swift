@@ -24,7 +24,6 @@ public protocol E2eIAPI {
     func getWireNonce(clientId: String) async throws -> String
 
     func getAccessToken(clientId: String, dpopToken: String) async throws -> AccessTokenResponse
-
 }
 
 class E2eIAPIV5: E2eIAPI {
@@ -65,7 +64,6 @@ class E2eIAPIV5: E2eIAPI {
 
         return try mapResponse(response)
     }
-
 }
 
 class E2eIAPIV6: E2eIAPIV5 {

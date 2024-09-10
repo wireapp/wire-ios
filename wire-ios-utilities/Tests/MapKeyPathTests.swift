@@ -126,5 +126,4 @@ class MapKeyPathTests: XCTestCase {
         XCTAssertTrue(containsAtLeastOneBerlinOffice)
         XCTAssertFalse(containsOnlyBerlinOffices)
     }
-
 }

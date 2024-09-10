@@ -453,5 +453,4 @@ final class CallStatusViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
-
 }

@@ -36,7 +36,6 @@ extension ZMConversation {
                 removeLabel(favoriteLabel)
             }
         }
-
     }
 
     @objc
@@ -69,5 +68,4 @@ extension ZMConversation {
     func removeLabel(_ label: Label) {
         labels.remove(label)
     }
-
 }

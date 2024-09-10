@@ -148,5 +148,4 @@ class StringLengthValidatorTests: XCTestCase {
         }
         XCTAssertEqual(phoneNumber as! String, "1234 5678")
     }
-
 }

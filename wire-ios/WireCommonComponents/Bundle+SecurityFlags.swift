@@ -80,5 +80,4 @@ public enum SecurityFlags {
     public var isEnabled: Bool {
         return stringValue == "1"
     }
-
 }

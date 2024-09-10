@@ -382,7 +382,6 @@ final class ConversationListViewModel: NSObject {
         }
 
         return conversationDirectory.conversations(by: conversationListType).filter({ !$0.hasIncompleteMetadata }).map({ SectionItem(item: $0, kind: kind) })
-
     }
 
     private func updateAllSections() {
@@ -665,6 +664,5 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
         }
 
         return kind
-
     }
 }

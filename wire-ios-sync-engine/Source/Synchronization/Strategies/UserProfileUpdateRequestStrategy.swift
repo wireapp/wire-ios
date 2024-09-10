@@ -209,5 +209,4 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
         }
         return nil
     }
-
 }

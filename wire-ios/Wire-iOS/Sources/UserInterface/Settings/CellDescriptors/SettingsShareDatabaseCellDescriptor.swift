@@ -25,7 +25,6 @@ final class DocumentDelegate: NSObject, UIDocumentInteractionControllerDelegate 
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         return UIApplication.shared.topmostViewController(onlyFullScreen: false)!
     }
-
 }
 
 final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
@@ -47,9 +46,7 @@ final class SettingsShareDatabaseCellDescriptor: SettingsButtonCellDescriptor {
             shareDatabaseDocumentController.delegate = documentDelegate
             shareDatabaseDocumentController.presentPreview(animated: true)
         }
-
     }
-
 }
 
 final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
@@ -71,7 +68,5 @@ final class SettingsShareCryptoboxCellDescriptor: SettingsButtonCellDescriptor {
             shareDatabaseDocumentController.delegate = documentDelegate
             shareDatabaseDocumentController.presentPreview(animated: true)
         }
-
     }
-
 }

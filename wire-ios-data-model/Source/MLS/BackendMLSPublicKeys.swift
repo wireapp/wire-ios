@@ -63,7 +63,5 @@ public struct BackendMLSPublicKeys: Equatable {
             self.p384 = p384
             self.p521 = p521
         }
-
     }
-
 }

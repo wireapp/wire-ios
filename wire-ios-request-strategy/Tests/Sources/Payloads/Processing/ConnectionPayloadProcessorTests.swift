@@ -155,5 +155,4 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
             }
         }
     }
-
 }

@@ -124,5 +124,4 @@ final class MessageDetailsActionTests: XCTestCase {
         message.conversationLike = SwiftMockConversation()
         block(message)
     }
-
 }

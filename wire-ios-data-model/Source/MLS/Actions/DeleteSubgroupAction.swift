@@ -31,7 +31,6 @@ public final class DeleteSubgroupAction: EntityAction {
         case noConversation
         case mlsStaleMessage
         case unknown(status: Int, label: String, message: String)
-
     }
 
     // MARK: - Properties
@@ -60,5 +59,4 @@ public final class DeleteSubgroupAction: EntityAction {
         self.groupID = groupID
         self.resultHandler = resultHandler
     }
-
 }

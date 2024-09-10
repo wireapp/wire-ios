@@ -143,5 +143,4 @@ final class AccountTests: XCTestCase {
         // Then
         XCTAssertThrowsError(try Keychain.fetchItem(item))
     }
-
 }

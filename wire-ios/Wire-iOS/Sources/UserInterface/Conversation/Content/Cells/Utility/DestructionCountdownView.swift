@@ -124,7 +124,6 @@ final class DestructionCountdownView: UIView {
         elapsedTimeAnimation.isRemovedOnCompletion = false
 
         elapsedTimeLayer.add(elapsedTimeAnimation, forKey: elapsedTimeAnimationKey)
-
     }
 
     func stopAnimating() {
@@ -134,5 +133,4 @@ final class DestructionCountdownView: UIView {
     func setProgress(_ newValue: CGFloat) {
         elapsedTimeLayer.strokeEnd = newValue
     }
-
 }

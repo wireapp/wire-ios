@@ -67,5 +67,4 @@ final class ZMConversationTests_Creation: ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         XCTAssertEqual(conversation.localParticipants, Set([selfUser, user1, user2]))
     }
-
 }

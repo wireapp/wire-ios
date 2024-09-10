@@ -137,5 +137,4 @@ final class LocationPreviewController: UIViewController {
     override var previewActionItems: [UIPreviewActionItem] {
         return actionController.previewActionItems
     }
-
 }

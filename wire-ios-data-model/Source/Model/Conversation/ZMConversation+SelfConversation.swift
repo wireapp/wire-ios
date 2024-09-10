@@ -25,7 +25,6 @@ extension ZMConversation {
         case invalidConversation
         case missingLastReadTimestamp
         case missingClearedTimestamp
-
     }
 
     // MARK: - Sync upstream
@@ -177,5 +176,4 @@ extension ZMConversation {
         let interval = Double(timestamp) / 1000
         return Date(timeIntervalSince1970: interval)
     }
-
 }

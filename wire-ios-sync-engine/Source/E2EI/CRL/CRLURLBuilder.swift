@@ -50,5 +50,4 @@ struct CRLURLBuilder {
 
         return proxyURL.appendingPathComponent(distributionPointComponents?.host ?? "")
     }
-
 }

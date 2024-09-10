@@ -669,5 +669,4 @@ extension ZMClientRegistrationStatus: UserProfileUpdateObserver {
             }
         }
     }
-
 }

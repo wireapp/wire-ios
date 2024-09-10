@@ -39,5 +39,4 @@ extension DispatchQueue {
             loadingGroup.wait()
         }
     }
-
 }

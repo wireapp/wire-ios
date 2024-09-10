@@ -55,7 +55,5 @@ public struct HTTPRequest: Equatable {
         case head
         case post
         case put
-
     }
-
 }

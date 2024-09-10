@@ -27,5 +27,4 @@ extension NSString {
     var lowercasedWithCurrentLocale: String {
         return lowercased(with: NSLocale.current)
     }
-
 }

@@ -78,5 +78,4 @@ final class FederationEventDecodingTests: XCTestCase {
 
         static let deleteEvent = FederationDeleteEvent(domain: "foo.com")
     }
-
 }

@@ -131,11 +131,9 @@ enum LegalHoldAlertFactory {
             ZMUserSession.shared()?.accept(legalHoldRequest: legalHoldRequest, password: password) { error in
                 handleLegalHoldActivationResult(error)
             }
-
         }
         return UIAlertController(inputRequest: request)
     }
-
 }
 
 // MARK: - SelfLegalHoldSubject + Accepting Alert

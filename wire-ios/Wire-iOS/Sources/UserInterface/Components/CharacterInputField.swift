@@ -200,7 +200,6 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
             stackView.leftAnchor.constraint(equalTo: leftAnchor),
             stackView.rightAnchor.constraint(equalTo: rightAnchor)
         ])
-
     }
 
     @available(*, unavailable)

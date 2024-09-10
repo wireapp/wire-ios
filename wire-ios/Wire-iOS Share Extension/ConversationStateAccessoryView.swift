@@ -100,5 +100,4 @@ final class ConversationStateAccessoryView: UIView {
             return nil
         }
     }
-
 }

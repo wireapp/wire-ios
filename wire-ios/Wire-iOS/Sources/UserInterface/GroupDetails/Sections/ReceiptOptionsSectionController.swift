@@ -91,7 +91,6 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
                     break
                 }
             })
-
         }
 
         cell.showSeparator = false
@@ -131,5 +130,4 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
         (view as? SectionFooter)?.titleLabel.text = L10n.Localizable.GroupDetails.ReceiptOptionsCell.description
         return view
     }
-
 }

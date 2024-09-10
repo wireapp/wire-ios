@@ -412,7 +412,6 @@ final class CallViewController: UIViewController {
             Log.calling.error("error toggling capture device: \(error)")
         }
     }
-
 }
 
 extension CallViewController: ZMConversationObserver {
@@ -435,7 +434,6 @@ extension CallViewController: WireCallCenterCallStateObserver {
         hideOverlayAfterCallEstablishedIfNeeded()
         hapticsController.updateCallState(callState)
     }
-
 }
 
 extension CallViewController: ActiveSpeakersObserver {
@@ -467,7 +465,6 @@ extension CallViewController: AVSMediaManagerClientObserver {
     func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification!) {
         updateConfiguration()
     }
-
 }
 
 extension CallViewController: MuteStateObserver {
@@ -475,7 +472,6 @@ extension CallViewController: MuteStateObserver {
     func callCenterDidChange(muted: Bool) {
         updateConfiguration()
     }
-
 }
 
 extension CallViewController {
@@ -527,7 +523,6 @@ extension CallViewController {
             voiceChannel.videoState = .stopped
         }
     }
-
 }
 
 extension CallViewController: ConstantBitRateAudioObserver {
@@ -535,7 +530,6 @@ extension CallViewController: ConstantBitRateAudioObserver {
     func callCenterDidChange(constantAudioBitRateAudioEnabled: Bool) {
         updateConfiguration()
     }
-
 }
 
 extension CallViewController: CallInfoRootViewControllerDelegate {
@@ -571,7 +565,6 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         case .participants: stopOverlayTimer()
         }
     }
-
 }
 
 extension CallViewController: CallGridViewControllerDelegate {
@@ -673,7 +666,6 @@ extension CallViewController {
         overlayTimer?.invalidate()
         overlayTimer = nil
     }
-
 }
 
 extension CallViewController {

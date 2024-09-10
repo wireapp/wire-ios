@@ -96,7 +96,6 @@ final class DirectorySectionController: SearchSectionController {
         let user = suggestions[indexPath.row]
         delegate?.searchSectionController(self, didSelectUser: user, at: indexPath)
     }
-
 }
 
 extension DirectorySectionController: UserObserving {
@@ -106,5 +105,4 @@ extension DirectorySectionController: UserObserving {
 
         collectionView?.reloadData()
     }
-
 }

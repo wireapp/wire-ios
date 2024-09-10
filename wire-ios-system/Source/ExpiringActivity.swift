@@ -21,7 +21,6 @@ import Foundation
 protocol ExpiringActivityInterface {
 
     func performExpiringActivity(withReason reason: String, using block: @escaping @Sendable (Bool) -> Void)
-
 }
 
 extension ProcessInfo: ExpiringActivityInterface { }
@@ -71,7 +70,6 @@ actor ExpiringActivityManager {
                             WireLogger.backgroundActivity.warn("Expiring activity ended with an error: \(error)")
                             continuation.resume(throwing: error)
                         }
-
                     }
                     semaphore.wait()
                 } else {

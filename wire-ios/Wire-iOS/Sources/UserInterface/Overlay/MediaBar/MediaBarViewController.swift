@@ -83,7 +83,6 @@ final class MediaBarViewController: UIViewController {
     private func stop(_ sender: Any?) {
         mediaPlaybackManager?.stop()
     }
-
 }
 
 extension MediaBarViewController: MediaPlaybackManagerChangeObserver {

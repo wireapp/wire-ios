@@ -695,5 +695,4 @@ final class MessageSenderTests: MessagingTestBase {
             )
         }
     }
-
 }

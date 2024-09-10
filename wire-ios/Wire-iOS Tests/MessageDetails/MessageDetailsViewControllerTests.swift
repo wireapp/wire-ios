@@ -400,5 +400,4 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             line: line
         )
     }
-
 }

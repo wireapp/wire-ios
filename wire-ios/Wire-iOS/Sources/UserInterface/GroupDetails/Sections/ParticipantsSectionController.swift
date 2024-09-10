@@ -323,7 +323,6 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
             return true
         }
     }
-
 }
 
 extension ParticipantsSectionController: UserObserving {
@@ -332,7 +331,6 @@ extension ParticipantsSectionController: UserObserving {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged else { return }
         collectionView?.reloadData()
     }
-
 }
 
 private extension UICollectionView {
@@ -342,5 +340,4 @@ private extension UICollectionView {
                                          withReuseIdentifier: "SectionFooter",
                                          for: indexPath)
     }
-
 }

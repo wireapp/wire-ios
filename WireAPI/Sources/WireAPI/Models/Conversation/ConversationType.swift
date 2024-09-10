@@ -38,5 +38,4 @@ public enum ConversationType: Int, Codable {
     /// to another user.
 
     case connection = 3
-
 }

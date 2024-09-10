@@ -34,7 +34,5 @@ struct UserContactJoinEventDecoder {
     private struct Payload: Decodable {
 
         let name: String
-
     }
-
 }

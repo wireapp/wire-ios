@@ -142,7 +142,6 @@ struct SwitchBackendConfirmationView: View {
         }
         .buttonStyle(PrimaryButtonStyle())
     }
-
 }
 
 // MARK: - Previews

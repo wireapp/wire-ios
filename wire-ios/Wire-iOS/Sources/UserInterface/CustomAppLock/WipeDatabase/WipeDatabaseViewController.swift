@@ -33,7 +33,6 @@ extension WipeDatabaseViewController: WipeDatabaseUserInterface {
         self.confirmController = confirmController
         present(confirmController.alertController, animated: true)
     }
-
 }
 
 final class WipeDatabaseViewController: UIViewController {
@@ -141,5 +140,4 @@ final class WipeDatabaseViewController: UIViewController {
             confirmButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: CGFloat.PasscodeUnlock.buttonPadding),
             confirmButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding)])
     }
-
 }

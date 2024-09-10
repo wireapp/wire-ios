@@ -90,7 +90,6 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
         // THEN
         XCTAssertTrue(manager.didCallhandleFederationTerminationBetween)
     }
-
 }
 
 class MockFederationTerminationManager: FederationTerminationManagerInterface {
@@ -105,5 +104,4 @@ class MockFederationTerminationManager: FederationTerminationManagerInterface {
     func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
         didCallhandleFederationTerminationBetween = true
     }
-
 }

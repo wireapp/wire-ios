@@ -47,5 +47,4 @@ public enum UpdateEvent: Equatable, Codable {
     /// An event that is not known by the client.
 
     case unknown(eventType: String)
-
 }

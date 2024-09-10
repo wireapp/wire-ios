@@ -24,5 +24,4 @@ public enum ConversationsAPIError: Error {
 
     /// Failure if http body is invalid.
     case invalidBody
-
 }

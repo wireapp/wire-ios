@@ -101,5 +101,4 @@ final class TokenSeparatorAttachment: NSTextAttachment, TokenContainer {
 
         return i
     }
-
 }

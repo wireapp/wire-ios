@@ -61,5 +61,4 @@ final class BackendInfoTestObserver: NSObject, XCTestObservation {
     func testCaseDidFinish(_ testCase: XCTestCase) {
         defaults.removePersistentDomain(forName: suiteName)
     }
-
 }

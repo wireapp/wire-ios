@@ -185,5 +185,4 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             XCTAssertEqual(nameMessage.numberOfGuestsAdded, 2)
         }
     }
-
 }

@@ -23,5 +23,4 @@ extension NSError: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         "<domain: \(domain), code: \(code)>"
     }
-
 }

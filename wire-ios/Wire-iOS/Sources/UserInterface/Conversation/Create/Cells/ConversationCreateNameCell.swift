@@ -41,6 +41,5 @@ final class ConversationCreateNameCell: UICollectionViewCell {
 
         contentView.addSubview(textField)
         textField.fitIn(view: contentView)
-
     }
 }

@@ -28,5 +28,4 @@ extension NSManagedObjectContext {
         setPersistentStoreMetadata(nil as Data?, key: PersistentMetadataKey.lastUpdateEventID.rawValue)
         _ = makeMetadataPersistent()
     }
-
 }

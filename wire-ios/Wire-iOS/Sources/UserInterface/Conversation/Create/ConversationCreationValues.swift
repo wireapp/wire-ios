@@ -22,7 +22,6 @@ import WireDataModel
 protocol ConversationCreationValuesConfigurable: AnyObject {
 
     func configure(with values: ConversationCreationValues)
-
 }
 
 final class ConversationCreationValues {
@@ -78,5 +77,4 @@ final class ConversationCreationValues {
         self.encryptionProtocol = encryptionProtocol
         self.selfUser = selfUser
     }
-
 }

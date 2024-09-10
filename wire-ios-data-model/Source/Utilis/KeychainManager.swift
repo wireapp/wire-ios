@@ -23,7 +23,6 @@ protocol KeychainItemProtocol {
     var id: String { get }
     var getQuery: [CFString: Any] { get }
     func setQuery<T>(value: T) -> [CFString: Any]
-
 }
 
 public enum KeychainManager {
@@ -80,7 +79,6 @@ public enum KeychainManager {
 
         case moreRestrictive
         case lessRestrictive
-
     }
 
     static func generatePublicPrivateKeyPair(
@@ -153,7 +151,6 @@ public enum KeychainManager {
         return false
         #endif
     }
-
 }
 
 public extension KeychainManager {
@@ -188,7 +185,5 @@ public extension KeychainManager {
                 return "failed to copy public key"
             }
         }
-
     }
-
 }

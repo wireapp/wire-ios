@@ -134,7 +134,6 @@ final class PushChannelTests: XCTestCase {
         // Then the web socket was closed
         XCTAssertEqual(webSocket.close_Invocations.count, 1)
     }
-
 }
 
 private enum Scaffolding {
@@ -226,5 +225,4 @@ private enum Scaffolding {
         senderID: senderID,
         timestamp: timestamp
     )
-
 }

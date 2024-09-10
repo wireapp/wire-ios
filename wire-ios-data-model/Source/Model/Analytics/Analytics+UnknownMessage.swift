@@ -25,7 +25,6 @@ extension AnalyticsType {
     func tagUnknownMessageReceived() {
         tagEvent(unknownMessageEventName)
     }
-
 }
 
 /// Objective-C compatibility wrapper for the unknown message event
@@ -35,5 +34,4 @@ class UnknownMessageAnalyticsTracker: NSObject {
     class func tagUnknownMessage(with analytics: AnalyticsType?) {
         analytics?.tagUnknownMessageReceived()
     }
-
 }

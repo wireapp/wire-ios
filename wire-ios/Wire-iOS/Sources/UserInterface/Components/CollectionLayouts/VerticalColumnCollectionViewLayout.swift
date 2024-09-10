@@ -126,5 +126,4 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
         positioning = nil
         super.invalidateLayout()
     }
-
 }

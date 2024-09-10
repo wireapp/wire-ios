@@ -87,7 +87,6 @@ class ConversationTests_Guests: IntegrationTest {
             }
 
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.4))
-
         }
     }
 
@@ -247,5 +246,4 @@ class ConversationTests_Guests: IntegrationTest {
         // then
         XCTAssertTrue(conversation.accessMode!.contains(.allowGuests))
     }
-
 }

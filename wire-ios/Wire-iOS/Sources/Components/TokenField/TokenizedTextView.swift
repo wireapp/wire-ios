@@ -60,7 +60,6 @@ class TokenizedTextView: TextView {
             } else {
                 super.contentOffset = .zero
             }
-
         }
     }
 

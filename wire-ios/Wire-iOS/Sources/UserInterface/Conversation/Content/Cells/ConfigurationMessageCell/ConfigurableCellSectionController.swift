@@ -33,5 +33,4 @@ import Foundation
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         return sectionDescription.cell(tableView: tableView, at: indexPath)
     }
-
 }

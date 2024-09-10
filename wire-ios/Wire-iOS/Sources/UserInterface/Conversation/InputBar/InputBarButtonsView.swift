@@ -486,5 +486,4 @@ final class InputBarButtonsView: UIView {
     private func ellipsisButtonPressed() {
         showRow(currentRow == 0 ? 1 : 0, animated: true)
     }
-
 }

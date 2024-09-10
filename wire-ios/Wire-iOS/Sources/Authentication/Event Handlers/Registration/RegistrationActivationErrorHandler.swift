@@ -44,5 +44,4 @@ final class RegistrationActivationErrorHandler: AuthenticationEventHandler {
         let errorAlert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: postAlertAction)
         return [.hideLoadingView, .presentErrorAlert(errorAlert)]
     }
-
 }

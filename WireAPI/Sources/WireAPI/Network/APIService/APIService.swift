@@ -38,7 +38,6 @@ public protocol APIServiceProtocol {
         _ request: URLRequest,
         requiringAccessToken: Bool
     ) async throws -> (Data, HTTPURLResponse)
-
 }
 
 /// A service for network communication to a specific backend.
@@ -128,5 +127,4 @@ public final class APIService: APIServiceProtocol {
 
         return (data, httpURLResponse)
     }
-
 }

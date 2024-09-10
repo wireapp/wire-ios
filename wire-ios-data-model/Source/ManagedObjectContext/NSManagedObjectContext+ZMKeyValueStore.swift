@@ -23,7 +23,6 @@ public protocol KeyValueStore: NSObjectProtocol {
 
     func store(value: PersistableInMetadata?, key: String)
     func storedValue(key: String) -> Any?
-
 }
 
 @objc
@@ -40,5 +39,4 @@ extension NSManagedObjectContext: ZMSynchonizableKeyValueStore {
     public func storedValue(key: String) -> Any? {
         return self.persistentStoreMetadata(forKey: key)
     }
-
 }

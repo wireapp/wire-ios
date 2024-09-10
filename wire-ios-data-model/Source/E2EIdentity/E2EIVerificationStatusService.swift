@@ -23,7 +23,6 @@ import WireCoreCrypto
 public protocol E2EIVerificationStatusServiceInterface {
 
     func getConversationStatus(groupID: MLSGroupID) async throws -> MLSVerificationStatus
-
 }
 
 public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceInterface {
@@ -49,7 +48,6 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
 
         case missingConversation
         case failedToFetchVerificationStatus
-
     }
 
     // MARK: - Public interface
@@ -76,7 +74,6 @@ public final class E2EIVerificationStatusService: E2EIVerificationStatusServiceI
             throw E2EIVerificationStatusError.failedToFetchVerificationStatus
         }
     }
-
 }
 
 private extension WireCoreCrypto.E2eiConversationState {
@@ -91,5 +88,4 @@ private extension WireCoreCrypto.E2eiConversationState {
             fatalError("unsupported value of 'E2eiConversationState'!")
         }
     }
-
 }

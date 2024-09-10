@@ -26,5 +26,4 @@ final class DeveloperFlagsViewModel: ObservableObject {
     var flags = DeveloperFlag.allCases.sorted {
         $0.rawValue < $1.rawValue
     }
-
 }

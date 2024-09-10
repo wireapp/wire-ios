@@ -61,7 +61,6 @@ public struct PushToken: Equatable {
     public var deviceTokenString: String {
         return deviceToken.zmHexEncodedString()
     }
-
 }
 
 // MARK: - Codable
@@ -84,7 +83,5 @@ extension PushToken: Codable {
         case appIdentifier
         case transportType
         case tokenType
-
     }
-
 }

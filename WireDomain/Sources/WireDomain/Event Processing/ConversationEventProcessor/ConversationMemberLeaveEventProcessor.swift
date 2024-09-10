@@ -27,7 +27,6 @@ protocol ConversationMemberLeaveEventProcessorProtocol {
     /// - Parameter event: A conversation member leave event.
 
     func processEvent(_ event: ConversationMemberLeaveEvent) async throws
-
 }
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProces
         // TODO: [WPB-10169]
         assertionFailure("not implemented yet")
     }
-
 }

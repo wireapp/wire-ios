@@ -22,5 +22,4 @@ public protocol SyncStatusProtocol {
 
     func performQuickSync() async
     func forceSlowSync()
-
 }

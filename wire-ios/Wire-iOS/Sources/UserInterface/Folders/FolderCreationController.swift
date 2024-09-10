@@ -25,7 +25,6 @@ protocol FolderCreationControllerDelegate: AnyObject {
     func folderController(
         _ controller: FolderCreationController,
         didCreateFolder folder: LabelType)
-
 }
 
 final class FolderCreationController: UIViewController {
@@ -167,7 +166,6 @@ extension FolderCreationController: SimpleTextFieldDelegate {
         case .error: navigationItem.rightBarButtonItem?.isEnabled = false
         case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
         }
-
     }
 
     func textFieldReturnPressed(_ textField: SimpleTextField) {
@@ -175,10 +173,8 @@ extension FolderCreationController: SimpleTextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: SimpleTextField) {
-
     }
 
     func textFieldDidEndEditing(_ textField: SimpleTextField) {
-
     }
 }

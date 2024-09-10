@@ -41,5 +41,4 @@ final class AuthenticationAddEmailPasswordInputHandler: AuthenticationEventHandl
         let credentials = UserEmailCredentials(email: email, password: password)
         return [.addEmailAndPassword(credentials)]
     }
-
 }

@@ -50,7 +50,6 @@ final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
     func testFileSharingDisabled() throws {
         try verify(matching: createSut(for: .fileSharingDisabled)!)
     }
-
 }
 
 private final class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
@@ -58,5 +57,4 @@ private final class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
     func acknowledgeChange(for featureName: Feature.Name) {
         // no op
     }
-
 }

@@ -30,5 +30,4 @@ public extension AsyncSequence {
             try await iterator.next()
         }
     }
-
 }

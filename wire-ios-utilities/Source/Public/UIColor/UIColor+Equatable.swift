@@ -57,5 +57,4 @@ public extension UIColor {
                          blue: rgb.blue,
                          alpha: 1))
     }
-
 }

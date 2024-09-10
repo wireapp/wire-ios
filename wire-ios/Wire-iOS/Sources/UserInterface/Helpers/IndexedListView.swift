@@ -44,7 +44,6 @@ extension IndexedListView {
         }
         return true
     }
-
 }
 
 extension UITableView: IndexedListView {

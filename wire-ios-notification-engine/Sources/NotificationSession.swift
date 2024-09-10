@@ -45,7 +45,6 @@ public enum NotificationSessionError: LocalizedError {
             return "unknown"
         }
     }
-
 }
 
 public protocol NotificationSessionDelegate: AnyObject {
@@ -61,7 +60,6 @@ public protocol NotificationSessionDelegate: AnyObject {
         _ payload: CallEventPayload,
         currentTimestamp: TimeInterval
     )
-
 }
 
 /// A syncing layer for the notification processing
@@ -81,7 +79,6 @@ public final class NotificationSession {
         case pendingCryptoboxMigration
         case coreDataMissingSharedContainer
         case coreDataMigrationRequired
-
     }
 
     // MARK: - Properties
@@ -317,7 +314,6 @@ public final class NotificationSession {
                 coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
             }
         }
-
     }
 
     deinit {
@@ -565,7 +561,6 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         delegate?.notificationSessionDidGenerateNotification(notification, unreadConversationCount: unreadCount)
         localNotifications.removeAll()
     }
-
 }
 
 // MARK: - Converting events to localNotifications
@@ -614,7 +609,6 @@ extension NotificationSession {
 
         return Int(currentTimestamp.timeIntervalSince(eventTimestamp)) > 30
     }
-
 }
 
 public struct CallEventPayload {
@@ -638,5 +632,4 @@ public struct CallEventPayload {
         self.callerName = callerName
         self.hasVideo = hasVideo
     }
-
 }

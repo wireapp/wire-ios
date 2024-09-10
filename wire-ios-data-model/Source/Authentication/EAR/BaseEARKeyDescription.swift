@@ -40,5 +40,4 @@ open class BaseEARKeyDescription {
         id = "com.wire.ear.\(self.label).\(self.accountID)"
         tag = id.data(using: .utf8)!
     }
-
 }

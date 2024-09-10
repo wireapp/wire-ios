@@ -46,7 +46,6 @@ extension ZMConversation {
             } catch {
                 Logging.messageProcessing.warn("Failed to append confirmation. Reason: \(error.localizedDescription)")
             }
-
         }
 
         return confirmationMessages
@@ -81,5 +80,4 @@ extension ZMConversation {
 
         return message
     }
-
 }

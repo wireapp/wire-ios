@@ -44,7 +44,6 @@ public protocol E2EISetupServiceInterface {
         isUpgradingClient: Bool,
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment
-
 }
 
 /// This class setups e2eIdentity object from CoreCrypto.
@@ -156,5 +155,4 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     enum Failure: Error {
         case failedToSetupE2eIClient(_ underlyingError: Error)
     }
-
 }

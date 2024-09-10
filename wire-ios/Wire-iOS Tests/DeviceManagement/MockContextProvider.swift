@@ -41,5 +41,4 @@ final class MockContextProvider: ContextProvider {
     var eventContext: NSManagedObjectContext {
         return NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     }
-
 }

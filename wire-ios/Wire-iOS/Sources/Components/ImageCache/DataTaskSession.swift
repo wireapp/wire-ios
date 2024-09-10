@@ -37,7 +37,6 @@ protocol DataTask: AnyObject {
 
     /// Starts the task.
     func resume()
-
 }
 
 /**
@@ -48,7 +47,6 @@ protocol DataTaskSession: AnyObject {
 
     /// Creates a data request task for the given URL.
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask
-
 }
 
 // MARK: - Conformance
@@ -60,5 +58,4 @@ extension URLSession: DataTaskSession {
     func makeDataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> DataTask {
         return dataTask(with: url, completionHandler: completionHandler)
     }
-
 }

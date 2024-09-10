@@ -97,5 +97,4 @@ public struct Logger {
     public func critical(_ message: String) {
         onCritical?(message)
     }
-
 }

@@ -70,7 +70,6 @@ final class Emoji: Decodable {
             $0.lowercased().contains(query)
         }
     }
-
 }
 
 extension Emoji: Hashable {
@@ -82,7 +81,6 @@ extension Emoji: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(value)
     }
-
 }
 
 extension Emoji.ID {
@@ -92,7 +90,6 @@ extension Emoji.ID {
     static let thumbsDown = "👎"
     static let smile = "🙂"
     static let frown = "☹️"
-
 }
 
 enum EmojiCategory: String, CaseIterable, Decodable {
@@ -107,5 +104,4 @@ enum EmojiCategory: String, CaseIterable, Decodable {
     case symbols = "Symbols"
     case flags = "Flags"
     case component = "Component"
-
 }

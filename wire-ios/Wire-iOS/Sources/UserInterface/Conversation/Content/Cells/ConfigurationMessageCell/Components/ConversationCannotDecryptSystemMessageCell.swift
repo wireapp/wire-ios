@@ -48,5 +48,4 @@ extension ConversationCannotDecryptSystemMessageCell {
 
         return false
     }
-
 }

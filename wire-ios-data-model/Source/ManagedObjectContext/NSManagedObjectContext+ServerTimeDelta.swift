@@ -34,7 +34,5 @@ public extension NSManagedObjectContext {
             precondition(zm_isSyncContext, "serverTimeDelta can only be accessed on the sync context")
             userInfo[NSManagedObjectContext.ServerTimeDeltaKey] = newValue
         }
-
     }
-
 }

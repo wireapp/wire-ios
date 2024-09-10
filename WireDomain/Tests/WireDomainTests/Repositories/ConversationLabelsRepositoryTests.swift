@@ -248,7 +248,6 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             expected.forEach { XCTAssert(labelNames.contains($0)) }
         }
     }
-
 }
 
 private extension ConversationLabelsRepositoryTests {
@@ -331,5 +330,4 @@ private enum Scaffolding {
             UUID(uuidString: "eca55fdb-8f81-4112-9175-4ffca7691bf2")!
         ]
     )
-
 }

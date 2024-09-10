@@ -40,7 +40,6 @@ class EncryptionSessionsDirectoryTests: XCTestCase {
         contextAlice = nil
         contextBob = nil
     }
-
 }
 
 // MARK: - Session creation and encoding/decoding
@@ -128,7 +127,6 @@ extension EncryptionSessionsDirectoryTests {
         let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
-
     }
 
     func testThatItGeneratesLastPrekey() {
@@ -145,7 +143,6 @@ extension EncryptionSessionsDirectoryTests {
         let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
-
     }
 
     func testThatItGeneratesARangeOfPrekeys() {

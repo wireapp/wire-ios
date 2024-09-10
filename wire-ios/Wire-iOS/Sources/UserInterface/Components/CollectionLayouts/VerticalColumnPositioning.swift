@@ -89,7 +89,6 @@ struct VerticalColumnPositioning {
         rows.append(rowAttributes)
         columnHeights[currentColumn] = frame.maxY
         currentColumn = nextColumn
-
     }
 
     private var nextColumn: Int {
@@ -103,7 +102,5 @@ struct VerticalColumnPositioning {
         }
 
         return smallestColumn
-
     }
-
 }

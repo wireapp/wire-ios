@@ -144,5 +144,4 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
 
         return View.Configuration(attributedText: attributedText, icon: verifiedIcon, linkTarget: .conversation(conversation))
     }
-
 }

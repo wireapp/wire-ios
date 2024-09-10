@@ -41,5 +41,4 @@ public struct ConversationMemberLeaveEvent: Equatable, Codable {
     /// The reason why the members were removed.
 
     public let reason: ConversationMemberLeaveReason
-
 }

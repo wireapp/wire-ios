@@ -38,7 +38,6 @@ final class ZMMockURLSession: ZMURLSession {
             self.cancellationHandler?()
         }
     }
-
 }
 
 // MARK: - Delegate
@@ -65,5 +64,4 @@ final class ZMMockURLSessionDelegate: NSObject, ZMURLSessionDelegate {
     func urlSessionDidFinishEvents(forBackgroundURLSession URLSession: ZMURLSession) {
         // no-op
     }
-
 }

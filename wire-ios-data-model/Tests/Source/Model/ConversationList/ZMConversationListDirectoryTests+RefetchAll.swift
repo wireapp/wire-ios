@@ -90,5 +90,4 @@ final class ZMConversationListDirectoryTests_RefetchAll: XCTestCase {
 
         return conversation
     }
-
 }

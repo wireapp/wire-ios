@@ -55,5 +55,4 @@ final class ConversationMessageFailedRecipientsTests: ConversationMessageSnapsho
         // THEN
         verify(message: message, allWidths: false)
     }
-
 }

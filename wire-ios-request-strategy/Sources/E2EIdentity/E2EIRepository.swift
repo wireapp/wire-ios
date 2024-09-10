@@ -30,7 +30,6 @@ public protocol E2EIRepositoryInterface {
         context: NSManagedObjectContext,
         expirySec: UInt32?
     ) async throws -> E2EIEnrollmentInterface
-
 }
 
 public final class E2EIRepository: E2EIRepositoryInterface {
@@ -139,5 +138,4 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         let acmeDirectoryData = try await acmeApi.getACMEDirectory()
         return try await e2eiService.getDirectoryResponse(directoryData: acmeDirectoryData)
     }
-
 }

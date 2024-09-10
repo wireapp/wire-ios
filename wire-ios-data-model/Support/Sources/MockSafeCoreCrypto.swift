@@ -59,5 +59,4 @@ public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
     public func tearDown() throws {
         tearDownCount += 1
     }
-
 }

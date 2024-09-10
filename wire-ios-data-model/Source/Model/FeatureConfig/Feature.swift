@@ -42,14 +42,12 @@ public class Feature: ZMManagedObject {
         case mls
         case e2ei = "mlsE2EId"
         case mlsMigration
-
     }
 
     public enum Status: String, Codable {
 
         case enabled
         case disabled
-
     }
 
     // MARK: - Properties

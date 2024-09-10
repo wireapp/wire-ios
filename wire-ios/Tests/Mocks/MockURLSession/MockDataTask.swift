@@ -39,5 +39,4 @@ class MockDataTask: DataTask {
     func resume() {
         session?.resume(dataTask: self)
     }
-
 }

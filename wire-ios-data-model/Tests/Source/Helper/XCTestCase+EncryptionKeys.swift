@@ -42,5 +42,4 @@ extension XCTestCase {
     var malformedDatabaseKey: VolatileData {
         return VolatileData(from: .zmRandomSHA256Key().dropFirst())
     }
-
 }

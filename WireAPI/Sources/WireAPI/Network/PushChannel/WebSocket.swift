@@ -89,5 +89,4 @@ final class WebSocket: WebSocketProtocol {
         connection.cancel(with: .goingAway, reason: nil)
         continuation?.finish()
     }
-
 }

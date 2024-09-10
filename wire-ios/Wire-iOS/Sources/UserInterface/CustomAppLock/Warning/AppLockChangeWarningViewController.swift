@@ -24,7 +24,6 @@ import WireSyncEngine
 protocol AppLockChangeWarningViewControllerDelegate: AnyObject {
 
     func appLockChangeWarningViewControllerDidDismiss()
-
 }
 
 final class AppLockChangeWarningViewController: UIViewController {
@@ -146,5 +145,4 @@ final class AppLockChangeWarningViewController: UIViewController {
 
         dismiss(animated: true, completion: delegate?.appLockChangeWarningViewControllerDidDismiss)
     }
-
 }

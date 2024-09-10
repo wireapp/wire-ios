@@ -220,5 +220,4 @@ final class SendController {
             }
         }
     }
-
 }

@@ -44,5 +44,4 @@ enum PasswordValidationResult: Equatable {
         /// The password does not satisfy a requirement for a character class.
         case missingRequiredClasses(Set<PasswordCharacterClass>)
     }
-
 }

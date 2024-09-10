@@ -53,7 +53,6 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
         case failedToMigrateData
         case failedToDeleteLegacyData
         case proteusServiceUnavailable
-
     }
 
     // MARK: - Methods
@@ -93,7 +92,6 @@ public class CryptoboxMigrationManager: CryptoboxMigrationManagerInterface {
         guard fileManager.fileExists(atPath: cryptoboxDirectory.path) else { return }
         try fileManager.removeItem(at: cryptoboxDirectory)
     }
-
 }
 
 // sourcery: AutoMockable
@@ -102,7 +100,6 @@ protocol FileManagerInterface {
     func fileExists(atPath path: String) -> Bool
     func removeItem(at url: URL) throws
     func cryptoboxDirectory(in accountDirectory: URL) -> URL
-
 }
 
 extension FileManager: FileManagerInterface {
@@ -113,5 +110,4 @@ extension FileManager: FileManagerInterface {
             createParentIfNeeded: false
         )
     }
-
 }

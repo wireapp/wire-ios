@@ -59,7 +59,6 @@ public struct PayloadPager<Payload>: AsyncSequence {
             self.hasMore = hasMore
             self.nextStart = nextStart
         }
-
     }
 
     public struct Iterator: AsyncIteratorProtocol {
@@ -84,5 +83,4 @@ public struct PayloadPager<Payload>: AsyncSequence {
             return page.element
         }
     }
-
 }

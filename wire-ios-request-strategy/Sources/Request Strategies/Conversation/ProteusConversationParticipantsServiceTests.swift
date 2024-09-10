@@ -146,5 +146,4 @@ class ProteusConversationParticipantsServiceTests: MessagingTestBase {
         }
         withExtendedLifetime(handler) {}
     }
-
 }

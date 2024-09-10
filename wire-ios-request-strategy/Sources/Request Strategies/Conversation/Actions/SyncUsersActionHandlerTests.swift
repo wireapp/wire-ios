@@ -167,5 +167,4 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
             expectedError: .unknownError(code: 999, label: "foo", message: "?")
         )
     }
-
 }

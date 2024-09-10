@@ -157,7 +157,6 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
             checkImageView.widthAnchor.constraint(equalToConstant: checkmarkSize),
             checkImageView.heightAnchor.constraint(equalToConstant: checkmarkSize)
         ])
-
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

@@ -126,5 +126,4 @@ extension Analytics: UserObserving {
         selfUser = nil
         selfUser = changeInfo.user
     }
-
 }

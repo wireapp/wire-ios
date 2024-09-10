@@ -26,7 +26,6 @@ extension UIViewController {
     func redrawAllFonts() {
         view.redrawAllFonts()
     }
-
 }
 
 // MARK: - UIView Extension
@@ -47,5 +46,4 @@ extension UIView {
             view.visitSubviews(executing: block)
         }
     }
-
 }

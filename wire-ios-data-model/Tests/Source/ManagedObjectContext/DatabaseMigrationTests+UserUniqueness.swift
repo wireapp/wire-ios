@@ -173,5 +173,4 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
         duplicate2.remoteIdentifier = identifier
         duplicate2.domain = domain
     }
-
 }

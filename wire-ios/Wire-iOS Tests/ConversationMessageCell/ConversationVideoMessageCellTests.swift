@@ -227,5 +227,4 @@ final class ConversationVideoMessageCellTests: ConversationMessageSnapshotTestCa
 
         verify(message: message, allColorSchemes: true)
     }
-
 }

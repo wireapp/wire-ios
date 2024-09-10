@@ -124,7 +124,6 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
     var selectionRect: CGRect {
         return transferView.bounds
     }
-
 }
 
 extension ConversationVideoMessageCell: TransferViewDelegate {
@@ -160,5 +159,4 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
         self.configuration = View.Configuration(message: message)
         accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
     }
-
 }

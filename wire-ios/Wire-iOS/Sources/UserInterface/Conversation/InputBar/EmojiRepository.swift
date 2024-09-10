@@ -25,7 +25,6 @@ protocol EmojiRepositoryInterface {
     func emoji(for id: String) -> Emoji?
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID])
     func fetchRecentlyUsedEmojis() -> [Emoji]
-
 }
 
 final class EmojiRepository: EmojiRepositoryInterface {
@@ -101,7 +100,6 @@ final class EmojiRepository: EmojiRepositoryInterface {
             return 13.1
         }
     }()
-
 }
 
 private extension EmojiRepository {
@@ -120,5 +118,4 @@ private extension EmojiRepository {
             return []
         }
     }
-
 }

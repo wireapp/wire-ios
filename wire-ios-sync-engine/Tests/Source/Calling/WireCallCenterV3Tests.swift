@@ -29,11 +29,9 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
     var mockClientsRequestResponse: [AVSClient]?
 
     func send(data: Data, conversationId: AVSIdentifier, targets: [AVSClient]?, overMLSSelfConversation: Bool, completionHandler: @escaping ((Int) -> Void)) {
-
     }
 
     func sendSFT(data: Data, url: URL, completionHandler: @escaping ((Result<Data, Error>) -> Void)) {
-
     }
 
     func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
@@ -47,7 +45,6 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
             completionHandler(mockClientsRequestResponse)
         }
     }
-
 }
 
 final class WireCallCenterV3Tests: MessagingTest {
@@ -2173,7 +2170,6 @@ extension WireCallCenterV3Tests {
         // Then
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
-
 }
 
 // MARK: - Helpers

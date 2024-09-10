@@ -28,7 +28,6 @@ public protocol FetchShareableConversationsUseCaseProtocol {
     /// - Returns: A list of conversations.
 
     func invoke() -> [ZMConversation]
-
 }
 
 public class FetchShareableConversationsUseCase: FetchShareableConversationsUseCaseProtocol {

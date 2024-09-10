@@ -87,7 +87,6 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
         // then
         XCTAssertNil(repository.fetchLastEventID())
     }
-
 }
 
 class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThreshold: IntegrationTest {

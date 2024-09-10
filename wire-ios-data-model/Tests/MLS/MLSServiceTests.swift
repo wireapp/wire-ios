@@ -1752,7 +1752,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         mockActionsProvider.uploadKeyPackagesClientIDKeyPackagesContext_MockMethod = { _, _, _ in
             throw TestError.failedToUploadKeyPackages
-
         }
         mockCoreCrypto.clientKeypackagesCiphersuiteCredentialTypeAmountRequested_MockMethod = { _, _, _ in
             [Data.random()]

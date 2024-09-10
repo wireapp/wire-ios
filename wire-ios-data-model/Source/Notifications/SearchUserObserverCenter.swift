@@ -192,5 +192,4 @@ public class SearchUserSnapshot {
     public func startObserving() {
         // do nothing
     }
-
 }

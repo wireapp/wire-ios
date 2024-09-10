@@ -26,5 +26,4 @@ public protocol ApplicationStatus: AnyObject {
     var requestCancellation: ZMRequestCancellation { get }
 
     func requestResyncResources()
-
 }

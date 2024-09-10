@@ -107,5 +107,4 @@ final class EphemeralCountdownView: UIView {
             }
         }
     }
-
 }

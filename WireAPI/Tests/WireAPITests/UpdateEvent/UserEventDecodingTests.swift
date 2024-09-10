@@ -405,7 +405,5 @@ final class UserEventDecodingTests: XCTestCase {
                 .mls
             ]
         )
-
     }
-
 }

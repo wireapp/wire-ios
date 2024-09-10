@@ -30,7 +30,6 @@ protocol ConversationEventProcessorProtocol {
     /// - Parameter event: A conversation update event.
 
     func processEvent(_ event: ConversationEvent) async throws
-
 }
 
 struct ConversationEventProcessor {
@@ -99,5 +98,4 @@ struct ConversationEventProcessor {
             try await typingEventProcessor.processEvent(event)
         }
     }
-
 }

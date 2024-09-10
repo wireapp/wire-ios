@@ -138,7 +138,6 @@ extension LocalNotificationDispatcher {
         selfUser.needsToNotifyAvailabilityBehaviourChange = notify
         syncMOC.enqueueDelayedSave()
     }
-
 }
 
 // MARK: - Failed messages

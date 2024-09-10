@@ -42,5 +42,4 @@ final class UIAlertControllerCompanyLoginSnapshotTests: XCTestCase {
         sut = UIAlertController.companyLogin(error: .unknown) { _  in }
         try verify(matching: sut)
     }
-
 }

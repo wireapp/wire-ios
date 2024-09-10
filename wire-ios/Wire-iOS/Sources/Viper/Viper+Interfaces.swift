@@ -33,7 +33,6 @@ protocol ModuleInterface {
     /// Assembles the module by connecting each component together.
 
     static func assemble(interactor: Interactor, presenter: Presenter, view: View, router: Router)
-
 }
 
 extension ModuleInterface {
@@ -46,7 +45,6 @@ extension ModuleInterface {
         view.presenter = (presenter as! Self.View.PresenterView)
         router.view = (view as! Self.Router.View)
     }
-
 }
 
 // MARK: - Interactor
@@ -61,7 +59,6 @@ protocol InteractorInterface: InteractorPresenterInterface {
     /// A weak reference to the presenter.
 
     var presenter: PresenterInteractor! { get set }
-
 }
 
 // MARK: - Presenter
@@ -87,7 +84,6 @@ protocol PresenterInterface: PresenterInteractorInterface, PresenterViewInterfac
     /// A strong reference to the router.
 
     var router: RouterPresenter! { get set }
-
 }
 
 // MARK: - View
@@ -102,7 +98,6 @@ protocol ViewInterface: ViewPresenterInterface {
     /// A strong reference to the presenter.
 
     var presenter: PresenterView! { get set }
-
 }
 
 // MARK: - Router

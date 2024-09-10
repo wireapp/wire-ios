@@ -31,5 +31,4 @@ class CallKitCall {
         self.id = id
         self.handle = handle
     }
-
 }

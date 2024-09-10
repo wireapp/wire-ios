@@ -24,5 +24,4 @@ extension SessionManager {
     public func continueUserActivity(_ userActivity: NSUserActivity) -> Bool {
         return callKitManager.continueUserActivity(userActivity)
     }
-
 }

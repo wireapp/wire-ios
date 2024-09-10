@@ -116,7 +116,6 @@ class ClientUpdateStatusTests: MessagingTest {
         } else {
             XCTFail("no notification received")
         }
-
     }
 
     func testThatItCallsTheCompletionHandlerWhenFetchCompletes() {
@@ -316,7 +315,6 @@ class ClientUpdateStatusTests: MessagingTest {
             XCTAssertFalse(selfClient.markedToDelete)
             XCTAssertFalse(selfClient.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
         }
-
     }
 
     func testThatItReturnsWaitsForPrekeys_WhenThereAreNoPrekeysAvailable() {

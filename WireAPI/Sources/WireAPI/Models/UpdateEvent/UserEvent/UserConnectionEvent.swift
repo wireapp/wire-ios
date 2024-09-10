@@ -30,5 +30,4 @@ public struct UserConnectionEvent: Equatable, Codable {
     /// The connection to the other user.
 
     public let connection: Connection
-
 }

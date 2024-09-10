@@ -47,5 +47,4 @@ final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
 
         onChanged?(changeInfo.message)
     }
-
 }

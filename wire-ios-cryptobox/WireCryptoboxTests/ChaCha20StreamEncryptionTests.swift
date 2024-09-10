@@ -77,7 +77,6 @@ class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
 
         XCTFail("Expected error")
     }
-
 }
 
 class ChaCha20StreamEncryptionTests: XCTestCase {
@@ -335,5 +334,4 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
             XCTFail()
         }
     }
-
 }

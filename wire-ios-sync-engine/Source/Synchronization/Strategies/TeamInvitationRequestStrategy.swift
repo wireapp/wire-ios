@@ -43,7 +43,6 @@ extension InviteResult {
             self = InviteResult.failure(email: email, error: .unknown)
         }
     }
-
 }
 
 public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
@@ -84,5 +83,4 @@ public final class TeamInvitationRequestStrategy: AbstractRequestStrategy {
             teamInvitationStatus?.handle(result: .failure(email: email, error: .cancelled), email: email)
         }
     }
-
 }

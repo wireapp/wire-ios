@@ -32,5 +32,4 @@ extension JSONEncoder {
 
         return encoder
     }
-
 }

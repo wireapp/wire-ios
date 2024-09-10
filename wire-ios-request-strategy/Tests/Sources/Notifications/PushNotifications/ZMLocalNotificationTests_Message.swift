@@ -634,7 +634,6 @@ extension ZMLocalNotificationTests_Message {
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
         return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
-
     }
 
     func bodyForAssetNote(_ fileType: FileType, conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> String {
@@ -774,7 +773,6 @@ extension ZMLocalNotificationTests_Message {
             XCTAssertNil(note)
         }
     }
-
 }
 
 // MARK: - Categories

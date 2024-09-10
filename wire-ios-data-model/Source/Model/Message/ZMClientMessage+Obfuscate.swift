@@ -39,5 +39,4 @@ extension ZMClientMessage {
             Logging.messageProcessing.warn("Failed to merge obfuscated message. Reason: \(error.localizedDescription)")
         }
     }
-
 }

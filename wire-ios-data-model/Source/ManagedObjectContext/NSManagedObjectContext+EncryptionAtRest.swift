@@ -50,7 +50,6 @@ extension Sequence where Element: NSManagedObject {
 
         try processed.last?.managedObjectContext?.save()
     }
-
 }
 
 extension NSManagedObjectContext {
@@ -75,7 +74,6 @@ extension NSManagedObjectContext {
                 return "Failed to migrate all instances of \(type). Reason: \(reason)"
             }
         }
-
     }
 
     public func migrateTowardEncryptionAtRest(databaseKey: VolatileData) throws {
@@ -189,7 +187,6 @@ extension NSManagedObjectContext {
                 key: PersistentMetadataKey.encryptMessagesAtRest.rawValue
             )
         }
-
     }
 
     // MARK: - Encryption / Decryption
@@ -212,7 +209,6 @@ extension NSManagedObjectContext {
                 return error.errorDescription
             }
         }
-
     }
 
     func encryptData(data: Data) throws -> (data: Data, nonce: Data) {
@@ -304,7 +300,6 @@ extension NSManagedObjectContext {
             userInfo[Self.databaseKeyUserInfoKey] = newValue
         }
     }
-
 }
 
 // MARK: - Migratable
@@ -336,5 +331,4 @@ protocol EncryptionAtRestMigratable {
         in context: NSManagedObjectContext,
         key: VolatileData
     ) throws
-
 }

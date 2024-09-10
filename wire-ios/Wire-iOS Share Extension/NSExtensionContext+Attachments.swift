@@ -26,7 +26,6 @@ extension NSExtensionContext {
         guard let items = inputItems as? [NSExtensionItem] else { return [] }
         return items.flatMap { $0.attachments ?? [] }
     }
-
 }
 
 // MARK: - Sorting
@@ -55,5 +54,4 @@ extension Array where Element == NSItemProvider {
 
         return attachments
     }
-
 }

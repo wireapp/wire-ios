@@ -76,5 +76,4 @@ public class CallEventStatus: NSObject, ZMTimerClient {
     public func finishedProcessingCallEvent() {
         callEventsWaitingToBeProcessed -= 1
     }
-
 }

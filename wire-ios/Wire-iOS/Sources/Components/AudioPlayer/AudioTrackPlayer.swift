@@ -224,7 +224,6 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         default:
             break
         }
-
     }
 
     func setIsRemoteCommandCenterEnabled(_ enabled: Bool) {

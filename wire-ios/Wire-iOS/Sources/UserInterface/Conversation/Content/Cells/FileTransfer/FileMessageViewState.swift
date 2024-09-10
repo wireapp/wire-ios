@@ -149,5 +149,4 @@ enum FileMessageViewState {
     func viewsStateForFile() -> FileMessageViewViewsState? {
         return type(of: self).viewsStateForCellStateForFileMessage[self]
     }
-
 }

@@ -37,7 +37,5 @@ extension AppLockModule {
         func processEvent(_ event: Event) {
             events.append(event)
         }
-
     }
-
 }

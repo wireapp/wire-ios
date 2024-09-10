@@ -52,7 +52,6 @@ final class ArchivedListViewModel: NSObject {
     subscript(key: Int) -> ZMConversation? {
         return archivedConversations[key]
     }
-
 }
 
 extension ArchivedListViewModel: ZMConversationListObserver {

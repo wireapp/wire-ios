@@ -40,5 +40,4 @@ extension AuthenticationFlowStep {
 
         return .clientManagement(clients: clients)
     }
-
 }

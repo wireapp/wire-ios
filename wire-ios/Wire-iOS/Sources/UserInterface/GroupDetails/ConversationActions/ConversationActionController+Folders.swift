@@ -38,5 +38,4 @@ extension ConversationActionController: FolderPickerViewControllerDelegate {
             conversation.moveToFolder(folder)
         }
     }
-
 }

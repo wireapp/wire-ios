@@ -74,5 +74,4 @@ enum PushNotificationCategory: String, CaseIterable {
         let userActions = self.actions.map(\.userAction)
         return UNNotificationCategory(identifier: rawValue, actions: userActions, intentIdentifiers: [], options: [])
     }
-
 }

@@ -42,5 +42,4 @@ enum UpdateEventType {
             self = .unknown(string)
         }
     }
-
 }

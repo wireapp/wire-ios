@@ -31,5 +31,4 @@ class GenericMessageHelperTests: XCTestCase {
         // Then
         XCTAssertEqual(sut.trackingIdentifier.identifier, id.transportString())
     }
-
 }

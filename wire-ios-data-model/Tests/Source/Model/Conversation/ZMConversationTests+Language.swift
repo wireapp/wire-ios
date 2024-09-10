@@ -39,5 +39,4 @@ class ZMConversationTests_Language: BaseZMMessageTests {
         // then
         XCTAssertEqual(conversationFetched?.language, germanLanguage)
     }
-
 }

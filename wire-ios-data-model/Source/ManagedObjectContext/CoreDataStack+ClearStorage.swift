@@ -114,5 +114,4 @@ extension CoreDataStack {
             Logging.localStorage.error("Failed to clear storage: \(error)")
         }
     }
-
 }

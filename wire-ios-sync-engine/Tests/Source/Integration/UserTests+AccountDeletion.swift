@@ -60,5 +60,4 @@ class UserTests_AccountDeletion: IntegrationTest {
         let groupConversation = self.conversation(for: self.groupConversation)!
         XCTAssertFalse(groupConversation.localParticipants.contains(user1))
     }
-
 }

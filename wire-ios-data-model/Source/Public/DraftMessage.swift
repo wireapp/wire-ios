@@ -41,7 +41,6 @@ import WireCryptobox
         guard let other = object as? DraftMessage else { return false }
         return (text, mentions, quote) == (other.text, other.mentions, other.quote)
     }
-
 }
 
 /// A serializable version of `DraftMessage` that conforms to `Codable` and
@@ -86,7 +85,6 @@ private struct StorableMention: Codable {
         ZMUser.fetch(with: userIdentifier, domain: nil, in: context)
             .map { Mention(range: range, user: $0) }
     }
-
 }
 
 /// A serializable version of `ZMMessage` that conforms to `Codable` and
@@ -102,7 +100,6 @@ private struct StorableQuote: Codable {
         guard let nonce else { return nil }
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
     }
-
 }
 
 // MARK: - Conversation Accessors
@@ -154,7 +151,6 @@ private struct StorableQuote: Codable {
                 draftMessageNonce = nil
             }
         }
-
     }
 
     @nonobjc
@@ -167,7 +163,6 @@ private struct StorableQuote: Codable {
         guard let nonce = draftMessageNonce else { return data }
         return try moc.decryptData(data: data, nonce: nonce)
     }
-
 }
 
 // MARK: - Storable Helper
@@ -184,7 +179,6 @@ fileprivate extension UserType {
 
         return nil
     }
-
 }
 
 fileprivate extension Mention {
@@ -195,7 +189,6 @@ fileprivate extension Mention {
             StorableMention(range: range, userIdentifier: $0)
         }
     }
-
 }
 
 fileprivate extension DraftMessage {
@@ -206,5 +199,4 @@ fileprivate extension DraftMessage {
                      mentions: mentions.compactMap(\.storable),
                      quote: StorableQuote(nonce: quote?.nonce))
     }
-
 }

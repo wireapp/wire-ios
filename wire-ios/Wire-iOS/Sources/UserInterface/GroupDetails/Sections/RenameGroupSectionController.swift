@@ -95,7 +95,6 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         focus()
     }
-
 }
 
 extension RenameGroupSectionController: ZMConversationObserver {
@@ -107,7 +106,6 @@ extension RenameGroupSectionController: ZMConversationObserver {
 
         renameCell?.configure(for: conversation, editable: ZMUser.selfUser()?.canModifyTitle(in: conversation) ?? false)
     }
-
 }
 
 extension RenameGroupSectionController: SimpleTextFieldDelegate {
@@ -126,7 +124,6 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
     }
 
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
-
     }
 
     func textFieldDidBeginEditing(_ textField: SimpleTextField) {
@@ -144,5 +141,4 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
 
         renameCell?.accessoryIconView.isHidden = false
     }
-
 }

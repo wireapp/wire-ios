@@ -177,5 +177,4 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
 
         return conversation
     }
-
 }

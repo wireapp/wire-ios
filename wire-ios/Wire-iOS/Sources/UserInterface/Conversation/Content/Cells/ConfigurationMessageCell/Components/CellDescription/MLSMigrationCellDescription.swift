@@ -143,7 +143,5 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         )
 
         return [text, link].joined(separator: NSAttributedString(" "))
-
     }
-
 }

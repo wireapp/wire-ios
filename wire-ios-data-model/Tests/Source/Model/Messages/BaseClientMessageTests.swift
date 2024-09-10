@@ -189,7 +189,6 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
             XCTAssertEqual(clientIds, expectedClientsIds, file: file, line: line)
             let hasTexts = (recipientEntry.clients).map { $0.hasText }
             XCTAssertFalse(hasTexts.contains(false), file: file, line: line)
-
         }
     }
 

@@ -111,5 +111,4 @@ public class ProteusProvider: ProteusProviding {
 
         return canUseProteusService || canUseKeyStore
     }
-
 }

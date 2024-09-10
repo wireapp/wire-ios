@@ -22,7 +22,6 @@ import WireTransport
 protocol AccessAPIClientProtocol {
 
     func fetchAccessToken() async throws -> AccessToken
-
 }
 
 final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
@@ -49,7 +48,6 @@ final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
             throw error
         }
     }
-
 }
 
 struct AccessTokenEndpoint: Endpoint, Loggable {
@@ -64,7 +62,6 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
         case failedToDecodePayload
         case authenticationError
         case unknownError(ErrorResponse)
-
     }
 
     // MARK: - Request
@@ -116,5 +113,4 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
             return .failure(.invalidResponse)
         }
     }
-
 }

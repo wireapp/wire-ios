@@ -149,7 +149,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                 return XCTFail("Response is invalid")
             }
             request.complete(with: response)
-
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -570,7 +569,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
                                    expiresAt: nil,
                                    legalholdStatus: nil)
     }
-
 }
 
 extension Decodable {
@@ -582,5 +580,4 @@ extension Decodable {
 
         self.init(payloadData)
     }
-
 }

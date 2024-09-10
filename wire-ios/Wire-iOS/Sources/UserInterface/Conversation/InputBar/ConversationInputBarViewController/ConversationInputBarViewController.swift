@@ -489,7 +489,6 @@ final class ConversationInputBarViewController: UIViewController,
         hourglassButton.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
         hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
         hourglassButton.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
-
     }
 
     private func setupSingleTapGestureRecognizer() {
@@ -805,7 +804,6 @@ final class ConversationInputBarViewController: UIViewController,
     override var canBecomeFirstResponder: Bool {
         return true
     }
-
 }
 
 // MARK: - GiphySearchViewControllerDelegate
@@ -886,7 +884,6 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
                         self.showConfirmationForImage(jpegData, isFromCamera: false, uti: mediaType)
                     }
                 }
-
             }
         } else {
             parent?.dismiss(animated: true)

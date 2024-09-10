@@ -23,5 +23,4 @@ class SelfUserAPIV6: SelfUserAPIV5 {
     override var apiVersion: APIVersion {
         .v6
     }
-
 }

@@ -47,5 +47,4 @@ struct UTCTime: Codable {
         let string = ISO8601DateFormatter.internetDateTime.string(from: date)
         try container.encode(string)
     }
-
 }

@@ -78,5 +78,4 @@ final class ChangeEmailViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
     }
-
 }

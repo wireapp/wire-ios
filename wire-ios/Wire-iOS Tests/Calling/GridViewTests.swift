@@ -179,5 +179,4 @@ extension GridViewTests: UICollectionViewDataSource {
         cell.add(streamView: tiles[indexPath.row])
         return cell
     }
-
 }

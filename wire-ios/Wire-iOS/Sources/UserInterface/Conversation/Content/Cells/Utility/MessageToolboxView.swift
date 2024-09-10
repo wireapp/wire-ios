@@ -269,7 +269,6 @@ final class MessageToolboxView: UIView {
             self.countdownLabel.attributedText = countdown
             self.countdownLabel.isHidden = countdown == nil
             self.messageFailureView.isHidden = true
-
         }
 
         layoutIfNeeded()
@@ -306,7 +305,6 @@ final class MessageToolboxView: UIView {
     private func deleteMessage(sender: UIView?) {
         delegate?.messageToolboxViewDidSelectDelete(sender)
     }
-
 }
 
 // MARK: - Tap Gesture
@@ -341,5 +339,4 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
     ) -> Bool {
         return gestureRecognizer.isEqual(self.tapGestureRecogniser)
     }
-
 }

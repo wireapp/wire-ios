@@ -210,7 +210,6 @@ extension TeamType {
     var teamImageViewContent: TeamImageView.Content? {
         return TeamImageView.Content(imageData: imageData, name: name)
     }
-
 }
 
 // MARK: - Account Extension

@@ -102,7 +102,6 @@ class SettingsDebugReportViewModelTests: XCTestCase {
             XCTAssertEqual(destinations.count, 1)
             XCTAssertEqual(destinations.first, conversation)
             XCTAssertEqual(debugReport, mockDebugReport)
-
         }
 
         // WHEN
@@ -114,5 +113,4 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_Invocations.count, 1)
         XCTAssertEqual(mockRouter.presentShareViewControllerDestinationsDebugReport_Invocations.count, 1)
     }
-
 }

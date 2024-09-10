@@ -82,5 +82,4 @@ class SearchRequestTests: MessagingTest {
         XCTAssertEqual(request.query.string, expectedHandle, file: file, line: line)
         XCTAssertEqual(request.searchDomain, expectedDomain, file: file, line: line)
     }
-
 }

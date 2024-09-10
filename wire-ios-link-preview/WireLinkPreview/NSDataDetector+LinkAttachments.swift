@@ -75,5 +75,4 @@ extension NSDataDetector {
 
         return nil
     }
-
 }

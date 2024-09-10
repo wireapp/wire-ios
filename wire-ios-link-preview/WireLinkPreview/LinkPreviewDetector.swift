@@ -21,7 +21,6 @@ import Foundation
 public protocol LinkPreviewDetectorType {
 
     func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void)
-
 }
 
 public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
@@ -80,5 +79,4 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
     deinit {
         previewDownloader.tearDown()
     }
-
 }

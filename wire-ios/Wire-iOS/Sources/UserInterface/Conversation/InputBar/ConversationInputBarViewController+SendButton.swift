@@ -68,5 +68,4 @@ extension ConversationInputBarViewController {
 
         return true
     }
-
 }

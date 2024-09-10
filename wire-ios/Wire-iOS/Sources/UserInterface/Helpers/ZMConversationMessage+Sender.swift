@@ -29,5 +29,4 @@ extension ZMConversationMessage {
             return sender.name ?? ""
         }
     }
-
 }

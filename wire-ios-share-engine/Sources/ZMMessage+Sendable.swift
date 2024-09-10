@@ -24,7 +24,6 @@ private extension ZMMessage {
     var reportsProgress: Bool {
         return fileMessageData != nil || imageMessageData != nil
     }
-
 }
 
 extension ZMMessage: Sendable {
@@ -66,5 +65,4 @@ extension ZMMessage: Sendable {
         WireLogger.messaging.warn("expiring message because of cancel", attributes: attributes)
         self.expire()
     }
-
 }

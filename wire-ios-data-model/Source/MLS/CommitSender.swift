@@ -63,7 +63,6 @@ public protocol CommitSending {
     /// Returns a publisher that emits the group ID of the group when the epoch changes.
 
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
-
 }
 
 /// An actor responsible for sending commits and external commits and handling the results.
@@ -251,7 +250,6 @@ private extension CommitError.RecoveryStrategy {
             self = .giveUp
         }
     }
-
 }
 
 private extension ExternalCommitError.RecoveryStrategy {
@@ -263,7 +261,6 @@ private extension ExternalCommitError.RecoveryStrategy {
         default:
             self = .giveUp
         }
-
     }
 }
 
@@ -278,5 +275,4 @@ extension CommitBundle {
         data.append(groupInfo.payload)
         return data
     }
-
 }

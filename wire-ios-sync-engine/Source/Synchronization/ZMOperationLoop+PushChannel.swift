@@ -89,5 +89,4 @@ extension ZMOperationLoop: ZMPushChannelConsumer {
         syncStatus.pushChannelDidOpen()
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
-
 }

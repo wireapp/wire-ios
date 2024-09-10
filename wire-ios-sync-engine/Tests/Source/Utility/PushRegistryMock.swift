@@ -34,7 +34,6 @@ final class PushPayloadMock: PKPushPayload {
     override var dictionaryPayload: [AnyHashable: Any] {
         return mockDictionaryPayload
     }
-
 }
 
 final class PushCredentialsMock: PKPushCredentials {
@@ -56,7 +55,6 @@ final class PushCredentialsMock: PKPushCredentials {
     override var type: PKPushType {
         return mockType
     }
-
 }
 
 @objcMembers
@@ -69,7 +67,6 @@ final class PushRegistryMock: PKPushRegistry {
         delegate?.pushRegistry!(self, didReceiveIncomingPushWith: PushPayloadMock(dictionaryPayload: payload), for: .voIP, completion: {
             completion?()
         })
-
     }
 
     func invalidatePushToken() {
@@ -85,5 +82,4 @@ final class PushRegistryMock: PKPushRegistry {
     override func pushToken(for type: PKPushType) -> Data? {
         return mockPushToken
     }
-
 }

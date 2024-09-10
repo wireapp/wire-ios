@@ -139,5 +139,4 @@ extension SessionManager: APIVersionResolverDelegate {
             self.delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
         }
     }
-
 }

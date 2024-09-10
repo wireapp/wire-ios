@@ -25,5 +25,4 @@ public enum PushChannelAPIError: Error {
     /// A submitted request is invalid.
 
     case invalidRequest
-
 }

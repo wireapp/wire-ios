@@ -580,7 +580,6 @@ extension UserClientTests {
         XCTAssertTrue(selfClient.needsToUploadSignalingKeys)
         XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateSignalingKeysKey))
     }
-
 }
 
 // MARK: Capabilities
@@ -598,7 +597,6 @@ extension UserClientTests {
         XCTAssertTrue(selfClient.needsToUpdateCapabilities)
         XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateCapabilitiesKey))
     }
-
 }
 
 // MARK: fetchFingerprintOrPrekeys
@@ -837,7 +835,6 @@ extension UserClientTests {
         // then
         XCTAssertFalse(client.needsToBeUpdatedFromBackend)
     }
-
 }
 
 // MARK: - Session Identifier
@@ -1020,7 +1017,6 @@ extension UserClientTests {
             }
         }
     }
-
 }
 
 // MARK: - MLS Public Keys
@@ -1056,7 +1052,6 @@ extension UserClientTests {
         // Then
         XCTAssertNil(client.modifiedKeys)
     }
-
 }
 
 // MARK: - Proteus
@@ -1099,5 +1094,4 @@ extension UserClientTests {
         XCTAssertTrue(mockMethodCalled)
         XCTAssertTrue(resultOfMethod)
     }
-
 }

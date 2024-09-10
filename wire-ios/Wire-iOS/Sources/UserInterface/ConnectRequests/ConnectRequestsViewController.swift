@@ -153,7 +153,6 @@ final class ConnectRequestsViewController: UIViewController,
         cell.ignoreBlock = { [weak self] in
             self?.ignoreConnectionRequest(from: cell.user)
         }
-
     }
 
     private func acceptConnectionRequest(from user: UserType) {

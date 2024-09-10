@@ -63,5 +63,4 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
         accessibilityLabel = updateText?.string
         actionController = nil
     }
-
 }

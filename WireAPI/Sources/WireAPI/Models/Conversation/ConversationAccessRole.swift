@@ -37,5 +37,4 @@ public enum ConversationAccessRole: String, Codable {
     /// Service users (aka bots).
 
     case service
-
 }

@@ -38,5 +38,4 @@ public enum ConversationAccessMode: String, Codable {
     /// Allowed users can join the conversation using a code.
 
     case code
-
 }

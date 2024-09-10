@@ -67,7 +67,6 @@ public extension StyleKitIcon {
             case .custom(let value): value
             }
         }
-
     }
 }
 

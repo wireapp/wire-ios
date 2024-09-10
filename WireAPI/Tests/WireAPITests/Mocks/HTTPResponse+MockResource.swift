@@ -55,5 +55,4 @@ extension HTTPResponse {
             payload: resource.jsonData
         )
     }
-
 }

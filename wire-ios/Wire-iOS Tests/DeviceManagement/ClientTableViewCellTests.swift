@@ -60,7 +60,6 @@ final class ClientTableViewCellTests: XCTestCase {
             mlsThumbprint: shouldDisplayMLSInfo ? .mockMlsThumbprint : "",
             e2eIdentityCertificateStatus: e2EIdentityCertificateStatus
         )
-
     }
 
     // MARK: - Snapshot Tests
@@ -239,7 +238,6 @@ final class ClientTableViewCellTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: container)
     }
-
 }
 
 extension ClientTableViewCellModel {

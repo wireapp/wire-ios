@@ -47,5 +47,4 @@ final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
             return nil
         }
     }
-
 }

@@ -68,5 +68,4 @@ class AtomicIntegerTests: XCTestCase {
         XCTAssertFalse(swapped)
         XCTAssertEqual(atomicNumber.rawValue, 1)
     }
-
 }

@@ -178,7 +178,6 @@ final class NetworkSessionTests: XCTestCase {
         XCTAssertEqual(urlRequest.allHTTPHeaderFields?["Accept"], "application/json")
         XCTAssertEqual(urlRequest.allHTTPHeaderFields?["Authorization"], "type1 1234")
     }
-
 }
 
 final class MockCookieStorage: CookieProvider {
@@ -188,7 +187,6 @@ final class MockCookieStorage: CookieProvider {
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 
     func deleteKeychainItems() { }
-
 }
 
 final class URLSessionMock: URLRequestable {
@@ -204,5 +202,4 @@ final class URLSessionMock: URLRequestable {
         calledRequest = request
         return mockedResponse
     }
-
 }

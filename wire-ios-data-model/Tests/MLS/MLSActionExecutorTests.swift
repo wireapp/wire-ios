@@ -670,5 +670,4 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(result, decryptedMessage)
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
     }
-
 }

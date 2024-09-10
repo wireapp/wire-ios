@@ -28,5 +28,4 @@ public extension ProteusSessionID {
             clientId: clientID
         )
     }
-
 }

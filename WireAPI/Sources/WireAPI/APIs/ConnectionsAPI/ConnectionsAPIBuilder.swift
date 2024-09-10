@@ -55,5 +55,4 @@ public struct ConnectionsAPIBuilder {
             ConnectionsAPIV6(httpClient: httpClient)
         }
     }
-
 }

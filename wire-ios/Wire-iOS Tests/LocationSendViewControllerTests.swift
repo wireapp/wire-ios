@@ -56,7 +56,6 @@ final class LocationSendViewControllerTests: XCTestCase {
         sut.address = "Hackescher Markt, Rosenthaler Straße 41, 10178 Berlin"
         verifyInAllPhoneWidths(matching: sut.prepareForSnapshot(heightConstant: 86))
     }
-
 }
 
 // MARK: - Helpers

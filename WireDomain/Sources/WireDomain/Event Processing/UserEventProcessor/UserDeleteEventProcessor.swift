@@ -27,7 +27,6 @@ protocol UserDeleteEventProcessorProtocol {
     /// - Parameter event: A user delete event.
 
     func processEvent(_ event: UserDeleteEvent) async throws
-
 }
 
 struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserDeleteEventProcessor: UserDeleteEventProcessorProtocol {
         // TODO: [WPB-10193]
         assertionFailure("not implemented yet")
     }
-
 }

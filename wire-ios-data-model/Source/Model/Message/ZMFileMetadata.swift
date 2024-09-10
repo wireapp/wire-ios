@@ -75,7 +75,6 @@ open class ZMAudioMetadata: ZMFileMetadata {
     override var asset: WireProtos.Asset {
         return WireProtos.Asset(self)
     }
-
 }
 
 open class ZMVideoMetadata: ZMFileMetadata {
@@ -100,7 +99,6 @@ open class ZMVideoMetadata: ZMFileMetadata {
     override var asset: WireProtos.Asset {
         return WireProtos.Asset(self)
     }
-
 }
 
 public extension ZMFileMetadata {
@@ -119,5 +117,4 @@ public extension ZMFileMetadata {
             return 0
         }
     }
-
 }

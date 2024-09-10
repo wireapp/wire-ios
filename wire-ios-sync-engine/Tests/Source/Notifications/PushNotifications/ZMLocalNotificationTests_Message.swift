@@ -549,7 +549,6 @@ extension ZMLocalNotificationTests_Message {
 
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
         return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: uiMOC)
-
     }
 
     func bodyForAssetNote(_ fileType: FileType, conversation: ZMConversation, sender: ZMUser, isEphemeral: Bool = false) -> String {
@@ -673,7 +672,6 @@ extension ZMLocalNotificationTests_Message {
         let note = editNote(message, sender: sender, text: "Edited Text")
         XCTAssertNil(note)
     }
-
 }
 
 // MARK: - Categories
@@ -695,7 +693,6 @@ extension ZMLocalNotificationTests_Message {
 
         // THEN
         XCTAssertEqual(note.category, .conversationWithLike)
-
     }
 
     func testThatItGeneratesTheNotificationWithMuteForNormalUser() {
@@ -755,5 +752,4 @@ extension ZMLocalNotificationTests_Message {
         // THEN
         XCTAssertEqual(note.category, .conversationUnderEncryptionAtRest)
     }
-
 }

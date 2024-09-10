@@ -41,7 +41,6 @@ extension IconLabelButton {
     static func flipCamera() -> IconLabelButton {
         .init(callActionIcon: .flipCamera)
     }
-
 }
 
 extension CallingActionButton {
@@ -65,7 +64,6 @@ extension CallingActionButton {
     static func flipCameraButton() -> CallingActionButton {
         .init(callActionIcon: .flipCamera)
     }
-
 }
 
 extension EndCallButton {

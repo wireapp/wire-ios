@@ -62,7 +62,6 @@ import Foundation
 
     /// Last prekeys registered for this client
     @NSManaged public var lastPrekey: MockPreKey
-
 }
 
 extension MockUserClient {
@@ -90,7 +89,6 @@ extension MockUserClient {
     public var isLegalHoldDevice: Bool {
         return type == "legalhold" || deviceClass == "legalhold"
     }
-
 }
 
 // MARK: - JSON de/serialization

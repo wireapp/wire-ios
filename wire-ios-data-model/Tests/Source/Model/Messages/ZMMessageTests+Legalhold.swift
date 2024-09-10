@@ -51,6 +51,5 @@ class ZMMessageTests_Legalhold: BaseZMClientMessageTests {
         await syncMOC.perform {
             XCTAssertEqual(message.underlyingMessage?.text.legalHoldStatus, enabled ? .enabled : .disabled)
         }
-
     }
 }

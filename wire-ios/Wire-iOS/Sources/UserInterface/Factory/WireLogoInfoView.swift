@@ -134,5 +134,4 @@ final class WireLogoInfoView: UIView {
             subtitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             subtitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)])
     }
-
 }

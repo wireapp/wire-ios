@@ -262,7 +262,6 @@ extension EventDecoderTest {
         // then
         XCTAssertTrue(didCallBlock)
     }
-
 }
 
 // MARK: - Already seen events
@@ -370,7 +369,6 @@ extension EventDecoderTest {
             XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }
 
 // MARK: - Helpers
@@ -417,5 +415,4 @@ extension EventDecoderTest {
             XCTAssert(self.eventMOC.saveOrRollback())
         }
     }
-
 }

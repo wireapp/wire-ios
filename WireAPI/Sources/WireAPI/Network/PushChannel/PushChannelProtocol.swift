@@ -31,5 +31,4 @@ public protocol PushChannelProtocol {
     /// Close the push channel and stop receiving update events.
 
     func close()
-
 }

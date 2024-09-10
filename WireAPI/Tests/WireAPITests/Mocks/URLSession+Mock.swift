@@ -30,5 +30,4 @@ extension URLSession {
         config.protocolClasses = [URLProtocolMock.self]
         return URLSession(configuration: config)
     }()
-
 }

@@ -45,5 +45,4 @@ public protocol ZMEventAsyncConsumer: NSObjectProtocol {
     /// Process events received either through a live update (websocket / notification / notification stream)
     /// or through history download
     func processEvents(_ events: [ZMUpdateEvent]) async
-
 }

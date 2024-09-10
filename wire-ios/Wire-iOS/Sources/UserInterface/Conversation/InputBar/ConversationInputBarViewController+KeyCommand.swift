@@ -103,5 +103,4 @@ extension ConversationInputBarViewController {
     func escapePressed() {
         endEditingMessageIfNeeded()
     }
-
 }

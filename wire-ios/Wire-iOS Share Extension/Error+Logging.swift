@@ -25,5 +25,4 @@ extension Error {
     func log(message: @autoclosure () -> String) {
         zmLog.error(message() + " — Error: \(self)")
     }
-
 }

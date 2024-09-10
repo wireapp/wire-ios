@@ -64,5 +64,4 @@ final class ConnectionPayloadProcessor {
         connection.status = payload.status.internalStatus
         connection.lastUpdateDateInGMT = payload.lastUpdate
     }
-
 }

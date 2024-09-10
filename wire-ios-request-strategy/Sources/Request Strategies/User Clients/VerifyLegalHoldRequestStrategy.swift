@@ -40,7 +40,6 @@ public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
                          .allowsRequestsWhileInBackground]
         conversationSync = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: self)
     }
-
 }
 
 extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
@@ -66,7 +65,6 @@ extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChang
             conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
         }
     }
-
 }
 
 extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
@@ -154,5 +152,4 @@ private class VerifyClientsParser: OTREntity {
     func expire() {
         // no-op
     }
-
 }

@@ -102,5 +102,4 @@ final class TargetConversationCell: UITableViewCell {
         accessibilityLabel = conversation.name
         accessibilityValue = details.joined(separator: ", ")
     }
-
 }

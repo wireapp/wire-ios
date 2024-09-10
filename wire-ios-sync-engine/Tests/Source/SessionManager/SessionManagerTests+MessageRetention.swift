@@ -100,5 +100,4 @@ final class SessionManagerMessageRetentionTests: IntegrationTest {
         // then
         XCTAssertEqual(conversation(for: groupConversation)?.allMessages.count, 4)
     }
-
 }

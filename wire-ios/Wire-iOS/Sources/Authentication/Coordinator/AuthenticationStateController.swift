@@ -157,7 +157,6 @@ final class AuthenticationStateController {
             currentStep = stack.last!
         } while !currentStep.needsInterface
     }
-
 }
 
 private extension AuthenticationStateController.RewindMilestone {

@@ -99,5 +99,4 @@ import WireTransport
         isExpiring = false
         tasks.removeAll()
     }
-
 }

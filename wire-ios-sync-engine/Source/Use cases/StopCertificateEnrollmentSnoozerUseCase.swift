@@ -44,5 +44,4 @@ final class StopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSn
     func invoke() {
         recurringActionService.removeAction(id: actionId)
     }
-
 }

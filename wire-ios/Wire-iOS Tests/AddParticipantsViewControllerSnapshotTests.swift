@@ -112,5 +112,4 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

@@ -47,5 +47,4 @@ class VolatileDataTests: XCTestCase {
         let storedBytes = [Byte](sut._storage)
         XCTAssertEqual(storedBytes, [0, 0, 0, 0, 0, 0])
     }
-
 }

@@ -117,5 +117,4 @@ final class LeaveSubconversationActionHandlerTests: ActionHandlerTestBase<LeaveS
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
         ])
     }
-
 }

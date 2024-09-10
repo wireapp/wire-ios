@@ -166,5 +166,4 @@ final class AppLockModulePresenterTests: XCTestCase {
         // Then
         XCTAssertEqual(interactor.requests, [.initiateAuthentication(requireActiveApp: false)])
     }
-
 }

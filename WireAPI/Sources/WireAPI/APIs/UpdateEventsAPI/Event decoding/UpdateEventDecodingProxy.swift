@@ -75,7 +75,5 @@ struct UpdateEventDecodingProxy: Decodable {
     private enum CodingKeys: String, CodingKey {
 
         case eventType = "type"
-
     }
-
 }

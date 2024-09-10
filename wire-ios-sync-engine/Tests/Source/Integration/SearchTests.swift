@@ -100,7 +100,6 @@ final class SearchTests: IntegrationTest {
 
             let connection = changes.createConnectionRequest(from: self.selfUser, to: user!, message: "Holo")
             connection.status = "pending"
-
         }
 
         XCTAssertTrue(login())
@@ -474,5 +473,4 @@ final class SearchTests: IntegrationTest {
         XCTAssertEqual(requests[1].path, "/assets/v3/\(user4.completeProfileAssetIdentifier!)")
         XCTAssertEqual(requests[1].method, .get)
     }
-
 }

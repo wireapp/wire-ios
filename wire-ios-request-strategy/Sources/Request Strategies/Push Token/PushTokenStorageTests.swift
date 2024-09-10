@@ -56,5 +56,4 @@ final class PushTokenStorageTests: MessagingTestBase {
         // Then
         XCTAssertEqual(PushTokenStorage.pushToken, pushToken)
     }
-
 }

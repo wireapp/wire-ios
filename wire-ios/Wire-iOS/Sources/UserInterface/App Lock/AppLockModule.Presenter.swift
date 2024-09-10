@@ -27,9 +27,7 @@ extension AppLockModule {
         var interactor: AppLockInteractorPresenterInterface!
         weak var view: AppLockViewPresenterInterface!
         var router: AppLockRouterPresenterInterface!
-
     }
-
 }
 
 // MARK: - Handle result
@@ -58,7 +56,6 @@ extension AppLockModule.Presenter: AppLockPresenterInteractorInterface {
             view.refresh(withModel: .locked(.unavailable))
         }
     }
-
 }
 
 // MARK: - Process event
@@ -84,7 +81,6 @@ extension AppLockModule.Presenter: AppLockPresenterViewInterface {
             router.performAction(.openDeviceSettings)
         }
     }
-
 }
 
 // MARK: - Helpers
@@ -95,5 +91,4 @@ extension AppLockModule.Presenter {
         view.refresh(withModel: .authenticating)
         interactor.executeRequest(.evaluateAuthentication)
     }
-
 }

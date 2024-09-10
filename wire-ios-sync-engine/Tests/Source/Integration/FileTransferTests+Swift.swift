@@ -462,7 +462,6 @@ extension FileTransferTests_Swift {
         XCTAssertEqual(message!.nonce, nonce)
         XCTAssertEqual(message!.transferState, AssetTransferState.uploading)
         XCTAssertTrue(message!.isEphemeral)
-
     }
 
     func testThatAFileUpload_AssetUploaded_MessageIsReceivedAndUpdatesTheOriginalMessageWhenSentRemotely_V3() {
@@ -547,7 +546,6 @@ extension FileTransferTests_Swift {
         let expectedPath = "/assets/v3/\(assetID.transportString())"
         XCTAssertEqual(lastRequest.path, expectedPath)
         XCTAssertEqual(message!.transferState, AssetTransferState.uploaded)
-
     }
 
     func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_V3() throws {

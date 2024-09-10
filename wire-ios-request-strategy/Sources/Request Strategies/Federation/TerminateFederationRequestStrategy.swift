@@ -53,7 +53,6 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return nil
     }
-
 }
 
 // MARK: - Event processing
@@ -88,10 +87,8 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
 
         default:
             break
-
         }
     }
-
 }
 
 extension Payload {
@@ -101,7 +98,6 @@ extension Payload {
 
         let domain: String
         let type: String
-
     }
 
     /// The list of domains that have terminated federation with each other.
@@ -109,7 +105,5 @@ extension Payload {
 
         let domains: [String]
         let type: String
-
     }
-
 }

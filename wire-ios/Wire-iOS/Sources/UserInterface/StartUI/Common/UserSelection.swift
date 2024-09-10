@@ -26,7 +26,6 @@ protocol UserSelectionObserver: AnyObject {
     func userSelection(_ userSelection: UserSelection, didAddUser user: UserType)
     func userSelection(_ userSelection: UserSelection, didRemoveUser user: UserType)
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType])
-
 }
 
 final class UserSelection: NSObject {

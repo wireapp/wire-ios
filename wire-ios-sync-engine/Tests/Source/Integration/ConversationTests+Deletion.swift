@@ -72,5 +72,4 @@ class ConversationTests_Deletion: ConversationTestsBase {
         // THEN
         XCTAssertFalse(teamConversation.isDeletedRemotely)
     }
-
 }

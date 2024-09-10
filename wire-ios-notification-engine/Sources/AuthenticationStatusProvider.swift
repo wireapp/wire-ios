@@ -21,12 +21,10 @@ import Foundation
 protocol AuthenticationStatusProvider {
 
     var state: AuthenticationState { get }
-
 }
 
 enum AuthenticationState {
 
     case authenticated
     case unauthenticated
-
 }

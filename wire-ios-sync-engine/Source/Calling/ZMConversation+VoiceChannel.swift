@@ -35,5 +35,4 @@ public extension ZMConversation {
             return voiceChannel
         }
     }
-
 }

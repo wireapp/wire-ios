@@ -103,5 +103,4 @@ final class FontBookSnapshotTests: XCTestCase {
     func testForButtonBigSemiboldFontStyle() {
         snapshotHelper.verifyForDynamicType(matching: setupLabel(style: .buttonBig))
     }
-
 }

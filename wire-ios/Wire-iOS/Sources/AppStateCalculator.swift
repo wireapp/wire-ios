@@ -119,7 +119,6 @@ extension AppState: SafeForLoggingStringConvertible {
             return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
         }
     }
-
 }
 
 // sourcery: AutoMockable

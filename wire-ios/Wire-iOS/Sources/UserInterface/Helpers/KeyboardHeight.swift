@@ -39,5 +39,4 @@ final class KeyboardHeight: NSObject {
         default: return 253
         }
     }
-
 }

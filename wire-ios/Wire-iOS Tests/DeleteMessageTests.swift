@@ -95,5 +95,4 @@ final class DeleteMessageTests: XCTestCase {
         let systemMessageCell = actionController(for: .systemMessage)
         XCTAssertFalse(systemMessageCell.canPerformAction(deleteAction))
     }
-
 }

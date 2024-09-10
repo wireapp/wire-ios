@@ -153,7 +153,6 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             case .failure(let error):
                 WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
-
         }
     }
 }
@@ -192,7 +191,6 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
             )
         }
     }
-
 }
 
 extension StartUIViewController: EmptySearchResultsViewDelegate {

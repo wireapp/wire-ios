@@ -45,5 +45,4 @@ public struct MLSFeatureConfig: Equatable, Codable {
     /// The list of supported message protocols.
 
     public let supportedProtocols: Set<MessageProtocol>
-
 }

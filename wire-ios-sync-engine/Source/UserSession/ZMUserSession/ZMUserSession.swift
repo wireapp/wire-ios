@@ -607,7 +607,6 @@ public final class ZMUserSession: NSObject {
     private func registerForBackgroundNotifications() {
         application.registerObserverForDidEnterBackground(self, selector: #selector(applicationDidEnterBackground(_:)))
         application.registerObserverForWillEnterForeground(self, selector: #selector(applicationWillEnterForeground(_:)))
-
     }
 
     private func enableBackgroundFetch() {
@@ -721,7 +720,6 @@ public final class ZMUserSession: NSObject {
     func purgeTemporaryAssets() throws {
         try dependencies.caches.fileAssets.purgeTemporaryAssets()
     }
-
 }
 
 // MARK: - ZMNetworkStateDelegate
@@ -740,7 +738,6 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             self?.isNetworkOnline = false
             self?.updateNetworkState()
             self?.saveOrRollbackChanges()
-
         }
     }
 

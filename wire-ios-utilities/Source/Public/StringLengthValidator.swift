@@ -81,5 +81,4 @@ open class StringLengthValidator: NSObject {
 
         return true
     }
-
 }

@@ -82,7 +82,6 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
             let expectedEncryptedMessage = serializedMessage.zmSHA256Digest()
             XCTAssertEqual(encryptedMessage, expectedEncryptedMessage)
         }
-
     }
 
     func test_EncryptForTransport_AssetClientMessage() async throws {
@@ -114,7 +113,5 @@ final class ZMClientMessageTests_MLSEncryptedPayloadGenerator: BaseZMClientMessa
             let expectedEncryptedMessage = serializedMessage.zmSHA256Digest()
             XCTAssertEqual(encryptedMessage, expectedEncryptedMessage)
         }
-
     }
-
 }

@@ -47,5 +47,4 @@ final class LogInStepDescription: AuthenticationStepDescription {
         secondaryView = nil
         footerView = nil
     }
-
 }

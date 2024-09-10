@@ -31,5 +31,4 @@ struct UpdateEventEnvelopeV0: Decodable, ToAPIModelConvertible {
             isTransient: transient ?? false
         )
     }
-
 }

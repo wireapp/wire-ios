@@ -160,5 +160,4 @@ final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
     func isFileProtectedUntilFirstUnlock(_ url: URL) -> Bool {
         return self.recordedAttributes[url.path] == FileProtectionType.completeUntilFirstUserAuthentication
     }
-
 }

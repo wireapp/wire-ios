@@ -36,7 +36,6 @@ final class ImagePickerConfirmationController: NSObject {
 
     /// We need to store this reference to close the @c SketchViewController
     private var presentingPickerController: UIImagePickerController?
-
 }
 
 extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
@@ -85,5 +84,4 @@ extension ImagePickerConfirmationController: UIImagePickerControllerDelegate {
 }
 
 extension ImagePickerConfirmationController: UINavigationControllerDelegate {
-
 }

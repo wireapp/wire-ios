@@ -30,7 +30,6 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
             self.selfUser = session.insertSelfUser(withName: "me")
             self.team = session.insertTeam(withName: "A Team", isBound: true)
             self.conversation = session.insertTeamConversation(to: self.team, with: [session.insertUser(withName: "some")], creator: self.selfUser)
-
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

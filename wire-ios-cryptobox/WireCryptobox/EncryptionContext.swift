@@ -111,9 +111,7 @@ public final class EncryptionContext: NSObject {
         // close cbox
         cbox_close(implementation.ptr)
         zmLog.debug("Closed cryptobox at path: \(path)")
-
     }
-
 }
 
 // MARK: - Start and stop using sessions
@@ -197,5 +195,4 @@ extension EncryptionContext {
     public func disableExtendedLoggingOnAllSessions() {
         self.extensiveLoggingSessions.removeAll()
     }
-
 }

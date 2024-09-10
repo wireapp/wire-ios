@@ -74,5 +74,4 @@ extension UserType {
     var expirationDisplayString: String? {
         return WirelessExpirationTimeFormatter.shared.string(for: self)
     }
-
 }

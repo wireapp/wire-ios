@@ -55,7 +55,6 @@ import Foundation
 
         expiringUsers.formUnion(notExpired)
     }
-
 }
 
 extension UserExpirationObserver: ZMTimerClient {

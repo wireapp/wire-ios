@@ -65,5 +65,4 @@ final class InvalidFeatureRemovalTests: DiskDatabaseTest {
         let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
         return context.fetchOrAssert(request: fetchRequest)
     }
-
 }

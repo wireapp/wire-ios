@@ -316,5 +316,4 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             XCTAssertNotNil(selfUser.selfClient())
         }
     }
-
 }

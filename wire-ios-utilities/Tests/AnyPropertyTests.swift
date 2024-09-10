@@ -121,5 +121,4 @@ class AnyPropertyTests: XCTestCase {
         XCTAssertEqual(firstMessage.numberOfLikes, 10)
         XCTAssertEqual(lastMessage.numberOfLikes, 5)
     }
-
 }

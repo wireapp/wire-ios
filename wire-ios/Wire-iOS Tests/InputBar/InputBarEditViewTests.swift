@@ -46,5 +46,4 @@ final class InputBarEditViewTests: XCTestCase {
             snapshotBackgroundColor: sut.backgroundColor ?? .white
         )
     }
-
 }

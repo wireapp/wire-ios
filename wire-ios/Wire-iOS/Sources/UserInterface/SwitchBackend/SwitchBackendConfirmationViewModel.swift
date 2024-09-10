@@ -78,7 +78,6 @@ final class SwitchBackendConfirmationViewModel {
 
         case userDidCancel
         case userDidConfirm
-
     }
 
     func handleEvent(_ event: Event) {
@@ -90,5 +89,4 @@ final class SwitchBackendConfirmationViewModel {
             didConfirm(true)
         }
     }
-
 }

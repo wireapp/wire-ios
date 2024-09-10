@@ -33,7 +33,6 @@ extension UITableViewCell {
     @objc func didEndDisplayingCell() {
         // to be overriden in subclasses
     }
-
 }
 
 class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescription>: UITableViewCell, SelectableView, HighlightableView, ConversationMessageCellMenuPresenter {
@@ -294,5 +293,4 @@ extension UITableView {
 
         return cell
     }
-
 }

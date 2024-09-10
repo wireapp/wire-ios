@@ -148,5 +148,4 @@ class ZiphyClientTests: XCTestCase {
             self.requester.respond()
         }
     }
-
 }

@@ -31,7 +31,6 @@ final class MockAddressBookHelper: NSObject, AddressBookHelperProtocol {
     static var sharedHelper: AddressBookHelperProtocol = MockAddressBookHelper()
 
     func persistCurrentAccessStatus() {
-
     }
 
     var isAddressBookAccessGranted: Bool {

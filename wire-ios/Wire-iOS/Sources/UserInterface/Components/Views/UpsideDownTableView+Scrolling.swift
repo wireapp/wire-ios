@@ -37,7 +37,6 @@ extension UpsideDownTableView {
             completion?(cell)
         }
     }
-
 }
 
 private extension UITableView {

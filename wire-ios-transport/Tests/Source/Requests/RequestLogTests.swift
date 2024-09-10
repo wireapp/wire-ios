@@ -51,5 +51,4 @@ class RequestLogTests: XCTestCase {
         }
         XCTAssertEqual(sut.headers["Authorization"], "*******")
     }
-
 }

@@ -27,7 +27,6 @@ protocol UserUpdateEventProcessorProtocol {
     /// - Parameter event: A user update event.
 
     func processEvent(_ event: UserUpdateEvent) async throws
-
 }
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
         // TODO: [WPB-10200]
         assertionFailure("not implemented yet")
     }
-
 }

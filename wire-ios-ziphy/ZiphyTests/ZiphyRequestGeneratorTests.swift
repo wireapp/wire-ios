@@ -70,5 +70,4 @@ class ZiphyRequestGeneratorTests: XCTestCase {
             XCTFail("URL generation failed with error: \(error)")
         }
     }
-
 }

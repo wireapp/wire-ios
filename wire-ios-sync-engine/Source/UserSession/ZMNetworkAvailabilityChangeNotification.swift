@@ -47,7 +47,6 @@ public class ZMNetworkAvailabilityChangeNotification: NSObject {
             userInfo: [stateKey: networkState]
         ).post()
     }
-
 }
 
 public protocol ZMNetworkAvailabilityObserver: AnyObject {

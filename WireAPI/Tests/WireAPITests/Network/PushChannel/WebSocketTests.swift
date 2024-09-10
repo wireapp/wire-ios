@@ -218,5 +218,4 @@ final class WebSocketTests: XCTestCase {
         // Then all messages were received in order
         XCTAssertEqual(receivedMessages, messages)
     }
-
 }

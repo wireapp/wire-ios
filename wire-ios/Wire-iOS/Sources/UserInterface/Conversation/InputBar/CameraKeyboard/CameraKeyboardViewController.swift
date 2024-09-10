@@ -413,9 +413,7 @@ class CameraKeyboardViewController: UIViewController {
                 })
             }
         }
-
     }
-
 }
 
 // MARK: - CameraKeyboardViewController - UICollectionViewDelegate - UICollectionViewDataSource

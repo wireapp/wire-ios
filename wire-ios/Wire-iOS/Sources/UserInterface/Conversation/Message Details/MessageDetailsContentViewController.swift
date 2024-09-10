@@ -28,7 +28,6 @@ struct MessageDetailsSectionDescription {
 
     var headerText: String?
     var items: [MessageDetailsCellDescription]
-
 }
 
 /**
@@ -210,7 +209,6 @@ final class MessageDetailsContentViewController: UIViewController {
                 title = MessageDetails.receiptsTitle
             } else {
                 title = MessageDetails.Tabs.seen(count)
-
             }
 
         case .reactions:
@@ -289,7 +287,6 @@ final class MessageDetailsContentViewController: UIViewController {
         collectionView.reloadData()
         self.updateFooterPosition(for: collectionView)
     }
-
 }
 
 // MARK: - UICollectionViewDataSource
@@ -395,7 +392,6 @@ extension MessageDetailsContentViewController: UICollectionViewDataSource, UICol
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateFooterPosition(for: scrollView)
     }
-
 }
 
 // MARK: - ViewControllerDismisser
@@ -436,5 +432,4 @@ extension MessageDetailsContentViewController {
 
         present(presentedController, animated: true)
     }
-
 }

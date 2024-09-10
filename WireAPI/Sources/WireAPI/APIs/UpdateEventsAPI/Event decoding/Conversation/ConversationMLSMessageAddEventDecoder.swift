@@ -54,7 +54,5 @@ struct ConversationMLSMessageAddEventDecoder {
     private struct Payload: Decodable {
 
         let text: String
-
     }
-
 }

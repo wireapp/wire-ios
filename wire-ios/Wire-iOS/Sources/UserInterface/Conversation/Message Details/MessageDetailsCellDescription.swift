@@ -51,7 +51,6 @@ final class MessageDetailsCellDescription: NSObject {
         self.accessibleSubtitleLabel = accessibleSubtitleLabel
         self.accessibleSubtitleValue = accessibleSubtitleValue
     }
-
 }
 
 // MARK: - Helpers
@@ -79,5 +78,4 @@ extension MessageDetailsCellDescription {
                                                  accessibleSubtitleValue: formattedAccessibleDate)
         }
     }
-
 }

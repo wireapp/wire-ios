@@ -56,7 +56,6 @@ public protocol ProteusServiceInterface {
     func localFingerprint() async throws -> String
     func remoteFingerprint(forSession id: ProteusSessionID) async throws -> String
     func fingerprint(fromPrekey prekey: String) async throws -> String
-
 }
 
 public typealias IdPrekeyTuple = (id: UInt16, prekey: String)

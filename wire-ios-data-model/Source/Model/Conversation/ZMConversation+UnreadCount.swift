@@ -37,5 +37,4 @@ extension ZMConversation {
             conversations.forEach { $0.calculateLastUnreadMessages() }
         }
     }
-
 }

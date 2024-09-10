@@ -56,6 +56,5 @@ extension Payload.Conversation {
             messageProtocol: messageProtocol,
             mlsGroupID: mlsGroupID
         )
-
     }
 }

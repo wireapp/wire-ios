@@ -47,5 +47,4 @@ final class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEve
             return nil
         }
     }
-
 }

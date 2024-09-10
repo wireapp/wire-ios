@@ -26,7 +26,6 @@ protocol MLSClientIDsProviding {
         for userID: QualifiedID,
         in context: NotificationContext
     ) async throws -> [MLSClientID]
-
 }
 
 struct MLSClientIDsProvider: MLSClientIDsProviding {

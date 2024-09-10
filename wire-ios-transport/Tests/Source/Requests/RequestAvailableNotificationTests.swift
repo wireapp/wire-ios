@@ -26,7 +26,6 @@ import XCTest
     func newRequestsAvailable() {
         requestsAvailable = true
     }
-
 }
 
 class RequestAvailableNotificationTests: XCTestCase {
@@ -69,5 +68,4 @@ class RequestAvailableNotificationTests: XCTestCase {
         // then
         XCTAssertFalse(sut.requestsAvailable)
     }
-
 }

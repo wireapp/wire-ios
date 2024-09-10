@@ -33,7 +33,5 @@ public extension Feature {
         public init(status: Feature.Status = .disabled) {
             self.status = status
         }
-
     }
-
 }

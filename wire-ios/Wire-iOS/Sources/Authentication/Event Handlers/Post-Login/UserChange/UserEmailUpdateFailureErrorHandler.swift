@@ -47,5 +47,4 @@ final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
 
         return actions
     }
-
 }

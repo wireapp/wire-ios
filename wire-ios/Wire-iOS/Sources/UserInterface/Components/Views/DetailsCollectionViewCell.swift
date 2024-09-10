@@ -187,5 +187,4 @@ class DetailsCollectionViewCell: SeparatorCollectionViewCell, DynamicTypeCapable
 
         titleLabel.font = titleBolded ? FontSpec.normalSemiboldFont.font : FontSpec.normalLightFont.font
     }
-
 }

@@ -51,9 +51,6 @@ public extension Conversation {
             case hiddenReference = "otr_hidden_ref"
             case mutedStatus = "otr_muted_status"
             case mutedReference = "otr_muted_ref"
-
         }
-
     }
-
 }

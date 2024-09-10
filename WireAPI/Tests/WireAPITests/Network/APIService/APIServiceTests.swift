@@ -155,7 +155,6 @@ final class APIServiceTests: XCTestCase {
             )
         }
     }
-
 }
 
 private enum Scaffolding {
@@ -177,5 +176,4 @@ private enum Scaffolding {
         type: "Bearer",
         validityInSeconds: 900
     )
-
 }

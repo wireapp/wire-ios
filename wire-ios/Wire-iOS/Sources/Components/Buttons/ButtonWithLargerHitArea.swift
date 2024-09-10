@@ -53,5 +53,4 @@ class ButtonWithLargerHitArea: DynamicFontButton {
 
         return bounds.insetBy(dx: -hitAreaPadding.width, dy: -hitAreaPadding.height).contains(point)
     }
-
 }

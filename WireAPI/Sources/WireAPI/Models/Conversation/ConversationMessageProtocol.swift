@@ -34,5 +34,4 @@ public enum ConversationMessageProtocol: String, Codable {
     /// The Messaging Layer Security protocol.
 
     case mls
-
 }

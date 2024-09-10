@@ -93,7 +93,6 @@ extension SelfProfileViewController {
 
         return resultViewController
     }
-
 }
 
 extension UIAlertController {
@@ -136,5 +135,4 @@ extension UIAlertController {
 
         self.init(title: title, message: messageFormat, preferredStyle: .alert)
     }
-
 }

@@ -101,7 +101,6 @@ final class StatusMessageTypeTests: XCTestCase {
             default:
                 XCTAssertNil(statusMessageType.localizedString(with: count))
             }
-
         }
     }
 }

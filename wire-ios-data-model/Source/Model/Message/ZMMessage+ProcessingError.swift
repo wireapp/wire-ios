@@ -33,7 +33,5 @@ extension ZMMessage {
                 return "Failed to process message data. Reason: \(reason)"
             }
         }
-
     }
-
 }

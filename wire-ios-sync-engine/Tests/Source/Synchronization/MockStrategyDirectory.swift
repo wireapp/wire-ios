@@ -28,5 +28,4 @@ public class MockStrategyDirectory: NSObject, StrategyDirectoryProtocol {
     public var requestStrategies: [RequestStrategy] = []
 
     public var contextChangeTrackers: [ZMContextChangeTracker] = []
-
 }

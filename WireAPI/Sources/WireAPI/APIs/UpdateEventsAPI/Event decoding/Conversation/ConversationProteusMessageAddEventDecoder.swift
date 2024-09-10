@@ -60,7 +60,5 @@ struct ConversationProteusMessageAddEventDecoder {
         let data: String?
         let sender: String
         let recipient: String
-
     }
-
 }

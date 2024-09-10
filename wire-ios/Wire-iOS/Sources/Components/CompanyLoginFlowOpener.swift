@@ -120,5 +120,4 @@ final class CompanyLoginFlowHandler {
         activeWebBrowser = safariViewController
         UIApplication.shared.topmostViewController()?.present(safariViewController, animated: true, completion: nil)
     }
-
 }

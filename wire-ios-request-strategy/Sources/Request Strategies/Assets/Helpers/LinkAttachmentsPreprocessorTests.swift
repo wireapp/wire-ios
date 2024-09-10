@@ -34,7 +34,6 @@ final class MockAttachmentDetector: LinkAttachmentDetectorType {
         excludedRanges = excluding
         completion(nextResult)
     }
-
 }
 
 class LinkAttachmentsPreprocessorTests: MessagingTestBase {
@@ -262,5 +261,4 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
         }
     }
-
 }

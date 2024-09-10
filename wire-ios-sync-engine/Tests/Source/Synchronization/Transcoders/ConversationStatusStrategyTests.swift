@@ -143,6 +143,5 @@ class ConversationStatusStrategyTests: MessagingTest {
             }
             XCTAssertTrue(message.underlyingMessage?.hasLastRead ?? false)
         }
-
     }
 }

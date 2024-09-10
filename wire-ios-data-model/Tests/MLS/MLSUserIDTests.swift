@@ -51,5 +51,4 @@ final class MLSUserIDTests: XCTestCase {
         XCTAssertNil(MLSUserID(rawValue: "foo@bar@"))
         XCTAssertNotNil(MLSUserID(rawValue: "foo@bar"))
     }
-
 }

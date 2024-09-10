@@ -36,5 +36,4 @@ final class MLSMessageSendingStatusPayloadProcessor {
             message.addFailedToSendRecipients(failedToSendUsers)
         }
     }
-
 }

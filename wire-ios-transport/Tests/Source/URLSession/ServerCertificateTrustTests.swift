@@ -50,7 +50,6 @@ extension SecTrust {
 
         return trust
     }
-
 }
 
 class BackendTrustProviderTests: XCTestCase {
@@ -88,7 +87,6 @@ class BackendTrustProviderTests: XCTestCase {
             self.pinnedKeys = try decoder.decode(PinnedKeysData.self, from: trustData)
         } catch {
             XCTFail("Error reading pinned keys: \(error)")
-
         }
 
         sut = ServerCertificateTrust(trustData: pinnedKeys.pinnedKeys)

@@ -34,5 +34,4 @@ extension IntegrationTest {
     func setBackendInfoIsFederationEnabled(_ isEnabled: Bool) {
         BackendInfo.isFederationEnabled = isEnabled
     }
-
 }

@@ -60,7 +60,5 @@ final class CallQualityPresentationTransition: NSObject, UIViewControllerAnimate
         UIView.animate(withDuration: duration, delay: 0, options: .systemPresentationCurve, animations: animations) { finished in
             transitionContext.completeTransition((transitionContext.transitionWasCancelled == false) && finished)
         }
-
     }
-
 }

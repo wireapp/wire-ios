@@ -65,5 +65,4 @@ extension UIImage {
 
         self.init(contentsOfFile: url!.path)!
     }
-
 }

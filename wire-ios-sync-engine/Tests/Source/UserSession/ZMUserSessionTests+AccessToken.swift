@@ -59,7 +59,5 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         } else {
             XCTAssertEqual(transportSession.renewAccessTokenCalls.count, 0)
         }
-
     }
-
 }

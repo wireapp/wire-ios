@@ -144,7 +144,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                     await mlsGroupVerification.updateAllConversations()
 
                     shouldNotifyAboutRevokedCertificate = true
-
                 }
             } catch {
                 logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
@@ -184,9 +183,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         } catch {
             logger.warn("failed to fetch certificate for self client: \(error)")
         }
-
     }
-
 }
 
 public extension Notification.Name {

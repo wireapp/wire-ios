@@ -164,5 +164,4 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     func buttonTapped(_ sender: UIButton) {
         buttonAction?()
     }
-
 }

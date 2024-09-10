@@ -25,7 +25,6 @@ import WireSyncEngine
 protocol UnlockViewControllerDelegate: AnyObject {
 
     func unlockViewControllerDidUnlock()
-
 }
 
 /// UnlockViewController

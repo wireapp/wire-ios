@@ -361,5 +361,4 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
         return response
     }
-
 }

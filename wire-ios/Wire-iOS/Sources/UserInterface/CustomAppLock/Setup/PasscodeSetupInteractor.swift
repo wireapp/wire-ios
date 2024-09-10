@@ -61,5 +61,4 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
             break
         }
     }
-
 }

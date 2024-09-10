@@ -31,7 +31,6 @@ public protocol ConversationParticipantsServiceInterface {
         _ user: ZMUser,
         from conversation: ZMConversation
     ) async throws
-
 }
 
 enum FederationError: Error, Equatable {
@@ -284,5 +283,4 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
             try await mlsParticipantsService.removeParticipant(user, from: conversation)
         }
     }
-
 }

@@ -72,7 +72,5 @@ final class MockAppLock: AppLockType {
     struct MethodCalls {
 
         var beginTimer: [Void] = []
-
     }
-
 }

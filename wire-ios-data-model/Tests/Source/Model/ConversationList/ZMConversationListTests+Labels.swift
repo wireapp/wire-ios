@@ -100,5 +100,4 @@ final class ZMConversationListTests_Labels: ZMBaseManagedObjectTest {
         // then
         XCTAssertEqual(uiMOC.conversationListDirectory().conversations(by: .folder(folder)).count, 0)
     }
-
 }

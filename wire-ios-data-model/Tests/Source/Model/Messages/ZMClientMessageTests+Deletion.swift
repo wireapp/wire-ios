@@ -460,7 +460,6 @@ extension ZMClientMessageTests_Deletion {
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
     }
-
 }
 
 // MARK: - Ephemeral
@@ -591,7 +590,6 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertNil(clientMessage.underlyingMessage, line: line)
         }
     }
-
 }
 
 final private class AssetDeletionNotificationObserver: NSObject {
@@ -607,5 +605,4 @@ final private class AssetDeletionNotificationObserver: NSObject {
         guard let identifier = note.object as? String else { return }
         deletedIdentifiers.append(identifier)
     }
-
 }

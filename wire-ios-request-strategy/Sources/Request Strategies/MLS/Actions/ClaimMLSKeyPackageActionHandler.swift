@@ -86,7 +86,6 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             action.fail(with: .unknown(status: response.httpStatus))
         }
     }
-
 }
 
 extension ClaimMLSKeyPackageActionHandler {
@@ -100,5 +99,4 @@ extension ClaimMLSKeyPackageActionHandler {
             case keyPackages = "key_packages"
         }
     }
-
 }

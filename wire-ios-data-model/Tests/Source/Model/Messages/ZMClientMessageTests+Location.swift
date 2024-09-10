@@ -54,5 +54,4 @@ class ClientMessageTests_Location: BaseZMMessageTests {
         // then
         XCTAssertNil(clientMessage.locationMessageData)
     }
-
 }

@@ -65,5 +65,4 @@ final class RotationAwareNavigationController: UINavigationController {
     override var childForStatusBarHidden: UIViewController? {
         return topViewController
     }
-
 }

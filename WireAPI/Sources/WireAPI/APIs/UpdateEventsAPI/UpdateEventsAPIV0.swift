@@ -94,5 +94,4 @@ class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
                 .parse(response)
         }
     }
-
 }

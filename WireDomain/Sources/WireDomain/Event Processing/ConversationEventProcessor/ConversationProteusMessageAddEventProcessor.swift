@@ -27,7 +27,6 @@ protocol ConversationProteusMessageAddEventProcessorProtocol {
     /// - Parameter event: A conversation proteus message add event.
 
     func processEvent(_ event: ConversationProteusMessageAddEvent) async throws
-
 }
 
 struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAddEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         // TODO: [WPB-10174]
         assertionFailure("not implemented yet")
     }
-
 }

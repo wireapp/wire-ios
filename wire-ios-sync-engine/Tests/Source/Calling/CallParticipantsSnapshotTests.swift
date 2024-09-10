@@ -274,5 +274,4 @@ private extension AVSCallMember {
                              videoState: videoState,
                              microphoneState: microphoneState)
     }
-
 }

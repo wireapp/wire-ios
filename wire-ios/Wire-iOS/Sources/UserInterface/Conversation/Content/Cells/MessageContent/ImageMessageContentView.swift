@@ -67,5 +67,4 @@ final class ImageContentView: UIView {
         imageWidthConstraint.constant = contentSize.width
         imageView.contentMode = resource.contentMode
     }
-
 }

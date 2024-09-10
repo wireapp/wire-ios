@@ -600,7 +600,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         let messageKey = count > 1 ? DegradationReasonMessageLocale.plural(users) : DegradationReasonMessageLocale.singular(users)
         return messageKey
     }
-
 }
 
 // MARK: - Authentication

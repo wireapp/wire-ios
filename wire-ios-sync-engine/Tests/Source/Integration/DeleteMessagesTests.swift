@@ -221,5 +221,4 @@ class DeleteMessagesTests: ConversationTestsBase {
         XCTAssertTrue(message.hasBeenDeleted)
         XCTAssertEqual(conversation.allMessages.count, 1) // system message
     }
-
 }

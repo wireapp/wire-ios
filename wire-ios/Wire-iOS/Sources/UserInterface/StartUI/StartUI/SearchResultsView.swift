@@ -183,7 +183,5 @@ final class SearchResultsView: UIView {
             collectionView.horizontalScrollIndicatorInsets.bottom = 0
             collectionView.verticalScrollIndicatorInsets.bottom = 0
         }
-
     }
-
 }

@@ -250,7 +250,6 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         var eventsToProcess = [ZMUpdateEvent]()
         var eventsToDelete = [StoredUpdateEvent]()
-
     }
 
     private static func extractUpdateEvent(
@@ -297,7 +296,6 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         case temporary
         case permanent
-
     }
 
     // MARK: - Encryption at Rest
@@ -396,7 +394,5 @@ public final class StoredUpdateEvent: NSManagedObject {
         case privateKeyUnavailable
         case decryptionError
         case serializationError
-
     }
-
 }

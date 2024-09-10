@@ -39,7 +39,6 @@ extension UIImage {
 
         return UIImage(cgImage: rawDecodedImage)
     }
-
 }
 
 private extension CGContext {
@@ -53,5 +52,4 @@ private extension CGContext {
                          space: CGColorSpaceCreateDeviceRGB(),
                          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
     }
-
 }

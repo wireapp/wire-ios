@@ -27,5 +27,4 @@ extension HTTPCookie {
     @objc public class func validCookieData(string: String) -> Data {
         HTTPCookie.extractCookieData(from: string, url: URL(string: "https://example.com")!)!
     }
-
 }

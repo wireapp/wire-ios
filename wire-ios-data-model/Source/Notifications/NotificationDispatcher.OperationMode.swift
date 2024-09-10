@@ -36,7 +36,5 @@ public extension NotificationDispatcher {
         /// Change detection is minimal and observers are notified infrequently.
 
         case economical
-
     }
-
 }

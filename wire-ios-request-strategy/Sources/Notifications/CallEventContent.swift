@@ -27,7 +27,6 @@ public struct CallEventContent: Codable {
         case callerUserID = "src_userid"
         case callerClientID = "src_clientid"
         case resp
-
     }
 
     // MARK: - Properties
@@ -143,7 +142,6 @@ public struct CallEventContent: Codable {
 
         return properties.isVideo
     }
-
 }
 
 extension CallEventContent {
@@ -156,7 +154,6 @@ extension CallEventContent {
             return videosend == "true"
         }
     }
-
 }
 
 extension ZMUpdateEvent {
@@ -164,5 +161,4 @@ extension ZMUpdateEvent {
     var isCallEvent: Bool {
         return CallEventContent(from: self) != nil
     }
-
 }

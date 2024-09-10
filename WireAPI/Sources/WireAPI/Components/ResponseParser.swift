@@ -113,5 +113,4 @@ struct ResponseParser<Success> {
             throw ParsingError.noParseResult
         }
     }
-
 }

@@ -204,5 +204,4 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         block()
         observer?.dataSourceDidChange(self)
     }
-
 }

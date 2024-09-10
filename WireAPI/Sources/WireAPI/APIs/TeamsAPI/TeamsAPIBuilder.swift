@@ -55,5 +55,4 @@ public struct TeamsAPIBuilder {
             TeamsAPIV6(httpClient: httpClient)
         }
     }
-
 }

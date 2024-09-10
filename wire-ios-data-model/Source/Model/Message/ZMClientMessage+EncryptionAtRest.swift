@@ -35,5 +35,4 @@ extension ZMClientMessage: EncryptionAtRestMigratable {
     ) {
         updateNormalizedText()
     }
-
 }

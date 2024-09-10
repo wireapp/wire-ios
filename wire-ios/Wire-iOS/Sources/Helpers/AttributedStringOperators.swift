@@ -251,5 +251,4 @@ extension NSMutableAttributedString {
 
         addAttributes(attributes, range: substringRange)
     }
-
 }

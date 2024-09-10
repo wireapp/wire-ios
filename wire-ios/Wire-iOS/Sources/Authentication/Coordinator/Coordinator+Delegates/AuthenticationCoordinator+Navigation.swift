@@ -54,5 +54,4 @@ extension AuthenticationCoordinator: UINavigationControllerDelegate {
         self.currentViewController = authenticationViewController
         stateController.unwindState()
     }
-
 }

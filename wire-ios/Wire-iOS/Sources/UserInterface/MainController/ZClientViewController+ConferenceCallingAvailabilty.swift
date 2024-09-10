@@ -93,7 +93,6 @@ extension ZClientViewController {
     private func confirmChanges() {
         userSession.acknowledgeFeatureChange(for: .conferenceCalling)
     }
-
 }
 
 extension ZClientViewController: ConferenceCallingUnavailableObserver {
@@ -117,5 +116,4 @@ extension ZClientViewController: ConferenceCallingUnavailableObserver {
             presentConferenceCallingRestrictionAlertForPersonalAccount()
         }
     }
-
 }

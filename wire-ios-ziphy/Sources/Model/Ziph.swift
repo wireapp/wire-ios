@@ -60,5 +60,4 @@ public struct Ziph: Codable {
     public enum CodingKeys: String, CodingKey {
         case title, images, identifier = "id"
     }
-
 }

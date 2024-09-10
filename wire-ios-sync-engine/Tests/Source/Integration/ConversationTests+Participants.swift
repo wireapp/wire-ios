@@ -147,5 +147,4 @@ class ConversationTests_Participants: ConversationTestsBase {
         let note1 = observer?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertEqual(note1.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex), to: 0))
     }
-
 }

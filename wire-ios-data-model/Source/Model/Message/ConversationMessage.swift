@@ -45,7 +45,6 @@ public protocol ReadReceipt {
     var userType: UserType { get }
 
     var serverTimestamp: Date? { get }
-
 }
 
 @objc
@@ -178,7 +177,6 @@ public protocol SwiftConversationMessage {
 
     /// The list of users who didn't receive the message (e.g their backend is offline)
     var failedToSendUsers: [UserType] { get }
-
 }
 
 public extension ZMConversationMessage {
@@ -305,7 +303,6 @@ extension ZMMessage: ZMConversationMessage {
 
         return fileSharingFeature.status == .disabled
     }
-
 }
 
 extension ZMMessage {
@@ -404,5 +401,4 @@ extension ZMMessage {
 extension ZMMessage {
 
     @NSManaged public var failedToSendRecipients: Set<ZMUser>?
-
 }

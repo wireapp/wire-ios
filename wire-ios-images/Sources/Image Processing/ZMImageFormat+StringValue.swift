@@ -57,5 +57,4 @@ public extension ZMImageFormat {
             return "smallProfile"
         }
     }
-
 }

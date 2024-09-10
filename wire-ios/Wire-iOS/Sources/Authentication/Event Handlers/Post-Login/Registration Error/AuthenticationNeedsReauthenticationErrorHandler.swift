@@ -57,5 +57,4 @@ final class AuthenticationNeedsReauthenticationErrorHandler: AuthenticationEvent
 
         return [.hideLoadingView, .transition(nextStep, mode: .reset), .presentAlert(alert)]
     }
-
 }

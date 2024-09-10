@@ -60,5 +60,4 @@ extension ZMConversation: EncryptionAtRestMigratable {
         draftMessageData = plaintext
         draftMessageNonce = nil
     }
-
 }

@@ -103,7 +103,6 @@ extension ConversationInputBarViewController {
             button.accessibilityValue = value
         }
     }
-
 }
 
 private extension MessageDestructionTimeoutValue {
@@ -134,7 +133,6 @@ private extension MessageDestructionTimeoutValue {
             return nil
         }
     }
-
 }
 
 extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDelegate {
@@ -154,7 +152,6 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
             self.updateRightAccessoryView()
         }
     }
-
 }
 
 extension ConversationInputBarViewController {
@@ -182,5 +179,4 @@ extension ConversationInputBarViewController {
             dismissEphemeralController()
         }
     }
-
 }

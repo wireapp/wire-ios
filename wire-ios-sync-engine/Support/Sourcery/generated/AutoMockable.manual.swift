@@ -70,7 +70,6 @@ public class MockMessageSenderInterface: MessageSenderInterface {
 
         try await mock(message)
     }
-
 }
 
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {
@@ -98,5 +97,4 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
 
         try await mock(clients, apiVersion)
     }
-
 }

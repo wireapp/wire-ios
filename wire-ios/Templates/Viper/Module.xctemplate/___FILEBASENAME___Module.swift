@@ -30,7 +30,6 @@ enum ___FILEBASENAMEASIDENTIFIER___: ModuleInterface {
 
         return view
     }
-
 }
 
 extension ___FILEBASENAMEASIDENTIFIER___ {
@@ -38,7 +37,6 @@ extension ___FILEBASENAMEASIDENTIFIER___ {
   enum Event: Equatable {
 
       case viewDidLoad
-
   }
 
   enum Request: Equatable {}
@@ -46,7 +44,6 @@ extension ___FILEBASENAMEASIDENTIFIER___ {
   enum Result: Equatable {}
 
   enum Action: Equatable {}
-
 }
 
 // MARK: - Interactor
@@ -54,7 +51,6 @@ extension ___FILEBASENAMEASIDENTIFIER___ {
 protocol ___VARIABLE_productName:identifier___InteractorPresenterInterface: InteractorPresenterInterface {
 
     func executeRequest(_ request: ___FILEBASENAMEASIDENTIFIER___.Request)
-
 }
 
 // MARK: - Presenter
@@ -62,13 +58,11 @@ protocol ___VARIABLE_productName:identifier___InteractorPresenterInterface: Inte
 protocol ___VARIABLE_productName:identifier___PresenterInteractorInterface: PresenterInteractorInterface {
 
     func handleResult(_ result: ___FILEBASENAMEASIDENTIFIER___.Result)
-
 }
 
 protocol ___VARIABLE_productName:identifier___PresenterViewInterface: PresenterViewInterface {
 
     func processEvent(_ event: ___FILEBASENAMEASIDENTIFIER___.Event)
-
 }
 
 // MARK: - View
@@ -76,7 +70,6 @@ protocol ___VARIABLE_productName:identifier___PresenterViewInterface: PresenterV
 protocol ___VARIABLE_productName:identifier___ViewPresenterInterface: ViewPresenterInterface {
 
     func refresh(withModel model: ___FILEBASENAMEASIDENTIFIER___.ViewModel)
-
 }
 
 // MARK: - Router
@@ -84,5 +77,4 @@ protocol ___VARIABLE_productName:identifier___ViewPresenterInterface: ViewPresen
 protocol ___VARIABLE_productName:identifier___RouterPresenterInterface: RouterPresenterInterface {
 
     func performAction(_ action: ___FILEBASENAMEASIDENTIFIER___.Action)
-
 }

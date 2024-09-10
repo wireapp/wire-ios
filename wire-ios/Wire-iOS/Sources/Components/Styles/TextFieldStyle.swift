@@ -49,5 +49,4 @@ extension UITextField: Stylable {
         layer.cornerRadius = style.cornerRadius
         layer.borderColor = style.borderColorNotSelected.cgColor
     }
-
 }

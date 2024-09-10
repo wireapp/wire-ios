@@ -122,7 +122,6 @@ extension DuplicatedEntityRemovalTests {
             XCTAssertFalse($0.clients.contains(client2))
         }
     }
-
 }
 
 extension Array where Element: ZMManagedObject {

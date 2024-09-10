@@ -103,5 +103,4 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             XCTAssertFalse(user.needsRichProfileUpdate)
         }
     }
-
 }

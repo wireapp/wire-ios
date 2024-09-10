@@ -27,7 +27,6 @@ fileprivate extension Notification {
             NSDeletedObjectsKey: Set<NSManagedObject>(deleted)
         ])
     }
-
 }
 
 class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
@@ -76,7 +75,6 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
 
         // Then
         XCTAssertEqual(sut.storedNotifications.count, 0)
-
     }
 
     func testThatItCanSaveMultipleNotifications() {
@@ -119,7 +117,6 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
             XCTAssertEqual(value as? Set<NSManagedObject>, secondExpected[key] as? Set<NSManagedObject>)
         }
     }
-
 }
 
 class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
@@ -165,9 +162,7 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
 
         // Then
         XCTAssertEqual(sut.storedTrackingEvents.count, 0)
-
     }
-
 }
 
 class ShareObjectStoreTests: ZMTBaseTest {
@@ -205,5 +200,4 @@ class ShareObjectStoreTests: ZMTBaseTest {
         let items = sut.load()
         XCTAssertEqual(items.first?.flag, item.flag)
     }
-
 }

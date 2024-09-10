@@ -34,9 +34,6 @@ public extension Conversation {
 
             case others
             case selfMember = "self"
-
         }
-
     }
-
 }

@@ -57,5 +57,4 @@ public struct ConversationRenameEvent: Equatable, Codable {
         self.timestamp = timestamp
         self.newName = newName
     }
-
 }

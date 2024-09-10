@@ -377,5 +377,4 @@ private enum Scaffolding {
             messageRecipientClientID: selfClientID
         )
     }
-
 }

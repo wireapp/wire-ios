@@ -71,7 +71,6 @@ struct URLRequestBuilder {
         mutation(&copy)
         return copy
     }
-
 }
 
 extension URLRequestBuilder {
@@ -85,5 +84,4 @@ extension URLRequestBuilder {
             contentType: .json
         )
     }
-
 }

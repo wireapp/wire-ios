@@ -214,5 +214,4 @@ class MetaStreamContainerTests: XCTestCase {
         XCTAssertEqual(sut.bytes, expected)
         XCTAssertEqual(sut.stringContent, "FirstSecond")
     }
-
 }

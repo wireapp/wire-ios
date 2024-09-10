@@ -47,5 +47,4 @@ enum HTTPStatusCode: Int {
     /// service unavailable - 503
 
     case serviceUnavailable = 503
-
 }

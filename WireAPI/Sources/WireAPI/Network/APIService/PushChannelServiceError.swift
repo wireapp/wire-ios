@@ -29,5 +29,4 @@ public enum PushChannelServiceError: Error {
     /// An access token is required but none is available.
 
     case missingAccessToken
-
 }

@@ -364,5 +364,4 @@ class GenericMessageTests_Obfuscation: ZMBaseManagedObjectTest {
         XCTAssertEqual(obfuscatedMessage?.location.longitude, 0.0)
         XCTAssertEqual(obfuscatedMessage?.location.latitude, 0.0)
     }
-
 }

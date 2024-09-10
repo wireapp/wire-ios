@@ -208,5 +208,4 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.2), line: line)
         }
     }
-
 }

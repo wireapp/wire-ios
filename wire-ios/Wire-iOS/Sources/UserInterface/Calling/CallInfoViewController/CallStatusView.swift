@@ -102,7 +102,6 @@ final class CallStatusView: UIView {
             $0.textColor = SemanticColors.Label.textDefault
         }
     }
-
 }
 
 // MARK: - Helper

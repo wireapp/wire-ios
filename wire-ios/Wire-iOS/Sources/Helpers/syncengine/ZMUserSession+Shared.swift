@@ -23,5 +23,4 @@ extension ZMUserSession {
     static func shared() -> ZMUserSession? {
         return SessionManager.shared?.activeUserSession
     }
-
 }

@@ -59,5 +59,4 @@ class HotFix_PendingChangesTests: IntegrationTestBase {
         // then
         XCTAssertFalse(userSession.isPendingHotFixChanges)
     }
-
 }

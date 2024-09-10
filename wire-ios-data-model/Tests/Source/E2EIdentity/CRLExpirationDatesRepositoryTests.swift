@@ -137,5 +137,4 @@ class CRLExpirationDatesRepositoryTests: XCTestCase {
         XCTAssertNotNil(date2)
         XCTAssertEqual(date2, distantFuture)
     }
-
 }

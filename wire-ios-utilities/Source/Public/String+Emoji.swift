@@ -46,7 +46,6 @@ extension Unicode.Scalar {
         return (CharacterSet.symbols.contains(self) && !CharacterSet.asciiPrintableSet.contains(self)) ||
             self.isEmojiComponentOrMiscSymbol
     }
-
 }
 
 extension Character {

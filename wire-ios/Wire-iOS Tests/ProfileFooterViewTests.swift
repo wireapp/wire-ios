@@ -106,5 +106,4 @@ final class ProfileFooterViewTests: XCTestCase {
 
         return view
     }
-
 }

@@ -62,5 +62,4 @@ final class NSMutableAttributedStringReplaceEmojiTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.string, "❤ Lorem Ipsum Dolor 😈Amed. 😊")
     }
-
 }

@@ -29,7 +29,6 @@ protocol Renderable: AnyObject {
     var bounds: CGRect { get }
 
     func draw(context: CGContext)
-
 }
 
 protocol Editable: Renderable {
@@ -58,7 +57,6 @@ struct Orientation {
 public protocol CanvasDelegate: AnyObject {
 
     func canvasDidChange(_ canvas: Canvas)
-
 }
 
 public final class Canvas: UIView {
@@ -373,7 +371,6 @@ public final class Canvas: UIView {
         flatten()
         setNeedsDisplay()
     }
-
 }
 
 extension Canvas: UIGestureRecognizerDelegate {
@@ -447,5 +444,4 @@ extension Canvas: UIGestureRecognizerDelegate {
             break
         }
     }
-
 }

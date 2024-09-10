@@ -32,7 +32,6 @@ extension ConversationAddParticipantsError {
        default: return nil
        }
    }
-
 }
 
 class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
@@ -209,7 +208,5 @@ extension AddParticipantActionHandler {
 
         var unreachable_backends: [String]?
         var non_federating_backends: [String]?
-
     }
-
 }

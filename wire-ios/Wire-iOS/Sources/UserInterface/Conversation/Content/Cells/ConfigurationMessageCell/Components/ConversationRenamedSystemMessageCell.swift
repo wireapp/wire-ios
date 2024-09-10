@@ -59,5 +59,4 @@ final class ConversationRenamedSystemMessageCell: ConversationIconBasedCell, Con
         nameLabel.attributedText = object.newConversationName
         nameLabel.accessibilityLabel = nameLabel.attributedText?.string
     }
-
 }

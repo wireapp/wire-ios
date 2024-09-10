@@ -160,7 +160,6 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [updateSync]
     }
-
 }
 
 extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
@@ -189,7 +188,6 @@ extension ConnectionRequestStrategy: KeyPathObjectSyncTranscoder {
     func cancel(_ object: ZMConnection) {
         // We don't need to cancel connections
     }
-
 }
 
 extension ConnectionRequestStrategy: ZMEventConsumer {
@@ -306,7 +304,6 @@ class ConnectionByIDTranscoder: IdentifierObjectSyncTranscoder {
             in: context
         )
     }
-
 }
 
 class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
@@ -365,5 +362,4 @@ class ConnectionByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             in: context
         )
     }
-
 }

@@ -37,7 +37,6 @@ private extension Team {
             managedObjectContext?.delete($0)
         }
     }
-
 }
 
 public final class TeamRolesDownloadRequestStrategy:

@@ -25,7 +25,6 @@ public protocol ProteusToMLSMigrationCoordinating {
 
     /// Updates the migration status of group conversations.
     func updateMigrationStatus() async throws
-
 }
 
 /// A class responsible for migrating group conversations from Proteus to MLS.

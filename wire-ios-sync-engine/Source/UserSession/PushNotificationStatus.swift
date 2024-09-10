@@ -102,5 +102,4 @@ open class PushNotificationStatus: NSObject {
         guard let order = lastEventId?.compare(withType1: eventId) else { return false }
         return order == .orderedDescending || order == .orderedSame
     }
-
 }

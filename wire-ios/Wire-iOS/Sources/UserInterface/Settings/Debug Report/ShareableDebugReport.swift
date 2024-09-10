@@ -61,7 +61,6 @@ struct ShareableDebugReport: Shareable {
         view.configure(with: logFileMetadata)
         return view
     }
-
 }
 
 extension ShareableDebugReport: Equatable {

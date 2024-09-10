@@ -152,5 +152,4 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
         // WHEN && THEN
         test_itHandlesFailure(.failure(status: statusCode, error: .invalidRequest))
     }
-
 }

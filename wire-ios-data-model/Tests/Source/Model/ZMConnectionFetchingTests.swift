@@ -186,5 +186,4 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
         mocs.viewContext.delete(user)
         mocs.viewContext.delete(connection)
     }
-
 }

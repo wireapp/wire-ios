@@ -57,5 +57,4 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
     public init(resultHandler: ResultHandler? = nil) {
         self.resultHandler = resultHandler
     }
-
 }

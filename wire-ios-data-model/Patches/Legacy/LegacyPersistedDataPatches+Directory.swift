@@ -48,5 +48,4 @@ extension LegacyPersistedDataPatch {
         LegacyPersistedDataPatch(version: "290.0.1", block: ZMUser.refetchSelfUserDomain),
         LegacyPersistedDataPatch(version: "297.0.2", block: UserClient.migrateAllSessionsClientIdentifiersV3)
     ]
-
 }

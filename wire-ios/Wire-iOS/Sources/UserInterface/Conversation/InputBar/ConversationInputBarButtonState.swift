@@ -75,5 +75,4 @@ final class ConversationInputBarButtonState {
         self.isEphemeralSendingDisabled = isEphemeralSendingDisabled
         self.isEphemeralTimeoutForced = isEphemeralTimeoutForced
     }
-
 }

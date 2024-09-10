@@ -39,5 +39,4 @@ final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
         secondaryView = nil
         footerView = nil
     }
-
 }

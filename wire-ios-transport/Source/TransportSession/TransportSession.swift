@@ -54,7 +54,6 @@ public protocol TransportSessionType: ZMBackgroundable, ZMRequestCancellation, T
 
     @objc(renewAccessTokenWithClientID:)
     func renewAccessToken(with clientID: String)
-
 }
 
 extension ZMTransportSession: TransportSessionType {}
@@ -120,5 +119,4 @@ public extension ZMTransportSession {
     ) -> String {
         return "\(prefix)-\(userIdentifier.transportString())"
     }
-
 }

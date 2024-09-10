@@ -240,7 +240,6 @@ extension ZMConversation {
            let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
             context.delete(previousLastMessage)
         }
-
     }
 
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
@@ -272,5 +271,4 @@ extension ZMConversation {
             timestamp: .now
         )
     }
-
 }

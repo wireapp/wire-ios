@@ -183,7 +183,6 @@ final class LegacyNotificationServiceTests: XCTestCase {
     private func contentHandlerMock(_ content: UNNotificationContent) {
         contentResult = content
     }
-
 }
 
 // MARK: - CallEventHandlerMock

@@ -89,7 +89,6 @@ public protocol E2EIEnrollmentInterface {
 
     /// Fetch the OIDC refresh token.
     func getOAuthRefreshToken()  async throws -> String?
-
 }
 
 /// This class implements the steps of the E2EI certificate enrollment process.
@@ -402,7 +401,6 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
             throw E2EIRepositoryFailure.failedToGetOAuthRefreshToken(error)
         }
     }
-
 }
 
 enum E2EIRepositoryFailure: Error {
@@ -424,7 +422,6 @@ enum E2EIRepositoryFailure: Error {
     case failedToSendCertificateRequest(_ underlyingError: Error)
     case failedToRotateKeys(_ underlyingError: Error)
     case failedToGetOAuthRefreshToken(_ underlyingError: Error)
-
 }
 
 public struct ChallengeResponse: Codable, Equatable {
@@ -435,7 +432,6 @@ public struct ChallengeResponse: Codable, Equatable {
     var token: String
     var target: String
     var nonce: String
-
 }
 
 public struct AccessTokenResponse: Decodable, Equatable {
@@ -449,7 +445,6 @@ public struct AccessTokenResponse: Decodable, Equatable {
         case token
         case type
     }
-
 }
 
 public struct AuthorizationResult {
@@ -457,7 +452,6 @@ public struct AuthorizationResult {
     var oidcAuthorization: NewAcmeAuthz
     var dpopAuthorization: NewAcmeAuthz
     var nonce: String
-
 }
 
 public struct AcmeAuthorization {
@@ -467,5 +461,4 @@ public struct AcmeAuthorization {
     var response: Data
     var challengeType: AuthorizationChallengeType
     var newAcmeAuthz: NewAcmeAuthz
-
 }

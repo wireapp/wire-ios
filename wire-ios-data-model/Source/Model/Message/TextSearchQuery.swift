@@ -26,7 +26,6 @@ extension ZMMessage {
     @objc func updateNormalizedText() {
         // no-op
     }
-
 }
 
 extension ZMClientMessage {
@@ -50,7 +49,6 @@ extension ZMClientMessage {
             normalizedText = ""
         }
     }
-
 }
 
 extension ZMClientMessage {
@@ -86,7 +84,6 @@ extension ZMClientMessage {
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
         return request
     }
-
 }
 
 /// The result object passed to the `TextSearchQueryDelegate`
@@ -356,5 +353,4 @@ public class TextSearchQuery: NSObject {
             ZMClientMessage.predicateForMessages(inConversationWith: self.conversationRemoteIdentifier)
         ])
     }()
-
 }

@@ -25,7 +25,6 @@ struct AcmeDirectoriesResponse: Codable, Equatable {
     var newOrder: String
     var revokeCert: String
     var keyChange: String
-
 }
 
 public struct ACMEResponse: Equatable {
@@ -33,7 +32,6 @@ public struct ACMEResponse: Equatable {
     var nonce: String
     var location: String
     var response: Data
-
 }
 
 public struct ACMEAuthorizationResponse: Equatable {
@@ -42,12 +40,10 @@ public struct ACMEAuthorizationResponse: Equatable {
     var location: String
     var response: Data
     var challengeType: AuthorizationChallengeType
-
 }
 
 enum AuthorizationChallengeType: String, Decodable {
 
     case DPoP = "wire-dpop-01"
     case OIDC = "wire-oidc-01"
-
 }

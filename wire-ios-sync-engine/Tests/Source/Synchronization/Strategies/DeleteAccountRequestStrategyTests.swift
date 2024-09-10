@@ -74,7 +74,6 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
         // then
         XCTAssertNotNil(request1)
         XCTAssertNil(request2)
-
     }
 
     func testThatItSignsUserOutWhenSuccessful() {

@@ -49,7 +49,6 @@ public protocol SelfLegalHoldSubject {
 
     /// Call this method when the user acknowledges their legal hold status.
     func acknowledgeLegalHoldStatus()
-
 }
 
 /**
@@ -90,7 +89,6 @@ public struct LegalHoldRequest: Codable, Hashable {
             self.id = id
             self.key = key
         }
-
     }
 
     /**
@@ -146,7 +144,6 @@ public struct LegalHoldRequest: Codable, Hashable {
         encoder.dataEncodingStrategy = .base64
         return try? encoder.encode(self)
     }
-
 }
 
 extension ZMUserKeys {
@@ -325,5 +322,4 @@ extension ZMUser: SelfLegalHoldSubject {
         guard let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: prekey.key) else { return nil }
         return String(decoding: fingerprintData, as: UTF8.self)
     }
-
 }

@@ -42,5 +42,4 @@ public protocol Conversation: SharingTarget {
     func acknowledgePrivacyWarningAndResendMessages()
 
     func discardPendingMessagesAfterPrivacyChanges()
-
 }

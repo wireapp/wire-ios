@@ -27,5 +27,4 @@ public struct FederationDeleteEvent: Equatable, Codable {
     /// federating with the self backend.
 
     public let domain: String
-
 }

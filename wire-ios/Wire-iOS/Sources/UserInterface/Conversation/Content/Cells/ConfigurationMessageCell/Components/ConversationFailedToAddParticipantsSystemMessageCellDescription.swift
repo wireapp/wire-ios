@@ -71,5 +71,4 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
 
         return [attributedText, learnMore].joined(separator: " ".attributedString)
     }
-
 }

@@ -59,5 +59,4 @@ struct VerticalColumnPositioningContext {
 
         self.columnWidth = columnWidth
     }
-
 }

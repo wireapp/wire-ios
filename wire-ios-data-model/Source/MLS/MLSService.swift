@@ -468,7 +468,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// [confluence documentation](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration)
 
     func startProteusToMLSMigration() async throws
-
 }
 
 // This is only used in tests, so it should be removed.
@@ -476,7 +475,6 @@ public protocol MLSServiceDelegate: AnyObject {
 
     func mlsServiceDidCommitPendingProposal(for groupID: MLSGroupID)
     func mlsServiceDidUpdateKeyMaterialForAllGroups()
-
 }
 
 /// This class is responsible for handling several MLS operations. See <doc:MLS> for more informations about MLS
@@ -1125,7 +1123,6 @@ public final class MLSService: MLSServiceInterface {
 
         case failedToConvertMessageToBytes
         case failedToProcessMessage
-
     }
 
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
@@ -1628,7 +1625,6 @@ public final class MLSService: MLSServiceInterface {
     enum MLSCommitPendingProposalsError: Error {
 
         case failedToCommitPendingProposals
-
     }
 
     public func commitPendingProposalsIfNeeded() {
@@ -1812,7 +1808,6 @@ public final class MLSService: MLSServiceInterface {
         } catch ExternalCommitError.failedToSendCommit(recovery: .giveUp, cause: let error) {
             logger.warn("failed to send external commit, giving up...")
             throw error
-
         }
     }
 
@@ -1826,7 +1821,6 @@ public final class MLSService: MLSServiceInterface {
         case failedToDeleteSubgroup
         case failedToJoinSubgroup
         case missingSubgroupID
-
     }
 
     public func createOrJoinSubgroup(
@@ -2139,7 +2133,6 @@ public final class MLSService: MLSServiceInterface {
 
                     // rollback: destroy/wipe group
                     try await wipeGroup(mlsGroupID)
-
                 }
 
             } catch {
@@ -2187,7 +2180,6 @@ public struct MLSUser: Equatable {
             selfClientID = nil
         }
     }
-
 }
 
 extension MLSUser: CustomStringConvertible {
@@ -2195,7 +2187,6 @@ extension MLSUser: CustomStringConvertible {
     public var description: String {
         return "\(id)@\(domain)"
     }
-
 }
 
 // MARK: - Helper Extensions
@@ -2205,7 +2196,6 @@ private extension TimeInterval {
     var nanoseconds: UInt64 {
         UInt64(self * 1_000_000_000)
     }
-
 }
 
 // sourcery: AutoMockable

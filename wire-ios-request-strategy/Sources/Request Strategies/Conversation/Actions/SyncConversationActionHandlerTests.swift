@@ -253,5 +253,4 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         sut.handleResponse(response, action: action)
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

@@ -151,5 +151,4 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
         ])
     }
-
 }

@@ -131,7 +131,6 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-
 }
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
@@ -290,7 +289,6 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
             headerFooterView.textLabel?.textColor = SemanticColors.Label.textSectionFooter
         }
     }
-
 }
 
 extension SettingsTableViewController {
@@ -299,7 +297,6 @@ extension SettingsTableViewController {
     func applicationDidBecomeActive() {
         refreshData()
     }
-
 }
 
 extension SettingsTableViewController: UserObserving {

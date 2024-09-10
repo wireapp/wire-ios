@@ -52,5 +52,4 @@ extension UserCellSubtitleProtocol where Self: UIView {
 
         return components.compactMap({ $0 }).joined(separator: " " + String.MessageToolbox.middleDot + " " && UserCell.lightFont.font!)
     }
-
 }

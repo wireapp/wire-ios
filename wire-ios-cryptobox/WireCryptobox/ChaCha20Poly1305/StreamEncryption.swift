@@ -165,7 +165,6 @@ public extension ChaCha20Poly1305 {
 
                 return hash
             }
-
         }
 
         /// Passphrase for encrypting/decrypting using ChaCha20.
@@ -203,7 +202,6 @@ public extension ChaCha20Poly1305 {
 
                 self.buffer = buffer
             }
-
         }
 
         fileprivate static func initializeSodium() throws {
@@ -394,7 +392,5 @@ public extension ChaCha20Poly1305 {
 
             return totalBytesWritten
         }
-
     }
-
 }

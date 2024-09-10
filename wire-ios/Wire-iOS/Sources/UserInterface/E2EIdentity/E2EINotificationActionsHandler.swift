@@ -25,7 +25,6 @@ protocol E2EINotificationActions {
     func getCertificate() async
     func updateCertificate() async
     func snoozeReminder() async
-
 }
 
 final class E2EINotificationActionsHandler: E2EINotificationActions {
@@ -229,7 +228,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
         return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
-
 }
 
 extension UIAlertController {

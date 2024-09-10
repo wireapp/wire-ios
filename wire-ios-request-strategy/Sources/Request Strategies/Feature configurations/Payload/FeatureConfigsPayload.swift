@@ -30,7 +30,6 @@ struct FeatureConfigsPayload: Decodable {
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
-
 }
 
 struct FeatureConfigsPayloadAPIV6: Decodable {
@@ -45,7 +44,6 @@ struct FeatureConfigsPayloadAPIV6: Decodable {
     let selfDeletingMessages: FeatureStatusWithConfig<Feature.SelfDeletingMessages.Config>?
     let mlsMigration: FeatureStatusWithConfig<Feature.MLSMigration.Config>?
     let mlsE2EId: FeatureStatusWithConfig<Feature.E2EI.Config>?
-
 }
 
 struct FeatureStatus: Decodable {

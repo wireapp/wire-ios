@@ -184,5 +184,4 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
             expectedError: .unknown(status: 999, label: "foo", message: "?")
         )
     }
-
 }

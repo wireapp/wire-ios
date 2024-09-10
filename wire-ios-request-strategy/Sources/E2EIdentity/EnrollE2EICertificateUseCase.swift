@@ -24,7 +24,6 @@ public struct OAuthParameters {
     public let clientID: String
     public let keyauth: String
     public let acmeAudience: String
-
 }
 
 public struct OAuthResponse {
@@ -38,7 +37,6 @@ public struct OAuthResponse {
             self.idToken = idToken
             self.refreshToken = refreshToken
         }
-
 }
 
 public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
@@ -47,7 +45,6 @@ public typealias OAuthBlock = (OAuthParameters) async throws -> OAuthResponse
 public protocol EnrollE2EICertificateUseCaseProtocol {
 
     func invoke(authenticate: @escaping OAuthBlock) async throws -> String
-
 }
 
 /// This class provides an interface to issue an E2EI certificate.
@@ -215,5 +212,4 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     private func notifyE2EICertificateChange() {
         NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
     }
-
 }

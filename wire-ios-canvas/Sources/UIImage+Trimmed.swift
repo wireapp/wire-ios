@@ -71,5 +71,4 @@ public extension UIImage {
 
         return trimmedImage
     }
-
 }

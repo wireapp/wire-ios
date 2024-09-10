@@ -73,7 +73,6 @@ import Foundation
     public override var debugDescription: String {
         return String(format: "<%@ %p> %@", NSStringFromClass(type(of: self)), self, description)
     }
-
 }
 
 // MARK: - Operators

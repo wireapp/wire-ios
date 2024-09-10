@@ -40,7 +40,6 @@ final class CallEventHandler: CallEventHandlerProtocol {
             }
         }
     }
-
 }
 
 final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
@@ -213,7 +212,6 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
 
         return NSNumber(value: totalUnreadCount)
     }
-
 }
 
 // MARK: - Extensions
@@ -239,5 +237,4 @@ extension UNNotificationContent {
 
         return userID
     }
-
 }

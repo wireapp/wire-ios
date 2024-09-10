@@ -132,5 +132,4 @@ final class ReactionToggle: UIControl {
         self.isAccessibilityElement = true
         self.accessibilityIdentifier = "value: \(value), count: \(count)"
     }
-
 }

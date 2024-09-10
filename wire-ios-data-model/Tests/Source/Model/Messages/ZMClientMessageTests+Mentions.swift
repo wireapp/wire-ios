@@ -107,5 +107,4 @@ class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
         XCTAssertEqual(mentions, mentions)
         XCTAssertEqual(mentions, Array(tooManyMentions.prefix(500)))
     }
-
 }

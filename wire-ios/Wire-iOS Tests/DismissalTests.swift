@@ -131,5 +131,4 @@ final class DismissalTests: XCTestCase {
         // THEN
         waitForExpectations(timeout: 2, handler: nil)
     }
-
 }

@@ -116,5 +116,4 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
         // then
         XCTAssertEqual(message.processingState, .done)
     }
-
 }

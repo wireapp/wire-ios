@@ -131,5 +131,4 @@ final class SketchToolbar: UIView {
 
         NSLayoutConstraint.activate(constraints)
     }
-
 }

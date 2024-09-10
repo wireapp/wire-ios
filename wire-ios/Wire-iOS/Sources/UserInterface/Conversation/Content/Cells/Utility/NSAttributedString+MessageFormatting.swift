@@ -171,7 +171,6 @@ extension NSAttributedString {
     func links() -> [URLWithRange] {
         return NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: []) ?? []
     }
-
 }
 
 extension NSMutableAttributedString {
@@ -214,7 +213,6 @@ extension NSMutableAttributedString {
 
         mutableString.replaceCharacters(in: NSRange(linkPreviewRange, in: text), with: "")
     }
-
 }
 
 private extension String {
@@ -233,7 +231,6 @@ private extension String {
             return textObject
         })
     }
-
 }
 
 private extension IndexSet {
@@ -248,5 +245,4 @@ private extension IndexSet {
 
         self = includedIndexSet.subtracting(excludedIndexSet)
     }
-
 }

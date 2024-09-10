@@ -148,5 +148,4 @@ public class LabelDownstreamRequestStrategy: AbstractRequestStrategy, ZMEventCon
 
         ZMUser.selfUser(in: managedObjectContext).needsToRefetchLabels = false
     }
-
 }

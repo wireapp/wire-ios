@@ -25,5 +25,4 @@ public protocol EARServiceDelegate: AnyObject {
     /// When the migration can be started, invoke the `onReady` closure.
 
     func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows
-
 }

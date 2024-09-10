@@ -55,7 +55,6 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
     }
 
     func didReceiveAuthenticationNotification(_ notification: NSNotification) {
-
     }
 
     // MARK: - Fetching client based on needsToBeUpdatedFromBackend flag

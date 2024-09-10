@@ -37,5 +37,4 @@ public struct BackendInfo: Equatable {
     /// All api versions currently under development by the local backend.
 
     public let developmentVersions: Set<APIVersion>
-
 }

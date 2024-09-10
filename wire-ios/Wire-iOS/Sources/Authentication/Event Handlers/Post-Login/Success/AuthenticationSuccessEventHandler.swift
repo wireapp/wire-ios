@@ -30,5 +30,4 @@ final class AuthenticationClientRegistrationSuccessHandler: AuthenticationEventH
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
         return [.transition(.configureDevice, mode: .normal), .configureDevicePermissions]
     }
-
 }

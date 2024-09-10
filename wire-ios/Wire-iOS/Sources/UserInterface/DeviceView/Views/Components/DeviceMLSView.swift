@@ -34,5 +34,4 @@ struct DeviceMLSView: View {
             .padding(.all, ViewConstants.Padding.standard)
         }
     }
-
 }

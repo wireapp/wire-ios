@@ -40,6 +40,5 @@ extension UICollectionView {
         } else {
             contentInset = UIEdgeInsets(top: 32, left: 0, bottom: 32, right: 0)
         }
-
     }
 }

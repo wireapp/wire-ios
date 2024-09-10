@@ -66,7 +66,6 @@ public struct AVSClient: Hashable {
         self.clientId = clientId
         self.isMemberOfSubconversation = isMemberOfSubconversation
     }
-
 }
 
 extension AVSClient: Codable {
@@ -76,7 +75,6 @@ extension AVSClient: Codable {
         case userId = "userid"
         case clientId = "clientid"
         case isMemberOfSubconversation = "in_subconv"
-
     }
 
     public init(from decoder: Decoder) throws {
@@ -92,5 +90,4 @@ extension AVSClient {
     public var avsIdentifier: AVSIdentifier {
         AVSIdentifier.from(string: userId)
     }
-
 }

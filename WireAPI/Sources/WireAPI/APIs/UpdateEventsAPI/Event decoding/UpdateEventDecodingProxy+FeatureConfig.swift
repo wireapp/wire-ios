@@ -90,5 +90,4 @@ extension UpdateEventDecodingProxy {
             }
         }
     }
-
 }

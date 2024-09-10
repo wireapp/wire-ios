@@ -435,5 +435,4 @@ final class SearchResultTests: DatabaseTest {
 
         return membershipPayload
     }
-
 }

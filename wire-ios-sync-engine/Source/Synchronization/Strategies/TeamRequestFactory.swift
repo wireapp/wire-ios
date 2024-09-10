@@ -39,5 +39,4 @@ public final class TeamDownloadRequestFactory {
         let path = teamPath + "/" + teamIdentifier.transportString() + "/members/" + identifier.transportString()
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
-
 }

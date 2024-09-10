@@ -45,5 +45,4 @@ public final class SyncUsersAction: EntityAction {
         self.qualifiedIDs = qualifiedIDs
         self.resultHandler = resultHandler
     }
-
 }

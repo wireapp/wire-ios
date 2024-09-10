@@ -65,7 +65,6 @@ public struct SearchOptions: OptionSet {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
-
 }
 
 extension SearchOptions {
@@ -102,7 +101,6 @@ public struct SearchRequest {
                 return text
             }
         }
-
     }
 
     var team: Team?
@@ -121,7 +119,6 @@ public struct SearchRequest {
     var normalizedQuery: String {
         query.string.normalizedAndTrimmed()
     }
-
 }
 
 private extension SearchRequest {
@@ -152,7 +149,6 @@ private extension SearchRequest {
             return (.fullTextSearch(text), domain)
         }
     }
-
 }
 
 fileprivate extension String {

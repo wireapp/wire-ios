@@ -136,7 +136,6 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
         }
         return false
     }
-
 }
 
 @objcMembers public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {

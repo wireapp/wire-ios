@@ -73,7 +73,6 @@ extension URL {
     static var selfUserProfileLink: URL? {
         BackendEnvironment.selfUserProfileLink
     }
-
 }
 
 // MARK: - BackendEnvironment Standard URLs
@@ -93,5 +92,4 @@ private extension BackendEnvironment {
         }
         return shared.accountsURL.appendingPathComponent("user-profile/?id=\(userID)")
     }
-
 }

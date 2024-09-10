@@ -78,7 +78,6 @@ final class ProxyCredentialsTests: ZMTBaseTest {
         // THEN
         XCTAssertTrue(result)
     }
-
 }
 
 // MARK: - Mock

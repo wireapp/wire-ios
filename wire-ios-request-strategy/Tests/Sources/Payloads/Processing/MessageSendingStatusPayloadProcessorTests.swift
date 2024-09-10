@@ -354,5 +354,4 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
-
 }

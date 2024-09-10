@@ -27,5 +27,4 @@ extension ZMPersistentCookieStorage {
     @objc public var hasAuthenticationCookie: Bool {
         authenticationCookieExpirationDate != nil
     }
-
 }

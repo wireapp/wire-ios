@@ -35,5 +35,4 @@ final class MockSessionManagerObserver: SessionManagerCreatedSessionObserver, Se
     func sessionManagerDestroyedUserSession(for accountId: UUID) {
         destroyedUserSessions.append(accountId)
     }
-
 }

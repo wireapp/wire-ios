@@ -144,7 +144,6 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
     func navigate(to destination: NavigationDestination) {
         didNavigateToDestination = destination
     }
-
 }
 
 final class MockURLActionRouterDelegate: URLActionRouterDelegate {
@@ -158,7 +157,6 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
     func urlActionRouterCanDisplayAlerts() -> Bool {
         return canDisplayAlerts
     }
-
 }
 
 final class TestableURLActionRouter: URLActionRouter {

@@ -27,7 +27,6 @@ enum API {
     static func fetchNotification(eventID: UUID) -> NotificationByIDEndpoint {
         return NotificationByIDEndpoint(eventID: eventID)
     }
-
 }
 
 protocol Endpoint {
@@ -38,11 +37,9 @@ protocol Endpoint {
     var request: NetworkRequest { get }
 
     func parseResponse(_ response: NetworkResponse) -> Swift.Result<Output, Failure>
-
 }
 
 extension Endpoint {
 
     typealias Result = Swift.Result<Output, Failure>
-
 }

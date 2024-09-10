@@ -217,7 +217,6 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
             logger.warn("failed to cancel removal of participant (\(clientID))")
         }
     }
-
 }
 
 private extension Array where Element == CallParticipant {
@@ -227,7 +226,6 @@ private extension Array where Element == CallParticipant {
             $0.userId != userID
         }
     }
-
 }
 
 private extension MLSClientID {

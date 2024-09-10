@@ -71,5 +71,4 @@ final class WipeCompletionViewController: UIViewController {
     private func onLoginCodeButtonPressed(sender: AnyObject?) {
         dismiss(animated: true)
     }
-
 }

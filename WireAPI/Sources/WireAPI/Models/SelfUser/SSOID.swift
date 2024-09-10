@@ -33,5 +33,4 @@ public struct SSOID: Equatable {
     /// The self user's tenant
 
     public let tenant: String
-
 }

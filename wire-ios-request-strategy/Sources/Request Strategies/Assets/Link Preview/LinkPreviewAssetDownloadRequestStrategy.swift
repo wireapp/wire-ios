@@ -122,7 +122,6 @@ import Foundation
             uiContext: uiMOC
         )
     }
-
 }
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource {
@@ -130,7 +129,6 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [assetDownstreamObjectSync]
     }
-
 }
 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
@@ -159,5 +157,4 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
     public func update(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
         // no-op
     }
-
 }

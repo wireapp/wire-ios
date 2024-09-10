@@ -45,5 +45,4 @@ public protocol AuthenticationStorage {
     /// - Returns: The stored cookie data.
 
     func fetchCookieData() -> Data?
-
 }

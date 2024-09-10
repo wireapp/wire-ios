@@ -35,7 +35,6 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
     func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
         lastReceivedResponse = (response, identifiers)
     }
-
 }
 
 class IdentifierObjectSyncTests: ZMTBaseTest {
@@ -173,5 +172,4 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
         // then
         XCTAssertNil(sut.nextRequest(for: .v0))
     }
-
 }

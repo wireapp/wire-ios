@@ -57,5 +57,4 @@ public enum ConversationAction: Hashable {
     /// The action of deleting the conversation for all members.
 
     case deleteConversation
-
 }

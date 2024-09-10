@@ -37,7 +37,5 @@ struct ClassifiedDomainsFeatureConfigDecoder {
     private struct Payload: Decodable {
 
         let domains: Set<String>
-
     }
-
 }

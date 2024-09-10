@@ -114,5 +114,4 @@ class UserRightTests: XCTestCase {
         XCTAssertTrue(UserRight.selfUserIsPermitted(to: .editProfilePicture))
         XCTAssertTrue(UserRight.selfUserIsPermitted(to: .editAccentColor))
     }
-
 }

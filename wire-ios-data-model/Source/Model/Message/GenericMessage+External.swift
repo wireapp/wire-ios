@@ -46,7 +46,6 @@ extension GenericMessage {
             WireLogger.messaging.error("failed to encrypt generic message: \(error.localizedDescription)")
             return nil
         }
-
     }
 
     /// Creates a genericMessage from a ZMUpdateEvent and  External

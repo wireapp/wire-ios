@@ -488,7 +488,6 @@ final class InputBar: UIView {
             button.setIconColor(SemanticColors.Button.textInputBarItemHighlighted, for: .selected)
             button.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemHighlighted, for: .selected)
             button.setBorderColor(SemanticColors.Button.borderInputBarItemHighlighted, for: .selected)
-
         }
     }
 
@@ -535,5 +534,4 @@ extension InputBar {
     @objc func textViewDidEndEditing(_ notification: Notification) {
         updateEditViewState()
     }
-
 }

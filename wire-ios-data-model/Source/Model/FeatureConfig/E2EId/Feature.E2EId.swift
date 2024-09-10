@@ -61,11 +61,8 @@ public extension Feature {
                     self.crlProxy = crlProxy
                     self.useProxyOnMobile = useProxyOnMobile
                 }
-
         }
-
     }
-
 }
 
 public extension Feature.E2EI {
@@ -73,5 +70,4 @@ public extension Feature.E2EI {
     var isEnabled: Bool {
         return status == .enabled
     }
-
 }

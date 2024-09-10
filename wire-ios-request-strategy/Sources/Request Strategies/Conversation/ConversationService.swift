@@ -49,7 +49,6 @@ public protocol ConversationServiceInterface {
     func syncConversationIfMissing(
         qualifiedID: QualifiedID
     ) async
-
 }
 
 public enum ConversationCreationFailure: Error {
@@ -60,7 +59,6 @@ public enum ConversationCreationFailure: Error {
     case noMLSGroup
     case networkError(CreateGroupConversationAction.Failure)
     case underlyingError(Error)
-
 }
 
 public final class ConversationService: ConversationServiceInterface {

@@ -138,7 +138,6 @@ final class CallController: NSObject {
         guard let userSession = ZMUserSession.shared() else { return }
         conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
     }
-
 }
 
 // MARK: - WireCallCenterCallStateObserver

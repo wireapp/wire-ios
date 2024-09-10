@@ -268,7 +268,6 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                                        ])
 
         NSLayoutConstraint.activate(constraints)
-
     }
 
     private func configureAudioRecorder() {
@@ -420,7 +419,5 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                 }
             }
         }
-
     }
-
 }

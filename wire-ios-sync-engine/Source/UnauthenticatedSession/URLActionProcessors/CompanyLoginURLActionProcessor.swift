@@ -21,7 +21,6 @@ import Foundation
 protocol UnauthenticatedSessionStatusDelegate: AnyObject {
 
     var isAllowedToCreateNewAccount: Bool { get }
-
 }
 
 class CompanyLoginURLActionProcessor: URLActionProcessor {
@@ -53,5 +52,4 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
 
         presentationDelegate?.completedURLAction(urlAction)
     }
-
 }

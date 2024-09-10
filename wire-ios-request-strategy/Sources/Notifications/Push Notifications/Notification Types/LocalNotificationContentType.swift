@@ -123,5 +123,4 @@ public enum LocalNotificationContentType: Equatable {
             return nil
         }
     }
-
 }

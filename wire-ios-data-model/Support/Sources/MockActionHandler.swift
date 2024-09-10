@@ -57,5 +57,4 @@ public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
             assertionFailure("no expected result set")
         }
     }
-
 }

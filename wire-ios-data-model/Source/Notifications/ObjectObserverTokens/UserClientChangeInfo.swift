@@ -22,7 +22,6 @@ extension UserClient {
     public override var description: String {
         return "Client: \(String(describing: sessionIdentifier?.rawValue)), user name: \(String(describing: user?.name)) email: \(String(describing: user?.emailAddress)) platform: \(String(describing: deviceClass)), label: \(String(describing: label)), model: \(String(describing: model))"
     }
-
 }
 
 extension UserClient: ObjectInSnapshot {
@@ -74,7 +73,6 @@ public enum UserClientChangeInfoKey: String {
     static func changeInfo(for client: UserClient, changes: Changes) -> UserClientChangeInfo? {
         return UserClientChangeInfo(object: client, changes: changes)
     }
-
 }
 
 @objc public protocol UserClientObserver: NSObjectProtocol {

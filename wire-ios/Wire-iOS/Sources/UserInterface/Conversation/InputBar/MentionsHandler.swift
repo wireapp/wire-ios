@@ -69,5 +69,4 @@ final class MentionsHandler: NSObject {
 
         return (mentionMatchRange, (mentionString + suffix))
     }
-
 }

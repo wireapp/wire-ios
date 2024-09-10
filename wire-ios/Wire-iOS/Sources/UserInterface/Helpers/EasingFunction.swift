@@ -53,5 +53,4 @@ extension EasingFunction {
         case .easeInOutBack: return CAMediaTimingFunction(controlPoints: 0.68, -0.55, 0.265, 1.55)
         }
     }
-
 }

@@ -282,7 +282,6 @@ final class AcmeAPITests: ZMTBaseTest {
         XCTAssertEqual(request.httpMethod, "GET")
         XCTAssertEqual(certificates, mockCertificates)
     }
-
 }
 
 class MockHttpClient: HttpClientCustom {
@@ -297,7 +296,6 @@ class MockHttpClient: HttpClientCustom {
         }
         return mockResponse
     }
-
 }
 
 private class MockAcmeResponse {
@@ -308,7 +306,5 @@ private class MockAcmeResponse {
                                        newOrder: "https://acme.elna.wire.link/acme/defaultteams/new-order",
                                        revokeCert: "https://acme.elna.wire.link/acme/defaultteams/revoke-cert",
                                        keyChange: "https://acme.elna.wire.link/acme/defaultteams/key-change")
-
     }
-
 }

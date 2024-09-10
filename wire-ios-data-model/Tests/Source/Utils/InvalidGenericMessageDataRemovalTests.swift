@@ -98,5 +98,4 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
         XCTAssertTrue(genericMessageData.isDeleted)
         XCTAssertTrue(genericMessageData.isZombieObject)
     }
-
 }

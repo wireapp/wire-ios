@@ -36,5 +36,4 @@ final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDes
         secondaryView = nil
         footerView = nil
     }
-
 }

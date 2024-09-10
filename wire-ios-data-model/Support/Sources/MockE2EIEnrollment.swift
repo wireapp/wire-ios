@@ -236,5 +236,4 @@ class MockE2EIEnrollment: E2eiEnrollmentProtocol {
 
         return try await mock(previousNonce)
     }
-
 }

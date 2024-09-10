@@ -65,5 +65,4 @@ struct PreferredAPIVersionView_Previews: PreviewProvider {
     static var previews: some View {
         PreferredAPIVersionView(viewModel: PreferredAPIVersionViewModel())
     }
-
 }

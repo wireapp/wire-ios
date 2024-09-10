@@ -198,7 +198,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             conversation.remoteIdentifier = conversationId
             self.syncMOC.saveOrRollback()
             event = self.updateEvent(with: self.favoriteResponse(favorites: [conversationId]))
-
         }
 
         // WHEN
@@ -291,7 +290,6 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             let label = Label.fetchOrCreate(remoteIdentifier: folderIdentifier, create: false, in: self.syncMOC, created: &created)!
             XCTAssertEqual(label.name, updatedName)
         }
-
     }
 
     func testThatItItUpdatesFolderConversations() {
@@ -345,5 +343,4 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             XCTAssertTrue(label2.isZombieObject)
         }
     }
-
 }

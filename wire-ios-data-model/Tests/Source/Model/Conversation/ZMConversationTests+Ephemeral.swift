@@ -43,7 +43,6 @@ final class MessageDestructionTimeoutValueTests: XCTestCase {
         XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 2419200), .fourWeeks)
         XCTAssertEqual(MessageDestructionTimeoutValue(rawValue: 1234567890), .custom(1234567890))
     }
-
 }
 
 // Tests for displayString of MessageDestructionTimeoutValue
@@ -66,7 +65,6 @@ extension MessageDestructionTimeoutValueTests {
         XCTAssertEqual(MessageDestructionTimeoutValue.oneWeek.displayString, "1 week")
         XCTAssertEqual(MessageDestructionTimeoutValue.fourWeeks.displayString, "4 weeks")
     }
-
 }
 
 class ZMConversationTests_Ephemeral: BaseZMMessageTests {
@@ -186,5 +184,4 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
             XCTAssertEqual(conversation.activeMessageDestructionTimeoutValue, .fiveMinutes)
         }
     }
-
 }

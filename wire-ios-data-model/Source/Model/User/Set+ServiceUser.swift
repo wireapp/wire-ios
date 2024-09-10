@@ -29,5 +29,4 @@ extension Set where Element == ZMUser {
         let users = self.subtracting(services)
         return (services, users)
     }
-
 }

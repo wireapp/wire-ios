@@ -162,7 +162,5 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         }
 
         return stackView
-
     }
-
 }

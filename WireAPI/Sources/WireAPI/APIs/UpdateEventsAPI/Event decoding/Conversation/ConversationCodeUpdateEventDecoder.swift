@@ -61,9 +61,6 @@ struct ConversationCodeUpdateEventDecoder {
             case key
             case code
             case hasPassword = "has_password"
-
         }
-
     }
-
 }

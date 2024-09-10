@@ -24,7 +24,6 @@ import WireRequestStrategy
 public protocol SupportedProtocolsServiceInterface {
 
     func calculateSupportedProtocols() -> Set<MessageProtocol>
-
 }
 
 public final class SupportedProtocolsService: SupportedProtocolsServiceInterface {
@@ -152,7 +151,6 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     private func allSelfUserClientsAreActiveMLSClients() -> Bool {
         return selfUserProvider.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
-
 }
 
 // MARK: -
@@ -182,5 +180,4 @@ private extension UserClient {
 
         return lastActiveDate.timeIntervalSinceNow.magnitude < .fourWeeks
     }
-
 }

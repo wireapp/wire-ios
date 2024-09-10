@@ -247,7 +247,6 @@ final class UpdateEventDecryptorTests: XCTestCase {
             XCTAssertNil(conversation.lastMessage)
         }
     }
-
 }
 
 private enum Scaffolding {
@@ -273,5 +272,4 @@ private enum Scaffolding {
         messageSenderClientID: aliceClientID,
         messageRecipientClientID: selfClientID
     )
-
 }

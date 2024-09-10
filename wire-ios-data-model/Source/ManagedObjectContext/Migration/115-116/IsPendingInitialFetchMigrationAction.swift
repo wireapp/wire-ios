@@ -25,5 +25,4 @@ final class IsPendingInitialFetchMigrationAction: CoreDataMigrationAction {
         batchUpdate.propertiesToUpdate = ["isPendingInitialFetch": false as NSNumber]
         try context.execute(batchUpdate)
     }
-
 }

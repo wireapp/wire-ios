@@ -49,7 +49,6 @@ import Foundation
         super.init()
 
         self.imageAssetPreprocessor = ZMAssetsPreprocessor(delegate: self)
-
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
@@ -136,7 +135,6 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
             self?.processingGroup.leave()
         }
     }
-
 }
 
 /// Adapter which implements the ZMImageOwner protcol because it requires an NSObject
@@ -157,5 +155,4 @@ class AssetImageOwnerAdapter: NSObject, ZMImageOwner {
     func originalImageData() -> Data? {
         return asset.original
     }
-
 }

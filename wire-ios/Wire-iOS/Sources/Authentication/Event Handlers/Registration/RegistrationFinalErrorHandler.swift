@@ -41,5 +41,4 @@ final class RegistrationFinalErrorHandler: AuthenticationEventHandler {
         let alert = AuthenticationCoordinatorErrorAlert(error: error, completionActions: [.unwindState(withInterface: false)])
         return [.hideLoadingView, .presentErrorAlert(alert)]
     }
-
 }

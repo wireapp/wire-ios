@@ -39,5 +39,4 @@ public struct BackendInfoAPIBuilder {
     public func makeAPI() -> any BackendInfoAPI {
         BackendInfoAPIImpl(apiService: apiService)
     }
-
 }

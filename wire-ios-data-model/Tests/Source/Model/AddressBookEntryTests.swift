@@ -51,6 +51,5 @@ class AddressBookEntryTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(sut.localIdentifier, contact.identifier)
         XCTAssertEqual(sut.cachedName, "MyName TheFamily")
         XCTAssertEqual(sut.user, user)
-
     }
 }

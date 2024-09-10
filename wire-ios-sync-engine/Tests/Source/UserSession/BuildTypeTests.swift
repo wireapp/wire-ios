@@ -85,5 +85,4 @@ final class BuildTypeTests: ZMTBaseTest {
         // THEN
         XCTAssertEqual(certName, "com.mycompany.myapp")
     }
-
 }

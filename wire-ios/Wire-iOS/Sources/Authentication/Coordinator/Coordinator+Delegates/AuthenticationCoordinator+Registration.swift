@@ -60,5 +60,4 @@ extension AuthenticationCoordinator: RegistrationStatusDelegate {
     func teamRegistered() {
         // no-op, handled in the event responder chain
     }
-
 }

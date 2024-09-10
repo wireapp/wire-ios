@@ -23,5 +23,4 @@ import Foundation
     func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]])
     func startObserving()
     func stopObserving()
-
 }

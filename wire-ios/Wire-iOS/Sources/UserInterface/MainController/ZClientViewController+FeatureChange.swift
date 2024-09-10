@@ -31,5 +31,4 @@ extension ZClientViewController: AppLockChangeWarningViewControllerDelegate {
         viewController.modalPresentationStyle = .fullScreen
         present(viewController, animated: false)
     }
-
 }

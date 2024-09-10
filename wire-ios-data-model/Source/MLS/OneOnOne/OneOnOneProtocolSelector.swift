@@ -25,13 +25,11 @@ public protocol OneOnOneProtocolSelectorInterface {
         with id: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> MessageProtocol?
-
 }
 
 public enum OneOnOneProtocolSelectorError: Error {
 
     case userNotFound
-
 }
 
 public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
@@ -71,5 +69,4 @@ public final class OneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
             return nil
         }
     }
-
 }

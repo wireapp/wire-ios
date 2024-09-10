@@ -57,5 +57,4 @@ final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
         verifyInAllPhoneWidths(matching: sut.view)
     }
-
 }

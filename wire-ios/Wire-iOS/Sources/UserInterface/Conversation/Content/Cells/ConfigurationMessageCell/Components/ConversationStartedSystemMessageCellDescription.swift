@@ -62,5 +62,4 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         accessibilityLabel = configuration.message.string
     }
-
 }

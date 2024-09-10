@@ -65,5 +65,4 @@ final class PushChannel: PushChannelProtocol {
         print("closing push channel")
         webSocket.close()
     }
-
 }

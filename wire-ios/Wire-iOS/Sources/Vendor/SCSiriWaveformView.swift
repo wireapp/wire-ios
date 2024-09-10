@@ -191,5 +191,4 @@ final class SCSiriWaveformView: UIView {
             context?.strokePath()
         }
     }
-
 }

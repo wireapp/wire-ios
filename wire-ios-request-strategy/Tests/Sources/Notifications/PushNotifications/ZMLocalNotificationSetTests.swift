@@ -37,7 +37,6 @@ public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {
     public func enqueueDelayedSave() {
         // no op
     }
-
 }
 
 class ZMLocalNotificationSetTests: MessagingTestBase {

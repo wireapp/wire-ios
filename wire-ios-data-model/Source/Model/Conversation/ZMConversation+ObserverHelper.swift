@@ -34,5 +34,4 @@ class ConversationObserverToken: NSObject, ZMConversationObserver {
             block()
         }
     }
-
 }

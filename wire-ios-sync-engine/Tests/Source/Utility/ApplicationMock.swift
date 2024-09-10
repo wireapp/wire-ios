@@ -146,5 +146,4 @@ extension ApplicationMock {
             pushTokenService?.storeLocalToken(.createAPNSToken(from: token))
         }
     }
-
 }

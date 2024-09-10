@@ -26,7 +26,6 @@ public protocol FetchUserClientsUseCaseProtocol {
         userIDs: Set<QualifiedID>,
         in context: NSManagedObjectContext
     ) async throws -> Set<QualifiedClientID>
-
 }
 
 public class FetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
@@ -40,5 +39,4 @@ public class FetchUserClientsUseCase: FetchUserClientsUseCaseProtocol {
         var action = FetchUserClientsAction(userIDs: userIDs)
         return try await action.perform(in: context.notificationContext)
     }
-
 }

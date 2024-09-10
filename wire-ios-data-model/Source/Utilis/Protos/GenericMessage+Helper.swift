@@ -499,7 +499,6 @@ extension WireProtos.Reaction {
 
         return Set(result)
     }
-
 }
 
 public enum ProtosReactionFactory {
@@ -513,7 +512,6 @@ public enum ProtosReactionFactory {
             messageID: messageID
         )
     }
-
 }
 
 // MARK: - LastRead

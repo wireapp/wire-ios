@@ -36,5 +36,4 @@ extension Notification.Name {
     static let ParticipantRoleChange = Notification.Name("ParticipantRoleChange")
 
     public static let NonCoreDataChangeInManagedObject = Notification.Name("NonCoreDataChangeInManagedObject")
-
 }

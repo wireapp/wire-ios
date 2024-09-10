@@ -44,5 +44,4 @@ struct ConversationMLSWelcomeEventDecoder {
             welcomeMessage: payload
         )
     }
-
 }

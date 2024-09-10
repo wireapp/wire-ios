@@ -52,7 +52,6 @@ public extension ZMConversation {
 
         return lastMessage
     }
-
 }
 
 public extension ZMSystemMessage {
@@ -64,5 +63,4 @@ public extension ZMSystemMessage {
 
         managedObjectContext?.processPendingChanges()
     }
-
 }

@@ -90,5 +90,4 @@ final class ImageResourceThumbnailView: RoundedView {
             }
         }
     }
-
 }

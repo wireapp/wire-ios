@@ -131,7 +131,6 @@ class BottomSheetContainerViewController: UIViewController {
             visibleControllerBottomConstraint
         ])
         contentViewController.didMove(toParent: self)
-
     }
 
     func didChangeState() {} // for overriding
@@ -239,7 +238,6 @@ extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
         }
         return true
     }
-
 }
 
 extension BottomSheetContainerViewController: BottomSheetScrollingDelegate {

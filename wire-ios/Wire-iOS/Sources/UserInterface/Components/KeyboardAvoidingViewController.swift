@@ -149,5 +149,4 @@ class KeyboardAvoidingViewController: UIViewController {
 
         animator?.startAnimation()
     }
-
 }

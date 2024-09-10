@@ -23,7 +23,6 @@ class MockStableRandomParticipantsConversation: SwiftMockConversation, StableRan
     var stableRandomParticipants: [UserType] = []
 
     required override init() {
-
     }
 
     static func createOneOnOneConversation<T: MockStableRandomParticipantsConversation>(otherUser: MockUserType) -> T {

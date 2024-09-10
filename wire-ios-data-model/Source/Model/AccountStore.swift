@@ -138,5 +138,4 @@ private extension Error {
     var safeForLoggingDescription: String {
         (self as NSError).safeForLoggingDescription
     }
-
 }

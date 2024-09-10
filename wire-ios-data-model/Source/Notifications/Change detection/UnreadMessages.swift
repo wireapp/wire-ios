@@ -41,5 +41,4 @@ struct UnreadMessages {
 
         return result
     }
-
 }

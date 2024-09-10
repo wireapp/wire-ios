@@ -52,7 +52,6 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
     }
-
 }
 
 extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
@@ -104,5 +103,4 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             managedObjectContext.leaveAllGroups(groups)
         }
     }
-
 }

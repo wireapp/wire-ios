@@ -48,14 +48,11 @@ struct ConversationTypingEventDecoder {
     private struct Payload: Decodable {
 
         let status: TypingStatus
-
     }
 
     private enum TypingStatus: String, Decodable {
 
         case started
         case stopped
-
     }
-
 }

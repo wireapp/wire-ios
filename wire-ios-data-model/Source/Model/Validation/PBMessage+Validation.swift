@@ -33,7 +33,6 @@ extension UUID {
     public static func isValid(array: [Any]?) -> Bool {
         return array?.map(UUID.isValid).contains(false) == false
     }
-
 }
 
 // MARK: - String Formatting
@@ -51,7 +50,6 @@ extension String {
         assetIDAllowedCharacters.insert("-") // hyphen
 
         return self.trimmingCharacters(in: assetIDAllowedCharacters).isEmpty
-
     }
 
     public var isValidBearerToken: Bool {
@@ -77,9 +75,7 @@ extension String {
         default:
             return false
         }
-
     }
-
 }
 
 // MARK: - Specific Validation

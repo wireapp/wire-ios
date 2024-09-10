@@ -27,7 +27,6 @@ protocol URLActionProcessor {
     /// - parameter urlAction: URLAction to process.
     /// - parameter delegate: Delegate which observes the attempt of processing the action.
     func process(urlAction: URLAction, delegate: PresentationDelegate?)
-
 }
 
 extension SessionManager {
@@ -91,5 +90,4 @@ extension SessionManager {
         }
         return delegate.isInAuthenticatedAppState || delegate.isInUnathenticatedAppState
     }
-
 }

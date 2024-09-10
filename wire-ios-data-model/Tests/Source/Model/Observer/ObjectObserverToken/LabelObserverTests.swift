@@ -29,7 +29,6 @@ final class TestLabelObserver: NSObject, LabelObserver {
     func labelDidChange(_ changeInfo: LabelChangeInfo) {
         notifications.append(changeInfo)
     }
-
 }
 
 final class LabelObserverTests: NotificationDispatcherTestBase {
@@ -89,7 +88,5 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
                                                      modifier: { $0.name = "foo" },
                                                      expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]
         )
-
     }
-
 }

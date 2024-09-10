@@ -39,5 +39,4 @@ public extension NSPredicate {
     class func all(of predicates: [NSPredicate]) -> NSPredicate {
         return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
     }
-
 }

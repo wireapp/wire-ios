@@ -154,5 +154,4 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     func cancelDegradedCall() {
         delegate?.callingActionsViewPerformAction(.terminateDegradedCall)
     }
-
 }

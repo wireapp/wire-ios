@@ -41,7 +41,6 @@ class TeamsAPIV2: TeamsAPIV1 {
             .failure(code: .notFound, label: "no-team", error: TeamsAPIError.teamNotFound)
             .parse(response)
     }
-
 }
 
 struct TeamResponseV2: Decodable, ToAPIModelConvertible {
@@ -65,7 +64,6 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
         case iconKey = "icon_key"
         case binding
         case splashScreen = "splash_screen"
-
     }
 
     func toAPIModel() -> Team {
@@ -78,5 +76,4 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
             splashScreenID: splashScreen
         )
     }
-
 }

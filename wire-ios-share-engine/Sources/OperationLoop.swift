@@ -200,7 +200,6 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     func newRequestsAvailable() {
         requestAvailableClosure?()
     }
-
 }
 
 final class RequestGeneratingOperationLoop {
@@ -243,6 +242,5 @@ final class RequestGeneratingOperationLoop {
         repeat {
             result = transportSession.attemptToEnqueueSyncRequest(generator: { [weak self] in self?.requestGeneratorObserver.nextRequest() })
         } while result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax
-
     }
 }

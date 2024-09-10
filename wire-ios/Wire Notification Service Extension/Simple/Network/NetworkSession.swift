@@ -25,7 +25,6 @@ protocol NetworkSessionProtocol: AnyObject {
     var isAuthenticated: Bool { get }
 
     func execute<E: Endpoint>(endpoint: E) async throws -> E.Result
-
 }
 
 final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDelegate, Loggable {
@@ -36,7 +35,6 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
 
         case invalidResponse
         case invalidRequestURL
-
     }
 
     // MARK: - Properties
@@ -136,7 +134,6 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
             return .success(successResponse)
         }
     }
-
 }
 
 extension AccessToken {
@@ -144,5 +141,4 @@ extension AccessToken {
     var headerValue: String {
         return "\(type) \(token)"
     }
-
 }

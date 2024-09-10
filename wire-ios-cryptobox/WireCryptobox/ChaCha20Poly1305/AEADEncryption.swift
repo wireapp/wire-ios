@@ -139,7 +139,6 @@ public extension ChaCha20Poly1305 {
                     return "Failed to decrypt, possible due to incorrect key or malformed ciphertext."
                 }
             }
-
         }
 
         // MARK: - Private Helpers
@@ -189,7 +188,5 @@ public extension ChaCha20Poly1305 {
         private static func createByteArray(length: Int) -> [Byte] {
             return [Byte](repeating: 0, count: length)
         }
-
     }
-
 }

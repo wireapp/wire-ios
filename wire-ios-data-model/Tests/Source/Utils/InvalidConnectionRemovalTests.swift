@@ -43,5 +43,4 @@ class InvalidConnectionRemovalTests: DiskDatabaseTest {
         XCTAssertFalse(connectionToOtherUser.isDeleted)
         XCTAssertFalse(connectionToOtherUser.isZombieObject)
     }
-
 }

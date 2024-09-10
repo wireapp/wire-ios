@@ -275,7 +275,5 @@ final class UpdateEventsAPITests: XCTestCase {
                 isTransient: false
             )
         ]
-
     }
-
 }

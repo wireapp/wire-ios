@@ -94,5 +94,4 @@ final class UserSessionGiphyRequestStateTests: ZMUserSessionTestsBase {
         request = self.sut.applicationStatusDirectory.proxiedRequestStatus.pendingRequests.first
         XCTAssert(request != nil)
     }
-
 }

@@ -136,7 +136,6 @@ final class SearchHeaderViewController: UIViewController {
     private func updateClearIndicator(for tokenField: TokenField) {
         clearButton.isHidden = tokenField.filterText.isEmpty && tokenField.tokens.isEmpty
     }
-
 }
 
 extension SearchHeaderViewController: UserSelectionObserver {
@@ -155,7 +154,6 @@ extension SearchHeaderViewController: UserSelectionObserver {
         tokenField.removeToken(token)
         updateClearIndicator(for: tokenField)
     }
-
 }
 
 extension SearchHeaderViewController: TokenFieldDelegate {

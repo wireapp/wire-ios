@@ -92,5 +92,4 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             XCTAssertFalse(otherClient.needsToNotifyOtherUserAboutSessionReset)
         }
     }
-
 }

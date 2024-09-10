@@ -411,5 +411,4 @@ final class DeviceDetailsViewTests: XCTestCase, CoreDataFixtureTestHelper {
             .withUserInterfaceStyle(.dark)
             .verify(matching: viewController)
     }
-
 }

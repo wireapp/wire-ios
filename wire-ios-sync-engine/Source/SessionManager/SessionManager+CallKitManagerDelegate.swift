@@ -76,5 +76,4 @@ extension SessionManager: CallKitManagerDelegate {
             userSession.callCenter?.endAllCalls()
         }
     }
-
 }

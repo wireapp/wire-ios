@@ -184,5 +184,4 @@ class NotificationByIDEndpointTests: XCTestCase {
         // Then
         XCTAssertEqual(result, .failure(.unknownError(response)))
     }
-
 }

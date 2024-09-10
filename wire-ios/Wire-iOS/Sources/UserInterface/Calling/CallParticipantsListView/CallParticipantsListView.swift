@@ -82,7 +82,6 @@ final class CallParticipantsListView: UICollectionView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
 }
 
 extension CallParticipantsListView: UICollectionViewDataSource {
@@ -105,7 +104,6 @@ extension CallParticipantsListView: UICollectionViewDataSource {
         }
         return cell
     }
-
 }
 
 extension UserCell: CallParticipantsListCellConfigurable {
@@ -147,7 +145,6 @@ extension UserCell: CallParticipantsListCellConfigurable {
             videoIconView.set(style: VideoIconStyle(state: nil))
             connectingLabel.isHidden = true
             unconnectedStateOverlay.isHidden = true
-
         }
         configure(
             user: user,

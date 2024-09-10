@@ -193,7 +193,6 @@ public final class ProteusService: ProteusServiceInterface {
                 return proteusError
             }
         }
-
     }
 
     public func decrypt(
@@ -354,5 +353,4 @@ private extension CoreCryptoProtocol {
     var lastProteusError: ProteusError {
         return ProteusError(proteusCode: proteusLastErrorCode())
     }
-
 }

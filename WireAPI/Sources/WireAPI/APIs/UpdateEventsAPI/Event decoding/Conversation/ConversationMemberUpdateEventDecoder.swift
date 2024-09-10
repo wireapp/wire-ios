@@ -75,9 +75,6 @@ struct ConversationMemberUpdateEventDecoder {
             case muteStatusReference = "otr_muted_ref"
             case archivedStatus = "otr_archived"
             case archivedStatusReference = "otr_archived_ref"
-
         }
-
     }
-
 }

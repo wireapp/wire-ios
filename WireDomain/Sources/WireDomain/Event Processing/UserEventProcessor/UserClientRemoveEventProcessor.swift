@@ -27,7 +27,6 @@ protocol UserClientRemoveEventProcessorProtocol {
     /// - Parameter event: A user client remove event.
 
     func processEvent(_ event: UserClientRemoveEvent) async throws
-
 }
 
 struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserClientRemoveEventProcessor: UserClientRemoveEventProcessorProtocol {
         // TODO: [WPB-10190]
         assertionFailure("not implemented yet")
     }
-
 }

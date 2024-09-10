@@ -27,7 +27,6 @@ protocol ConversationProtocolUpdateEventProcessorProtocol {
     /// - Parameter event: A conversation protocol update event.
 
     func processEvent(_ event: ConversationProtocolUpdateEvent) async throws
-
 }
 
 struct ConversationProtocolUpdateEventProcessor: ConversationProtocolUpdateEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationProtocolUpdateEventProcessor: ConversationProtocolUpdateEvent
         // TODO: [WPB-10175]
         assertionFailure("not implemented yet")
     }
-
 }

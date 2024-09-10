@@ -22,7 +22,6 @@ import Foundation
 public protocol UpdateMLSGroupVerificationStatusUseCaseProtocol {
 
     func invoke(for conversation: ZMConversation, groupID: MLSGroupID) async throws
-
 }
 
 public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol {
@@ -110,7 +109,6 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
             return
         }
     }
-
 }
 
 // MARK: - Append system messages
@@ -132,5 +130,4 @@ private extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: context)
         appendConversationDegradedSystemMessage(sender: selfUser, at: Date())
     }
-
 }

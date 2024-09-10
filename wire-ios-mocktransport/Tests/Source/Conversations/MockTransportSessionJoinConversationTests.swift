@@ -28,7 +28,6 @@ class MockTransportSessionJoinConversationTests: MockTransportSessionTests {
         sut.performRemoteChanges { session in
             self.selfUser = session.insertSelfUser(withName: "me")
             self.conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [self.selfUser!], type: .group)
-
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }

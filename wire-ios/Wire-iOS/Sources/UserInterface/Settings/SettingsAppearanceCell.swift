@@ -147,7 +147,6 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
             contentView.addSubview($0)
         }
     }
-
 }
 
 private extension AccentColor {

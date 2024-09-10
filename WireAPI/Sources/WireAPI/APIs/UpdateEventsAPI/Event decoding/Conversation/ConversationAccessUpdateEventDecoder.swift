@@ -58,9 +58,6 @@ struct ConversationAccessUpdateEventDecoder {
             case accessModes = "access"
             case legacyAccessRole = "access_role"
             case accessRoles = "access_role_v2"
-
         }
-
     }
-
 }

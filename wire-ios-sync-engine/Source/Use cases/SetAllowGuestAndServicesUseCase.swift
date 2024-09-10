@@ -21,7 +21,6 @@ public enum SetAllowGuestsAndServicesUseCaseError: Error {
     case invalidOperation
     case contextUnavailable
     case networkError(Error)
-
 }
 
 // sourcery: AutoMockable
@@ -64,7 +63,6 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
             case .failure(let error):
                 completion(.failure(.networkError(error)))
             }
-
         }
     }
 }

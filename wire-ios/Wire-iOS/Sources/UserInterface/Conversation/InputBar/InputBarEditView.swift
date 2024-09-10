@@ -110,5 +110,4 @@ typealias IconColors = SemanticColors.Icon
         guard sender.state == .began else { return }
         delegate?.inputBarEditViewDidLongPressUndoButton(self)
     }
-
 }

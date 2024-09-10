@@ -80,5 +80,4 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
 
         return prerequisites
     }
-
 }

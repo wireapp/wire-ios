@@ -36,5 +36,4 @@ struct MockJSONPayloadResource {
             throw "unable to load data from resource: \(error)"
         }
     }
-
 }

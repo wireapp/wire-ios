@@ -128,7 +128,6 @@ final class EstablishingCallStatusView: UIView {
     func setProfileImage(hidden: Bool) {
         profileImageView.isHidden = hidden
     }
-
 }
 
 // MARK: - Helper

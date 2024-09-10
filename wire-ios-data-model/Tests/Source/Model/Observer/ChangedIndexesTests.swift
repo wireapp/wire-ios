@@ -282,5 +282,4 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         }
         XCTAssertEqual(result, ["C", "B", "A"])
     }
-
 }

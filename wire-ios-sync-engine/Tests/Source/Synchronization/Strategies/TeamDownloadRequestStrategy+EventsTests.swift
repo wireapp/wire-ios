@@ -467,5 +467,4 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
-
 }

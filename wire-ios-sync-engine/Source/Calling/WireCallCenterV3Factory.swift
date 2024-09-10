@@ -65,5 +65,4 @@ import WireDataModel
             return newInstance
         }
     }
-
 }

@@ -39,7 +39,6 @@ class FeatureConfigsAPIV1: FeatureConfigsAPIV0 {
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
             .parse(response)
     }
-
 }
 
 struct FeatureConfigsResponseAPIV1: Decodable, ToAPIModelConvertible {
@@ -94,7 +93,6 @@ struct FeatureConfigsResponseAPIV1: Decodable, ToAPIModelConvertible {
 
         return featureConfigs
     }
-
 }
 
 extension FeatureConfigResponse {
@@ -105,6 +103,5 @@ extension FeatureConfigResponse {
         let defaultProtocol: MessageProtocol
         let allowedCipherSuites: [MLSCipherSuite]
         let defaultCipherSuite: MLSCipherSuite
-
     }
 }

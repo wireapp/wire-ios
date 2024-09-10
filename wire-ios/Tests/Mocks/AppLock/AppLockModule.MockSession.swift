@@ -57,7 +57,5 @@ extension AppLockModule {
         func registerDatabaseLockedHandler(_ handler: @escaping (Bool) -> Void) -> Any {
             methodCalls.registerDatabaseLockedHandler.append(handler)
         }
-
     }
-
 }

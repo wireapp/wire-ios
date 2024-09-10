@@ -64,5 +64,4 @@ class AccessRoleMigrationTests: DiskDatabaseTest {
         XCTAssertTrue(groupConvo.needsToBeUpdatedFromBackend)
         XCTAssertTrue(groupConvoInAnotherTeam.needsToBeUpdatedFromBackend)
     }
-
 }

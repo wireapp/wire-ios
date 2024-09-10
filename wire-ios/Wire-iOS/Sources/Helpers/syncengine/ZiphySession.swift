@@ -63,7 +63,6 @@ final class ZiphySession: ZiphyURLRequester {
             callback: completionHandler
         )
     }
-
 }
 
 extension ProxyRequest: ZiphyRequestIdentifier {}

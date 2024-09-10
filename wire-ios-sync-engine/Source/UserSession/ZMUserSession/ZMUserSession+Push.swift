@@ -87,7 +87,6 @@ extension ZMUserSession {
             self.sessionManager?.configurePushToken(session: self)
         }
     }
-
 }
 
 // MARK: - Register, delete and update push token
@@ -99,7 +98,6 @@ extension ZMUserSession {
     public func validatePushToken() {
         sessionManager?.configurePushToken(session: self)
     }
-
 }
 
 extension ZMUserSession {
@@ -119,7 +117,6 @@ extension ZMUserSession {
             self.operationLoop?.fetchEvents(fromPushChannelPayload: payload, completionHandler: completion)
         }
     }
-
 }
 
 // MARK: - UNUserNotificationCenterDelegate
@@ -214,7 +211,6 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
             completionHandler()
         }
     }
-
 }
 
 extension UNNotificationContent {

@@ -176,5 +176,4 @@ final class AuthenticationInterfaceBuilder {
 
         return controller
     }
-
 }

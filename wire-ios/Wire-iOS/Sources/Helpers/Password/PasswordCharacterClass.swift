@@ -119,5 +119,4 @@ enum PasswordCharacterClass: Hashable, Decodable {
         case .custom(let charactersString): return CharacterSet(charactersIn: charactersString)
         }
     }
-
 }

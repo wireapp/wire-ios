@@ -279,5 +279,4 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: setupWrappedInNavigationController(viewModel: viewModel))
     }
-
 }

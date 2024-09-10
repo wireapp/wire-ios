@@ -27,5 +27,4 @@ extension ZMClientMessage {
 
         establishRelationshipsForInsertedQuote(text.quote)
     }
-
 }

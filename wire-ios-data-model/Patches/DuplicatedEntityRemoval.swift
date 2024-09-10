@@ -38,7 +38,6 @@ enum DuplicatedEntityRemoval {
             }
         }
     }
-
 }
 
 extension UserClient {

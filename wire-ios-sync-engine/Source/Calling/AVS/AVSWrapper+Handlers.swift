@@ -211,6 +211,5 @@ extension AVSWrapper {
         /// typedef void (wcall_req_new_epoch_h)(WUSER_HANDLE wuser, const char *convid, void *arg);
 
         typealias RequestNewEpoch = @convention(c) (UInt32, StringPtr, ContextRef) -> Void
-
     }
 }

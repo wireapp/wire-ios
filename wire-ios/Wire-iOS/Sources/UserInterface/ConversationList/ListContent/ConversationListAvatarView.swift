@@ -40,7 +40,6 @@ final class RandomGeneratorFromData: RandomGenerator {
 
         return result
     }
-
 }
 
 extension RandomGeneratorFromData {

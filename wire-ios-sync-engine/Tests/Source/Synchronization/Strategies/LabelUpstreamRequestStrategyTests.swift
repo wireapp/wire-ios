@@ -205,5 +205,4 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
             XCTAssertTrue(label.isZombieObject)
         }
     }
-
 }

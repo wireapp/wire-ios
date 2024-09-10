@@ -36,5 +36,4 @@ extension Analytics {
         attributes.merge(conversation.attributesForConversation) { _, new in new }
         tagEvent(conversationMediaCompleteActionEventName, attributes: attributes)
     }
-
 }

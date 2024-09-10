@@ -38,7 +38,6 @@ extension NewUnreadMessagesChangeInfo {
     public static func add(observer: ZMNewUnreadMessagesObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
         return self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
     }
-
 }
 
 extension NewUnreadKnockMessagesChangeInfo {
@@ -47,5 +46,4 @@ extension NewUnreadKnockMessagesChangeInfo {
     public static func add(observer: ZMNewUnreadKnocksObserver, for userSession: ZMUserSession) -> NSObjectProtocol {
         return self.add(observer: observer, managedObjectContext: userSession.managedObjectContext)
     }
-
 }

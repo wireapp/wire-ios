@@ -364,7 +364,6 @@ final class SettingsTextCell: SettingsTableCell,
 
             cellNameLabel.trailingAnchor.constraint(equalTo: textInput.leadingAnchor, constant: -textInputSpacing)
         ])
-
     }
 
     override func setupAccessibility() {
@@ -413,7 +412,6 @@ final class SettingsStaticTextTableCell: SettingsTableCell {
         cellNameLabel.textAlignment = .justified
         accessibilityTraits = .staticText
     }
-
 }
 
 final class SettingsProfileLinkCell: SettingsTableCell {
@@ -445,5 +443,4 @@ final class SettingsProfileLinkCell: SettingsTableCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.fitIn(view: contentView, insets: UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16))
     }
-
 }

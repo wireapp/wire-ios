@@ -212,5 +212,4 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         message.senderUser = mockOtherUser
         return message
     }
-
 }

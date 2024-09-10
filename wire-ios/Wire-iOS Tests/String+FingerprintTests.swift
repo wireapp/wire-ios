@@ -49,5 +49,4 @@ final class String_FingerprintTests: XCTestCase {
             XCTAssertEqual(attrs as? [NSAttributedString.Key: UIFont], regularAttributes)
         }
     }
-
 }

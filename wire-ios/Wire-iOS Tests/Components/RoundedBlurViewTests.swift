@@ -58,5 +58,4 @@ final class RoundedBlurViewTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: container)
     }
-
 }

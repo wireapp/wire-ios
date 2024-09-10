@@ -247,7 +247,6 @@ final class TeamRepositoryTests: XCTestCase {
         // Then
         XCTAssertEqual(result, .pending)
     }
-
 }
 
 private enum Scaffolding {

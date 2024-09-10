@@ -71,5 +71,4 @@ public struct Team: Identifiable, Equatable {
         self.logoKey = logoKey
         self.splashScreenID = splashScreenID
     }
-
 }

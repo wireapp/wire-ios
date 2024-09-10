@@ -56,5 +56,4 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
         configuration = L10n.Localizable.Content.System.UnknownMessage.body
         accessibilityLabel = configuration
     }
-
 }

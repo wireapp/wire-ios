@@ -59,7 +59,6 @@ public class ProxyRequest: NSObject {
 
         if let taskIdentifier = executedRequests.removeValue(forKey: request) {
             requestCancellation.cancelTask(with: taskIdentifier)
-
         }
     }
 }

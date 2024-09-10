@@ -112,7 +112,5 @@ public struct UserClient: Equatable, Identifiable, Codable {
         case mlsPublicKeys = "mls_public_keys"
         case cookie
         case capabilities
-
     }
-
 }

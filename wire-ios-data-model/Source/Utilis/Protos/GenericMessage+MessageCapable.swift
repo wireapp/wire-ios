@@ -150,7 +150,6 @@ extension MessageHide: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.hidden = self
     }
-
 }
 
 extension MessageDelete: MessageCapable {

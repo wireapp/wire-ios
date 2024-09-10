@@ -33,7 +33,6 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
             payload: nil,
             apiVersion: apiVersion.rawValue
         )
-
     }
 
     override func handleResponse(
@@ -57,5 +56,4 @@ class RemovePushTokenActionHandler: ActionHandler<RemovePushTokenAction> {
             action.notifyResult(.failure(.unknown(status: response.httpStatus)))
         }
     }
-
 }

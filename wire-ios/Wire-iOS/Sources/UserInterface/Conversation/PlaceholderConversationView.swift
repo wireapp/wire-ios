@@ -60,5 +60,4 @@ final class PlaceholderConversationView: UIView {
             shieldImageView.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
     }
-
 }

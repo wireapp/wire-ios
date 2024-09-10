@@ -39,7 +39,6 @@ public final class LinkAttachmentDetectorHelper: NSObject {
     public static func tearDown() {
         _test_debug_linkAttachmentDetector = nil
     }
-
 }
 
 @objcMembers public final class LinkAttachmentsPreprocessor: LinkPreprocessor<LinkAttachment> {
@@ -86,5 +85,4 @@ public final class LinkAttachmentDetectorHelper: NSObject {
         // which is why we need to enque a save maually here
         managedObjectContext.enqueueDelayedSave()
     }
-
 }

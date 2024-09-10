@@ -123,5 +123,4 @@ final class MessageSendingStatusPayloadProcessor {
             result[user] = next.value
         }
     }
-
 }

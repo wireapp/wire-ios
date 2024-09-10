@@ -92,7 +92,6 @@ final class MessageSendFailureView: UIView {
     func retryButtonTapped(_ sender: UIButton) {
         tapHandler?(sender)
     }
-
 }
 
 // MARK: - DownStyle extension
@@ -107,5 +106,4 @@ final class MessageSendFailureView: UIView {
 
         return style
     }
-
 }

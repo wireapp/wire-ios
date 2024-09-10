@@ -462,5 +462,4 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<Cre
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }

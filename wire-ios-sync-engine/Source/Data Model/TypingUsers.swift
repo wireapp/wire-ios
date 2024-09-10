@@ -56,5 +56,4 @@ import Foundation
         let users = userIds.compactMap { moc.object(with: $0) as? ZMUser }
         return Set(users)
     }
-
 }

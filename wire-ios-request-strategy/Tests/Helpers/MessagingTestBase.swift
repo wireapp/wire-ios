@@ -590,5 +590,4 @@ extension MessagingTestBase {
                 "type": type
         ]
     }
-
 }

@@ -225,5 +225,4 @@ class SnapshotCenterTests: BaseZMMessageTests {
         XCTAssertEqual(snapshot.toOneRelationships["role"], role2.objectID)
         XCTAssertEqual(changedKeys, Set(["role"]))
     }
-
 }

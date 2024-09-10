@@ -65,5 +65,4 @@ extension MessageProtocol: CustomStringConvertible {
     public var description: String {
         return rawValue
     }
-
 }

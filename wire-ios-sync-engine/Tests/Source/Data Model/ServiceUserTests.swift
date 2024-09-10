@@ -25,23 +25,18 @@ import XCTest
 final class DummyServiceUser: NSObject, ServiceUser {
 
     func cancelConnectionRequest(completion: @escaping (Error?) -> Void) {
-
     }
 
     func connect(completion: @escaping (Error?) -> Void) {
-
     }
 
     func block(completion: @escaping (Error?) -> Void) {
-
     }
 
     func accept(completion: @escaping (Error?) -> Void) {
-
     }
 
     func ignore(completion: @escaping (Error?) -> Void) {
-
     }
 
     var remoteIdentifier: UUID?
@@ -219,11 +214,9 @@ final class DummyServiceUser: NSObject, ServiceUser {
     var activeConversations: Set<ZMConversation> = Set()
 
     func requestPreviewProfileImage() {
-
     }
 
     func requestCompleteProfileImage() {
-
     }
 
     func imageData(for size: ProfileImageSize) -> Data? {
@@ -235,19 +228,15 @@ final class DummyServiceUser: NSObject, ServiceUser {
     }
 
     func refreshData() {
-
     }
 
     func refreshRichProfile() {
-
     }
 
     func refreshMembership() {
-
     }
 
     func refreshTeamData() {
-
     }
 
     func isGuest(in conversation: ConversationLike) -> Bool {

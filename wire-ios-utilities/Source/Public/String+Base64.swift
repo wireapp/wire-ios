@@ -43,5 +43,4 @@ public extension String {
     var base64DecodedBytes: [Byte]? {
         return base64DecodedData?.bytes
     }
-
 }

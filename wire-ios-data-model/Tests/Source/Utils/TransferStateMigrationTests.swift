@@ -62,5 +62,4 @@ class TransferStateMigrationTests: DiskDatabaseTest {
             try verifyThatLegacyTransferStateIsMigrated(legacy.rawValue, expectedTranferState: migrated)
         }
     }
-
 }

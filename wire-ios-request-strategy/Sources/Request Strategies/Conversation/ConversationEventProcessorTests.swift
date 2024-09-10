@@ -221,7 +221,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         } else {
             XCTAssertTrue(wipeGroupInvocations.isEmpty, file: file, line: line)
         }
-
     }
 
     func test_UpdateConversationMemberLeave_DoesntWipeMLSGroup_WhenSelfUserIsNotRemoved() async throws {
@@ -808,7 +807,6 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil)!
     }
-
 }
 
 private extension Encodable {
@@ -822,5 +820,4 @@ private extension Encodable {
         let json = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
         return json as! [String: Any]
     }
-
 }

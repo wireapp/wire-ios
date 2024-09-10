@@ -30,7 +30,6 @@ protocol EARKeyEncryptorInterface {
         _ encryptedDatabaseKey: Data,
         privateKey: SecKey
     ) throws -> Data
-
 }
 
 struct EARKeyEncryptor: EARKeyEncryptorInterface {
@@ -74,5 +73,4 @@ struct EARKeyEncryptor: EARKeyEncryptorInterface {
 
         return databaseKey as Data
     }
-
 }

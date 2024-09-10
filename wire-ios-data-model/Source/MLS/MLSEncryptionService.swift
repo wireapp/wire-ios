@@ -37,7 +37,6 @@ public protocol MLSEncryptionServiceInterface {
         message: Data,
         for groupID: MLSGroupID
     ) async throws -> Data
-
 }
 
 /// A class responsible for encrypting messages for MLS groups.
@@ -65,7 +64,6 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
     public enum MLSMessageEncryptionError: Error {
 
         case failedToEncryptMessage
-
     }
 
     public func encrypt(
@@ -80,5 +78,4 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }
     }
-
 }

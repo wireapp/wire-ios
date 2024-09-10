@@ -55,5 +55,4 @@ final class GiphyCollectionViewCell: UICollectionViewCell {
         representation = nil
         backgroundColor = nil
     }
-
 }

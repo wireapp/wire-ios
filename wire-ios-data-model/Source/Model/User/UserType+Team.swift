@@ -27,5 +27,4 @@ public extension UserType {
     var isTemporaryUser: Bool {
         return expiresAfter > 0.0
     }
-
 }

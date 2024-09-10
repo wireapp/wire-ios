@@ -25,7 +25,6 @@ import WireDataModel
         guard let current = BackendInfo.apiVersion else { return nil }
         return .init(value: current)
     }
-
 }
 
 /// A helper object to give reference semantics to `APIVersion`.
@@ -43,5 +42,4 @@ public class APIVersionWrapper: NSObject {
         self.value = value
         super.init()
     }
-
 }

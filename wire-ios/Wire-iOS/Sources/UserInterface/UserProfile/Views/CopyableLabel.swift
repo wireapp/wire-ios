@@ -69,5 +69,4 @@ final class CopyableLabel: UILabel {
             self.alpha = dimmed ? self.dimmedAlpha : 1
         }
     }
-
 }

@@ -35,7 +35,6 @@ public extension NSManagedObjectContext {
             precondition(zm_isUserInterfaceContext, "callCenter can only be accessed on the ui context")
             userInfo[NSManagedObjectContext.WireCallCenterKey] = newValue
         }
-
     }
 
     private static let ConstantBitRateAudioKey = "ConstantBitRateAudioKey"
@@ -52,6 +51,5 @@ public extension NSManagedObjectContext {
             precondition(zm_isUserInterfaceContext, "zm_useConstantBitRateAudio can only be accessed on the ui context")
             userInfo[NSManagedObjectContext.ConstantBitRateAudioKey] = newValue
         }
-
     }
 }

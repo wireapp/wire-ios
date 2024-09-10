@@ -42,7 +42,6 @@ final class CallParticipantsListHelper {
                                                                                               activeSpeakerState: .inactive)
         }
     }
-
 }
 
 final class CallParticipantsListViewControllerTests: XCTestCase {

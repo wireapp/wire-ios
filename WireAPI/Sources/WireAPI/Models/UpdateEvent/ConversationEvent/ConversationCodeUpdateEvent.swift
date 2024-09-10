@@ -45,5 +45,4 @@ public struct ConversationCodeUpdateEvent: Equatable, Codable {
     /// Whether a password is required to accss the conversation.
 
     public let isPasswordProtected: Bool
-
 }

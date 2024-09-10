@@ -117,7 +117,6 @@ extension MockUser {
             return .disabled
         }
     }
-
 }
 
 // MARK: - Broadcasting
@@ -149,7 +148,6 @@ extension MockUser {
     public var currentTeamMembers: [MockUser]? {
         return self.memberships?.first?.team.members.compactMap({ $0.user })
     }
-
 }
 
 // MARK: - Images
@@ -183,7 +181,6 @@ extension MockUser {
     @objc public func removeLegacyPictures() {
         [smallProfileImage, mediumImage].compactMap { $0 }.forEach(managedObjectContext!.delete)
     }
-
 }
 
 // MARK: - Transport data
@@ -303,7 +300,6 @@ extension MockUser {
             return payload
         }
     }
-
 }
 
 // MARK: - Participant Roles

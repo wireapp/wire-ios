@@ -322,7 +322,6 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
-
 }
 
 // tests on result of request
@@ -669,7 +668,6 @@ extension AssetV3DownloadRequestStrategyTests {
             XCTAssertEqual(message.category, [.file])
         }
     }
-
 }
 
 // MARK: - Download Cancellation
@@ -718,5 +716,4 @@ extension AssetV3DownloadRequestStrategyTests {
             XCTAssertNil(message.associatedTaskIdentifier)
         }
     }
-
 }

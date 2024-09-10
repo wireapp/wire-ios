@@ -32,7 +32,6 @@ protocol EARKeyRepositoryInterface {
     func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data
     func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws
     func clearCache()
-
 }
 
 /// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
@@ -125,5 +124,4 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
         WireLogger.ear.info("clear key cache", attributes: .safePublic)
         keyCache.removeAll()
     }
-
 }

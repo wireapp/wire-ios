@@ -93,7 +93,6 @@ extension ZMSystemMessage {
                               #keyPath(ZMSystemMessage.systemMessageType)]
         return keys.union(additionalKeys)
     }
-
 }
 
 @objcMembers public final class MessageChangeInfo: ObjectChangeInfo {
@@ -206,7 +205,6 @@ extension ZMSystemMessage {
     }
 
     public let message: ZMMessage
-
 }
 
 @objc public protocol ZMMessageObserver: NSObjectProtocol {

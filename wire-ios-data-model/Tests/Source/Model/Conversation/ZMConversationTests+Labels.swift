@@ -137,5 +137,4 @@ class ZMConversationTests_Labels: ZMConversationTestsBase {
         // THEN
         XCTAssertFalse(folder.markedForDeletion)
     }
-
 }

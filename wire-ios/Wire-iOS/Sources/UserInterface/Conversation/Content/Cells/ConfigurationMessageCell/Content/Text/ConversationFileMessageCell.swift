@@ -110,7 +110,6 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
     var selectionRect: CGRect {
         return fileTransferView.bounds
     }
-
 }
 
 extension ConversationFileMessageCell: TransferViewDelegate {
@@ -144,5 +143,4 @@ final class ConversationFileMessageCellDescription: ConversationMessageCellDescr
     init(message: ZMConversationMessage) {
         self.configuration = View.Configuration(message: message)
     }
-
 }

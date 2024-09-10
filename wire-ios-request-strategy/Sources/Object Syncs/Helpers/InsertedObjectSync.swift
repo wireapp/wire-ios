@@ -31,7 +31,6 @@ protocol InsertedObjectSyncTranscoder: AnyObject {
     ///                 on the backend.
     ///
     func insert(object: Object, completion: @escaping () -> Void)
-
 }
 
 /**

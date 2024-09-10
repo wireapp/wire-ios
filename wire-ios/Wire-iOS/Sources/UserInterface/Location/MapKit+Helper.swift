@@ -24,7 +24,6 @@ extension CLLocationCoordinate2D {
     var location: CLLocation {
         return CLLocation(latitude: latitude, longitude: longitude)
     }
-
 }
 
 extension CLPlacemark {
@@ -36,7 +35,6 @@ extension CLPlacemark {
 
         return includeCountry ? lines?.joined(separator: ", ") : lines?.dropLast().joined(separator: ", ")
     }
-
 }
 
 extension MKMapView {
@@ -59,7 +57,6 @@ extension MKMapView {
         let region = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(zoomLevel: zoomLevel, viewSize: Float(frame.height)))
         setRegion(region, animated: animated)
     }
-
 }
 
 extension MKCoordinateSpan {
@@ -73,7 +70,6 @@ extension LocationData {
     var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: CLLocationDegrees(latitude), longitude: CLLocationDegrees(longitude))
     }
-
 }
 
 extension MKMapView {
@@ -96,5 +92,4 @@ extension MKMapView {
         guard let location: LocationData = Settings.shared[.lastUserLocation] else { return }
         setCenterCoordinate(location.coordinate, zoomLevel: Int(location.zoomLevel), animated: animated)
     }
-
 }

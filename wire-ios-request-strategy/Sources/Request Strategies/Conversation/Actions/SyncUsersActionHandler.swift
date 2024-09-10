@@ -36,7 +36,6 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
     struct RequestPayload: Codable, Equatable {
 
         let qualified_ids: [QualifiedID]
-
     }
 
     private func markUserProfilesAsUnavailable(_ users: Set<QualifiedID>) {
@@ -120,8 +119,6 @@ class SyncUsersActionHandler: ActionHandler<SyncUsersAction> {
                 let errorInfo = response.errorInfo
                 action.fail(with: .unknownError(code: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
             }
-
         }
     }
-
 }

@@ -23,5 +23,4 @@ import Foundation
     var shouldBeDisplayed: Bool {
         return !hasBeenDeleted && !isZombieObject
     }
-
 }

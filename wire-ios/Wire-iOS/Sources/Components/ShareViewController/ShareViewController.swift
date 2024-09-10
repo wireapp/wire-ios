@@ -236,5 +236,4 @@ extension ShareViewController: TokenFieldDelegate {
     func tokenFieldDidConfirmSelection(_ controller: TokenField) {
         // no-op
     }
-
 }

@@ -39,7 +39,6 @@ extension TextMarker {
     func range(in string: String) -> Range<Int>? {
         return Range((string as NSString).range(of: token))
     }
-
 }
 
 extension Mention {
@@ -67,7 +66,6 @@ extension URL {
 
         return index
     }
-
 }
 
 extension NSMutableAttributedString {

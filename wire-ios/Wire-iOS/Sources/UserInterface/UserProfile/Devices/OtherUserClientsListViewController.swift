@@ -225,7 +225,6 @@ extension OtherUserClientsListViewController: UserObserving {
         clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
         updateCertificatesForUserClients()
     }
-
 }
 
 extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegate {
@@ -269,5 +268,4 @@ extension Array where Element: UserClientType {
             return self
         }
     }
-
 }

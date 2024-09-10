@@ -24,7 +24,6 @@ public enum CreateConversationGuestLinkUseCaseError: Error {
     case contextUnavailable
     case networkError(Error)
     case failedToEnableGuestAccess(Error)
-
 }
 
 // sourcery: AutoMockable
@@ -35,7 +34,6 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
         password: String?,
         completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     )
-
 }
 
 struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
@@ -95,5 +93,4 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
             }
         }
     }
-
 }

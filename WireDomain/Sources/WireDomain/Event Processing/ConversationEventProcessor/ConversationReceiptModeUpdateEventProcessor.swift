@@ -27,7 +27,6 @@ protocol ConversationReceiptModeUpdateEventProcessorProtocol {
     /// - Parameter event: A conversation receipt mode update event.
 
     func processEvent(_ event: ConversationReceiptModeUpdateEvent) async throws
-
 }
 
 struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdateEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationReceiptModeUpdateEventProcessor: ConversationReceiptModeUpdat
         // TODO: [WPB-10176]
         assertionFailure("not implemented yet")
     }
-
 }

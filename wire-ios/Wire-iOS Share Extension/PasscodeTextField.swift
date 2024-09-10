@@ -135,5 +135,4 @@ extension PasscodeTextField {
 
         return textField
     }
-
 }

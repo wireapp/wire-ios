@@ -32,7 +32,6 @@ enum BitRateStatus: String {
         case .variable:
             return ""
         }
-
     }
 
     fileprivate var accessibilityValue: String {

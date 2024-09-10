@@ -23,5 +23,4 @@ import Foundation
 struct TestError: Error {
 
     let message: String
-
 }

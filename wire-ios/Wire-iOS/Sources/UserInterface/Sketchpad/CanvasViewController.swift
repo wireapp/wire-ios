@@ -57,7 +57,6 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
             if let image = sketchImage {
                 canvas.referenceImage = image
             }
-
         }
     }
 
@@ -287,7 +286,6 @@ extension CanvasViewController: CanvasDelegate {
         navigationItem.leftBarButtonItem?.isEnabled = canvas.hasChanges
         hideHint()
     }
-
 }
 
 // MARK: - EmojiKeyboardViewControllerDelegate
@@ -403,7 +401,6 @@ extension CanvasViewController: UIImagePickerControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-
 }
 
 // MARK: - SketchColorPickerControllerDelegate
@@ -413,5 +410,4 @@ extension CanvasViewController: SketchColorPickerControllerDelegate {
     func sketchColorPickerController(_ controller: SketchColorPickerController, changedSelectedColor color: UIColor) {
         canvas.brush = Brush(size: Float(controller.brushWidth(for: color)), color: color)
     }
-
 }

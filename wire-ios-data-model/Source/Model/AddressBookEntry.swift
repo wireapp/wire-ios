@@ -47,7 +47,6 @@ import Foundation
     public override static func isTrackingLocalModifications() -> Bool {
         return false
     }
-
 }
 
 extension AddressBookEntry {

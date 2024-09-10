@@ -43,7 +43,6 @@ struct TeamPayload: Decodable {
         case icon
         case iconKey = "icon_key"
     }
-
 }
 
 extension TeamPayload {
@@ -72,7 +71,6 @@ extension TeamPayload {
             managedObjectContext.delete(team)
         }
     }
-
 }
 
 fileprivate extension Team {
@@ -80,7 +78,6 @@ fileprivate extension Team {
     static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
         NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
     }()
-
 }
 
 /// Responsible for downloading the team which the self user belongs to during the slow sync
@@ -283,7 +280,6 @@ private  enum TeamEventPayloadKey: String {
     case data
     case user
     case conversation = "conv"
-
 }
 
 struct TeamUpdateEventPayload: Decodable {
@@ -297,7 +293,6 @@ struct TeamUpdateEventPayload: Decodable {
         case icon
         case iconKey = "icon_key"
     }
-
 }
 
 extension TeamUpdateEventPayload {
@@ -307,7 +302,6 @@ extension TeamUpdateEventPayload {
         team.pictureAssetId = icon
         team.pictureAssetKey = iconKey
     }
-
 }
 
 private let log = ZMSLog(tag: "Teams")

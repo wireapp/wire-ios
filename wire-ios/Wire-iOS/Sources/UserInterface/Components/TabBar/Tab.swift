@@ -27,7 +27,6 @@ final class Tab: LegacyButton {
         titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 4, right: 0)
         isSelected = false
         updateColors()
-
     }
 
     override var intrinsicContentSize: CGSize {
@@ -37,6 +36,5 @@ final class Tab: LegacyButton {
     private func updateColors() {
         setTitleColor(SemanticColors.Label.textDefault, for: .normal)
         setTitleColor(SemanticColors.Label.textDefault, for: .highlighted)
-
     }
 }

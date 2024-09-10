@@ -39,5 +39,4 @@ public struct ConversationMessageTimerUpdateEvent: Equatable, Codable {
     /// A `nil` value means the timer is off.
 
     public let newTimer: Int64?
-
 }

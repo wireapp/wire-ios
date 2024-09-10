@@ -135,5 +135,4 @@ private extension DeviceStatus {
             preconditionFailure("Should have a valid status")
         }
     }
-
 }

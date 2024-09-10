@@ -149,7 +149,6 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
     private func sutNextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
        syncMOC.performAndWait { sut.nextRequest(for: apiVersion) }
     }
-
 }
 
 extension TeamInvitationRequestStrategyTests: ZMRequestCancellation, ZMSyncStateDelegate {

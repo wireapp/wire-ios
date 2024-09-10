@@ -87,5 +87,4 @@ class AssetsPreprocessorTests: MessagingTestBase {
         // then
         XCTAssertTrue(message.modifiedKeys!.contains(#keyPath(ZMAssetClientMessage.transferState)))
     }
-
 }

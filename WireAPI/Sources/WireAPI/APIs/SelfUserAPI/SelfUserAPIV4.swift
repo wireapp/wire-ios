@@ -36,7 +36,6 @@ class SelfUserAPIV4: SelfUserAPIV3 {
             .success(code: .ok, type: SelfUserV4.self)
             .parse(response)
     }
-
 }
 
 struct SelfUserV4: Decodable, ToAPIModelConvertible {

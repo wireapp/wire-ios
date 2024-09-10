@@ -24,5 +24,4 @@ public protocol TearDownCapable: NSObjectProtocol {
 
     @objc
     func tearDown()
-
 }

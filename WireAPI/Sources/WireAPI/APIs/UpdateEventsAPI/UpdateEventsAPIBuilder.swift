@@ -55,5 +55,4 @@ public struct UpdateEventsAPIBuilder {
             UpdateEventsAPIV6(httpClient: httpClient)
         }
     }
-
 }

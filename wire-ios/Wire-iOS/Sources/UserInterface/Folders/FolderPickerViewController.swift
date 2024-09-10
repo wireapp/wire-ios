@@ -103,7 +103,6 @@ final class FolderPickerViewController: UIViewController {
         collectionViewLayout.minimumLineSpacing = 0
 
         CheckmarkCell.register(in: collectionView)
-
     }
 
     private func configureConstraints() {
@@ -125,7 +124,6 @@ final class FolderPickerViewController: UIViewController {
         folderCreation.delegate = self
         self.navigationController?.pushViewController(folderCreation, animated: true)
     }
-
 }
 
 // MARK: - Table View
@@ -171,7 +169,6 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.size.width, height: 56)
     }
-
 }
 
 extension FolderPickerViewController: FolderCreationControllerDelegate {
@@ -179,5 +176,4 @@ extension FolderPickerViewController: FolderCreationControllerDelegate {
     func folderController(_ controller: FolderCreationController, didCreateFolder folder: LabelType) {
         pickFolder(folder)
     }
-
 }

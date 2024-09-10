@@ -166,5 +166,4 @@ extension Team {
         }
         return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, notCached])
     }
-
 }

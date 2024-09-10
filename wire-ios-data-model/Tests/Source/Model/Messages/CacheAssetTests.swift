@@ -231,5 +231,4 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         XCTAssertFalse(sut.hasOriginal)
         XCTAssertFalse(sut.hasPreprocessed)
     }
-
 }

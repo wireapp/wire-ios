@@ -135,5 +135,4 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
             self.longPressEnded()
         })
     }
-
 }

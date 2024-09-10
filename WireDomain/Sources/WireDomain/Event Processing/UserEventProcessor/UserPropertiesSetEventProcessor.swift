@@ -27,7 +27,6 @@ protocol UserPropertiesSetEventProcessorProtocol {
     /// - Parameter event: A user properties set event.
 
     func processEvent(_ event: UserPropertiesSetEvent) async throws
-
 }
 
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol 
         // TODO: [WPB-10197]
         assertionFailure("not implemented yet")
     }
-
 }

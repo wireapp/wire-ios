@@ -55,7 +55,6 @@ import Foundation
             completion(imageData != nil)
         }
     }
-
 }
 
 @objcMembers

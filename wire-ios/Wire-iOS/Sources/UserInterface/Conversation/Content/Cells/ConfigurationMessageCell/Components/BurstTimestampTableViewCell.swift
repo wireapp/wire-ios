@@ -64,7 +64,6 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
     init(configuration: View.Configuration) {
         self.configuration = configuration
     }
-
 }
 
 final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
@@ -152,5 +151,4 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
             accentColor: object.accentColor
         )
     }
-
 }

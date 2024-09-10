@@ -32,7 +32,5 @@ extension ___VARIABLE_productName:identifier___Module {
         func performAction(_ action: ___VARIABLE_productName:identifier___Module.Action) {
             actions.append(action)
         }
-
     }
-
 }

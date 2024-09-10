@@ -55,7 +55,6 @@ extension ZMOperationLoopTests {
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
     }
 
     func testThatMOCIsSavedOnFailedRequest() {

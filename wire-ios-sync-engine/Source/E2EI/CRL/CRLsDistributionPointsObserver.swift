@@ -25,7 +25,6 @@ public protocol CRLsDistributionPointsObserving {
     func startObservingNewCRLsDistributionPoints(
         from publisher: AnyPublisher<CRLsDistributionPoints, Never>
     )
-
 }
 
 public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
@@ -47,5 +46,4 @@ public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
         }
         .store(in: &cancellables)
     }
-
 }

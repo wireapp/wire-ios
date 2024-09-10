@@ -24,5 +24,4 @@ enum UserRepositoryError: Error {
 
     case failedToFetchRemotely(Error)
     case failedToCollectKnownUsers(Error)
-
 }

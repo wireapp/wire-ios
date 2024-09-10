@@ -46,5 +46,4 @@ extension CallQualityController {
         // Allow the survey if the mute period is finished
         return (date >= nextPossibleDate)
     }
-
 }

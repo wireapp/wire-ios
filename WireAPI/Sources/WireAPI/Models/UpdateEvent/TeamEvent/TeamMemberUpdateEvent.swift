@@ -29,5 +29,4 @@ public struct TeamMemberUpdateEvent: Equatable, Codable {
     /// The membership id.
 
     public let membershipID: UUID
-
 }

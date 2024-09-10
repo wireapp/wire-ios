@@ -89,7 +89,6 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
         case expiresAt = "expires_at"
         case service
         case legalholdStatus = "legalhold_status"
-
     }
 
     func toAPIModel() -> User {
@@ -117,7 +116,6 @@ struct ListUsersRequestV0: Encodable {
     enum CodingKeys: String, CodingKey {
 
         case qualifiedIDs = "qualified_ids"
-
     }
 }
 

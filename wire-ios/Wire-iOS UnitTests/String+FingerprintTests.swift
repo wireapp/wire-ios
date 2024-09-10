@@ -30,5 +30,4 @@ final class String_FingerprintTests: XCTestCase {
         let validText = "AB CD\nEF GH\nIJ KL\nMN OP\nQR ST"
         XCTAssertEqual(validText, testText.splitStringIntoLines(charactersPerLine: 4))
     }
-
 }

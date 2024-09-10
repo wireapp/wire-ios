@@ -93,7 +93,6 @@ extension MockUserClient {
         }
         return mapped
     }
-
 }
 
 extension String {

@@ -169,7 +169,6 @@ public enum SemanticColors {
         // AudioView
         public static let backgroundAudioViewOverlay = UIColor(light: .gray20, dark: .gray100)
         public static let backgroundAudioViewOverlayActive = UIColor(light: .white, dark: .gray95)
-
     }
 
     public enum TabBar {

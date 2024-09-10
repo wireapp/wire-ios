@@ -74,5 +74,4 @@ class StartLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStat
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError, .accountLimitReached)
     }
-
 }

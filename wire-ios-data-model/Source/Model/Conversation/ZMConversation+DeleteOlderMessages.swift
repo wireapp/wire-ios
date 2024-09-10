@@ -39,6 +39,5 @@ extension ZMConversation {
         for element in result {
             managedObjectContext.delete(element)
         }
-
     }
 }

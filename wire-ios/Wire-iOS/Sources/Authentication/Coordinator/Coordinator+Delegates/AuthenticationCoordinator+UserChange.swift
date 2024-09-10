@@ -33,5 +33,4 @@ extension AuthenticationCoordinator: UserProfileUpdateObserver, UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         eventResponderChain.handleEvent(ofType: .userProfileChange(changeInfo))
     }
-
 }

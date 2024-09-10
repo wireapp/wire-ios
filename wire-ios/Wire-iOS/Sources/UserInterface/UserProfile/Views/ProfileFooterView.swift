@@ -25,7 +25,6 @@ protocol ProfileFooterViewDelegate: AnyObject {
 
     /// Called when the footer wants to present the list of actions, from the right button.
     func footerView(_ footerView: ProfileFooterView, shouldPresentMenuWithActions actions: [ProfileAction])
-
 }
 
 /**
@@ -100,5 +99,4 @@ final class ProfileFooterView: ConversationDetailFooterView {
         guard let rightActions = self.rightActions else { return }
         delegate?.footerView(self, shouldPresentMenuWithActions: rightActions)
     }
-
 }

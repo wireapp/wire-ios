@@ -74,7 +74,5 @@ final class AnalyticsTests: XCTestCase {
             // Then
             XCTAssertEqual(MockCountly.startCount, 2)
         }
-
     }
-
 }

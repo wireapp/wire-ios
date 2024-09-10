@@ -243,7 +243,6 @@ final class FullscreenImageViewController: UIViewController {
 
         scrollView.delegate = self
         scrollView.accessibilityIdentifier = "fullScreenPage"
-
     }
 
     private func setupObservers() {
@@ -771,7 +770,6 @@ extension FullscreenImageViewController: MessageActionResponder {
 
         (delegate as? MessageActionResponder)?.perform(action: action, for: message, view: sourceView)
     }
-
 }
 
 extension FullscreenImageViewController: ZMMessageObserver {
@@ -781,7 +779,6 @@ extension FullscreenImageViewController: ZMMessageObserver {
             updateForMessage()
         }
     }
-
 }
 
 // MARK: - UIScrollViewDelegate
@@ -822,5 +819,4 @@ extension FullscreenImageViewController: UIScrollViewDelegate {
 
         scrollView.contentInset = UIEdgeInsets(top: verticalInset, left: horizontalInset, bottom: verticalInset, right: horizontalInset)
     }
-
 }

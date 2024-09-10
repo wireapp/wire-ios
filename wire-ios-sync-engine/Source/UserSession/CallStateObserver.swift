@@ -60,7 +60,6 @@ public final class CallStateObserver: NSObject {
             }
         }
     }
-
 }
 
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
@@ -179,5 +178,4 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
         default: break
         }
     }
-
 }

@@ -57,5 +57,4 @@ public class RemovePushTokenAction: EntityAction {
         self.deviceToken = deviceToken
         self.resultHandler = resultHandler
     }
-
 }

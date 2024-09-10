@@ -33,5 +33,4 @@ enum ConversationLabelsRepositoryError: Error {
     /// Unable to delete label locally
 
     case failedToDeleteStoredLabels
-
 }

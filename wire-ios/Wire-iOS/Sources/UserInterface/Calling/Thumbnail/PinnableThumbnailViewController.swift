@@ -277,5 +277,4 @@ final class PinnableThumbnailViewController: UIViewController {
             break
         }
     }
-
 }

@@ -153,7 +153,6 @@ class MemberTests: ZMConversationTestsBase {
         XCTAssertNotNil(member.remoteIdentifier)
         XCTAssertEqual(member.remoteIdentifier, user.remoteIdentifier)
     }
-
 }
 
 // MARK: - Transport
@@ -214,5 +213,4 @@ extension MemberTests {
             XCTAssertEqual(member.createdBy?.remoteIdentifier, createdByUUID)
         }
     }
-
 }

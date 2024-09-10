@@ -86,5 +86,4 @@ class String_StrippingTests: XCTestCase {
     func testThatItStripsPrefixNonMutating() {
         XCTAssertEqual("abc".strippingPrefix("a"), "bc")
     }
-
 }

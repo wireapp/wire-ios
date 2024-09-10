@@ -258,5 +258,4 @@ final class VideoMessageView: UIView, TransferView {
             }
         }
     }
-
 }

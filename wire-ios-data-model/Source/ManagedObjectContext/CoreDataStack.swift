@@ -63,7 +63,6 @@ extension URL {
 
     func appendingEventStoreFile() -> URL {
         return self.appendingPathComponent("ZMEventModel.sqlite")
-
     }
 
     /// Returns the location of the persistent store file in the given account folder
@@ -95,7 +94,6 @@ public extension NSURL {
     @objc func URLByAppendingPersistentStoreLocation() -> URL {
         return (self as URL).appendingPersistentStoreLocation()
     }
-
 }
 
 // MARK: -
@@ -446,7 +444,6 @@ public class CoreDataStack: NSObject, ContextProvider {
             context.setupLocalCachedSessionAndSelfUser()
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
-
         }
     }
 
@@ -523,7 +520,6 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         try eventsMigrator.migrateStore(at: storeURL, toVersion: .current)
     }
-
 }
 
 // MARK: -
@@ -580,5 +576,4 @@ extension NSPersistentStoreCoordinator {
             NSInferMappingModelAutomaticallyOption: supportsMigration
         ]
     }
-
 }

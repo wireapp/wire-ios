@@ -36,5 +36,4 @@ extension UpdateEventDecodingProxy {
             updateEvent = .federation(.delete(event))
         }
     }
-
 }

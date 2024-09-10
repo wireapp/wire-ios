@@ -130,5 +130,4 @@ final class MentionsHandlerTests: XCTestCase {
 
         XCTAssertEqual(replacement, expected)
     }
-
 }

@@ -103,7 +103,6 @@ extension Decodable {
 
         self.init(rawData, decoder: decoder)
     }
-
 }
 
 extension Encodable {
@@ -152,13 +151,11 @@ extension Encodable {
             throw JSONEncodingFailure.failedToEncode(error)
         }
     }
-
 }
 
 enum JSONEncodingFailure: Error {
 
     case failedToEncode(Error)
-
 }
 
 // MARK: API version aware coding
@@ -182,7 +179,6 @@ extension DecodableAPIVersionAware {
 
         try self.init(from: decoder, apiVersion: apiVersion)
     }
-
 }
 
 extension EncodableAPIVersionAware {
@@ -194,7 +190,6 @@ extension EncodableAPIVersionAware {
 
         try encode(to: encoder, apiVersion: apiVersion)
     }
-
 }
 
 // MARK: - Helpers

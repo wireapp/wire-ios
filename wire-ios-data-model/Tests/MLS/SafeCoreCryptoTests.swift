@@ -32,7 +32,6 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
 
         // WHEN / THEN
         await sut.perform { _ in }
-
     }
 
     func test_performDoesCallRestoreFromDisk() async throws {
@@ -52,5 +51,4 @@ class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
         // THEN
         XCTAssertTrue(called)
     }
-
 }

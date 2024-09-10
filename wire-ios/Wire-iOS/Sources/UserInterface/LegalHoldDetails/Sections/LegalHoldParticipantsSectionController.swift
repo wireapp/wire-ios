@@ -31,13 +31,11 @@ private struct LegalHoldParticipantsSectionViewModel {
     init(participants: [UserType]) {
         self.participants = participants
     }
-
 }
 
 protocol LegalHoldParticipantsSectionControllerDelegate: AnyObject {
 
     func legalHoldParticipantsSectionWantsToPresentUserProfile(for user: UserType)
-
 }
 
 typealias LegalHoldDetailsConversation = Conversation & GroupDetailsConversation
@@ -112,7 +110,6 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
         delegate?.legalHoldParticipantsSectionWantsToPresentUserProfile(for: user)
     }
-
 }
 
 extension LegalHoldParticipantsSectionController: UserObserving {
@@ -123,5 +120,4 @@ extension LegalHoldParticipantsSectionController: UserObserving {
         viewModel = conversation.createViewModel()
         collectionView?.reloadData()
     }
-
 }

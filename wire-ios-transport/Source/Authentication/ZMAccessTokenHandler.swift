@@ -28,5 +28,4 @@ public extension ZMAccessTokenHandler {
     func logError(_ message: String) {
         WireLogger.authentication.error(message)
     }
-
 }

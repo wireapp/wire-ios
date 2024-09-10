@@ -179,7 +179,6 @@ class ConversationTests_LegalHold: ConversationTestsBase {
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
-
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -279,5 +278,4 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // then
         XCTAssertEqual(conversation?.legalHoldStatus, .pendingApproval)
     }
-
 }

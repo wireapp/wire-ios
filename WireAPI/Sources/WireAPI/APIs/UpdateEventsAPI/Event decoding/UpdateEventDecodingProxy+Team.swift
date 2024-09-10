@@ -39,5 +39,4 @@ extension UpdateEventDecodingProxy {
             updateEvent = .team(.memberUpdate(event))
         }
     }
-
 }

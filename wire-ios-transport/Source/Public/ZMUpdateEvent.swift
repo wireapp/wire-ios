@@ -203,7 +203,6 @@ extension ZMUpdateEvent {
     @objc(eventTypeStringForUpdateEventType:) public static func eventTypeString(for eventType: ZMUpdateEventType) -> String? {
         return eventType.stringValue
     }
-
 }
 
 private let zmLog = ZMSLog(tag: "UpdateEvents")

@@ -80,7 +80,6 @@ extension ZMConversation {
 
         userSession.transportSession.enqueueOneTime(request)
     }
-
 }
 
 private struct MessageDestructionTimeoutRequestFactory {
@@ -98,5 +97,4 @@ private struct MessageDestructionTimeoutRequestFactory {
         }
         return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
-
 }

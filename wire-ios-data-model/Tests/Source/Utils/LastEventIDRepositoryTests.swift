@@ -82,5 +82,4 @@ final class LastEventIDRepositoryTests: XCTestCase {
         // Then
         XCTAssertEqual(sut.fetchLastEventID(), eventID)
     }
-
 }

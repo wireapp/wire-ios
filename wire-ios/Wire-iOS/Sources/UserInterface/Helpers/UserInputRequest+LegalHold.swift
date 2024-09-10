@@ -59,5 +59,4 @@ extension UserType where Self: SelfLegalHoldSubject {
             cancellationHandler: cancellationHandler
         )
     }
-
 }

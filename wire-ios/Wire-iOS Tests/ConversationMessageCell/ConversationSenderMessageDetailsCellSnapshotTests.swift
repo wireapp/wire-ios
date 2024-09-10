@@ -233,5 +233,4 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

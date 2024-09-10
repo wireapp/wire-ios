@@ -326,7 +326,6 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         // then
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyNotificationSettings(in: conversation))
     }
-
 }
 
  // MARK: Conversation roles

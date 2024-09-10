@@ -56,7 +56,6 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
     public func requestResyncResources() {
         resyncResourcesWasRequested = true
     }
-
 }
 
 public class MockTaskCancellationDelegate: NSObject, ZMRequestCancellation {

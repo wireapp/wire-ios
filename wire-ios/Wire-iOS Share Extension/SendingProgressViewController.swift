@@ -153,5 +153,4 @@ final class SendingProgressViewController: UIViewController {
             connectionStatusLabel.isHidden = false
         }
     }
-
 }

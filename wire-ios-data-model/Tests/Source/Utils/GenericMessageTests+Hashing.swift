@@ -158,5 +158,4 @@ class GenericMessageTests_Hashing: XCTestCase {
         // then
         XCTAssertEqual(hash?.zmHexEncodedString(), "4f8ee55a8b71a7eb7447301d1bd0c8429971583b15a91594b45dee16f208afd5")
     }
-
 }

@@ -165,5 +165,4 @@ extension Settings {
             ZMSLog.set(level: .debug, tag: tag)
         }
     }
-
 }

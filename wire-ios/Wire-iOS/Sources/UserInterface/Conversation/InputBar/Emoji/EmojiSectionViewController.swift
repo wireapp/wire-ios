@@ -158,5 +158,4 @@ final class EmojiSectionViewController: UIViewController {
 
         NSLayoutConstraint.activate(constraints)
     }
-
 }

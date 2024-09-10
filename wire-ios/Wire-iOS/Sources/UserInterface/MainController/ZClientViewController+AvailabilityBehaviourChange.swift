@@ -38,5 +38,4 @@ extension ZClientViewController {
             selfUser.needsToNotifyAvailabilityBehaviourChange = notify
         }
     }
-
 }

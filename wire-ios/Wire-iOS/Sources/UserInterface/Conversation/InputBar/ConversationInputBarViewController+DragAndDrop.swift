@@ -92,5 +92,4 @@ private extension NSItemProvider {
         // Image dragged from browser can be both NSString and UIImage
         return canLoadObject(ofClass: NSString.self) && !canLoadObject(ofClass: UIImage.self)
     }
-
 }

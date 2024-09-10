@@ -52,7 +52,6 @@ extension ConversationInputBarViewController {
         } else {
             zmLog.error("Cannot archive files at URLs: \(urls.description)")
         }
-
     }
 
     /// upload a signal file

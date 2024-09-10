@@ -45,5 +45,4 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
             expectedError: .endpointUnavailable
         )
     }
-
 }

@@ -171,5 +171,4 @@ final class SessionManagerPushTokenTests: IntegrationTest {
         // Then only the local token is registered
         XCTAssertEqual(pushService.registeredTokensByClientID[clientID], [expectedToken])
     }
-
 }

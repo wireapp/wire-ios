@@ -26,5 +26,4 @@ public struct UserDeleteEvent: Equatable, Codable {
     /// The user's qualified id.
 
     public let qualifiedUserID: QualifiedID
-
 }

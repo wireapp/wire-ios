@@ -202,5 +202,4 @@ extension ZMConversation {
         }
         return self.conversationType != .self
     }
-
 }

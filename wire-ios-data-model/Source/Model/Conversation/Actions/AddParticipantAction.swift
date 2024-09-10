@@ -30,7 +30,6 @@ public enum ConversationAddParticipantsError: Error, Equatable {
     case failedToAddMLSMembers
     case unreachableDomains(Set<String>)
     case nonFederatingDomains(Set<String>)
-
 }
 
 public class AddParticipantAction: EntityAction {

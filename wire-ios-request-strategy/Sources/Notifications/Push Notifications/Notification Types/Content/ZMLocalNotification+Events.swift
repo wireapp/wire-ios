@@ -64,7 +64,6 @@ public extension ZMLocalNotification {
         let value = moc?.persistentStoreMetadata(forKey: ZMShouldHideNotificationContentKey) as? NSNumber
         return value?.boolValue ?? false
     }
-
 }
 
 // Base class for event notification builders. Subclass this for each
@@ -184,7 +183,6 @@ private class ConversationCreateEventNotificationBuilder: EventNotificationBuild
     override var notificationType: LocalNotificationType {
         return LocalNotificationType.event(.conversationCreated)
     }
-
 }
 
 // MARK: - Conversation Delete Event
@@ -198,7 +196,6 @@ private class ConversationDeleteEventNotificationBuilder: EventNotificationBuild
     override func shouldCreateNotification() -> Bool {
         return super.shouldCreateNotification() && conversation?.conversationType == .group
     }
-
 }
 
 // MARK: - User Connection Event
@@ -238,7 +235,6 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     override func bodyText() -> String {
         return notificationType.messageBodyText(senderName: senderName)
     }
-
 }
 
 // MARK: - New User Event

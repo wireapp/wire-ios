@@ -61,5 +61,4 @@ public enum RichAssetFileType: Int, Equatable {
             return nil
         }
     }
-
 }

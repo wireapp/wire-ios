@@ -72,5 +72,4 @@ class AVSClientTests: XCTestCase {
         XCTAssertEqual(sut.userId, avsIdentifier.serialized)
         XCTAssertEqual(sut.avsIdentifier, avsIdentifier)
     }
-
 }

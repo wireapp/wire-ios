@@ -94,5 +94,4 @@ final class CheckmarkCellTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
-
 }

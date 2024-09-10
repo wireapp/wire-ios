@@ -107,5 +107,4 @@ class Conversation_DeletionTests: DatabaseTest {
         // THEN
         XCTAssertEqual(request.path, "/teams/\(conversation.teamRemoteIdentifier!.transportString())/conversations/\(conversation.remoteIdentifier!.transportString())")
     }
-
 }

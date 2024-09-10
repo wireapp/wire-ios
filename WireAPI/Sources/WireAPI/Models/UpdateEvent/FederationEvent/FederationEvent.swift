@@ -31,5 +31,4 @@ public enum FederationEvent: Equatable, Codable {
     /// domain.
 
     case delete(FederationDeleteEvent)
-
 }

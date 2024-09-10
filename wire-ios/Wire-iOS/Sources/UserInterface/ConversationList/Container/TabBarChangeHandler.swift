@@ -93,5 +93,4 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
             MainTabBarController.Tab.folders.rawValue
         }
     }
-
 }

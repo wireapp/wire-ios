@@ -52,9 +52,6 @@ struct ConversationReceiptModeUpdateEventDecoder {
         enum CodingKeys: String, CodingKey {
 
             case receiptMode = "receipt_mode"
-
         }
-
     }
-
 }

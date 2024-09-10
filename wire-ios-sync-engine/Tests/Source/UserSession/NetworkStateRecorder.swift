@@ -71,5 +71,4 @@ public final class NetworkStateRecorder: NSObject, ZMNetworkAvailabilityObserver
             self._stateChanges.append(newState)
         }
     }
-
 }

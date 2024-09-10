@@ -50,7 +50,6 @@ struct UserConnectionEventDecoder {
     private struct UserPayload: Decodable {
 
         let name: String
-
     }
 
     private struct ConnectionPayload: Decodable {
@@ -72,7 +71,5 @@ struct UserConnectionEventDecoder {
             case lastUpdate = "last_update"
             case status
         }
-
     }
-
 }

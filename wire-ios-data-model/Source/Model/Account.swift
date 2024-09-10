@@ -96,7 +96,6 @@ public final class Account: NSObject, Codable {
     public override var debugDescription: String {
         return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
     }
-
 }
 
 // MARK: - Serialization Helper
@@ -115,7 +114,6 @@ extension Account {
 
         return data.flatMap { try? decoder.decode(Account.self, from: $0) }
     }
-
 }
 
 // MARK: - SafeForLoggingStringConvertible
@@ -125,5 +123,4 @@ extension Account: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         userIdentifier.safeForLoggingDescription
     }
-
 }

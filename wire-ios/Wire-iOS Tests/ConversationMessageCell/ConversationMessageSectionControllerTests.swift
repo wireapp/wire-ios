@@ -186,5 +186,4 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
         XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
     }
-
 }

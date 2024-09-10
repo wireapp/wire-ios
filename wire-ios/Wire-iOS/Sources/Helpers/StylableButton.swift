@@ -69,5 +69,4 @@ class StylableButton: UIButton, Stylable {
             setBackgroundImage(nil, for: state)
         }
     }
-
 }

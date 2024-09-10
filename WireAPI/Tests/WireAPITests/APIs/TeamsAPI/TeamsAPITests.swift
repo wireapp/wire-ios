@@ -416,5 +416,4 @@ final class TeamsAPITests: XCTestCase {
             )
         }
     }
-
 }

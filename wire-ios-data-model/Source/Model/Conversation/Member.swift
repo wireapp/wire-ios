@@ -77,7 +77,6 @@ public typealias TeamMembership = Member
 
         return member
     }
-
 }
 
 // MARK: - Transport
@@ -115,5 +114,4 @@ extension Member {
         guard let selfPermissions = permissionsPayload[ResponseKey.Permissions.`self`.rawValue] as? NSNumber else { return }
         permissions = Permissions(rawValue: selfPermissions.int64Value)
     }
-
 }

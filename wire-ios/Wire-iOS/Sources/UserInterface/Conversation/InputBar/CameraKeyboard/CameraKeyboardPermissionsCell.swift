@@ -64,7 +64,6 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         containerView.addSubview(descriptionLabel)
 
         if SecurityFlags.cameraRoll.isEnabled { addSubview(containerView) }
-
     }
 
     @available(*, unavailable)
@@ -97,7 +96,6 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         if SecurityFlags.cameraRoll.isEnabled {
             createConstraints(deniedAuthorization: deniedAuthorization)
         }
-
     }
 
     // MARK: - Actions
@@ -168,5 +166,4 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
             cameraIcon.centerXAnchor.constraint(equalTo: containerView.centerXAnchor)
         ]
     }
-
 }

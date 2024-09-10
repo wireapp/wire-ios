@@ -34,7 +34,6 @@ extension Sequence where Element: UserType {
 
         return self.compactMap({ $0.unbox(in: context) })
     }
-
 }
 
 extension UserType {
@@ -56,7 +55,6 @@ extension UserType {
 
         return nil
     }
-
 }
 
 extension Sequence where Element: ZMSearchUser {

@@ -36,7 +36,6 @@ public enum ZiphyImageType: String, CodingKey {
     case downsizedSmall = "downsized_small"
     case original = "original"
     case preview = "preview_gif"
-
 }
 
 extension ZiphyImageType {

@@ -106,5 +106,4 @@ class TeamsAPIV5: TeamsAPIV4 {
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
     }
-
 }

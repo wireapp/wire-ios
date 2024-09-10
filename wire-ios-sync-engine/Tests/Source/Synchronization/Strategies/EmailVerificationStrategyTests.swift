@@ -116,7 +116,6 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         // then
         XCTAssertEqual(registrationStatus.successCalled, 1)
     }
-
 }
 
 extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStrategyTestHelper {

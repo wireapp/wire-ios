@@ -174,7 +174,6 @@ final class ProfileDetailsViewController: UIViewController {
             tableView.layoutIfNeeded()
         }
     }
-
 }
 
 // MARK: - ProfileDetailsContentController

@@ -24,26 +24,22 @@ struct NetworkRequest {
     let httpMethod: HTTPMethod
     let contentType: ContentType
     let acceptType: AcceptType
-
 }
 
 enum HTTPMethod: String {
 
     case get = "GET"
     case post = "POST"
-
 }
 
 enum ContentType: String {
 
     case json = "application/json"
-
 }
 
 enum AcceptType: String {
 
     case json = "application/json"
-
 }
 
 enum NetworkResponse: CustomStringConvertible {
@@ -60,7 +56,6 @@ enum NetworkResponse: CustomStringConvertible {
             return response.description
         }
     }
-
 }
 
 struct SuccessResponse: CustomStringConvertible {
@@ -71,7 +66,6 @@ struct SuccessResponse: CustomStringConvertible {
     var description: String {
         return "status: \(status), data: \(data)"
     }
-
 }
 
 struct ErrorResponse: Codable, Equatable, CustomStringConvertible {
@@ -83,5 +77,4 @@ struct ErrorResponse: Codable, Equatable, CustomStringConvertible {
     var description: String {
         return "code: \(code), label: \(label), message: \(message)"
     }
-
 }

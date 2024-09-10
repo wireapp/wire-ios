@@ -27,7 +27,6 @@ public extension IteratorProtocol {
         guard let current = next() else { return true }
         return try predicate(current) && all(predicate)
     }
-
 }
 
 public extension Sequence {

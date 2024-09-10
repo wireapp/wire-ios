@@ -43,7 +43,6 @@ public class GetPushTokensAction: EntityAction {
         public var safeForLoggingDescription: String {
             return errorDescription ?? ""
         }
-
     }
 
     // MARK: - Properties
@@ -57,5 +56,4 @@ public class GetPushTokensAction: EntityAction {
         self.clientID = clientID
         self.resultHandler = resultHandler
     }
-
 }

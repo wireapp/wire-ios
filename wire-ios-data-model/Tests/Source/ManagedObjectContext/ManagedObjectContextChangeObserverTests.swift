@@ -95,5 +95,4 @@ class ManagedObjectContextChangeObserverTests: ZMBaseManagedObjectTest {
         spinMainQueue(withTimeout: 0.05)
         XCTAssertFalse(called)
     }
-
 }

@@ -128,7 +128,6 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     public func enumerateAndRemoveObjects(for dependency: ZMManagedObject, block: (ZMManagedObject) -> Bool) {
         self.dependentObjects.enumerateAndRemoveObjects(for: dependency, block: block)
     }
-
 }
 
 /// Returns a string representing the pointer

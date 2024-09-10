@@ -104,5 +104,4 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
         // then
         XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageType.decryptionFailed)
     }
-
 }

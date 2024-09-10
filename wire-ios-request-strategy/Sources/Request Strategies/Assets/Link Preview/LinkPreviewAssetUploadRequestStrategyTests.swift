@@ -276,7 +276,6 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
         }
     }
-
 }
 
 extension LinkPreviewAssetUploadRequestStrategyTests {
@@ -329,5 +328,4 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             XCTAssertEqual(linkPreview.image.uploaded.assetDomain, domain)
         }
     }
-
 }

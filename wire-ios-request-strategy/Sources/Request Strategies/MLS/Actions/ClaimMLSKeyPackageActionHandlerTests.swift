@@ -125,7 +125,6 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             status: 200,
             payload: transportData(for: Payload(keyPackages: []))
         )
-
     }
 
     func test_itHandlesFailures() {

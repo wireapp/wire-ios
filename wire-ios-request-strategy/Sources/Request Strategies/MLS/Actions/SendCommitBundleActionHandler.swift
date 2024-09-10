@@ -186,6 +186,5 @@ class SendCommitBundleActionHandler: ActionHandler<SendCommitBundleAction> {
             case unreachableBackends = "unreachable_backends"
             case nonFederatingBackends = "non_federating_backends"
         }
-
     }
 }

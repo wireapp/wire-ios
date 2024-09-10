@@ -59,7 +59,6 @@ struct TransferApplockKeychain {
         let item = AppLockController.PasscodeKeychainItem(userId: selfUserId)
         try? Keychain.storeItem(item, value: passcode)
     }
-
 }
 
 private extension Bundle {
@@ -71,5 +70,4 @@ private extension Bundle {
     var appGroupIdentifier: String? {
         return bundleIdentifier.map { "group." + $0 }
     }
-
 }

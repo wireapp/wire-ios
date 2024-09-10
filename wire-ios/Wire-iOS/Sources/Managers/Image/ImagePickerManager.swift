@@ -110,7 +110,6 @@ class ImagePickerManager: NSObject {
 
         viewController.present(imagePickerController, animated: true)
     }
-
 }
 
  extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -156,5 +155,4 @@ class ImagePickerManager: NSObject {
             completion?(image)
         }
     }
-
 }

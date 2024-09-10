@@ -69,5 +69,4 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         objectsDidChange(objects)
     }
-
 }

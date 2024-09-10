@@ -28,5 +28,4 @@ extension ZMMessage {
         context.zm_fileAssetCache.deleteAssetsOlderThan(date)
         try context.batchDeleteEntities(named: ZMMessage.entityName(), matching: predicateForMessagesOlderThan(date))
     }
-
 }

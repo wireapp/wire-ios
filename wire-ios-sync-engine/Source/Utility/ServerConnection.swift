@@ -23,5 +23,4 @@ public protocol ServerConnection {
 
     var isMobileConnection: Bool { get }
     var isOffline: Bool { get }
-
 }

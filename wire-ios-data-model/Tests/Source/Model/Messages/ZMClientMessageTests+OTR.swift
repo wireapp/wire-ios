@@ -362,7 +362,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
             default:
                 XCTFail()
             }
-
         }
     }
 
@@ -582,7 +581,6 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         }
         return string
     }
-
 }
 
 extension DatabaseBaseTest {

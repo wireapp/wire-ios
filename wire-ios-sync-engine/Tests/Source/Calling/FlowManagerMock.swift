@@ -34,7 +34,6 @@ public class FlowManagerMock: NSObject, FlowManagerType {
     }
 
     public func appendLog(for conversationId: UUID, message: String) {
-
     }
 
     public func report(callConfig: Data?, httpStatus: Int, context: UnsafeRawPointer) {
@@ -47,5 +46,4 @@ public class FlowManagerMock: NSObject, FlowManagerType {
     public func setVideoCaptureDevice(_ device: CaptureDevice, for conversationId: AVSIdentifier) {
         didSetVideoCaptureDevice = true
     }
-
 }

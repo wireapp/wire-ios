@@ -68,5 +68,4 @@ final class TeamMetadataRefresher {
         selfUser.refreshTeamData()
         dateOfLastRefresh = Date()
     }
-
 }

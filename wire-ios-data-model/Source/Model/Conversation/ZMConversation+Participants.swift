@@ -176,7 +176,6 @@ extension ZMConversation {
             self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
             self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }), addedSelfUser: addedSelfUser)
         }
-
     }
 
     private enum FetchOrCreation {
@@ -342,5 +341,4 @@ public extension Collection where Element == ZMUser {
 
         return Set(result)
     }
-
 }

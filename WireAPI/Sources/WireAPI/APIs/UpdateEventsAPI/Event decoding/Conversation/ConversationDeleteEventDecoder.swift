@@ -44,5 +44,4 @@ struct ConversationDeleteEventDecoder {
             timestamp: timestamp.date
         )
     }
-
 }

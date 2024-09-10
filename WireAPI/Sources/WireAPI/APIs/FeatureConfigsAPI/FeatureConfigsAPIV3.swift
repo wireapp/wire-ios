@@ -23,5 +23,4 @@ class FeatureConfigsAPIV3: FeatureConfigsAPIV2 {
     override var apiVersion: APIVersion {
         .v3
     }
-
 }

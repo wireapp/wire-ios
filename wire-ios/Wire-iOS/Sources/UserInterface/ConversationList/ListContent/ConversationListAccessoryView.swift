@@ -289,7 +289,6 @@ final class ConversationListAccessoryView: UIView {
                 view.leadingAnchor.constraint(equalTo: parentView.leadingAnchor, constant: 6),
                 view.trailingAnchor.constraint(equalTo: parentView.trailingAnchor, constant: -6)
             ])
-
         }
     }
 

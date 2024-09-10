@@ -43,5 +43,4 @@ class MockConversationDirectory: ConversationDirectoryType {
             return []
         }
     }
-
 }

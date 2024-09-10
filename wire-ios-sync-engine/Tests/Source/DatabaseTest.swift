@@ -48,7 +48,6 @@ class DatabaseTest: ZMTBaseTest {
 
     var cacheURL: URL {
         return FileManager.default.randomCacheURL!
-
     }
 
     private func cleanUp() {
@@ -128,5 +127,4 @@ class DatabaseTest: ZMTBaseTest {
                  "type": ZMUpdateEvent.eventTypeString(for: type)!
         ]
     }
-
 }

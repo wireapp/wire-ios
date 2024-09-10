@@ -27,9 +27,7 @@ extension ___VARIABLE_productName:identifier___Module {
         var interactor: ___VARIABLE_productName:identifier___InteractorPresenterInterface!
         weak var view: ___VARIABLE_productName:identifier___ViewPresenterInterface!
         var router: ___VARIABLE_productName:identifier___RouterPresenterInterface!
-
     }
-
 }
 
 // MARK: - Handle result
@@ -38,10 +36,8 @@ extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_pro
 
     func handleResult(_ result: ___VARIABLE_productName:identifier___Module.Result) {
         switch result {
-
         }
     }
-
 }
 
 // MARK: - Process event
@@ -54,5 +50,4 @@ extension ___VARIABLE_productName:identifier___Module.Presenter: ___VARIABLE_pro
           break
         }
     }
-
 }

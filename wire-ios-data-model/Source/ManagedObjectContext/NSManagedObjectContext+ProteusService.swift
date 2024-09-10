@@ -34,5 +34,4 @@ extension NSManagedObjectContext {
             userInfo[Self.proteusServiceUserInfoKey] = newValue
         }
     }
-
 }

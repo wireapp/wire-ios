@@ -27,7 +27,6 @@ protocol ConversationMemberJoinEventProcessorProtocol {
     /// - Parameter event: A conversation member join event.
 
     func processEvent(_ event: ConversationMemberJoinEvent) async throws
-
 }
 
 struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationMemberJoinEventProcessor: ConversationMemberJoinEventProcesso
         // TODO: [WPB-10168]
         assertionFailure("not implemented yet")
     }
-
 }

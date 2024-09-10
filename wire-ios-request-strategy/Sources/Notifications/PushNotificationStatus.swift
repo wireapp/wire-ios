@@ -29,7 +29,6 @@ open class PushNotificationStatus: NSObject {
         case invalidEventID
         case alreadyFetchedEvent
         case unknown
-
     }
 
     public typealias FetchCompletion = (Result<Void, FetchError>) -> Void
@@ -139,5 +138,4 @@ open class PushNotificationStatus: NSObject {
         guard let order = lastEventId?.compare(withType1: eventId) else { return false }
         return order == .orderedDescending || order == .orderedSame
     }
-
 }

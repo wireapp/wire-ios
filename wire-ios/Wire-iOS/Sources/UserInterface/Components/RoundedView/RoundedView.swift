@@ -27,5 +27,4 @@ class RoundedView: UIView, RoundedViewProtocol {
     func setCornerRadius(_ cornerRadius: CGFloat) {
         shape = .rounded(radius: cornerRadius)
     }
-
 }

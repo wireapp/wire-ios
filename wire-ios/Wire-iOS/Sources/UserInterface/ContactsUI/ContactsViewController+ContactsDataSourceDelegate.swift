@@ -45,5 +45,4 @@ extension ContactsViewController: ContactsDataSourceDelegate {
         tableView.reloadData()
         updateEmptyResults(hasResults: !newUser.isEmpty)
     }
-
 }

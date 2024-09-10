@@ -33,5 +33,4 @@ public struct MLSMigrationFeatureConfig: Equatable, Codable {
     /// The date until the migration has to finalise.
 
     public let finaliseRegardlessAfter: Date?
-
 }

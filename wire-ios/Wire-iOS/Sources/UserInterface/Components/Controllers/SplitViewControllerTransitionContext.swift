@@ -100,5 +100,4 @@ final class SplitViewControllerTransitionContext: NSObject, UIViewControllerCont
     func pauseInteractiveTransition() {
         // no-op
     }
-
 }

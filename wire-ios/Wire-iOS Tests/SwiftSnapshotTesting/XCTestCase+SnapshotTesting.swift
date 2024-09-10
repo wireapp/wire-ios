@@ -94,7 +94,6 @@ extension XCTestCase {
                        testName: testName,
                        line: line)
     }
-
 }
 
 extension XCTestCase {
@@ -153,7 +152,6 @@ extension XCTestCase {
 
         XCTAssertNil(failure, file: file, line: line)
     }
-
 }
 
 extension Snapshotting where Value == UIAlertController, Format == UIImage {

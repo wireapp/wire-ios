@@ -187,5 +187,4 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }

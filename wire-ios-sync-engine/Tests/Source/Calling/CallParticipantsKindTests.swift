@@ -75,5 +75,4 @@ class CallParticipantsKindTests: XCTestCase {
             ActiveSpeakerState.active(audioLevelNow: 0)
         )
     }
-
 }

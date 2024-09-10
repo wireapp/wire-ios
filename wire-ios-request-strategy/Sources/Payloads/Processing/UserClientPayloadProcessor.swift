@@ -84,5 +84,4 @@ final class UserClientPayloadProcessor {
 
         client.deviceClass = DeviceClass(rawValue: deviceClass)
     }
-
 }

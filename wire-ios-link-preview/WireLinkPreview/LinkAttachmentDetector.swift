@@ -45,7 +45,6 @@ public protocol LinkAttachmentDetectorType {
      */
 
     func downloadLinkAttachments(inText text: String, excluding excludedRanges: [NSRange], completion: @escaping (_ detectedAttachments: [LinkAttachment]) -> Void)
-
 }
 
 /**
@@ -85,5 +84,4 @@ public final class LinkAttachmentDetector: NSObject, LinkAttachmentDetectorType 
             completion([linkAttachment])
         }
     }
-
 }

@@ -202,5 +202,4 @@ public class OperationStatus: NSObject {
             return .foreground
         }
     }
-
 }

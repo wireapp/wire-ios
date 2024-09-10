@@ -85,5 +85,4 @@ class CallEventStatusTests: ZMTBaseTest {
         XCTAssertTrue(hasUnprocessedCallEvents)
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

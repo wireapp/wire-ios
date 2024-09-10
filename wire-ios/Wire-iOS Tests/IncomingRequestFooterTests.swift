@@ -60,7 +60,6 @@ final class IncomingRequestFooterTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view)
     }
-
 }
 
 private extension IncomingRequestFooterView {
@@ -85,5 +84,4 @@ private extension IncomingRequestFooterView {
         container.layoutIfNeeded()
         return container
     }
-
 }

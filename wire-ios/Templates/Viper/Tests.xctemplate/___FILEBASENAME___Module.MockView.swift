@@ -32,7 +32,5 @@ extension ___VARIABLE_productName:identifier___Module {
         func refresh(withModel model: ___VARIABLE_productName:identifier___Module.ViewModel) {
             models.append(model)
         }
-
     }
-
 }

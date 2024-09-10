@@ -140,7 +140,6 @@ final class GuestsBarController: UIViewController {
             label.accessibilityIdentifier = accessibilityIdentifier
         }
     }
-
 }
 
 // MARK: - Bar

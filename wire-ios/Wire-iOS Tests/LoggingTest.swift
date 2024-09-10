@@ -38,5 +38,4 @@ class LoggingTest: XCTestCase {
         XCTAssertFalse(ZMSLog.currentZipLog!.isEmpty)
         XCTAssertFalse(FileManager.default.contents(atPath: ZMSLog.currentLogURL!.path)!.isEmpty)
     }
-
 }

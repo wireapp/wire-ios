@@ -108,5 +108,4 @@ final class UserPropertyCell: SeparatorTableViewCell {
             contentStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
         ])
     }
-
 }

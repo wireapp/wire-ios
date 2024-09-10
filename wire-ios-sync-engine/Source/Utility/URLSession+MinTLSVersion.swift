@@ -25,5 +25,4 @@ public extension URLSession {
         let minTLSVersion = TLSVersion.minVersionFrom(minTLSVersion)
         configuration.tlsMinimumSupportedProtocolVersion = minTLSVersion.secValue
     }
-
 }

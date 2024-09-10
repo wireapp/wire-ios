@@ -59,5 +59,4 @@ final class SwitchBackendConfirmationViewTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: createSUT)
     }
-
 }

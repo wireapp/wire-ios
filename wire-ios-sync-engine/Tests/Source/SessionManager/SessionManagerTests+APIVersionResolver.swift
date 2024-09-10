@@ -165,5 +165,4 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
     var isInUnathenticatedAppState: Bool {
         return false
     }
-
 }

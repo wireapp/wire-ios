@@ -37,5 +37,4 @@ extension UIView {
         visibleViews.forEach { $0.isHidden = false }
         hiddenViews.forEach { $0.isHidden = true }
     }
-
 }

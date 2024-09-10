@@ -58,7 +58,6 @@ final class TextSearchViewController: NSObject {
 
         searchBar.delegate = self
         searchBar.placeholderString = L10n.Localizable.Collections.Search.Field.placeholder
-
     }
 
     func teardown() {
@@ -123,7 +122,6 @@ final class TextSearchViewController: NSObject {
             superview.collectionView.accessibilityElementsHidden = !resultsView.noResultsView.isHidden
         }
     }
-
 }
 
 extension TextSearchViewController: TextSearchQueryDelegate {

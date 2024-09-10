@@ -73,7 +73,6 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
         XCTAssertEqual(mockDelegate.composedDrafts.count, 1)
         XCTAssertEqual(mockDelegate.composedDrafts[0], DraftMessage(text: "Goo", mentions: [], quote: nil))
     }
-
 }
 
 private final class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
@@ -105,5 +104,4 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
     func conversationInputBarViewControllerDidComposeDraft(message: DraftMessage) {
         composedDrafts.append(message)
     }
-
 }

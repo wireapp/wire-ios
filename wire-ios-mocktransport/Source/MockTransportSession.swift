@@ -170,7 +170,6 @@ extension MockTransportSession: TransportSessionType {
     }
 
     public func addCompletionHandlerForBackgroundSession(identifier: String, handler: @escaping () -> Void) {
-
     }
 }
 

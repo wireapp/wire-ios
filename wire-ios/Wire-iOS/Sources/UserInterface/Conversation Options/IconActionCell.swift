@@ -68,9 +68,7 @@ final class IconActionCell: SettingsTableCell, CellConfigurationConfigurable {
         iconImageView.tintColor = SemanticColors.Icon.foregroundDefault
         label.textColor = SemanticColors.Label.textDefault
         label.text = title
-
     }
-
 }
 
 extension IconActionCell: IconActionCellDelegate {
@@ -78,5 +76,4 @@ extension IconActionCell: IconActionCellDelegate {
     func updateLayout() {
         descriptor?.featureCell(self)
     }
-
 }

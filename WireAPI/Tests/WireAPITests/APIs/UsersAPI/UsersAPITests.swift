@@ -188,5 +188,4 @@ final class UsersAPITests: XCTestCase {
             legalholdStatus: .enabled
         )
     }
-
 }

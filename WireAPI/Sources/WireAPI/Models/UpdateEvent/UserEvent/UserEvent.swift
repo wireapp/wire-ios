@@ -69,5 +69,4 @@ public enum UserEvent: Equatable, Codable {
     /// A user's metadata was updated.
 
     case update(UserUpdateEvent)
-
 }

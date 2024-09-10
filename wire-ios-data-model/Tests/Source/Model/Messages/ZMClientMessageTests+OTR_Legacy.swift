@@ -31,7 +31,6 @@
         super.tearDown()
         DeveloperFlag.storage = UserDefaults.standard
     }
-
  }
 
  // MARK: - Payload creation
@@ -316,7 +315,6 @@ extension ClientMessageTests_OTR_Legacy {
             default:
                 XCTFail()
             }
-
         }
     }
 

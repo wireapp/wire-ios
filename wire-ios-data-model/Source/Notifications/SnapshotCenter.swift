@@ -129,5 +129,4 @@ public class SnapshotCenter {
     func clearAllSnapshots() {
         snapshots = [:]
     }
-
 }

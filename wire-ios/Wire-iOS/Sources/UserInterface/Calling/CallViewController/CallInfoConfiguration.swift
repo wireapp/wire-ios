@@ -94,7 +94,6 @@ extension VoiceChannel {
         default: return internalIsVideoCall && !state.isTerminating
         }
     }
-
 }
 
 struct CallInfoConfiguration: CallInfoViewControllerInput {
@@ -166,7 +165,6 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         case .none, .unknown: return .none
         }
     }
-
 }
 
 private struct VoiceChannelSnapshot {

@@ -39,7 +39,6 @@ enum AppLockModule: ModuleInterface {
 
         return view
     }
-
 }
 
 extension AppLockModule {
@@ -53,7 +52,6 @@ extension AppLockModule {
         case passcodeSetupCompleted
         case customPasscodeVerified
         case configChangeAcknowledged
-
     }
 
     enum Request: Equatable {
@@ -61,7 +59,6 @@ extension AppLockModule {
         case initiateAuthentication(requireActiveApp: Bool)
         case evaluateAuthentication
         case openAppLock
-
     }
 
     enum Result: Equatable {
@@ -71,7 +68,6 @@ extension AppLockModule {
         case authenticationDenied(AuthenticationType)
         case authenticationUnavailable
         case customPasscodeNeeded
-
     }
 
     enum Action: Equatable {
@@ -80,9 +76,7 @@ extension AppLockModule {
         case inputPasscode
         case informUserOfConfigChange
         case openDeviceSettings
-
     }
-
 }
 
 // MARK: - Interactor
@@ -90,7 +84,6 @@ extension AppLockModule {
 protocol AppLockInteractorPresenterInterface: InteractorPresenterInterface {
 
     func executeRequest(_ request: AppLockModule.Request)
-
 }
 
 // MARK: - Presenter
@@ -98,13 +91,11 @@ protocol AppLockInteractorPresenterInterface: InteractorPresenterInterface {
 protocol AppLockPresenterInteractorInterface: PresenterInteractorInterface {
 
     func handleResult(_ result: AppLockModule.Result)
-
 }
 
 protocol AppLockPresenterViewInterface: PresenterViewInterface {
 
     func processEvent(_ event: AppLockModule.Event)
-
 }
 
 // MARK: - View
@@ -112,7 +103,6 @@ protocol AppLockPresenterViewInterface: PresenterViewInterface {
 protocol AppLockViewPresenterInterface: ViewPresenterInterface {
 
     func refresh(withModel model: AppLockModule.ViewModel)
-
 }
 
 // MARK: - Router
@@ -120,5 +110,4 @@ protocol AppLockViewPresenterInterface: ViewPresenterInterface {
 protocol AppLockRouterPresenterInterface: RouterPresenterInterface {
 
     func performAction(_ action: AppLockModule.Action)
-
 }

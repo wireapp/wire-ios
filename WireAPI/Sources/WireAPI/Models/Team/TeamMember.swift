@@ -64,5 +64,4 @@ public struct TeamMember: Equatable {
         self.legalholdStatus = legalholdStatus
         self.permissions = permissions
     }
-
 }

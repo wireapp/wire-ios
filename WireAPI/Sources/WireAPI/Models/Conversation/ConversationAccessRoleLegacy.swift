@@ -39,5 +39,4 @@ public enum ConversationAccessRoleLegacy: String, Codable {
     /// Any user, including services.
 
     case nonActivated = "non_activated"
-
 }

@@ -23,5 +23,4 @@ public extension FileManager {
     var randomCacheURL: URL? {
         urls(for: .cachesDirectory, in: .userDomainMask).first?.appendingPathComponent(UUID().uuidString)
     }
-
 }

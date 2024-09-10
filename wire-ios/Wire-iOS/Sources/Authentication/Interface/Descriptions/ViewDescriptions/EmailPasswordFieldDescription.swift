@@ -33,7 +33,6 @@ final class EmailPasswordFieldDescription: ValueSubmission {
         self.forRegistration = forRegistration
         self.usePasswordDeferredValidation = usePasswordDeferredValidation
     }
-
 }
 
 extension EmailPasswordFieldDescription: ViewDescriptor {

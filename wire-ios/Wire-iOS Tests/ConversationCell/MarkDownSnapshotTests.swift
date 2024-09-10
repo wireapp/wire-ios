@@ -71,5 +71,4 @@ final class MarkDownSnapshotTests: ConversationMessageSnapshotTestCase {
 
         verify(message: message)
     }
-
 }

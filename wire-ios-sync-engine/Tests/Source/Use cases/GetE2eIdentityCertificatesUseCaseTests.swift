@@ -181,7 +181,6 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         // Status is revoked, further validation inrelevant.
         XCTAssertEqual(certificate4.status, .revoked)
     }
-
 }
 
 private let mockCertificate =

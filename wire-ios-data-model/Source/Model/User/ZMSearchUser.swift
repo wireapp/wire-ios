@@ -78,7 +78,6 @@ public struct SearchUserAssetKeys {
 
         return nil
     }
-
 }
 
 extension ZMSearchUser: SearchServiceUser {
@@ -86,7 +85,6 @@ extension ZMSearchUser: SearchServiceUser {
     public var serviceIdentifier: String? {
         return remoteIdentifier?.transportString()
     }
-
 }
 
 // MARK: NSManagedObjectContext
@@ -582,7 +580,6 @@ public class ZMSearchUser: NSObject, UserType {
         self.summary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
         self.internalIsAccountDeleted = payload["deleted"] as? Bool
-
     }
 
     public var smallProfileImageCacheKey: String? {

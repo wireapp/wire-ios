@@ -57,5 +57,4 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     override func rightButtonTapped(_ sender: IconButton) {
         delegate?.footerView(self, shouldPerformAction: .more)
     }
-
 }

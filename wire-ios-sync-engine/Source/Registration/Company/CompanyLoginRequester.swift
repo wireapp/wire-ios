@@ -89,7 +89,6 @@ public protocol CompanyLoginRequesterDelegate: AnyObject {
      */
 
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL)
-
 }
 
 /**
@@ -213,5 +212,4 @@ public class CompanyLoginRequester {
 
         return components.url!.absoluteString
     }
-
 }

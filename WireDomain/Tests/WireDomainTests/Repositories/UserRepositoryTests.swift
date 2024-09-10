@@ -150,5 +150,4 @@ class UserRepositoryTests: XCTestCase {
             legalholdStatus: .disabled
         )
     }
-
 }

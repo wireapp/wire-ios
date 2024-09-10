@@ -501,7 +501,5 @@ final class ConversationEventDecodingTests: XCTestCase {
             senderID: senderID,
             isTyping: true
         )
-
     }
-
 }

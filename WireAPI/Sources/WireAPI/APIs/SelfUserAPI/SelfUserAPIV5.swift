@@ -41,7 +41,6 @@ class SelfUserAPIV5: SelfUserAPIV4 {
             .success(code: 200)
             .parse(response)
     }
-
 }
 
 struct SupportedProtocolsPayloadV5: Encodable {

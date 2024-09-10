@@ -69,7 +69,6 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
     public func requestResyncResources() {
         didRequestResyncResources = true
     }
-
 }
 
 class MockAuthenticationStatus: ZMAuthenticationStatus {
@@ -88,7 +87,6 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
     override var currentPhase: ZMAuthenticationPhase {
         return mockPhase
     }
-
 }
 
 @objcMembers
@@ -287,7 +285,6 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
 
         return Set(events.compactMap(\.conversationUUID))
     }
-
 }
 
 @objcMembers public class MockContextChangeTracker: NSObject, ZMContextChangeTracker {
@@ -308,7 +305,6 @@ public class MockEventConsumer: NSObject, ZMEventConsumer {
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
         addTrackedObjectsCalled = true
     }
-
 }
 
 @objcMembers
@@ -343,5 +339,4 @@ public class MockRequestStrategy: NSObject, RequestStrategy {
         nextRequestCalled = true
         return mockRequestQueue.popLast()
     }
-
 }

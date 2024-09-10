@@ -166,5 +166,4 @@ class ZMHotFixDirectoryTests: MessagingTest {
             XCTAssertEqual(conversation.unreadMessages.count, 1)
         }
     }
-
 }

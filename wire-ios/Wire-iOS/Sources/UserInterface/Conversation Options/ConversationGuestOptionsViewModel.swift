@@ -150,7 +150,6 @@ final class ConversationGuestOptionsViewModel {
         configuration.guestLinkFeatureStatusChangedHandler = { [weak self] _ in
             self?.updateRows()
         }
-
     }
 
     private func updateRows() {
@@ -317,7 +316,6 @@ final class ConversationGuestOptionsViewModel {
             item.cancel()
             self.showLoadingCell = false
         }
-
     }
 
     /// Starts the Guest Link Creation Flow
@@ -400,5 +398,4 @@ final class ConversationGuestOptionsViewModel {
 
         return nil
     }
-
 }

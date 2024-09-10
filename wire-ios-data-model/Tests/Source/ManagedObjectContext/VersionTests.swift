@@ -52,5 +52,4 @@ final class VersionTests: XCTestCase {
         XCTAssertGreaterThan(version5, version3)
         XCTAssertGreaterThan(version5, version4)
     }
-
 }

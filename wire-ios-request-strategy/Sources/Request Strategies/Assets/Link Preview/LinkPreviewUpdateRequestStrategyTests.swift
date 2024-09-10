@@ -160,5 +160,4 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
             $0.objectsDidChange([message])
         }
     }
-
 }

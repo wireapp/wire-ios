@@ -398,7 +398,6 @@ extension SettingsCellDescriptorFactory {
             return L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.Subtitle.none
         }
     }
-
 }
 
 // MARK: - Helpers

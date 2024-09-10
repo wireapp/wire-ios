@@ -34,5 +34,4 @@ extension Analytics {
                           settingsChangeEventPropertyValue: value]
         tagEvent(settingsChangeEvent, attributes: attributes)
     }
-
 }

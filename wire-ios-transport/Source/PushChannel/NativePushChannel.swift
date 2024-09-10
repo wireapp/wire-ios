@@ -41,7 +41,6 @@ final class NativePushChannel: NSObject, PushChannelType {
             } else {
                 self.close()
             }
-
         }
     }
 
@@ -218,7 +217,6 @@ final class NativePushChannel: NSObject, PushChannelType {
         timer?.fire(afterTimeInterval: 30)
         pingTimer = timer
     }
-
 }
 
 extension NativePushChannel: ZMTimerClient {
@@ -232,7 +230,6 @@ extension NativePushChannel: ZMTimerClient {
         })
         schedulePingTimer()
     }
-
 }
 
 extension NativePushChannel: URLSessionWebSocketDelegate {
@@ -275,7 +272,5 @@ extension NativePushChannel: URLSessionDataDelegate {
         } else {
             return completionHandler(.cancelAuthenticationChallenge, nil)
         }
-
     }
-
 }

@@ -90,5 +90,4 @@ extension MessagingTest {
         var proteusViaCoreCrypto = DeveloperFlag.proteusViaCoreCrypto
         proteusViaCoreCrypto.isOn = false
     }
-
 }

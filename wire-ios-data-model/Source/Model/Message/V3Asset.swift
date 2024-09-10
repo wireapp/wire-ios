@@ -39,7 +39,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
     @objc(fetchImageDataWithQueue:completionHandler:)
     func fetchImageData(with queue: DispatchQueue!, completionHandler: ((Data?) -> Void)!)
-
 }
 
 @objcMembers public class V3Asset: NSObject, ZMImageMessageData {
@@ -174,7 +173,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
         return assetClientMessage.preprocessedSize
     }
-
 }
 
 extension V3Asset: AssetProxyType {
@@ -228,5 +226,4 @@ extension V3Asset: AssetProxyType {
             return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")
         }
     }
-
 }

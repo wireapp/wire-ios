@@ -83,5 +83,4 @@ final class SharingSessionTests: BaseSharingSessionTests {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
     }
-
 }

@@ -373,7 +373,6 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "<8000 x a's>", whenSearchingFor: "<8000 x a's>")
         verifyThatItFindsMessage(withText: "bb бб bb", whenSearchingFor: "бб")
         verifyThatItFindsMessage(withText: "bb бб bb", whenSearchingFor: "bb")
-
     }
 
     func testThatItUsesANDConjunctionForSearchTerms() {
@@ -626,5 +625,4 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         return delegate.fetchedResults
     }
-
 }

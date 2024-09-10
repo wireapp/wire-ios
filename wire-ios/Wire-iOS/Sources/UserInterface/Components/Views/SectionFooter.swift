@@ -49,7 +49,6 @@ final class SectionFooterView: UIView {
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
     }
-
 }
 
 final class SectionFooter: UICollectionReusableView {
@@ -96,5 +95,4 @@ final class SectionTableFooter: UITableViewHeaderFooterView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
-
 }

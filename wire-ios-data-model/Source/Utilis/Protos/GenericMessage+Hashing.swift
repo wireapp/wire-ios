@@ -90,7 +90,6 @@ extension String: BigEndianDataConvertible {
         data.append(self.data(using: .utf16BigEndian)!)
         return data
     }
-
 }
 
 extension Int: BigEndianDataConvertible {
@@ -100,7 +99,6 @@ extension Int: BigEndianDataConvertible {
             Data(bytes: $0, count: MemoryLayout.size(ofValue: self))
         }
     }
-
 }
 
 extension TimeInterval: BigEndianDataConvertible {
@@ -111,7 +109,6 @@ extension TimeInterval: BigEndianDataConvertible {
             return Data(bytes: $0, count: MemoryLayout.size(ofValue: long))
         }
     }
-
 }
 
 extension BigEndianDataConvertible {
@@ -125,5 +122,4 @@ extension BigEndianDataConvertible {
     public func hashWithTimestamp(timestamp: TimeInterval) -> Data {
         return dataWithTimestamp(timestamp: timestamp).zmSHA256Digest()
     }
-
 }

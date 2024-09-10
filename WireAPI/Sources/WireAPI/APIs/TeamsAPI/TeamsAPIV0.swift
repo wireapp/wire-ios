@@ -115,7 +115,6 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
             .failure(code: .notFound, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
             .parse(response)
     }
-
 }
 
 struct TeamResponseV0: Decodable, ToAPIModelConvertible {
@@ -135,7 +134,6 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
         case icon
         case iconKey = "icon_key"
         case binding
-
     }
 
     func toAPIModel() -> Team {
@@ -148,7 +146,6 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
             splashScreenID: nil
         )
     }
-
 }
 
 struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
@@ -162,7 +159,6 @@ struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> [ConversationRole] {
         conversationRoles.map { $0.toAPIModel() }
     }
-
 }
 
 struct ConversationRoleResponseV0: Decodable {
@@ -174,7 +170,6 @@ struct ConversationRoleResponseV0: Decodable {
 
         case conversationRole = "conversation_role"
         case actions
-
     }
 
     func toAPIModel() -> ConversationRole {
@@ -185,7 +180,6 @@ struct ConversationRoleResponseV0: Decodable {
             })
         )
     }
-
 }
 
 enum ConversationActionResponseV0: String, Decodable {
@@ -222,7 +216,6 @@ enum ConversationActionResponseV0: String, Decodable {
             .deleteConversation
         }
     }
-
 }
 
 struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
@@ -235,7 +228,6 @@ struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
             $0.toAPIModel()
         }
     }
-
 }
 
 struct TeamMemberResponseV0: Decodable {
@@ -253,7 +245,6 @@ struct TeamMemberResponseV0: Decodable {
         case createdBy = "created_by"
         case createdAt = "created_at"
         case legalholdStatus = "legalhold_status"
-
     }
 
     func toAPIModel() -> TeamMember {
@@ -265,7 +256,6 @@ struct TeamMemberResponseV0: Decodable {
             permissions: permissions?.toAPIModel()
         )
     }
-
 }
 
 struct PermissionsResponseV0: Decodable {
@@ -279,7 +269,6 @@ struct PermissionsResponseV0: Decodable {
             selfPermissions: self.`self`
         )
     }
-
 }
 
 enum LegalholdStatusV0: String, Decodable {
@@ -301,7 +290,6 @@ enum LegalholdStatusV0: String, Decodable {
             .noConsent
         }
     }
-
 }
 
 struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
@@ -311,5 +299,4 @@ struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
     func toAPIModel() -> LegalholdStatus {
         status.toAPIModel()
     }
-
 }

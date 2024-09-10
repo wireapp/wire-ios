@@ -48,5 +48,4 @@ final class DecodeImageOperation: Operation {
 
         decodedImage = UIImage(data: imageData)?.decoded
     }
-
 }

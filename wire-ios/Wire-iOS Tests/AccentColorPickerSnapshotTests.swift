@@ -65,5 +65,4 @@ final class AccentColorPickerSnapshotTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut.view)
     }
-
 }

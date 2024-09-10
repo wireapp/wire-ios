@@ -139,5 +139,4 @@ class SelfClientCertificateProviderTests: MessagingTest {
         otherClient.remoteIdentifier = UUID.create().uuidString
         otherClient.user = .selfUser(in: context)
     }
-
 }

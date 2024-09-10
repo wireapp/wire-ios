@@ -58,8 +58,6 @@ struct ConversationMessageTimerUpdateEventDecoder {
         enum CodingKeys: String, CodingKey {
 
             case messageTimer = "message_timer"
-
         }
     }
-
 }

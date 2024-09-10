@@ -185,6 +185,5 @@ final class DateFormatterTests: XCTestCase {
         // THEN
         XCTAssertFalse(startOfYearDateString.contains(String(thisYear)), "startOfYearDateString is \(startOfYearDateString)")
         XCTAssert(dateString.contains(String(lastYear)), "dateString is \(dateString)")
-
     }
 }

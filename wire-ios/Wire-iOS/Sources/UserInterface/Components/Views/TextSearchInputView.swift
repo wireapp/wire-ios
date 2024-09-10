@@ -171,5 +171,4 @@ extension TextSearchInputView: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         self.updatePlaceholderLabel()
     }
-
 }

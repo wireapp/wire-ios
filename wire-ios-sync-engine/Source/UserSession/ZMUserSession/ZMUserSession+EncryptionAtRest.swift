@@ -32,7 +32,6 @@ public protocol UserSessionEncryptionAtRestInterface {
 protocol UserSessionEncryptionAtRestDelegate: AnyObject {
 
     func prepareForMigration(for account: Account, onReady: @escaping (NSManagedObjectContext) throws -> Void)
-
 }
 
 extension ZMUserSession: UserSessionEncryptionAtRestInterface {
@@ -133,5 +132,4 @@ extension ZMUserSession: EARServiceDelegate {
             onReady: onReady
         )
     }
-
 }

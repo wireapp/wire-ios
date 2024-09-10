@@ -133,7 +133,6 @@ final class AudioRecordViewControllerTests: XCTestCase {
         // then
         XCTAssertEqual(delegate.cancelCallCount, 1)
     }
-
 }
 
 private extension UIViewController {

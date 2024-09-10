@@ -21,5 +21,4 @@ public extension Array where Element == ZMRequestGenerator {
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return (self as NSArray).nextRequest(for: apiVersion)
     }
-
 }

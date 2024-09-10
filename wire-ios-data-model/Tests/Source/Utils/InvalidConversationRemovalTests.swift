@@ -47,5 +47,4 @@ class InvalidConversationRemovalTests: DiskDatabaseTest {
             XCTAssertFalse(conversation.isZombieObject)
         }
     }
-
 }

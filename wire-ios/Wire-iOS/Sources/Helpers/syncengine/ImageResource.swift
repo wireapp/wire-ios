@@ -31,7 +31,6 @@ extension ZMConversationMessage {
 
         return LinkAttachmentImageResourceAdaptor(attachment: attachment, textMessageData: textMessage, urlSession: URLSession.shared)
     }
-
 }
 
 extension TextMessageData {
@@ -39,7 +38,6 @@ extension TextMessageData {
     var linkPreviewImage: WireImageResource {
         return LinkPreviewImageResourceAdaptor(textMessageData: self)
     }
-
 }
 
 extension ZMFileMessageData {
@@ -47,7 +45,6 @@ extension ZMFileMessageData {
     var thumbnailImage: PreviewableImageResource {
         return FileMessageImageResourceAdaptor(fileMesssageData: self)
     }
-
 }
 
 extension ZMImageMessageData {
@@ -55,7 +52,6 @@ extension ZMImageMessageData {
     var image: PreviewableImageResource {
         return ImageMessageImageResourceAdaptor(imageMessageData: self)
     }
-
 }
 
 struct LinkPreviewImageResourceAdaptor: WireImageResource {
@@ -77,7 +73,6 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
         textMessageData.fetchLinkPreviewImageData(queue: queue, completionHandler: completionHandler)
     }
-
 }
 
 struct LinkAttachmentImageResourceAdaptor: WireImageResource {
@@ -125,7 +120,6 @@ struct LinkAttachmentImageResourceAdaptor: WireImageResource {
 
         task.resume()
     }
-
 }
 
 struct FileMessageImageResourceAdaptor: PreviewableImageResource {
@@ -155,7 +149,6 @@ struct FileMessageImageResourceAdaptor: PreviewableImageResource {
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
         fileMesssageData.fetchImagePreviewData(queue: queue, completionHandler: completionHandler)
     }
-
 }
 
 struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
@@ -185,7 +178,6 @@ struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
         imageMessageData.fetchImageData(with: queue, completionHandler: completionHandler)
     }
-
 }
 
 protocol WireImageResource {
@@ -195,7 +187,6 @@ protocol WireImageResource {
 
     func requestImageDownload()
     func fetchImageData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void)
-
 }
 
 protocol PreviewableImageResource: WireImageResource {
@@ -289,5 +280,4 @@ extension WireImageResource {
             }
         }
     }
-
 }

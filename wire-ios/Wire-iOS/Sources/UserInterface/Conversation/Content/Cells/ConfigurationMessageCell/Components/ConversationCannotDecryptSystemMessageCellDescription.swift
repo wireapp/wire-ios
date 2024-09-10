@@ -167,5 +167,4 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
                                   attributes: [.foregroundColor: LabelColors.textDefault,
                                                .font: UIFont.mediumFont])
     }
-
 }

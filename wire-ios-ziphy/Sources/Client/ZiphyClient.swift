@@ -55,7 +55,6 @@ public final class ZiphyClient {
         self.downloadSession = downloadSession
         self.requestGenerator = ZiphyRequestGenerator(host: host)
     }
-
 }
 
 // MARK: - List Requests
@@ -120,7 +119,6 @@ extension ZiphyClient {
 
         return listTask
     }
-
 }
 
 // MARK: - Resource Requests
@@ -183,7 +181,6 @@ extension ZiphyClient {
 
         return downloadTask
     }
-
 }
 
 // MARK: - Utilities
@@ -250,5 +247,4 @@ extension ZiphyClient {
             throw ZiphyError.jsonSerialization(error)
         }
     }
-
 }

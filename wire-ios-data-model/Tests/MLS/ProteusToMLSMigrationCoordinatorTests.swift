@@ -508,5 +508,4 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
             config: .init(startTime: startTime)
         )
     }
-
 }

@@ -33,5 +33,4 @@ struct ConferenceCallingFeatureConfigDecoder {
             useSFTForOneToOneCalls: false
         )
     }
-
 }

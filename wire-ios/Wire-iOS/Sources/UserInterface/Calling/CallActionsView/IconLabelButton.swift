@@ -153,7 +153,6 @@ class IconLabelButton: ButtonWithLargerHitArea {
 
         blurView.isHidden = !configuration.showBlur
     }
-
 }
 
 // MARK: - Helper

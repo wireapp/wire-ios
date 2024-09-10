@@ -88,5 +88,4 @@ extension UpdateEventDecodingProxy {
             updateEvent = .conversation(.typing(event))
         }
     }
-
 }

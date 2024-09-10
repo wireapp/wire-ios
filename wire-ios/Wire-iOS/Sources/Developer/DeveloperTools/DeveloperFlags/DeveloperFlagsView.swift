@@ -62,5 +62,4 @@ struct DeveloperFlagsView_Previews: PreviewProvider {
             DeveloperFlagsView(viewModel: DeveloperFlagsViewModel())
         }
     }
-
 }

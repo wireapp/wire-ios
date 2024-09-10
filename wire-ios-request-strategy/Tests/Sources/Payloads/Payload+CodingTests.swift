@@ -156,5 +156,4 @@ class Payload_CodingTests: XCTestCase {
         XCTAssertEqual(object?.initCalls.count, 1)
         XCTAssertEqual(object?.initCalls.first?.1, .v3)
     }
-
 }

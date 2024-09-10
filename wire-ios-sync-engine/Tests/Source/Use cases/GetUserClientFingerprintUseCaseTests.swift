@@ -173,5 +173,4 @@ final class GetUserClientFingerprintUseCaseTests: MessagingTest {
                                                sessionEstablisher: mockSessionEstablisher,
                                                managedObjectContext: syncMOC)
     }
-
 }

@@ -257,7 +257,6 @@ final class ConversationReplyContentView: UIView {
             contentTextView.isAccessibilityElement = false
         }
     }
-
 }
 
 final class ConversationReplyCell: UIView, ConversationMessageCell {
@@ -300,7 +299,6 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     @objc func onTap() {
         delegate?.perform(action: .openQuote, for: message!, view: self)
     }
-
 }
 
 final class ConversationReplyCellDescription: ConversationMessageCellDescription {

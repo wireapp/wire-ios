@@ -39,5 +39,4 @@ extension SharingSession: SharingSessionEncryptionAtRestInterface {
     public func unlockDatabase() throws {
         try earService.unlockDatabase()
     }
-
 }

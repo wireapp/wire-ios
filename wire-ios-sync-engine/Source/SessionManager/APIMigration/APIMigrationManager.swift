@@ -138,7 +138,6 @@ final class APIMigrationManager {
     static func removeDefaults(for clientID: String) {
         UserDefaults.standard.removePersistentDomain(forName: "com.wire.apiversion.\(clientID)")
     }
-
 }
 
 private extension UserDefaults {

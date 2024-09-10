@@ -93,7 +93,6 @@ public struct CallParticipant: Hashable {
         hasher.combine(userId)
         hasher.combine(clientId)
     }
-
 }
 
 /**

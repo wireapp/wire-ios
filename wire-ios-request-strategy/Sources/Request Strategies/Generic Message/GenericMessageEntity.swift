@@ -121,5 +121,4 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
 
         return "\(self)"
     }
-
 }

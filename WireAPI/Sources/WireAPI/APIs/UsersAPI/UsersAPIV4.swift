@@ -52,7 +52,6 @@ class UsersAPIV4: UsersAPIV3 {
             .success(code: .ok, type: UserListResponseV4.self)
             .parse(response)
     }
-
 }
 
 struct UserListResponseV4: Decodable, ToAPIModelConvertible {
@@ -99,7 +98,6 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
         case service
         case supportedProtocols = "supported_protocols"
         case legalholdStatus = "legalhold_status"
-
     }
 
     func toAPIModel() -> User {

@@ -93,5 +93,4 @@ extension IconButton {
             heightAnchor.constraint(greaterThanOrEqualToConstant: width).isActive = true
         }
     }
-
 }

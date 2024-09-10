@@ -149,5 +149,4 @@ final class MLSMigrationCellDescriptionTests: XCTestCase {
 
         XCTAssertNotNil(expectedValue)
     }
-
 }

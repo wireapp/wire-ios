@@ -118,7 +118,6 @@ private extension VoIPPushPayload {
             in: context
         )
     }
-
 }
 
 private extension Dictionary where Key == AnyHashable, Value == Any {
@@ -134,5 +133,4 @@ private extension Dictionary where Key == AnyHashable, Value == Any {
 
         return "\(id)"
     }
-
 }

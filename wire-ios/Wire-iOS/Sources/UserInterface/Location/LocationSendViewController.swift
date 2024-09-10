@@ -25,7 +25,6 @@ import WireDesign
 protocol LocationSendViewControllerDelegate: AnyObject {
     func locationSendViewControllerSendButtonTapped(_ viewController: LocationSendViewController)
     func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool)
-
 }
 
 // MARK: - LocationSendViewController
@@ -130,5 +129,4 @@ final class LocationSendViewController: UIViewController {
         guard let delegate else { return }
         delegate.locationSendViewControllerSendButtonTapped(self)
     }
-
 }

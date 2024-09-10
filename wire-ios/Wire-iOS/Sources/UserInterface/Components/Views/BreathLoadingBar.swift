@@ -152,5 +152,4 @@ final class BreathLoadingBar: UIView {
     static func withDefaultAnimationDuration() -> BreathLoadingBar {
         return BreathLoadingBar(animationDuration: TimeInterval.SyncBar.defaultAnimationDuration)
     }
-
 }

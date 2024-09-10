@@ -26,5 +26,4 @@ public enum UserClientCapability: String, Codable {
     /// (directly or indirectly).
 
     case legalholdConsent = "legalhold-implicit-consent"
-
 }

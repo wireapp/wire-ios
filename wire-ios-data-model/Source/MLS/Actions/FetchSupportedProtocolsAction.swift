@@ -28,7 +28,6 @@ public final class FetchSupportedProtocolsAction: EntityAction {
         case invalidParameters
         case invalidResponse
         case unknown(status: Int, label: String, message: String)
-
     }
 
     // MARK: - Properties
@@ -45,5 +44,4 @@ public final class FetchSupportedProtocolsAction: EntityAction {
         self.userID = userID
         self.resultHandler = resultHandler
     }
-
 }

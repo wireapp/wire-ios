@@ -37,5 +37,4 @@ class MockSyncStatus: SyncStatusProtocol {
 
         await mock()
     }
-
 }

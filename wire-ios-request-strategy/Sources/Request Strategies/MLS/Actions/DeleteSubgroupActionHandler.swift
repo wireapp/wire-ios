@@ -94,5 +94,4 @@ final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
             ))
         }
     }
-
 }

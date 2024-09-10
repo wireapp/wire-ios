@@ -135,5 +135,4 @@ extension SettingsCellDescriptorFactory {
                                            icon: .robot,
                                            accessibilityBackButtonText: L10n.Accessibility.DeveloperOptionsSettings.BackButton.description)
     }
-
 }

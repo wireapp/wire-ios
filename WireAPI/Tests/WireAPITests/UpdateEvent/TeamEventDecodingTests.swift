@@ -78,7 +78,5 @@ final class TeamEventDecodingTests: XCTestCase {
             teamID: UUID(uuidString: "6f96e56c-8b3b-4821-925a-457f62f9de32")!,
             membershipID: UUID(uuidString: "d6344976-f86c-4010-afe2-bc07447ab412")!
         )
-
     }
-
 }

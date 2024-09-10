@@ -107,7 +107,6 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: { $0.name = "Phil" },
                                                      expectedChangedField: .name)
-
     }
 
     func testThatItNotifiestheObserverOfMultipleNameChanges() {
@@ -633,5 +632,4 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
                                                      modifier: { $0.analyticsIdentifier = "bar" },
                                                      expectedChangedField: .analyticsIdentifier)
     }
-
 }

@@ -35,7 +35,6 @@ public class MockPendingLegalHoldClient: NSManagedObject {
 
     /// Last prekeys registered for this client
     @NSManaged public var lastPrekey: MockPreKey
-
 }
 
 extension MockUser {
@@ -108,5 +107,4 @@ extension MockUser {
         managedObjectContext.delete(pendingClient)
         return true
     }
-
 }

@@ -65,7 +65,6 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     private var isLoggedIn: Bool {
         return transportSession.cookieStorage.hasAuthenticationCookie
     }
-
 }
 
 extension BackendEnvironmentProvider {
@@ -128,7 +127,6 @@ final class ApplicationStatusDirectory: ApplicationStatus {
     func requestResyncResources() {
         // we don't resync Resources in the share engine
     }
-
 }
 
 /// A Wire session to share content from a share extension
@@ -464,14 +462,12 @@ public final class SharingSession {
             completionHandler?()
         }
     }
-
 }
 
 extension SharingSession: LinkPreviewDetectorType {
     public func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
         applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excluding, completion: completion)
     }
-
 }
 
 // MARK: - Helper

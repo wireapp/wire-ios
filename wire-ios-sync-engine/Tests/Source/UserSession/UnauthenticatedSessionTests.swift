@@ -37,7 +37,6 @@ final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransp
 
     func tearDown() {}
     let environment: BackendEnvironmentProvider = MockEnvironment()
-
 }
 
 @objcMembers
@@ -106,7 +105,6 @@ final class MockUnauthenticatedSessionDelegate: NSObject, UnauthenticatedSession
     func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
         return isAllowedToCreatingNewAccounts
     }
-
 }
 
 public final class UnauthenticatedSessionTests: ZMTBaseTest {

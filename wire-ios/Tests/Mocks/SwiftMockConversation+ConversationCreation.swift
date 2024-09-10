@@ -40,5 +40,4 @@ extension SwiftMockConversation {
 
         return mockConversation
     }
-
 }

@@ -80,9 +80,7 @@ extension AppLockModule {
             methodCalls.updatePasscode.append(passcode)
             _passcode = passcode
         }
-
     }
-
 }
 
 extension AppLockModule.MockAppLockController {
@@ -98,7 +96,5 @@ extension AppLockModule.MockAppLockController {
         var evaluateAuthenticationWithCustomPasscode: [String] = []
         var deletePasscode: [Void] = []
         var updatePasscode: [String] = []
-
     }
-
 }

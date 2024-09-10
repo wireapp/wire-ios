@@ -70,5 +70,4 @@ final class FederationSectionController: SearchSectionController {
         let user = users[indexPath.row]
         delegate?.searchSectionController(self, didSelectUser: user, at: indexPath)
     }
-
 }

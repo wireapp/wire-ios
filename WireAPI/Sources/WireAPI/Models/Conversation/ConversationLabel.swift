@@ -37,5 +37,4 @@ public struct ConversationLabel: Equatable, Codable, Sendable {
     /// The conversation ids associated with the label.
 
     public let conversationIDs: [UUID]
-
 }

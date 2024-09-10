@@ -25,5 +25,4 @@ extension ZMConversation {
 
         allMessages.forEach({ managedObjectContext?.zm_fileAssetCache?.deleteAssetData($0) })
     }
-
 }

@@ -58,7 +58,6 @@ final class IncomingConnectionViewController: UIViewController {
 
         view = connectionView
     }
-
 }
 
 final class UserConnectionViewController: UIViewController {

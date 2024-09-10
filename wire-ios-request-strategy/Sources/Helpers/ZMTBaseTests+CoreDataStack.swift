@@ -23,7 +23,6 @@ extension ZMTBaseTest {
 
     var sharedContainerURL: URL {
         FileManager.default.randomCacheURL!
-
     }
 
     @objc
@@ -61,5 +60,4 @@ extension ZMTBaseTest {
             try? FileManager.default.removeItem(at: $0)
         }
     }
-
 }

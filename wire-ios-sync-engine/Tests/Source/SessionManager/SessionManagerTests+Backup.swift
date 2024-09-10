@@ -289,7 +289,6 @@ final class SessionManagerBackupTests: IntegrationTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return result
     }
-
 }
 
 private enum TestError: Error {

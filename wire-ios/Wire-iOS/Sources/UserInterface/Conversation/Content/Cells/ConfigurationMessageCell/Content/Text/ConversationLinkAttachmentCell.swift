@@ -131,7 +131,6 @@ final class ConversationLinkAttachmentCell: UIView, ConversationMessageCell, Hig
     private func handleTapGesture() {
         currentAttachment?.permalink.open()
     }
-
 }
 
 extension ConversationLinkAttachmentCell: LinkViewDelegate {

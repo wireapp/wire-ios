@@ -30,7 +30,6 @@ extension UpdateAccessRolesError {
         default: return nil
         }
     }
-
 }
 
 final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesAction> {
@@ -97,7 +96,5 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
         default:
             action.notifyResult(.failure(UpdateAccessRolesError(response: response) ?? .unknown))
         }
-
     }
-
 }

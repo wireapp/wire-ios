@@ -57,7 +57,6 @@ import WireUtilities
 
         else {
             return
-
         }
 
         self.oldNotifications = unarchivedNotes

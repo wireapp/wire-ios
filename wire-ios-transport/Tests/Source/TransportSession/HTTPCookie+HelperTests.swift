@@ -83,5 +83,4 @@ final class HTTPCookieHelperTests: XCTestCase {
         // then
         XCTAssertNil(data)
     }
-
 }

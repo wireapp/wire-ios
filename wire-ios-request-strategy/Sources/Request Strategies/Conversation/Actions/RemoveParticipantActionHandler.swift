@@ -28,7 +28,6 @@ extension ConversationRemoveParticipantError {
        default: return nil
        }
    }
-
 }
 
 class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
@@ -118,5 +117,4 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             action.notifyResult(.failure(ConversationRemoveParticipantError(response: response) ?? .unknown))
         }
     }
-
 }

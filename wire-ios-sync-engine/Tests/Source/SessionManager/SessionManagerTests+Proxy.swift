@@ -105,6 +105,5 @@ final class SessionManagerProxyTests: IntegrationTest {
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
     }
 }

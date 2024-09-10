@@ -538,5 +538,4 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
             XCTAssertNil(contentView.assetThumbnail.accessibilityIdentifier, file: file, line: line)
         }
     }
-
 }

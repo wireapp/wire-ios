@@ -91,7 +91,6 @@ class UserPropertiesAPIV0: UserPropertiesAPI, VersionedAPI {
             .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
             .parse(response)
     }
-
 }
 
 protocol UserPropertiesResponseAPIV0: Decodable, ToAPIModelConvertible {
@@ -154,7 +153,5 @@ struct LabelsPayloadV0: Decodable {
         let type: Int16
         let name: String?
         let conversations: [UUID]
-
     }
-
 }

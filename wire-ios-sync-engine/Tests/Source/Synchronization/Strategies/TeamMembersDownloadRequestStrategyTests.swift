@@ -195,5 +195,4 @@ final class TeamMembersDownloadRequestStrategyTests: MessagingTest {
             XCTAssertEqual(team.members.count, initialTeamMembersCount + 1)
         }
     }
-
 }

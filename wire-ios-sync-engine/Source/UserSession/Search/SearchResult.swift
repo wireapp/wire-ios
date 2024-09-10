@@ -202,5 +202,4 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
     }
-
 }

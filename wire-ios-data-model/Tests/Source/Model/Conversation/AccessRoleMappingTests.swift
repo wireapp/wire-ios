@@ -90,5 +90,4 @@ class AccessRoleMappingTests: XCTestCase {
         // WHEN & THEN
         XCTAssertEqual(ConversationAccessRoleV2.fromLegacyAccessRole(.private), [])
     }
-
 }

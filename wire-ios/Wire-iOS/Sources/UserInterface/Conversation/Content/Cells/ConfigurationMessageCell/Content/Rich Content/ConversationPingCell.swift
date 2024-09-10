@@ -104,7 +104,6 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
                     }
                 })
             })
-
         }
 
         return animationBlock

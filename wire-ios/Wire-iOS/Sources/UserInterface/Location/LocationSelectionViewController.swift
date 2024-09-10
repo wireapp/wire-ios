@@ -239,7 +239,6 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
         delegate?.locationSelectionViewControllerDidCancel(self)
     }
-
 }
 
 // MARK: - Map Manager Delegate
@@ -261,7 +260,6 @@ extension LocationSelectionViewController: MapViewControllerDelegate {
         mapDidRender = true
         formatAndUpdateAddress()
     }
-
 }
 
 // MARK: - AppLocation Manager Delegate

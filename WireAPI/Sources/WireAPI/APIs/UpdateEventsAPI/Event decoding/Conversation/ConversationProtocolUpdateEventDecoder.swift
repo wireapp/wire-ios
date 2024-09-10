@@ -48,7 +48,5 @@ struct ConversationProtocolUpdateEventDecoder {
     private struct Payload: Decodable {
 
         let `protocol`: ConversationMessageProtocol
-
     }
-
 }

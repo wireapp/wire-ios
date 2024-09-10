@@ -95,7 +95,6 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
             onToggle: {
                 reaction.performReaction?()
             }
-
         )
         return cell
     }
@@ -107,5 +106,4 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 4
     }
-
 }

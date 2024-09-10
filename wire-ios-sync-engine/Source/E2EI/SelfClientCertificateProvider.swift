@@ -23,7 +23,6 @@ public protocol SelfClientCertificateProviderProtocol {
 
     var hasCertificate: Bool { get async }
     func getCertificate() async throws -> E2eIdentityCertificate?
-
 }
 
 public final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol {
@@ -77,5 +76,4 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
         case failedToGetMLSGroupID(_ conversation: Conversation)
         case failedToGetSelfClientID
     }
-
 }

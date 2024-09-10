@@ -60,5 +60,4 @@ public final class StoredUpdateEventEnvelope: NSManagedObject {
         ]
         return request
     }
-
 }

@@ -37,7 +37,5 @@ extension ___VARIABLE_productName:identifier___Module {
         func processEvent(_ event: ___VARIABLE_productName:identifier___Module.Event) {
             events.append(event)
         }
-
     }
-
 }

@@ -924,12 +924,10 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
             self.assertFeatureExists(name: .mls)
             self.assertFeatureExists(name: .selfDeletingMessages)
             self.assertFeatureExists(name: .e2ei)
-
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }
 
 private extension Data {
@@ -937,5 +935,4 @@ private extension Data {
     func decode<T: Decodable>(as type: T.Type) -> T? {
         return try? JSONDecoder().decode(type, from: self)
     }
-
 }

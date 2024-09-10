@@ -58,6 +58,5 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
         label.textColor = SemanticColors.Label.textDefault
         container.backgroundColor = SemanticColors.View.backgroundDefault
         backgroundColor = SemanticColors.View.backgroundDefault
-
     }
 }

@@ -281,7 +281,6 @@ extension UserProfileImageUpdateStatusTests {
             self.changeDelegate.check(lastStates: [.failed(.preprocessingFailed), .ready])
         }
     }
-
 }
 
 // MARK: Main state transitions
@@ -536,7 +535,6 @@ extension UserProfileImageUpdateStatusTests {
         // THEN
         XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
     }
-
 }
 
 // MARK: - User profile update

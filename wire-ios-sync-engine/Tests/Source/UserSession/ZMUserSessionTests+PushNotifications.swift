@@ -316,7 +316,6 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
         XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
     }
-
 }
 
 extension ZMUserSessionTests_PushNotifications {

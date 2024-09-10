@@ -245,5 +245,4 @@ class RegistrationStatusTests: MessagingTest {
         XCTAssertEqual(delegate.userRegistrationFailedCalled, 1)
         XCTAssertEqual(delegate.userRegistrationError as NSError?, error)
     }
-
 }

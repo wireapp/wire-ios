@@ -36,7 +36,6 @@ extension SessionManager.AccountError: LocalizedError {
             return SettingsAddAccountLocale.message
         }
     }
-
 }
 
 extension SessionManager.SwitchBackendError: LocalizedError {
@@ -97,7 +96,6 @@ extension DeepLinkRequestError: LocalizedError {
             return UrlActionLocale.AuthorizationRequired.message
         }
     }
-
 }
 
 extension CompanyLoginError: LocalizedError {
@@ -109,7 +107,6 @@ extension CompanyLoginError: LocalizedError {
     public var failureReason: String? {
         return L10n.Localizable.Login.Sso.Error.Alert.message(displayCode)
     }
-
 }
 
 extension ConmpanyLoginRequestError: LocalizedError {
@@ -145,7 +142,6 @@ extension ConnectToUserError: LocalizedError {
             return ConnectionError.genericError
         }
     }
-
 }
 
 extension UpdateConnectionError: LocalizedError {
@@ -164,5 +160,4 @@ extension UpdateConnectionError: LocalizedError {
             return ConnectionError.genericError
         }
     }
-
 }

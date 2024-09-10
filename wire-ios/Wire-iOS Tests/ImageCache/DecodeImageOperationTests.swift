@@ -106,5 +106,4 @@ final class DecodeImageOperationTests: XCTestCase {
         let url = Bundle(for: DecodeImageOperationTests.self).url(forResource: "0x0", withExtension: "pdf")!
         return try! Data(contentsOf: url)
     }
-
 }

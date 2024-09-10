@@ -34,6 +34,5 @@ final class SettingsStyleNavigationController: UINavigationController {
 
         navButtonAppearance.setTitleTextAttributes(attributes, for: UIControl.State.normal)
         navButtonAppearance.setTitleTextAttributes(attributes, for: UIControl.State.highlighted)
-
     }
 }

@@ -136,7 +136,6 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
                                                      attributes: nil)
 
                 XCTAssertTrue(success)
-
             }
 
             return storeFiles
@@ -168,5 +167,4 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
             applicationContainer.appendingPathComponent(bundleID).appendingPathComponent(accountID).appendingPathComponent("store")
         ]
     }
-
 }

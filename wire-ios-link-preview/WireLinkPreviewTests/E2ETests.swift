@@ -191,5 +191,4 @@ final class E2ETests: XCTestCase {
         XCTAssertEqual(data.userGeneratedImage, expected.userGeneratedImage, "User generated image should match", line: line)
         XCTAssertTrue(data.imageUrls.count == expected.numberOfImages, "Should have \(expected.numberOfImages) images, found:\(data.imageUrls.count)", line: line)
     }
-
 }

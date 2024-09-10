@@ -74,7 +74,5 @@ final class MockZiphyRequester: ZiphyURLRequester {
         case .error(let error):
             completionHandler(nil, nil, error)
         }
-
     }
-
 }

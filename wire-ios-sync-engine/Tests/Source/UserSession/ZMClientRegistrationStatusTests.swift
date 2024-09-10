@@ -32,7 +32,6 @@ final class MockCookieStorage: CookieProvider {
     func deleteKeychainItems() {
         didCallDeleteKeychainItems = true
     }
-
 }
 
 final class ZMClientRegistrationStatusTests: MessagingTest {

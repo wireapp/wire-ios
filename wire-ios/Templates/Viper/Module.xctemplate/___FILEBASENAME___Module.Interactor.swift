@@ -25,9 +25,7 @@ extension ___VARIABLE_productName:identifier___Module {
         // MARK: - Properties
 
         weak var presenter: ___VARIABLE_productName:identifier___PresenterInteractorInterface!
-
     }
-
 }
 
 
@@ -37,8 +35,6 @@ extension ___VARIABLE_productName:identifier___Module.Interactor: ___VARIABLE_pr
 
     func executeRequest(_ request: ___VARIABLE_productName:identifier___Module.Request) {
         switch request {
-
         }
     }
-
 }

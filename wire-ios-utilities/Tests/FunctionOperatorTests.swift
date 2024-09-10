@@ -32,5 +32,4 @@ final class FunctionOperatorTests: XCTestCase {
         XCTAssert(negated(false))
         XCTAssertFalse(negated(true))
     }
-
 }

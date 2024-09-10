@@ -110,7 +110,6 @@ final class SearchTaskTests: DatabaseTest {
         // when
         task.performRemoteSearchForTeamUser()
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
     }
 
     func testThatItReturnsNothingWhenSearchingForSelfUserByHandle() {

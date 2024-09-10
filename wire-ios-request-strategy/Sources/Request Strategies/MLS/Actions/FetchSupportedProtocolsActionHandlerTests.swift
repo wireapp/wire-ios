@@ -148,5 +148,4 @@ final class FetchSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Fet
             expectedError: .invalidParameters
         )
     }
-
 }

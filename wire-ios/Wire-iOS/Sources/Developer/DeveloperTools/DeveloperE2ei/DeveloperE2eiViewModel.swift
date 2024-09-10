@@ -114,5 +114,4 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
         return dateFormatter
     }
-
 }

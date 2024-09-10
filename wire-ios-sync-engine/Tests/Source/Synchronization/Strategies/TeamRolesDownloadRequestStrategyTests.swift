@@ -71,7 +71,6 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange(Set(objects))
         }
-
     }
 
     func testThatPredicateIsCorrect() {
@@ -286,5 +285,4 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
             XCTAssertNotNil(Team.fetch(with: teamId, in: self.syncMOC))
         }
     }
-
 }

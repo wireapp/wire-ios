@@ -46,7 +46,6 @@ public extension ZMConversation {
         let request = sortedFetchRequest(with: predicate)
         return context.fetchOrAssert(request: request) as? [ZMConversation] ?? []
     }
-
 }
 
 private extension NSPredicate {
@@ -82,5 +81,4 @@ private extension NSPredicate {
             domains
         )
     }
-
 }

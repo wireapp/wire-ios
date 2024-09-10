@@ -68,5 +68,4 @@ class ZMConversationVoiceChannelTests: MessagingTest {
             XCTAssertTrue(oneToOneconversation.voiceChannel === voiceChannel)
         }
     }
-
 }

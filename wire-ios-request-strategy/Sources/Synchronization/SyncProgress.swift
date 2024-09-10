@@ -25,5 +25,4 @@ public protocol SyncProgress: AnyObject {
 
     func finishCurrentSyncPhase(phase: SyncPhase)
     func failCurrentSyncPhase(phase: SyncPhase)
-
 }

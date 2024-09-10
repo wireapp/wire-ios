@@ -28,7 +28,6 @@ final class StoreUpdateEventTests: MessagingTestBase {
         init(_ description: String) {
             self.description = description
         }
-
     }
 
     var account: Account!
@@ -113,7 +112,6 @@ final class StoreUpdateEventTests: MessagingTestBase {
 
         event.appendDebugInformation("Highly informative description")
         return event
-
     }
 
     private func createStoredEvent(index: UInt) throws -> StoredUpdateEvent {
@@ -319,7 +317,6 @@ final class StoreUpdateEventTests: MessagingTestBase {
             XCTAssertNotNil(storedEvent2.payload)
             XCTAssertTrue(storedEvent2.isCallEvent)
             XCTAssertFalse(storedEvent2.isEncrypted)
-
         }
     }
 
@@ -396,7 +393,6 @@ final class StoreUpdateEventTests: MessagingTestBase {
 
             XCTAssertNil(duplicateStoredEvent1)
         }
-
     }
 
     func test_EncryptAndCreate_CanStoreEventsWithSameIdButDifferentPayloads() throws {
@@ -422,7 +418,6 @@ final class StoreUpdateEventTests: MessagingTestBase {
             )
             XCTAssertNotNil(storedEvent2)
         }
-
     }
 
     func test_EncryptAndCreate_Encrypted() throws {

@@ -65,5 +65,4 @@ extension ZMConversation {
 
         userSession.transportSession.enqueueOneTime(request)
     }
-
 }

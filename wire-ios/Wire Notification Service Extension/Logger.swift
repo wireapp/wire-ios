@@ -27,13 +27,11 @@ extension Loggable {
         return os.Logger(category: String(describing: type(of: self))
 )
     }
-
 }
 
 protocol Loggable {
 
     var logger: os.Logger { get }
-
 }
 
 extension os.Logger {
@@ -43,7 +41,6 @@ extension os.Logger {
     init(category: String) {
         self.init(subsystem: Self.subsystem, category: category)
     }
-
 }
 
 extension OSLogInterpolation {
@@ -51,5 +48,4 @@ extension OSLogInterpolation {
     mutating func appendInterpolation(_ request: UNNotificationRequest) {
         appendInterpolation(String(request.identifier), align: .none, privacy: .public)
     }
-
 }

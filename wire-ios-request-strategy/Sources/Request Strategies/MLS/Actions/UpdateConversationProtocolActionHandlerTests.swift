@@ -128,5 +128,4 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
             expectedError: .unknown
         )
     }
-
 }

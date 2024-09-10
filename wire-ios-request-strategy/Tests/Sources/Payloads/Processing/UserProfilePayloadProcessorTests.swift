@@ -606,5 +606,4 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             XCTAssertEqual(self.otherUser.supportedProtocols, [.proteus, .mls])
         }
     }
-
 }

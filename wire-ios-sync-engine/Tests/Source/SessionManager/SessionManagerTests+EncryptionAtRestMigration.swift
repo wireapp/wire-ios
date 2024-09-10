@@ -99,5 +99,4 @@ final class SessionManagerEncryptionAtRestMigrationTests: IntegrationTest {
         let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(clientMessage?.messageText, expectedText)
     }
-
 }

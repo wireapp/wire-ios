@@ -36,7 +36,6 @@ public struct SyncMLSOneToOneConversationAction: EntityAction {
         self.domain = domain
         self.resultHandler = resultHandler
     }
-
 }
 
 public enum SyncMLSOneToOneConversationActionError: Error, Equatable {
@@ -48,5 +47,4 @@ public enum SyncMLSOneToOneConversationActionError: Error, Equatable {
     case mlsNotEnabled
     case usersNotConnected
     case unknown(status: Int, label: String, message: String)
-
 }

@@ -53,7 +53,6 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
     static func free(_ doc: HTMLDocument) {
         xmlFreeDoc(doc)
     }
-
 }
 
 extension UnsafeMutablePointer where Pointee == xmlNode {
@@ -80,7 +79,6 @@ extension UnsafeMutablePointer where Pointee == xmlNode {
         guard let xmlProp = xmlGetProp(self, attributeName) else { return nil }
         return HTMLStringBuffer(retaining: xmlProp)
     }
-
 }
 
 // MARK: - Helper Types
@@ -152,7 +150,6 @@ final class HTMLStringBuffer {
 
         return removeEntities ? stringValue.removingHTMLEntities() : stringValue
     }
-
 }
 
 /// Compares an HTML string with an UTF-8 Swift string.

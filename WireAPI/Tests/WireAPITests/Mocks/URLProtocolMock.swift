@@ -61,5 +61,4 @@ final class URLProtocolMock: URLProtocol {
     override func stopLoading() {
         // The request was cancelled or completed.
     }
-
 }

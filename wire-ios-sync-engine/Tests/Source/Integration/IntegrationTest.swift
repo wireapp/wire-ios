@@ -100,7 +100,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
         return userSession
     }
-
 }
 
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
@@ -218,7 +217,6 @@ extension IntegrationTest {
 
         deleteSharedContainerContent()
         sharedContainerDirectory = nil
-
     }
 
     @objc
@@ -313,7 +311,6 @@ extension IntegrationTest {
         sessionManager?.start(launchOptions: [:])
 
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
     }
 
     @objc
@@ -561,7 +558,6 @@ extension IntegrationTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }
 
 extension IntegrationTest {
@@ -687,7 +683,6 @@ extension IntegrationTest {
         application?.simulateApplicationDidEnterBackground()
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
     }
-
 }
 
 extension IntegrationTest {

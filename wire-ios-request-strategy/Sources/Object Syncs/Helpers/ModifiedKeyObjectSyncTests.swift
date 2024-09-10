@@ -36,7 +36,6 @@ class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
         objectsAskedToBeSynchronized.append(object)
         pendingModifications.append(completion)
     }
-
 }
 
 class ModifiedKeyObjectSyncTests: ZMTBaseTest {
@@ -152,5 +151,4 @@ class ModifiedKeyObjectSyncTests: ZMTBaseTest {
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
     }
-
 }

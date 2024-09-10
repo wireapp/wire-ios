@@ -54,7 +54,5 @@ struct ConversationMemberJoinEventDecoder {
     private struct Payload: Decodable {
 
         let users: [Conversation.Member]
-
     }
-
 }

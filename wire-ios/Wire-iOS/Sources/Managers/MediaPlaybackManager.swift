@@ -149,6 +149,5 @@ extension MediaPlaybackManager: MediaPlayerDelegate {
         }
 
         NotificationCenter.default.post(name: .mediaPlaybackManagerPlayerStateChanged, object: mediaPlayer)
-
     }
 }

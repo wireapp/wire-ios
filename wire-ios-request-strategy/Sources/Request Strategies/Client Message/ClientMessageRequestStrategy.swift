@@ -152,7 +152,6 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             context.delete(message)
         }
     }
-
 }
 
 // MARK: - Event processing
@@ -207,5 +206,4 @@ private struct UpdateEventWithNonce {
 
     let event: ZMUpdateEvent
     let nonce: UUID
-
 }

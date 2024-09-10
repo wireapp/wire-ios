@@ -42,7 +42,6 @@ public protocol FeatureRepositoryInterface {
     func storeE2EI(_ e2ei: Feature.E2EI)
     func fetchMLSMigration() -> Feature.MLSMigration
     func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
-
 }
 
 /// This class facilitates storage and retrieval of feature configs to and from
@@ -483,7 +482,6 @@ public class FeatureRepository: FeatureRepositoryInterface {
     private func notifyChange(_ change: FeatureChange) {
         NotificationCenter.default.post(name: .featureDidChangeNotification, object: change)
     }
-
 }
 
 extension FeatureRepository {
@@ -513,11 +511,9 @@ extension FeatureRepository {
             }
         }
     }
-
 }
 
 extension Notification.Name {
 
     public static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
-
 }

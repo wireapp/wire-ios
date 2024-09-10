@@ -27,7 +27,6 @@ protocol TeamMemberLeaveEventProcessorProtocol {
     /// - Parameter event: A team member leave event.
 
     func processEvent(_ event: TeamMemberLeaveEvent) async throws
-
 }
 
 struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
         // TODO: [WPB-10185]
         assertionFailure("not implemented yet")
     }
-
 }

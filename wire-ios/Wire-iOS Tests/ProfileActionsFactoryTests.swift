@@ -870,5 +870,4 @@ final class ProfileActionsFactoryTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
         XCTAssertEqual(actions, expectedActions, file: file, line: line)
     }
-
 }

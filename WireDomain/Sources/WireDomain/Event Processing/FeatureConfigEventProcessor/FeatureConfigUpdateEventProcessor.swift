@@ -27,7 +27,6 @@ protocol FeatureConfigUpdateEventProcessorProtocol {
     /// - Parameter event: A feature config update event.
 
     func processEvent(_ event: FeatureConfigUpdateEvent) async throws
-
 }
 
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProto
         // TODO: [WPB-10183]
         assertionFailure("not implemented yet")
     }
-
 }

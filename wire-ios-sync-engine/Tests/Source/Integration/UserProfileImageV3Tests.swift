@@ -115,5 +115,4 @@ class UserProfileImageV3Tests: IntegrationTest {
         let previewAsset = assets?["preview"]
         checkProfileImagesMatch(local: localUser, previewAsset: previewAsset, completeAsset: completeAsset)
     }
-
 }

@@ -50,5 +50,4 @@ class CoreCryptoCallbacksTests: XCTestCase {
         XCTAssertTrue(userAuthorizeResult)
         XCTAssertTrue(clientIsExistingGroupUserResult)
     }
-
 }

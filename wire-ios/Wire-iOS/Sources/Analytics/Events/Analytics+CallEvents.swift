@@ -40,7 +40,6 @@ extension CallEvent {
         case .screenSharing: return "calling.screen_share"
         }
     }
-
 }
 
 extension Analytics {

@@ -180,5 +180,4 @@ final class MLSGroupVerificationTests: XCTestCase {
             syncContext: mockCoreDataStack.syncContext
         )
     }
-
 }

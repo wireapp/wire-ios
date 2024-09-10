@@ -102,5 +102,4 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
             line: #line
         )
     }
-
 }

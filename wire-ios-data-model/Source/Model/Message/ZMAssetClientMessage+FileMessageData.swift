@@ -380,5 +380,4 @@ extension ZMAssetClientMessage {
             try! self.managedObjectContext!.obtainPermanentIDs(for: [self])
         }
     }
-
 }

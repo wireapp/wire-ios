@@ -43,7 +43,6 @@ private class TestActionHandler: ActionHandler<MockAction> {
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<MockAction>.Action) {
         calledHandleResponse = true
     }
-
 }
 
 class ActionHandlerTests: MessagingTestBase {
@@ -150,5 +149,4 @@ class ActionHandlerTests: MessagingTestBase {
             apiVersion: apiVersion.rawValue
         )
     }
-
 }

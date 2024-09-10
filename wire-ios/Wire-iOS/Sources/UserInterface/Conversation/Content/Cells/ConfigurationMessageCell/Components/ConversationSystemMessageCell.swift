@@ -38,5 +38,4 @@ final class ConversationSystemMessageCell: ConversationIconBasedCell, Conversati
         imageView.image = object.icon
         attributedText = object.attributedText
     }
-
 }

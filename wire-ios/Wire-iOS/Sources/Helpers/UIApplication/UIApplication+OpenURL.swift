@@ -25,5 +25,4 @@ extension UIApplication {
             open(url, options: [:], completionHandler: nil)
         }
     }
-
 }

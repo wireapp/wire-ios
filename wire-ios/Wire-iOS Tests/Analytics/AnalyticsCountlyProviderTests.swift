@@ -115,7 +115,6 @@ final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper
             XCTAssertEqual(MockCountly.startCount, 0)
         }
     }
-
 }
 
 final class MockCountly: CountlyInstance {

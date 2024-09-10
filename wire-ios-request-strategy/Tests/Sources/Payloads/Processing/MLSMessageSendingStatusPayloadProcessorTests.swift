@@ -65,5 +65,4 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
             XCTAssertEqual(message.failedToSendRecipients?.first, self.otherUser)
         }
     }
-
 }

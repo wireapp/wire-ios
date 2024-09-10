@@ -29,5 +29,4 @@ public struct Prekey: Equatable, Codable {
     /// The base64-encoded prekey key.
 
     public let base64EncodedKey: String
-
 }

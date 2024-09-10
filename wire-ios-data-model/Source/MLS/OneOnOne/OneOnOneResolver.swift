@@ -28,7 +28,6 @@ public protocol OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution
-
 }
 
 public final class OneOnOneResolver: OneOnOneResolverInterface {

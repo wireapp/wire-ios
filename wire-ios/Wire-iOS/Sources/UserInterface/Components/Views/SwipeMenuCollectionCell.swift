@@ -347,7 +347,6 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
         maxMenuViewToSwipeViewLeftConstraint?.isActive = false
         menuViewToSwipeViewLeftConstraint?.isActive = true
     }
-
 }
 
 // MARK: - UIGestureRecognizerDelegate
@@ -388,14 +387,11 @@ extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
                            shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 
         return false
-
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 
         return true
-
     }
-
 }

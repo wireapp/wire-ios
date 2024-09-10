@@ -304,5 +304,4 @@ final class AppLockModuleInteractorTests: XCTestCase {
         // Then
         XCTAssertEqual(session.openApp.count, 1)
     }
-
 }

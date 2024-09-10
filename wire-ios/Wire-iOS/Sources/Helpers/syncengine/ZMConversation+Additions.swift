@@ -29,5 +29,4 @@ extension ZMConversation {
 
         return localParticipants.first(where: { $0 != selfUser })
     }
-
 }

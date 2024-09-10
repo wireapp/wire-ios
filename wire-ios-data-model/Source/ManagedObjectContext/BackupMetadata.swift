@@ -87,7 +87,6 @@ public extension BackupMetadata {
         decoder.dateDecodingStrategy = .formatted(.iso8601)
         self = try decoder.decode(type(of: self), from: data)
     }
-
 }
 
 private extension DateFormatter {
@@ -126,7 +125,6 @@ public extension BackupMetadata {
         guard current >= backup else { return .backupFromNewerAppVersion }
         return nil
     }
-
 }
 
 // MARK: - Version Helper

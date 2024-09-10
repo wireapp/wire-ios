@@ -85,5 +85,4 @@ final class ContactsDataSourceTests: XCTestCase {
             self.dataSource?.ungroupedSearchResults = mockUsers
         })
     }
-
 }

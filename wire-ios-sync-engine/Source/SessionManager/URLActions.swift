@@ -192,7 +192,6 @@ extension URLAction {
         guard let token = components.query(for: URLQueryItem.Key.validationToken).flatMap(UUID.init(transportString:)) else { return false }
         return storedToken.matches(identifier: token)
     }
-
 }
 
 extension URLQueryItem.Key {
@@ -200,5 +199,4 @@ extension URLQueryItem.Key {
     static let conversationKey = "key"
     static let conversationCode = "code"
     static let password = "password"
-
 }

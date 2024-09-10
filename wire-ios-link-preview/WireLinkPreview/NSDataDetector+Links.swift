@@ -69,5 +69,4 @@ extension NSDataDetector {
             return (url, range)
         }
     }
-
 }

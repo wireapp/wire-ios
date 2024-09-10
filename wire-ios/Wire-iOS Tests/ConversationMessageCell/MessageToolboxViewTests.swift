@@ -162,5 +162,4 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

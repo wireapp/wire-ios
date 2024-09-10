@@ -28,5 +28,4 @@ extension ModifiedObjects: Mergeable {
             deleted: deleted.union(other.deleted)
         )
     }
-
 }

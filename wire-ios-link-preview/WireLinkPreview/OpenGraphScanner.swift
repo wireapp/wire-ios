@@ -105,5 +105,4 @@ final class OpenGraphScanner: NSObject {
         guard !contentsByProperty.keys.contains(.title) else { return }
         pageTitle.map { addProperty(.title, value: $0) }
     }
-
 }

@@ -125,5 +125,4 @@ class TeamInvitationStatusTests: ZMTBaseTest {
         // then
         XCTAssertEqual(completionHandlerCallCount, 1)
     }
-
 }

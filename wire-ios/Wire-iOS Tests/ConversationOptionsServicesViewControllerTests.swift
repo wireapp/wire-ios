@@ -121,7 +121,6 @@ final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
         // Then, verify the toggle is now on.
         snapshotHelper.verify(matching: sut)
-
     }
 
     // MARK: Renders Group's Title in Services Screen

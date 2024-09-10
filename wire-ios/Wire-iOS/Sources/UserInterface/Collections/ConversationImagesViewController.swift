@@ -181,7 +181,6 @@ final class ConversationImagesViewController: UIViewController {
             separator.trailingAnchor.constraint(equalTo: buttonsBar.trailingAnchor),
             separator.leadingAnchor.constraint(equalTo: buttonsBar.leadingAnchor)
         ])
-
     }
 
     private func createPageController() {
@@ -533,7 +532,6 @@ extension ConversationImagesViewController: MenuVisibilityController {
             self.navigationController?.setNavigationBarHidden(hidden, animated: false)
         })
     }
-
 }
 
 extension ConversationImagesViewController {
@@ -542,7 +540,6 @@ extension ConversationImagesViewController {
     override var previewActionItems: [UIPreviewActionItem] {
         return currentActionController?.previewActionItems ?? []
     }
-
 }
 
 // MARK: - Helper
@@ -559,5 +556,4 @@ extension UIView {
         let completion: (Bool) -> Void = { _ in self.isHidden = hide }
         UIView.animate(withDuration: duration, delay: 0, options: UIView.AnimationOptions(), animations: animations, completion: completion)
     }
-
 }

@@ -68,6 +68,5 @@ final class WarningLabelView: UIView {
         }
         self.isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
         label.text = profileDetails.identityWarning(name)
-
     }
 }

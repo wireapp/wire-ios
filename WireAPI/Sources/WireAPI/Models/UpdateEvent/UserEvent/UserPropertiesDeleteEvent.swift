@@ -26,5 +26,4 @@ public struct UserPropertiesDeleteEvent: Equatable, Codable {
     /// The property key that was deleted.
 
     public let key: String
-
 }

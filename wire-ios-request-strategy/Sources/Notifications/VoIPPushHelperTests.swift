@@ -81,5 +81,4 @@ final class VoIPPushHelperTests: XCTestCase {
         // Then
         XCTAssertTrue(VoIPPushHelper.isAVSReady)
     }
-
 }

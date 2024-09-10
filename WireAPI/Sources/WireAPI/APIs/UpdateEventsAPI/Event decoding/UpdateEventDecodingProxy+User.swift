@@ -75,5 +75,4 @@ extension UpdateEventDecodingProxy {
             updateEvent = .user(.update(event))
         }
     }
-
 }

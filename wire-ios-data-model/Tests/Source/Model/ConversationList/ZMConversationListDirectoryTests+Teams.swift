@@ -116,5 +116,4 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
         conversation.conversationType = .group
         return conversation
     }
-
 }

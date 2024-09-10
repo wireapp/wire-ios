@@ -53,5 +53,4 @@ public struct UpdateEventEnvelope: Equatable, Codable {
         self.events = events
         self.isTransient = isTransient
     }
-
 }

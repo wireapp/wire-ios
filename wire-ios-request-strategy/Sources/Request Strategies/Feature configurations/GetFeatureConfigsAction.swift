@@ -34,7 +34,6 @@ public final class GetFeatureConfigsAction: EntityAction {
         case malformedResponse
         case failedToDecodeResponse(reason: String)
         case unknown(status: Int, label: String)
-
     }
 
     // MARK: - Properties
@@ -46,5 +45,4 @@ public final class GetFeatureConfigsAction: EntityAction {
     public init(resultHandler: ResultHandler? = nil) {
         self.resultHandler = resultHandler
     }
-
 }

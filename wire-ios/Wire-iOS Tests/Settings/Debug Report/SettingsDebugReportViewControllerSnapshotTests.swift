@@ -53,5 +53,4 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
-
 }

@@ -26,6 +26,5 @@ extension UIDevice {
 #else
         return false
 #endif
-
     }
 }

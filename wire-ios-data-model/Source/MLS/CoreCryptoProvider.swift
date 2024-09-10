@@ -39,7 +39,6 @@ public protocol CoreCryptoProviderProtocol {
     ///   - enrollment: enrollment instance which was used to establish end to end identity
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
     func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints?
-
 }
 
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
@@ -290,5 +289,4 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         WireLogger.proteus.info("cryptobox migration success")
     }
-
 }

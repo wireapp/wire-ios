@@ -88,5 +88,4 @@ extension ZMSLog {
             logTagToLevel = [:]
         }
     }
-
 }

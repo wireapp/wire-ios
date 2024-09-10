@@ -62,7 +62,6 @@ protocol ProfileViewControllerViewModeling {
     func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void)
     func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void)
     func setDelegate(_ delegate: ProfileViewControllerViewModelDelegate)
-
 }
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
@@ -316,7 +315,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     private func transition(to conversation: ZMConversation) {
         conversationTransitionClosure?(conversation)
     }
-
 }
 
 extension ProfileViewControllerViewModel: UserObserving {

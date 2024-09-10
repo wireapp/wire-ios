@@ -41,7 +41,6 @@ extension Sequence where Element: UserClientType {
             return OptionalComparison.prependingNilAscending(lhs: lhs.remoteIdentifier, rhs: rhs.remoteIdentifier)
         }
     }
-
 }
 
 extension UserClientType {
@@ -91,7 +90,6 @@ extension DeviceType {
             return DeviceTypeLocale.unknown
         }
     }
-
 }
 
 extension DeviceClass {
@@ -112,5 +110,4 @@ extension DeviceClass {
             return DeviceClassLocale.unknown
         }
     }
-
 }

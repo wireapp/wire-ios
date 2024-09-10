@@ -25,7 +25,6 @@ public protocol E2EIActivationDateRepositoryProtocol {
     var e2eiActivatedAt: Date? { get }
     func storeE2EIActivationDate(_ date: Date)
     func removeE2EIActivationDate()
-
 }
 
 public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRepositoryProtocol {
@@ -67,5 +66,4 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
     public func removeE2EIActivationDate() {
         storage.removeObject(forKey: .e2eiActivatedAt)
     }
-
 }

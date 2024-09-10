@@ -239,5 +239,4 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
             XCTAssertNil(fetchedUser)
         }
     }
-
 }

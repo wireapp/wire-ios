@@ -74,7 +74,5 @@ final class ConversationGapsAndWindowTests: ZMConversationTestsBase {
 
         let expectedParticipants = Set<AnyHashable>([user1, user2, user3, selfUser])
         XCTAssertEqual(expectedParticipants, conversation?.localParticipants)
-
     }
-
 }

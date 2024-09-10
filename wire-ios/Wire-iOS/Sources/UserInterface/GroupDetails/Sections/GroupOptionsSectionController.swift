@@ -50,7 +50,6 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .notifications: return GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
             }
         }
-
     }
 
     // MARK: - Properties
@@ -107,7 +106,6 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         cell.isUserInteractionEnabled = syncCompleted
         cell.alpha = syncCompleted ? 1 : 0.48
         return cell
-
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -122,7 +120,5 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case .notifications:
             delegate?.presentNotificationsOptions(animated: true)
         }
-
     }
-
 }

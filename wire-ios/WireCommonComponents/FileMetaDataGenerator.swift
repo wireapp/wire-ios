@@ -32,7 +32,6 @@ public protocol FileMetaDataGenerating {
         name: String,
         completion: @escaping (ZMFileMetadata) -> Void
     )
-
 }
 
 public final class FileMetaDataGenerator: FileMetaDataGenerating {
@@ -68,7 +67,6 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
             }
         }
     }
-
 }
 
 extension AVURLAsset {
@@ -171,5 +169,4 @@ extension AVAsset {
 
         return sampleData
     }
-
 }

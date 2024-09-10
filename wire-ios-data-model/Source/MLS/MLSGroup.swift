@@ -107,5 +107,4 @@ public class MLSGroup: ZMManagedObject {
         let result = context.fetchOrAssert(request: request)
         return Set(result)
     }
-
 }

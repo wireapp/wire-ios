@@ -28,7 +28,6 @@ protocol SettingsDebugReportViewModelProtocol {
 
     /// Presents a list of conversation for the user to share the debug report with
     func shareReport()
-
 }
 
 class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
@@ -96,6 +95,5 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
         } catch {
             WireLogger.system.error("failed to generate log files \(error)")
         }
-
     }
 }

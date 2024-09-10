@@ -99,7 +99,6 @@ final class ConversationListCellTests: XCTestCase {
         accentColor = .blue
         // The cell must higher than 64, otherwise it breaks the constraints.
         sut = ConversationListCell(frame: CGRect(x: 0, y: 0, width: 375, height: ConversationListItemView.minHeight))
-
     }
 
     // MARK: - tearDown
@@ -615,5 +614,4 @@ final class ConversationListCellTests: XCTestCase {
         let icon = CallingMatcher.icon(for: .outgoing(degraded: false), conversation: conversation)
         verify(conversation!, icon: icon)
     }
-
 }

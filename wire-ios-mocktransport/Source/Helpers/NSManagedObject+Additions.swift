@@ -45,5 +45,4 @@ extension NSManagedObject {
         let results = try? context.fetch(fetchRequest)
         return results?.first as? A
     }
-
 }

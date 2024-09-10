@@ -126,6 +126,5 @@ final class MediaBar: UIView {
             bottomSeparatorLine.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomSeparatorLine.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-
     }
 }

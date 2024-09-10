@@ -56,7 +56,5 @@ public extension Feature {
                 self.useSFTForOneToOneCalls = useSFTForOneToOneCalls
             }
         }
-
     }
-
 }

@@ -140,7 +140,6 @@ final class EphemeralKeyboardViewController: UIViewController {
             default:
                 break
             }
-
         }
     }
 }
@@ -184,5 +183,4 @@ extension EphemeralKeyboardViewController: UIPickerViewDelegate, UIPickerViewDat
             displayCustomPicker()
         }
     }
-
 }

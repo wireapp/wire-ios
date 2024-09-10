@@ -53,5 +53,4 @@ extension ZMSystemMessage {
             self.didChangeValue(forKey: key)
         }
     }
-
 }

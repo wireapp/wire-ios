@@ -119,5 +119,4 @@ class AccessTokenEndpointTests: XCTestCase {
         // Then
         XCTAssertEqual(result, .failure(.unknownError(response)))
     }
-
 }

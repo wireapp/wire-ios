@@ -98,5 +98,4 @@ final class SearchServicesSectionController: SearchSectionController {
             delegate?.searchSectionController(self, didSelectUser: service, at: indexPath)
         }
     }
-
 }

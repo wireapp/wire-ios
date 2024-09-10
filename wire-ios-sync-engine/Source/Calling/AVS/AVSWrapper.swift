@@ -408,7 +408,6 @@ public final class AVSWrapper: AVSWrapperType {
 
                 callCenter.clientsRequestCompletionsByConversationId[conversationId] = completion
                 callCenter.handleClientsRequest(conversationId: conversationId, completion: completion)
-
             }
         }
     }
@@ -435,5 +434,4 @@ public final class AVSWrapper: AVSWrapperType {
             callCenter.handleNewEpochRequest(conversationID: .from(string: conversationID))
         }
     }
-
 }

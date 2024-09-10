@@ -101,7 +101,6 @@ public class UserClient: ZMManagedObject, UserClientType {
                 self.didChangeValue(forKey: Keys.PushToken)
             }
         }
-
     }
 
     /// Fetches and removes the old push token from the self client.
@@ -381,7 +380,6 @@ public class UserClient: ZMManagedObject, UserClientType {
             return user.oneToOneConversation
         }
     }
-
 }
 
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
@@ -474,7 +472,6 @@ public extension UserClient {
         }
 
         return client
-
     }
 
     private static func fetchOrCreateUserClient(
@@ -533,7 +530,6 @@ public extension UserClient {
                 managedObjectContext?.zm_failedToEstablishSessionStore?.remove(self)
             }
         }
-
     }
 }
 
@@ -775,7 +771,6 @@ extension UserClient {
     /// Add new clients that were just discovered to the ignored ones
     @objc public func addNewClientsToIgnored(_ clients: Set<UserClient>) {
         _ = self.addIgnoredClients(clients)
-
     }
 
     public func updateSecurityLevelAfterDiscovering(_ clients: Set<UserClient>) {
@@ -829,7 +824,6 @@ extension UserClient {
 
         context.enqueueDelayedSave()
     }
-
 }
 
 // MARK: - Update SelfClient Capability
@@ -844,7 +838,6 @@ extension UserClient {
 
         context.enqueueDelayedSave()
     }
-
 }
 
 // MARK: - Session identifier
@@ -968,5 +961,4 @@ extension UserClient {
             clientID: clientID
         )
     }
-
 }

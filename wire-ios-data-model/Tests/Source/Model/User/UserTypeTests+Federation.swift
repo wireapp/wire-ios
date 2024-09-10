@@ -53,5 +53,4 @@ class UserTypeTests_Federation: ModelObjectsTests {
         // THEN
         XCTAssertFalse(selfUser.isFederating(with: user))
     }
-
 }

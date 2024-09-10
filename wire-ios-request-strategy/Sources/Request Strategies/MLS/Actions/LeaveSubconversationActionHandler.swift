@@ -94,5 +94,4 @@ final class LeaveSubconversationActionHandler: ActionHandler<LeaveSubconversatio
             ))
         }
     }
-
 }

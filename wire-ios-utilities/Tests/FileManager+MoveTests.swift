@@ -253,5 +253,4 @@ extension FileManagerMoveTests {
         let fileContent = String(decoding: data, as: UTF8.self)
         XCTAssertEqual(fileContent, content ?? relativePath)
     }
-
 }

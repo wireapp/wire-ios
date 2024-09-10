@@ -107,5 +107,4 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         }
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.1))
     }
-
 }

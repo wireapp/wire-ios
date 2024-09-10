@@ -73,7 +73,6 @@ struct DeveloperToolsView: View {
 
         case let .destination(destinationItem):
             NavigationLink(destinationItem.title, destination: destinationItem.makeView)
-
         }
     }
 
@@ -83,7 +82,6 @@ struct DeveloperToolsView: View {
             label: { Text("Close") }
         )
     }
-
 }
 
 // MARK: - Subviews

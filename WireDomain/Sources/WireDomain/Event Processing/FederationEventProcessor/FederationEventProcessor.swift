@@ -31,7 +31,6 @@ protocol FederationEventProcessorProtocol {
     /// - Parameter event: A federation update event.
 
     func processEvent(_ event: FederationEvent) async throws
-
 }
 
 struct FederationEventProcessor {
@@ -48,5 +47,4 @@ struct FederationEventProcessor {
             try await deleteEventProcessor.processEvent(event)
         }
     }
-
 }

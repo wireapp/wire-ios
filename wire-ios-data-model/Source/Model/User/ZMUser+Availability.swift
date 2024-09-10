@@ -33,7 +33,6 @@ public struct NotificationMethod: OptionSet {
     public static let alert = NotificationMethod(rawValue: 1 << 1)
 
     public static let all: NotificationMethod = [.notification, .alert]
-
 }
 
 extension ZMUser {

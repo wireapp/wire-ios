@@ -98,7 +98,6 @@ extension ZMConversation {
     public static func predicateForConversationsArePendingToRefreshMetadata() -> NSPredicate {
         return NSPredicate(format: "\(ZMConversationIsPendingMetadataRefreshKey) == YES")
     }
-
 }
 
 extension String {

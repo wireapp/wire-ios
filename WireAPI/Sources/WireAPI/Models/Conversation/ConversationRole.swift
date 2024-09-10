@@ -46,5 +46,4 @@ public struct ConversationRole: Equatable {
         self.name = name
         self.actions = actions
     }
-
 }

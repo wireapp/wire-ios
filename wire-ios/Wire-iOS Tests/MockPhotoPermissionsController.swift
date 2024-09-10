@@ -45,5 +45,4 @@ final class MockPhotoPermissionsController: PhotoPermissionsController {
     var areCameraAndPhotoLibraryAuthorized: Bool {
         return camera && library
     }
-
 }

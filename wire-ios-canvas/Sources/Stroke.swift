@@ -35,7 +35,6 @@ public struct Brush {
     public func change(toSize size: Float) -> Brush {
         return Brush(size: size, color: color)
     }
-
 }
 
 final class Stroke: Renderable {
@@ -62,7 +61,6 @@ final class Stroke: Renderable {
     }
 
     func end() {
-
     }
 
     func draw(context: CGContext) {
@@ -156,5 +154,4 @@ final class Stroke: Renderable {
 
         return controlPoints
     }
-
 }

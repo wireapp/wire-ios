@@ -38,5 +38,4 @@ final class AuthenticationAddUsernameInputHandler: AuthenticationEventHandler {
 
         return [.setUsername(handle)]
     }
-
 }

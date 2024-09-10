@@ -321,5 +321,4 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 0, loginCredentials: expectedCredentials)
         XCTAssertEqual(account, expectedAccount)
     }
-
 }

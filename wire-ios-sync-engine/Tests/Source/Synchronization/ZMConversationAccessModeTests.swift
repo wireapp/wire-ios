@@ -272,5 +272,4 @@ public class ZMConversationAccessModeTests: MessagingTest {
 
         return selfUser
     }
-
 }

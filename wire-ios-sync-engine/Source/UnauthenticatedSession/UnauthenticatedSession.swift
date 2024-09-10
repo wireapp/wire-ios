@@ -108,7 +108,6 @@ extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
     var isAllowedToCreateNewAccount: Bool {
         return delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
-
 }
 
 extension UnauthenticatedSession: URLActionProcessor {
@@ -116,7 +115,6 @@ extension UnauthenticatedSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
     }
-
 }
 
 extension UnauthenticatedSession: TearDownCapable {

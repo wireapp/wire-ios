@@ -38,5 +38,4 @@ extension ZMConversationMessage {
 
         return true
     }
-
 }

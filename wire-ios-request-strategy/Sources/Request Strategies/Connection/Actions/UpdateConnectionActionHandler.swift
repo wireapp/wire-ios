@@ -131,5 +131,4 @@ class UpdateConnectionActionHandler: ActionHandler<UpdateConnectionAction> {
 
         action.notifyResult(.success(Void()))
     }
-
 }

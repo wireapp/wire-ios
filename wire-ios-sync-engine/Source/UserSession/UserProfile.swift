@@ -53,5 +53,4 @@ import Foundation
 
     /// Last handle to have been suggested
     @objc var lastSuggestedHandle: String? { get }
-
 }

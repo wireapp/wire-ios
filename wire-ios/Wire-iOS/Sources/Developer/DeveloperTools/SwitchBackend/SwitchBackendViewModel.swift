@@ -28,13 +28,11 @@ final class SwitchBackendViewModel: ObservableObject {
         let id = UUID()
         let title: String
         let value: EnvironmentType
-
     }
 
     enum Event {
 
         case itemTapped(Item)
-
     }
 
     // MARK: - State
@@ -52,7 +50,6 @@ final class SwitchBackendViewModel: ObservableObject {
         let id = UUID()
         let message: String
         let action: (() -> Void)?
-
     }
 
     // MARK: - Life cycle
@@ -101,5 +98,4 @@ final class SwitchBackendViewModel: ObservableObject {
             }
         }
     }
-
 }

@@ -250,5 +250,4 @@ extension OTREntity {
 
         selfClient.addNewClientsToIgnored(missingClients)
     }
-
 }

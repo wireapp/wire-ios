@@ -159,7 +159,6 @@ extension ZMUser: UserType {
         let featureRepository = FeatureRepository(context: context)
         return featureRepository.fetchMLS().config.protocolToggleUsers.contains(id)
     }
-
 }
 
 public struct AssetKey {
@@ -485,7 +484,6 @@ extension ZMUser: UserConnections {
 
         case invalidState
         case unableToSwitchToMLS
-
     }
 
     public func accept(completion: @escaping (Error?) -> Void) {
@@ -581,5 +579,4 @@ extension ZMUser: UserConnections {
             }
         })
     }
-
 }

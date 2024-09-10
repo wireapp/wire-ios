@@ -43,5 +43,4 @@ class IteratorContainmentTests: XCTestCase {
     func testThatItReturnsFalseIfAllElementsMatchAll() {
         XCTAssertTrue([true, true].all { $0 })
     }
-
 }

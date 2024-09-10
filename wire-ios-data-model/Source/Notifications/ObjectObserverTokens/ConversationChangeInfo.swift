@@ -58,7 +58,6 @@ extension ZMConversation: ObjectInSnapshot {
     public var notificationName: Notification.Name {
         return .ConversationChange
     }
-
 }
 
 ////////////////////

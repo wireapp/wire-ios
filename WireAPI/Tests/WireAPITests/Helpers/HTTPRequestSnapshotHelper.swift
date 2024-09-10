@@ -86,5 +86,4 @@ struct HTTPRequestSnapshotHelper {
             XCTFail(errorMessage, file: file, line: line)
         }
     }
-
 }

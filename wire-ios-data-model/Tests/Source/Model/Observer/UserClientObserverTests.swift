@@ -126,5 +126,4 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
 
         XCTAssertEqual(otherObserver.receivedChangeInfo.count, 0)
     }
-
 }

@@ -103,5 +103,4 @@ final class DatabaseMigrationTests_UserClientUniqueness: XCTestCase {
         let duplicate2 = UserClient.insertNewObject(in: context)
         duplicate2.remoteIdentifier = identifier
     }
-
 }

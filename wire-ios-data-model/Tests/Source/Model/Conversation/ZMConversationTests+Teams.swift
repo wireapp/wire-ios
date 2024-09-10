@@ -107,7 +107,6 @@ final class ConversationTests_Teams: ZMConversationTestsBase {
         XCTAssertTrue(otherUser.isTeamMember)
         XCTAssertEqual(conversation?.team, team)
     }
-
 }
 
 // MARK: - System messages

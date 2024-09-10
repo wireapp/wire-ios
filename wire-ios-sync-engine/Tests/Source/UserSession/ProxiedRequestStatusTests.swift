@@ -74,5 +74,4 @@ class ProxiedRequestsStatusTests: MessagingTest {
         // then
         XCTAssertEqual(mockRequestCancellation.canceledTasks.first, taskIdentifier)
     }
-
 }

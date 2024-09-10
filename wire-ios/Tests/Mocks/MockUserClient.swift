@@ -55,5 +55,4 @@ final class MockUserClient: NSObject, UserClientType {
     func fetchFingerprintOrPrekeys() {
         // No-op
     }
-
 }

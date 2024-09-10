@@ -104,7 +104,6 @@ public extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         return selfUser.mutedMessagesTypes.union(mutedMessageTypes)
     }
-
 }
 
 extension ZMUser {
@@ -119,7 +118,6 @@ extension ZMUser {
             return .all
         }
     }
-
 }
 
 public extension ZMConversation {

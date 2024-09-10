@@ -70,7 +70,6 @@ extension ConversationInputBarViewController {
         updateRightAccessoryView()
         updateMarkdownButton()
     }
-
 }
 
 extension ConversationInputBarViewController: InputBarEditViewDelegate {
@@ -88,5 +87,4 @@ extension ConversationInputBarViewController: InputBarEditViewDelegate {
         guard let text = editingMessage?.textMessageData?.messageText else { return }
         inputBar.setInputBarText(text, mentions: editingMessage?.textMessageData?.mentions ?? [])
     }
-
 }

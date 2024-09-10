@@ -104,7 +104,6 @@ final class AnimatedPenView: UIView {
     @objc func applicationDidBecomeActive(_ notification: Notification) {
         startWritingAnimation()
     }
-
 }
 
 final class TypingIndicatorView: UIView {
@@ -252,5 +251,4 @@ final class TypingIndicatorView: UIView {
             completion?()
         }
     }
-
 }

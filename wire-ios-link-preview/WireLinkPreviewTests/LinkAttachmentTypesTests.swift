@@ -52,5 +52,4 @@ class LinkAttachmentTypesTests: XCTestCase {
         XCTAssertEqual(decodedAttachment?.thumbnails, [URL(string: "https://i.ytimg.com/vi/sRIQsy2PGyM/maxresdefault.jpg")!])
         XCTAssertEqual(decodedAttachment?.originalRange, NSRange(location: 10, length: 43))
     }
-
 }

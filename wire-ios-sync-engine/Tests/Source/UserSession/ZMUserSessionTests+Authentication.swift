@@ -140,12 +140,10 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
                 if errorCode == (error as NSError).userSessionErrorCode {
                     completionHandlerCalled.fulfill()
                 }
-
             }
         })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         transportSession.lastEnqueuedRequest?.complete(with: response)
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

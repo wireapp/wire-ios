@@ -95,5 +95,4 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
         // THEN
         XCTAssertNil(conversation.draftMessage)
     }
-
 }

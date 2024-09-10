@@ -171,7 +171,6 @@ final class BadgeUserImageView: UserImageView {
             badgeShadow.backgroundColor = .clear
         }
     }
-
 }
 
 // MARK: - Compatibility
@@ -186,5 +185,4 @@ extension BadgeUserImageView {
             badgeIconSize = .custom(newValue)
         }
     }
-
 }

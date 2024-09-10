@@ -273,7 +273,6 @@ extension ConversationViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateRightNavigationItemsButtons()
     }
-
 }
 
 extension ZMConversation {

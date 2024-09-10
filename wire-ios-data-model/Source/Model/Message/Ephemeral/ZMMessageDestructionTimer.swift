@@ -142,5 +142,4 @@ enum MessageDestructionType: String {
 
         return timeout
     }
-
 }

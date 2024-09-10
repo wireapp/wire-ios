@@ -158,7 +158,5 @@ extension SessionManagerConfiguration {
         case failedPasswordThresholdBeforeWipe
         case encryptionAtRestEnabledByDefault
         case legacyAppLockConfig
-
     }
-
 }

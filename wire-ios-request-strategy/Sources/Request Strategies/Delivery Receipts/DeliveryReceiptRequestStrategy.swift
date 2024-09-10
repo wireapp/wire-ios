@@ -135,7 +135,6 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                                conversation: conversation,
                                messageIDs: events.compactMap(\.messageNonce))
     }
-
 }
 
 private extension GenericMessage {
@@ -148,5 +147,4 @@ private extension GenericMessage {
             return false
         }
     }
-
 }

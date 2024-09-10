@@ -350,7 +350,6 @@ final class ZMConversationMessagesTests: ZMConversationTestsBase {
         // then
         XCTAssertNotNil(textMessage?.textMessageData?.quoteMessage)
         XCTAssertEqual(textMessage?.textMessageData?.quoteMessage?.nonce, imageMessage?.nonce)
-
     }
 
     func testThatWeCanInsertAPassFileMessage() {

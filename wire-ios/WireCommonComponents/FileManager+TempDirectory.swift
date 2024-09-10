@@ -35,6 +35,5 @@ extension FileManager {
         }
 
         try copyItem(at: fileURL, to: tmpURL)
-
     }
 }

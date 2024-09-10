@@ -90,7 +90,6 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         // After the mute time interval, it is not possible to request it
         let postMuteDate = mutedRequestDate.addingTimeInterval(2)
         XCTAssertTrue(sut.canRequestSurvey(at: postMuteDate, muteInterval: 1))
-
     }
 
     // MARK: - SnapshotTests
@@ -199,7 +198,6 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         // THEN
         XCTAssertTrue(router.presentCallFailureDebugAlertMainWindow_Invocations.isEmpty)
     }
-
 }
 
 // MARK: - Helpers

@@ -31,7 +31,6 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
      */
 
     func userAuthenticationDidComplete(userSession: UserSession)
-
 }
 
 /**
@@ -215,7 +214,6 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             }
         }
     }
-
 }
 
 // MARK: - Event Handling
@@ -408,7 +406,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             }
         }
     }
-
 }
 
 // MARK: - External Input
@@ -449,7 +446,6 @@ extension AuthenticationCoordinator {
     func handleUserInput(_ input: Any) {
         eventResponderChain.handleEvent(ofType: .userInput(input))
     }
-
 }
 
 // MARK: - Actions

@@ -107,5 +107,4 @@ final class ConversationReactionMessageTests: XCTestCase {
         // THEN
         snapshotHelper.verify(matching: sut)
     }
-
 }

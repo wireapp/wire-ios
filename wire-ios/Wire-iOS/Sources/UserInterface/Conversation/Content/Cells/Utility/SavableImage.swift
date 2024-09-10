@@ -143,5 +143,4 @@ final class SavableImage: NSObject {
 
         AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
     }
-
 }

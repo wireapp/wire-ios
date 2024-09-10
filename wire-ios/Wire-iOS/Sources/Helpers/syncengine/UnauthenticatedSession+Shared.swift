@@ -24,7 +24,5 @@ extension UnauthenticatedSession {
     static var sharedSession: UnauthenticatedSession? {
 
         return AppDelegate.shared.unauthenticatedSession
-
     }
-
 }

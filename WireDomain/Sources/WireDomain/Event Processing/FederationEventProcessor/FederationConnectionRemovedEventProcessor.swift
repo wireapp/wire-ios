@@ -27,7 +27,6 @@ protocol FederationConnectionRemovedEventProcessorProtocol {
     /// - Parameter event: A federation connection removed event.
 
     func processEvent(_ event: FederationConnectionRemovedEvent) async throws
-
 }
 
 struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct FederationConnectionRemovedEventProcessor: FederationConnectionRemovedEve
         // TODO: [WPB-10187]
         assertionFailure("not implemented yet")
     }
-
 }

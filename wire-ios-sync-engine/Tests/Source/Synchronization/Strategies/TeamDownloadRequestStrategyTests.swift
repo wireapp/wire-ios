@@ -73,7 +73,6 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange(Set(objects))
         }
-
     }
 
     // MARK: Incremental Sync

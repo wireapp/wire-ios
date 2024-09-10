@@ -39,7 +39,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         let id = UUID()
         var header: String
         var items: [Item]
-
     }
 
     enum Item: Identifiable {
@@ -60,7 +59,6 @@ final class DeveloperToolsViewModel: ObservableObject {
                 return item.id
             }
         }
-
     }
 
     struct ButtonItem: Identifiable {
@@ -68,7 +66,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         let id = UUID()
         let title: String
         let action: () -> Void
-
     }
 
     struct TextItem: Identifiable {
@@ -76,7 +73,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         let id = UUID()
         let title: String
         let value: String
-
     }
 
     struct DestinationItem: Identifiable {
@@ -84,7 +80,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         let id = UUID()
         let title: String
         let makeView: () -> AnyView
-
     }
 
     enum Event {
@@ -92,7 +87,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         case dismissButtonTapped
         case itemTapped(Item)
         case itemCopyRequested(Item)
-
     }
 
     // MARK: - Properties
@@ -406,7 +400,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         let manager = FederationTerminationManager(with: context)
         manager.handleFederationTerminationWith(domain)
     }
-
 }
 
 extension PushToken.TokenType: CustomStringConvertible {
@@ -418,10 +411,8 @@ extension PushToken.TokenType: CustomStringConvertible {
 
         case .voip:
             return "VoIP"
-
         }
     }
-
 }
 
 extension PushToken: CustomDebugStringConvertible {
@@ -434,5 +425,4 @@ extension PushToken: CustomDebugStringConvertible {
         app: \(appIdentifier)
         """
     }
-
 }

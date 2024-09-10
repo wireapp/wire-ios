@@ -66,7 +66,6 @@ extension AVURLAsset {
 
         case missingVideoTrack
         case exportSessionUnavailable
-
     }
 
     public static let defaultVideoQuality = AVAssetExportPresetHighestQuality
@@ -112,7 +111,6 @@ extension AVURLAsset {
                     try FileManager.default.removeItem(at: url)
                 } catch let deleteError {
                     zmLog.error("Cannot delete file: \(url) (\(deleteError))")
-
                 }
             }
 

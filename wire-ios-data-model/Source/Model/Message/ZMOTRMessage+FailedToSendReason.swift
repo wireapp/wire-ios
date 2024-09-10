@@ -38,5 +38,4 @@ extension ZMMessage: SwiftConversationMessage {
         }
         return Array(recipients)
     }
-
 }

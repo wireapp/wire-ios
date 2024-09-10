@@ -56,5 +56,4 @@ public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
         var container = encoder.singleValueContainer()
         try container.encode(String(rawValue))
     }
-
 }

@@ -121,7 +121,6 @@ extension ZMMessage: Shareable {
             fatal("Cannot forward message")
         }
     }
-
 }
 
 extension ZMConversationMessage {

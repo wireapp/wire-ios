@@ -51,7 +51,6 @@ final class AccessTokenTests: ZMTBaseTest {
             accessToken.expirationDate.timeIntervalSinceReferenceDate,
             expiration.timeIntervalSinceReferenceDate,
             accuracy: 0.1)
-
     }
 
     func testThatItReturnsHTTPHeaders() {

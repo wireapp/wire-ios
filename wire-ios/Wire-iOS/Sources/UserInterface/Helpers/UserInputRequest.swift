@@ -68,7 +68,6 @@ struct UserInputRequest {
 
     /// The block to execute when the user taps the cancel button.
     let cancellationHandler: () -> Void
-
 }
 
 // MARK: - UIAlertController + UserInputRequest
@@ -123,5 +122,4 @@ extension UIAlertController {
         addAction(continueAction)
         preferredAction = continueAction
     }
-
 }

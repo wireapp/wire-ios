@@ -31,5 +31,4 @@ public struct ClassifiedDomainsFeatureConfig: Equatable, Codable {
     /// for classified communication.
 
     public let domains: Set<String>
-
 }

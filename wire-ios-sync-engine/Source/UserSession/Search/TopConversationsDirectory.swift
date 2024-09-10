@@ -102,7 +102,6 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 @objc public protocol TopConversationsDirectoryObserver {
 
     @objc func topConversationsDidChange()
-
 }
 
 struct TopConversationsDirectoryNotification: SelfPostingNotification {
@@ -117,7 +116,6 @@ extension TopConversationsDirectory {
             observer?.topConversationsDidChange()
         }
     }
-
 }
 
 fileprivate extension ZMConversation {
@@ -141,5 +139,4 @@ fileprivate extension ZMConversation {
 
         return count
     }
-
 }

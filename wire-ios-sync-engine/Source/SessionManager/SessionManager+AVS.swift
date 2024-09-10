@@ -25,7 +25,6 @@ public protocol AVSLogger: AnyObject {
 
     @objc(logMessage:)
     func log(message: String)
-
 }
 
 public extension SessionManager {
@@ -42,5 +41,4 @@ public extension SessionManager {
     static func logAVS(message: String) {
         NotificationCenter.default.post(name: AVSLogMessageNotification, object: nil, userInfo: ["message": message])
     }
-
 }

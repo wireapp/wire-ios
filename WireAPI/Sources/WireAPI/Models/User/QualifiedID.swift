@@ -37,5 +37,4 @@ public struct QualifiedID: Codable, Hashable, Equatable {
         case uuid = "id"
         case domain
     }
-
 }

@@ -72,7 +72,6 @@ import Foundation
 
         return components
     }
-
 }
 
 @objc public extension ZMTransportRequest {

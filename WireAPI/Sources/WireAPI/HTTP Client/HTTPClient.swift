@@ -31,5 +31,4 @@ public protocol HTTPClient {
     /// - Returns: The response from the server.
 
     func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse
-
 }

@@ -57,5 +57,4 @@ import Foundation
         hasher.combine(usesCompanyLogin)
         return hasher.finalize()
     }
-
 }

@@ -46,5 +46,4 @@ extension UserChangeInfo {
     public static func add(searchUserObserver observer: UserObserving, in userSession: ZMUserSession) -> NSObjectProtocol {
         return add(searchUserObserver: observer, in: userSession.managedObjectContext)
     }
-
 }

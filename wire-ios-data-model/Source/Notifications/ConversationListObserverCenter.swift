@@ -351,5 +351,4 @@ class ConversationListSnapshot: NSObject {
         message.append("\n ConversationListChangeInfo: \(changeInfo.description)")
         return message
     }
-
 }

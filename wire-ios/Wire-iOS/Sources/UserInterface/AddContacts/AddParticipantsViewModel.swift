@@ -91,5 +91,4 @@ struct AddParticipantsViewModel {
             return newItem
         }
     }
-
 }

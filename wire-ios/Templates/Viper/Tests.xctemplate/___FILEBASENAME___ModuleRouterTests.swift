@@ -34,5 +34,4 @@ final class ___FILEBASENAMEASIDENTIFIER___: XCTestCase {
     }
 
     // MARK: - Tests
-
 }

@@ -48,7 +48,6 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "SectionHeader")
     }
-
 }
 
 extension ConversationCreateSectionController: ConversationCreationValuesConfigurable {

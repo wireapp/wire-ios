@@ -84,7 +84,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     enum MockError: Error {
 
         case cannotStoreKey
-
     }
 
     func generatePrimaryKeyPair() throws -> (publicKey: SecKey, privateKey: SecKey) {
@@ -945,7 +944,6 @@ private extension ZMGenericMessageData {
     var unencryptedContent: String? {
         return underlyingMessage?.text.content
     }
-
 }
 
 private extension NSManagedObjectContext {
@@ -955,7 +953,6 @@ private extension NSManagedObjectContext {
         request.returnsObjectsAsFaults = false
         return try fetch(request)
     }
-
 }
 
 private extension ZMConversation {
@@ -967,5 +964,4 @@ private extension ZMConversation {
     var unencryptedDraftMessageContent: String? {
         return draftMessage?.text
     }
-
 }

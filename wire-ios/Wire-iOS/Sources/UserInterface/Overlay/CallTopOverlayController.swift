@@ -89,7 +89,6 @@ final class CallTopOverlayController: UIViewController {
             observerTokens.append(WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession))
             observerTokens.append(WireCallCenterV3.addMuteStateObserver(observer: self, userSession: userSession))
         }
-
     }
 
     @available(*, unavailable)

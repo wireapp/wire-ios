@@ -154,5 +154,4 @@ class ZiphyPaginationControllerTests: XCTestCase {
         let image1 = Ziph(identifier: "JzOyy8vKMCwvK", images: ZiphyAnimatedImageList(images: [:]), title: "judge judy bored over it")
         return .success([image1])
     }
-
 }

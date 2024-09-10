@@ -132,5 +132,4 @@ struct WireURLs: Codable {
     enum WireURLsError: Error {
         case fileNotFound
     }
-
 }

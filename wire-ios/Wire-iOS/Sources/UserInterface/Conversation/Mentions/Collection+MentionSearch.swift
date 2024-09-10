@@ -50,7 +50,6 @@ extension Collection where Iterator.Element: UserType {
 
         return results
     }
-
 }
 
 private extension UserType {
@@ -58,5 +57,4 @@ private extension UserType {
     var nameTokens: [String] {
         return name?.components(separatedBy: CharacterSet.alphanumerics.inverted) ?? []
     }
-
 }

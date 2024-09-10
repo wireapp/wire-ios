@@ -47,7 +47,6 @@ class FeatureConfigsAPIV0: FeatureConfigsAPI, VersionedAPI {
             .failure(code: .notFound, label: "no-team", error: FeatureConfigsAPIError.teamNotFound)
             .parse(response)
     }
-
 }
 
 /// A namespace for all feature config responses
@@ -58,21 +57,17 @@ enum FeatureConfigResponse {
 
         let enforceAppLock: Bool
         let inactivityTimeoutSecs: UInt
-
     }
 
     struct ClassifiedDomainsV0: Decodable {
 
         let domains: Set<String>
-
     }
 
     struct SelfDeletingMessagesV0: Decodable {
 
         let enforcedTimeoutSeconds: UInt
-
     }
-
 }
 
 struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
@@ -124,7 +119,6 @@ struct FeatureConfigsResponseAPIV0: Decodable, ToAPIModelConvertible {
 
         return featureConfigs
     }
-
 }
 
 extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConvertible {
@@ -136,7 +130,6 @@ extension FeatureWithConfig<FeatureConfigResponse.AppLockV0>: ToAPIModelConverti
             inactivityTimeoutInSeconds: config.inactivityTimeoutSecs
         )
     }
-
 }
 
 extension FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0> {
@@ -147,7 +140,6 @@ extension FeatureWithConfig<FeatureConfigResponse.ClassifiedDomainsV0> {
             domains: config.domains
         )
     }
-
 }
 
 extension FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0> {
@@ -158,5 +150,4 @@ extension FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0> {
             enforcedTimeoutSeconds: config.enforcedTimeoutSeconds
         )
     }
-
 }

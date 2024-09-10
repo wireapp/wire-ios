@@ -88,5 +88,4 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
         // then
         XCTAssertNil(sessionManager?.backgroundUserSessions[additionalAccount.userIdentifier])
     }
-
 }

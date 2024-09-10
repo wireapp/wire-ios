@@ -85,7 +85,6 @@ extension ZMConversation {
                 onGranted(granted)
             }
         }
-
     }
 
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {

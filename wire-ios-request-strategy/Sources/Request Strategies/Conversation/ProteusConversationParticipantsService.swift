@@ -31,7 +31,6 @@ protocol ProteusConversationParticipantsServiceInterface {
         _ user: ZMUser,
         from conversation: ZMConversation
     ) async throws
-
 }
 
 struct ProteusConversationParticipantsService: ProteusConversationParticipantsServiceInterface {

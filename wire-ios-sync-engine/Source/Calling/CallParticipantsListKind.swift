@@ -27,7 +27,6 @@ public enum CallParticipantsListKind {
     /// Only the smoothed active speakers
 
     case smoothedActiveSpeakers
-
 }
 
 extension CallParticipantsListKind {
@@ -41,5 +40,4 @@ extension CallParticipantsListKind {
             return .inactive
         }
     }
-
 }

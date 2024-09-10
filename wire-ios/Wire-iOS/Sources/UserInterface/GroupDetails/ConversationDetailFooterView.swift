@@ -136,5 +136,4 @@ class ConversationDetailFooterView: UIView {
     @objc func rightButtonTapped(_ sender: IconButton) {
         fatal("Should be overridden in subclasses")
     }
-
 }

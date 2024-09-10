@@ -149,7 +149,6 @@ final class TextSearchResultCell: UITableViewCell {
         footerView.message = newMessage
         if !ProcessInfo.processInfo.isRunningTests {
             observerToken = userSession.addMessageObserver(self, for: newMessage)
-
         }
 
         updateTextView()

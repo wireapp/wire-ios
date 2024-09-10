@@ -840,7 +840,6 @@ public final class FileAssetCache: NSObject {
             .zmSHA256Digest()
             .zmHexEncodedString()
     }
-
 }
 
 // MARK: - Testing
@@ -853,7 +852,6 @@ public extension FileAssetCache {
         try fileCache.wipeCaches()
         try tempCache.wipeCaches()
     }
-
 }
 
 // Helper function inserted by Swift 4.2 migrator.

@@ -28,5 +28,4 @@ public enum ProteusToMLSMigrationState: String, CustomStringConvertible {
     public var description: String {
         rawValue
     }
-
 }

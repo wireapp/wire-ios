@@ -40,5 +40,4 @@ public extension UIColor {
         }
         return alpha
     }
-
 }

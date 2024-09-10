@@ -34,7 +34,6 @@ public enum ZMUserKeys {
         guard let other = object as? UserRichProfileField else { return false }
         return self.type == other.type && self.value == other.value
     }
-
 }
 
 extension ZMUser {

@@ -189,5 +189,4 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         // when
         sut.users = users.searchForMentions(withQuery: "362D00AE-B606-4680-BD47-F17749229E64")
     }
-
 }

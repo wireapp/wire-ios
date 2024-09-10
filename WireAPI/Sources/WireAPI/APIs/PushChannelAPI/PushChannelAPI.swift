@@ -25,5 +25,4 @@ public protocol PushChannelAPI {
     /// - Returns: A push channel.
 
     func createPushChannel(clientID: String) throws -> any PushChannelProtocol
-
 }

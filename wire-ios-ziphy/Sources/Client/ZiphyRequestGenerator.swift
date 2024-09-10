@@ -48,7 +48,6 @@ struct ZiphyRequestGenerator {
 
         return .success(URLRequest(url: requestURL))
     }
-
 }
 
 // MARK: - V1 Requests
@@ -92,5 +91,4 @@ extension ZiphyRequestGenerator {
 
         return makeRequest(endpoint: .search, query: queryItems)
     }
-
 }

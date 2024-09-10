@@ -69,5 +69,4 @@ class CallObserver: WireCallCenterCallStateObserver {
             break
         }
     }
-
 }

@@ -96,9 +96,7 @@ extension ConversationMessageCell {
     }
 
     func prepareForReuse() {
-
     }
-
 }
 
 /**
@@ -165,7 +163,6 @@ extension ConversationMessageCellDescription {
     }
 
     func didEndDisplayingCell() {
-
     }
     func register(in tableView: UITableView) {
         tableView.register(cell: type(of: self))
@@ -220,7 +217,6 @@ extension ConversationMessageCellDescription {
     func isConfigurationEqual(with other: Any) -> Bool {
         return type(of: self) == type(of: other)
     }
-
 }
 
 extension ConversationMessageCellDescription where View.Configuration: Equatable {
@@ -363,5 +359,4 @@ final class AnyConversationMessageCellDescription: NSObject {
     func isConfigurationEqual(with description: AnyConversationMessageCellDescription) -> Bool {
         return isConfigurationEqualBlock(description)
     }
-
 }

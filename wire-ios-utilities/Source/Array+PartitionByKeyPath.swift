@@ -43,5 +43,4 @@ extension Array {
             }
         })
     }
-
 }

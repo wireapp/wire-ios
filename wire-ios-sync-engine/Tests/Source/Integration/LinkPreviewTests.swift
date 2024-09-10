@@ -187,5 +187,4 @@ class LinkPreviewTests: ConversationTestsBase {
         let message = conversation?.lastMessage as! ZMClientMessage
         assertMessageContainsLinkPreview(message, linkPreviewURL: .article)
     }
-
 }

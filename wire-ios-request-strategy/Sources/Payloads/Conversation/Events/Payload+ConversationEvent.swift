@@ -38,6 +38,5 @@ extension Payload {
             case timestamp = "time"
             case type
         }
-
     }
 }

@@ -30,5 +30,4 @@ public enum MessageContent: Equatable, Codable {
     /// Unencrypted message content.
 
     case plaintext(String)
-
 }

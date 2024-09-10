@@ -181,7 +181,5 @@ final class ConversationActionController {
 
             WireLogger.conversation.debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
         }
-
     }
-
 }

@@ -23,7 +23,6 @@ public enum FileManagerError: Error {
 
     case failedToCreateDirectory(Error)
     case failedToSetProtection(Error)
-
 }
 
 extension FileManager {
@@ -67,7 +66,6 @@ extension FileManager {
             throw FileManagerError.failedToSetProtection(error)
         }
     }
-
 }
 
 public extension URL {

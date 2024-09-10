@@ -34,5 +34,4 @@ class UserPropertiesAPIV4: UserPropertiesAPIV3 {
             .failure(code: .notFound, error: UserPropertiesAPIError.propertyNotFound)
             .parse(response)
     }
-
 }

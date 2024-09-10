@@ -60,7 +60,6 @@ private extension HTTPRequest {
             apiVersion: 0
         )
     }
-
 }
 
 private extension HTTPRequest.Method {
@@ -79,7 +78,6 @@ private extension HTTPRequest.Method {
             return .put
         }
     }
-
 }
 
 private extension ZMTransportResponse {
@@ -90,5 +88,4 @@ private extension ZMTransportResponse {
             payload: rawData
         )
     }
-
 }

@@ -107,7 +107,6 @@ class ContactsSectionController: SearchSectionController {
         let user = contacts[indexPath.row]
         selection?.remove(user)
     }
-
 }
 
 extension ContactsSectionController: UserSelectionObserver {
@@ -123,5 +122,4 @@ extension ContactsSectionController: UserSelectionObserver {
     func userSelection(_ userSelection: UserSelection, didRemoveUser user: UserType) {
         collectionView?.reloadData()
     }
-
 }

@@ -29,5 +29,4 @@ extension NSCoder {
     func decodeData(forKey key: String) -> Data? {
         return decodeObject(of: NSData.self, forKey: key) as Data?
     }
-
 }

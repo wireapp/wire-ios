@@ -51,5 +51,4 @@ extension ZMConversationMessage {
         }
         return nil
     }
-
 }

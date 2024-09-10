@@ -34,5 +34,4 @@ extension UIFont {
         let monospaceFontDescriptor = descriptor.addingAttributes(monospaceAttribute)
         return UIFont(descriptor: monospaceFontDescriptor, size: 0.0)
     }
-
 }

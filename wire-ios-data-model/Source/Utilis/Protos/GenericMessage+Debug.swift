@@ -81,7 +81,6 @@ extension GenericMessage: CustomStringConvertible {
         message.reaction.emoji = reaction.emoji.redacted
         return message.debugDescription
     }
-
 }
 
 extension GenericMessage: SafeForLoggingStringConvertible {
@@ -167,5 +166,4 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
             return "dataTransfer"
         }
     }
-
 }

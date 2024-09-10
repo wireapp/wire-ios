@@ -323,7 +323,6 @@ extension TopConversationsDirectoryTests {
             XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         }
     }
-
 }
 
 // MARK: - Helpers
@@ -382,5 +381,4 @@ class FakeTopConversationsDirectoryObserver: TopConversationsDirectoryObserver {
     func topConversationsDidChange() {
         topConversationsDidChangeCallCount += 1
     }
-
 }

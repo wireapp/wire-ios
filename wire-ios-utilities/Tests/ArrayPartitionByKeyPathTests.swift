@@ -58,5 +58,4 @@ class ArrayPartitionByKeyPathTests: XCTestCase {
         XCTAssertEqual(partitions[5], [string5])
         XCTAssertEqual(partitions[6], [string1])
     }
-
 }

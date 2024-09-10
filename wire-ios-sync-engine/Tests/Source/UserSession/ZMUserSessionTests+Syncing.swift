@@ -69,7 +69,6 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .lastSlowSyncPhase
             sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
-
         }
     }
 
@@ -212,5 +211,4 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertEqual(networkStateRecorder.stateChanges, [.onlineSynchronizing, .online])
         XCTAssertFalse(sut.isPerformingSync)
     }
-
 }

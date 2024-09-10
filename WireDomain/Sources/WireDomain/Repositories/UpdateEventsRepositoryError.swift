@@ -24,5 +24,4 @@ enum UpdateEventsRepositoryError: Error {
     case failedToFetchStoredEvents(Error)
     case failedToDecodeStoredEvent(Error)
     case failedToDeleteStoredEvents(Error)
-
 }

@@ -69,5 +69,4 @@ class CoreCryptoKeyProviderTests: XCTestCase {
         XCTAssertNotNil(storedKey)
         XCTAssertEqual(key, storedKey)
     }
-
 }

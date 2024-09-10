@@ -120,7 +120,6 @@ final class CallParticipantDetailsView: RoundedBlurView {
             microphoneWidth!
         ])
         updateMicrophoneView()
-
     }
 
     // MARK: - Methods to update the state of the microphone view

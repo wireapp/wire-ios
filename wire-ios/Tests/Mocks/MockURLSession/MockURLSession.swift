@@ -98,7 +98,6 @@ class MockURLSession: DataTaskSession {
         case .error(let error):
             failTask(mockTask, with: error)
         }
-
     }
 
     // MARK: - Response
@@ -118,9 +117,7 @@ class MockURLSession: DataTaskSession {
             } else {
                 cachingCompletionHandler()
             }
-
         }
-
     }
 
     private func startCaching(data: Data, for response: URLResponse, task: DataTask, in cache: URLCache, completionHandler: @escaping () -> Void) {
@@ -140,7 +137,6 @@ class MockURLSession: DataTaskSession {
 
         cache.storeCachedResponse(cachedResponse, for: task.currentRequest!)
         completionHandler()
-
     }
 
     private func failTask(_ task: MockDataTask, with error: Error) {
@@ -148,5 +144,4 @@ class MockURLSession: DataTaskSession {
             task.completionHandler(nil, nil, error)
         }
     }
-
 }

@@ -282,7 +282,6 @@ final class SyncManagerTests: XCTestCase {
 
         XCTAssertEqual(updateEventsRepository.stopReceivingLiveEvents_Invocations.count, 0)
     }
-
 }
 
 private enum Scaffolding {
@@ -335,5 +334,4 @@ private enum Scaffolding {
             isTransient: isTransient
         )
     }
-
 }

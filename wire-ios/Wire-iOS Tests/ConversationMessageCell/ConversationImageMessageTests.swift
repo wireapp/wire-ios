@@ -94,5 +94,4 @@ final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
 
         verify(message: message, allColorSchemes: true)
     }
-
 }

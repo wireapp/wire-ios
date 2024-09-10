@@ -33,5 +33,4 @@ public enum FeatureConfigsAPIError: Error {
     /// Team not found
 
     case teamNotFound
-
 }

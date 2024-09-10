@@ -61,5 +61,4 @@ final class ConversationSystemMessageMlsSupportSnapshotTests: ConversationMessag
     private func makeMessage(messageType: ZMSystemMessageType) -> MockMessage {
         MockMessageFactory.systemMessage(with: messageType, conversation: mockConversation)!
     }
-
 }

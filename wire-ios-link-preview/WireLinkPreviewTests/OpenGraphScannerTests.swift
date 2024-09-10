@@ -109,5 +109,4 @@ class OpenGraphScannerTests: XCTestCase {
 
         XCTAssertEqual(mockData.expected, receivedData, line: line)
     }
-
 }

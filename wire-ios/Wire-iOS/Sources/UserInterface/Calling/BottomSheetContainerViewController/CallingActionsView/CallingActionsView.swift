@@ -177,7 +177,6 @@ final class CallingActionsView: UIView {
             largePickUpButton,
             largeHangUpButton
         ].forEach { $0.updateState() }
-
     }
 
     private func addIncomingCallControllButtons() {
@@ -319,5 +318,4 @@ extension CallingActionsView: UILargeContentViewerInteractionDelegate {
 
         return self
     }
-
 }

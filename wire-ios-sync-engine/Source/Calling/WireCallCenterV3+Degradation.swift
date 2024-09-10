@@ -27,5 +27,4 @@ extension WireCallCenterV3 {
             callSnapshots[conversationId] = previousSnapshot.updateDegradedUser(degradedUser)
         }
     }
-
 }

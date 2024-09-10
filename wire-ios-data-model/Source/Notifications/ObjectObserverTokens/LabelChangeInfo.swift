@@ -29,7 +29,6 @@ extension Label: ObjectInSnapshot {
     public var notificationName: Notification.Name {
         return .LabelChange
     }
-
 }
 
 @objcMembers public class LabelChangeInfo: ObjectChangeInfo {
@@ -56,7 +55,6 @@ extension Label: ObjectInSnapshot {
     public var conversationsChanged: Bool {
         return changedKeys.contains(#keyPath(Label.conversations))
     }
-
 }
 
 @objc public protocol LabelObserver: NSObjectProtocol {
@@ -89,5 +87,4 @@ extension LabelChangeInfo {
             observer.labelDidChange(changeInfo)
         }
     }
-
 }

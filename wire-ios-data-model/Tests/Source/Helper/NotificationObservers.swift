@@ -78,7 +78,6 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
         notifications.append(changeInfo)
     }
-
 }
 
 final class ConversationObserver: NSObject, ZMConversationObserver {

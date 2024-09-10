@@ -109,5 +109,4 @@ final class WaveFormView: UIView {
         leftGradient.gradientLayer.colors = leftColors
         rightGradient.gradientLayer.colors = leftColors
     }
-
 }

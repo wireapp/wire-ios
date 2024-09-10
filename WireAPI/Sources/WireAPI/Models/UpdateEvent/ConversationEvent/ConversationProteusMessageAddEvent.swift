@@ -78,5 +78,4 @@ public struct ConversationProteusMessageAddEvent: Equatable, Codable {
         self.messageSenderClientID = messageSenderClientID
         self.messageRecipientClientID = messageRecipientClientID
     }
-
 }

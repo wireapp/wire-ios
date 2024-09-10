@@ -336,7 +336,6 @@ class MessageObserverTests: NotificationDispatcherTestBase {
             modifier: { try! $0.setUnderlyingMessage(update) },
             expectedChangedFields: [ #keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
         )
-
     }
 
     func testThatItNotifiesWhenLinkAttachmentIsAdded() {
@@ -358,5 +357,4 @@ class MessageObserverTests: NotificationDispatcherTestBase {
             expectedChangedFields: [#keyPath(MessageChangeInfo.linkAttachmentsChanged)]
         )
     }
-
 }

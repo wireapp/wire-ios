@@ -31,7 +31,6 @@ protocol TeamEventProcessorProtocol {
     /// - Parameter event: A team update event.
 
     func processEvent(_ event: TeamEvent) async throws
-
 }
 
 struct TeamEventProcessor {
@@ -52,5 +51,4 @@ struct TeamEventProcessor {
             try await memberUpdateEventProcessor.processEvent(event)
         }
     }
-
 }

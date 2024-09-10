@@ -66,5 +66,4 @@ public class FolderList: NSObject { // TODO jacob turn into struct and make gene
     public func remove(label: Label) {
         backingList.removeAll(where: { $0 == label })
     }
-
 }

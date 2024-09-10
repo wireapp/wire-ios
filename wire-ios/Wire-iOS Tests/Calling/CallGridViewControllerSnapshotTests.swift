@@ -262,7 +262,6 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
             input: .configurationChanged(participants: .two(videoState: .sharing(isMaximized: false))),
             output: .showNothing
         )
-
     }
 
     // MARK: - Selective video
@@ -323,7 +322,6 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
         // then
         XCTAssertNil(mockDelegate.requestedClients)
     }
-
 }
 
 extension CallGridViewControllerSnapshotTests {
@@ -440,7 +438,6 @@ extension CallGridViewControllerSnapshotTests {
 
                 var isMaximized: Bool { self != .notMaximized }
             }
-
         }
 
         enum Output {

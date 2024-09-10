@@ -24,5 +24,4 @@ import Foundation
      static func md5Digest(for data: Data) -> Data {
          return data.zmMD5Digest()
      }
-
  }

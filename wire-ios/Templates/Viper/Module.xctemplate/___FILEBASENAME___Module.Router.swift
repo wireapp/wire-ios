@@ -26,9 +26,7 @@ extension ___VARIABLE_productName:identifier___Module {
         // MARK: - Properties
 
         weak var view: View!
-
     }
-
 }
 
 // MARK: - Perform action
@@ -37,8 +35,6 @@ extension ___VARIABLE_productName:identifier___Module.Router: ___VARIABLE_produc
 
     func performAction(_ action: ___VARIABLE_productName:identifier___Module.Action) {
         switch action {
-
         }
     }
-
 }

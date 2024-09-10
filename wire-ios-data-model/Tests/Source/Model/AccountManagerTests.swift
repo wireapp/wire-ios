@@ -235,5 +235,4 @@ final class AccountManagerTests: ZMConversationTestsBase {
         // then
         XCTAssertEqual(manager.accounts, [account1, account2, account3, account4])
     }
-
 }

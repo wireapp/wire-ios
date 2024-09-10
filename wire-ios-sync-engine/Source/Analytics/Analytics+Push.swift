@@ -28,7 +28,6 @@ extension AnalyticsType {
         attributes["with_service"] = conversation.includesServiceUser ? "true" : "false"
         tagEvent("contributed", attributes: attributes as! [String: NSObject])
     }
-
 }
 
 public extension ZMConversation {

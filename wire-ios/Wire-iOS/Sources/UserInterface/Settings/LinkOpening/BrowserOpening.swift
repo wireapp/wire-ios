@@ -84,7 +84,6 @@ extension URL {
 
         return true
     }
-
 }
 
 // MARK: - Private
@@ -106,7 +105,6 @@ fileprivate extension UIApplication {
     var braveInstalled: Bool {
         return canHandleScheme("brave://")
     }
-
 }
 
 extension URL {

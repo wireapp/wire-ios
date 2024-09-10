@@ -36,7 +36,6 @@ public struct QualifiedID: Codable, Hashable, CustomDebugStringConvertible {
     public var debugDescription: String {
         return "\(uuid)@\(domain)"
     }
-
 }
 
 extension QualifiedID: SafeForLoggingStringConvertible {
@@ -58,7 +57,6 @@ public extension ZMUser {
 
         return QualifiedID(uuid: uuid, domain: domain)
     }
-
 }
 
 public extension ZMConversation {
@@ -73,7 +71,6 @@ public extension ZMConversation {
 
         return QualifiedID(uuid: uuid, domain: domain)
     }
-
 }
 
 public extension Collection where Element == ZMUser {
@@ -83,7 +80,6 @@ public extension Collection where Element == ZMUser {
 
         return list.count == count ? list : nil
     }
-
 }
 
 public extension Collection where Element == ZMConversation {
@@ -93,7 +89,6 @@ public extension Collection where Element == ZMConversation {
 
         return list.count == count ? list : nil
     }
-
 }
 
 public extension QualifiedID {
@@ -104,5 +99,4 @@ public extension QualifiedID {
             domain: .randomDomain()
         )
     }
-
 }

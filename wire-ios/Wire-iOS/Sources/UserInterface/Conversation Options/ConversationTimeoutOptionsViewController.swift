@@ -104,7 +104,6 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 
         CheckmarkCell.register(in: collectionView)
         collectionView.register(SectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SectionHeader")
-
     }
 
     private func configureConstraints() {
@@ -114,7 +113,6 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
 
         collectionView.fitIn(view: view)
     }
-
 }
 
 // MARK: - Table View
@@ -202,7 +200,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             default:
                 break
             }
-
         }
     }
 
@@ -211,7 +208,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     private func canSelectItem(with value: MessageDestructionTimeoutValue) -> Bool {
         let currentValue = conversation.messageDestructionTimeoutValue(for: .groupConversation)
         return value != currentValue
-
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -240,7 +236,6 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: collectionView.bounds.size.width, height: 32)
     }
-
 }
 
 extension ConversationTimeoutOptionsViewController: ZMConversationObserver {

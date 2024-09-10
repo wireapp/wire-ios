@@ -127,7 +127,6 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     ) {
         return
     }
-
 }
 
 private extension MessageProtocol {
@@ -143,5 +142,4 @@ private extension MessageProtocol {
             return "Mixed"
         }
     }
-
 }

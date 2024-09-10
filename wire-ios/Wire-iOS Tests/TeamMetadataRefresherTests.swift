@@ -125,7 +125,6 @@ final class TeamMetadataRefresherTests: XCTestCase {
         // Then
         XCTAssertEqual(mockSelfUser.refreshTeamDataCount, 1)
     }
-
 }
 
 // MARK: - Mock Self User Provider

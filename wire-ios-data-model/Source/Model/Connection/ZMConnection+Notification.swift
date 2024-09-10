@@ -27,5 +27,4 @@ extension ZMConnection {
         NotificationInContext(name: type(of: self).invalidateTopConversationCacheNotificationName,
                               context: moc.notificationContext).post()
     }
-
 }

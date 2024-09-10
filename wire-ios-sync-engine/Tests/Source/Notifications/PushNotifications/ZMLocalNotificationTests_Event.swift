@@ -535,7 +535,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         XCTAssertNotNil(note)
         XCTAssertEqual(note?.title, "Super User")
         XCTAssertEqual(note?.body, "%1$@ removed you")
-
     }
 
     func testThatItCreatesASystemLocalNotificationForAddingTheSelfUserEvent() {
@@ -550,7 +549,6 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         XCTAssertNotNil(note)
         XCTAssertEqual(note?.title, "Super User")
         XCTAssertEqual(note?.body, "%1$@ added you")
-
     }
 
     func testThatItCreatesASystemLocalNotificationForMessageTimerUpdateEvent() {
@@ -564,6 +562,5 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // then
         XCTAssertNotNil(note)
         XCTAssertEqual(note?.body, "Someone set the message timer to 1 year")
-
     }
 }

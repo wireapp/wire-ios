@@ -99,5 +99,4 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
     func conversationMessageShouldUpdate() {
         dataSource.loadMessages(forceRecalculate: true)
     }
-
 }

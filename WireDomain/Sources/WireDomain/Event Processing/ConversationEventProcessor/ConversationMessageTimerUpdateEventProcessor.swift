@@ -27,7 +27,6 @@ protocol ConversationMessageTimerUpdateEventProcessorProtocol {
     /// - Parameter event: A conversation message timer update event.
 
     func processEvent(_ event: ConversationMessageTimerUpdateEvent) async throws
-
 }
 
 struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpdateEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationMessageTimerUpdateEventProcessor: ConversationMessageTimerUpd
         // TODO: [WPB-10171]
         assertionFailure("not implemented yet")
     }
-
 }

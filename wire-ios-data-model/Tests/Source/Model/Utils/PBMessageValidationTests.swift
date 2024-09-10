@@ -307,7 +307,6 @@ class PBMessageValidationTests: XCTestCase {
             $0.encryption = .aesCbc
         }
     }
-
 }
 
 class ModelValidationTests: XCTestCase {
@@ -535,7 +534,6 @@ class ModelValidationTests: XCTestCase {
 
         XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", assetDomain: "wire.com", preview: true))
         XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", assetDomain: "wire.com", preview: false))
-
     }
 
     func testThatItDoesNotCreateMessageWithInvalidAsset() {
@@ -558,7 +556,6 @@ class ModelValidationTests: XCTestCase {
         // Both
         XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", assetDomain: "wire.com", preview: true))
         XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", assetDomain: "wire.com", preview: false))
-
     }
 
     // MARK: - Utilities

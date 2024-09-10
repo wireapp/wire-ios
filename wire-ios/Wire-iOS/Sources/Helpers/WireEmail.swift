@@ -34,5 +34,4 @@ struct WireEmail: Codable {
             return nil
         }
     }
-
 }

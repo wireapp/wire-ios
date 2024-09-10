@@ -411,7 +411,6 @@ extension ZMLogTests {
 
         XCTAssertEqual(lines.count, 2)
     }
-
 }
 
 extension ZMLogTests {
@@ -427,7 +426,6 @@ extension ZMLogTests {
 
         // THEN
         XCTAssertEqual(ZMSLog.currentZipLog, currentLog)
-
     }
 
     func testThatItRecordsLogs() {

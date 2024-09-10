@@ -30,5 +30,4 @@ public struct EARPrivateKeys {
         self.primary = primary
         self.secondary = secondary
     }
-
 }

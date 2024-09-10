@@ -91,7 +91,6 @@ class MockLinkPreviewDetector: LinkPreviewDetectorType {
 
             return twitterStatus
         }
-
     }
 
     fileprivate func randomAsset() -> WireProtos.Asset {

@@ -30,5 +30,4 @@ extension Member {
     static private func migrateUserRemoteIdentifer(for member: Member) {
         member.remoteIdentifier = member.user?.remoteIdentifier
     }
-
 }

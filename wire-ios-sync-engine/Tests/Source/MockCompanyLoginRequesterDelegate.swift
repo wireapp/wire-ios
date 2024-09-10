@@ -29,5 +29,4 @@ class MockCompanyLoginRequesterDelegate: CompanyLoginRequesterDelegate {
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
         verificationBlock(url)
     }
-
 }

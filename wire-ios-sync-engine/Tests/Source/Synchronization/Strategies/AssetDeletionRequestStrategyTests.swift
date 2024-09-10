@@ -99,7 +99,6 @@ class AssetDeletionRequestStrategyTests: MessagingTest {
         XCTAssertEqual(mockIdentifierProvider.failedToDeleteIdentifiers.first, identifier)
         XCTAssert(mockIdentifierProvider.deletedIdentifiers.isEmpty)
     }
-
 }
 
 // MARK: Helper Method
@@ -151,5 +150,4 @@ private class MockIdentifierProvider: AssetDeletionIdentifierProviderType {
     func didFailToDelete(identifier: String) {
         failedToDeleteIdentifiers.append(identifier)
     }
-
 }

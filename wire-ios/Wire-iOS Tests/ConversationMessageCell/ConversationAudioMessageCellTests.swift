@@ -226,5 +226,4 @@ final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCa
 
         verify(message: message, allColorSchemes: true)
     }
-
 }

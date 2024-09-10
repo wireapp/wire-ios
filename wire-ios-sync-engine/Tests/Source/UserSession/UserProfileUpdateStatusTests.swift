@@ -192,7 +192,6 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         XCTAssertTrue(sut.currentlySettingEmail)
         XCTAssertFalse(sut.currentlySettingPassword)
         XCTAssertNil(self.sut.emailCredentials())
-
     }
 
     func testThatItCompletesAfterSuccessfullySettingPasswordAndEmail() {

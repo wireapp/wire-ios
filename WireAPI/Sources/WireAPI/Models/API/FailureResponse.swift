@@ -33,5 +33,4 @@ public struct FailureResponse: Decodable, Error {
     /// The error message.
 
     public let message: String
-
 }

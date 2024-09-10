@@ -154,7 +154,6 @@ class ProtosTests: XCTestCase {
         XCTAssertTrue(message.hasClientAction)
         XCTAssertEqual(message.clientAction, ClientAction.resetSession)
         XCTAssertEqual(message.messageID, nonce.transportString())
-
     }
 
     func testThatItCanBuildAnEphemeralMessage() {
@@ -169,5 +168,4 @@ class ProtosTests: XCTestCase {
         XCTAssertTrue(message.ephemeral.hasKnock)
         XCTAssertEqual(message.ephemeral.expireAfterMillis, 10000)
     }
-
 }

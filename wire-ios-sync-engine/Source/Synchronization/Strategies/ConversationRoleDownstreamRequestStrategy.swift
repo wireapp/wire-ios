@@ -39,7 +39,6 @@ fileprivate extension ZMConversation {
             managedObjectContext?.delete($0)
         }
     }
-
 }
 
 public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, ZMRequestGeneratorSource, ZMDownstreamTranscoder {
@@ -61,7 +60,6 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
             filter: nil,
             managedObjectContext: managedObjectContext
         )
-
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -118,5 +116,4 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
         conversation.needsToDownloadRoles = false
         conversation.updateRoles(with: response)
     }
-
 }

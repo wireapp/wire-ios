@@ -58,5 +58,4 @@ protocol Cache {
 
     /// Checks if the data exists in the cache. Faster than checking the data itself
     func hasDataForKey(_ key: String) -> Bool
-
 }

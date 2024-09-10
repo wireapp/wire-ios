@@ -142,7 +142,6 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
     func tearDown() {
         session.invalidateAndCancel()
     }
-
 }
 
 extension PreviewDownloader {
@@ -160,7 +159,6 @@ extension PreviewDownloader {
 
         return completionHandler(.allow)
     }
-
 }
 
 extension HTTPURLResponse {
@@ -169,5 +167,4 @@ extension HTTPURLResponse {
     var isSuccess: Bool {
         return statusCode < 400
     }
-
 }

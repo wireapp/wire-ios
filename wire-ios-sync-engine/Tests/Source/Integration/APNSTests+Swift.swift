@@ -70,5 +70,4 @@ class APNSTests_Swift: APNSTestsBase {
         application?.simulateApplicationWillEnterForeground()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
-
 }

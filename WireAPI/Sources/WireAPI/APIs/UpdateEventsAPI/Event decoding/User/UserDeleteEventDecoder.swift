@@ -30,5 +30,4 @@ struct UserDeleteEventDecoder {
 
         return UserDeleteEvent(qualifiedUserID: qualifiedUserID)
     }
-
 }

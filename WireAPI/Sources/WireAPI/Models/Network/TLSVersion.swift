@@ -39,5 +39,4 @@ public enum TLSVersion {
             .TLSv13
         }
     }
-
 }

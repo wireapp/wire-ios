@@ -62,5 +62,4 @@ class ZMConversationPerformanceTests: ZMConversationTestsBase {
 
         return conversation
     }
-
 }

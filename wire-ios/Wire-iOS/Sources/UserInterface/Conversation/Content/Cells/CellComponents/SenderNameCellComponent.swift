@@ -88,5 +88,4 @@ final class SenderNameCellComponent: UIView {
         super.traitCollectionDidChange(previousTraitCollection)
         indicatorImageViewTrailing.constant = -conversationHorizontalMargins.right
     }
-
 }

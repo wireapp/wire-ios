@@ -74,5 +74,4 @@ final class ConversationReplyCellDescriptionTests: CoreDataSnapshotTestCase {
         // THEN
         XCTAssertEqual(cellDescription.configuration.timestamp, "Original message from 9:41 AM")
     }
-
 }

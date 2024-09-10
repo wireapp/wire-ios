@@ -181,7 +181,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         false
     }
-
 }
 
 // MARK: - CallInfoConfigurationObserver

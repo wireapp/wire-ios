@@ -24,7 +24,6 @@ import XCTest
 protocol TestableAbstractRequestStrategy: AnyObject {
 
     var mutableConfiguration: ZMStrategyConfigurationOption { get set }
-
 }
 
 class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractRequestStrategy {
@@ -38,7 +37,6 @@ class TestRequestStrategyObjc: ZMAbstractRequestStrategy, TestableAbstractReques
     override var configuration: ZMStrategyConfigurationOption {
         return mutableConfiguration
     }
-
 }
 
 class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrategy {
@@ -53,7 +51,6 @@ class TestRequestStrategy: AbstractRequestStrategy, TestableAbstractRequestStrat
         get { return mutableConfiguration }
         set { mutableConfiguration = newValue }
     }
-
 }
 
 class AbstractRequestStrategyTests: MessagingTestBase {
@@ -234,5 +231,4 @@ class AbstractRequestStrategyTests: MessagingTestBase {
     func testAbstractRequestStrategyObjC() {
         checkAllPermutations(on: TestRequestStrategyObjc(managedObjectContext: syncMOC, applicationStatus: mockApplicationStatus))
     }
-
 }

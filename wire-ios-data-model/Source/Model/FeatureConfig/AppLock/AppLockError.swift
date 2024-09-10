@@ -25,5 +25,4 @@ public enum AppLockError: Error {
     /// Authentication is needed to unlock the app lock.
 
     case authenticationNeeded
-
 }

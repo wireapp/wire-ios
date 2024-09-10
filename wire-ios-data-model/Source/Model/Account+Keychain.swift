@@ -26,5 +26,4 @@ public extension Account {
         let item = AppLockController.PasscodeKeychainItem(userId: userIdentifier)
         try? Keychain.deleteItem(item)
     }
-
 }

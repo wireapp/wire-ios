@@ -127,5 +127,4 @@ extension EventDecoder {
             return []
         }
     }
-
 }

@@ -80,7 +80,6 @@ extension ObjectChangeInfo {
         let changedObjects = mergeLastChangesWithoutNotifying()
         self.dispatcher.didMergeChanges(Set(changedObjects))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
     }
     @discardableResult public func mergeLastChangesWithoutNotifying() -> [NSManagedObjectID] {
         guard let change = mergeNotifications.last else { return [] }
@@ -91,7 +90,6 @@ extension ObjectChangeInfo {
         mergeNotifications = []
         return changedObjects
     }
-
 }
 
 final class NotificationDispatcherTests: NotificationDispatcherTestBase {
@@ -663,5 +661,4 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
             XCTAssertFalse(newChangeInfo.considerAllKeysChanged)
         }
     }
-
 }

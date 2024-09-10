@@ -92,5 +92,4 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
             })
         }
     }
-
 }

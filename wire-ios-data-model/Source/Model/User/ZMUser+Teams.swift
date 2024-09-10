@@ -74,5 +74,4 @@ public extension ZMUser {
             context.delete(membership)
         }
     }
-
 }

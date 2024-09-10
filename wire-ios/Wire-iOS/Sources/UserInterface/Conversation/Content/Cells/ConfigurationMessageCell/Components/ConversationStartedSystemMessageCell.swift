@@ -53,7 +53,6 @@ final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, Con
         selectedUsers = object.selectedUsers
         accessibilityLabel = object.title?.string
     }
-
 }
 
 // MARK: - UITextViewDelegate
@@ -65,5 +64,4 @@ extension ConversationStartedSystemMessageCell {
 
         return false
     }
-
 }

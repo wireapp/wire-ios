@@ -77,5 +77,4 @@ final class UserTests_swift: IntegrationTest {
         XCTAssertEqual(realUser?.name, "Max Tester")
         XCTAssertEqual(selfUser?.name, "Super Name")
     }
-
 }

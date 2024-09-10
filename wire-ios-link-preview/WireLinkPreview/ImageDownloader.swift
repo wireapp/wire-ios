@@ -71,7 +71,6 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
             }
         }
     }
-
 }
 
 extension HTTPURLResponse {
@@ -84,5 +83,4 @@ extension HTTPURLResponse {
         // support it
         return contentType.contains("image") && !contentType.contains("svg")
     }
-
 }

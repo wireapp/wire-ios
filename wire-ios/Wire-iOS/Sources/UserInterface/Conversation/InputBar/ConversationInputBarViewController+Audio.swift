@@ -89,7 +89,6 @@ extension ConversationInputBarViewController {
             audioRecordViewController?.finishRecordingIfNeeded(sender)
         default: break
         }
-
     }
 
     fileprivate func showAudioRecordViewControllerIfGrantedAccess() {
@@ -222,7 +221,6 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
         }
         checker.performAction()
     }
-
 }
 
 extension ConversationInputBarViewController: WireCallCenterCallStateObserver {

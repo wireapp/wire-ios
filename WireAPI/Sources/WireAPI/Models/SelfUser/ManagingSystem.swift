@@ -29,5 +29,4 @@ public enum ManagingSystem {
     /// User identity is managed with SCIM
 
     case scim
-
 }

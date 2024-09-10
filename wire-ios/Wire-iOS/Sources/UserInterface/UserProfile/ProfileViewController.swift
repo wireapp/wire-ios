@@ -301,7 +301,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         case .ignore:
             viewModel.ignoreConnectionRequest()
         }
-
     }
 
     func footerView(_ footerView: ProfileFooterView, shouldPerformAction action: ProfileAction) {
@@ -524,7 +523,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
             WireLogger.conversation.debug("duplicate team \(original.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
         }
     }
-
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
@@ -542,7 +540,6 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
             )
         }
     }
-
 }
 
 extension ProfileViewController: ProfileViewControllerViewModelDelegate {
@@ -638,5 +635,4 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     func stopAnimatingActivity() {
         activityIndicator.stopAnimating()
     }
-
 }

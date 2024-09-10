@@ -91,5 +91,4 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
         self.type = type
         self.serverTimestamp = serverTimestamp
     }
-
 }

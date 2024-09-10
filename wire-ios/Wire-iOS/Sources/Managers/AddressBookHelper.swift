@@ -83,5 +83,4 @@ final class AddressBookHelper: AddressBookHelperProtocol {
         guard let lastStatus = lastAccessStatus else { return false }
         return CNContactStore.authorizationStatus(for: .contacts) != lastStatus && isAddressBookAccessGranted
     }
-
 }

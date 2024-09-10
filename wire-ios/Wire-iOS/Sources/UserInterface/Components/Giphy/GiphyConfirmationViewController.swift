@@ -25,7 +25,6 @@ import Ziphy
 protocol GiphyConfirmationViewControllerDelegate: AnyObject {
 
     func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data)
-
 }
 
 final class GiphyConfirmationViewController: UIViewController {

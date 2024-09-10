@@ -288,5 +288,4 @@ private actor ProcessedEventList {
 
         return hashes.contains(hash)
     }
-
 }

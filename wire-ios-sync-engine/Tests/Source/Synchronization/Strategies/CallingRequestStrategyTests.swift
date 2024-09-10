@@ -156,7 +156,6 @@ class CallingRequestStrategyTests: MessagingTest {
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
     }
 
     // MARK: - Client List

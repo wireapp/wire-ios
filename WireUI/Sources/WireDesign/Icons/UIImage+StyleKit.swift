@@ -39,7 +39,6 @@ public extension StyleKitIcon {
             imageProperties.renderingMethod(color)
         }
     }
-
 }
 
 public extension UIImage {
@@ -79,7 +78,6 @@ public extension UIImage {
             self.draw(at: .zero)
         }
     }
-
 }
 
 public extension UIImageView {

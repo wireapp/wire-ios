@@ -61,7 +61,6 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
         let has_password: Bool
         let key: String
         let uri: String?
-
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: CreateConversationGuestLinkAction) {
@@ -113,5 +112,4 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
             action.fail(with: .unknown)
         }
     }
-
 }

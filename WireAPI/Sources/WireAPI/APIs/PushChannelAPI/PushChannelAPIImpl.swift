@@ -40,5 +40,4 @@ class PushChannelAPIImpl: PushChannelAPI {
 
         return try pushChannelService.createPushChannel(request)
     }
-
 }

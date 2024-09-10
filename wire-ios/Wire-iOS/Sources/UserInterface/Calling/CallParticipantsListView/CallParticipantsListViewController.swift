@@ -139,5 +139,4 @@ final class CallParticipantsListViewController: UIViewController, UICollectionVi
         collectionView.deselectItem(at: indexPath, animated: true)
         delegate?.callParticipantsListViewControllerDidSelectShowMore(viewController: self)
     }
-
 }

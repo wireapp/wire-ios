@@ -45,7 +45,5 @@ struct MLSFeatureConfigDecoder {
         let allowedCipherSuites: [MLSCipherSuite]
         let defaultCipherSuite: MLSCipherSuite
         let supportedProtocols: Set<MessageProtocol>
-
     }
-
 }

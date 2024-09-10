@@ -111,7 +111,6 @@ class ZMClientMessageTests_TextMessageData: BaseZMClientMessageTests {
         // then
         XCTAssertTrue(message.hasQuote)
     }
-
 }
 
 // MARK: - Payload creation

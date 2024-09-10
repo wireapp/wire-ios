@@ -70,5 +70,4 @@ final class SearchGroupSelector: UIView, TabBarDelegate {
     func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
         group = groups[index]
     }
-
 }

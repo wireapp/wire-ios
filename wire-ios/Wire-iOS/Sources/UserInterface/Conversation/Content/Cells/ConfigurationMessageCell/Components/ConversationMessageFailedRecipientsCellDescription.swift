@@ -98,7 +98,6 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
         }
         return usersPerDomain
     }
-
 }
 
 extension NSAttributedString {
@@ -115,5 +114,4 @@ extension NSAttributedString {
         return .markdown(from: text, style: .errorLabelStyle)
                .adding(font: .mediumSemiboldFont, to: highlighted)
     }
-
 }

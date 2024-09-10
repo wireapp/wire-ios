@@ -74,5 +74,4 @@ final class EmoticonSubstitutionConfigurationTests: XCTestCase {
         XCTAssertEqual(config.shortcuts[1] as! String, ":-)")
         XCTAssertEqual(config.shortcuts[2] as! String, ":)")
     }
-
 }

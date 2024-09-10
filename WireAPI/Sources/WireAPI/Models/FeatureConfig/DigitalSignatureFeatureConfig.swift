@@ -25,5 +25,4 @@ public struct DigitalSignatureFeatureConfig: Codable, Equatable {
     /// The feature's status.
 
     public let status: FeatureConfigStatus
-
 }

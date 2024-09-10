@@ -29,7 +29,6 @@ final class SectionHeaderView: UIView {
         super.init(frame: frame)
         setupViews()
         createConstraints()
-
     }
 
     @available(*, unavailable)
@@ -53,7 +52,6 @@ final class SectionHeaderView: UIView {
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ])
     }
-
 }
 
 final class SectionHeader: UICollectionReusableView {
@@ -75,7 +73,6 @@ final class SectionHeader: UICollectionReusableView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init?(coder aDecoder: NSCoder) is not implemented")
     }
-
 }
 
 final class SectionTableHeader: UITableViewHeaderFooterView {
@@ -107,5 +104,4 @@ final class SectionTableHeader: UITableViewHeaderFooterView {
             headerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
-
 }

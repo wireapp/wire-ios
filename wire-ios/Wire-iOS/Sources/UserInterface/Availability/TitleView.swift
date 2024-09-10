@@ -97,7 +97,6 @@ class TitleView: UIView, DynamicTypeCapable {
         subtitleLabel.isHidden = subtitle == nil
         subtitleLabel.text = subtitle
         subtitleLabel.font = .smallLightFont
-
     }
 
     required init?(coder aDecoder: NSCoder) {

@@ -68,7 +68,6 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
                     XCTAssertTrue(context.readAndResetSlowSyncFlag())
                     // the flag has been consumed
                     XCTAssertFalse(context.readAndResetSlowSyncFlag())
-
                 }
             },
             for: self
@@ -97,5 +96,4 @@ final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {
         let duplicate2 = Team.insertNewObject(in: context)
         duplicate2.remoteIdentifier = identifier
     }
-
 }

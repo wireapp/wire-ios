@@ -49,5 +49,4 @@ final class AuthenticationReauthenticateInputHandler: AuthenticationEventHandler
         // Do not handle other cases.
         return nil
     }
-
 }

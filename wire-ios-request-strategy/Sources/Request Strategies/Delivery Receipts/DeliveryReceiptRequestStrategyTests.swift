@@ -72,7 +72,6 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
 
         // then
         XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
-
     }
 
     // MARK: Delivery receipt creation
@@ -226,5 +225,4 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
 
         return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
     }
-
 }

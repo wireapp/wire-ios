@@ -86,5 +86,4 @@ class LinkPreview_ProtobufTests: XCTestCase {
         XCTAssertEqual(preview.originalURLString, "www.example.com/original")
         XCTAssertEqual(preview.characterOffsetInText, 42)
     }
-
 }

@@ -97,5 +97,4 @@ final class Image: Editable {
     func updateImageTransform() {
         imageView.transform = transform
     }
-
 }

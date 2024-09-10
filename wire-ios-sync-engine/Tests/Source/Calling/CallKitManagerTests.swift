@@ -64,7 +64,6 @@ class MockCallKitProvider: CXProvider {
     override func invalidate() {
         isInvalidated = true
     }
-
 }
 
 class MockCallObserver: CXCallObserver {
@@ -74,7 +73,6 @@ class MockCallObserver: CXCallObserver {
     override var calls: [CXCall] {
         return mockCalls
     }
-
 }
 
 class MockCallKitCallController: CXCallController {
@@ -113,7 +111,6 @@ class MockCallAnswerAction: CXAnswerCallAction {
     override func fail() {
         hasFailed = true
     }
-
 }
 
 class MockStartCallAction: CXStartCallAction {
@@ -128,7 +125,6 @@ class MockStartCallAction: CXStartCallAction {
     override func fail() {
         hasFailed = true
     }
-
 }
 
 class MockEndCallAction: CXEndCallAction {
@@ -143,7 +139,6 @@ class MockEndCallAction: CXEndCallAction {
     override func fail() {
         hasFailed = true
     }
-
 }
 
 class MockProvider: CXProvider {
@@ -162,7 +157,6 @@ class MockProvider: CXProvider {
     override func reportOutgoingCall(with UUID: UUID, connectedAt dateConnected: Date?) {
         connectedCalls.insert(UUID)
     }
-
 }
 
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
@@ -189,7 +183,6 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     func endAllCalls() {
         hasEndedAllCalls = true
     }
-
 }
 
 class CallKitManagerTest: DatabaseTest {
@@ -1045,5 +1038,4 @@ class CallKitManagerTest: DatabaseTest {
         // then
         XCTAssertEqual(mockCallKitManagerDelegate.lookupConversationAndProcessPendingCallEventsCalls, 1)
     }
-
 }

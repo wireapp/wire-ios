@@ -73,7 +73,6 @@ public protocol CallActions: NSObjectProtocol {
     func leave(userSession: ZMUserSession, completion: (() -> Void)?)
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession)
     func request(videoStreams: [AVSClient])
-
 }
 
 @objc
@@ -81,7 +80,6 @@ public protocol CallActionsInternal: NSObjectProtocol {
 
     func join(video: Bool) -> Bool
     func leave()
-
 }
 
 public protocol CallObservers: NSObjectProtocol {

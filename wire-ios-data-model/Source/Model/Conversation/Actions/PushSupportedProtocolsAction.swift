@@ -37,5 +37,4 @@ public final class PushSupportedProtocolsAction: EntityAction {
         self.supportedProtocols = supportedProtocols
         self.resultHandler = resultHandler
     }
-
 }

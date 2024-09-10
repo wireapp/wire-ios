@@ -27,5 +27,4 @@ extension ZMManagedObject {
     var classIdentifier: String {
         return type(of: self).entityName()
     }
-
 }

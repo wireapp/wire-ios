@@ -219,7 +219,6 @@ final class ConversationSystemMessageCellDescription {
         case .invalid:
             let unknownMessage = UnknownMessageCellDescription()
             return [AnyConversationMessageCellDescription(unknownMessage)]
-
         }
 
         return []

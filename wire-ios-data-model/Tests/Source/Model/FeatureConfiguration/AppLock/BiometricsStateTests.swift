@@ -88,5 +88,4 @@ final class BiometricsStateTests: XCTestCase {
         // Then
         sut.lastPolicyDomainState = state1
     }
-
 }

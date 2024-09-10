@@ -73,5 +73,4 @@ class LabelTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(created)
         XCTAssertEqual(label, fetchedLabel)
     }
-
 }

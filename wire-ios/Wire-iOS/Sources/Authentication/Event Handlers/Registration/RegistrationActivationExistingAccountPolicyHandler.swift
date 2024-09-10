@@ -57,7 +57,6 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
 
         return actions
     }
-
 }
 
 private extension AuthenticationCoordinatorAlertAction {

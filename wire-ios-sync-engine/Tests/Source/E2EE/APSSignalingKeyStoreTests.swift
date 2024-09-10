@@ -94,5 +94,4 @@ final class APSSignalingKeyStoreTests: MessagingTest {
         ZMKeychain.deleteAllKeychainItems(withAccountName: APSSignalingKeysStore.verificationKeyAccountName)
         ZMKeychain.deleteAllKeychainItems(withAccountName: APSSignalingKeysStore.decryptionKeyAccountName)
     }
-
 }

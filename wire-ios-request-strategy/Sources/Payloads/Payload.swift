@@ -69,7 +69,6 @@ public enum Payload {
 
         let prekeyByQualifiedUserID: Payload.PrekeyByQualifiedUserID
         let failed: [QualifiedID]?
-
     }
 
     struct Location: Codable, Equatable {
@@ -118,7 +117,6 @@ public enum Payload {
             self.deviceClass = deviceClass
             self.deviceModel = deviceModel
         }
-
     }
 
     struct Asset: Codable {
@@ -171,7 +169,6 @@ public enum Payload {
 
         let found: [Payload.UserProfile]
         let failed: [QualifiedID]?
-
     }
 
     public struct UserProfile: Codable {
@@ -180,7 +177,6 @@ public enum Payload {
 
             case proteus
             case mls
-
         }
 
         enum CodingKeys: String, CodingKey, CaseIterable {
@@ -305,7 +301,6 @@ public enum Payload {
             let domain: String
             let path: String
             let type: FailureType
-
         }
 
         public enum Label: String, Codable, Equatable {
@@ -348,7 +343,6 @@ public enum Payload {
         public let label: Label
         public let message: String
         public let data: FederationFailure?
-
     }
 
     public struct MessageSendingStatusV0: Codable {
@@ -411,7 +405,6 @@ public enum Payload {
                 failedToConfirm: [:]
             )
         }
-
     }
 
     public struct MessageSendingStatusV4: Codable, Equatable {
@@ -518,7 +511,6 @@ public enum Payload {
 
         /// List of federated users who could not be reached and did not receive the message.
         let failedToSend: [QualifiedID]?
-
     }
 
     struct PaginationStatus: Codable {
@@ -536,7 +528,6 @@ public enum Payload {
             self.size = size
         }
     }
-
 }
 
 extension Payload.ResponseFailure {
@@ -544,5 +535,4 @@ extension Payload.ResponseFailure {
     func updateExpirationReason(for message: OTREntity, with reason: MessageSendFailure) {
         message.expirationReasonCode = NSNumber(value: reason.rawValue)
     }
-
 }

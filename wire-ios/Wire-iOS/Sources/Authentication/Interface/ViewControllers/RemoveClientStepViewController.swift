@@ -135,5 +135,4 @@ extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
                                                         completionActions: [.unwindState(withInterface: false)])
         authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
-
 }

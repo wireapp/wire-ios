@@ -138,7 +138,6 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
         XCTAssertEqual(payload?["icon_key"] as? String, team.pictureAssetKey)
         XCTAssertEqual(payload?["icon"] as? String, team.pictureAssetId)
         XCTAssertEqual(payload?["binding"] as? Bool, true)
-
     }
 
     func testThatItFetchesAllTeams() {
@@ -552,5 +551,4 @@ extension MockTransportSessionTeamTests {
         let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
-
 }

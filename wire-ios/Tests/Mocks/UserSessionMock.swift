@@ -246,7 +246,6 @@ final class UserSessionMock: UserSession {
     }
 
     func acknowledgeFeatureChange(for feature: Feature.Name) {
-
     }
 
     func fetchMarketingConsent(
@@ -254,14 +253,12 @@ final class UserSessionMock: UserSession {
             Result<Bool, Error>
         ) -> Void
     ) {
-
     }
 
     func setMarketingConsent(
         granted: Bool,
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
-
     }
 
     func classification(
@@ -281,7 +278,6 @@ final class UserSessionMock: UserSession {
     }
 
     func cancelProxiedRequest(_ request: WireSyncEngine.ProxyRequest) {
-
     }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
@@ -367,7 +363,6 @@ final class UserSessionMock: UserSession {
     var contextProvider: any ContextProvider {
         coreDataStack ?? MockContextProvider()
     }
-
 }
 
 // MARK: - UserSessionMock + ContextProvider

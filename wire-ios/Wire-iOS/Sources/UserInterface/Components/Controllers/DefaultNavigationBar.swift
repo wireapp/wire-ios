@@ -56,7 +56,6 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
                 .foregroundColor: color,
                 .baselineOffset: 1.0]
     }
-
 }
 
 extension UIViewController {
@@ -81,5 +80,4 @@ extension UIViewController {
 
         return navigationController
     }
-
 }

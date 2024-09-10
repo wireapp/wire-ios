@@ -424,7 +424,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         // then
         XCTAssertTrue(hasUntrustedClients)
-
     }
 
     func testThatItReturns_HasUntrustedClients_NO_ifThereAreNoUntrustedClients() {
@@ -967,7 +966,6 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             return XCTFail()
         }
         XCTAssertEqual(lastMessage2.systemMessageType, .participantsAdded)
-
     }
 
     func testThatItDoesNotMoveExistingDegradedMessageWhenRemoteParticpantsAdd_OtherParticipants() {
@@ -1049,5 +1047,4 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         // then
         XCTAssertEqual(conversation.securityLevel, .secure)
     }
-
 }

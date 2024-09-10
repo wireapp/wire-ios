@@ -52,5 +52,4 @@ public protocol LoginDelegate: NSObjectProtocol {
     /// Invoked when there was an error registering the client
     @objc
     func clientRegistrationDidFail(_ error: NSError, accountId: UUID)
-
 }

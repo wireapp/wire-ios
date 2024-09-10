@@ -137,5 +137,4 @@ class SlowSyncTestsTeams: IntegrationTest {
             XCTAssertEqual(team.members.count, 2)
         }
     }
-
 }

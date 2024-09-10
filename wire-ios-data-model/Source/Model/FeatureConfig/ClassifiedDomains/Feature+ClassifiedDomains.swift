@@ -54,8 +54,6 @@ public extension Feature {
             public init(domains: [String] = []) {
                 self.domains = domains
             }
-
         }
-
     }
 }

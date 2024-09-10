@@ -102,5 +102,4 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
             success()
         }
     }
-
 }

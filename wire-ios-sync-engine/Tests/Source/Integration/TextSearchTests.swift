@@ -194,5 +194,4 @@ class TextSearchTests: ConversationTestsBase {
             XCTAssert(result.matches.isEmpty, file: file, line: line)
         }
     }
-
 }

@@ -433,7 +433,6 @@ final class SearchResultsViewController: UIViewController {
             return .unknown
         }
     }
-
 }
 
 extension SearchResultsViewController: SearchSectionControllerDelegate {
@@ -459,13 +458,11 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         case .createGuestRoom:
             delegate?.searchResultsViewController(self, wantsToPerformAction: .createGuestRoom)
         }
-
     }
 
     func searchSectionController(_ searchSectionController: CollectionViewSectionController, wantsToDisplayError error: LocalizedError) {
         presentLocalizedErrorAlert(error)
     }
-
 }
 
 extension SearchResultsViewController: InviteTeamMemberSectionDelegate {

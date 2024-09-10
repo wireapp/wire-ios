@@ -46,5 +46,4 @@ final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventH
 
         return [.startPostLoginFlow, .transition(.addUsername, mode: .reset)]
     }
-
 }

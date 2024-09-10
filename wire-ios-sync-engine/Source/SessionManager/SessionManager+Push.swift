@@ -29,7 +29,6 @@ protocol PushRegistry {
     var desiredPushTypes: Set<PKPushType>? { get set }
 
     func pushToken(for type: PKPushType) -> Data?
-
 }
 
 extension PKPushRegistry: PushRegistry {}
@@ -135,5 +134,4 @@ extension SessionManager {
     var shouldProcessLegacyPushes: Bool {
         return requiredPushTokenType == .voip
     }
-
 }

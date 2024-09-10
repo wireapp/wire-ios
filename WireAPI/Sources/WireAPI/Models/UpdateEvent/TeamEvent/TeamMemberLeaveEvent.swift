@@ -29,5 +29,4 @@ public struct TeamMemberLeaveEvent: Equatable, Codable {
     /// The id of the member who left.
 
     public let userID: UUID
-
 }

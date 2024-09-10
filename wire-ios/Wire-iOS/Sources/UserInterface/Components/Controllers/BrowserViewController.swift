@@ -39,7 +39,6 @@ final class BrowserViewController: SFSafariViewController {
             defaultBlock?()
         }
     }
-
 }
 
 extension BrowserViewController: SFSafariViewControllerDelegate {

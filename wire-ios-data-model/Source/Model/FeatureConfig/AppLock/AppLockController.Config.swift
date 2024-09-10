@@ -31,7 +31,6 @@ public extension AppLockController {
             self.isForced = isForced
             self.timeout = timeout
         }
-
     }
 
     /// The legacy config is determined at compile time through the SessionManagerConfiguration, which
@@ -49,7 +48,5 @@ public extension AppLockController {
             self.timeout = timeout
             self.requireCustomPasscode = requireCustomPasscode
         }
-
     }
-
 }

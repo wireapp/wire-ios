@@ -39,7 +39,5 @@ struct MLSMigrationFeatureConfigDecoder {
 
         let startTime: UTCTime?
         let finaliseRegardlessAfter: UTCTime?
-
     }
-
 }

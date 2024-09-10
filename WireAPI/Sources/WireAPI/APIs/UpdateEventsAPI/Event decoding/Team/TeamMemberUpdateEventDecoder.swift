@@ -46,9 +46,6 @@ struct TeamMemberUpdateEventDecoder {
         enum CodingKeys: String, CodingKey {
 
             case membershipID = "user"
-
         }
-
     }
-
 }

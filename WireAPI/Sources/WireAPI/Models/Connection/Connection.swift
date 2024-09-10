@@ -47,5 +47,4 @@ public struct Connection: Equatable, Codable {
     /// current status of connection
 
     public let status: ConnectionStatus
-
 }

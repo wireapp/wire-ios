@@ -98,5 +98,4 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
 
         return cell
     }
-
 }

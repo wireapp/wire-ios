@@ -107,5 +107,4 @@ import Foundation
         default:                                            return identifier
         }
     }
-
 }

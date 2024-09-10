@@ -57,5 +57,4 @@ final class ConversationRenamedSystemMessageCellDescription: ConversationMessage
         actionController = nil
         accessibilityLabel = "\(titleString), \(newName)"
     }
-
 }

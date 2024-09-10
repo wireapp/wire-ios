@@ -66,7 +66,6 @@ extension MessagingTestBase {
                                            apiVersion: apiVersion.rawValue)
 
         return response
-
     }
 
     func updateEvent(from data: Data) -> ZMUpdateEvent {
@@ -107,7 +106,5 @@ extension MessagingTestBase {
             timestamp: timestamp,
             type: ZMUpdateEvent.eventTypeString(for: Event.eventType)
         )
-
     }
-
 }

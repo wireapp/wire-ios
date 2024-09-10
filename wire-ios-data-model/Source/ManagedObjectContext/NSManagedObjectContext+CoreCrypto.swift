@@ -32,7 +32,5 @@ extension NSManagedObjectContext {
             precondition(zm_isSyncContext, "CoreCrypto should only be accessed on the sync context")
             userInfo[Self.coreCryptoUserInfoKey] = newValue
         }
-
     }
-
 }

@@ -100,7 +100,6 @@ class Typing {
         expirationTimer?.fire(at: date)
         nextPruneDate = date
     }
-
 }
 
 // MARK: - TimerClient

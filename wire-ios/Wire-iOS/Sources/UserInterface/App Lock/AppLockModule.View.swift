@@ -61,9 +61,7 @@ extension AppLockModule {
         func applicationWillEnterForeground() {
             presenter.processEvent(.applicationWillEnterForeground)
         }
-
     }
-
 }
 
 // MARK: - View model
@@ -121,7 +119,6 @@ extension AppLockModule {
             }
         }
     }
-
 }
 
 // MARK: - Refresh
@@ -136,7 +133,6 @@ extension AppLockModule.View: AppLockViewPresenterInterface {
             self?.presenter.processEvent(model.buttonEvent)
         }
     }
-
 }
 
 // MARK: - Delegates
@@ -148,9 +144,7 @@ extension AppLockModule.View: PasscodeSetupViewControllerDelegate {
     }
 
     func passcodeSetupControllerWasDismissed() {
-
     }
-
 }
 
 extension AppLockModule.View: UnlockViewControllerDelegate {
@@ -158,7 +152,6 @@ extension AppLockModule.View: UnlockViewControllerDelegate {
     func unlockViewControllerDidUnlock() {
         presenter.processEvent(.customPasscodeVerified)
     }
-
 }
 
 extension AppLockModule.View: AppLockChangeWarningViewControllerDelegate {
@@ -166,5 +159,4 @@ extension AppLockModule.View: AppLockChangeWarningViewControllerDelegate {
     func appLockChangeWarningViewControllerDidDismiss() {
         presenter.processEvent(.configChangeAcknowledged)
     }
-
 }

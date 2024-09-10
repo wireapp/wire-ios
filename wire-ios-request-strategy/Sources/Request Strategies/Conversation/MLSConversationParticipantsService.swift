@@ -31,7 +31,6 @@ protocol MLSConversationParticipantsServiceInterface {
         _ user: ZMUser,
         from conversation: ZMConversation
     ) async throws
-
 }
 
 enum MLSConversationParticipantsError: Error, Equatable {

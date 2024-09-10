@@ -63,5 +63,4 @@ public extension ProteusError {
             return nil
         }
     }
-
 }

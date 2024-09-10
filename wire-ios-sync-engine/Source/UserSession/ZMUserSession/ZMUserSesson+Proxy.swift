@@ -44,5 +44,4 @@ extension ZMUserSession {
             self.applicationStatusDirectory.proxiedRequestStatus.cancel(request: request)
         }
     }
-
 }

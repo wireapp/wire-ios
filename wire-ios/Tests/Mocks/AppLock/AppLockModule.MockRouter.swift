@@ -32,7 +32,5 @@ extension AppLockModule {
         func performAction(_ action: Action) {
             actions.append(action)
         }
-
     }
-
 }

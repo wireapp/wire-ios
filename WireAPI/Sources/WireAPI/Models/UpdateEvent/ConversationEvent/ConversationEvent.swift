@@ -81,5 +81,4 @@ public enum ConversationEvent: Equatable, Codable {
     /// One or more users are typing in a conversation.
 
     case typing(ConversationTypingEvent)
-
 }

@@ -65,5 +65,4 @@ public enum AppLockPasscodePreference {
             return false
         }
     }
-
 }

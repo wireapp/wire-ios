@@ -37,7 +37,6 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             // then
             XCTAssertNil(self.syncConversation.clearedTimeStamp)
         }
-
     }
 
     func testThatWeIgnoreLastReadEventNotSentFromSelfUser() {
@@ -62,7 +61,6 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             // then
             XCTAssertNil(self.syncConversation.lastReadServerTimeStamp)
         }
-
     }
 
     func testThatWeIgnoreHideMessageEventNotSentFromSelfUser() {
@@ -82,7 +80,6 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             // then
             XCTAssertFalse(toBehiddenMessage.hasBeenDeleted)
         }
-
     }
 
     // MARK: - Analytics Data Transfer
@@ -168,5 +165,4 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             eventSource: ZMUpdateEventSource.download
         )
     }
-
 }

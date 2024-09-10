@@ -68,6 +68,5 @@ extension UnauthenticatedSession {
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         }
         return true
-
     }
 }

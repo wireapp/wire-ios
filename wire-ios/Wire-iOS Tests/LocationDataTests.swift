@@ -74,5 +74,4 @@ final class LocationDataTests: XCTestCase {
         XCTAssertEqual(sut?.zoomLevel, 5)
         XCTAssertNil(sut?.name)
     }
-
 }

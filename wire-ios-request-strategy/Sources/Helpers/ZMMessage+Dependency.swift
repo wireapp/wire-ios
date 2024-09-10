@@ -56,7 +56,6 @@ extension ZMOTRMessage: OTREntity {
     public var shouldIgnoreTheSecurityLevelCheck: Bool {
         hiddenInConversation != nil
     }
-
 }
 
 /// Message that can block following messages
@@ -77,7 +76,6 @@ extension ZMMessage {
         if conversation.remoteIdentifier == nil {
             zmLog.debug("conversation has no remote identifier")
             return conversation
-
         }
 
         // Messages should time out within 1 minute. But image messages never time out. In case there is a bug
@@ -122,7 +120,6 @@ extension ZMMessage {
         }
         return blockingMessage
     }
-
 }
 
 extension ZMMessage: BlockingMessage {

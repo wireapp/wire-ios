@@ -63,9 +63,7 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             let p256: String?
             let p384: String?
             let p521: String?
-
         }
-
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: FetchBackendMLSPublicKeysAction) {
@@ -114,5 +112,4 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
             action.fail(with: .unknown(status: error.status, label: error.label, message: error.message))
         }
     }
-
 }

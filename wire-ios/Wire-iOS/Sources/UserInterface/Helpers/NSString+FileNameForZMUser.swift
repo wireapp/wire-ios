@@ -30,5 +30,4 @@ extension String {
     static func filename(for selfUser: UserType, suffix: String? = nil) -> String {
         selfUser.filename(suffix: suffix)
     }
-
 }

@@ -258,7 +258,6 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
         searchController.searchBar.resignFirstResponder()
     }
-
 }
 
 // MARK: - Search
@@ -291,7 +290,6 @@ extension GiphySearchViewController {
             self?.performSearch()
         }
     }
-
 }
 
 // MARK: - Pagination
@@ -308,7 +306,6 @@ extension GiphySearchViewController {
                 self?.collectionView.performBatchUpdates {
                     self?.insertSearchResults(ziphs)
                 }
-
             }
 
             self?.pendingFetchTask = nil
@@ -338,7 +335,6 @@ extension GiphySearchViewController {
 
         return confirmationController
     }
-
 }
 
 // MARK: - GiphyConfirmationViewControllerDelegate
@@ -348,7 +344,6 @@ extension GiphySearchViewController: GiphyConfirmationViewControllerDelegate {
     func giphyConfirmationViewController(_ giphyConfirmationViewController: GiphyConfirmationViewController, didConfirmImageData imageData: Data) {
         delegate?.giphySearchViewController(self, didSelectImageData: imageData, searchTerm: searchTerm)
     }
-
 }
 
 extension GiphySearchViewController: UISearchResultsUpdating {

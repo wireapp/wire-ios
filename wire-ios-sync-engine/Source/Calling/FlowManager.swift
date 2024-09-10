@@ -41,7 +41,6 @@ public class FlowManager: NSObject, FlowManagerType {
     public func setVideoCaptureDevice(_ device: CaptureDevice, for conversationId: AVSIdentifier) {
         avsFlowManager?.setVideoCaptureDevice(device.deviceIdentifier, forConversation: conversationId.serialized)
     }
-
 }
 
 // MARK: - AVSFlowManagerDelegate
@@ -84,5 +83,4 @@ extension FlowManager: AVSFlowManagerDelegate {
     public func didUpdateVolume(_ volume: Double, conversationId convid: String!, participantId: String!) {
         // no-op
     }
-
 }

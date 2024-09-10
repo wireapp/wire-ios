@@ -22,7 +22,6 @@ import Foundation
 public protocol PrekeyAPI {
 
     func fetchPrekeys(for clients: Set<QualifiedClientID>) async throws -> Payload.PrekeyByQualifiedUserID
-
 }
 
 extension Payload.PrekeyByUserID {
@@ -152,5 +151,4 @@ extension Collection where Element == QualifiedClientID {
             result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []].append(client.clientID)
         }
     }
-
 }

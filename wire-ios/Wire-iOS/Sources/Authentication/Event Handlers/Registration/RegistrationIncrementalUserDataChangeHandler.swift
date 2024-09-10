@@ -87,5 +87,4 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
         user.accentColor = oldUser.accentColor
         return user
     }
-
 }

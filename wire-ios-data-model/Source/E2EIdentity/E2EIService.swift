@@ -44,7 +44,6 @@ public protocol E2EIServiceInterface {
     func createNewClient(certificateChain: String) async throws
 
     var e2eIdentity: E2eiEnrollmentProtocol { get }
-
 }
 
 /// This class provides an interface for WireE2eIdentityProtocol (CoreCrypto) methods.
@@ -176,5 +175,4 @@ public final class E2EIService: E2EIServiceInterface {
         case missingCoreCrypto
         case missingEnrollment
     }
-
 }

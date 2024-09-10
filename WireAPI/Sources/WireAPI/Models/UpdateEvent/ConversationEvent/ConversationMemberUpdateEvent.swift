@@ -37,5 +37,4 @@ public struct ConversationMemberUpdateEvent: Equatable, Codable {
     /// The changed metadata of the member.
 
     public let memberChange: ConversationMemberChange
-
 }

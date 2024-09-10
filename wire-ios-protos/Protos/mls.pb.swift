@@ -81,7 +81,6 @@ public enum Mls_GroupInfoType: SwiftProtobuf.Enum {
     case .groupInfoJwe: return 3
     }
   }
-
 }
 
 #if swift(>=4.2)
@@ -118,7 +117,6 @@ public enum Mls_RatchetTreeType: SwiftProtobuf.Enum {
     case .reference: return 3
     }
   }
-
 }
 
 #if swift(>=4.2)

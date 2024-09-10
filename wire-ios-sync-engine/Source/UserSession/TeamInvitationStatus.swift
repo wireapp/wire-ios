@@ -86,5 +86,4 @@ public class TeamInvitationStatus: NSObject {
         processedInvitations[email]?(result)
         processedInvitations.removeValue(forKey: email)
     }
-
 }

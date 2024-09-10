@@ -101,7 +101,6 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
         aCoder.encode(thumbnails as NSArray, forKey: #keyPath(thumbnails))
         aCoder.encode(NSValue(range: originalRange), forKey: #keyPath(originalRange))
     }
-
 }
 
 // MARK: - OpenGraph Data
@@ -124,5 +123,4 @@ extension LinkAttachment {
 
         self.init(type: detectedType, title: openGraphData.title, permalink: permalink, thumbnails: thumbnails, originalRange: originalRange)
     }
-
 }

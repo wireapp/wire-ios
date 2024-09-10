@@ -135,7 +135,6 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             using: { [internalDetectSSOCode] _ in internalDetectSSOCode(false) }
         )
     }
-
 }
 
 // MARK: - Company Login
@@ -377,5 +376,4 @@ extension CompanyLoginController: CompanyLoginFlowHandlerDelegate {
     func userDidCancelCompanyLoginFlow() {
         delegate?.controllerDidCancelCompanyLoginFlow(self)
     }
-
 }

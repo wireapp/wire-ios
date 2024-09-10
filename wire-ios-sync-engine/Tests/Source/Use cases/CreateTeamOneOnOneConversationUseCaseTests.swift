@@ -173,5 +173,4 @@ final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
         // Then
         XCTAssertEqual(result, conversation.objectID)
     }
-
 }

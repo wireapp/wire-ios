@@ -37,5 +37,4 @@ public enum UserClientType: String, Codable {
     /// all messages you send or receive.
 
     case legalhold
-
 }

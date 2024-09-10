@@ -98,5 +98,4 @@ extension Settings {
 
         return SettingsColorScheme(from: string)
     }
-
 }

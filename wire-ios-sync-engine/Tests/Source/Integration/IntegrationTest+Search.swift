@@ -119,5 +119,4 @@ extension IntegrationTest {
         user.connect(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }

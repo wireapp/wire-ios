@@ -173,7 +173,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }, completion: { _ in
             self.updateLayoutSizeAndLeftViewVisibility()
         })
-
     }
 
     // MARK: - status bar
@@ -545,7 +544,6 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             break
         }
     }
-
 }
 
 extension SplitViewController: UIGestureRecognizerDelegate {

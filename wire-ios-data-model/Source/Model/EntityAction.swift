@@ -119,7 +119,6 @@ public extension EntityAction {
     mutating func fail(with failure: Failure) {
         notifyResult(.failure(failure))
     }
-
 }
 
 public extension EntityAction where Result == Void {
@@ -129,7 +128,6 @@ public extension EntityAction where Result == Void {
     mutating func succeed() {
         notifyResult(.success(()))
     }
-
 }
 
 // MARK: - Async / Await
@@ -167,5 +165,4 @@ public extension EntityAction {
             perform(in: context, resultHandler: continuation.resume(with:))
         }
     }
-
 }

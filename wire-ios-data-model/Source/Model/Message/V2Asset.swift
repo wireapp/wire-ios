@@ -170,9 +170,7 @@ public class V2Asset: NSObject, ZMImageMessageData {
         }
 
         return assetClientMessage.preprocessedSize
-
     }
-
 }
 
 extension V2Asset: AssetProxyType {
@@ -242,5 +240,4 @@ extension V2Asset: AssetProxyType {
             NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
         }
     }
-
 }

@@ -324,7 +324,5 @@ final class FeatureConfigEventDecodingTests: XCTestCase {
                 )
             )
         )
-
     }
-
 }

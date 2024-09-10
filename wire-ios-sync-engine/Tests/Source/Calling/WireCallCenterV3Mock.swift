@@ -105,7 +105,6 @@ public class MockAVSWrapper: AVSWrapperType {
 
         mock(conversationId, info)
     }
-
 }
 
 final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
@@ -116,7 +115,6 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
         mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
         super.init(userId: userId, clientId: clientId, avsWrapper: mockAVSWrapper, uiMOC: uiMOC, flowManager: flowManager, transport: transport)
     }
-
 }
 
 @objcMembers
@@ -187,5 +185,4 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
         clearSnapshot(conversationId: conversationId)
         createSnapshot(callState: .established, members: [], callStarter: callerId, video: false, for: conversationId, conversationType: .oneToOne)
     }
-
 }

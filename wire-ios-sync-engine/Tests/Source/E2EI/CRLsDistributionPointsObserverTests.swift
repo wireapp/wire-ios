@@ -61,5 +61,4 @@ class CRLsDistributionPointsObserverTests: XCTestCase {
         XCTAssertEqual(mockCRLsChecker.checkNewCRLsFrom_Invocations.count, 1)
         XCTAssertEqual(mockCRLsChecker.checkNewCRLsFrom_Invocations.first, distributionPoints)
     }
-
 }

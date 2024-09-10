@@ -24,7 +24,6 @@ protocol CollectionViewSectionController: UICollectionViewDataSource, UICollecti
     var isHidden: Bool { get }
 
     func prepareForUse(in collectionView: UICollectionView?)
-
 }
 
 final class SectionCollectionViewController: NSObject {
@@ -86,7 +85,6 @@ extension SectionCollectionViewController: UICollectionViewDelegate {
 
         visibleSections[indexPath.section].collectionView?(collectionView, didDeselectItemAt: indexPath)
     }
-
 }
 
 extension SectionCollectionViewController: UICollectionViewDataSource {
@@ -122,7 +120,6 @@ extension SectionCollectionViewController: UICollectionViewDataSource {
 
         return visibleSections[indexPath.section].collectionView!(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
-
 }
 
 extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
@@ -138,5 +135,4 @@ extension SectionCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return visibleSections[indexPath.section].collectionView?(collectionView, layout: collectionViewLayout, sizeForItemAt: indexPath) ?? .zero
     }
-
 }

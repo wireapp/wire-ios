@@ -146,7 +146,6 @@ import UIKit
                         try setInvalid()
                         return false
                     }
-
                 }
             }
         }
@@ -167,5 +166,4 @@ import UIKit
             return false
         }
     }
-
 }

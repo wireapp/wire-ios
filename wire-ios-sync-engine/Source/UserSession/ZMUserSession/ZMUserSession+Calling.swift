@@ -22,7 +22,6 @@ import Foundation
 public protocol CallNotificationStyleProvider: AnyObject {
 
     var callNotificationStyle: CallNotificationStyle { get }
-
 }
 
 @objc extension ZMUserSession: CallNotificationStyleProvider {
@@ -53,7 +52,6 @@ public protocol CallNotificationStyleProvider: AnyObject {
             managedObjectContext.zm_useConstantBitRateAudio = newValue
             callCenter?.useConstantBitRateAudio = newValue
         }
-
     }
 
     var usePackagingFeatureConfig: Bool {
@@ -64,6 +62,5 @@ public protocol CallNotificationStyleProvider: AnyObject {
             managedObjectContext.zm_usePackagingFeatureConfig = newValue
             callCenter?.usePackagingFeatureConfig = newValue
         }
-
     }
 }

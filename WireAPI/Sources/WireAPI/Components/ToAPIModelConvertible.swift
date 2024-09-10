@@ -25,5 +25,4 @@ protocol ToAPIModelConvertible {
     associatedtype APIModel
 
     func toAPIModel() -> APIModel
-
 }

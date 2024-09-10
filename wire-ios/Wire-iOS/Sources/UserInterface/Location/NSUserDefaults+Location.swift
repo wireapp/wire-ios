@@ -55,5 +55,4 @@ extension LocationData {
 
         return .locationData(withLatitude: latitudeFloat, longitude: longitudeFloat, name: nil, zoomLevel: Int32(zoomLevel))
     }
-
 }

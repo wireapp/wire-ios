@@ -22,7 +22,6 @@ import Foundation
 public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 
     func invoke() async throws
-
 }
 
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {

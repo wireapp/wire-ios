@@ -36,5 +36,4 @@ final class ExtensionBackupExcluder: BackupExcluder {
             zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
         }
     }
-
 }

@@ -26,5 +26,4 @@ class DragInteractionRestrictionTextView: TextView {
 
         textDragInteraction?.isEnabled = SecurityFlags.fileSharing.isEnabled
     }
-
 }

@@ -62,5 +62,4 @@ extension NSManagedObjectContext {
             userInfo[Self.mlsEncryptionServiceUserInfoKey] = newValue
         }
     }
-
 }

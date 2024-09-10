@@ -30,5 +30,4 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
                 .foregroundStyle(Color.primaryButtonText)
                 .clipShape(.rect(cornerRadius: 16))
         }
-
 }

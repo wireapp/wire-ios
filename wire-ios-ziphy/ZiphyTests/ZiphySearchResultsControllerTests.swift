@@ -270,5 +270,4 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)!
         return .success(data, response)
     }
-
 }

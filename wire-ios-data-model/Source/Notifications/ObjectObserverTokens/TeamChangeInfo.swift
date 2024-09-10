@@ -59,7 +59,6 @@ extension Team: ObjectInSnapshot {
     public var imageDataChanged: Bool {
         return changedKeysContain(keys: #keyPath(Team.imageData), #keyPath(Team.pictureAssetId))
     }
-
 }
 
 @objc public protocol TeamObserver: NSObjectProtocol {
@@ -91,5 +90,4 @@ extension TeamChangeInfo {
             observer.teamDidChange(changeInfo)
         }
     }
-
 }

@@ -215,7 +215,6 @@ extension AddressBookTests {
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
-
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
@@ -274,7 +273,6 @@ extension AddressBookTests {
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
-
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
@@ -417,7 +415,6 @@ extension AddressBookTests {
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: ["+15550101"]),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550100"]),
             MockAddressBookContact(firstName: "Hadiya", emailAddresses: [], phoneNumbers: ["+15550102"])
-
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
@@ -473,5 +470,4 @@ private func checkEqual(lhs: [String: [String]]?, rhs: [String: [String]]?, line
         let array2 = rhs[key]!
         zip(array1, array2).forEach { XCTAssertEqual($0.0, $0.1, file: file, line: line) }
     }
-
 }

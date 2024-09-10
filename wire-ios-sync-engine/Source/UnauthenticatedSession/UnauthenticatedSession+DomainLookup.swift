@@ -94,5 +94,4 @@ extension UnauthenticatedSession {
 
         operationLoop.transportSession.enqueueOneTime(request)
     }
-
 }

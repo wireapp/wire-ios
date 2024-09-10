@@ -90,7 +90,6 @@ extension BackendEnvironment {
             UserDefaults.moveValue(forKey: key, from: from, to: to)
         }
     }
-
 }
 
 fileprivate extension UserDefaults {
@@ -101,5 +100,4 @@ fileprivate extension UserDefaults {
         to.setValue(value, forKey: key)
         from.removeObject(forKey: key)
     }
-
 }

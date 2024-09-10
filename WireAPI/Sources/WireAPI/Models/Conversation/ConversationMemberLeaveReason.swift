@@ -34,5 +34,4 @@ public enum ConversationMemberLeaveReason: String, Codable {
     /// The user was removed from the conversation by an admin.
 
     case removed
-
 }

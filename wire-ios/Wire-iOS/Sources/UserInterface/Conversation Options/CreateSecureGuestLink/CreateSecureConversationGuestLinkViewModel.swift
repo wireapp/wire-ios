@@ -137,5 +137,4 @@ final class CreateSecureConversationGuestLinkViewModel {
 
         return String(characters.shuffled())
     }
-
 }

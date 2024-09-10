@@ -242,5 +242,4 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     enum ParticipantsError: Error {
         case genericError
     }
-
 }

@@ -249,7 +249,6 @@ extension VoiceChannelV3: CallActionsInternal {
             callCenter?.closeCall(conversationId: conversationId)
         }
     }
-
 }
 
 extension VoiceChannelV3: CallObservers {

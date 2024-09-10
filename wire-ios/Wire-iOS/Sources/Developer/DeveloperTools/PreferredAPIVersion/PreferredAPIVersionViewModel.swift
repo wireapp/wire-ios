@@ -29,7 +29,6 @@ final class PreferredAPIVersionViewModel: ObservableObject {
         let id = UUID()
         let header: String
         let items: [Item]
-
     }
 
     struct Item: Identifiable {
@@ -37,7 +36,6 @@ final class PreferredAPIVersionViewModel: ObservableObject {
         let id = UUID()
         let title: String
         let value: Value
-
     }
 
     enum Value: Equatable {
@@ -52,13 +50,11 @@ final class PreferredAPIVersionViewModel: ObservableObject {
                 self = .noPreference
             }
         }
-
     }
 
     enum Event {
 
         case itemTapped(Item)
-
     }
 
     // MARK: - State
@@ -104,5 +100,4 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             }
         }
     }
-
 }

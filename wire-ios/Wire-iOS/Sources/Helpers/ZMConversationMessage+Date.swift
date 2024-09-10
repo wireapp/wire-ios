@@ -72,5 +72,4 @@ extension ZMConversationMessage {
 
         return accessibleMessageDetails
     }
-
 }

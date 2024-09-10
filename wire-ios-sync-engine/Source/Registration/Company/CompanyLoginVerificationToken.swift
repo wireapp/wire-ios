@@ -91,5 +91,4 @@ public extension CompanyLoginVerificationToken {
         guard let token = current(in: defaults), token.isExpired else { return }
         flush(in: defaults)
     }
-
 }

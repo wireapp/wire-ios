@@ -77,5 +77,4 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
 
         return nil
     }
-
 }

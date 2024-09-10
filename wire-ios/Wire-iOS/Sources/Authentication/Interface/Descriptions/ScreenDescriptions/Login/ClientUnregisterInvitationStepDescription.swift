@@ -42,5 +42,4 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
         secondaryView = nil
         footerView = nil
     }
-
 }

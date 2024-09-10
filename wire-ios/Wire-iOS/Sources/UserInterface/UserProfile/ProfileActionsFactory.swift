@@ -89,7 +89,6 @@ enum ProfileAction: Equatable {
     var isEligibleForKeyAction: Bool {
         return keyActionIcon != nil
     }
-
 }
 
 // sourcery: AutoMockable
@@ -291,5 +290,4 @@ extension UserType {
             return true
         }
     }
-
 }

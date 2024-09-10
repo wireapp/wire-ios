@@ -71,7 +71,6 @@ extension Payload {
                 return nil
             }
         }
-
     }
 
     struct Connection: Codable, EventData {
@@ -97,7 +96,6 @@ extension Payload {
         let qualifiedConversationID: QualifiedID?
         let lastUpdate: Date
         let status: ConnectionStatus
-
     }
 
     struct ConnectionUpdate: Codable {
@@ -156,5 +154,4 @@ extension Payload {
         let connection: Connection
         let type: String
     }
-
 }

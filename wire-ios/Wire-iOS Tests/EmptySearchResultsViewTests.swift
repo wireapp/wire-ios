@@ -152,5 +152,4 @@ final class EmptySearchResultsViewTests: XCTestCase {
         )
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
-
 }

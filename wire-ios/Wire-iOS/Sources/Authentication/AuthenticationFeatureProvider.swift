@@ -32,7 +32,6 @@ protocol AuthenticationFeatureProvider {
 
     /// Whether we allow the users to log in with their company manually, or only enable SSO links.
     var allowDirectCompanyLogin: Bool { get }
-
 }
 
 /**
@@ -56,5 +55,4 @@ final class BuildSettingAuthenticationFeatureProvider: AuthenticationFeatureProv
     var allowDirectCompanyLogin: Bool {
         return allowCompanyLogin && !allowOnlyEmailLogin
     }
-
 }

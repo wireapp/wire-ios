@@ -239,5 +239,4 @@ final class ConversationFileMessageTests: ConversationMessageSnapshotTestCase {
 
         verify(message: message, allColorSchemes: true)
     }
-
 }

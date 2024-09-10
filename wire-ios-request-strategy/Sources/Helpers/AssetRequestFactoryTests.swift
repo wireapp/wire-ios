@@ -210,5 +210,4 @@ class AssetRequestFactoryTests: MessagingTestBase {
             XCTAssertEqual(request.path, "/v2/assets")
         }
     }
-
 }

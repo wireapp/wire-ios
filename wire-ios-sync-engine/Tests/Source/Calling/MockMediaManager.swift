@@ -39,5 +39,4 @@ class MockMediaManager: NSObject, MediaManagerType {
     func resetAudioDevice() {
         didResetAudioDevice = true
     }
-
 }

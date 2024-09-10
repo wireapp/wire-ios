@@ -32,7 +32,5 @@ extension AppLockModule {
         func executeRequest(_ request: Request) {
             requests.append(request)
         }
-
     }
-
 }

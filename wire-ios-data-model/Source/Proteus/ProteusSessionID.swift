@@ -63,7 +63,6 @@ public struct ProteusSessionID: Hashable, Equatable {
     public static func == (lhs: ProteusSessionID, rhs: ProteusSessionID) -> Bool {
         return lhs.rawValue == rhs.rawValue
     }
-
 }
 
 extension ProteusSessionID: SafeForLoggingStringConvertible {
@@ -71,5 +70,4 @@ extension ProteusSessionID: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
         return "<\(domain.readableHash)>_<\(userID.readableHash)>_<\(clientID.readableHash)>"
     }
-
 }

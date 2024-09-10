@@ -156,5 +156,4 @@ class AVSBridgingTests: MessagingTest {
         strcpy(ptr, string)
         return UnsafePointer(ptr)
     }
-
 }

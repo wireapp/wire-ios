@@ -36,7 +36,6 @@ class MockInsertedObjectSyncTranscoder: InsertedObjectSyncTranscoder {
         objectsAskedToBeInserted.append(object)
         pendingInsertions.append(completion)
     }
-
 }
 
 class InsertedObjectSyncTests: ZMTBaseTest {
@@ -143,5 +142,4 @@ class InsertedObjectSyncTests: ZMTBaseTest {
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeInserted.isEmpty)
     }
-
 }

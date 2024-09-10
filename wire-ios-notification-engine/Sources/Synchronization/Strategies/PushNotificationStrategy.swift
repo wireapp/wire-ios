@@ -23,7 +23,6 @@ protocol PushNotificationStrategyDelegate: AnyObject {
 
     func pushNotificationStrategy(_ strategy: PushNotificationStrategy, didFetchEvents events: [ZMUpdateEvent]) async throws
     func pushNotificationStrategyDidFinishFetchingEvents(_ strategy: PushNotificationStrategy)
-
 }
 
 final class PushNotificationStrategy: AbstractRequestStrategy {
@@ -80,7 +79,6 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     public var isFetchingStreamForAPNS: Bool {
         return self.pushNotificationStatus.hasEventsToFetch
     }
-
 }
 
 // MARK: - Notification stream sync delegate
@@ -120,9 +118,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 sync.reset()
                 delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
             }
-
         }
-
     }
 
     func failedFetchingEvents(recoverable: Bool) {

@@ -73,5 +73,4 @@ final class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
         // then
         XCTAssertFalse(sharingSession.isDatabaseLocked)
     }
-
 }

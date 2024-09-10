@@ -23,7 +23,6 @@ public protocol FederationTerminationManagerInterface {
 
     func handleFederationTerminationWith(_ domain: String)
     func handleFederationTerminationBetween(_ domain: String, otherDomain: String)
-
 }
 
 public final class FederationTerminationManager: FederationTerminationManagerInterface {
@@ -62,7 +61,6 @@ public final class FederationTerminationManager: FederationTerminationManagerInt
         removeUsers(with: domain, fromConversationsOwnedBy: otherDomain)
         removeUsers(with: otherDomain, fromConversationsOwnedBy: domain)
     }
-
 }
 
 private extension FederationTerminationManager {
@@ -124,7 +122,6 @@ private extension FederationTerminationManager {
         return ZMConversation.groupConversations(notHostedOnDomains: domains, in: context)
                              .filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
     }
-
 }
 
 // MARK: - Append system messages
@@ -149,7 +146,6 @@ private extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: context)
         appendFederationTerminationSystemMessage(domains: domains, sender: selfUser, at: Date())
     }
-
 }
 
 private extension ZMConversation {
@@ -172,7 +168,6 @@ private extension ZMConversation {
 
         return domains.isSubset(of: localParticipantDomains)
     }
-
 }
 
 private extension NSManagedObjectContext {
@@ -180,5 +175,4 @@ private extension NSManagedObjectContext {
     var selfDomain: String {
         return ZMUser.selfUser(in: self).domain ?? ""
     }
-
 }

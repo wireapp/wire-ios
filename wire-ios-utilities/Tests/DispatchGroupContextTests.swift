@@ -115,5 +115,4 @@ final class DispatchGroupContextTests: ZMTBaseTest {
         sut.leave([group2])
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

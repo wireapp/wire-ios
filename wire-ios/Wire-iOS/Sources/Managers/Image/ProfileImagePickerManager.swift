@@ -32,5 +32,4 @@ final class ProfileImagePickerManager: ImagePickerManager {
         }
         return actionSheet
     }
-
 }

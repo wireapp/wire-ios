@@ -37,5 +37,4 @@ public struct ConversationMemberJoinEvent: Equatable, Codable {
     /// The members who were added.
 
     public let members: [Conversation.Member]
-
 }

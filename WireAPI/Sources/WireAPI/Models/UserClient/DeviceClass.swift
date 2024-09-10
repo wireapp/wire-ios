@@ -37,5 +37,4 @@ public enum DeviceClass: String, Codable {
     /// The client is a legalhold device.
 
     case legalhold
-
 }

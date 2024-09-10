@@ -31,5 +31,4 @@ public extension UserType {
 
         return QualifiedID(uuid: uuid, domain: domain)
     }
-
 }

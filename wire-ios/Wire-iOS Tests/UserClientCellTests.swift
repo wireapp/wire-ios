@@ -161,5 +161,4 @@ final class UserClientCellTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: container)
     }
-
 }

@@ -134,7 +134,6 @@ final class ContactsViewController: UIViewController {
         inviteOthersButton.addTarget(self, action: #selector(sendIndirectInvite), for: .touchUpInside)
         inviteOthersButton.setTitle(ContactsUI.inviteOthers.capitalized, for: .normal)
         bottomContainerView.addSubview(inviteOthersButton)
-
     }
 
     private func setupStyle() {
@@ -208,5 +207,4 @@ final class ContactsViewController: UIViewController {
             view.layoutIfNeeded()
         })
     }
-
 }

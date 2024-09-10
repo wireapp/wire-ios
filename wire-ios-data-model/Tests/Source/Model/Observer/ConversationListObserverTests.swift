@@ -94,7 +94,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // then
         XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 1)
-
     }
 
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate() {
@@ -527,7 +526,6 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserversWhenTheEstimatedUnreadCountChanges() {
         assertThatItNotifiesObserversWhenTheEstimatedUnreadCountChanges()
-
     }
 
     func assertThatItNotifiesObserversWhenTheEstimatedUnreadCountChanges(team: Team? = nil, file: StaticString = #file, line: UInt = #line) {
@@ -1161,5 +1159,4 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         // then
         assertThatTheListIsReorderedWhenAConversationChangesTheLastModifiedTime(team: team)
     }
-
 }

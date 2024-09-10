@@ -207,5 +207,4 @@ private extension Dictionary where Key == AttachmentType, Value == [NSItemProvid
 
         return nil
     }
-
 }

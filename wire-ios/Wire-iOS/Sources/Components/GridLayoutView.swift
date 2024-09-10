@@ -106,5 +106,4 @@ final class GridLayoutView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }
-
 }

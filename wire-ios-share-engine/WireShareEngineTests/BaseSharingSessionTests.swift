@@ -196,5 +196,4 @@ class BaseTest: ZMTBaseTest {
             sharedUserDefaults: .temporary()
         )
     }
-
 }

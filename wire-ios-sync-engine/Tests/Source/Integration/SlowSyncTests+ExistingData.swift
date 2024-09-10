@@ -67,5 +67,4 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         // THEN
         XCTAssertFalse(conversation.isSelfAnActiveMember)
     }
-
 }

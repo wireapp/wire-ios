@@ -26,5 +26,4 @@ public extension ZMTransportResponse {
         let message = payload?["message"] as? String
         return (httpStatus, label ?? "?", message ?? "?")
     }
-
 }

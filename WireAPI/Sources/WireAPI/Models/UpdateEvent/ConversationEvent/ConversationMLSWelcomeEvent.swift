@@ -33,5 +33,4 @@ public struct ConversationMLSWelcomeEvent: Equatable, Codable {
     /// The base 64 encoded welcome message.
 
     public let welcomeMessage: String
-
 }

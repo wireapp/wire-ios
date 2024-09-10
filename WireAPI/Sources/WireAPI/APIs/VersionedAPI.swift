@@ -21,7 +21,6 @@ import Foundation
 protocol VersionedAPI {
 
     var apiVersion: APIVersion { get }
-
 }
 
 extension VersionedAPI {
@@ -34,5 +33,4 @@ extension VersionedAPI {
             "/v\(apiVersion.rawValue)"
         }
     }
-
 }

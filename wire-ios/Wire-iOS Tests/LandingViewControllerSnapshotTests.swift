@@ -73,7 +73,6 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
 
         return navigationController
     }
-
 }
 
 // MARK: - FakeProxySettings

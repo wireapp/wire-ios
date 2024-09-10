@@ -25,7 +25,6 @@ public protocol MLSGroupVerificationProtocol {
     func updateConversation(by groupID: MLSGroupID) async
     func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async
     func updateAllConversations() async
-
 }
 
 public final class MLSGroupVerification: MLSGroupVerificationProtocol {

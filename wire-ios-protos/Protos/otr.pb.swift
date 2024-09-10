@@ -80,7 +80,6 @@ public enum Proteus_Priority: SwiftProtobuf.Enum {
     case .highPriority: return 2
     }
   }
-
 }
 
 #if swift(>=4.2)

@@ -110,7 +110,6 @@ class ProxiedRequestStrategyTests: MessagingTest {
         // then
         XCTAssertNotNil(request1)
         XCTAssertNil(request2)
-
     }
 
     func testThatItCallsTheCompletionHandlerWhenTheRequestIsCompleted() {
@@ -184,6 +183,5 @@ class ProxiedRequestStrategyTests: MessagingTest {
         XCTAssertEqual(proxyRequest, executedRequest)
         XCTAssertEqual(taskIdentifier.identifier, 1)
         XCTAssertEqual(taskIdentifier.sessionIdentifier, "123")
-
     }
 }

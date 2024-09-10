@@ -166,5 +166,4 @@ extension LinkInteractionTextView: UITextDragDelegate {
 
         return dragRequest.suggestedItems
     }
-
 }

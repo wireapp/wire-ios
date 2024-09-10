@@ -28,7 +28,6 @@ public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
     /// - Parameter userID: The qualified ID of the user to check the one on one conversation for
     /// - Returns: Whether the one on one conversation is ready.
     func invoke(userID: QualifiedID) async throws -> Bool
-
 }
 
 public enum CheckOneOnOneConversationIsReadyError: Error, Equatable {
@@ -92,5 +91,4 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
             await $0.conversationExists(conversationId: groupID.data)
         }
     }
-
 }

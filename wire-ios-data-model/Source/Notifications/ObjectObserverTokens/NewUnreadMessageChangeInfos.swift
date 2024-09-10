@@ -33,7 +33,6 @@ public final class NewUnreadMessagesChangeInfo: ObjectChangeInfo {
     public var messages: [ZMConversationMessage] {
         return object as? [ZMConversationMessage] ?? []
     }
-
 }
 
 @objc public protocol ZMNewUnreadMessagesObserver: NSObjectProtocol {
@@ -89,7 +88,6 @@ extension NewUnreadKnockMessagesChangeInfo {
             observer.didReceiveNewUnreadKnockMessages(changeInfo)
         }
     }
-
 }
 
 //////////////////////////

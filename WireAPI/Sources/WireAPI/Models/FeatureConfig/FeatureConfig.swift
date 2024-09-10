@@ -102,5 +102,4 @@ public enum FeatureConfig: Equatable, Codable {
     /// An unknown feature.
 
     case unknown(featureName: String)
-
 }

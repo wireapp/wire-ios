@@ -151,7 +151,6 @@ extension ConversationStatusLineTests_Muting {
         // THEN
         XCTAssertEqual(status.string, "5 replies, 5 messages")
     }
-
 }
 
 // MARK: - mentions & replies
@@ -183,7 +182,6 @@ extension ConversationStatusLineTests_Muting {
         // THEN
         XCTAssertEqual(status.string, "5 mentions, 5 replies, 5 messages")
     }
-
 }
 
 // MARK: - Only mentions
@@ -381,5 +379,4 @@ extension ConversationStatusLineTests_Muting {
         // THEN
         XCTAssertEqual(status.string, "1 mention, 5 messages")
     }
-
 }

@@ -173,5 +173,4 @@
         let uppercaseCharacterSet = NSCharacterSet.uppercaseLetters
         return uppercaseCharacterSet.contains(scalar)
     }
-
 }

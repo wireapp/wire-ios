@@ -171,5 +171,4 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             wait(for: [expectation], timeout: 0.4)
         }
     }
-
 }

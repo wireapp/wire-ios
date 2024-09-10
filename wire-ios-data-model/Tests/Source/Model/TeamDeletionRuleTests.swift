@@ -216,5 +216,4 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
             XCTAssertTrue(team.members.isEmpty)
         }
     }
-
 }

@@ -41,5 +41,4 @@ final class AuthenticationMissingUsernameErrorHandler: AuthenticationEventHandle
 
         return [.hideLoadingView, .startPostLoginFlow, .transition(.addUsername, mode: .reset)]
     }
-
 }

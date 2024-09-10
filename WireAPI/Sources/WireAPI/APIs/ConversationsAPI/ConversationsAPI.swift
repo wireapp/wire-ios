@@ -29,5 +29,4 @@ public protocol ConversationsAPI {
 
     /// Fetch conversation list with qualified identifiers.
     func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
-
 }

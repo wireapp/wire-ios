@@ -29,7 +29,6 @@ protocol SyncManagerProtocol {
     /// Stop all syncing activities and prepare to idle.
 
     func suspend() async throws
-
 }
 
 final class SyncManager: SyncManagerProtocol {
@@ -168,5 +167,4 @@ final class SyncManager: SyncManagerProtocol {
             try await updateEventsRepository.deleteNextPendingEvents(limit: batchSize)
         }
     }
-
 }

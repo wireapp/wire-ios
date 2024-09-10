@@ -52,7 +52,6 @@ class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {
     var deletionTimer: ZMMessageDestructionTimer? {
         return uiMOC.zm_messageDeletionTimer
     }
-
 }
 
 // MARK: Sending

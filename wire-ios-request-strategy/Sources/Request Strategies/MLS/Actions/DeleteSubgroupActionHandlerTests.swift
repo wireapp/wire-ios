@@ -122,5 +122,4 @@ final class DeleteSubgroupActionHandlerTests: ActionHandlerTestBase<DeleteSubgro
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
         ])
     }
-
 }

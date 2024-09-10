@@ -100,5 +100,4 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
         sut.layoutForTest()
         snapshotHelper.verify(matching: sut)
     }
-
 }

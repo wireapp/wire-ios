@@ -50,5 +50,4 @@ actor MockActorOneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface {
             fatalError("no mock for `getProtocolForUserWithIn`")
         }
     }
-
 }

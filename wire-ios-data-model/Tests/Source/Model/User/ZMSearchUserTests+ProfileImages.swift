@@ -150,7 +150,6 @@ final class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
             imageDataArrived.fulfill()
         }
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
-
     }
     func testThatItCanFetchCompleteProfileImageOnAQueue() {
         // given

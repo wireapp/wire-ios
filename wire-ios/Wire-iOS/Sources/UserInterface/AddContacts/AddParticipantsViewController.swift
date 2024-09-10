@@ -40,7 +40,6 @@ extension ConversationLike where Self: SwiftConversationLike {
 
         return canAddGuest && guestCanBeAdded
     }
-
 }
 
 protocol AddParticipantsConversationCreationDelegate: AnyObject {
@@ -379,7 +378,6 @@ final class AddParticipantsViewController: UIViewController {
         guard let title else { return }
 
         setupNavigationBarTitle(title.capitalized)
-
     }
 
     private func rightNavigationItemTapped() -> UIAction {
@@ -457,7 +455,6 @@ extension AddParticipantsViewController: UserSelectionObserver {
     func userSelection(_ userSelection: UserSelection, wasReplacedBy users: [UserType]) {
         updateSelectionValues()
     }
-
 }
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
@@ -467,14 +464,12 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
             self.dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)
             }
-
         }
     }
 
     func searchHeaderViewController(_ searchHeaderViewController: SearchHeaderViewController, updatedSearchQuery query: String) {
         self.performSearch()
     }
-
 }
 
 extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate {
@@ -486,7 +481,6 @@ extension AddParticipantsViewController: UIPopoverPresentationControllerDelegate
     func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
         return UIModalPresentationStyle.overFullScreen
     }
-
 }
 
 extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
@@ -527,7 +521,6 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
 
         navigationController?.pushViewController(detail, animated: true)
     }
-
 }
 
 extension AddParticipantsViewController: EmptySearchResultsViewDelegate {

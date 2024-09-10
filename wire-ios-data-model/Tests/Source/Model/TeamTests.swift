@@ -205,5 +205,4 @@ final class TeamTests: ZMConversationTestsBase {
         // then
         XCTAssertEqual(result, [membership])
     }
-
 }

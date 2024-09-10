@@ -788,7 +788,6 @@ final class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual(sut.text, line1 + line2)
         checkAttributes(for: .oList, inRange: NSRange(location: 0, length: line1.length + line2.length))
     }
-
 }
 
 private extension String {

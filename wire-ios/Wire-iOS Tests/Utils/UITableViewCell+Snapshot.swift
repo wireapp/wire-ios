@@ -36,5 +36,4 @@ extension UITableViewCell {
 
         return wrapInTableView()
     }
-
 }

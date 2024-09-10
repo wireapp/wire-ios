@@ -176,7 +176,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             }
             XCTAssertEqual(newClient.remoteIdentifier, clientId)
         }
-
     }
 
     func testThatItDoesNotAddASelfUserClientWhenReceivingAPushIfTheClientExistsAlready() async {
@@ -324,5 +323,4 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             XCTAssertNotEqual(previousLastPrekey, newLastPrekey)
         }
     }
-
 }

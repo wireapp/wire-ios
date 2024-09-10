@@ -24,7 +24,6 @@ extension UIApplication {
     static var isLeftToRightLayout: Bool {
         return UIApplication.shared.userInterfaceLayoutDirection == .leftToRight
     }
-
 }
 
 // MARK: - UIEdgeInsets

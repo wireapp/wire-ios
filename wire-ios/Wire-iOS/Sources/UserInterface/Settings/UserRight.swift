@@ -34,7 +34,6 @@ final class UserRight: UserRightInterface {
         case editPhone
         case editProfilePicture
         case editAccentColor
-
     }
 
     static func selfUserIsPermitted(to permission: UserRight.Permission) -> Bool {
@@ -67,5 +66,4 @@ final class UserRight: UserRightInterface {
             return true
         }
     }
-
 }

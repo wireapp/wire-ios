@@ -511,6 +511,5 @@ extension AudioMessageView: AudioTrackPlayerDelegate {
         DispatchQueue.main.async { [weak self] in
             self?.updateUI(state: state)
         }
-
     }
 }

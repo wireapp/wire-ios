@@ -151,5 +151,4 @@ final class ReactionSectionViewController: UIViewController {
 
         NSLayoutConstraint.activate(constraints)
     }
-
 }

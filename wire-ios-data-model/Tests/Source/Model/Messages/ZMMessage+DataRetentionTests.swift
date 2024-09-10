@@ -56,5 +56,4 @@ class ZMMessage_DataRetentionTests: BaseZMMessageTests {
         // THEN
         XCTAssertNil(uiMOC.zm_fileAssetCache.assetData(cacheKey))
     }
-
 }

@@ -217,7 +217,5 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
             return XCTFail()
         }
         XCTAssertTrue(messageChangeInfo.isObfuscatedChanged)
-
     }
-
 }

@@ -26,7 +26,6 @@ extension ZMUser {
                                 hasPassword: self.emailAddress != nil,
                                 usesCompanyLogin: self.usesCompanyLogin)
     }
-
 }
 
 extension LoginCredentials {
@@ -44,5 +43,4 @@ extension LoginCredentials {
 
         return userInfo
     }
-
 }

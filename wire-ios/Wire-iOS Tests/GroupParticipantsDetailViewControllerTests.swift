@@ -37,7 +37,6 @@ private final class MockConversation: MockStableRandomParticipantsConversation, 
     var mlsGroupID: WireDataModel.MLSGroupID?
 
     var mlsVerificationStatus: WireDataModel.MLSVerificationStatus?
-
 }
 
 final class GroupParticipantsDetailViewControllerTests: XCTestCase {

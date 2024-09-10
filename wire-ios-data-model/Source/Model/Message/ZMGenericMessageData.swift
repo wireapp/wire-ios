@@ -128,7 +128,6 @@ import WireCryptobox
             throw ProcessingError.failedToDecrypt(reason: error)
         }
     }
-
 }
 
 // MARK: - Encryption Error
@@ -155,7 +154,6 @@ extension ZMGenericMessageData {
             }
         }
     }
-
 }
 
 extension ZMGenericMessageData: EncryptionAtRestMigratable {
@@ -192,5 +190,4 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
         self.data = plaintext
         self.nonce = nil
     }
-
 }

@@ -176,7 +176,6 @@ class JobTests: XCTestCase {
         // Then
         XCTAssertEqual(result, .empty)
     }
-
 }
 
 final class MockNetworkSession: NetworkSessionProtocol {
@@ -207,7 +206,6 @@ final class MockNetworkSession: NetworkSessionProtocol {
             fatalError("unexpected endpoint which isn't mocked")
         }
     }
-
 }
 
 final class MockAccessAPIClient: AccessAPIClientProtocol {
@@ -221,7 +219,6 @@ final class MockAccessAPIClient: AccessAPIClientProtocol {
 
         return try await mock()
     }
-
 }
 
 final class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
@@ -235,5 +232,4 @@ final class MockNotificationsAPIClient: NotificationsAPIClientProtocol {
 
         return try await mock(eventID)
     }
-
 }

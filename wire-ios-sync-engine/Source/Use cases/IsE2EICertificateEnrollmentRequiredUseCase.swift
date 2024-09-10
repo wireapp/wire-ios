@@ -51,5 +51,4 @@ final public class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificate
         let hasCertificate = await selfClientCertificateProvider.hasCertificate
         return isE2EIdentityEnabled && !hasCertificate && gracePeriodEndDate.isInThePast
     }
-
 }

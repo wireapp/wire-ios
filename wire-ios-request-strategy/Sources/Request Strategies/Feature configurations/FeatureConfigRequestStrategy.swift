@@ -144,5 +144,4 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             WireLogger.featureConfigs.error("Failed processing update event \(name): \(error.localizedDescription)")
         }
     }
-
 }

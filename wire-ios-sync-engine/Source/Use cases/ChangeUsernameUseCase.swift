@@ -28,7 +28,6 @@ public enum ChangeUsernameError: Error {
 public protocol ChangeUsernameUseCaseProtocol {
 
     func invoke(username: String) async throws
-
 }
 
 class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
@@ -48,7 +47,6 @@ class ChangeUsernameUseCase: NSObject, ChangeUsernameUseCaseProtocol {
             token = userProfile.add(observer: self)
         })
     }
-
 }
 
 extension ChangeUsernameUseCase: UserProfileUpdateObserver {
@@ -70,5 +68,4 @@ extension ChangeUsernameUseCase: UserProfileUpdateObserver {
         continuation = nil
         token = nil
     }
-
 }

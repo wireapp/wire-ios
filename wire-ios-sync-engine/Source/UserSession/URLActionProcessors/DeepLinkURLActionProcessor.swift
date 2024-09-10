@@ -172,7 +172,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
         delegate?.showConversation(conversation, at: nil)
         delegate?.completedURLAction(.openConversation(id: id))
-
     }
 
     private func handleOpenUserProfile(id: UUID, delegate: PresentationDelegate?) {
@@ -186,7 +185,6 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
 
         delegate?.completedURLAction(.openUserProfile(id: id))
-
     }
 
     private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation, Error>) -> Void) {

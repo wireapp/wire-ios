@@ -41,5 +41,4 @@ public protocol UpdateEventsAPI {
         selfClientID: String,
         sinceEventID: UUID
     ) -> PayloadPager<UpdateEventEnvelope>
-
 }

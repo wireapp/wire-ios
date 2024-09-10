@@ -82,5 +82,4 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
 
         return payload
     }
-
 }

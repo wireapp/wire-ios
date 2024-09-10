@@ -88,7 +88,6 @@ final class TextFieldValidator {
 
         return .none
     }
-
 }
 
 extension PasswordRuleSet {
@@ -96,7 +95,6 @@ extension PasswordRuleSet {
     var textInputPasswordRules: UITextInputPasswordRules {
         return UITextInputPasswordRules(descriptor: encodeInKeychainFormat())
     }
-
 }
 
 extension TextFieldValidator.ValidationError: LocalizedError {
@@ -142,7 +140,6 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             return "invalid"
         }
     }
-
 }
 
 // MARK: - Email validator

@@ -90,5 +90,4 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
         conversation.setMessageDestructionTimeoutValue(.init(rawValue: newValue), for: .groupConversation)
         cell.configure(with: (conversation as Any) as! ZMConversation)
     }
-
 }

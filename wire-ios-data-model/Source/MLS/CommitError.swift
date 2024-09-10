@@ -56,7 +56,6 @@ enum CommitError: Error, Equatable {
         /// There is no way to automatically recover from the error.
 
         case giveUp
-
     }
 }
 

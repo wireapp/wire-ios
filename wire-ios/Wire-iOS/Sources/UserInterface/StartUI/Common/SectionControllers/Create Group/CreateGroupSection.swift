@@ -74,7 +74,5 @@ final class CreateGroupSection: NSObject, CollectionViewSectionController {
         case .createGuestRoom:
             delegate?.searchSectionController(self, didSelectRow: .createGuestRoom, at: indexPath)
         }
-
     }
-
 }

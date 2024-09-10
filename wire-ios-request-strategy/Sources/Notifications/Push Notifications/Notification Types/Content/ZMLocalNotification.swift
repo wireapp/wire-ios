@@ -149,7 +149,6 @@ extension ZMLocalNotification {
         guard case .message(.ephemeral) = type else { return false }
         return true
     }
-
 }
 
 // MARK: - Lookup
@@ -188,7 +187,6 @@ extension ZMLocalNotification {
             conversation?.internalEstimatedUnreadSelfReplyCount += 1
         }
     }
-
 }
 
 extension LocalNotificationType {
@@ -250,7 +248,6 @@ extension LocalNotificationType {
             return false
         }
     }
-
 }
 
 extension ZMLocalNotification {
@@ -259,7 +256,6 @@ extension ZMLocalNotification {
         let builder = BundledMessagesNotificationBuilder(messageCount: count)
         return ZMLocalNotification(builder: builder, moc: context)
     }
-
 }
 
 // Helper function inserted by Swift 4.2 migrator.

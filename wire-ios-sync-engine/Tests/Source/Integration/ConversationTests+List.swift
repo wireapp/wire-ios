@@ -50,7 +50,6 @@ class ConversationTests_List: ConversationTestsBase {
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
                                                                          data: try! message.serializedData())
-
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

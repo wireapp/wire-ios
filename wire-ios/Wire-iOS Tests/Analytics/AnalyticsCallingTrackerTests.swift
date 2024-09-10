@@ -156,7 +156,5 @@ final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper 
         sut.callInfos[mockConversation.remoteIdentifier!] = callInfo
 
         sut.callParticipantsDidChange(conversation: mockConversation, participants: [callParticipant])
-
     }
-
 }

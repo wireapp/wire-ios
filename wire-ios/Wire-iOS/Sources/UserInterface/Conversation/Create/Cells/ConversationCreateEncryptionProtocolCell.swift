@@ -36,5 +36,4 @@ extension ConversationCreateEncryptionProtocolCell: ConversationCreationValuesCo
     func configure(with values: ConversationCreationValues) {
         label.text = values.encryptionProtocol.rawValue
     }
-
 }

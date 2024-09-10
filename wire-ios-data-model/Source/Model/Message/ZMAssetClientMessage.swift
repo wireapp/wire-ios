@@ -238,7 +238,6 @@ import Foundation
     @NSManaged fileprivate var assetID_data: Data
     @NSManaged fileprivate var preprocessedSize_data: Data
     @NSManaged fileprivate var associatedTaskIdentifier_data: Data
-
 }
 
 // MARK: - Core data
@@ -282,7 +281,6 @@ extension ZMAssetClientMessage {
                 #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data),
                 #keyPath(ZMAssetClientMessage.version)
             ])
-
     }
 
     override static public func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
@@ -483,14 +481,12 @@ struct CacheAsset: AssetType {
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
                 WireLogger.assets.debug("encrypted image", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
-
             }
         case .thumbnail:
             WireLogger.assets.debug("encrypting thumbnail", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAssetPreview(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
                 WireLogger.assets.debug("encrypted thumbnail", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
-
             }
         }
 
@@ -500,7 +496,6 @@ struct CacheAsset: AssetType {
             WireLogger.messageProcessing.warn("Failed to encrypt asset message data. Reason: \(error.localizedDescription)", attributes: [.nonce: genericMessage.messageID.redactedAndTruncated()])
         }
     }
-
 }
 
 extension ZMAssetClientMessage: AssetMessage {
@@ -546,7 +541,6 @@ extension ZMAssetClientMessage: AssetMessage {
 
         return .done
     }
-
 }
 
 /// Exposes all the assets which are contained within a message
@@ -559,7 +553,6 @@ public protocol AssetMessage {
 
     /// Summary of the processing state for the assets
     var processingState: AssetProcessingState { get }
-
 }
 
 /// Represent a single asset like file, thumbnail, image and image preview.
@@ -598,5 +591,4 @@ public protocol AssetType {
 
     /// Encrypt the original or preprocessed data
     func encrypt()
-
 }

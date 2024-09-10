@@ -34,5 +34,4 @@ extension HTTPRequest: AnySnapshotStringConvertible {
           - body: \(bodyAsString ?? "none")
         """
     }
-
 }

@@ -65,5 +65,4 @@ extension ZMConversation {
 
         return self.managedObjectContext?.fetchOrAssert(request: fetchRequest).first
     }
-
 }

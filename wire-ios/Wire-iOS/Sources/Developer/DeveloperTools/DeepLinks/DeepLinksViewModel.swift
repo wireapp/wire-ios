@@ -31,7 +31,6 @@ final class DeepLinksViewModel: ObservableObject {
                 return "The deeplink you have entered is invalid."
             }
         }
-
     }
 
     let router: AppRootRouter?

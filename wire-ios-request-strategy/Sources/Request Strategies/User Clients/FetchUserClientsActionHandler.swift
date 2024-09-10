@@ -26,7 +26,6 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
     struct RequestPayload: Codable, Equatable {
 
         let qualified_users: Set<QualifiedID>
-
     }
 
     override func request(
@@ -63,7 +62,6 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
     struct ResponsePayload: Codable, Equatable {
 
         let qualified_user_map: Payload.UserClientByDomain
-
     }
 
     override func handleResponse(
@@ -120,8 +118,6 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
                 let errorInfo = response.errorInfo
                 action.fail(with: .unknown(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
             }
-
         }
     }
-
 }

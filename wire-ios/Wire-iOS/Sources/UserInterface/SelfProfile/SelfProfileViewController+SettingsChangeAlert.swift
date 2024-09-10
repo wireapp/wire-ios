@@ -50,5 +50,4 @@ extension SelfProfileViewController {
 
         self.present(settingsChangedAlert, animated: true)
     }
-
 }

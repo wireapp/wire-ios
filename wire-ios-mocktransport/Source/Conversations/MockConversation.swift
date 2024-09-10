@@ -110,6 +110,5 @@ extension MockConversation: EntityNamedProtocol {
     static func existingConversation(with identifier: String, managedObjectContext: NSManagedObjectContext) -> MockConversation? {
         let conversationPredicate = NSPredicate(format: "%K == %@", #keyPath(MockConversation.identifier), identifier)
         return MockConversation.fetch(in: managedObjectContext, withPredicate: conversationPredicate)
-
     }
 }

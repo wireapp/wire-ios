@@ -30,7 +30,6 @@ protocol URLActionRouterDelegate: AnyObject {
 
     func urlActionRouterWillShowCompanyLoginError()
     func urlActionRouterCanDisplayAlerts() -> Bool
-
 }
 
 // MARK: - URLActionRouterProtocol
@@ -296,7 +295,6 @@ extension URLActionRouter: PresentationDelegate {
         let hostingController = UIHostingController(rootView: view)
         rootViewController().present(hostingController, animated: true)
     }
-
 }
 
 // MARK: - Errors
@@ -365,7 +363,6 @@ private extension URLActionRouter {
                 return L10n.Localizable.Error.User.unkownError
             }
         }
-
     }
 
     private func mapToLocalizedError(_ error: Error) -> LocalizedError {
@@ -396,5 +393,4 @@ private extension URLActionRouter {
         }
         presentAlert(alert)
     }
-
 }

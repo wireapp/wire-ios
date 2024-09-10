@@ -43,7 +43,6 @@ protocol TeamRepositoryProtocol {
     /// Fetch the legalhold status for the self user from the server.
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
-
 }
 
 final class TeamRepository: TeamRepositoryProtocol {
@@ -233,7 +232,6 @@ final class TeamRepository: TeamRepositoryProtocol {
             userID: selfUserID
         )
     }
-
 }
 
 private extension ConversationAction {
@@ -260,5 +258,4 @@ private extension ConversationAction {
             "delete_conversation"
         }
     }
-
 }

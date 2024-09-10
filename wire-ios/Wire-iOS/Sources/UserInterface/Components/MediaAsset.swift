@@ -36,7 +36,6 @@ extension MediaAsset {
             return UIImageView(image: (self as? UIImage)?.downsized())
         }
     }
-
 }
 
 protocol MediaAssetView: UIView {

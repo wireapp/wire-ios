@@ -107,7 +107,6 @@ final class IncomingConnectionViewTests: XCTestCase {
         sut.backgroundColor = sutBackgroundColor
         snapshotHelper.verify(matching: sut.layoutForTest())
     }
-
 }
 
 // MARK: - UIView extension
@@ -119,5 +118,4 @@ private extension UIView {
         frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
         return self
     }
-
 }

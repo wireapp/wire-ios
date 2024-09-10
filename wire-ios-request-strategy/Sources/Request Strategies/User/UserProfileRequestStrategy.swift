@@ -127,7 +127,6 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
         syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)
         isFetchingAllConnectedUsers = false
     }
-
 }
 
 extension UserProfileRequestStrategy: ZMContextChangeTracker {
@@ -156,7 +155,6 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
 
         fetch(users: users, for: apiVersion)
     }
-
 }
 
 extension UserProfileRequestStrategy: ZMEventConsumer {
@@ -220,7 +218,6 @@ extension UserProfileRequestStrategy: ZMEventConsumer {
         let notification = AccountDeletedNotification(context: managedObjectContext)
         notification.post(in: managedObjectContext.notificationContext)
     }
-
 }
 
 class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
@@ -279,7 +276,6 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
             user?.needsToBeUpdatedFromBackend = false
         }
     }
-
 }
 
 class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
@@ -384,7 +380,6 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
             user?.needsToBeUpdatedFromBackend = false
         }
     }
-
 }
 
 private extension Collection where Element == ZMUser {
@@ -400,5 +395,4 @@ private extension Collection where Element == ZMUser {
             }
         }
     }
-
 }

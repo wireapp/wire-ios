@@ -46,7 +46,6 @@ class ZMConversationTests_Mute: ZMConversationTestsBase {
 
             // then
             XCTAssertEqual(ZMConversation.unreadConversationCountExcludingSilenced(in: context, excluding: nil), 0)
-
         }
     }
 
@@ -277,7 +276,6 @@ extension ZMConversationTests_Mute {
         // THEN
         XCTAssertTrue(message.isSilenced)
     }
-
 }
 
 // MARK: - Alarming messages

@@ -24,7 +24,6 @@ private extension Availability {
     var dontRemindMeUserDefaultsKey: String {
         "dont_remind_me_\(localizedName)"
     }
-
 }
 
 extension Settings {
@@ -36,5 +35,4 @@ extension Settings {
     func dontRemindUserWhenChanging(_ availability: Availability) {
         defaults.set(true, forKey: availability.dontRemindMeUserDefaultsKey)
     }
-
 }

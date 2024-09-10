@@ -63,7 +63,6 @@ class ZMAddressBookContactTests: XCTestCase {
         // then
         XCTAssertNotEqual(contact1, contact2)
         XCTAssertNotEqual(contact1.hash, contact2.hash)
-
     }
 
     func testThatTwoContactsAreNotTheSameBecausePhoneIsNotSame() {
@@ -87,7 +86,6 @@ class ZMAddressBookContactTests: XCTestCase {
         // then
         XCTAssertNotEqual(contact1, contact2)
         XCTAssertNotEqual(contact1.hash, contact2.hash)
-
     }
 
     func testThatTwoContactsAreNotTheSameBecauseNameIsNotSame() {
@@ -112,5 +110,4 @@ class ZMAddressBookContactTests: XCTestCase {
         XCTAssertNotEqual(contact1, contact2)
         XCTAssertNotEqual(contact1.hash, contact2.hash)
     }
-
 }

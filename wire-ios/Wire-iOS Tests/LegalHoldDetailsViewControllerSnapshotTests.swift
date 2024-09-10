@@ -140,5 +140,4 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
                 line: #line
             )
     }
-
 }

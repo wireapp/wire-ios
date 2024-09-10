@@ -96,5 +96,4 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         // Then
         XCTAssertEqual(response?.httpStatus, 404)
     }
-
 }

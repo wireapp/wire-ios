@@ -144,5 +144,4 @@ extension ZMUserSession {
 
         return NSError(userSessionErrorCode: errorCode, userInfo: userInfo)
     }
-
 }

@@ -37,5 +37,4 @@ extension UIFont {
 
         return UIFont(descriptor: UIFontDescriptor(fontAttributes: fontAttributes), size: pointSize)
     }
-
 }

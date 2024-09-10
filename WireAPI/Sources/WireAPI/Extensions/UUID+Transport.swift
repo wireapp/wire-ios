@@ -25,5 +25,4 @@ extension UUID {
     func transportString() -> String {
         uuidString.lowercased()
     }
-
 }

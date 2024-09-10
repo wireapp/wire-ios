@@ -40,5 +40,4 @@ final class AuthenticationStatus: AuthenticationStatusProvider {
     private var isLoggedIn: Bool {
         transportSession.cookieStorage.hasAuthenticationCookie
     }
-
 }

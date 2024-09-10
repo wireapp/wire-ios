@@ -69,5 +69,4 @@ extension MockUserType: SelfLegalHoldSubject {
                                                                 clientIdentifier: "eca3c87cfe28be49",
                                                                 lastPrekey: prekey)
     }
-
 }

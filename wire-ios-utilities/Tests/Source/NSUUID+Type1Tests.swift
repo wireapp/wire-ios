@@ -88,7 +88,6 @@ class NSUUIDType1Tests: XCTestCase {
             XCTAssertEqual(last.compare(withType1UUID: uuid as NSUUID), ComparisonResult.orderedAscending)
             XCTAssertEqual(uuid.compare(withType1UUID: last as NSUUID), ComparisonResult.orderedDescending)
             XCTAssertEqual(uuid.compare(withType1UUID: uuid as NSUUID), ComparisonResult.orderedSame)
-
         }
     }
 

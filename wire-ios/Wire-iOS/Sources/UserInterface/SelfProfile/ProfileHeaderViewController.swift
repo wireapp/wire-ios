@@ -289,7 +289,6 @@ final class ProfileHeaderViewController: UIViewController {
             groupRoleIndicatorHidden = true
         }
         groupRoleIndicator.isHidden = groupRoleIndicatorHidden
-
     }
 
     private func applyOptions() {
@@ -373,7 +372,6 @@ final class ProfileHeaderViewController: UIViewController {
 
         /// Whether to allow the user to change their availability.
         static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
-
     }
 }
 

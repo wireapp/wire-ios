@@ -92,5 +92,4 @@ final class FetchSupportedProtocolsActionHandler: ActionHandler<FetchSupportedPr
             ))
         }
     }
-
 }

@@ -71,7 +71,6 @@ struct UserPropertiesSetEventDecoder {
 
         return UserPropertiesSetEvent(property: property)
     }
-
 }
 
 struct LabelsPayload: Decodable {
@@ -84,7 +83,5 @@ struct LabelsPayload: Decodable {
         let type: Int16
         let name: String?
         let conversations: [UUID]
-
     }
-
 }

@@ -58,7 +58,6 @@ public protocol ZiphyURLRequester {
     func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier
 
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier)
-
 }
 
 // MARK: - URL Session
@@ -80,5 +79,4 @@ extension URLSession: ZiphyURLRequester {
 
         task.cancel()
     }
-
 }

@@ -132,5 +132,4 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     private func fetchCRLExpirationDate(for distributionPoint: URL) -> Date? {
         storage.date(forKey: .expirationDate(dp: distributionPoint.absoluteString))
     }
-
 }

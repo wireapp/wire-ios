@@ -105,5 +105,4 @@ final class EventProcessingTrackerTests: XCTestCase {
         XCTAssertNotNil(attributes)
         XCTAssertEqual(attributes[attribute.identifier] as? Int, 1)
     }
-
 }

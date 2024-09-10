@@ -22,7 +22,6 @@ import WireSyncEngine
 protocol FeatureChangeAcknowledger {
 
     func acknowledgeChange(for featureName: Feature.Name)
-
 }
 
 extension FeatureRepository: FeatureChangeAcknowledger {
@@ -30,7 +29,6 @@ extension FeatureRepository: FeatureChangeAcknowledger {
     func acknowledgeChange(for featureName: Feature.Name) {
         setNeedsToNotifyUser(false, for: featureName)
     }
-
 }
 
 extension UIAlertController {
@@ -102,7 +100,6 @@ extension UIAlertController {
             // Handled elsewhere.
             return nil
         }
-
     }
 
     private static func alertForFeatureChange(

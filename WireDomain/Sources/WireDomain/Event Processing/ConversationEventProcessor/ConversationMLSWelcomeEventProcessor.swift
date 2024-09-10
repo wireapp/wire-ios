@@ -27,7 +27,6 @@ protocol ConversationMLSWelcomeEventProcessorProtocol {
     /// - Parameter event: A conversation mls welcome event.
 
     func processEvent(_ event: ConversationMLSWelcomeEvent) async throws
-
 }
 
 struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcessorProtocol {
@@ -36,5 +35,4 @@ struct ConversationMLSWelcomeEventProcessor: ConversationMLSWelcomeEventProcesso
         // TODO: [WPB-10173]
         assertionFailure("not implemented yet")
     }
-
 }

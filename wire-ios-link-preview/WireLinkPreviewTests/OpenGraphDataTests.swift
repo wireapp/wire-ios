@@ -177,5 +177,4 @@ class OpenGraphDataTests: XCTestCase {
             XCTAssertTrue(expectedFailure, "No link preview present", line: line)
         }
     }
-
 }

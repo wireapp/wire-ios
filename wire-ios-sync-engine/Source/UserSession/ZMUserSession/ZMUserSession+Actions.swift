@@ -221,7 +221,6 @@ import Foundation
             applicationStatusDirectory.operationStatus.finishBackgroundTask(withTaskResult: .failed)
         }
     }
-
 }
 
 public extension ZMUserSession {

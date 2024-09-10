@@ -83,5 +83,4 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
     func testEmptySearchScreenWithKeyword() {
         snapshotHelper.verify(matching: mockNavigationController.view)
     }
-
 }

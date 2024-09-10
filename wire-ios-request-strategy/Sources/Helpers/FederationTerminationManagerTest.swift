@@ -226,7 +226,6 @@ class FederationTerminationManagerTests: MessagingTestBase {
             XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, ZMSystemMessageType.domainsStoppedFederating)
         }
     }
-
 }
 
 extension FederationTerminationManagerTests {
@@ -253,5 +252,4 @@ extension FederationTerminationManagerTests {
         conversation.needsToBeUpdatedFromBackend = false
         return conversation
     }
-
 }

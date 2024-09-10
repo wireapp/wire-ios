@@ -41,5 +41,4 @@ public struct ConversationAccessUpdateEvent: Equatable, Codable {
     /// The new legacy access role.
 
     public let legacyAccessRole: ConversationAccessRoleLegacy?
-
 }

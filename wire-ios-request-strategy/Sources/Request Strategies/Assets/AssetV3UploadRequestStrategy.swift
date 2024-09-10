@@ -92,7 +92,6 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
         applicationStatus?.requestCancellation.cancelTask(with: identifier)
         message.associatedTaskIdentifier = nil
     }
-
 }
 
 extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
@@ -239,5 +238,4 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
         return false
     }
-
 }

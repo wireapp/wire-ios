@@ -70,5 +70,4 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             managedObjectContext.leaveAllGroups(groups)
         }
     }
-
 }

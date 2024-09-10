@@ -100,7 +100,6 @@ final class UTIHelperTests: XCTestCase {
         XCTAssertEqual(UTIHelper.convertToMime(uti: "public.png"), "image/png")
         XCTAssertEqual(UTIHelper.convertToMime(uti: "public.svg-image"), "image/svg+xml")
         XCTAssertEqual(UTIHelper.convertToMime(uti: "public.mpeg-4"), "video/mp4")
-
     }
 
     func testThatConvertToMimeConvertsFileExtensions() {

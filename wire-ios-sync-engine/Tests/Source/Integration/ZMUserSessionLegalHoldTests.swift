@@ -116,5 +116,4 @@ final class ZMUserSessionLegalHoldTests: IntegrationTest {
         XCTAssertEqual(realSelfUser.clients.count, 1)
         XCTAssertEqual(realSelfUser.legalHoldStatus, .pending(legalHoldRequest))
     }
-
 }

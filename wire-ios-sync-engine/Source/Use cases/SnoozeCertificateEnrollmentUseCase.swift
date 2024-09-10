@@ -80,7 +80,6 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
         recurringActionService.registerAction(recurringAction)
     }
-
 }
 
 final class SnoozeTimeProvider {
@@ -116,5 +115,4 @@ final class SnoozeTimeProvider {
             return .oneDay
         }
     }
-
 }

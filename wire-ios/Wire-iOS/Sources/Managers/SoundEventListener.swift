@@ -139,7 +139,6 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
             playSoundIfAllowed(.incomingKnockSound)
         }
     }
-
 }
 
 extension SoundEventListener: WireCallCenterCallStateObserver {
@@ -195,9 +194,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             mediaManager.stop(sound: .ringingFromThemInCallSound)
             mediaManager.stop(sound: .ringingFromThemSound)
         }
-
     }
-
 }
 
 extension SoundEventListener {
@@ -229,5 +226,4 @@ extension SoundEventListener: ZMNetworkAvailabilityObserver {
             soundEventWatchDog.isMuted = false
         }
     }
-
 }

@@ -128,7 +128,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
                 lastRestortPrekey: lastRestortPrekey,
                 apiVersion: .v0
             )
-
         }
 
         // then
@@ -277,7 +276,6 @@ final class UserClientRequestFactoryTests: MessagingTest {
                 XCTAssertNotNil(error, "Should not return request if client does not have remoteIdentifier")
             }
         }
-
     }
 
     // MARK: - Deleting client

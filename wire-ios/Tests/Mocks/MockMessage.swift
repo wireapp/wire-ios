@@ -153,7 +153,6 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
         }
 
         set {
-
         }
     }
     var thumbnailAssetID: String? = ""
@@ -285,7 +284,6 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
 }
 
 final class MockKnockMessageData: NSObject, ZMKnockMessageData {
-
 }
 
 final class MockImageMessageData: NSObject, ZMImageMessageData {
@@ -454,6 +452,5 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var systemMessageType: ZMSystemMessageType = ZMSystemMessageType.invalid
 
     required override init() {
-
     }
 }

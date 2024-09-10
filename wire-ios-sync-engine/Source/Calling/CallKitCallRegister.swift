@@ -86,5 +86,4 @@ class CallKitCallRegister {
     func lookupCalls(by handle: CallHandle) -> [CallKitCall] {
         storage.values.filter { $0.handle == handle }
     }
-
 }

@@ -21,5 +21,4 @@ import Foundation
 enum FederationEventCodingKeys: String, CodingKey {
 
     case payload = "data"
-
 }

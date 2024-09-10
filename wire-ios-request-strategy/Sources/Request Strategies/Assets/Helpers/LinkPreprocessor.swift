@@ -95,5 +95,4 @@ import Foundation
         let wholeRange = NSRange(text.startIndex ..< text.endIndex, in: text)
         return regex.matches(in: text, options: [], range: wholeRange).compactMap { $0.range(at: 0) }
     }
-
 }

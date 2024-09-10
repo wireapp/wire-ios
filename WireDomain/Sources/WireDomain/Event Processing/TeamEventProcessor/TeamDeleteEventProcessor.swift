@@ -25,7 +25,6 @@ protocol TeamDeleteEventProcessorProtocol {
     /// Process a team delete event.
 
     func processEvent() async throws
-
 }
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
@@ -34,5 +33,4 @@ struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
         // TODO: [WPB-10184]
         assertionFailure("not implemented yet")
     }
-
 }

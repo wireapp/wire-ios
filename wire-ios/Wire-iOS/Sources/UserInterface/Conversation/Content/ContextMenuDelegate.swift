@@ -43,7 +43,6 @@ extension ContextMenuDelegate {
                                                    context: .content,
                                                    view: view)
     }
-
 }
 
 extension ContextMenuDelegate where Self: LinkViewDelegate {
@@ -61,6 +60,5 @@ extension ContextMenuDelegate where Self: LinkViewDelegate {
                                           actionProvider: { _ in
                                             return self.makeContextMenu(title: url.absoluteString, view: view)
         })
-
     }
 }

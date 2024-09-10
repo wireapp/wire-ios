@@ -95,5 +95,4 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
             XCTAssertEqual(client?.user, user)
         }
     }
-
 }

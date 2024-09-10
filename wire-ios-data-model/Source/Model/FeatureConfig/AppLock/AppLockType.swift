@@ -96,5 +96,4 @@ public protocol AppLockType {
     /// - Returns: The authentication result, which should be either `granted` or `denied`.
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult
-
 }

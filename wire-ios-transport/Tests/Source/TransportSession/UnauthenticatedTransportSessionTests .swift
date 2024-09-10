@@ -26,7 +26,6 @@ private final class MockTask: DataTaskProtocol {
     func resume() {
         resumeCallCount += 1
     }
-
 }
 
 private final class MockURLSession: SessionProtocol {
@@ -44,7 +43,6 @@ private final class MockURLSession: SessionProtocol {
         }
         return nextMockTask ?? MockTask()
     }
-
 }
 
 private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
@@ -59,7 +57,6 @@ private final class MockReachability: NSObject, ReachabilityProvider, TearDownCa
     func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
         return NSObject()
     }
-
 }
 
 @objcMembers
@@ -237,7 +234,6 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         // when
         _ = sut.enqueueRequest { request }
         XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
-
     }
 
     func testWrongURLResponseError() {

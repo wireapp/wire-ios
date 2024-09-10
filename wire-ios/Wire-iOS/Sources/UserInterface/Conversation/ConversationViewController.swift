@@ -665,5 +665,4 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }
-
 }

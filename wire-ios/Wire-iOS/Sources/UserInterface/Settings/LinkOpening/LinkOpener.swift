@@ -42,7 +42,6 @@ extension URL {
         browser.modalPresentationCapturesStatusBarAppearance = true
         viewController.present(browser, animated: true, completion: nil)
     }
-
 }
 
 protocol LinkOpeningOption {
@@ -76,7 +75,6 @@ extension LinkOpeningOption {
     static var optionsAvailable: Bool {
         return availableOptions.count > 1
     }
-
 }
 
 extension UIApplication {
@@ -84,5 +82,4 @@ extension UIApplication {
     func canHandleScheme(_ scheme: String) -> Bool {
         return URL(string: scheme).map(canOpenURL) ?? false
     }
-
 }

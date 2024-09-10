@@ -127,7 +127,6 @@ extension FetchSubgroupActionHandler {
         let id: UUID
         let domain: String
     }
-
 }
 
 extension FetchSubgroupActionHandler.Subgroup {

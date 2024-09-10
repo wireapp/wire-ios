@@ -67,7 +67,6 @@ private final class ModalInteractionController: UIPercentDrivenInteractiveTransi
         default: break
         }
     }
-
 }
 
 final class ModalPresentationViewController: UIViewController, UIViewControllerTransitioningDelegate {
@@ -148,5 +147,4 @@ final class ModalPresentationViewController: UIViewController, UIViewControllerT
     func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return interactionController.interactionInProgress ? interactionController : nil
     }
-
 }

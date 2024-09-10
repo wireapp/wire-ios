@@ -34,7 +34,6 @@ final class ConversationCreateServicesCell: IconToggleCell {
         icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
-
 }
 
 extension ConversationCreateServicesCell: ConversationCreationValuesConfigurable {

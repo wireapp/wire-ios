@@ -47,5 +47,4 @@ extension UIButton {
             layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
         }
     }
-
 }

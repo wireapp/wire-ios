@@ -24,7 +24,6 @@ extension Notification.Name {
     public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
 
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
-
 }
 
 @objcMembers public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
@@ -155,9 +154,7 @@ extension Notification.Name {
         currentSyncPhase = .fetchingMissedEvents
         self.log("quick sync")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
-
     }
-
 }
 
 // MARK: Slow Sync

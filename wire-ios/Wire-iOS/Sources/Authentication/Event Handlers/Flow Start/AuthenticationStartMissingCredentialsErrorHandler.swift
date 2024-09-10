@@ -42,5 +42,4 @@ final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEve
         // Prepare the next step
         return [.startPostLoginFlow, .transition(.addEmailAndPassword, mode: .reset)]
     }
-
 }

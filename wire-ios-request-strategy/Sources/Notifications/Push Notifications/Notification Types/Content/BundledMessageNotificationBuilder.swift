@@ -45,5 +45,4 @@ final class BundledMessagesNotificationBuilder: NotificationBuilder {
     func userInfo() -> NotificationUserInfo? {
         return nil
     }
-
 }

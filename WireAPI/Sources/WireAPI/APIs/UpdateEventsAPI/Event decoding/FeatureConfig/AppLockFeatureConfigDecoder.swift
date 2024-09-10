@@ -39,7 +39,5 @@ struct AppLockFeatureConfigDecoder {
 
         let enforceAppLock: Bool
         let inactivityTimeoutSecs: UInt
-
     }
-
 }

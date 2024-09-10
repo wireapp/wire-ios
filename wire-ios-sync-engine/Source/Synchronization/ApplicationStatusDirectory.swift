@@ -115,5 +115,4 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     public func requestQuickSync() {
         syncStatus.forceQuickSync()
     }
-
 }

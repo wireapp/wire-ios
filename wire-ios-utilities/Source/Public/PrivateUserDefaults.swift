@@ -92,19 +92,16 @@ extension PrivateUserDefaults {
     public func removeObject(forKey key: Key) {
         storage.removeObject(forKey: scopeKey(key))
     }
-
 }
 
 public protocol DefaultsKey {
 
     var rawValue: String { get }
-
 }
 
 extension Never: DefaultsKey {
 
     public var rawValue: String { fatalError() }
-
 }
 
 extension PrivateUserDefaults where Key == Never {
@@ -118,5 +115,4 @@ extension PrivateUserDefaults where Key == Never {
             storage.removeObject(forKey: key)
         }
     }
-
 }

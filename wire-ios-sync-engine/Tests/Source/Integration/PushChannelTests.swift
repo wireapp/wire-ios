@@ -121,5 +121,4 @@ class PushChannelTests: IntegrationTest {
         let targetRequests = mockTransportSession.receivedRequests().filter { $0.path == expectedRequest }
         XCTAssertEqual(targetRequests.count, 1)
     }
-
 }

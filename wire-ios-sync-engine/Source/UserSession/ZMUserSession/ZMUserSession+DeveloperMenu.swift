@@ -29,5 +29,4 @@ extension ZMUserSession {
     public func updateMLSMigrationStatus() async throws {
         try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
     }
-
 }

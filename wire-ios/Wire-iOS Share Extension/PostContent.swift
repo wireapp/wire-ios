@@ -95,7 +95,6 @@ final class PostContent {
     func cancel(completion: @escaping () -> Void) {
         sendController?.cancel(completion: completion)
     }
-
 }
 /// What to do when a conversation that was verified degraded (we discovered a new
 /// non-verified client)

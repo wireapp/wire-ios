@@ -105,7 +105,6 @@ class ZMSnapshotTestCase: XCTestCase {
         } catch {
             XCTAssertNil(error, "Unexpected error \(error)")
         }
-
     }
 
     func wipeCaches() {
@@ -119,5 +118,4 @@ class ZMSnapshotTestCase: XCTestCase {
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
         uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
     }
-
 }

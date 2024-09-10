@@ -158,7 +158,6 @@ final class ReplyComposingView: UIView {
     @objc func onTap() {
         self.delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
     }
-
 }
 
 // MARK: - ReplyComposingView Extension

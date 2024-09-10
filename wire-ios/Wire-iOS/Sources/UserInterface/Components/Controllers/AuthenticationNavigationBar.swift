@@ -26,7 +26,6 @@ final class AuthenticationNavigationBar: DefaultNavigationBar {
         setBackgroundImage(UIImage(), for: .default)
         shadowImage = UIImage()
     }
-
 }
 
 extension AuthenticationNavigationBar {
@@ -44,5 +43,4 @@ extension AuthenticationNavigationBar {
         button.accessibilityLabel = L10n.Localizable.General.back
         return button
     }
-
 }

@@ -79,5 +79,4 @@ final class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
             XCTAssertTrue(message.causedSecurityLevelDegradation)
         }
     }
-
 }

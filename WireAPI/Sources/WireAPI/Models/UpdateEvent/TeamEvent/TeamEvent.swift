@@ -33,5 +33,4 @@ public enum TeamEvent: Equatable, Codable {
     /// A user's team membership was updated.
 
     case memberUpdate(TeamMemberUpdateEvent)
-
 }

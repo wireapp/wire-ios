@@ -114,7 +114,6 @@ class EncryptionContextTests: XCTestCase {
 
         // THEN
         self.waitForExpectations(timeout: 0) { _ in }
-
     }
 
     func testThatItReceivesTheSameSessionStatusWithNestedPerform() {
@@ -163,7 +162,6 @@ class EncryptionContextTests: XCTestCase {
 
             mainContext.perform { (context2: EncryptionSessionsDirectory) in
                 _ = try! context2.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
-
             }
 
             _ = try! context1.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
@@ -201,7 +199,6 @@ class EncryptionContextTests: XCTestCase {
 
         self.waitForExpectations(timeout: 0) { _ in }
     }
-
 }
 
 // MARK: - Logging

@@ -46,5 +46,4 @@ final class AuthenticationStartCompanyLoginLinkEventHandler: AuthenticationEvent
             return [.startCompanyLogin(code: code)]
         }
     }
-
 }

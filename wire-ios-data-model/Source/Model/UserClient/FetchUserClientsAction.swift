@@ -29,7 +29,6 @@ public struct QualifiedClientID: Hashable {
         self.domain = domain
         self.clientID = clientID
     }
-
 }
 
 /// An action to fetch all user client IDs given a set of
@@ -49,7 +48,6 @@ public final class FetchUserClientsAction: EntityAction {
         case missingResponsePayload
         case failedToDecodeResponsePayload
         case unknown(status: Int, label: String, message: String)
-
     }
 
     // MARK: - Properties
@@ -66,5 +64,4 @@ public final class FetchUserClientsAction: EntityAction {
         self.userIDs = userIDs
         self.resultHandler = resultHandler
     }
-
 }

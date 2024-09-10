@@ -70,5 +70,4 @@ class String_FilenameTests: XCTestCase {
         // WHEN & THEN
         XCTAssertEqual(filename, "alashkhas-almfdlyn")
     }
-
 }

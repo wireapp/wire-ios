@@ -117,7 +117,5 @@ public struct Conversation: Equatable, Codable {
         case legacyAccessRole = "access_role"
         case lastEvent = "last_event"
         case lastEventTime = "last_event_time"
-
     }
-
 }

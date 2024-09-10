@@ -70,5 +70,4 @@ final class ZiphyPaginationController {
             self.updateBlock?(.failure(error))
         }
     }
-
 }

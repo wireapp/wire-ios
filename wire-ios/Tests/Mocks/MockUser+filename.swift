@@ -27,5 +27,4 @@ extension MockUser {
     func filename(suffix: String? = nil) -> String {
         return "dummy.txt"
     }
-
 }

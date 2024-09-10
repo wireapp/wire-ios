@@ -353,5 +353,4 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(data, encryptedData)
         }
     }
-
 }

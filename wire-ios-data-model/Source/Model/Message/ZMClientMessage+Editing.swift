@@ -68,5 +68,4 @@ extension ZMClientMessage {
 
         return true
     }
-
 }

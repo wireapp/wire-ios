@@ -32,5 +32,4 @@ public struct SelfDeletingMessagesFeatureConfig: Equatable, Codable {
     /// A value of 0 indicates that the self-deleting messages are not mandatory.
 
     public let enforcedTimeoutSeconds: UInt
-
 }

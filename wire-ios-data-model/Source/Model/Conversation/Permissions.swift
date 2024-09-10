@@ -53,7 +53,6 @@ public struct Permissions: OptionSet {
     public static let member: Permissions = [.partner, .deleteConversation, .addRemoveConversationMember, .modifyConversationMetaData, .getMemberPermissions]
     public static let admin: Permissions = [.member, .addTeamMember, .removeTeamMember, .setTeamData, .setMemberPermissions]
     public static let owner: Permissions = [.admin, .getBilling, .setBilling, .deleteTeam]
-
 }
 
 // MARK: - Debugging
@@ -79,14 +78,12 @@ extension Permissions: CustomDebugStringConvertible {
     public var debugDescription: String {
         return "[\(Permissions.descriptions.filter { contains($0.0) }.map { $0.1 }.joined(separator: ", "))]"
     }
-
 }
 
 extension Permissions: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.rawValue)
     }
-
 }
 
 // MARK: - Objective-C Interoperability

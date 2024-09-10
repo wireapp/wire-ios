@@ -114,7 +114,6 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
             } catch {
                 XCTFail()
             }
-
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -161,5 +160,4 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
         // Then
         XCTAssertEqual(conversation.typingUsers.count, 1)
     }
-
 }

@@ -67,7 +67,6 @@ class ZMMessageTests_SystemMessages: BaseZMMessageTests {
         // then
         XCTAssertEqual(systemMessage.isDecryptionErrorRecoverable, recoverable, file: file, line: line)
     }
-
 }
 
 extension ZMMessageTests_SystemMessages {
@@ -189,5 +188,4 @@ extension ZMMessageTests_SystemMessages {
         XCTAssertEqual(message!.users.count, 2)
         XCTAssertTrue(conversation.lastMessage is ZMSystemMessage)
     }
-
 }

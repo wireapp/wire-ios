@@ -63,5 +63,4 @@ public class BaseFetchMLSGroupInfoAction: EntityAction {
     init(resultHandler: ResultHandler? = nil) {
         self.resultHandler = resultHandler
     }
-
 }

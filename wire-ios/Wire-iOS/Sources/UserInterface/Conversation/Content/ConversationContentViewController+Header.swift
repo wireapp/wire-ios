@@ -51,5 +51,4 @@ extension ConversationContentViewController {
             tableView.tableHeaderView = nil
         }
     }
-
 }

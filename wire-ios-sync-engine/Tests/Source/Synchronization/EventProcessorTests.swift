@@ -254,5 +254,4 @@ final class EventProcessorTests: MessagingTest {
 class MockOperationStateProvider: OperationStateProvider {
 
     var operationState = SyncEngineOperationState.background
-
 }

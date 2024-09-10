@@ -236,7 +236,6 @@ public final class AppLockController: AppLockType {
     func fetchPasscode() -> Data? {
         return try? Keychain.fetchItem(keychainItem)
     }
-
 }
 
 // MARK: - TEST ONLY!
@@ -251,5 +250,4 @@ extension AppLockController {
     func _setLastCheckpoint(_ checkpoint: Date) {
         lastCheckpoint = checkpoint
     }
-
 }

@@ -127,7 +127,6 @@ class BackupMetadataTests: XCTestCase {
         // Then
         XCTAssertEqual(error, BackupMetadata.VerificationError.userMismatch)
     }
-
 }
 
 // MARK: - Helper

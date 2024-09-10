@@ -155,5 +155,4 @@ public class RegistrationStatus: RegistrationStatusProtocol {
         }
         self.phase = .none
     }
-
 }

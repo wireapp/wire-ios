@@ -32,6 +32,5 @@ extension Payload {
 
         let userIDs: [UUID]?
         let users: [ConversationMember]?
-
     }
 }

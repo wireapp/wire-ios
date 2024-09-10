@@ -52,5 +52,4 @@ final class UserEmailChangeEventHandler: AuthenticationEventHandler {
         // Complete the login flow when the user finished adding email
         return [.hideLoadingView, .completeLoginFlow]
     }
-
 }

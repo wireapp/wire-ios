@@ -33,7 +33,5 @@ public extension NSManagedObjectContext {
             precondition(zm_isUserInterfaceContext, "zm_usePackagingFeatureConfig can only be accessed on the ui context")
             userInfo[NSManagedObjectContext.PackagingFeatureConfigKey] = newValue
         }
-
     }
-
 }

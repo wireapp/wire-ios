@@ -36,7 +36,6 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
         sut = UpdateMLSGroupVerificationStatusUseCase(e2eIVerificationStatusService: e2eIVerificationStatusService,
                                                       syncContext: syncMOC,
                                                       featureRepository: mockFeatureRepository)
-
     }
 
     override func tearDown() {
@@ -147,5 +146,4 @@ class UpdateMLSGroupVerificationStatusUseCaseTests: ZMConversationTestsBase {
             try await sut.invoke(for: mockConversation, groupID: groupID)
         }
     }
-
 }

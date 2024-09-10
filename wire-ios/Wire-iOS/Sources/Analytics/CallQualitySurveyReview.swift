@@ -73,5 +73,4 @@ enum CallQualitySurveyReview {
         default: return nil
         }
     }
-
 }

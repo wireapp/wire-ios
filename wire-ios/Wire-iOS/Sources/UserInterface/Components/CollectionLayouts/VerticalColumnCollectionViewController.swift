@@ -34,7 +34,6 @@ struct AdaptiveColumnCount {
     /// The number of columns when the container has a regular horizontal size class,
     /// and a width larger than 1024pt.
     let large: Int
-
 }
 
 /**
@@ -124,5 +123,4 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
     func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize {
         fatalError("Subclasses of 'VerticalColumnCollectionViewController' must implement this method.")
     }
-
 }

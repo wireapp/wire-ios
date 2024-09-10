@@ -28,7 +28,6 @@ extension UIViewController {
 
         return isInWindow && notCoveredModally && viewIsVisible
     }
-
 }
 
 extension UIView {

@@ -94,5 +94,4 @@ final class ConversationPreviewViewController: UIViewController {
             self.actionController.handleAction(action)
         }
     }
-
 }

@@ -27,5 +27,4 @@ enum ConversationEventCodingKeys: String, CodingKey {
     case subconversation = "subconv"
     case timestamp = "time"
     case payload = "data"
-
 }

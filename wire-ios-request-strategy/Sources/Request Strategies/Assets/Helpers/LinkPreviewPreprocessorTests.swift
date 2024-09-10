@@ -34,7 +34,6 @@ final class MockLinkDetector: LinkPreviewDetectorType {
         excludedRanges = excluding
         completion(nextResult)
     }
-
 }
 
 class LinkPreviewPreprocessorTests: MessagingTestBase {
@@ -294,5 +293,4 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, .done)
         }
     }
-
 }

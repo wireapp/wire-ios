@@ -40,5 +40,4 @@ public extension Date {
     var isInThePast: Bool {
         return compare(Date()) != .orderedDescending
     }
-
 }

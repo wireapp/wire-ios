@@ -97,5 +97,4 @@ public enum CompanyLoginError: Error, Equatable {
         case .insufficientPermissions: return "10"
         }
     }
-
 }

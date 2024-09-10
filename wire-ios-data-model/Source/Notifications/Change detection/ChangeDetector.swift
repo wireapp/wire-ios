@@ -35,5 +35,4 @@ protocol ChangeDetector {
     /// Reset the local state.
 
     func reset()
-
 }

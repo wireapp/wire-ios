@@ -31,7 +31,6 @@ protocol UserEventProcessorProtocol {
     /// - Parameter event: A user update event.
 
     func processEvent(_ event: UserEvent) async throws
-
 }
 
 struct UserEventProcessor {
@@ -88,5 +87,4 @@ struct UserEventProcessor {
             try await updateEventProcessor.processEvent(event)
         }
     }
-
 }

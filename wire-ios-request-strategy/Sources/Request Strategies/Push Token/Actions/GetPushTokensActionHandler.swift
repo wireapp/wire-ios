@@ -70,7 +70,6 @@ class GetPushTokensActionHandler: ActionHandler<GetPushTokensAction> {
             action.notifyResult(.failure(.unknown(status: response.httpStatus)))
         }
     }
-
 }
 
 extension GetPushTokensActionHandler {
@@ -78,7 +77,6 @@ extension GetPushTokensActionHandler {
     struct ResponsePayload: Codable {
 
         let tokens: [Token]
-
     }
 
     struct Token: Codable {
@@ -95,7 +93,5 @@ extension GetPushTokensActionHandler {
         var isVoIPToken: Bool {
             return transport.isOne(of: ["APNS_VOIP", "APNS_VOIP_SANDBOX"])
         }
-
     }
-
 }

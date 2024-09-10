@@ -73,5 +73,4 @@ public extension LocationMessageData {
             longitude: CLLocationDegrees(longitude)
         )
     }
-
 }

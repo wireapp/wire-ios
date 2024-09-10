@@ -96,7 +96,5 @@ final class MockPaginatedRequester: ZiphyURLRequester {
         case .error(let error):
             completionHandler(nil, nil, error)
         }
-
     }
-
 }

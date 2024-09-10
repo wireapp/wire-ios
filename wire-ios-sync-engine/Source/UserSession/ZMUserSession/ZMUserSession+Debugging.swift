@@ -350,5 +350,4 @@ private class DebugCommandVariables: DebugCommandMixin {
             return onComplete(.unknownCommand)
         }
     }
-
 }

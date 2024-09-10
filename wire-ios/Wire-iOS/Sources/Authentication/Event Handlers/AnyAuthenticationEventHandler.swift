@@ -52,5 +52,4 @@ final class AnyAuthenticationEventHandler<Context> {
     func handleEvent(currentStep: AuthenticationFlowStep, context: Context) -> [AuthenticationCoordinatorAction]? {
         return handlerBlock(currentStep, context)
     }
-
 }

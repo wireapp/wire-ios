@@ -32,7 +32,6 @@ protocol ProteusMessageDecryptorProtocol {
     func decryptedEventData(
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent
-
 }
 
 struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
@@ -148,5 +147,4 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
             return (selfClient, senderUser, senderClient, proteusSessionID)
         }
     }
-
 }

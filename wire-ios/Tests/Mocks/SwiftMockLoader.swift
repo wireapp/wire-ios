@@ -43,5 +43,4 @@ final class SwiftMockLoader {
             fatalError("Couldn't decode Mockuser: \(error.localizedDescription)")
         }
     }
-
 }

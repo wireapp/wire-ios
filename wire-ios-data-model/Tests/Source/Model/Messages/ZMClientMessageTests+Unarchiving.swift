@@ -113,5 +113,4 @@ class ZMClientMessageTests_Unarchiving: BaseZMClientMessageTests {
         // then
         XCTAssertFalse(conversation.isArchived)
     }
-
 }

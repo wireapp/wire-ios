@@ -73,5 +73,4 @@ struct CacheFileRelocator {
         }
         return result
     }
-
 }

@@ -134,5 +134,4 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let moreMessageIds = [message3, message4].map { $0.nonce!.transportString() }
         XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds, moreMessageIds)
     }
-
 }

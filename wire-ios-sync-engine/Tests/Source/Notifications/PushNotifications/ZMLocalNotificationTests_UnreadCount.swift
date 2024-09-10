@@ -65,5 +65,4 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
             XCTAssertFalse(LocalNotificationType.message(contentType).shouldIncreaseUnreadCount)
         }
     }
-
 }

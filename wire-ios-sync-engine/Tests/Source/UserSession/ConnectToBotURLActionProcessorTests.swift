@@ -83,5 +83,4 @@ final class ConnectToBotURLActionProcessorTests: IntegrationTest {
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? AddBotError, AddBotError.general)
     }
-
 }

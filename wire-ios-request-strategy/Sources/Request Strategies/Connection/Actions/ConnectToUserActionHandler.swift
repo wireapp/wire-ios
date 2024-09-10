@@ -50,7 +50,6 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
                                   method: .post,
                                   payload: payloadAsString as ZMTransportData,
                                   apiVersion: apiVersion.rawValue)
-
     }
 
     func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -106,5 +105,4 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
 
         action.notifyResult(.success(Void()))
     }
-
 }

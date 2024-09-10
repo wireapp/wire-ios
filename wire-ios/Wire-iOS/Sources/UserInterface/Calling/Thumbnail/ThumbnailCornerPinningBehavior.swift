@@ -68,9 +68,7 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
             fieldBehaviors.append(fieldBehavior)
             addChildBehavior(fieldBehavior)
-
         }
-
     }
 
     // MARK: - Behavior
@@ -158,7 +156,6 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
         updateFieldRegion(at: .topRight, point: topRight)
         updateFieldRegion(at: .bottomLeft, point: bottomLeft)
         updateFieldRegion(at: .bottomRight, point: bottomRight)
-
     }
 
     // MARK: - Utilities
@@ -174,5 +171,4 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
     func positionForCurrentCorner() -> CGPoint? {
         return currentCorner.flatMap(position)
     }
-
 }

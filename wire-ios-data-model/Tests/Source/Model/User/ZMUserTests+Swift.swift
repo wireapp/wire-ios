@@ -69,7 +69,6 @@ final class ZMUserTests_Swift: ModelObjectsTests {
         XCTAssertEqual(user.previewProfileAssetIdentifier, initialPreview)
         XCTAssertEqual(user.completeProfileAssetIdentifier, initialComplete)
     }
-
 }
 
 // MARK: - AssetV3 response parsing
@@ -188,7 +187,6 @@ extension ZMUserTests_Swift {
             XCTAssertEqual(user.imageData(for: .complete), completeData)
         }
     }
-
 }
 
 // MARK: - AssetV3 filter predicates
@@ -417,7 +415,6 @@ extension ZMUserTests_Swift {
         XCTAssertEqual(users.count, 3)
         XCTAssertEqual(users, [user1, user2, user3])
     }
-
 }
 
 // MARK: - Filename
@@ -515,7 +512,6 @@ extension ZMUserTests_Swift {
         // then
         XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, .alert)
     }
-
 }
 
 // MARK: - Broadcast Recipients
@@ -786,7 +782,6 @@ extension ZMUserTests_Swift {
 
         XCTAssertEqual(recipients, Set(expectedRecipients))
     }
-
 }
 
 // MARK: - Bot support
@@ -873,7 +868,6 @@ extension ZMUserTests_Swift {
         // then
         XCTAssertTrue(teamOneToOneConversation.localParticipants.contains(sut))
     }
-
 }
 
 // MARK: - Active conversations
@@ -900,7 +894,6 @@ extension ZMUserTests_Swift {
         // then
         XCTAssertEqual(sut.activeConversations, [conversation])
     }
-
 }
 
 // MARK: - Self user tests
@@ -996,7 +989,6 @@ extension ZMUserTests_Swift {
         // THEN
         XCTAssertEqual(user.supportedProtocols, [.proteus, .mls])
     }
-
 }
 
 // MARK: - Verifying user
@@ -1032,7 +1024,6 @@ extension ZMUserTests_Swift {
         XCTAssertFalse(selfUser.isTrusted)
         XCTAssertFalse(user.isVerified)
     }
-
 }
 
 // MARK: - Connections
@@ -1168,7 +1159,6 @@ extension ZMUserTests_Swift {
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }
 
 // MARK: - Domain tests

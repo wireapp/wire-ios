@@ -38,7 +38,6 @@ extension ZMUser {
             return cacheIdentifier(suffix: completeProfileAssetIdentifier)
         }
     }
-
 }
 
 // MARK: NSManagedObjectContext
@@ -175,7 +174,6 @@ extension NSManagedObjectContext {
             return largeUserImageCache.containsObject(forKey: cacheKey)
         }
     }
-
 }
 
 public extension UserImageLocalCache {

@@ -206,5 +206,4 @@ class LinkPreviewDetectorTests: XCTestCase {
         // then
         waitForExpectations(timeout: 0.2, handler: nil)
     }
-
 }

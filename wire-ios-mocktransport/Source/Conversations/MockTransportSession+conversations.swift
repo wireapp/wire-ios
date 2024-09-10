@@ -155,7 +155,6 @@ extension MockTransportSession {
             ] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
-
     }
 
     @objc(processDeleteLinkForConversation:payload:apiVersion:)

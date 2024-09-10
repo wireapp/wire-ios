@@ -39,7 +39,6 @@ protocol CallKitManagerDelegate: AnyObject {
     /// End all active calls in all user sessions
 
     func endAllCalls()
-
 }
 
 @objc
@@ -53,7 +52,6 @@ public protocol CallKitManagerInterface {
     func requestMuteCall(in conversation: ZMConversation, muted: Bool)
     func requestJoinCall(in conversation: ZMConversation, video: Bool)
     func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?)
-
 }
 
 @objc
@@ -534,7 +532,6 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             provider.reportCall(with: call.id, endedAt: timestamp?.clampForCallKit() ?? Date(), reason: reason)
         }
     }
-
 }
 
 // MARK: - Provider delegate
@@ -800,7 +797,6 @@ extension CallKitManager: CXProviderDelegate {
         log("didDeactivate audioSession")
         mediaManager?.resetAudioDevice()
     }
-
 }
 
 // MARK: - Callstate observer
@@ -874,7 +870,6 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
             reason: .unanswered
         )
     }
-
 }
 
 // MARK: - Helpers
@@ -919,7 +914,6 @@ extension ZMConversation {
 
         return localizedCallerName(with: ZMUser.selfUser(in: managedObjectContext))
     }
-
 }
 
 extension CXCallAction {
@@ -927,7 +921,6 @@ extension CXCallAction {
     func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
         return ZMConversation.fetch(with: callUUID, in: context)
     }
-
 }
 
 extension CallClosedReason {
@@ -946,7 +939,6 @@ extension CallClosedReason {
             return .failed
         }
     }
-
 }
 
 extension CallKitCallRegister {
@@ -955,7 +947,6 @@ extension CallKitCallRegister {
         guard let handle = conversation.callHandle else { return nil }
         return lookupCall(by: handle)
     }
-
 }
 
 private extension CXCallController {
@@ -963,5 +954,4 @@ private extension CXCallController {
     func existingCall(for callKitCall: CallKitCall) -> CXCall? {
         return callObserver.calls.first { $0.uuid == callKitCall.id }
     }
-
 }

@@ -28,14 +28,12 @@ public protocol IdentifierObjectSyncTranscoder: AnyObject {
     func request(for identifiers: Set<T>, apiVersion: APIVersion) -> ZMTransportRequest?
 
     func didReceive(response: ZMTransportResponse, for identifiers: Set<T>, completionHandler: @escaping () -> Void)
-
 }
 
 public protocol IdentifierObjectSyncDelegate: AnyObject {
 
     func didFinishSyncingAllObjects()
     func didFailToSyncAllObjects()
-
 }
 
 /// Class for syncing objects based on an identifier.
@@ -132,5 +130,4 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
 
         return request
     }
-
 }

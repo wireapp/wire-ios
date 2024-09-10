@@ -51,7 +51,6 @@ public struct ZiphyAnimatedImageList: Codable {
             try container.encode(image, forKey: type)
         }
     }
-
 }
 
 // MARK: - Sequence
@@ -72,5 +71,4 @@ extension ZiphyAnimatedImageList: Sequence {
     public func makeIterator() -> RawValue.Iterator {
         return images.makeIterator()
     }
-
 }

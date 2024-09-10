@@ -86,5 +86,4 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
                 .parse(response)
         }
     }
-
 }

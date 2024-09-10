@@ -29,7 +29,6 @@ public enum AVSCallType: Int32 {
     case normal = 0
     case video = 1
     case audioOnly = 2
-
 }
 
 /// Possible types of conversation in which calls can be initiated.
@@ -40,7 +39,6 @@ public enum AVSConversationType: Int32 {
     case group = 1
     case conference = 2
     case mlsConference = 3
-
 }
 
  /// An object that represents a calling event.
@@ -53,7 +51,6 @@ public struct CallEvent {
     let conversationId: AVSIdentifier
     let userId: AVSIdentifier
     let clientId: String
-
 }
 
 // MARK: - Call center transport
@@ -106,5 +103,4 @@ public protocol WireCallCenterTransport: AnyObject {
     ///     - completionHandler: A handler when the network request completes with the list of clients.
 
     func requestClientsList(conversationId: AVSIdentifier, completionHandler: @escaping ([AVSClient]) -> Void)
-
 }

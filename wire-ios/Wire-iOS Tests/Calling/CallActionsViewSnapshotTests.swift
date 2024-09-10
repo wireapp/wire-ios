@@ -465,5 +465,4 @@ final class CallActionsViewSnapshotTests: XCTestCase {
         // THEN
         verify(matching: sut)
     }
-
 }

@@ -160,5 +160,4 @@ class ChaCha20AEADEncryptionTests: XCTestCase {
             XCTFail("Unexpected error: \(error.localizedDescription)")
         }
     }
-
 }

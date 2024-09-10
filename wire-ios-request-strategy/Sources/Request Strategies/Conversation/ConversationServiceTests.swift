@@ -641,5 +641,4 @@ final class ConversationServiceTests: MessagingTestBase {
             XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }

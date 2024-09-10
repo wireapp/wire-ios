@@ -51,5 +51,4 @@ public struct AnalyticsIdentifierProvider {
         let message = DataTransfer(trackingIdentifier: identifier)
         _ = try? ZMConversation.sendMessageToSelfClients(message, in: context)
     }
-
 }

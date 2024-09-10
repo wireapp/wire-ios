@@ -44,5 +44,4 @@ public struct MLSSubgroup: Equatable {
         self.members = members
         self.parentQualifiedID = parentQualifiedID
     }
-
 }

@@ -34,5 +34,4 @@ extension AppLockController {
 
         case needsChecking
     }
-
 }

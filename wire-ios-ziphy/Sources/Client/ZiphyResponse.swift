@@ -48,5 +48,4 @@ struct ZiphyPagination: Codable {
     enum CodingKeys: String, CodingKey {
         case count, offset, totalCount = "total_count"
     }
-
 }

@@ -101,9 +101,7 @@ extension ZMConversation {
         })
 
         transportSession.enqueueOneTime(request)
-
     }
-
 }
 
 struct ConversationDeletionRequestFactory {
@@ -119,5 +117,4 @@ struct ConversationDeletionRequestFactory {
 
         return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
-
 }

@@ -196,7 +196,6 @@ extension ConversationViewController {
             mainCoordinator: mainCoordinator
         )
     }
-
 }
 
 // MARK: - E2EIPrivacyWarningPresenter

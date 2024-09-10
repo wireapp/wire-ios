@@ -92,5 +92,4 @@ public class UserEmailCredentials: UserCredentials {
     public static func credentials(email: String, password: String, emailVerificationCode: String?) -> UserEmailCredentials {
         return UserEmailCredentials(email: email, password: password, emailVerificationCode: emailVerificationCode)
     }
-
 }

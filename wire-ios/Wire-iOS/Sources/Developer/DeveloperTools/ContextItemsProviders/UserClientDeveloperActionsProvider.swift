@@ -103,5 +103,4 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
             context.saveOrRollback()
         }
     }
-
 }

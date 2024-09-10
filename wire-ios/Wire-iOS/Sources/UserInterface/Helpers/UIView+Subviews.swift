@@ -25,7 +25,6 @@ extension UIView {
             $0.removeFromSuperview()
         }
     }
-
 }
 
 extension UIStackView {
@@ -35,5 +34,4 @@ extension UIStackView {
             $0.removeFromSuperview()
         }
     }
-
 }

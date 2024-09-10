@@ -189,7 +189,6 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         syncMOC.performAndWait {
             XCTAssertTrue(conversation.localParticipants.contains(user))
         }
-
     }
 
     func testThatItRefetchTeamUsers_On403() {
@@ -413,5 +412,4 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
-
 }

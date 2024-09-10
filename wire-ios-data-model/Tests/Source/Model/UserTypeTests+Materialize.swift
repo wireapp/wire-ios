@@ -104,5 +104,4 @@ final class UserTypeTests_Materialize: ModelObjectsTests {
             searchUsersCache: nil
         )
     }
-
 }

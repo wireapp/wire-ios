@@ -31,5 +31,4 @@ public enum FeatureConfigStatus: String, Codable {
 
     case enabled
     case disabled
-
 }

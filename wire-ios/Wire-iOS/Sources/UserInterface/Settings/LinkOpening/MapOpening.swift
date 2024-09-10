@@ -62,7 +62,6 @@ extension URL {
             return true
         }
     }
-
 }
 
 // MARK: - Private
@@ -72,5 +71,4 @@ fileprivate extension UIApplication {
     var googleMapsInstalled: Bool {
         return canHandleScheme("comgooglemaps://")
     }
-
 }

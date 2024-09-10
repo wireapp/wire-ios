@@ -28,7 +28,6 @@ protocol ConversationCreationControllerDelegate: AnyObject {
         _ controller: ConversationCreationController,
         didCreateConversation conversation: ZMConversation
     )
-
 }
 
 final class ConversationCreationController: UIViewController {
@@ -409,7 +408,6 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
     private func abort(_ action: UIAlertAction) {
         dismiss(animated: true)
     }
-
 }
 
 // MARK: - SimpleTextFieldDelegate
@@ -422,7 +420,6 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
         case .error: navigationItem.rightBarButtonItem?.isEnabled = false
         case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
         }
-
     }
 
     func textFieldReturnPressed(_ textField: SimpleTextField) {
@@ -430,11 +427,9 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: SimpleTextField) {
-
     }
 
     func textFieldDidEndEditing(_ textField: SimpleTextField) {
-
     }
 }
 
@@ -473,7 +468,6 @@ extension ConversationCreationController {
             $0.isHidden = true
         }
     }
-
 }
 
 extension ConversationCreationController {

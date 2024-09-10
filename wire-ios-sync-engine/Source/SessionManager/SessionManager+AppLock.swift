@@ -27,5 +27,4 @@ extension SessionManager: UserSessionAppLockDelegate {
             self.delegate?.sessionManagerDidReportLockChange(forSession: session)
         }
     }
-
 }

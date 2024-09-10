@@ -137,5 +137,4 @@ public final class UTIHelper: NSObject {
 
         return mime(from: utType)
     }
-
 }

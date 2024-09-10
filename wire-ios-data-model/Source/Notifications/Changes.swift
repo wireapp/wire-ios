@@ -53,5 +53,4 @@ struct Changes: Mergeable {
             mayHaveUnknownChanges: mayHaveUnknownChanges || other.mayHaveUnknownChanges
         )
     }
-
 }

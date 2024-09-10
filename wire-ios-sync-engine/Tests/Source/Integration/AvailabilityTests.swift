@@ -85,5 +85,4 @@ final class AvailabilityTests: IntegrationTest {
 
         XCTAssertEqual(Set(connectedAndTeamMemberUUIDs), Set(recipientsUUIDs))
     }
-
 }

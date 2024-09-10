@@ -33,7 +33,6 @@ protocol URLSessionWebSocketTaskProtocol {
     func receive(completionHandler: @escaping (Result<URLSessionWebSocketTask.Message, any Error>) -> Void)
 
     func receive() async throws -> URLSessionWebSocketTask.Message
-
 }
 
 extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
@@ -41,5 +40,4 @@ extension URLSessionWebSocketTask: URLSessionWebSocketTaskProtocol {
     var isOpen: Bool {
         closeCode == .invalid
     }
-
 }

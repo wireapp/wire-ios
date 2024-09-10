@@ -232,7 +232,6 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
     }
-
 }
 
 // MARK: - Helpers

@@ -142,7 +142,6 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         // then
         XCTAssertFalse(sut.keysThatHaveLocalModifications.contains("accessModeStrings"))
-
     }
 
     func testThatItIgnoresAccessRoleStringsKeyV2() {
@@ -253,7 +252,6 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         assertAccessModeAndRoles(allowGuests: true, allowServices: true, expectedAccessModes: ["code", "invite"], expectedAccessRoles: [.teamMember, .nonTeamMember, .guest, .service])
 
         assertAccessModeAndRoles(allowGuests: false, allowServices: false, expectedAccessModes: [], expectedAccessRoles: [.teamMember])
-
     }
 
     func assertAccessModeAndRoles(allowGuests: Bool, allowServices: Bool, expectedAccessModes: Set<String>, expectedAccessRoles: Set<ConversationAccessRoleV2>, file: StaticString = #file, line: UInt = #line) {

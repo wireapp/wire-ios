@@ -72,7 +72,6 @@ extension URL {
 
         return true
     }
-
 }
 
 // MARK: - Private
@@ -86,7 +85,6 @@ fileprivate extension UIApplication {
     var twitterrificInstalled: Bool {
         return canHandleScheme("twitterrific://")
     }
-
 }
 
 extension URL {
@@ -94,7 +92,6 @@ extension URL {
     var isTweet: Bool {
         return absoluteString.contains("twitter.com") && absoluteString.contains("status")
     }
-
 }
 
 fileprivate extension URL {
@@ -124,7 +121,6 @@ fileprivate extension URL {
         guard let statusRange = absoluteString.range(of: "status/") else { return nil }
         return String(absoluteString[statusRange.upperBound...])
     }
-
 }
 
 private extension String {
@@ -132,5 +128,4 @@ private extension String {
     func replacingWithTweetbotURLScheme(_ string: String) -> String {
         return replacingOccurrences(of: string, with: "tweetbot://")
     }
-
 }

@@ -86,9 +86,7 @@ extension AppLockModule {
         private var applicationState: UIApplication.State {
             applicationStateProvider.applicationState
         }
-
     }
-
 }
 
 // MARK: - Execute request
@@ -154,5 +152,4 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
     private func openAppLock() {
         try? userSession.openAppLock()
     }
-
 }

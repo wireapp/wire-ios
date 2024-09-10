@@ -37,5 +37,4 @@ final class DeviceConfigurationEventHandler: AuthenticationEventHandler {
             return nil
         }
     }
-
 }

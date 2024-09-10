@@ -255,7 +255,6 @@ class ProteusServiceTests: XCTestCase {
             try await sut.deleteSession(id: sessionID)
         }
     }
-
 }
 
 // MARK: - Helpers
@@ -269,5 +268,4 @@ private extension ProteusSessionID {
             clientID: .randomAlphanumerical(length: 6)
         )
     }
-
 }

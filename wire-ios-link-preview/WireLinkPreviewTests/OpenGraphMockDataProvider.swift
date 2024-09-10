@@ -400,5 +400,4 @@ final class OpenGraphMockDataProvider: NSObject {
         let url = bundle.url(forResource: name, withExtension: "txt")!
         return try! String(contentsOf: url)
     }
-
 }

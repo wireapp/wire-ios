@@ -151,5 +151,4 @@ public struct PasswordRuleSet: Decodable, Equatable {
             ? .valid
             : .invalid(violations: violations)
     }
-
 }

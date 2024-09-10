@@ -27,7 +27,6 @@ public protocol PushChannelServiceProtocol {
     /// - Returns: A push channel.
 
     func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol
-
 }
 
 /// A service for creating push channel connections to a specific backend.
@@ -95,7 +94,6 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
         pushChannelsByTask[task] = pushChannel
         return pushChannel
     }
-
 }
 
 extension PushChannelService: URLSessionWebSocketDelegate {
@@ -117,7 +115,6 @@ extension PushChannelService: URLSessionWebSocketDelegate {
         pushChannelsByTask[webSocketTask]?.close()
         pushChannelsByTask[webSocketTask] = nil
     }
-
 }
 
 extension PushChannelService: URLSessionDataDelegate {
@@ -160,5 +157,4 @@ extension PushChannelService: URLSessionDataDelegate {
 
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }
-
 }

@@ -114,7 +114,6 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
             XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
         }
     }
-
 }
 
 // MARK: - Helpers
@@ -127,7 +126,6 @@ private extension AnalyticsIdentifierProviderTests {
         createMembership(in: uiMOC, user: user, team: createTeam(in: uiMOC))
         return user
     }
-
 }
 
 private extension ZMConversation {
@@ -141,5 +139,4 @@ private extension ZMConversation {
             .filter { $0 == analyticsIdentifier }
             .count
     }
-
 }

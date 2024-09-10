@@ -297,7 +297,6 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
         // then
         XCTAssertEqual(editedMessage!.usersReaction.count, 1)
-
     }
 
     func testThatWeSeeLikeFromBlockedUserInGroupConversation() {

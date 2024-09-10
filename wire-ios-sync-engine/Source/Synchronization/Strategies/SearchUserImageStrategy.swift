@@ -269,5 +269,4 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
 
         return request
     }
-
 }

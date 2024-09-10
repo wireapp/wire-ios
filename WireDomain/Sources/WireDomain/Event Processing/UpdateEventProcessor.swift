@@ -31,7 +31,6 @@ protocol UpdateEventProcessorProtocol {
     /// - Parameter event: An update event.
 
     func processEvent(_ event: UpdateEvent) async throws
-
 }
 
 struct UpdateEventProcessor {
@@ -63,5 +62,4 @@ struct UpdateEventProcessor {
             print("can not process unknown event: \(event)")
         }
     }
-
 }

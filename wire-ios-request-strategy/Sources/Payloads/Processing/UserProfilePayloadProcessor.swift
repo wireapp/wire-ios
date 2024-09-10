@@ -174,7 +174,6 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
             user.completeProfileAssetIdentifier = completeAssetKey
         }
     }
-
 }
 
 private extension Payload.UserProfile.MessageProtocol {
@@ -188,5 +187,4 @@ private extension Payload.UserProfile.MessageProtocol {
             return .mls
         }
     }
-
 }

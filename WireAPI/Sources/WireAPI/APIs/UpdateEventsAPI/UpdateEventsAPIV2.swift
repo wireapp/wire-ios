@@ -23,5 +23,4 @@ class UpdateEventsAPIV2: UpdateEventsAPIV1 {
     override var apiVersion: APIVersion {
         .v2
     }
-
 }

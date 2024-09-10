@@ -34,7 +34,6 @@ protocol AVSValue {
      */
 
     init?(rawValue: AVSType)
-
 }
 
 /**
@@ -86,7 +85,6 @@ extension UUID: AVSValue {
         guard let aString = String(cString: cString) else { return nil }
         self.init(uuidString: aString)
     }
-
 }
 
 extension String: AVSValue {
@@ -103,7 +101,6 @@ extension String: AVSValue {
             return nil
         }
     }
-
 }
 
 // MARK: - Decoding
@@ -174,5 +171,4 @@ extension AVSWrapper {
         block(callCenter, value1, value2, value3, value4, value5, value6, value7)
         return 0
     }
-
 }

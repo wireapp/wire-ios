@@ -1166,7 +1166,6 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.syncMOC)
             XCTAssertEqual(selfConversation?.ciphersuite, ciphersuite)
         }
-
     }
 
     func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() async throws {

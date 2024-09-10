@@ -217,7 +217,6 @@ final class CollectionsViewControllerTests: XCTestCase {
         let controller = createController(showingCollection: assetCollection)
         snapshotHelper.verifyInAllIPhoneSizes(matching: controller)
     }
-
 }
 
 extension CollectionsViewControllerTests {

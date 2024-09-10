@@ -50,5 +50,4 @@ final class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler 
 
         return actions
     }
-
 }

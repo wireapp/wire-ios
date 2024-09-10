@@ -111,7 +111,6 @@ final class UserImageLocalCacheTests: XCTestCase {
         // then
         XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
         XCTAssertEqual(sut.userImage(testUser, size: .preview), smallData)
-
     }
 
     func testThatItPersistsSmallAndLargeUserImageForV3() throws {

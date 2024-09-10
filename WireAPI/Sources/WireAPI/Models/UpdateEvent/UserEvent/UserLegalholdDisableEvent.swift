@@ -25,5 +25,4 @@ public struct UserLegalholdDisableEvent: Equatable, Codable {
     /// The user id for whom legalhold was disabled.
 
     public let userID: UUID
-
 }

@@ -76,5 +76,4 @@ final class SimpleNotificationService: UNNotificationServiceExtension, Loggable 
         WireLogger.notifications.info("finishing without showing notification")
         latestContentHandler?(.empty)
     }
-
 }

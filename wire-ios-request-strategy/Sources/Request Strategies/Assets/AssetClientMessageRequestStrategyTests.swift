@@ -159,7 +159,6 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // THEN
         XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
-
     }
 
     func testThatItDoesNotCreateARequestForAnImageMessageWhichIsExpired() {
@@ -223,7 +222,6 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // THEN
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
-
     }
 
     func testThatItExpiresAMessageWhenItReceivesAFailureResponse() {

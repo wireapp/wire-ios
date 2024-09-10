@@ -138,7 +138,6 @@ public final class AssetRequestFactory: NSObject {
             for: message
         )
     }
-
 }
 
 public extension AssetRequestFactory.Retention {

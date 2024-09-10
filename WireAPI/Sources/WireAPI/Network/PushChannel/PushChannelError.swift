@@ -23,5 +23,4 @@ public enum PushChannelError: Error {
     /// An unexpected message was received.
 
     case receivedInvalidMessage
-
 }

@@ -103,5 +103,4 @@ final class ValidatedTextFieldTests: XCTestCase {
         // Then
         waitForExpectations(timeout: 0.5)
     }
-
 }

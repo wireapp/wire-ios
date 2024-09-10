@@ -153,7 +153,6 @@ public class WireCallCenterV3: NSObject {
     func tearDown() {
         isEnabled = false
     }
-
 }
 
 // MARK: - Snapshots
@@ -205,7 +204,6 @@ extension WireCallCenterV3 {
             conversationObserverToken: token
         )
     }
-
 }
 
 // MARK: - State Helpers
@@ -370,7 +368,6 @@ extension WireCallCenterV3 {
     private func isGroup(conversationId: AVSIdentifier) -> Bool {
         return callSnapshots[conversationId]?.isGroup ?? false
     }
-
 }
 
 // MARK: - Call Participants
@@ -457,7 +454,6 @@ extension WireCallCenterV3 {
     func onParticipantsChanged() -> AnyPublisher<ConferenceParticipantsInfo, Never> {
         return onParticipantsChangedSubject.eraseToAnyPublisher()
     }
-
 }
 
 // MARK: - Call ending for oneOnOne conversations
@@ -516,7 +512,6 @@ extension WireCallCenterV3 {
     ) -> Bool {
         return previousParticipants.count == 2 && newParticipants.count == 1
     }
-
 }
 
 // MARK: - Actions
@@ -530,7 +525,6 @@ extension WireCallCenterV3 {
         case missingConferencingPermission
         case failedToSetupMLSConference
         case unknown
-
     }
 
     /// Answers an incoming call in the given conversation.
@@ -1102,9 +1096,7 @@ extension WireCallCenterV3 {
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
         }
-
     }
-
 }
 
 // MARK: - Get AVS conversation type
@@ -1143,5 +1135,4 @@ extension WireCallCenterV3 {
             return .conference
         }
     }
-
 }

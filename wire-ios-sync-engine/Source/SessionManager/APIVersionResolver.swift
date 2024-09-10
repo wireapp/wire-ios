@@ -64,7 +64,6 @@ final class APIVersionResolver {
 
         request.add(completionHandler)
         transportSession.enqueueOneTime(request)
-
     }
 
     private func handleResponse(_ response: ZMTransportResponse) {
@@ -151,9 +150,7 @@ final class APIVersionResolver {
         let development: [Int32]?
         let federation: Bool
         let domain: String
-
     }
-
 }
 
 // MARK: - Delegate
@@ -163,7 +160,6 @@ protocol APIVersionResolverDelegate: AnyObject {
     func apiVersionResolverDetectedFederationHasBeenEnabled()
     func apiVersionResolverFailedToResolveVersion(reason: BlacklistReason)
     func apiVersionResolverDidResolve(apiVersion: APIVersion)
-
 }
 
 // MARK: - Prod/Dev versions
@@ -186,5 +182,4 @@ public extension APIVersion {
     /// environments.
 
     static let developmentVersions: Set<Self> = Set(allCases).subtracting(productionVersions)
-
 }

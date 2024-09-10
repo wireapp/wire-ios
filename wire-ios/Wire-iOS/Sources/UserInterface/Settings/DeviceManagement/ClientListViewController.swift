@@ -433,7 +433,6 @@ final class ClientListViewController: UIViewController,
             self.deleteUserClient(userClient, credentials: credentials)
         default: break
         }
-
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -445,7 +444,6 @@ final class ClientListViewController: UIViewController,
         default:
             return .none
         }
-
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -471,7 +469,6 @@ final class ClientListViewController: UIViewController,
         default:
             break
         }
-
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -582,7 +579,6 @@ extension ClientListViewController: EditingStateControllable {
     func setEditingState(_ isEditing: Bool) {
         editingList = isEditing
     }
-
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -612,5 +608,4 @@ extension ClientListViewController: UserObserving {
             updateAllClients()
         }
     }
-
 }

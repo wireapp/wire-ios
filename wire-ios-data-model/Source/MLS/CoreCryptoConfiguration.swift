@@ -29,7 +29,6 @@ public struct CoreCryptoConfiguration {
     public var clientIDBytes: ClientId? {
         .init(from: clientID)
     }
-
 }
 
 public class CoreCryptoConfigProvider {
@@ -119,5 +118,4 @@ public extension ClientId {
 
         self = data
     }
-
 }

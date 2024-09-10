@@ -43,7 +43,6 @@ public class RegisterPushTokenAction: EntityAction {
         public var safeForLoggingDescription: String {
             return errorDescription ?? ""
         }
-
     }
 
     // MARK: - Properties
@@ -68,5 +67,4 @@ public class RegisterPushTokenAction: EntityAction {
         self.clientID = clientID
         self.resultHandler = resultHandler
     }
-
 }

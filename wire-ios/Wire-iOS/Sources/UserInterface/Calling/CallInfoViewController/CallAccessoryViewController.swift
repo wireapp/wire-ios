@@ -122,5 +122,4 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
     func callParticipantsListViewControllerDidSelectShowMore(viewController: CallParticipantsListViewController) {
         delegate?.callAccessoryViewControllerDidSelectShowMore(viewController: self)
     }
-
 }

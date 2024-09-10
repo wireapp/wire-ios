@@ -37,7 +37,6 @@ extension ValidatedTextField {
         textField.heightAnchor.constraint(equalToConstant: CGFloat.PasscodeUnlock.textFieldHeight).isActive = true
 
         return textField
-
     }
 
     func updatePasscodeIcon() {

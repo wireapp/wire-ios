@@ -23,7 +23,6 @@ import WireDataModel
 public protocol SelfUserProviderProtocol {
 
     func fetchSelfUser() -> ZMUser
-
 }
 
 @available(*, deprecated, message: "Use UserRepository instead")
@@ -44,5 +43,4 @@ public final class SelfUserProvider: SelfUserProviderProtocol {
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
     }
-
 }

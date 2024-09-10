@@ -60,7 +60,6 @@ public final class VolatileData {
     public func resetBytes() {
         _storage.resetBytes(in: (_storage.startIndex)..<(_storage.endIndex))
     }
-
 }
 
 extension VolatileData: Equatable {
@@ -68,5 +67,4 @@ extension VolatileData: Equatable {
     public static func == (lhs: VolatileData, rhs: VolatileData) -> Bool {
         return lhs._storage == rhs._storage
     }
-
 }

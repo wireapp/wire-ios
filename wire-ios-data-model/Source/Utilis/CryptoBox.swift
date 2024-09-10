@@ -89,7 +89,6 @@ public extension FileManager {
         let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         return keyStoreDirectory
     }
-
 }
 
 public enum UserClientKeyStoreError: Error {
@@ -180,5 +179,4 @@ open class UserClientKeysStore: NSObject {
         }
         return start ..< (start + count)
     }
-
 }

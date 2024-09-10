@@ -190,9 +190,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
                     completion()
                 }
             }
-
         }
-
     }
 
     func send(completion: @escaping (Sendable?) -> Void) {
@@ -201,7 +199,6 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
             completion(self.imageData.flatMap(self.conversation.appendImage))
         }
     }
-
 }
 
 /// `UnsentSendable` implementation to send file messages
@@ -398,7 +395,6 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
         }
         return name
     }
-
 }
 
 extension AccountManager {

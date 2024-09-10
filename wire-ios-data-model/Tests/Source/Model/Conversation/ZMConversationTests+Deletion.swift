@@ -35,5 +35,4 @@ class ZMConversationTests_Deletion: ZMConversationTestsBase {
         // THEN
         XCTAssertNil(uiMOC.zm_fileAssetCache.assetData(cacheKey))
     }
-
 }

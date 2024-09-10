@@ -66,5 +66,4 @@ final class PopUpIconButton: IconButton {
             delegate?.popUpIconButton(self, didSelectIcon: icon)
         }
     }
-
 }

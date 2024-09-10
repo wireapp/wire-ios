@@ -41,7 +41,6 @@ public final class SafeFileContext: NSObject {
         // close
         close(self.fileDescriptor)
     }
-
 }
 
 public extension SafeFileContext {

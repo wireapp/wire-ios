@@ -47,7 +47,6 @@ final class MockAssetCreationRequest: AssetCreationRequestProtocol {
     func addResource(with type: PHAssetResourceType, data: Data, options: PHAssetResourceCreationOptions?) {
         MockAssetCreationRequest.image = UIImage(data: data)
     }
-
 }
 
 final class MockOwner {
@@ -106,7 +105,6 @@ final class SavableImageTests: XCTestCase {
             }
 
             self.waitForExpectations(timeout: 2, handler: nil)
-
         }
 
         // THEN
@@ -167,7 +165,6 @@ final class SavableImageTests: XCTestCase {
             }
 
             self.waitForExpectations(timeout: 2, handler: nil)
-
         }
 
         // THEN

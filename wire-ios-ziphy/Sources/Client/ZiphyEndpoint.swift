@@ -45,5 +45,4 @@ enum ZiphyEndpoint: String {
     static var version: String {
         return "v1"
     }
-
 }

@@ -200,7 +200,6 @@ final class ConversationRootViewController: UIViewController {
         } else {
             navHeight?.constant = defaultNavBarHeight
         }
-
     }
 }
 

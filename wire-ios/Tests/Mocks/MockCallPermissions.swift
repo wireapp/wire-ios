@@ -45,7 +45,6 @@ final class MockCallPermissions: CallPermissionsConfiguration {
     func requestOrWarnAboutAudioPermission(resultHandler: @escaping (Bool) -> Void) {
         resultHandler(canAcceptAudioCalls)
     }
-
 }
 
 // MARK: - Factories
@@ -72,7 +71,6 @@ extension MockCallPermissions {
         permissions.isPendingVideoPermissionRequest = false
         return permissions
     }
-
 }
 
 // MARK: - Utilities
@@ -88,7 +86,5 @@ extension CallPermissionsConfiguration {
         }
 
         return preferredState
-
     }
-
 }

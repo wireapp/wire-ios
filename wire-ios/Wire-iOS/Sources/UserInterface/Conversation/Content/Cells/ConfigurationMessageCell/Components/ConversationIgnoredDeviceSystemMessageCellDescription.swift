@@ -78,5 +78,4 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
 
         return .markdown(from: string, style: .systemMessage)
     }
-
 }

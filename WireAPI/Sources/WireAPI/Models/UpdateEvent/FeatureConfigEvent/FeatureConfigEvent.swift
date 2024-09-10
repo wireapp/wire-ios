@@ -25,5 +25,4 @@ public enum FeatureConfigEvent: Equatable, Codable {
     /// A feature config was updated.
 
     case update(FeatureConfigUpdateEvent)
-
 }

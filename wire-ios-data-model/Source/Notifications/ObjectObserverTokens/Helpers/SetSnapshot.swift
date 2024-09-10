@@ -26,7 +26,6 @@ public struct SetStateUpdate<T: Hashable> {
 
     let removedObjects: Set<T>
     let insertedObjects: Set<T>
-
 }
 
 public protocol SetChangeInfoOwner {
@@ -41,7 +40,6 @@ public protocol SetChangeInfoOwner {
     var zm_movedIndexPairs: [ZMMovedIndex] { get }
 
     func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void)
-
 }
 
 open class SetChangeInfo<T: Hashable>: NSObject {
@@ -79,7 +77,6 @@ open class SetChangeInfo<T: Hashable>: NSObject {
         return "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
         "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
     }
-
 }
 
 public struct SetSnapshot<T: Hashable> {

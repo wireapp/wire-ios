@@ -32,7 +32,6 @@ public final class LeaveSubconversationAction: EntityAction {
         case noConversation
         case mlsStaleMessage
         case unknown(status: Int, label: String, message: String)
-
     }
 
     // MARK: - Properties
@@ -55,5 +54,4 @@ public final class LeaveSubconversationAction: EntityAction {
         self.subconversationType = subconversationType
         self.resultHandler = resultHandler
     }
-
 }

@@ -55,5 +55,4 @@ public struct UsersAPIBuilder {
             UsersAPIV6(httpClient: httpClient)
         }
     }
-
 }

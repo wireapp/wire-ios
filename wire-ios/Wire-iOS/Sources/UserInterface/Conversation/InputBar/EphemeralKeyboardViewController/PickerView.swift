@@ -101,5 +101,4 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
     ) -> Bool {
         return otherGestureRecognizer == tapRecognizer && recognizerInSelectedRow(gestureRecognizer)
     }
-
 }

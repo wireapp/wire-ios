@@ -243,7 +243,6 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
         // Then
         let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
         XCTAssertEqual(events.count, 1)
-
     }
 
     // MARK: - Legal Hold Events
@@ -274,5 +273,4 @@ final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
 
         XCTAssertEqual(firstEvent.type, .userLegalHoldRequest)
     }
-
 }

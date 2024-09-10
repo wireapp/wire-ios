@@ -88,7 +88,6 @@ class BackendEnvironmentTests: XCTestCase {
         XCTAssertEqual(environment.websiteURL, URL(string: "https://wire.com")!)
         XCTAssertEqual(environment.teamsURL, URL(string: "https://teams.wire.com")!)
         XCTAssertEqual(environment.accountsURL, URL(string: "https://account.wire.com")!)
-
     }
 
     func testThatWeCanLoadCustomBackendEndpointsWithProxy() {
@@ -114,7 +113,6 @@ class BackendEnvironmentTests: XCTestCase {
         ) else {
             XCTFail("Could not read environment data from Backend.bundle")
             return
-
         }
 
         XCTAssertEqual(environment.backendURL, URL(string: "https://custom.backend.com")!)
@@ -182,7 +180,6 @@ class BackendEnvironmentTests: XCTestCase {
         XCTAssertEqual(loaded?.proxySettings?.host, backendEnvironment.proxySettings?.host)
         XCTAssertEqual(loaded?.proxySettings?.port, backendEnvironment.proxySettings?.port)
         XCTAssertEqual(loaded?.proxySettings?.needsAuthentication, backendEnvironment.proxySettings?.needsAuthentication)
-
     }
 
     func testThatWeCanMigrateCustomBackendInfoToAnotherUserDefaults() {
@@ -208,5 +205,4 @@ class BackendEnvironmentTests: XCTestCase {
         XCTAssertEqual(migrated?.endpoints.websiteURL, backendEnvironment.endpoints.websiteURL)
         XCTAssertEqual(migrated?.title, backendEnvironment.title)
     }
-
 }

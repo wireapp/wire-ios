@@ -107,5 +107,4 @@ final class PayloadPagerTests: XCTestCase {
 private struct TestError: Error, Equatable {
 
     let message: String
-
 }

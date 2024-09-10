@@ -100,5 +100,4 @@ extension String: DefaultsKey {
     public var rawValue: String {
         return self
     }
-
 }

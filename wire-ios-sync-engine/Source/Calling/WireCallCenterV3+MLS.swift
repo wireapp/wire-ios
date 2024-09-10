@@ -233,7 +233,6 @@ extension WireCallCenterV3 {
             }
         }
     }
-
 }
 
 extension CallParticipantState {
@@ -246,5 +245,4 @@ extension CallParticipantState {
             return false
         }
     }
-
 }
