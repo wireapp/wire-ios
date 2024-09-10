@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import WireTransport
+@testable import WireRequestStrategy
 
 final class AcmeAPITests: ZMTBaseTest {
     var acmeApi: AcmeAPI?

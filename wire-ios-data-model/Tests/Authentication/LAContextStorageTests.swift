@@ -17,8 +17,8 @@
 //
 
 import LocalAuthentication
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class LAContextStorageTests: XCTestCase {
     func testContext_givenInit_thenContextIsNil() {

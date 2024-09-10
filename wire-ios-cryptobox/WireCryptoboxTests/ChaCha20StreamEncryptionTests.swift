@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCryptobox
 import XCTest
+@testable import WireCryptobox
 
 private typealias Sut = ChaCha20Poly1305.StreamEncryption
 

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
     private let bundle = Bundle(for: ZMManagedObject.self)

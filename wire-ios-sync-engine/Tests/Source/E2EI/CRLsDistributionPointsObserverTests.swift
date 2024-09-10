@@ -18,9 +18,9 @@
 
 import Combine
 import Foundation
+import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-import XCTest
 
 class CRLsDistributionPointsObserverTests: XCTestCase {
     private var publisher: PassthroughSubject<CRLsDistributionPoints, Never>!

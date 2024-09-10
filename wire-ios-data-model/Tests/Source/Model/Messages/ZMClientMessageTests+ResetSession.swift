@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMClientMessagesTests_ResetSession: BaseZMClientMessageTests {
     func testSessionResetSystemMessageIsInserted_WhenReceivingMessage() throws {

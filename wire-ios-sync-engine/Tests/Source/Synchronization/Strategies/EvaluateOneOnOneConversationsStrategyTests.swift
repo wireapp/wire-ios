@@ -18,8 +18,8 @@
 
 import WireDataModelSupport
 import WireRequestStrategySupport
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!

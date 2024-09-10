@@ -17,9 +17,9 @@
 //
 
 import UIKit
+import class WireCommonComponents.NetworkStatus
 import WireDataModel
 import WireSyncEngine
-import class WireCommonComponents.NetworkStatus
 
 // TODO [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {

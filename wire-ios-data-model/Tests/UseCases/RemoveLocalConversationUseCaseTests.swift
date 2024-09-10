@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
 import XCTest
+@testable import WireDataModel
 
 class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
     private var sut: RemoveLocalConversationUseCase!

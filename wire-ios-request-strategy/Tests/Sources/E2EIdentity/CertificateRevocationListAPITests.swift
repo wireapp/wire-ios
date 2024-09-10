@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class CertificateRevocationListAPITests: XCTestCase {
     private var sut: CertificateRevocationListAPI!

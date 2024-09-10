@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 class MockURLProtectionSpace: URLProtectionSpace {
     var mockServerTrust: SecTrust?

@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<PushSupportedProtocolsAction, PushSupportedProtocolsActionHandler> {
     // MARK: - Properties

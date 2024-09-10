@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AnalyticsCallingTrackerTests: XCTestCase, CoreDataFixtureTestHelper {
     var sut: AnalyticsCallingTracker!

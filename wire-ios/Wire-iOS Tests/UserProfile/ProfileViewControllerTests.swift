@@ -18,9 +18,9 @@
 
 import XCTest
 
+import WireTestingPackage
 @testable import Wire
 @testable import WireSyncEngineSupport
-import WireTestingPackage
 
 final class ProfileViewControllerTests: XCTestCase {
     // MARK: - Properties

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 func localizeString (stringToLocalize: String, language: String) -> String? {
     guard let path = Bundle.main.path(forResource: language, ofType: "lproj") else { return nil }

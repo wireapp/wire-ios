@@ -17,8 +17,8 @@
 //
 
 import avs
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class AVURLAsset_conversionTests: XCTestCase {
     override static func setUp() {

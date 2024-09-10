@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCryptobox
 import XCTest
+@testable import WireCryptobox
 
 let someTextToEncrypt = "ENCRYPT THIS!"
 

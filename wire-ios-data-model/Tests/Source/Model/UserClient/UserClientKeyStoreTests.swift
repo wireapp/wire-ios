@@ -17,8 +17,8 @@
 //
 
 import WireCryptobox
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class UserClientKeysStoreTests: OtrBaseTest {
     var sut: UserClientKeysStore!

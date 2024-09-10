@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
     override class func setUp() {

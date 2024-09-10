@@ -18,8 +18,8 @@
 
 import WireCoreCrypto
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     private let coreDataStackHelper = CoreDataStackHelper()

@@ -19,10 +19,10 @@
 import Foundation
 import WireDataModel
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
     var sut: ConversationRequestStrategy!

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class String_FingerprintTests: XCTestCase {
     let fingerprintString = "05 1c f4 ca 74 4b 80"

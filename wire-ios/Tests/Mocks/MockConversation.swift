@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import WireRequestStrategy
+@testable import Wire
 
 // swiftlint:disable:next todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired

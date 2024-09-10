@@ -17,9 +17,9 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
     typealias RequestPayload = Payload.NewConversation

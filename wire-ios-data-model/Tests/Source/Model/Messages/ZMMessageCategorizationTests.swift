@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireLinkPreview
 import WireUtilities
 import XCTest
+@testable import WireDataModel
 
 extension ZMConversationMessage {
     fileprivate var categorization: MessageCategory {

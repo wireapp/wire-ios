@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 class ZMUserMentionsTest: XCTestCase {
     var selfUser: MockUserType!

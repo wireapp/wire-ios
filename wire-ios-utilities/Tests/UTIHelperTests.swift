@@ -18,8 +18,8 @@
 
 import CoreServices
 import UniformTypeIdentifiers
-@testable import WireUtilities
 import XCTest
+@testable import WireUtilities
 
 final class UTIHelperTests: XCTestCase {
     func testThatConformsToVectorTypeIdentifiesSVG() {

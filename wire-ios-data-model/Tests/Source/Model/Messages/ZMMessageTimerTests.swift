@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTransport
 import XCTest
+@testable import WireDataModel
 
 class ZMMessageTimerTests: BaseZMMessageTests {
     var sut: ZMMessageTimer!

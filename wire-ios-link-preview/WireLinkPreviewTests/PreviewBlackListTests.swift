@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class PreviewBlackListTests: XCTestCase {
     var hosts: [String]!

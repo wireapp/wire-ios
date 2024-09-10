@@ -17,10 +17,10 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import WireRequestStrategySupport
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
     var sut: UserProfileRequestStrategy!

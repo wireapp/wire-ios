@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class LastEventIDRepositoryTests: XCTestCase {
     var sut: LastEventIDRepository!

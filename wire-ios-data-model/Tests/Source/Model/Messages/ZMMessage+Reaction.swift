@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMMessage_Reaction: BaseZMClientMessageTests {
     func testThatAddingAReactionAddsAReactionGenericMessage_fromUI() {

@@ -17,9 +17,9 @@
 //
 
 import MapKit
-@testable import Wire
 import WireDataModel
 import XCTest
+@testable import Wire
 
 final class LocationDataTests: XCTestCase {
     override func tearDown() {

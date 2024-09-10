@@ -17,9 +17,9 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class ResolveOneOnOneConversationsUseCaseTests: XCTestCase {
     // MARK: - Properties

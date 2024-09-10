@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTesting
 import XCTest
+@testable import WireRequestStrategy
 
 class MockModifiedKeyObjectSyncTranscoder: ModifiedKeyObjectSyncTranscoder {
     typealias Object = MockEntity

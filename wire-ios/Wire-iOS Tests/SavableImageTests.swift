@@ -17,8 +17,8 @@
 //
 
 import Photos
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockAssetChangeRequest: AssetChangeRequestProtocol {
     static var url: URL?

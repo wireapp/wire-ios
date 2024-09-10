@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireTesting
+@testable import WireSyncEngine
 
 class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
     // MARK: - Helpers

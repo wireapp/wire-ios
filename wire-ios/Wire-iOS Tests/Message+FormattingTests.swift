@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireLinkPreview
 import XCTest
+@testable import Wire
 
 class Message_FormattingTests: XCTestCase {
     let previewURL = "http://www.example.com/1"

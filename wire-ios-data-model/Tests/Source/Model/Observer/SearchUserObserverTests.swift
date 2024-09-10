@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
+@testable import WireDataModel
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
     private final class TestSearchUserObserver: UserObserving {

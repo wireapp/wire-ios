@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationStatusTests: CoreDataSnapshotTestCase {
     override var needsCaches: Bool {

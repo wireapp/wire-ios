@@ -54,7 +54,10 @@
     redundantType, \
     redundantTypedThrows, \
     redundantVoidReturnType, \
-    semicolons
+    semicolons, \
+    # sortDeclarations, \ TODO
+    sortImports
+
 
 # Options
 
@@ -71,4 +74,5 @@
 --indent 4 # indent
 --anonymousforeach ignore # preferForLoop
 # --self init-only # redundantSelf TODO
---redundanttype inferred
+--redundanttype inferred # redundantType
+--importgrouping testable-last # sortImports

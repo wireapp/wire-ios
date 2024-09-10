@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!

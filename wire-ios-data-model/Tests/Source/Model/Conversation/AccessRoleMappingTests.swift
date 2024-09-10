@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class AccessRoleMappingTests: XCTestCase {
     // MARK: Test Access Role Mapping from AccessRoleV2 to Access Role

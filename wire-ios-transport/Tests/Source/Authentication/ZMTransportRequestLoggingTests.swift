@@ -17,8 +17,8 @@
 //
 
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 final class ZMTransportRequestLoggingTests: ZMTBaseTest {
     func testThatItObfuscatesPasswordsInLogs() {

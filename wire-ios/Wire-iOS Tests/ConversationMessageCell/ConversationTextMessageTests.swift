@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import WireLinkPreview
 import XCTest
+@testable import Wire
 
 final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
     var mockOtherUser: MockUserType!

@@ -18,8 +18,8 @@
 
 import Foundation
 
-@testable import WireSyncEngine
 import WireTesting
+@testable import WireSyncEngine
 
 class ZMHotFixDirectoryTests: MessagingTest {
     func testThatOnlyTeamConversationsAreUpdated() {

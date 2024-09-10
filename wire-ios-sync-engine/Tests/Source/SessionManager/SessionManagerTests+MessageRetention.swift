@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
+@testable import WireSyncEngine
 
 final class SessionManagerMessageRetentionTests: IntegrationTest {
     override func setUp() {

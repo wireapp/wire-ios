@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 @testable import Wire
 @testable import WireSyncEngineSupport
-import XCTest
 
 final class ProfileActionsFactoryTests: XCTestCase {
     var domain = "domain.com"

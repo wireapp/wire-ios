@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import WireTesting
 import XCTest
+@testable import WireSyncEngine
 
 public class ZMConversationAccessModeTests: MessagingTest {
     override public func setUp() {

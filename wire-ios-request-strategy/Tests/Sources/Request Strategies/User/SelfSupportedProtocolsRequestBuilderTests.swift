@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 final class SelfSupportedProtocolsRequestBuilderTests: XCTestCase {
     // the api version is required to build and should not influence the tests

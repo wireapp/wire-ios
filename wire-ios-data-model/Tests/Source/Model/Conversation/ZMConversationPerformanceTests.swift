@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class ZMConversationPerformanceTests: ZMConversationTestsBase {
     /// There are no true 1:1 conversations in teams, so we check to see if it

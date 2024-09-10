@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
     override func setUp() {

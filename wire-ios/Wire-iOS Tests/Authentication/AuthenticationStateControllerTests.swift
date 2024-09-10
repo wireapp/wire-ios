@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireDataModel
 import XCTest
+@testable import Wire
 
 class MockAuthenticationStateControllerDelegate: AuthenticationStateControllerDelegate {
     var lastKnownStep: AuthenticationFlowStep?

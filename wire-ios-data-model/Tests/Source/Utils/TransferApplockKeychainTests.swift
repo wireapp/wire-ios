@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireDataModelSupport
 import XCTest
+@testable import WireDataModel
 
 final class TransferAppLockKeychainTests: DiskDatabaseTest {
     var appLock: AppLockController!

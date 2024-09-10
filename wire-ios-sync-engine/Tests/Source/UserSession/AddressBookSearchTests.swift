@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AddressBookSearchTests: MessagingTest {
     var sut: WireSyncEngine.AddressBookSearch!

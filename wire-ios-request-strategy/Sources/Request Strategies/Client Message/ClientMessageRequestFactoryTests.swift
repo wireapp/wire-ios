@@ -18,10 +18,10 @@
 
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
 import WireTransport
 import WireUtilities
 import XCTest
+@testable import WireRequestStrategy
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
     private var apiVersion: APIVersion! {

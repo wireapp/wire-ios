@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class Conversation_DeletionTests: DatabaseTest {
     var mockTransportSession: MockTransportSession!

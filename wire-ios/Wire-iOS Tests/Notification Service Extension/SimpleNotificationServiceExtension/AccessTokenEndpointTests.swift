@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire_Notification_Service_Extension
 import XCTest
+@testable import Wire_Notification_Service_Extension
 
 class AccessTokenEndpointTests: XCTestCase {
     // MARK: - Request generation

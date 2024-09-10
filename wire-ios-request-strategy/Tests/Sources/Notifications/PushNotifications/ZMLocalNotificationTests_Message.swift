@@ -18,9 +18,9 @@
 
 import WireDataModel
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import WireTesting
 import XCTest
+@testable import WireRequestStrategy
 
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     // MARK: - Text Messages

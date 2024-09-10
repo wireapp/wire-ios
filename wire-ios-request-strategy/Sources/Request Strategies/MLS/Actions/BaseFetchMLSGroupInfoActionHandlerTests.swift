@@ -17,8 +17,8 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class BaseFetchMLSGroupInfoActionHandlerTests<
     Action: BaseFetchMLSGroupInfoAction,

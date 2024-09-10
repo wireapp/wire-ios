@@ -17,8 +17,8 @@
 //
 //
 
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class DatabaseMigrationTests: DatabaseBaseTest {
     private let helper = DatabaseMigrationHelper()

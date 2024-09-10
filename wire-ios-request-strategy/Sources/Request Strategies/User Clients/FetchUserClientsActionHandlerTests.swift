@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClientsAction, FetchUserClientsActionHandler> {
     typealias RequestPayload = FetchUserClientsActionHandler.RequestPayload

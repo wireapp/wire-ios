@@ -17,8 +17,8 @@
 //
 
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActionHandlerTests<FetchMLSSubconversationGroupInfoAction, FetchMLSSubconversationGroupInfoActionHandler> {
     let subgroupType: SubgroupType = .conference

@@ -17,9 +17,9 @@
 //
 
 import UIKit
-@testable import Wire
 import WireCommonComponents
 import XCTest
+@testable import Wire
 
 class ZMSnapshotTestCase: XCTestCase {
     var uiMOC: NSManagedObjectContext!

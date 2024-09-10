@@ -18,8 +18,8 @@
 
 import LocalAuthentication
 import WireDataModel
-@testable import WireShareEngine
 import XCTest
+@testable import WireShareEngine
 
 final class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
     // MARK: - Life Cycle

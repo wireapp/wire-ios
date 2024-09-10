@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class MockCoreCryptoKeyProvider: CoreCryptoKeyProvider {
     enum MockError: Error {

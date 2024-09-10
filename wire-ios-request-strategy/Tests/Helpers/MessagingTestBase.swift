@@ -18,8 +18,8 @@
 
 import WireCryptobox
 import WireDataModel
-@testable import WireRequestStrategy
 import WireTesting
+@testable import WireRequestStrategy
 
 class MessagingTestBase: ZMTBaseTest {
     var groupConversation: ZMConversation!

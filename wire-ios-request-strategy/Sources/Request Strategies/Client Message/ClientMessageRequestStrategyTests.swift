@@ -18,10 +18,10 @@
 
 import XCTest
 
+import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-import WireTransport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
     var localNotificationDispatcher: MockPushMessageHandler!

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
     private var camera = false

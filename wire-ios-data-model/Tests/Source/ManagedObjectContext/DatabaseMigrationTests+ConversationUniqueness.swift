@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 @available(iOS 15.0, *)
 final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {

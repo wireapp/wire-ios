@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<ReplaceSelfMLSKeyPackagesAction, ReplaceSelfMLSKeyPackagesActionHandler> {
     let clientId = UUID().transportString()

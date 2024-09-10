@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class Payload_ConversationTests: MessagingTestBase {
     private typealias AccessRole = ConversationAccessRoleV2

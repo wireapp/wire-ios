@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import WireAPISupport
-@testable import WireDataModel
 import WireDataModelSupport
-@testable import WireDomain
 import XCTest
+@testable import WireAPI
+@testable import WireDataModel
+@testable import WireDomain
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
     var sut: ConversationLabelsRepository!

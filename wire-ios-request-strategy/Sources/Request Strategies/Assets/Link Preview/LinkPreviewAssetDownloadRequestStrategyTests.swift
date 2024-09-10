@@ -18,9 +18,9 @@
 
 import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
     var sut: LinkPreviewAssetDownloadRequestStrategy!

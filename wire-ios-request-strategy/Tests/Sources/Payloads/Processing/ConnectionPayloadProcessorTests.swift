@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import WireTransport
 import XCTest
+@testable import WireRequestStrategy
 
 final class ConnectionPayloadProcessorTests: MessagingTestBase {
     var sut: ConnectionPayloadProcessor!

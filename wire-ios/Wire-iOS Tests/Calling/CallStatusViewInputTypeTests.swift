@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 struct MockCallStatusViewInputType: CallStatusViewInputType {
     var state: CallStatusViewState

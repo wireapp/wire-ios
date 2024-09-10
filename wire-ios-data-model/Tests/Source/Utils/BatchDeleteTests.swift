@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import WireTesting
 import XCTest
+@testable import WireDataModel
 
 class TestEntity: NSManagedObject {
     @NSManaged var identifier: String?

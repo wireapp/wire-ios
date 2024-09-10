@@ -18,9 +18,9 @@
 
 import XCTest
 
+import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
-import WireTransport
 
 final class MessageSenderTests: MessagingTestBase {
     override func setUp() {

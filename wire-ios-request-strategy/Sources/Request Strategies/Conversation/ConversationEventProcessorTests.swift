@@ -18,9 +18,9 @@
 
 import XCTest
 
+import WireTransport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-import WireTransport
 
 final class ConversationEventProcessorTests: MessagingTestBase {
     var sut: ConversationEventProcessor!

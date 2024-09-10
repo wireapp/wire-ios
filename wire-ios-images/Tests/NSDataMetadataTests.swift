@@ -18,9 +18,9 @@
 
 import Foundation
 import ImageIO
-@testable import WireImages
 import WireTesting
 import XCTest
+@testable import WireImages
 
 class NSDataMetadataTests: XCTestCase {
     func testThatItThrowsForEmptyData() {

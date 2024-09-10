@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class AppLockIntegrationTests: IntegrationTest {
     private var appLock: MockAppLock!

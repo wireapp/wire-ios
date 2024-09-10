@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSystem
 import XCTest
+@testable import WireSystem
 
 class ExpiringActivityTests: XCTestCase {
     let concurrentQueue = DispatchQueue(label: "activity queue", attributes: [.concurrent])

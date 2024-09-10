@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import WireSyncEngine
+@testable import Wire
 
 struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
     var allowPresentationModeUpdates: Bool

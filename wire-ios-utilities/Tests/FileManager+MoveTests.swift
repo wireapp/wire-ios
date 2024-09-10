@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireUtilities
 import XCTest
+@testable import WireUtilities
 
 class FileManagerMoveTests: XCTestCase {
     override func setUp() {

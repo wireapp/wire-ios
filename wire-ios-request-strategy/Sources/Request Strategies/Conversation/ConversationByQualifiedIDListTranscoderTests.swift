@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
     // MARK: - Request generation

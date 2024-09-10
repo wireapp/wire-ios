@@ -20,9 +20,9 @@ import WireDataModel
 import WireLinkPreview
 import WireMockTransport
 import WireRequestStrategy
-@testable import WireShareEngine
 import WireTesting
 import XCTest
+@testable import WireShareEngine
 
 @testable import WireDataModelSupport
 

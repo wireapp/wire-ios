@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class SubconversationGroupIDRepositoryTests: XCTestCase {
     func test_StoreAndFetchGroupID() async throws {

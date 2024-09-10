@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireAPI
 import XCTest
+@testable import WireAPI
 
 extension HTTPResponse {
     // MARK: Error

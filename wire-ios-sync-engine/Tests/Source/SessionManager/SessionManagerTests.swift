@@ -18,11 +18,11 @@
 
 import LocalAuthentication
 import PushKit
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTesting
 import WireTransportSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class SessionManagerTests: IntegrationTest {
     private var sessionManagerBuilder: SessionManagerBuilder!

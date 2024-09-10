@@ -18,9 +18,9 @@
 
 import Foundation
 import WireCoreCrypto
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class MLSEncryptionServiceTests: XCTestCase {
     var sut: MLSEncryptionService!

@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 class SafeCoreCryptoTests: ZMBaseManagedObjectTest {
     func test_performDoesNotBlockWithMock() async throws {

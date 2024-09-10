@@ -19,10 +19,10 @@
 import Combine
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireTransportSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 @testable import WireTransport
-import WireTransportSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
     var mockSessionManager: MockSessionManager!

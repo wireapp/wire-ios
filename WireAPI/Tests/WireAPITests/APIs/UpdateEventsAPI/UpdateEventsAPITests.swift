@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-@testable import WireAPI
 import XCTest
+@testable import WireAPI
 
 final class UpdateEventsAPITests: XCTestCase {
     private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {

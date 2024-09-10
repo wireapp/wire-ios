@@ -18,10 +18,10 @@
 
 import Foundation
 
-@testable import Wire
 import WireDataModel
-@testable import WireDataModelSupport
 import XCTest
+@testable import Wire
+@testable import WireDataModelSupport
 
 final class ConversationMissedCallSystemMessageViewModelTests: XCTestCase {
     func testAttributedTitle_givenInitialState() {

@@ -17,9 +17,9 @@
 //
 
 import LocalAuthentication
+import XCTest
 @_spi(AppLockControllerState) @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
     var selfUser: ZMUser!

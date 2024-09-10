@@ -18,8 +18,8 @@
 
 import avs
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MockAudioRecordKeyboardDelegate: AudioRecordViewControllerDelegate {
     var didCancelHitCount = 0

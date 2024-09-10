@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AccessTokenRenewerMock: AccessTokenRenewing {
     struct Calls {

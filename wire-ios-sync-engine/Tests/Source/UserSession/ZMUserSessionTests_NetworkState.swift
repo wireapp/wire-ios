@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
     func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {

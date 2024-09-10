@@ -19,8 +19,8 @@
 import Foundation
 import XCTest
 
-@testable import WireRequestStrategy
 import WireTransport
+@testable import WireRequestStrategy
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {
     enum CodingKeys: CodingKey {}

@@ -19,9 +19,9 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 class CommitSenderTests: ZMBaseManagedObjectTest {
     // MARK: - Properties

@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireSyncEngine
 import WireTransport
 import XCTest
+@testable import WireSyncEngine
 
 class AVSIdentifierTests: XCTestCase {
     let uuid = UUID()

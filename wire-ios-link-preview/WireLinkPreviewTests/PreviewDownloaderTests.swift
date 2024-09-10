@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireLinkPreview
 import XCTest
+@testable import WireLinkPreview
 
 class PreviewDownloaderTests: XCTestCase {
     private let url = URL(string: "https://twitter.com/ericasadun/status/743868311843151872")!

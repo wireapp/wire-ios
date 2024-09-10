@@ -1,4 +1,6 @@
 //
+import XCTest
+
 // Wire
 // Copyright (C) 2024 Wire Swiss GmbH
 //
@@ -16,7 +18,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 @testable import WireDataModel
-import XCTest
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
     enum TestError: Error {

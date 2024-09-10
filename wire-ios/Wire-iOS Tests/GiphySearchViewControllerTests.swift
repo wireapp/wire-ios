@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 import Ziphy
+@testable import Wire
 
 final class GiphySearchViewControllerTests: XCTestCase {
     weak var sut: GiphySearchViewController!

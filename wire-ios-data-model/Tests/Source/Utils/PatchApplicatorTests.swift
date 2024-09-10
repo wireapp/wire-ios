@@ -19,8 +19,8 @@
 import CoreData
 import Foundation
 import simd
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 class PatchApplicatorTests: ZMBaseManagedObjectTest {
     var patchCountByVersion = [Int: Int]()

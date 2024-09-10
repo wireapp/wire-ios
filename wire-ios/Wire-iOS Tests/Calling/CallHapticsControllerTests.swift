@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+@testable import Wire
 
 private final class MockCallHapticsGenerator: CallHapticsGeneratorType {
     var triggeredEvents = [CallHapticsEvent]()

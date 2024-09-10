@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import XCTest
 @testable import Wire
 @testable import WireDataModelSupport
-import XCTest
 
 final class ProfileViewControllerViewModelTests: XCTestCase {
     // MARK: - Properties

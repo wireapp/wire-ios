@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSystem
 import XCTest
+@testable import WireSystem
 
 class ZMLogTests: XCTestCase {
     override func setUp() {

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import WireSyncEngine
 import XCTest
+@testable import Wire
 
 class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
     var sut = AuthenticationEmailVerificationRequiredErrorHandler()

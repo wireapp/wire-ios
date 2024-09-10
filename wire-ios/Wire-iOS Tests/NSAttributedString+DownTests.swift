@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class NSAttributedStringDownTests: XCTestCase {
     func testThatItReturnsH1Character() {

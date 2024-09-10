@@ -19,8 +19,8 @@
 import Foundation
 
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 final class AccessTokenTests: ZMTBaseTest {
     func testThatItStoresTokenAndType() {

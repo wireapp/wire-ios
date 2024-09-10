@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 class BackendEnvironmentTests: XCTestCase {
     var backendBundle: Bundle!

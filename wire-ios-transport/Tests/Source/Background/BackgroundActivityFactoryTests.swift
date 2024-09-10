@@ -18,8 +18,8 @@
 
 import UIKit
 import WireTesting
-@testable import WireTransport
 import XCTest
+@testable import WireTransport
 
 class BackgroundActivityFactoryTests: XCTestCase {
     var factory: BackgroundActivityFactory!

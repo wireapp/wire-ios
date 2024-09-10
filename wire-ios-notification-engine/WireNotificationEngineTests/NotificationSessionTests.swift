@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireNotificationEngine
 import XCTest
+@testable import WireNotificationEngine
 
 final class NotificationSessionTests: BaseTest {
     // MARK: - Init errors

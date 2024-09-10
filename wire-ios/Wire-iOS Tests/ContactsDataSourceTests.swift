@@ -17,8 +17,8 @@
 //
 
 import UIKit
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ContactsDataSourceTests: XCTestCase {
     var dataSource: ContactsDataSource!

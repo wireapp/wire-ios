@@ -18,9 +18,9 @@
 
 import XCTest
 
+import WireTransport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-import WireTransport
 
 class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     private var sut: LinkPreviewUpdateRequestStrategy!

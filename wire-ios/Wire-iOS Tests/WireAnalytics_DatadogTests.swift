@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCommonComponents
 import XCTest
+@testable import WireCommonComponents
 
 class WireAnalytics_DatadogTests: XCTestCase {
     func test_enable_isExecutedOnlyOnce() {

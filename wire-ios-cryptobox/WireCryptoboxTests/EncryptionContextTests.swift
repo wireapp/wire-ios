@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireCryptobox
 import XCTest
+@testable import WireCryptobox
 
 class EncryptionContextTests: XCTestCase {
     /// This test verifies that the critical section (in usingSessions)

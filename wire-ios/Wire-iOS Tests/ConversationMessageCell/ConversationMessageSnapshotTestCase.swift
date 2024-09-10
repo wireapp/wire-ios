@@ -18,8 +18,8 @@
 
 import Foundation
 import SnapshotTesting
-@testable import Wire
 import XCTest
+@testable import Wire
 
 extension ConversationMessageContext {
     fileprivate static let defaultContext = ConversationMessageContext(isSameSenderAsPrevious: false,

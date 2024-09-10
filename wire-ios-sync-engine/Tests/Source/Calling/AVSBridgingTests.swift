@@ -17,8 +17,8 @@
 //
 
 import avs
-@testable import WireSyncEngine
 import XCTest
+@testable import WireSyncEngine
 
 class AVSBridgingTests: MessagingTest {
     var rawString: UnsafePointer<CChar>!

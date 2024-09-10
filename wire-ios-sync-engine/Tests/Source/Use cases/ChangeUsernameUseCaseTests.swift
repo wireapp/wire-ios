@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
+@testable import WireSyncEngine
 
 final class ChangeUsernameUseCaseTests: XCTestCase {
     func testThatIt_requestsSettingHandle() async throws {

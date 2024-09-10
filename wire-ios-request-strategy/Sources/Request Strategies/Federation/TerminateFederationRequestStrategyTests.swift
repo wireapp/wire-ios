@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class TerminateFederationRequestStrategyTests: MessagingTestBase {
     // MARK: - Properties

@@ -17,8 +17,8 @@
 //
 
 import Down
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class MarkdownTextStorageTests: XCTestCase {
     var sut: MarkdownTextStorage!

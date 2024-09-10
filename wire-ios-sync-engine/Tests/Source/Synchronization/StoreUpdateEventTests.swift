@@ -17,8 +17,8 @@
 //
 
 import WireDataModel
-@testable import WireSyncEngine
 import WireTesting
+@testable import WireSyncEngine
 
 class StoreUpdateEventTests: MessagingTest {
     var account: Account!

@@ -19,10 +19,10 @@
 import Foundation
 import WireCoreCrypto
 
+import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-import WireTransport
 
 class E2EIEnrollmentTests: ZMTBaseTest {
     var sut: E2EIEnrollment!

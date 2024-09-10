@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import XCTest
+@testable import WireDataModel
 
 final class MLSUserIDTests: XCTestCase {
     func test_ItLowercasesComponents() throws {

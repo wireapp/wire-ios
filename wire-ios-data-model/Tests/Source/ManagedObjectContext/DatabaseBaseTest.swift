@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireDataModel
 import WireTesting
+@testable import WireDataModel
 
 class DatabaseBaseTest: ZMTBaseTest {
     var accountID = UUID.create()

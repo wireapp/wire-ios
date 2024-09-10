@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+@testable import Wire
 
 final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase {
     override func setUp() {

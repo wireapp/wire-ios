@@ -19,8 +19,8 @@
 import WireDataModelSupport
 import WireDomainSupport
 import WireRequestStrategySupport
-@testable import WireSyncEngine
 import WireSyncEngineSupport
+@testable import WireSyncEngine
 
 import XCTest
 

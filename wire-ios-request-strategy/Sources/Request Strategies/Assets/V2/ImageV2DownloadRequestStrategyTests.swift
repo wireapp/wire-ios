@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDataModel
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     fileprivate var applicationStatus: MockApplicationStatus!

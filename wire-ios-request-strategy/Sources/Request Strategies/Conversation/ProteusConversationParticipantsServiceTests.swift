@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
 import XCTest
+@testable import WireRequestStrategy
 
 class ProteusConversationParticipantsServiceTests: MessagingTestBase {
     // MARK: - Properties

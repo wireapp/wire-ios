@@ -17,9 +17,9 @@
 //
 
 import Foundation
-@testable import WireCryptobox
 import WireSystem
 import XCTest
+@testable import WireCryptobox
 
 class EncryptionSessionsDirectoryTests: XCTestCase {
     var contextAlice: EncryptionContext!

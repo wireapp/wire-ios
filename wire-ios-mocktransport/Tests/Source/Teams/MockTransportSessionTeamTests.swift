@@ -17,8 +17,8 @@
 //
 
 import Foundation
-@testable import WireMockTransport
 import XCTest
+@testable import WireMockTransport
 
 // MARK: - Teams
 

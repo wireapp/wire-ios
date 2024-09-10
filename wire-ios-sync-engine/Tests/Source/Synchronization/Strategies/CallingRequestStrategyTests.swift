@@ -19,9 +19,9 @@
 import Foundation
 import WireDataModelSupport
 import WireRequestStrategy
-@testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTransport
+@testable import WireSyncEngine
 
 class CallingRequestStrategyTests: MessagingTest {
     var sut: CallingRequestStrategy!

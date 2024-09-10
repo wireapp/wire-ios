@@ -17,9 +17,9 @@
 //
 
 import LocalAuthentication
+import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
-import XCTest
 
 final class AuthenticationContextTests: XCTestCase {
     // Executing `evaluatePolicy` triggers authentication prompt to the user
