@@ -21,8 +21,8 @@ import Foundation
 private var zmLog = ZMSLog(tag: "ZMManagedObjectGrouping")
 
 // Describing the generic storage type that contains the data in the format of
-// Key => [Value, 
-//         Value, 
+// Key => [Value,
+//         Value,
 //         ...]
 private protocol TupleKeyArrayType {
     associatedtype Key: Hashable

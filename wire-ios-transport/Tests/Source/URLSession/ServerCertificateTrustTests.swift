@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/* 
+/*
  To export a certificate in ascii PEM format, run:
 
  openssl s_client -connect wire.com:443 -showcerts

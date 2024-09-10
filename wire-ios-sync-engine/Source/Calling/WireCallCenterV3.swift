@@ -749,7 +749,7 @@ extension WireCallCenterV3 {
                         }
                     }
 
-                    // Create the stale participants remover 
+                    // Create the stale participants remover
                     // and subscribe to the publisher of participants changes
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
                         mlsService: mlsService,

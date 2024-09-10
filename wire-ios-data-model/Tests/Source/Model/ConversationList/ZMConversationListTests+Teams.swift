@@ -40,7 +40,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
     }
 
     func testThatItDoesNotReturnTheSelfConversation() {
-        // given 
+        // given
         let group = ZMConversation.insertNewObject(in: uiMOC)
         group.team = team
         group.conversationType = .group

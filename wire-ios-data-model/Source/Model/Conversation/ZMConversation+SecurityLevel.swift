@@ -232,7 +232,7 @@ extension ZMConversation {
         }
     }
 
-    /// Update the legal hold status based on the hint of a message.    
+    /// Update the legal hold status based on the hint of a message.
     private func updateLegalHoldIfNeededWithHint(from message: GenericMessage, timestamp: Date) {
         switch message.legalHoldStatus {
         case .enabled where !legalHoldStatus.denotesEnabledComplianceDevice:
@@ -438,7 +438,7 @@ extension ZMConversation {
         resendPendingMessagesAfterPrivacyChanges()
     }
 
-    /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 
+    /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered,
     /// halting the enumeration when a system message for security level degradation is found.
     /// This is executed asychronously on the sync context
     private func enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext(block: @escaping (ZMOTRMessage) -> Void) {

@@ -277,7 +277,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             let existingClient = self.createSelfClient()
 
             // swiftlint:disable:next todo_requires_jira_link
-            // TODO: [John] use flag here 
+            // TODO: [John] use flag here
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 fingerprint = sessionsDirectory.localFingerprint
             }

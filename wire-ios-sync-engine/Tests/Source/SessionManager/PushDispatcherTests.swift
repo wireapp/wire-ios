@@ -72,7 +72,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
             // GIVEN
             observer = TestPushDispatcherClient()
             observerWeakReference = observer
-            // WHEN 
+            // WHEN
             sut.add(client: observer!)
             observer = nil
         }

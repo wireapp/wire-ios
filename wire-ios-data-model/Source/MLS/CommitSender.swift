@@ -50,7 +50,7 @@ public protocol CommitSending {
     /// - Throws: `ExternalCommitError` if the operation fails.
     ///
     /// If the commit is sent successfully, the pending group will be merged.
-    /// 
+    ///
     /// If the commit fails to send, the error will contain a recovery strategy to handle the failure.
     /// If the recovery strategy is to give up, then the pending group will be cleared.
 

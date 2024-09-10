@@ -21,7 +21,7 @@ import XCTest
 
 final class StringXMLEntityParserTests: XCTestCase {
     func testThatItIgnoresEmptyString() {
-        // given 
+        // given
         let string = ""
         // when & then
         XCTAssertEqual(string, string.removingHTMLEntities())

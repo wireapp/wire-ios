@@ -24,7 +24,7 @@ import WireSyncEngine
 final class DeveloperOptionsController: UIViewController {
     /// Cells
     var tableCells: [UITableViewCell]!
-    /// Map from UISwitch to the action it should perform. 
+    /// Map from UISwitch to the action it should perform.
     /// The parameter of the action is whether the switch is on or off
     var uiSwitchToAction: [UISwitch: (Bool) -> Void] = [:]
 

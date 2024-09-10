@@ -23,7 +23,7 @@ import Foundation
         Foundation.URL(string: path)!
     }
 
-    // It would be better to use `queryItems: [URLQueryItem]`, 
+    // It would be better to use `queryItems: [URLQueryItem]`,
     // because an array is sorted (compared to dictionary here).
     // It can make a difference in the final call,
     // e.g. for caching requests and have them equal with other platforms.

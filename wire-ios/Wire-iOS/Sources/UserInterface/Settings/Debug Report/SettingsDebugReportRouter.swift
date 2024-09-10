@@ -31,7 +31,7 @@ protocol SettingsDebugReportRouterProtocol {
     func presentFallbackAlert(sender: UIView)
 
     /// Presents the share view controller
-    /// 
+    ///
     /// - Parameters:
     ///   - destinations: list of conversations to choose from to send the report
     ///   - debugReport: the debug report to share

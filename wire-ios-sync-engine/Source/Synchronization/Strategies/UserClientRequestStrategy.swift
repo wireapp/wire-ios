@@ -331,7 +331,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                         }
                     } catch {
                         // swiftlint:disable:next todo_requires_jira_link
-                        // TODO: [F] check if we need to propagate error 
+                        // TODO: [F] check if we need to propagate error
                         WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
                     }
                     managedObjectContext?.leaveAllGroups(groups)

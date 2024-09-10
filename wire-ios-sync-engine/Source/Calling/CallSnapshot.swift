@@ -160,7 +160,7 @@ struct CallSnapshot {
      *
      * A user degrades the call if they were previously trusted by the self
      * client and then joined the call with an unverified device.
-     * 
+     *
      * - parameter degradedUser: The user who degraded the call.
      */
 

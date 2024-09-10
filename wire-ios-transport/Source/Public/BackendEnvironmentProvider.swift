@@ -20,7 +20,7 @@ import Foundation
 
 @objc public protocol BackendTrustProvider: NSObjectProtocol {
     /// Returns true if certificate matches what we expect it to be OR it's a host we don't need to check
-    /// False if certificate doesn't match 
+    /// False if certificate doesn't match
     @objc func verifyServerTrust(trust: SecTrust, host: String?) -> Bool
 }
 

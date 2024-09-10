@@ -22,7 +22,7 @@ extension ZMUserSession {
     /// This flag is an abstraction for the UI to use in case a HotFix relies on
     /// changes to be made which should not be checked from the UI directly.
     /// The is caused by the fact that a HotFix gets applied in the EventProcessingState,
-    /// (see `ZMEventProcessingState.h` in `didEnterState`), after which the initial sync 
+    /// (see `ZMEventProcessingState.h` in `didEnterState`), after which the initial sync
     /// will be completed. In case a HotFix relies on a network request being made (e.g. when refetching a user),
     /// the notification for the initial sync completion might be fired before that request completed.
     /// In order to ensure all HotFix related changes have been made (including requests) the UI

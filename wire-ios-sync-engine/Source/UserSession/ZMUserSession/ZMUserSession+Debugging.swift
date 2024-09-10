@@ -199,7 +199,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
 
         userSession.syncManagedObjectContext.perform {
             // swiftlint:disable:next todo_requires_jira_link
-            // TODO: [John] use flag here         
+            // TODO: [John] use flag here
             guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
                 return onComplete(.failure(error: "No encryption context"))
             }

@@ -74,7 +74,7 @@ final class ExplicitChangeDetector: ChangeDetector {
     ///
     /// - Parameters:
     ///     - objects: A set of modified objects.
-    ///     
+    ///
     /// - Returns:
     ///     A mapping of all objects and their changed keys.
 

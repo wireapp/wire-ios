@@ -265,7 +265,7 @@ public class TextSearchQuery: NSObject {
             guard let unwrappedRequest = request,
                   let messagesToIndex = self.syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage] else { return }
             for item in messagesToIndex {
-                // We populate the `normalizedText` field, so the search can be 
+                // We populate the `normalizedText` field, so the search can be
                 // performed faster on the normalized field the next time.
                 item.updateNormalizedText()
             }
@@ -301,7 +301,7 @@ public class TextSearchQuery: NSObject {
         }
     }
 
-    /// Returns the count of indexed messages in the conversation. 
+    /// Returns the count of indexed messages in the conversation.
     /// Needs to be called from the syncMOC's Queue.
     private func countForIndexedMessages() -> Int {
         let request = ZMClientMessage.sortedFetchRequest(with: predicateForIndexedMessages)
@@ -309,7 +309,7 @@ public class TextSearchQuery: NSObject {
         return (try? self.syncMOC.count(for: request)) ?? 0
     }
 
-    /// Returns the count of not indexed indexed messages in the conversation. 
+    /// Returns the count of not indexed indexed messages in the conversation.
     /// Needs to be called from the syncMOC's Queue.
     private func countForNonIndexedMessages() -> Int {
         let request = ZMClientMessage.sortedFetchRequest(with: predicateForNotIndexedMessages)

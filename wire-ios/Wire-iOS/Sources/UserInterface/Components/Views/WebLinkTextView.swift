@@ -53,7 +53,7 @@ final class WebLinkTextView: UITextView {
         set { /* no-op */ }
     }
 
-    // Prevent double-tap to select 
+    // Prevent double-tap to select
     override var canBecomeFirstResponder: Bool {
         false
     }

@@ -74,7 +74,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
             return
         }
 
-        // In case the user has set a 3rd party application to open the URL we do not 
+        // In case the user has set a 3rd party application to open the URL we do not
         // want to commit the view controller but instead open the url.
         if let url = lastPreviewURL {
             url.open()

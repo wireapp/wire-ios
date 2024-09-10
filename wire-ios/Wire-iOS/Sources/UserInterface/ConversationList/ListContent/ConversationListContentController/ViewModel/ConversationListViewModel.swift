@@ -293,7 +293,7 @@ final class ConversationListViewModel: NSObject {
     /// When folderEnabled == true, returns false
     ///
     /// - Parameter sectionIndex: section number of collection view
-    /// - Returns: if the section exists and visible, return true. 
+    /// - Returns: if the section exists and visible, return true.
     func sectionHeaderVisible(section: Int) -> Bool {
         guard sections.indices.contains(section),
               kind(of: section) != .contactRequests,

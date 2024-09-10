@@ -172,7 +172,7 @@ protocol ConversationStatusMatcher {
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString?
     func icon(with status: ConversationStatus, conversation: MatcherConversation) -> ConversationStatusIcon?
 
-    // An array of matchers that are compatible with the current one. Leads to display the description of all matching 
+    // An array of matchers that are compatible with the current one. Leads to display the description of all matching
     // in one row, like "description1 | description2"
     var combinesWith: [ConversationStatusMatcher] { get }
 }

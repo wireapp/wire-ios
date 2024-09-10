@@ -90,7 +90,7 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
 
     /*
      * [WPB-5993] Jira-Ticket "fix core data migrating corrupted ParticipantRole objects"
-     * 
+     *
      * This test was creating an error thrown by core data migration. Now this behavior is solved.
      *
      * In order to recreate this the failure migration one needs to remove the `RemoveZombieParticipantRolesMigrationPolicy`

@@ -30,7 +30,7 @@ enum LocalNotificationType {
 }
 
 /// A notification builder provides the main components used to configure
-/// a local notification. 
+/// a local notification.
 ///
 protocol NotificationBuilder {
     var notificationType: LocalNotificationType { get }

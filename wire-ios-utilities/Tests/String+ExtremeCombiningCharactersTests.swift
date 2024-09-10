@@ -211,7 +211,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
     }
 
     func testValueValidatorForValidString() {
-        // GIVEN 
+        // GIVEN
         let initialString = "Hello world"
         var string: AnyObject? = initialString as AnyObject?
 

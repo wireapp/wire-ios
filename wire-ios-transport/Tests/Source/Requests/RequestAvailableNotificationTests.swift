@@ -49,7 +49,7 @@ class RequestAvailableNotificationTests: XCTestCase {
         // when
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
 
-        // then 
+        // then
         XCTAssertTrue(sut.requestsAvailable)
     }
 

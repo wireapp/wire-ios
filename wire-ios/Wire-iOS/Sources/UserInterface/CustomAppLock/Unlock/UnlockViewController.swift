@@ -27,7 +27,7 @@ protocol UnlockViewControllerDelegate: AnyObject {
 }
 
 /// UnlockViewController
-/// 
+///
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
     typealias Unlock = L10n.Localizable.Unlock

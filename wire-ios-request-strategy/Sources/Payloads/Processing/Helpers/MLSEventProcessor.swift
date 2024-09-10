@@ -28,7 +28,7 @@ public protocol MLSEventProcessing {
     ///   - fallbackGroupID: The groupd ID of the conversation found in the event payload.
     ///   - context: The sync context.
     ///
-    /// This method will update the conversation's `mlsStatus` to `.ready` if the underlying 
+    /// This method will update the conversation's `mlsStatus` to `.ready` if the underlying
     /// MLS group already exists in core crypto's local storage.
     /// Otherwise, it will update it to `.pendingJoin`.
 
@@ -45,9 +45,9 @@ public protocol MLSEventProcessing {
     ///   - conversationID: The qualified ID of the conversation.
     ///   - context: The sync context.
     ///
-    /// This method will notify the stale key material detector about the keying material update 
+    /// This method will notify the stale key material detector about the keying material update
     /// and upload key packages if needed.
-    /// It will also sync the conversation if it's missing. 
+    /// It will also sync the conversation if it's missing.
     /// And if the conversation is a one to one conversation, it will be resolved.
     ///
     /// **Note:** The welcome message itself is not being processed in this method, but rather in the ``EventDecoder``.

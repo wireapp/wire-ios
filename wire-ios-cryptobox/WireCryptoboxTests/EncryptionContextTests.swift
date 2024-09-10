@@ -160,7 +160,7 @@ class EncryptionContextTests: XCTestCase {
             _ = try! context1.encrypt(someTextToEncrypt.data(using: .utf8)!, for: hardcodedClientId)
         }
 
-        // THEN 
+        // THEN
         // it didn't crash
     }
 

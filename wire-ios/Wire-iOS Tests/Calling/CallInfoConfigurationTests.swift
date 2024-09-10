@@ -562,7 +562,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
     @MainActor
     func testGroupAudioEstablishedLargeGroup() {
-        // given        
+        // given
         let fixture = CallInfoTestFixture(otherUser: otherUser, selfUser: selfUser, groupSize: .large, mockUsers: mockUsers)
 
         let mockConversation = createGroupConversation()

@@ -50,7 +50,7 @@ extension UnauthenticatedSession {
         }
     }
 
-    /// Triggers a request for an email verification code for login. 
+    /// Triggers a request for an email verification code for login.
     ///
     /// Returns: false if the email address was invalid.
     @objc(requestEmailVerificationCodeForLogin:)

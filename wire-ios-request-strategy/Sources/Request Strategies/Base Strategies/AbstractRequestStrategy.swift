@@ -35,7 +35,7 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
         super.init()
     }
 
-    /// Subclasses should override this method. 
+    /// Subclasses should override this method.
     open func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         fatal("you must override this method")
     }

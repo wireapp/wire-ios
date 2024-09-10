@@ -73,7 +73,8 @@
     strongifiedSelf, \
     todos, \
     trailingClosures, \
-    trailingCommas
+    trailingCommas, \
+    trailingSpace
 
 
 # Options

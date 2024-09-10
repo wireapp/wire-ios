@@ -169,7 +169,7 @@ extension EventDecoder {
         }
     }
 
-    /// Fetches and returns the next batch of size `EventDecoder.BatchSize` 
+    /// Fetches and returns the next batch of size `EventDecoder.BatchSize`
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
     private func fetchNextEventsBatch(with encryptionKeys: EncryptionKeys?) -> EventsWithStoredEvents {
         var (storedEvents, updateEvents) = ([StoredUpdateEvent](), [ZMUpdateEvent]())
@@ -203,7 +203,7 @@ extension EventDecoder {
         Set(self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String])
     }
 
-    /// Store received event IDs 
+    /// Store received event IDs
     private func storeReceivedPushEventIDs(from: [ZMUpdateEvent]) {
         let uuidToAdd = from
             .filter { $0.source == .pushNotification }

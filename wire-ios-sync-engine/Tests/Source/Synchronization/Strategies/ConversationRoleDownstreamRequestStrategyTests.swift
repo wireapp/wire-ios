@@ -93,7 +93,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             // when
             let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap { $0.fetchRequestForTrackedObjects() }.flatMap { try! self.syncMOC.fetch($0) as! [ZMConversation] }
 
-            // then            
+            // then
             XCTAssertEqual(objs, [convo1])
         }
     }

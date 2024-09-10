@@ -41,7 +41,7 @@ import Foundation
     /// In the model schema version 2.6 we removed the flags `needsToUploadMedium` and `needsToUploadPreview` on `ZMAssetClientMessage`
     /// and introduced an enum called `ZMAssetUploadedState`. During the migration this value will be set to `.Done` on all `ZMAssetClientMessages`.
     /// There is an edge case in which the user has such a message in his database which is not yet uploaded and we want to upload it again, thus
-    /// not set the state to `.Done` in this case. We fetch all asset messages without an assetID and set set their uploaded state 
+    /// not set the state to `.Done` in this case. We fetch all asset messages without an assetID and set set their uploaded state
     /// to `.UploadingFailed`, in case this message represents an image we also expire it.
     public static func updateUploadedStateForNotUploadedFileMessages(_ context: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: context)

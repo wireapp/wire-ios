@@ -22,7 +22,7 @@ import WireTesting
 import XCTest
 
 extension MessagingTestBase {
-    /// Encrypts a message from the given client to the self user. 
+    /// Encrypts a message from the given client to the self user.
     /// It will create a session between the two if needed
     public func encryptedMessageToSelf(message: GenericMessage, from sender: UserClient) -> Data {
         let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
@@ -53,7 +53,7 @@ extension MessagingTestBase {
         return cypherText!
     }
 
-    /// Creates a session between the self client to the given user, if it does not 
+    /// Creates a session between the self client to the given user, if it does not
     /// exists already
     @objc(establishSessionFromSelfToClient:)
     public func establishSessionFromSelf(to client: UserClient) {

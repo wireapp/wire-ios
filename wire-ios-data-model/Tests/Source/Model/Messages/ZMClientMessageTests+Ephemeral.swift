@@ -224,7 +224,7 @@ extension ZMClientMessageTests_Ephemeral {
                 message.linkPreviewState = .done
                 message.markAsSent()
 
-                // then 
+                // then
                 XCTAssertNotNil(message.destructionDate)
                 XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
             } catch {

@@ -25,7 +25,7 @@ public enum FileManagerError: Error {
 }
 
 extension FileManager {
-    /// Creates a new directory if needed, sets the file protection 
+    /// Creates a new directory if needed, sets the file protection
     /// to `completeUntilFirstUserAuthentication` and excludes the URL from backups.
     ///
     /// Throws: FileManagerError

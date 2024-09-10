@@ -36,7 +36,7 @@ extension UIFont {
 //            (.heavy, "Heavy"),
 //            (.black, "Black")
 //        ]
-//    
+//
 //        print("Font weights for \(familyName):")
 //        for (weight, weightName) in fontWeights {
 //            print("\(weight.rawValue): \(weightName)")

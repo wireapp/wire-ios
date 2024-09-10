@@ -30,7 +30,7 @@ protocol LogFilesProviding {
     func generateLogFilesData() throws -> Data
 
     /// Generates a zip file containing all log files
-    /// 
+    ///
     /// - Returns: the log files archive URL
 
     func generateLogFilesZip() throws -> URL

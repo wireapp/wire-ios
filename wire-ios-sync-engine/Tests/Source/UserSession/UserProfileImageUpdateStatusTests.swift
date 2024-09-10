@@ -387,7 +387,7 @@ extension UserProfileImageUpdateStatusTests {
         // WHEN
         self.sut.updateImage(imageData: tinyImage)
 
-        // THEN 
+        // THEN
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
 

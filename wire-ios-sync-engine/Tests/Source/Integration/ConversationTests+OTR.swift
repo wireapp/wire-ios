@@ -580,7 +580,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         setupInitialSecurityLevel(initialSecurityLevel, in: conversation)
 
-        // WHEN        
+        // WHEN
         let previousMessageCount = conversation?.allMessages.count
 
         mockTransportSession.performRemoteChanges { session in
@@ -594,7 +594,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        // THEN        
+        // THEN
         XCTAssertEqual(conversation?.securityLevel, expectedSecurityLevel)
 
         let messageAddedCount = conversation!.allMessages.count - previousMessageCount!

@@ -241,7 +241,7 @@ extension UserProfileImageUpdateStatus {
 
 // Called from the UI to update a v3 image
 extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
-    /// Starts the process of updating profile picture. 
+    /// Starts the process of updating profile picture.
     ///
     /// - Important: Expected to be run from UI thread
     ///

@@ -33,7 +33,7 @@ public protocol CoreCryptoProviderProtocol {
     func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws
 
     /// Initialise a new MLS client after completing end to end identity enrollment
-    /// 
+    ///
     /// - parameters:
     ///   - enrollment: enrollment instance which was used to establish end to end identity
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment

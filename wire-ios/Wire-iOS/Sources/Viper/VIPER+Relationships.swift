@@ -23,7 +23,7 @@ import Foundation
 /// The names of all relationship protocols follow the format:
 ///
 ///  <module name><implementer><caller>Interface
-/// 
+///
 /// For example, the name FooInteractorPresenterInterface is the relationship
 /// implemented by the interactor, called by the presenter, and located in the
 /// "Foo" module.

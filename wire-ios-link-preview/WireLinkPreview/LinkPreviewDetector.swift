@@ -53,7 +53,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
 
      The completion block will be called on private background queue, make sure to switch to main or other queue.
 
-     **Attention: For now this method only downloads the preview data (and only one image for this link preview) 
+     **Attention: For now this method only downloads the preview data (and only one image for this link preview)
      for the first link found in the text!**
 
      - parameter text:       The text with potentially contained links, if links are found the preview data is downloaded.

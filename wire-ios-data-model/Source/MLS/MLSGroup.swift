@@ -19,7 +19,7 @@
 import CoreData
 import Foundation
 
-/// A managed object representing an MLS group that is primarily being used 
+/// A managed object representing an MLS group that is primarily being used
 /// to store the last key material update date for a group.
 
 @objcMembers

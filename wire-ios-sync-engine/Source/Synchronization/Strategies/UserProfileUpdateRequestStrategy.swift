@@ -134,7 +134,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
             } else if response.httpStatus == 403, response.payloadLabel() == "invalid-credentials" {
                 // if the credentials are invalid, we assume that there was a previous password.
                 // We decide to ignore this case because there's nothing we can do
-                // and since we don't allow to change the password on the client (only to set it once), 
+                // and since we don't allow to change the password on the client (only to set it once),
                 // this will only be fired in some edge cases
                 self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
             } else {

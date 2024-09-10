@@ -19,7 +19,7 @@
 private let unknownMessageEventName = "debug.compatibility_unknown_message"
 
 extension AnalyticsType {
-    /// This method should be used to track messages which are not reported to 
+    /// This method should be used to track messages which are not reported to
     /// be `known`, c.f. `knownMessage` in `ZMGenericMessage+Utils.m`.
     func tagUnknownMessageReceived() {
         tagEvent(unknownMessageEventName)

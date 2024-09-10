@@ -53,7 +53,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: nil)
         let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
         sut.overrideUserInterfaceStyle = .light
-        // WHEN 
+        // WHEN
         sut.selected = true
 
         // THEN
@@ -73,7 +73,7 @@ final class AccountViewSnapshotTests: XCTestCase {
         // GIVEN
         let account = Account(userName: "Iggy Pop", userIdentifier: UUID(), teamName: nil, imageData: imageData)
         let sut = PersonalAccountView(account: account, displayContext: .accountSelector)
-        // WHEN 
+        // WHEN
         sut.selected = true
         // THEN
         snapshotHelper.verify(matching: sut)

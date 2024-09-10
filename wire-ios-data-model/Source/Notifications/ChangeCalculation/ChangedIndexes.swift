@@ -95,7 +95,7 @@ public struct ChangedIndexes<T: Hashable> {
     /// insertedIndexes refer to the indexes after deleting deletedIndexes
     public let insertedIndexes: IndexSet
 
-    /// updatedIndexes refer to the position of the item after the move 
+    /// updatedIndexes refer to the position of the item after the move
     /// Reloads using these indexes must be performed AFTER inserts / deletes and moves have COMPLETED
     public let updatedIndexes: IndexSet
 

@@ -39,7 +39,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
     }
 
     /// Returns the public key of the leaf certificate associated with the trust object
-    /// 
+    ///
     /// To dump certificate data, use
     ///     CFIndex const certCount = SecTrustGetCertificateCount(serverTrust);
     /// and

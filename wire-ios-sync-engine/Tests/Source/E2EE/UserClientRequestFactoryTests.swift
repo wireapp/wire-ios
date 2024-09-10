@@ -62,7 +62,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         return proteusService
     }
 
-    // MARK: - Registration request creation 
+    // MARK: - Registration request creation
 
     func testThatItCreatesRegistrationRequestWithEmailCorrectly() throws {
         let credentials = UserEmailCredentials(email: "some@example.com", password: "123")

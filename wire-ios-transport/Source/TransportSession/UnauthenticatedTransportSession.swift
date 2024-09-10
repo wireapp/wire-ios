@@ -47,7 +47,7 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 }
 
 /// The `UnauthenticatedTransportSession` class should be used instead of `ZMTransportSession`
-/// until a user has been authenticated. Consumers should set themselves as delegate to 
+/// until a user has been authenticated. Consumers should set themselves as delegate to
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
 /// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
 /// to create a regular transport session with it.
@@ -174,8 +174,8 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
 
     public func tearDown() {
         // From NSURLSession documentation at https://developer.apple.com/documentation/foundation/urlsession:
-        // "The session object keeps a strong reference to the delegate until your app 
-        // exits or explicitly invalidates the session. 
+        // "The session object keeps a strong reference to the delegate until your app
+        // exits or explicitly invalidates the session.
         // If you do not invalidate the session, your app leaks memory until it exits."
         self.session = nil
     }

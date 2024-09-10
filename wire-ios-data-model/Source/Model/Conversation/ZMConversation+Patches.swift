@@ -28,7 +28,7 @@ extension ZMConversation {
 
     /// After changes to conversation security degradation logic we need
     /// to migrate all conversations from .secureWithIgnored to .notSecure
-    /// so that users wouldn't get degratation prompts to conversations that 
+    /// so that users wouldn't get degratation prompts to conversations that
     /// at any point in the past had been secure
     static func migrateAllSecureWithIgnored(in moc: NSManagedObjectContext) {
         let predicate = ZMConversation.predicateSecureWithIgnored()

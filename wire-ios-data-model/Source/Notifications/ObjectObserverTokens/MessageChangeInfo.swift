@@ -20,7 +20,7 @@ import Foundation
 
 private var zmLog = ZMSLog(tag: "MessageChangeInfo")
 
-// MARK: Message observing 
+// MARK: Message observing
 
 enum MessageKey: String {
     case previewGenericMessage

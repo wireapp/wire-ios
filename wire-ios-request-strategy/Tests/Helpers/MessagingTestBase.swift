@@ -107,7 +107,7 @@ class MessagingTestBase: ZMTBaseTest {
     }
 }
 
-// MARK: - Messages 
+// MARK: - Messages
 
 extension MessagingTestBase {
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it

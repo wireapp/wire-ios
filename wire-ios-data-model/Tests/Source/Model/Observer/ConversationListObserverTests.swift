@@ -777,7 +777,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             self.syncMOC.saveOrRollback()
         }
 
-        // when 
+        // when
         // This simulates an objectsDidChange notification without the immediate merge afterwards
         mergeLastChangesWithoutNotifying()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
