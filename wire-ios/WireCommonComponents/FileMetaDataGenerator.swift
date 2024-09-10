@@ -20,6 +20,7 @@ import AVFoundation
 import Foundation
 import MobileCoreServices
 import WireDataModel
+import UniformTypeIdentifiers
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -96,6 +97,13 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
 
 extension AVURLAsset {
 
+    static func wr_isAudioVisualUniformType(_ uniformType: UTType) -> Bool {
+        audiovisualTypes()
+            .compactMap { avFileType in UTType(avFileType.rawValue) }
+            .contains { uniformType.conforms(to: $0) }
+    }
+
+    // TODO: remove
     static func wr_isAudioVisualUTI(_ UTI: String) -> Bool {
         audiovisualTypes().contains { compatibleUTI -> Bool in
             UTTypeConformsTo(UTI as CFString, compatibleUTI as CFString)

@@ -22,18 +22,14 @@ import UniformTypeIdentifiers
 // TODO: remove import
 import CoreServices
 
-public struct PDFFilePreviewGenerator: FilePreviewGenerator {
+struct PDFFilePreviewGenerator: FilePreviewGenerator {
 
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
-    public init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
-        self.thumbnailSize = thumbnailSize
-        self.callbackQueue = callbackQueue
-    }
 
     @available(*, deprecated, message: "TODO: delete")
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return UTTypeConformsTo(uti as CFString, kUTTypePDF)
+        UTTypeConformsTo(uti as CFString, kUTTypePDF)
     }
 
     func generatePreview(_ fileURL: URL, type: UTType, completion: @escaping (UIImage?) -> Void) {

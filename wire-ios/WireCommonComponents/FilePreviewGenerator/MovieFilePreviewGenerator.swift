@@ -21,15 +21,14 @@ import UniformTypeIdentifiers
 import AVFoundation
 
 struct MovieFilePreviewGenerator: FilePreviewGenerator {
+
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
-    init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
-        self.thumbnailSize = thumbnailSize
-        self.callbackQueue = callbackQueue
-    }
+
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        return AVURLAsset.wr_isAudioVisualUTI(uti)
+        AVURLAsset.wr_isAudioVisualUTI(uti)
     }
+
     func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
         var result: UIImage? = .none
         defer {

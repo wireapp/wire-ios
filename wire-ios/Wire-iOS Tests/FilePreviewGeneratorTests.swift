@@ -31,7 +31,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // Given
         let pdfURL = try XCTUnwrap(bundle.url(forResource: "0x0", withExtension: "pdf"))
-        let sut = PDFFilePreviewGenerator(callbackQueue: .main, thumbnailSize: CGSize(width: 100, height: 100))
+        let sut = PDFFilePreviewGenerator(thumbnailSize: CGSize(width: 100, height: 100), callbackQueue: .main)
 
         // When
         let expectation = expectation(description: "Finished generating the preview")
@@ -48,7 +48,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // Given
         let pdfURL = try XCTUnwrap(bundle.url(forResource: "huge", withExtension: "pdf"))
-        let sut = PDFFilePreviewGenerator(callbackQueue: .main, thumbnailSize: CGSize(width: 100, height: 100))
+        let sut = PDFFilePreviewGenerator(thumbnailSize: CGSize(width: 100, height: 100), callbackQueue: .main)
 
         // When
         let expectation = expectation(description: "Finished generating the preview")

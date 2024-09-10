@@ -22,19 +22,19 @@ enum SharedPreviewGenerator {
 
     static var generator: AggregateFilePreviewGenerator = {
 
-        let resultQueue = OperationQueue.main
+        let callbackQueue = OperationQueue.main
 
         let thumbnailSizeDefault = CGSize(width: 120, height: 120)
         let thumbnailSizeVideo = CGSize(width: 640, height: 480)
 
-        let imageGenerator = ImageFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: resultQueue)
-        let movieGenerator = MovieFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeVideo)
-        let pdfGenerator = PDFFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
+        let imageGenerator = ImageFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: callbackQueue)
+        let movieGenerator = MovieFilePreviewGenerator(thumbnailSize: thumbnailSizeVideo, callbackQueue: callbackQueue)
+        let pdfGenerator = PDFFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: callbackQueue)
 
         return AggregateFilePreviewGenerator(
             subGenerators: [imageGenerator, movieGenerator, pdfGenerator],
             thumbnailSize: thumbnailSizeDefault,
-            callbackQueue: resultQueue
+            callbackQueue: callbackQueue
         )
     }()
 }
