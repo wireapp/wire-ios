@@ -279,18 +279,22 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func applyUserStatus() {
-        let icon1 = NSTextAttachment()
+        let certificate = NSTextAttachment()
         let iconBounds = CGRect(x: 0,
                                 y: 10,
                                 width: 16,
                                 height:16)
 
-        icon1.bounds = iconBounds
-        icon1.image = UIImage(resource: .certificateValid)
-        let e2eiIconString = NSAttributedString(attachment: icon1)
-        let icon2 = NSTextAttachment()
-        icon2.image = UIImage(resource: .verifiedShield)
-        let proteusIconString = NSAttributedString(attachment: icon2)
+        certificate.bounds = iconBounds
+        certificate.image = UIImage(resource: .certificateValid)
+        let e2eiIconString = NSAttributedString(attachment: certificate)
+
+        let verifiedShield = NSTextAttachment()
+        verifiedShield.image = UIImage(resource: .verifiedShield)
+        let iconSize = nameLabel.font.pointSize
+        verifiedShield.bounds = CGRect(x: 0, y: (nameLabel.font.capHeight - iconSize) / 2, width: iconSize, height: iconSize)
+        let proteusIconString = NSAttributedString(attachment: verifiedShield)
+
         var mainName = NSMutableAttributedString(string: userStatus.name)
       //  if userStatus.isE2EICertified {
             mainName.append(e2eiIconString)
@@ -299,10 +303,10 @@ final class ProfileHeaderViewController: UIViewController {
       //  if userStatus.isProteusVerified {
             mainName.append(proteusIconString)
        // }
-        nameLabel.text = mainName.string
+        nameLabel.attributedText = mainName
         userStatusViewController.userStatus = userStatus
-       // e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
-        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
+        e2eiCertifiedImageView.isHidden = true//!userStatus.isE2EICertified
+        proteusVerifiedImageView.isHidden = true//!userStatus.isProteusVerified
     }
 
     private func updateGuestIndicator() {
