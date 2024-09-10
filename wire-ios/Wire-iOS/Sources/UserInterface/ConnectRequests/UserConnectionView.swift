@@ -26,13 +26,11 @@ final class UserConnectionView: UIView, Copyable {
         self.init(user: instance.user)
     }
 
-    private static var correlationFormatter: AddressBookCorrelationFormatter = {
-        return AddressBookCorrelationFormatter(
-            lightFont: FontSpec(.small, .light),
-            boldFont: FontSpec(.small, .medium),
-            color: SemanticColors.Label.textDefault
-        )
-    }()
+    private static var correlationFormatter: AddressBookCorrelationFormatter = AddressBookCorrelationFormatter(
+        lightFont: FontSpec(.small, .light),
+        boldFont: FontSpec(.small, .medium),
+        color: SemanticColors.Label.textDefault
+    )
 
     private let firstLabel = UILabel()
     private let secondLabel = UILabel()

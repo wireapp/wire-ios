@@ -87,9 +87,7 @@ final class SketchColorPickerController: UIViewController {
     }
 
     private var colorToBrushWidthMapper: [UIColor: CGFloat]?
-    lazy var colorsCollectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: colorsCollectionViewLayout)
-    }()
+    lazy var colorsCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: colorsCollectionViewLayout)
 
     private var colorsCollectionViewLayout: UICollectionViewFlowLayout {
         let flowLayout = UICollectionViewFlowLayout()

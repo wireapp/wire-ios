@@ -51,9 +51,7 @@ final class FullscreenImageViewController: UIViewController {
     let scrollView: UIScrollView = UIScrollView()
     var snapshotBackgroundView: UIView?
     private var minimumDismissMagnitude: CGFloat = 0
-    private lazy var actionController: ConversationMessageActionController = {
-        return ConversationMessageActionController(responder: self, message: message, context: .collection, view: scrollView)
-    }()
+    private lazy var actionController: ConversationMessageActionController = ConversationMessageActionController(responder: self, message: message, context: .collection, view: scrollView)
 
     // MARK: pull to dismiss
 
@@ -62,9 +60,7 @@ final class FullscreenImageViewController: UIViewController {
     private var imageDragStartingPoint: CGPoint = .zero
     private var imageDragOffsetFromActualTranslation: UIOffset = .zero
     private var imageDragOffsetFromImageCenter: UIOffset = .zero
-    private lazy var animator: UIDynamicAnimator = {
-        return UIDynamicAnimator(referenceView: scrollView)
-    }()
+    private lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: scrollView)
 
     private var attachmentBehavior: UIAttachmentBehavior?
     private var initialImageViewBounds = CGRect.zero

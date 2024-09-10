@@ -22,9 +22,7 @@ struct WireEmail: Codable {
     let supportEmail: String
     let callingSupportEmail: String
 
-    static var shared: WireEmail = {
-        return WireEmail(forResource: "email", withExtension: "json")!
-    }()
+    static var shared: WireEmail = WireEmail(forResource: "email", withExtension: "json")!
 
     private init?(forResource resource: String, withExtension fileExtension: String) {
         do {

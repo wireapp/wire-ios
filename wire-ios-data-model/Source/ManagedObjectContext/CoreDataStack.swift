@@ -103,17 +103,11 @@ public class CoreDataStack: NSObject, ContextProvider {
         messagesContainer.viewContext
     }
 
-    public lazy var syncContext: NSManagedObjectContext = {
-        return messagesContainer.newBackgroundContext()
-    }()
+    public lazy var syncContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
-    public lazy var searchContext: NSManagedObjectContext = {
-        return messagesContainer.newBackgroundContext()
-    }()
+    public lazy var searchContext: NSManagedObjectContext = messagesContainer.newBackgroundContext()
 
-    public lazy var eventContext: NSManagedObjectContext = {
-        return eventsContainer.newBackgroundContext()
-    }()
+    public lazy var eventContext: NSManagedObjectContext = eventsContainer.newBackgroundContext()
 
     public let accountContainer: URL
     public let applicationContainer: URL

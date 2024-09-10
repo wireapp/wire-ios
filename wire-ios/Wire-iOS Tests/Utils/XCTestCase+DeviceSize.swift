@@ -41,9 +41,7 @@ extension XCTestCase {
         "iPad-Landscape": DeviceSizeIPadLandscape
     ]
 
-    static var deviceScreenSizes: [String: CGSize] = {
-        return phoneScreenSizes.merging(tabletScreenSizes) { $1 }
-    }()
+    static var deviceScreenSizes: [String: CGSize] = phoneScreenSizes.merging(tabletScreenSizes) { $1 }
 
     func phoneWidths() -> Set<CGFloat> {
         return Set(XCTestCase.phoneScreenSizes.map({ size in

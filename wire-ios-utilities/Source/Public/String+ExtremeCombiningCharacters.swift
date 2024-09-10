@@ -30,17 +30,15 @@ extension CharacterSet {
     // http://www.unicode.org/charts/PDF/UFE20.pdf
     private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xFE20 as UInt16)!...UnicodeScalar(0xFE2F as UInt16)!)
 
-    public static var diacriticsCombining: CharacterSet = {
-        [
-            diacriticsCombiningCodes,
-            diacriticsCombiningCodesExtended,
-            diacriticsCombiningCodesSupplementary,
-            diacriticsCombiningCodesForSymbols,
-            diacriticsCombiningCodesHalfMarks
-        ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
-            current.union(new)
-        }
-    }()
+    public static var diacriticsCombining: CharacterSet = [
+        diacriticsCombiningCodes,
+        diacriticsCombiningCodesExtended,
+        diacriticsCombiningCodesSupplementary,
+        diacriticsCombiningCodesForSymbols,
+        diacriticsCombiningCodesHalfMarks
+    ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
+        current.union(new)
+    }
 }
 
 extension UnicodeScalar {

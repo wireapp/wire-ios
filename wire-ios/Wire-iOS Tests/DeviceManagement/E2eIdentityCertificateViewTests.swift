@@ -28,9 +28,7 @@ final class E2eIdentityCertificateViewTests: XCTestCase {
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
     private var snapshotHelper: SnapshotHelper!
 
-    lazy var kCertificate: String = {
-        return .mockCertificate
-    }()
+    lazy var kCertificate: String = .mockCertificate
 
     override func setUp() {
         super.setUp()

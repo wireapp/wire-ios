@@ -34,7 +34,8 @@
     preferForLoop, \
     preferKeyPath, \
     redundantBackticks, \
-    redundantBreak
+    redundantBreak, \
+    redundantClosure
 
 # Options
 

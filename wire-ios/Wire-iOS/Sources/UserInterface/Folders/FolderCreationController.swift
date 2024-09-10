@@ -29,10 +29,8 @@ protocol FolderCreationControllerDelegate: AnyObject {
 final class FolderCreationController: UIViewController {
     private let collectionViewController = SectionCollectionViewController()
 
-    private lazy var nameSection: FolderCreationNameSectionController = {
-        return FolderCreationNameSectionController(delegate: self,
-                                                   conversationName: conversation.displayNameWithFallback)
-    }()
+    private lazy var nameSection: FolderCreationNameSectionController = FolderCreationNameSectionController(delegate: self,
+                                                                                                            conversationName: conversation.displayNameWithFallback)
 
     private var folderName: String = ""
     private var conversation: ZMConversation

@@ -81,15 +81,13 @@ final class ConversationContentViewController: UIViewController {
 
     let mentionsSearchResultsViewController: UserSearchResultsViewController = UserSearchResultsViewController()
 
-    lazy var dataSource: ConversationTableViewDataSource = {
-        return ConversationTableViewDataSource(
-            conversation: conversation,
-            tableView: tableView,
-            actionResponder: self,
-            cellDelegate: self,
-            userSession: userSession
-        )
-    }()
+    lazy var dataSource: ConversationTableViewDataSource = ConversationTableViewDataSource(
+        conversation: conversation,
+        tableView: tableView,
+        actionResponder: self,
+        cellDelegate: self,
+        userSession: userSession
+    )
 
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?

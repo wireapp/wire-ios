@@ -385,15 +385,11 @@ final class MarkdownTextView: NextResponderTextView {
         return try! NSRegularExpression(pattern: pattern, options: .anchorsMatchLines)
     }()
 
-    private lazy var orderedListItemRegex: NSRegularExpression = {
-        // group 1: prefix, group 2: number, group 3: content
-        return try! NSRegularExpression(pattern: "^((\\d+)\\.\\ )(.*$)", options: .anchorsMatchLines)
-    }()
+    private lazy var orderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: number, group 3: content
+        try! NSRegularExpression(pattern: "^((\\d+)\\.\\ )(.*$)", options: .anchorsMatchLines)
 
-    private lazy var unorderedListItemRegex: NSRegularExpression = {
-        // group 1: prefix, group 2: bullet, group 3: content
-        return try! NSRegularExpression(pattern: "^(([•*+-])\\ )(.*$)", options: .anchorsMatchLines)
-    }()
+    private lazy var unorderedListItemRegex: NSRegularExpression = // group 1: prefix, group 2: bullet, group 3: content
+        try! NSRegularExpression(pattern: "^(([•*+-])\\ )(.*$)", options: .anchorsMatchLines)
 
     // MARK: - List Methods
 

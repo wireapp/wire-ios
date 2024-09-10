@@ -23,11 +23,9 @@ private let zmLog = ZMSLog(tag: "EmoticonSubstitutionConfiguration")
 final class EmoticonSubstitutionConfiguration {
     // Sorting keys is important. Longer keys should be resolved first,
     // In order to make 'O:-)' to be resolved as '😇', not a 'O😊'.
-    lazy var shortcuts: [String] = {
-        return substitutionRules.keys.sorted(by: {
-            $0.count >= $1.count
-        })
-    }()
+    lazy var shortcuts: [String] = substitutionRules.keys.sorted(by: {
+        $0.count >= $1.count
+    })
 
     // key is substitution string like ':)', value is smile string 😊
     let substitutionRules: [String: String]

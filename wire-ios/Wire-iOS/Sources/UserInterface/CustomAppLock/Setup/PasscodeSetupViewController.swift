@@ -44,9 +44,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     weak var passcodeSetupViewControllerDelegate: PasscodeSetupViewControllerDelegate?
 
-    private lazy var presenter: PasscodeSetupPresenter = {
-        return PasscodeSetupPresenter(userInterface: self)
-    }()
+    private lazy var presenter: PasscodeSetupPresenter = PasscodeSetupPresenter(userInterface: self)
 
     private let stackView: UIStackView = UIStackView.verticalStackView()
 
@@ -99,13 +97,11 @@ final class PasscodeSetupViewController: UIViewController {
         return label
     }()
 
-    private let validationLabels: [PasscodeError: UILabel] = {
-        PasscodeError
-            .allCases
-            .reduce(into: [:]) { partialResult, errorReason in
-                partialResult[errorReason] = UILabel()
-            }
-    }()
+    private let validationLabels: [PasscodeError: UILabel] = PasscodeError
+        .allCases
+        .reduce(into: [:]) { partialResult, errorReason in
+            partialResult[errorReason] = UILabel()
+        }
 
     private var callback: ResultHandler?
     private let context: Context

@@ -244,17 +244,11 @@ final class ConversationAvatarView: UIView {
         return userImageView
     }()
 
-    lazy var imageViewRightTop: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewRightTop: UserImageView = UserImageView()
 
-    lazy var imageViewLeftBottom: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewLeftBottom: UserImageView = UserImageView()
 
-    lazy var imageViewRightBottom: UserImageView = {
-        return UserImageView()
-    }()
+    lazy var imageViewRightBottom: UserImageView = UserImageView()
 
     init() {
         super.init(frame: .zero)

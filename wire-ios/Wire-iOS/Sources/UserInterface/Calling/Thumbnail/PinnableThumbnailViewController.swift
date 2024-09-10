@@ -31,13 +31,9 @@ final class PinnableThumbnailViewController: UIViewController {
     private var hasDoneInitialLayout = false
     private var hasEnabledPinningBehavior = false
 
-    private lazy var pinningBehavior: ThumbnailCornerPinningBehavior = {
-        return ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
-    }()
+    private lazy var pinningBehavior: ThumbnailCornerPinningBehavior = ThumbnailCornerPinningBehavior(item: self.thumbnailView, edgeInsets: self.edgeInsets)
 
-    private lazy var animator: UIDynamicAnimator = {
-        return UIDynamicAnimator(referenceView: self.thumbnailContainerView)
-    }()
+    private lazy var animator: UIDynamicAnimator = UIDynamicAnimator(referenceView: self.thumbnailContainerView)
 
     // MARK: - Changing the Previewed Content
 

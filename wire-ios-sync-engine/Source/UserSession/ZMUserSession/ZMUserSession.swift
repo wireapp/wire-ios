@@ -145,25 +145,19 @@ public final class ZMUserSession: NSObject {
         return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
 
-    public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol = {
-        return SelfClientCertificateProvider(
-            getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
-            context: syncContext)
-    }()
+    public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol = SelfClientCertificateProvider(
+        getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
+        context: syncContext)
 
-    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
-        return SnoozeCertificateEnrollmentUseCase(
-            featureRepository: featureRepository,
-            featureRepositoryContext: syncContext,
-            recurringActionService: recurringActionService,
-            accountId: account.userIdentifier)
-    }()
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = SnoozeCertificateEnrollmentUseCase(
+        featureRepository: featureRepository,
+        featureRepositoryContext: syncContext,
+        recurringActionService: recurringActionService,
+        accountId: account.userIdentifier)
 
-    public lazy var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol = {
-        return StopCertificateEnrollmentSnoozerUseCase(
-            recurringActionService: recurringActionService,
-            accountId: account.userIdentifier)
-    }()
+    public lazy var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol = StopCertificateEnrollmentSnoozerUseCase(
+        recurringActionService: recurringActionService,
+        accountId: account.userIdentifier)
 
     var cRLsChecker: CertificateRevocationListsChecker?
     var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
@@ -270,35 +264,27 @@ public final class ZMUserSession: NSObject {
         return e2eiRepository
     }()
 
-    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = {
-        return EnrollE2EICertificateUseCase(
-            e2eiRepository: e2eiRepository,
-            context: syncContext)
-    }()
+    public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = EnrollE2EICertificateUseCase(
+        e2eiRepository: e2eiRepository,
+        context: syncContext)
 
     public private(set) var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
-    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
-        return GetIsE2EIdentityEnabledUseCase(
-            coreCryptoProvider: coreCryptoProvider,
-            featureRespository: featureRepository
-        )
-    }()
+    public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = GetIsE2EIdentityEnabledUseCase(
+        coreCryptoProvider: coreCryptoProvider,
+        featureRespository: featureRepository
+    )
 
-    public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
-        return GetE2eIdentityCertificatesUseCase(
-            coreCryptoProvider: coreCryptoProvider,
-            syncContext: syncContext
-        )
-    }()
+    public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = GetE2eIdentityCertificatesUseCase(
+        coreCryptoProvider: coreCryptoProvider,
+        syncContext: syncContext
+    )
 
     @MainActor
-    public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
-        return IsE2EICertificateEnrollmentRequiredUseCase(
-            isE2EIdentityEnabled: e2eiFeature.isEnabled,
-            selfClientCertificateProvider: selfClientCertificateProvider,
-            gracePeriodEndDate: gracePeriodEndDate)
-    }()
+    public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = IsE2EICertificateEnrollmentRequiredUseCase(
+        isE2EIdentityEnabled: e2eiFeature.isEnabled,
+        selfClientCertificateProvider: selfClientCertificateProvider,
+        gracePeriodEndDate: gracePeriodEndDate)
 
     public lazy var removeUserClient: RemoveUserClientUseCaseProtocol? = {
         let httpClient = HttpClientImpl(
@@ -317,9 +303,7 @@ public final class ZMUserSession: NSObject {
             syncContext: syncContext)
     }()
 
-    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
-        ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
-    }()
+    public lazy var changeUsername: ChangeUsernameUseCaseProtocol = ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
 
     // MARK: Dependency Injection
 

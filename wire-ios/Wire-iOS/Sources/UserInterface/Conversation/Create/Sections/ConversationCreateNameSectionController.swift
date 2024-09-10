@@ -35,9 +35,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
     private var footer = SectionFooter(frame: .zero)
     private let selfUser: UserType
 
-    private lazy var footerText: String = {
-        return L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
-    }()
+    private lazy var footerText: String = L10n.Localizable.Participants.Section.Name.footer(ZMConversation.maxParticipants)
 
     init(selfUser: UserType,
          delegate: SimpleTextFieldDelegate? = nil) {

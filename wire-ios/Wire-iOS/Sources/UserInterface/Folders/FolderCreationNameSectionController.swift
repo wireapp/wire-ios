@@ -34,15 +34,11 @@ final class FolderCreationNameSectionController: NSObject, CollectionViewSection
     private weak var textFieldDelegate: SimpleTextFieldDelegate?
     private var footer = SectionFooter(frame: .zero)
 
-    private lazy var footerText: String = {
-        return L10n.Localizable.Folder.Creation.Name.footer
-    }()
+    private lazy var footerText: String = L10n.Localizable.Folder.Creation.Name.footer
 
     private var header = SectionHeader(frame: .zero)
 
-    private lazy var headerText: String = {
-        return L10n.Localizable.Folder.Creation.Name.header(conversationName)
-    }()
+    private lazy var headerText: String = L10n.Localizable.Folder.Creation.Name.header(conversationName)
 
     init(delegate: SimpleTextFieldDelegate? = nil, conversationName: String) {
         self.textFieldDelegate = delegate

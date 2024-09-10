@@ -36,12 +36,10 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let conversationByQualifiedIDListTranscoder: ConversationByQualifiedIDListTranscoder
     let conversationByQualifiedIDListSync: IdentifierObjectSync<ConversationByQualifiedIDListTranscoder>
 
-    lazy var modifiedSync: ZMUpstreamModifiedObjectSync = {
-        ZMUpstreamModifiedObjectSync(transcoder: self,
-                                     entityName: ZMConversation.entityName(),
-                                     keysToSync: keysToSync,
-                                     managedObjectContext: managedObjectContext)
-    }()
+    lazy var modifiedSync: ZMUpstreamModifiedObjectSync = ZMUpstreamModifiedObjectSync(transcoder: self,
+                                                                                       entityName: ZMConversation.entityName(),
+                                                                                       keysToSync: keysToSync,
+                                                                                       managedObjectContext: managedObjectContext)
 
     let addParticipantActionHandler: AddParticipantActionHandler
     let removeParticipantActionHandler: RemoveParticipantActionHandler

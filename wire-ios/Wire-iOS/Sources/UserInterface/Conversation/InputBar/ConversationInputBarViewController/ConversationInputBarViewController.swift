@@ -191,9 +191,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: text input
 
-    lazy var sendController: ConversationInputBarSendController = {
-        return ConversationInputBarSendController(conversation: conversation)
-    }()
+    lazy var sendController: ConversationInputBarSendController = ConversationInputBarSendController(conversation: conversation)
 
     var editingMessage: ZMConversationMessage?
     var quotedMessage: ZMConversationMessage?

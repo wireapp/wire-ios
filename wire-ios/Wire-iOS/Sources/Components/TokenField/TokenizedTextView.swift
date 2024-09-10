@@ -31,9 +31,7 @@ protocol TokenizedTextViewDelegate: AnyObject {
 class TokenizedTextView: TextView {
     weak var tokenizedTextViewDelegate: TokenizedTextViewDelegate?
 
-    private lazy var tapSelectionGestureRecognizer: UITapGestureRecognizer = {
-        return UITapGestureRecognizer(target: self, action: #selector(didTapText(_:)))
-    }()
+    private lazy var tapSelectionGestureRecognizer: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapText(_:)))
 
     convenience init() {
         self.init(frame: .zero)

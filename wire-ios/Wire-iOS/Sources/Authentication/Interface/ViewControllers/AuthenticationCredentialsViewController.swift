@@ -123,15 +123,13 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         fontSpec: .buttonBigSemibold
     )
 
-    lazy var proxyCredentialsViewController = {
-        ProxyCredentialsViewController(backendURL: backendEnvironment.backendURL,
-                                       textFieldDidUpdateText: { [weak self] _ in
-                                           self?.updateLoginButtonState()
-                                       },
-                                       activeFieldChange: { [weak self] textField in
-                                           self?.loginActiveField = textField
-                                       })
-    }()
+    lazy var proxyCredentialsViewController = ProxyCredentialsViewController(backendURL: backendEnvironment.backendURL,
+                                                                             textFieldDidUpdateText: { [weak self] _ in
+                                                                                 self?.updateLoginButtonState()
+                                                                             },
+                                                                             activeFieldChange: { [weak self] textField in
+                                                                                 self?.loginActiveField = textField
+                                                                             })
 
     lazy var forgotPasswordButton = {
         let button = ZMButton(fontSpec: .smallLightFont)

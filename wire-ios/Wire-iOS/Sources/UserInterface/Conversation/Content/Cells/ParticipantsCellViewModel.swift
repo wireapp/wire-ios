@@ -127,9 +127,7 @@ final class ParticipantsCellViewModel {
         }
     }
 
-    lazy var isSelfIncludedInUsers: Bool = {
-        return sortedUsers.any(\.isSelfUser)
-    }()
+    lazy var isSelfIncludedInUsers: Bool = sortedUsers.any(\.isSelfUser)
 
     /// The users involved in the conversation action sorted alphabetically by
     /// name.
@@ -164,9 +162,7 @@ final class ParticipantsCellViewModel {
         self.message = message
     }
 
-    lazy var sortedUsersWithoutSelf: [UserType] = {
-        return sortedUsers.filter { !$0.isSelfUser }
-    }()
+    lazy var sortedUsersWithoutSelf: [UserType] = sortedUsers.filter { !$0.isSelfUser }
 
     private func name(for user: UserType) -> String {
         if user.isSelfUser {

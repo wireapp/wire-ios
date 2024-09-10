@@ -85,11 +85,9 @@ final class UserNameDetailViewModel: NSObject {
         return "correlation"
     }
 
-    static var formatter: AddressBookCorrelationFormatter = {
-        AddressBookCorrelationFormatter(lightFont: smallLightFont,
-                                        boldFont: smallBoldFont,
-                                        color: SemanticColors.Label.textDefault)
-    }()
+    static var formatter: AddressBookCorrelationFormatter = AddressBookCorrelationFormatter(lightFont: smallLightFont,
+                                                                                            boldFont: smallBoldFont,
+                                                                                            color: SemanticColors.Label.textDefault)
 
     init(user: UserType?, fallbackName fallback: String, addressBookName: String?) {
         title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)

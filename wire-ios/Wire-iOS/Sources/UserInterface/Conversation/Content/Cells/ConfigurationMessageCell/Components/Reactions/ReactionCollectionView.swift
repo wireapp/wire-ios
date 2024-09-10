@@ -28,9 +28,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
     private lazy var collectionViewHeightConstraint: NSLayoutConstraint = collectionView.heightAnchor.constraint(equalToConstant: collectionViewHeight)
     private let flowLayout = UICollectionViewFlowLayout()
     private var contentSizeObservation: NSKeyValueObservation?
-    private lazy var collectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
-    }()
+    private lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
 
     var reactions = [MessageReactionMetadata]() {
         didSet {

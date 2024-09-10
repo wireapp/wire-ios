@@ -60,12 +60,10 @@ class SettingsDebugReportViewController: UIViewController {
         }
     )
 
-    private lazy var shareReportButton: UIButton = {
-        return createButton(
-            title: Strings.TechnicalReport.shareReport.capitalized,
-            action: UIAction { [weak self] _ in self?.didTapShareReport() }
-        )
-    }()
+    private lazy var shareReportButton: UIButton = createButton(
+        title: Strings.TechnicalReport.shareReport.capitalized,
+        action: UIAction { [weak self] _ in self?.didTapShareReport() }
+    )
 
     // MARK: - Life cycle
 

@@ -24,21 +24,15 @@ import WireLinkPreview
 import WireUtilities
 
 extension NSAttributedString {
-    static var paragraphStyle: NSParagraphStyle = {
-        return defaultParagraphStyle()
-    }()
+    static var paragraphStyle: NSParagraphStyle = defaultParagraphStyle()
 
     static var previewParagraphStyle: NSParagraphStyle {
         return defaultPreviewParagraphStyle()
     }
 
-    static var style: DownStyle = {
-        return defaultMarkdownStyle()
-    }()
+    static var style: DownStyle = defaultMarkdownStyle()
 
-    static var previewStyle: DownStyle = {
-        return previewMarkdownStyle()
-    }()
+    static var previewStyle: DownStyle = previewMarkdownStyle()
 
     /// This method needs to be called as soon as the preferredContentSizeCategory is changed
     @objc

@@ -72,9 +72,7 @@ extension TeamPayload {
 }
 
 extension Team {
-    fileprivate static var predicateForObjectsNeedingToBeUpdated: NSPredicate = {
-        NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
-    }()
+    fileprivate static var predicateForObjectsNeedingToBeUpdated: NSPredicate = NSPredicate(format: "%K == YES AND %K != NULL", #keyPath(Team.needsToBeUpdatedFromBackend), Team.remoteIdentifierDataKey())
 }
 
 /// Responsible for downloading the team which the self user belongs to during the slow sync

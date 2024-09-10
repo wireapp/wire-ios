@@ -155,9 +155,7 @@ class CollectionCell: UICollectionViewCell {
         return .exclamationMarkCircle
     }
 
-    lazy var obfuscationView = {
-        return ObfuscationView(icon: self.obfuscationIcon)
-    }()
+    lazy var obfuscationView = ObfuscationView(icon: self.obfuscationIcon)
 
     fileprivate func updateMessageVisibility() {
         let isObfuscated = message?.isObfuscated == true || message?.hasBeenDeleted == true

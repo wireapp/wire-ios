@@ -106,9 +106,7 @@ class ZMLocalNotification: NSObject {
     }()
 
     /// Returns a configured concrete `UNNotificationRequest`.
-    lazy var request: UNNotificationRequest = {
-        return UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
-    }()
+    lazy var request: UNNotificationRequest = UNNotificationRequest(identifier: id.uuidString, content: content, trigger: nil)
 }
 
 // MARK: - Properties

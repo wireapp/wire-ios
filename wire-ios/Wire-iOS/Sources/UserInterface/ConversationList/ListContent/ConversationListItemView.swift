@@ -50,9 +50,7 @@ final class ConversationListItemView: UIView {
 
     let titleField: UILabel = UILabel()
     let avatarView: ConversationAvatarView = ConversationAvatarView()
-    lazy var rightAccessory: ConversationListAccessoryView = {
-        return ConversationListAccessoryView()
-    }()
+    lazy var rightAccessory: ConversationListAccessoryView = ConversationListAccessoryView()
 
     var selected = false {
         didSet {
