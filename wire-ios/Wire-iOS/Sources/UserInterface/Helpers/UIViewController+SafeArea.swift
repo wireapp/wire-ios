@@ -18,18 +18,6 @@
 
 import UIKit
 
-// TODO: [WPB-8778] remove the whole file
-
-extension UIViewController {
-
-
-    @available(*, deprecated, message: "Will be removed")
-    var safeCenterYAnchor: NSLayoutYAxisAnchor {
-        return view.safeAreaLayoutGuide.centerYAnchor
-    }
-
-}
-
 extension UIView {
 
     @available(*, deprecated, message: "Will be removed")
