@@ -147,7 +147,7 @@ extension AppLockModule.View {
                 actionButton.leadingAnchor.constraint(equalTo: contentContainerView.leadingAnchor, constant: CGFloat.PasscodeUnlock.buttonPadding),
                 actionButton.topAnchor.constraint(equalTo: messageLabel.bottomAnchor, constant: 24),
                 actionButton.trailingAnchor.constraint(equalTo: contentContainerView.trailingAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding),
-                actionButton.bottomAnchor.constraint(equalTo: contentContainerView.safeBottomAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding)])
+                actionButton.bottomAnchor.constraint(equalTo: contentContainerView.safeAreaLayoutGuide.bottomAnchor, constant: -CGFloat.PasscodeUnlock.buttonPadding)])
         }
 
         override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

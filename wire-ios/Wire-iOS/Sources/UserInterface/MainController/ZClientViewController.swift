@@ -650,7 +650,7 @@ final class ZClientViewController: UIViewController {
         topOverlayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topOverlayContainer)
 
-        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: safeTopAnchor)
+        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         contentTopCompactConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor)
 
         NSLayoutConstraint.activate([

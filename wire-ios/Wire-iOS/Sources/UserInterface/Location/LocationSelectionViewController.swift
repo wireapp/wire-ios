@@ -121,7 +121,7 @@ final class LocationSelectionViewController: UIViewController {
 
         locationButton.addAction(action, for: .touchUpInside)
 
-        toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: safeTopAnchor)
+        toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: view.safeAreaLayoutGuide.topAnchor)
     }
 
     private func createConstraints() {

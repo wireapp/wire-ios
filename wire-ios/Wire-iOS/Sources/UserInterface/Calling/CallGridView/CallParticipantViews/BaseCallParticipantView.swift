@@ -76,7 +76,7 @@ class BaseCallParticipantView: OrientableView {
     private var isCovered: Bool
 
     private var adjustedInsets: UIEdgeInsets {
-        safeAreaInsetsOrFallback.adjusted(for: delta)
+        safeAreaInsets.adjusted(for: delta)
     }
 
     private var userDetailsAlpha: CGFloat {
