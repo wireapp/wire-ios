@@ -126,7 +126,7 @@ extension StateTransition {
     }
 
     static func canTransition(from oldState: Self, onlyTo newStates: [Self], file: StaticString = #file, line: UInt = #line) {
-        for state in Self.allStates {
+        for state in allStates {
             let isValid = newStates.contains(state)
             oldState.checkThatTransition(to: state, isValid: isValid, file: file, line: line)
         }

@@ -44,8 +44,8 @@ extension CoreDataStack {
 
     static func removeDirectory(at url: URL) {
         do {
-            guard Self.fileManager.fileExists(atPath: url.path) else { return }
-            try Self.fileManager.removeItem(at: url)
+            guard fileManager.fileExists(atPath: url.path) else { return }
+            try fileManager.removeItem(at: url)
         } catch {
             Logging.localStorage.debug("error removing directory: \(error)")
         }

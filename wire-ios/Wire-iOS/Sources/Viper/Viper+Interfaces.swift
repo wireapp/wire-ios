@@ -36,12 +36,12 @@ protocol ModuleInterface {
 
 extension ModuleInterface {
     static func assemble(interactor: Interactor, presenter: Presenter, view: View, router: Router) {
-        interactor.presenter = (presenter as! Self.Interactor.PresenterInteractor)
-        presenter.interactor = (interactor as! Self.Presenter.InteractorPresenter)
-        presenter.router = (router as! Self.Presenter.RouterPresenter)
-        presenter.view = (view as! Self.Presenter.ViewPresenter)
-        view.presenter = (presenter as! Self.View.PresenterView)
-        router.view = (view as! Self.Router.View)
+        interactor.presenter = (presenter as! Interactor.PresenterInteractor)
+        presenter.interactor = (interactor as! Presenter.InteractorPresenter)
+        presenter.router = (router as! Presenter.RouterPresenter)
+        presenter.view = (view as! Presenter.ViewPresenter)
+        view.presenter = (presenter as! View.PresenterView)
+        router.view = (view as! Router.View)
     }
 }
 

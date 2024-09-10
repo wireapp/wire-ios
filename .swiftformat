@@ -50,6 +50,7 @@
     redundantRawValues, \
     redundantReturn, \
     # redundantSelf, \ TODO
+    redundantStaticSelf
 
 # Options
 
