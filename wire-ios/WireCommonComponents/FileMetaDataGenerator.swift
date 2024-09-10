@@ -26,21 +26,44 @@ private let zmLog = ZMSLog(tag: "UI")
 // sourcery: AutoMockable
 public protocol FileMetaDataGenerating {
 
+    func metadataForFile(
+        at url: URL,
+        name: String,
+        uniformType: UTType,
+        completion: @escaping (ZMFileMetadata) -> Void
+    )
     func metadataForFileAtURL(
         _ url: URL,
         UTI uti: String,
         name: String,
         completion: @escaping (ZMFileMetadata) -> Void
     )
-
 }
 
 public final class FileMetaDataGenerator: FileMetaDataGenerating {
 
     @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
-    public static var shared = FileMetaDataGenerator()
+    public static var shared = FileMetaDataGenerator(previewGenerator: SharedPreviewGenerator.generator)
 
-    public init() {}
+    private let previewGenerator: FilePreviewGenerator
+
+    init(previewGenerator: FilePreviewGenerator) {
+        self.previewGenerator = previewGenerator
+    }
+
+    // TODO: consider removing
+    public convenience init() {
+        self.init(previewGenerator: SharedPreviewGenerator.generator)
+    }
+
+    public func metadataForFile(
+        at url: URL,
+        name: String,
+        uniformType: UTType,
+        completion: @escaping (ZMFileMetadata) -> Void
+    ) {
+        metadataForFileAtURL(url, UTI: uniformType.identifier, name: name, completion: completion)
+    }
 
     public func metadataForFileAtURL(
         _ url: URL,
@@ -48,7 +71,7 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
         name: String,
         completion: @escaping (ZMFileMetadata) -> Void
     ) {
-        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
+        previewGenerator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 
             if AVURLAsset.wr_isAudioVisualUTI(uti) {

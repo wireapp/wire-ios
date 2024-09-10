@@ -34,6 +34,7 @@ import AppKit
 import CoreLocation
 import WireDataModel
 import WireSyncEngine
+import UniformTypeIdentifiers
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -714,6 +715,21 @@ public class MockFileMetaDataGenerating: FileMetaDataGenerating {
 
     public init() {}
 
+
+    // MARK: - metadataForFile
+
+    public var metadataForFileAtNameUniformTypeCompletion_Invocations: [(url: URL, name: String, uniformType: UTType, completion: (ZMFileMetadata) -> Void)] = []
+    public var metadataForFileAtNameUniformTypeCompletion_MockMethod: ((URL, String, UTType, @escaping (ZMFileMetadata) -> Void) -> Void)?
+
+    public func metadataForFile(at url: URL, name: String, uniformType: UTType, completion: @escaping (ZMFileMetadata) -> Void) {
+        metadataForFileAtNameUniformTypeCompletion_Invocations.append((url: url, name: name, uniformType: uniformType, completion: completion))
+
+        guard let mock = metadataForFileAtNameUniformTypeCompletion_MockMethod else {
+            fatalError("no mock for `metadataForFileAtNameUniformTypeCompletion`")
+        }
+
+        mock(url, name, uniformType, completion)
+    }
 
     // MARK: - metadataForFileAtURL
 

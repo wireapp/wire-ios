@@ -3,7 +3,6 @@
 input_dir: Wire-iOS/
 output_dir: Wire-iOS/Generated/
 
-
 # Generate constants for your localized strings.
 
 strings:

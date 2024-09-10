@@ -23,13 +23,6 @@ import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
 
-extension URL {
-
-    public var uniformType: UTType? {
-        UTType(tag: pathExtension, tagClass: .filenameExtension, conformingTo: nil)
-    }
-}
-
 func ScaleToAspectFitRectInRect(_ fit: CGRect, into: CGRect) -> CGFloat {
     guard fit.width != 0, fit.height != 0 else {
         return 1
@@ -51,28 +44,7 @@ func AspectFitRectInRect(_ fit: CGRect, into: CGRect) -> CGRect {
     return CGRect(x: 0, y: 0, width: w, height: h)
 }
 
-protocol FilePreviewGenerator {
-    var callbackQueue: OperationQueue { get }
-    var thumbnailSize: CGSize { get }
-    func canGeneratePreviewForFile(_ fileURL: URL, UTI: String) -> Bool
-    func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void)
-}
-
-final class SharedPreviewGenerator: NSObject {
-    static var generator: AggregateFilePreviewGenerator = {
-        let resultQueue = OperationQueue.main
-        let thumbnailSizeDefault = CGSize(width: 120, height: 120)
-        let thumbnailSizeVideo = CGSize(width: 640, height: 480)
-        let imageGenerator = ImageFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
-        let movieGenerator = MovieFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeVideo)
-        let pdfGenerator = PDFFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
-        return AggregateFilePreviewGenerator(subGenerators: [imageGenerator, movieGenerator, pdfGenerator],
-                                             callbackQueue: resultQueue,
-                                             thumbnailSize: thumbnailSizeDefault)
-    }()
-}
-
-final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
+final class AggregateFilePreviewGenerator: FilePreviewGenerator {
     let subGenerators: [FilePreviewGenerator]
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
@@ -80,7 +52,6 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
         self.callbackQueue = callbackQueue
         self.thumbnailSize = thumbnailSize
         self.subGenerators = subGenerators
-        super.init()
     }
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return self.subGenerators.filter {
@@ -98,13 +69,12 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 }
 
-final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
+final class ImageFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
     init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.thumbnailSize = thumbnailSize
         self.callbackQueue = callbackQueue
-        super.init()
     }
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return UTType(uti)?.conforms(to: UTType.image) ?? false
@@ -131,13 +101,12 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 }
 
-final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
+final class MovieFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
     init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.thumbnailSize = thumbnailSize
         self.callbackQueue = callbackQueue
-        super.init()
     }
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
         return AVURLAsset.wr_isAudioVisualUTI(uti)
@@ -183,14 +152,13 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 }
 
-public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
+public final class PDFFilePreviewGenerator: FilePreviewGenerator {
 
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
     public init(callbackQueue: OperationQueue, thumbnailSize: CGSize) {
         self.thumbnailSize = thumbnailSize
         self.callbackQueue = callbackQueue
-        super.init()
     }
 
     @available(*, deprecated, message: "TODO: delete")
