@@ -40,7 +40,8 @@
     redundantFileprivate, \
     redundantGet, \
     redundantInit, \
-    redundantInternal
+    redundantInternal, \
+    redundantLet
 
 # Options
 
