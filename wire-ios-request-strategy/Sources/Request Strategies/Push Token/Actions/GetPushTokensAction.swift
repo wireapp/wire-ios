@@ -33,7 +33,7 @@ public class GetPushTokensAction: EntityAction {
             case .malformedResponse:
                 return "Malformed response"
 
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

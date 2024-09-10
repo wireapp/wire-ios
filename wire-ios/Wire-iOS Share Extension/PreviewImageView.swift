@@ -122,7 +122,7 @@ final class PreviewImageView: UIImageView {
             contentMode = .scaleAspectFill
         case .placeholder?:
             contentMode = .center
-        case .mixed(_, let mainMode)?:
+        case let .mixed(_, mainMode)?:
             updateContentMode(for: mainMode)
         }
     }
@@ -132,7 +132,7 @@ final class PreviewImageView: UIImageView {
         case .placeholder?, .link?:
             layer.borderColor = UIColor.gray.cgColor
             layer.borderWidth = UIScreen.hairline
-        case .mixed(_, let mainMode)?:
+        case let .mixed(_, mainMode)?:
             updateBorders(for: mainMode)
         default:
             layer.borderColor = nil
@@ -146,7 +146,7 @@ final class PreviewImageView: UIImageView {
             detailsContainer.isHidden = false
             videoBadgeImageView.isHidden = false
             countLabel.isHidden = true
-        case .mixed(let count, _)?:
+        case let .mixed(count, _)?:
             detailsContainer.isHidden = false
             videoBadgeImageView.isHidden = true
             countLabel.isHidden = false

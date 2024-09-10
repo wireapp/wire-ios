@@ -199,7 +199,7 @@ final class WebSocketTests: XCTestCase {
         // When
         do {
             for try await message in try sut.open() {
-                if case .data(let data) = message {
+                if case let .data(data) = message {
                     receivedMessageData.append(data)
                 }
             }

@@ -138,7 +138,7 @@ final class ParticipantsCellViewModel {
         guard action.involvesUsersOtherThanSender else { return [sender] }
         guard let systemMessage = message.systemMessageData else { return [] }
 
-        let usersWithoutSender: Set<AnyHashable> = if case .removed(let reason) = action, reason == .federationTermination {
+        let usersWithoutSender: Set<AnyHashable> = if case let .removed(reason) = action, reason == .federationTermination {
             systemMessage.userTypes
         } else if let hashableSender = sender as? AnyHashable {
             systemMessage.userTypes.subtracting([hashableSender])

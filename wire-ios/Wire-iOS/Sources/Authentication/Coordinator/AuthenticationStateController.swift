@@ -126,7 +126,7 @@ final class AuthenticationStateController {
             stack = [step]
         case .replace:
             stack[stack.endIndex - 1] = step
-        case .rewindToOrReset(let milestone):
+        case let .rewindToOrReset(milestone):
             let rewindedStep = stack.first { milestone.shouldRewind(to: $0) }
             if rewindedStep != nil {
                 stack = [Array(stack.prefix { !milestone.shouldRewind(to: $0) }), milestone.stepsToAdd, [step]].flatMap { $0 }
@@ -169,7 +169,7 @@ extension AuthenticationStateController.RewindMilestone {
 
     fileprivate var stepsToAdd: [AuthenticationFlowStep] {
         switch self {
-        case .createCredentials(let user):
+        case let .createCredentials(user):
             return [.createCredentials(user)]
         }
     }

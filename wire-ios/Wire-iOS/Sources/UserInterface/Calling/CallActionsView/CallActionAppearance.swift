@@ -26,7 +26,7 @@ enum CallActionAppearance: Equatable {
     var showBlur: Bool {
         switch self {
         case .light: return false
-        case .dark(blurred: let blurred): return blurred
+        case let .dark(blurred: blurred): return blurred
         }
     }
 

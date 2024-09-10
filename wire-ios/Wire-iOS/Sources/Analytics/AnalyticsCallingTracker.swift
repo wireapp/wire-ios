@@ -117,7 +117,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
             }
 
             callParticipantObserverToken = WireCallCenterV3.addCallParticipantObserver(observer: self, for: conversation, userSession: userSession)
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             if let callInfo = callInfos[conversationId] {
                 analytics.tag(callEvent: .ended(reason: reason.analyticsValue), in: conversation, callInfo: callInfo)
             }

@@ -157,11 +157,11 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         sut.lookup(domain: "example.com") { result in
 
             switch (result, expectedResult) {
-            case (.success(let lhsDomainInfo), .success(let rhsDomainInfo)):
+            case let (.success(lhsDomainInfo), .success(rhsDomainInfo)):
                 if lhsDomainInfo == rhsDomainInfo {
                     resultExpectation.fulfill()
                 }
-            case (.failure(let lhsError), .failure(let rhsError)):
+            case let (.failure(lhsError), .failure(rhsError)):
                 if (lhsError as? DomainLookupError) == (rhsError as? DomainLookupError) {
                     resultExpectation.fulfill()
                 }

@@ -46,17 +46,17 @@ extension ZMOTRMessage {
         if conversation.conversationType == .oneOnOne {
             var expectsReadConfirmation: Bool {
                 switch genericMessage.content {
-                case .ephemeral(let data)?:
+                case let .ephemeral(data)?:
                     return data.expectsReadConfirmation
-                case .knock(let data)?:
+                case let .knock(data)?:
                     return data.expectsReadConfirmation
-                case .text(let data)?:
+                case let .text(data)?:
                     return data.expectsReadConfirmation
-                case .location(let data)?:
+                case let .location(data)?:
                     return data.expectsReadConfirmation
-                case .asset(let data)?:
+                case let .asset(data)?:
                     return data.expectsReadConfirmation
-                case .composite(let data):
+                case let .composite(data):
                     return data.expectsReadConfirmation
                 default:
                     return false

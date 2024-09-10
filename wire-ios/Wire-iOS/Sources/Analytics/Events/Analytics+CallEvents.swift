@@ -70,12 +70,12 @@ extension Analytics {
         attributes.merge(attributesForDirection(with: callInfo)) { _, new in new }
 
         switch event {
-        case .ended(reason: let reason):
+        case let .ended(reason: reason):
             attributes.merge(attributesForSetupTime(with: callInfo)) { _, new in new }
             attributes.merge(attributesForCallDuration(with: callInfo)) { _, new in new }
             attributes.merge(attributesForVideoToogle(with: callInfo)) { _, new in new }
             attributes.merge(["reason": reason]) { _, new in new }
-        case .screenSharing(let duration):
+        case let .screenSharing(duration):
             attributes["screen_share_direction"] = "incoming"
             attributes["screen_share_duration"] = Int(round(duration / 5)) * 5
         default:

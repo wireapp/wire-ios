@@ -81,9 +81,9 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
 
             if let result {
                 switch result {
-                case .success(let conversation):
+                case let .success(conversation):
                     delegate?.startUI(self, didSelect: conversation)
-                case .failure(let error):
+                case let .failure(error):
                     error.displayAddBotError(in: self)
                 }
             } else {
@@ -138,14 +138,14 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             messageProtocol: .proteus
         ) { [weak self] in
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 guard let self else { return }
                 self.delegate?.startUI(
                     self,
                     didSelect: conversation
                 )
 
-            case .failure(let error):
+            case let .failure(error):
                 WireLogger.conversation.error("failed to create guest room: \(String(describing: error))")
             }
         }

@@ -55,7 +55,7 @@ class CallObserver: WireCallCenterCallStateObserver {
         case .establishedDataChannel, .established:
             onEstablished?()
 
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             switch reason {
             case .inputOutputError, .internalError, .unknown, .lostMedia, .answeredElsewhere:
                 onFailedToJoin?()

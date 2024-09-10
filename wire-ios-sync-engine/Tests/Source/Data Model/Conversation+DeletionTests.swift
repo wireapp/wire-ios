@@ -59,7 +59,7 @@ class Conversation_DeletionTests: DatabaseTest {
 
         // WHEN
         conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
                 }
@@ -79,7 +79,7 @@ class Conversation_DeletionTests: DatabaseTest {
 
         // WHEN
         conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
                 }

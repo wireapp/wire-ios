@@ -67,9 +67,9 @@ extension ZMClientMessageTests_Ephemeral {
         // then
         XCTAssertTrue(message.isEphemeral)
         switch message.underlyingMessage!.content {
-        case .ephemeral(let data)?:
+        case let .ephemeral(data)?:
             switch data.content {
-            case .text(let text)?:
+            case let .text(text)?:
                 XCTAssertNotNil(text)
             default:
                 XCTFail()

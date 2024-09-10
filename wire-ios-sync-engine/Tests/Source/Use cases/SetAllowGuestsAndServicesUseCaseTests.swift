@@ -87,7 +87,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     print("Operation successful")
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
                 expectation.fulfill()
@@ -110,7 +110,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure(let error):
+                case let .failure(error):
                     break
                 }
                 expectation.fulfill()
@@ -135,7 +135,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     break
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
 

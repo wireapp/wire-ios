@@ -161,19 +161,19 @@ extension KeychainManager {
 
         public var errorDescription: String? {
             switch self {
-            case .failedToStoreItemInKeychain(let status):
+            case let .failedToStoreItemInKeychain(status):
                 return "failed to store item in keychain, OSStatus: \(status)"
 
-            case .failedToFetchItemFromKeychain(let status):
+            case let .failedToFetchItemFromKeychain(status):
                 return "failed to fetch item from keychain, OSStatus: \(status)"
 
-            case .failedToDeleteItemFromKeychain(let status):
+            case let .failedToDeleteItemFromKeychain(status):
                 return "failed to delete item from keychain, OSStatus: \(status)"
 
-            case .failedToGenerateKey(let status):
+            case let .failedToGenerateKey(status):
                 return "failed to generate key, OSStatus: \(status)"
 
-            case .failedToGeneratePublicPrivateKey(underlyingError: let error):
+            case let .failedToGeneratePublicPrivateKey(underlyingError: error):
                 return "failed to generate public private key, underlying error: \(error?.localizedDescription ?? "?")"
 
             case .failedToCopyPublicKey:

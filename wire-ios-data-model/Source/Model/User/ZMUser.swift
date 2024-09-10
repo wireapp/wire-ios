@@ -469,7 +469,7 @@ extension ZMUser: UserConnections {
             switch result {
             case .success:
                 completion(nil)
-            case .failure(let error):
+            case let .failure(error):
                 completion(error)
             }
         }
@@ -535,7 +535,7 @@ extension ZMUser: UserConnections {
                     }
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 completion(error)
             }
         }
@@ -546,7 +546,7 @@ extension ZMUser: UserConnections {
             switch result {
             case .success:
                 completion(nil)
-            case .failure(let error):
+            case let .failure(error):
                 completion(error)
             }
         })
@@ -557,7 +557,7 @@ extension ZMUser: UserConnections {
             switch result {
             case .success:
                 completion(nil)
-            case .failure(let error):
+            case let .failure(error):
                 completion(error)
             }
         })
@@ -568,7 +568,7 @@ extension ZMUser: UserConnections {
             switch result {
             case .success:
                 completion(nil)
-            case .failure(let error):
+            case let .failure(error):
                 completion(error)
             }
         })

@@ -206,7 +206,7 @@ extension ActionHandlerTestBase {
             file: file,
             line: line
         ) {
-            guard case .success(let res) = $0 else { return false }
+            guard case let .success(res) = $0 else { return false }
             result = res
             return true
         }
@@ -224,7 +224,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         expectedError: Action.Failure
     ) {
         test_itDoesntGenerateARequest(action: action, apiVersion: apiVersion, validation: {
-            guard case .failure(let error) = $0 else { return false}
+            guard case let .failure(error) = $0 else { return false}
             return error == expectedError
         })
     }
@@ -242,7 +242,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
             file: file,
             line: line
         ) {
-            guard case .failure(let error) = $0 else { return false }
+            guard case let .failure(error) = $0 else { return false }
             return error == expectedError
         }
     }
@@ -254,7 +254,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
         expectedError: Action.Failure
     ) {
         test_itHandlesResponse(status: status, label: label, apiVersion: apiVersion) {
-            guard case .failure(let error) = $0 else { return false }
+            guard case let .failure(error) = $0 else { return false }
             return error == expectedError
         }
     }

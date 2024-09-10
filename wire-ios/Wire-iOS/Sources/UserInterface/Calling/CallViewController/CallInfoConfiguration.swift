@@ -192,14 +192,14 @@ extension CallParticipantState {
 
     var isSendingVideo: Bool {
         switch self {
-        case .connected(videoState: let state, _) where state.isSending: return true
+        case let .connected(videoState: state, _) where state.isSending: return true
         default: return false
         }
     }
 
     var videoState: VideoState? {
         switch self {
-        case .connected(videoState: let state, _):
+        case let .connected(videoState: state, _):
             return state
         default:
             return nil
@@ -208,7 +208,7 @@ extension CallParticipantState {
 
     var microphoneState: MicrophoneState? {
         switch self {
-        case .connected(_, microphoneState: let state):
+        case let .connected(_, microphoneState: state):
             return state
         default:
             return nil

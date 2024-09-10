@@ -135,7 +135,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
             switch result {
             case .success:
                 XCTFail()
-            case .failure(let error):
+            case let .failure(error):
                 if errorCode == (error as NSError).userSessionErrorCode {
                     completionHandlerCalled.fulfill()
                 }

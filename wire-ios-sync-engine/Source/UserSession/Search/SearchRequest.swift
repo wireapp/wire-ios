@@ -94,9 +94,9 @@ public struct SearchRequest {
 
         var string: String {
             switch self {
-            case .exactHandle(let handle):
+            case let .exactHandle(handle):
                 return handle
-            case .fullTextSearch(let text):
+            case let .fullTextSearch(text):
                 return text
             }
         }

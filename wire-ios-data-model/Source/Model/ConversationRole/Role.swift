@@ -87,9 +87,9 @@ public final class Role: ZMManagedObject {
         let entry = Role.insertNewObject(in: managedObjectContext)
         entry.name = name
         switch teamOrConversation {
-        case .team(let team):
+        case let .team(team):
             entry.team = team
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             entry.conversation = conversation
         }
         return entry
@@ -101,9 +101,9 @@ public final class Role: ZMManagedObject {
         let fetchRequest = NSFetchRequest<Role>(entityName: Role.entityName())
         let namePredicate = NSPredicate(format: "%K == %@", Role.nameKey, name)
         let teamOrConvoPredicate: NSPredicate = switch teamOrConversation {
-        case .team(let team):
+        case let .team(team):
             NSPredicate(format: "%K == %@", Role.teamKey, team)
-        case .conversation(let convo):
+        case let .conversation(convo):
             NSPredicate(format: "%K == %@", Role.conversationKey, convo)
         }
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
@@ -164,9 +164,9 @@ public final class Role: ZMManagedObject {
         }
 
         switch teamOrConversation {
-        case .team(let team):
+        case let .team(team):
             role.team = team
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             role.conversation = conversation
         }
         role.name = conversationRole

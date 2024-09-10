@@ -94,9 +94,9 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
             sut.invoke(conversation: mockConversation, password: nil) { result in
                 switch result {
-                case .success(let link):
+                case let .success(link):
                     XCTAssertNotNil(link)
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
 
@@ -119,9 +119,9 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
             sut.invoke(conversation: mockConversation, password: nil) { result in
                 switch result {
-                case .success(let link):
+                case let .success(link):
                     XCTAssertNotNil(link)
-                case .failure(let error):
+                case let .failure(error):
                     XCTFail("Test failed with error: \(error)")
                 }
 

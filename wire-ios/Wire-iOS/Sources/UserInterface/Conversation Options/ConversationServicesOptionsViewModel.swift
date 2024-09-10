@@ -98,7 +98,7 @@ final class ConversationServicesOptionsViewModel {
                 switch result {
                 case .success:
                     self.updateRows()
-                case .failure(let error):
+                case let .failure(error):
                     self.delegate?.conversationServicesOptionsViewModel(self, didReceiveError: error)
                 }
             }

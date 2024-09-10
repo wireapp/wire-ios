@@ -233,7 +233,7 @@ final class MessageToolboxView: UIView {
         }
 
         switch dataSource.content {
-        case .callList(let callListString):
+        case let .callList(callListString):
             self.detailsLabel.attributedText = callListString
             self.detailsLabel.isHidden = false
             self.detailsLabel.numberOfLines = 0
@@ -243,7 +243,7 @@ final class MessageToolboxView: UIView {
             self.countdownLabel.isHidden = true
             self.messageFailureView.isHidden = true
 
-        case .sendFailure(let detailsString):
+        case let .sendFailure(detailsString):
             self.hideAndCleanStatusLabel()
             self.statusSeparatorLabel.isHidden = true
             self.countdownLabel.isHidden = true
@@ -251,7 +251,7 @@ final class MessageToolboxView: UIView {
             self.messageFailureView.isHidden = false
             self.messageFailureView.setTitle(detailsString.string)
 
-        case .details(let timestamp, let status, let countdown):
+        case let .details(timestamp, status, countdown):
             self.detailsLabel.attributedText = timestamp
             self.detailsLabel.isHidden = timestamp == nil
             self.detailsLabel.numberOfLines = 1

@@ -101,12 +101,12 @@ extension EventDecoder {
             var events = [ZMUpdateEvent]()
             for result in results {
                 switch result {
-                case .message(let decryptedData, let senderClientID):
+                case let .message(decryptedData, senderClientID):
                     if let event = updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID) {
                         events.append(event)
                     }
 
-                case .proposal(let commitDelay):
+                case let .proposal(commitDelay):
                     let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
                     let mlsService = await context.perform {
                         conversation?.commitPendingProposalDate = scheduledDate

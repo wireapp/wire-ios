@@ -125,7 +125,7 @@ public final class SendMLSMessageAction: EntityAction {
             case .mlsClientMismatch:
                 return "A proposal of type Add or Remove does not apply to the full list of clients for a user"
 
-            case .nonFederatingDomains(let domains):
+            case let .nonFederatingDomains(domains):
                 return "Some domains are note fully connected: \(domains)"
 
             case .mlsUnsupportedProposal:
@@ -137,7 +137,7 @@ public final class SendMLSMessageAction: EntityAction {
             case let .unknown(status, label, message):
                 return "Unknown error (response status: \(status), label: \(label), message: \(message))"
 
-            case .unreachableDomains(let domains):
+            case let .unreachableDomains(domains):
                 return "Some domains were unreachable: \(domains)"
             }
         }

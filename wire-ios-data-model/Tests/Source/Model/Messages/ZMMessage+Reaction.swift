@@ -40,7 +40,7 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         let reactionMessage = conversation.hiddenMessages.first as! ZMClientMessage
         XCTAssertNotNil(reactionMessage)
         switch reactionMessage.underlyingMessage?.content {
-        case .reaction(let data)?:
+        case let .reaction(data)?:
             XCTAssertNotNil(data)
         default:
             XCTFail()

@@ -97,7 +97,7 @@ class NotificationByIDEndpointTests: XCTestCase {
         let result = sut.parseResponse(.success(response))
 
         // Then
-        guard case .success(let event) = result else {
+        guard case let .success(event) = result else {
             XCTFail("expected success result")
             return
         }

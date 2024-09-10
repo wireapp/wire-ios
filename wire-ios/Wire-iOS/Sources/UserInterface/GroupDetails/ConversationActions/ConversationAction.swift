@@ -157,7 +157,7 @@ extension ZMConversation.Action {
             return MetaMenuLocale.delete
         case .moveToFolder:
             return MetaMenuLocale.moveToFolder
-        case .removeFromFolder(let folder):
+        case let .removeFromFolder(folder):
             return MetaMenuLocale.removeFromFolder(folder)
         case .remove:
             return ProfileLocale.removeDialogButtonRemove
@@ -171,15 +171,15 @@ extension ZMConversation.Action {
             return MetaMenuLocale.markUnread
         case .configureNotifications:
             return MetaMenuLocale.configureNotifications
-        case .silence(isSilenced: let muted):
+        case let .silence(isSilenced: muted):
             return muted ? MetaMenuLocale.Silence.unmute : MetaMenuLocale.Silence.mute
-        case .archive(isArchived: let archived):
+        case let .archive(isArchived: archived):
             return archived ? MetaMenuLocale.unarchive : MetaMenuLocale.archive
         case .cancelRequest:
             return MetaMenuLocale.cancelConnectionRequest
-        case .block(isBlocked: let blocked):
+        case let .block(isBlocked: blocked):
             return blocked ? ProfileLocale.unblockButtonTitle : ProfileLocale.blockButtonTitle
-        case .favorite(isFavorite: let favorited):
+        case let .favorite(isFavorite: favorited):
             return favorited ? ProfileLocale.unfavoriteButtonTitle : ProfileLocale.favoriteButtonTitle
         case .duplicateConversation:
             // no localization needed, this is debug

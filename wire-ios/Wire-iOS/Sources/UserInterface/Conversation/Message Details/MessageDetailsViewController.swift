@@ -40,25 +40,25 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         /// The read receipts view controller.
         var readReceipts: MessageDetailsContentViewController {
             switch self {
-            case .combinedView(let readReceipts, _): return readReceipts
-            case .singleView(let viewController): return viewController
+            case let .combinedView(readReceipts, _): return readReceipts
+            case let .singleView(viewController): return viewController
             }
         }
 
         /// The reactions view controller.
         var reactions: MessageDetailsContentViewController {
             switch self {
-            case .combinedView(_, let reactions): return reactions
-            case .singleView(let viewController): return viewController
+            case let .combinedView(_, reactions): return reactions
+            case let .singleView(viewController): return viewController
             }
         }
 
         /// All the view controllers.
         var all: [MessageDetailsContentViewController] {
             switch self {
-            case .combinedView(let readReceipts, let reactions):
+            case let .combinedView(readReceipts, reactions):
                 return [readReceipts, reactions]
-            case .singleView(let viewController):
+            case let .singleView(viewController):
                 return [viewController]
             }
         }

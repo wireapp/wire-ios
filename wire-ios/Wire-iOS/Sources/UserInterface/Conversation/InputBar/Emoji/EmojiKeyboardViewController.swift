@@ -140,8 +140,8 @@ extension EmojiKeyboardViewController: UICollectionViewDelegateFlowLayout {
         guard let result = emojiDataSource.register(used: emoji) else { return }
         collectionView.performBatchUpdates({
             switch result {
-            case .insert(let section): collectionView.insertSections(IndexSet(integer: section))
-            case .reload(let section): collectionView.reloadSections(IndexSet(integer: section))
+            case let .insert(section): collectionView.insertSections(IndexSet(integer: section))
+            case let .reload(section): collectionView.reloadSections(IndexSet(integer: section))
             }
         }, completion: { _ in
             self.updateSectionSelection()

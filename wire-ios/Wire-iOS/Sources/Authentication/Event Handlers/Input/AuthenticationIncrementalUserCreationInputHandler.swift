@@ -27,7 +27,7 @@ final class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEve
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Any) -> [AuthenticationCoordinatorAction]? {
         // Only handle input during the incremental user creation.
-        guard case .incrementalUserCreation(_, let step) = currentStep else {
+        guard case let .incrementalUserCreation(_, step) = currentStep else {
             return nil
         }
 

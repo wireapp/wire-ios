@@ -544,7 +544,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         case .alertVideoUnavailable: alertVideoUnavailable()
         case .flipCamera: toggleCameraAnimated()
         case .showParticipantsList: return // Handled in `CallInfoRootViewController`, we don't want to update.
-        case .updateVideoGridPresentationMode(let mode): voiceChannel.videoGridPresentationMode = mode
+        case let .updateVideoGridPresentationMode(mode): voiceChannel.videoGridPresentationMode = mode
         }
 
         updateConfiguration()
@@ -563,7 +563,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
 extension CallViewController: CallGridViewControllerDelegate {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction) {
         switch action {
-        case .requestVideoStreamsForClients(let clients): voiceChannel.request(videoStreams: clients)
+        case let .requestVideoStreamsForClients(clients): voiceChannel.request(videoStreams: clients)
         }
     }
 }

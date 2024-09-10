@@ -76,7 +76,7 @@ extension AudioButtonOverlayState {
     }
 
     func colorWithColors(_ color: UIColor, highlightedColor: UIColor) -> UIColor {
-        if case .expanded(let amount) = self {
+        if case let .expanded(amount) = self {
             return color.mix(highlightedColor, amount: amount)
         }
         return color

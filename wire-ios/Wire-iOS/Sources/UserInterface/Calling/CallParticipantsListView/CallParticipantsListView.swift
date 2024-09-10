@@ -117,7 +117,7 @@ extension UserCell: CallParticipantsListCellConfigurable {
         hidesSubtitle = true
         accessoryIconView.isHidden = true
         switch callParticipantState {
-        case .connected(let videoState, let microphoneState):
+        case let .connected(videoState, microphoneState):
             microphoneIconView.set(style: MicrophoneIconStyle(
                 state: microphoneState,
                 shouldPulse: activeSpeakerState.isSpeakingNow)

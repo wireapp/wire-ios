@@ -81,7 +81,7 @@ struct IconLabelButtonTestCase {
 
         var callActionAppearance: CallActionAppearance {
             switch self {
-            case .dark(let blurState, _, _): return .dark(blurred: blurState.isBlurred)
+            case let .dark(blurState, _, _): return .dark(blurred: blurState.isBlurred)
             case .light: return .light
             }
         }
@@ -96,22 +96,22 @@ struct IconLabelButtonTestCase {
 
         var description: String {
             switch self {
-            case .dark(let blurState, let selectionState, let interactionState):
+            case let .dark(blurState, selectionState, interactionState):
                 return "dark_\(blurState.rawValue)_\(selectionState.rawValue)_\(interactionState.rawValue)"
-            case .light(let selectionState, let interactionState):
+            case let .light(selectionState, interactionState):
                 return "light_\(selectionState.rawValue)_\(interactionState.rawValue)"
             }
         }
 
         private var selectionState: SelectionState {
             switch self {
-            case .dark(_, let selectionState, _), .light(let selectionState, _): return selectionState
+            case let .dark(_, selectionState, _), let .light(selectionState, _): return selectionState
             }
         }
 
         private var interactionState: InteractionState {
             switch self {
-            case .dark(_, _, let interactionState), .light(_, let interactionState): return interactionState
+            case let .dark(_, _, interactionState), let .light(_, interactionState): return interactionState
             }
         }
     }

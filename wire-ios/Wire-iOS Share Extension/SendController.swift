@@ -100,7 +100,7 @@ final class SendController {
             guard let self else { return }
 
             switch sendableResult {
-            case .success(let sendables):
+            case let .success(sendables):
                 observer = SendableBatchObserver(sendables: sendables)
                 observer?.progressHandler = { [weak self] in
                     progress(.sending($0))
@@ -112,7 +112,7 @@ final class SendController {
                     self?.sentAllSendables = true
                     progress(.done)
                 }
-            case .failure(let error):
+            case let .failure(error):
                 progress(.error(error))
             }
         }

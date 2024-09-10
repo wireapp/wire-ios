@@ -277,7 +277,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         // Then
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 XCTAssertEqual(users, [self.syncSelfUser, self.syncUser1])
             default:
                 XCTFail()
@@ -329,7 +329,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             guard let payloadAndStrategy = payload else { return XCTFail() }
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 XCTAssertEqual(users, [self.syncSelfUser])
             default:
                 XCTFail()
@@ -427,7 +427,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             // Then
             switch unWrappedPayloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users):
                 XCTAssertEqual(users, [self.syncUser1])
             default:
                 XCTFail()

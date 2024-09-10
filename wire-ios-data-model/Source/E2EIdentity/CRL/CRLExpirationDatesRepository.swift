@@ -34,7 +34,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
 
         var rawValue: String {
             switch self {
-            case .expirationDate(let distributionPoint):
+            case let .expirationDate(distributionPoint):
                 "CRL_expirationDate_\(distributionPoint)"
             case .distributionPoints:
                 "CRL_distributionPoints"

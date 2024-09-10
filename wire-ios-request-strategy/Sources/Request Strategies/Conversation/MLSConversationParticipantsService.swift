@@ -94,16 +94,16 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
         do {
             try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
 
-        } catch MLSService.MLSAddMembersError.failedToClaimKeyPackages(let failedMLSUsers) {
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
             let failedUsers = await context.perform {
                 users.filter { failedMLSUsers.contains(MLSUser(from: $0)) }
             }
             throw MLSConversationParticipantsError.failedToClaimKeyPackages(users: Set(failedUsers))
 
-        } catch SendCommitBundleAction.Failure.nonFederatingDomains(domains: let domains) {
+        } catch let SendCommitBundleAction.Failure.nonFederatingDomains(domains: domains) {
             throw FederationError.nonFederatingDomains(domains)
 
-        } catch SendCommitBundleAction.Failure.unreachableDomains(domains: let domains) {
+        } catch let SendCommitBundleAction.Failure.unreachableDomains(domains: domains) {
             throw FederationError.unreachableDomains(domains)
 
         } catch {

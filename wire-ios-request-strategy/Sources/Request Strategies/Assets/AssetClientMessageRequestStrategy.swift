@@ -81,7 +81,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     object.expire()
                     self.managedObjectContext.enqueueDelayedSave()
 
-                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
+                    if case let NetworkError.invalidRequestError(responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
                         self.managedObjectContext.zm_userInterface.performGroupedBlock {
                             NotificationInContext(

@@ -39,7 +39,7 @@ extension ZMConversation {
                 return "The managed object context is missing."
             case .malformedNonce:
                 return "Encountered a malformed nonce."
-            case .failedToProcessMessageData(let reason):
+            case let .failedToProcessMessageData(reason):
                 return "Failed to process generic message data. Reason: \(reason)"
             case .messageIsEmpty:
                 return "Can not send empty text messages."

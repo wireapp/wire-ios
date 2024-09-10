@@ -96,7 +96,7 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .sendActivationCode: return false
         case .enterActivationCode: return true
         case .activateCredentials: return false
-        case .incrementalUserCreation(_, let intermediateStep): return intermediateStep.needsInterface
+        case let .incrementalUserCreation(_, intermediateStep): return intermediateStep.needsInterface
         case .createUser: return false
         // Configuration
         case .configureDevice: return false

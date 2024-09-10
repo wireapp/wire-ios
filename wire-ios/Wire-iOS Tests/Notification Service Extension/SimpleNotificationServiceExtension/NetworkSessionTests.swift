@@ -134,7 +134,7 @@ final class NetworkSessionTests: XCTestCase {
         let result = try await sut.send(request: mockNetworkRequest)
 
         // Then
-        guard case .failure(let response) = result else {
+        guard case let .failure(response) = result else {
             XCTFail("expected failure")
             return
         }
@@ -160,7 +160,7 @@ final class NetworkSessionTests: XCTestCase {
         let result = try await sut.send(request: mockNetworkRequest)
 
         // Then
-        guard case .success(let response) = result else {
+        guard case let .success(response) = result else {
             XCTFail("expected success")
             return
         }

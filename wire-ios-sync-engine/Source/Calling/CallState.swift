@@ -191,17 +191,17 @@ public enum CallState: Equatable {
 
     func logState() {
         switch self {
-        case .answered(degraded: let degraded):
+        case let .answered(degraded: degraded):
             zmLog.debug("answered call, degraded: \(degraded)")
-        case .incoming(video: let isVideo, shouldRing: let shouldRing, degraded: let degraded):
+        case let .incoming(video: isVideo, shouldRing: shouldRing, degraded: degraded):
             zmLog.debug("incoming call, isVideo: \(isVideo), shouldRing: \(shouldRing), degraded: \(degraded)")
         case .establishedDataChannel:
             zmLog.debug("established data channel")
         case .established:
             zmLog.debug("established call")
-        case .outgoing(degraded: let degraded):
+        case let .outgoing(degraded: degraded):
             zmLog.debug("outgoing call, , degraded: \(degraded)")
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             zmLog.debug("terminating call reason: \(reason)")
         case .mediaStopped:
             zmLog.debug("media stopped")

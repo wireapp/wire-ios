@@ -94,7 +94,7 @@ final class CreateSecureConversationGuestLinkViewModel {
             guard let self else { return }
 
             switch result {
-            case .success(let link?):
+            case let .success(link?):
                 self.delegate?.viewModel(self, didCreateLink: link)
                 NotificationCenter.default.post(
                     name: ConversationGuestLink.didCreateSecureGuestLinkNotification,
@@ -105,7 +105,7 @@ final class CreateSecureConversationGuestLinkViewModel {
             case .success(nil):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
 
-            case .failure(let error):
+            case let .failure(error):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
             }
         }

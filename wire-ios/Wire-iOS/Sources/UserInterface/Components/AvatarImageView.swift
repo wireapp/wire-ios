@@ -143,13 +143,13 @@ class AvatarImageView: UIView {
             imageView.isHidden = true
             initialsLabel.isHidden = true
 
-        case .image(let image):
+        case let .image(image):
             imageView.image = image
             initialsLabel.text = nil
             imageView.isHidden = false
             initialsLabel.isHidden = true
 
-        case .text(let text):
+        case let .text(text):
             imageView.image = nil
             initialsLabel.text = text
             imageView.isHidden = true

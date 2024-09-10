@@ -28,17 +28,17 @@ extension GenericMessage {
             return nil
         }
         switch content {
-        case .location(let data as BigEndianDataConvertible),
+        case let .location(data as BigEndianDataConvertible),
              .text(let data as BigEndianDataConvertible),
              .edited(let data as BigEndianDataConvertible),
              .asset(let data as BigEndianDataConvertible):
             return data.hashWithTimestamp(timestamp: timestamp.timeIntervalSince1970)
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             guard let content = data.content else {
                 return nil
             }
             switch content {
-            case .location(let data as BigEndianDataConvertible),
+            case let .location(data as BigEndianDataConvertible),
                  .text(let data as BigEndianDataConvertible),
                  .asset(let data as BigEndianDataConvertible):
                 return data.hashWithTimestamp(timestamp: timestamp.timeIntervalSince1970)

@@ -676,10 +676,10 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     private func mockFetchingPublicKeys(primary: SecKey?, secondary: SecKey?) {
         keyRepository.fetchPublicKeyDescription_MockMethod = { description in
             switch (description.label, primary, secondary) {
-            case ("public", let primary?, _):
+            case let ("public", primary?, _):
                 return primary
 
-            case ("secondary-public", _, let secondary?):
+            case let ("secondary-public", _, secondary?):
                 return secondary
 
             default:
@@ -782,10 +782,10 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     private func mockFetchingPrivateKeys(primary: SecKey?, secondary: SecKey?) {
         keyRepository.fetchPrivateKeyDescription_MockMethod = { description in
             switch (description.label, primary, secondary) {
-            case ("private", let primary?, _):
+            case let ("private", primary?, _):
                 return primary
 
-            case ("secondary-private", _, let secondary?):
+            case let ("secondary-private", _, secondary?):
                 return secondary
 
             default:

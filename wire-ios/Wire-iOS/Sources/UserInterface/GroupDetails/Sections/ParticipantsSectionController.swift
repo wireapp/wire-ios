@@ -246,7 +246,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         }
 
         switch configuration {
-        case .user(let user):
+        case let .user(user):
             guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
             let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified } else { false }
             cell.configure(
@@ -256,7 +256,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
                 showSeparator: showSeparator
             )
 
-        case .showAll(let totalParticipantsCount):
+        case let .showAll(totalParticipantsCount):
             guard let cell = cell as? ShowAllParticipantsCell else { return unexpectedCellHandler() }
             cell.configure(
                 totalParticipantsCount: totalParticipantsCount,
@@ -305,7 +305,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case .user(let user):
+        case let .user(user):
             delegate?.presentDetails(for: user)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
@@ -314,7 +314,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
         switch viewModel.rows[indexPath.row] {
-        case .user(let bareUser):
+        case let .user(bareUser):
             return !bareUser.isSelfUser
         default:
             return true

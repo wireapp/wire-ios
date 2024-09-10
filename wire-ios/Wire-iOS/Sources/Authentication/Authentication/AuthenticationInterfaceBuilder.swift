@@ -45,7 +45,7 @@ final class AuthenticationInterfaceBuilder {
         case .landingScreen:
             return LandingViewController()
 
-        case .reauthenticate(let credentials, let numberOfAccounts):
+        case let .reauthenticate(credentials, numberOfAccounts):
             let registrationViewController = RegistrationViewController(authenticationFlow: .onlyLogin)
             registrationViewController.shouldHideCancelButton = numberOfAccounts < 2
             registrationViewController.loginCredentials = credentials
@@ -66,38 +66,38 @@ final class AuthenticationInterfaceBuilder {
             registrationViewController.shouldHideCancelButton = true
             return registrationViewController
 
-        case .clientManagement(let clients, let credentials):
+        case let .clientManagement(clients, credentials):
             let emailCredentials = credentials.map { ZMEmailCredentials(email: $0.email!, password: $0.password!) }
             let flow = ClientUnregisterFlowViewController(clientsList: clients, credentials: emailCredentials)
             return AdaptiveFormViewController(childViewController: flow)
 
-        case .noHistory(_, let type):
+        case let .noHistory(_, type):
             let noHistory = NoHistoryViewController(contextType: type)
             return AdaptiveFormViewController(childViewController: noHistory)
 
-        case .enterLoginCode(let phoneNumber):
+        case let .enterLoginCode(phoneNumber):
             let verification = VerificationCodeStepViewController(credential: phoneNumber)
             return AdaptiveFormViewController(childViewController: verification)
 
-        case .addEmailAndPassword(_, _, let canSkip):
+        case let .addEmailAndPassword(_, _, canSkip):
             let addEmailPasswordViewController = AddEmailPasswordViewController()
             addEmailPasswordViewController.canSkipStep = canSkip
             return AdaptiveFormViewController(childViewController: addEmailPasswordViewController)
 
-        case .enterActivationCode(let credentials, _):
+        case let .enterActivationCode(credentials, _):
             let verification = VerificationCodeStepViewController(credential: credentials.rawValue)
             return AdaptiveFormViewController(childViewController: verification)
 
-        case .pendingEmailLinkVerification(let emailCredentials):
+        case let .pendingEmailLinkVerification(emailCredentials):
             let verification = EmailLinkVerificationViewController(credentials: emailCredentials)
             return AdaptiveFormViewController(childViewController: verification)
 
-        case .incrementalUserCreation(let user, let registrationStep):
+        case let .incrementalUserCreation(user, registrationStep):
             return makeRegistrationStepViewController(for: registrationStep, user: user).map {
                 AdaptiveFormViewController(childViewController: $0)
             }
 
-        case .teamCreation(let state):
+        case let .teamCreation(state):
             return makeTeamCreationStepViewController(for: state)
 
         default:

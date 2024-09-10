@@ -88,7 +88,7 @@ final class ConversationActionController {
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
             }
-        case .archive(isArchived: let isArchived): self.transitionToListAndEnqueue {
+        case let .archive(isArchived: isArchived): self.transitionToListAndEnqueue {
             conversation.isArchived = !isArchived
             }
         case .markRead: self.enqueue {
@@ -100,7 +100,7 @@ final class ConversationActionController {
         case .configureNotifications: self.requestNotificationResult(for: conversation) { result in
             self.handleNotificationResult(result, for: conversation)
         }
-        case .silence(isSilenced: let isSilenced): self.enqueue {
+        case let .silence(isSilenced: isSilenced): self.enqueue {
             conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
         case .leave:
@@ -125,7 +125,7 @@ final class ConversationActionController {
             enqueue {
                 conversation.removeFromFolder()
             }
-        case .favorite(isFavorite: let isFavorite):
+        case let .favorite(isFavorite: isFavorite):
             enqueue {
                 conversation.isFavorite = !isFavorite
             }

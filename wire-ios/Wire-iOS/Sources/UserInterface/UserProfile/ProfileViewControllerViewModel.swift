@@ -185,9 +185,9 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             self?.viewModelDelegate?.stopAnimatingActivity()
 
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 self?.transition(to: conversation)
-            case .failure(let error):
+            case let .failure(error):
                 WireLogger.conversation.warn("failed to create team one on one from profile view: \(error)")
                 guard let username = self?.user.name else { return }
                 self?.viewModelDelegate?.presentConversationCreationError(username: username)
@@ -232,7 +232,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     // MARK: - Deletion
 
     func handleDeleteResult(_ result: ClearContentResult) {
-        guard case .delete(leave: let leave) = result else { return }
+        guard case let .delete(leave: leave) = result else { return }
         guard let user = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return

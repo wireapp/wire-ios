@@ -171,7 +171,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
 
             let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { result in
-                if case .failure(let error) = result {
+                if case let .failure(error) = result {
                     if expectedError == error {
                         expectation.fulfill()
                     }

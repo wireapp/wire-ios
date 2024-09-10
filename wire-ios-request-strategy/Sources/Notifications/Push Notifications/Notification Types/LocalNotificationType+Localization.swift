@@ -81,7 +81,7 @@ private let NoUserNameKey = "nousername"
 extension LocalNotificationType {
     fileprivate var baseKey: String {
         switch self {
-        case .message(let contentType):
+        case let .message(contentType):
             switch contentType {
             case .image:
                 return ZMPushStringImageAdd
@@ -113,7 +113,7 @@ extension LocalNotificationType {
                 return ZMPushStringMessageTimerUpdate
             }
 
-        case .calling(let callState):
+        case let .calling(callState):
             switch callState {
             case .incomingCall(video: true):
                 return ZMPushStringVideoCallStarts
@@ -123,7 +123,7 @@ extension LocalNotificationType {
                 return ZMPushStringCallMissed
             }
 
-        case .event(let eventType):
+        case let .event(eventType):
             switch eventType {
             case .conversationCreated:
                 return ZMPushStringConversationCreate
@@ -181,7 +181,7 @@ extension LocalNotificationType {
     }
 
     public func titleText(selfUser: ZMUser, conversation: ZMConversation? = nil) -> String? {
-        if case .message(let contentType) = self {
+        if case let .message(contentType) = self {
             switch contentType {
             case .ephemeral:
                 return .localizedStringWithFormat(ZMPushStringEphemeralTitle.pushFormatString)
@@ -207,7 +207,7 @@ extension LocalNotificationType {
     }
 
     public func alertTitleText(team: Team?) -> String? {
-        guard case .availabilityBehaviourChangeAlert(let availability) = self, availability.isOne(of: .away, .busy) else { return nil }
+        guard case let .availabilityBehaviourChangeAlert(availability) = self, availability.isOne(of: .away, .busy) else { return nil }
 
         let teamName = team?.name
         let teamKey = teamName != nil ? TeamKey : nil
@@ -217,7 +217,7 @@ extension LocalNotificationType {
     }
 
     public func alertMessageBodyText() -> String {
-        guard case .availabilityBehaviourChangeAlert(let availability) = self, availability.isOne(of: .away, .busy) else { return "" }
+        guard case let .availabilityBehaviourChangeAlert(availability) = self, availability.isOne(of: .away, .busy) else { return "" }
 
         let availabilityKey = availability == .away ? "away" : "busy"
         let localizationKey = [baseKey, availabilityKey, "message"].compactMap({ $0 }).joined(separator: ".")
@@ -230,7 +230,7 @@ extension LocalNotificationType {
     }
 
     func messageBodyText(senderName: String?) -> String {
-        if case LocalNotificationType.event(let eventType) = self {
+        if case let LocalNotificationType.event(eventType) = self {
             return messageBodyText(eventType: eventType, senderName: senderName)
         } else {
             return messageBodyText(sender: nil, conversation: nil)
@@ -238,7 +238,7 @@ extension LocalNotificationType {
     }
 
     public func messageBodyText(sender: ZMUser?, conversation: ZMConversation?) -> String {
-        if case LocalNotificationType.event(let eventType) = self {
+        if case let LocalNotificationType.event(eventType) = self {
             return messageBodyText(eventType: eventType, senderName: sender?.name)
         }
 
@@ -258,13 +258,13 @@ extension LocalNotificationType {
         var mentionOrReplyKey: String?
 
         switch self {
-        case .message(let contentType):
+        case let .message(contentType):
             switch contentType {
             case let .text(content, isMention, isReply):
                 arguments.append(content)
                 mentionOrReplyKey = isMention ? MentionKey : (isReply ? ReplyKey : nil)
 
-            case .reaction(emoji: let emoji):
+            case let .reaction(emoji: emoji):
                 arguments.append(emoji)
 
             case .knock:
@@ -278,7 +278,7 @@ extension LocalNotificationType {
             case .hidden:
                 return .localizedStringWithFormat(baseKey.pushFormatString)
 
-            case .messageTimerUpdate(let timerString):
+            case let .messageTimerUpdate(timerString):
                 if let string = timerString {
                     arguments.append(string)
                 }
@@ -288,7 +288,7 @@ extension LocalNotificationType {
                 conversationTypeKey = nil // System messages don't follow the template and is missing the `group` suffix
                 senderKey = SelfKey
 
-            case .participantsRemoved(let reason):
+            case let .participantsRemoved(reason):
                 conversationTypeKey = nil // System messages don't follow the template and is missing the `group` suffix
                 senderKey = SelfKey
                 // If there is a reason for removal, we should display a simple message "You were removed"

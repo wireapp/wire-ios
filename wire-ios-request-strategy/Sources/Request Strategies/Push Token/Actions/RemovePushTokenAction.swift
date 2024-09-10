@@ -33,7 +33,7 @@ public class RemovePushTokenAction: EntityAction {
             case .tokenDoesNotExist:
                 return "Push token does not exist."
 
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

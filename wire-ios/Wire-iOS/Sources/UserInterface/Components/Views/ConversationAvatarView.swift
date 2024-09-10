@@ -144,10 +144,10 @@ final class ConversationAvatarView: UIView {
 
     func configure(context: Context) {
         switch context {
-        case .connect(let users):
+        case let .connect(users):
             self.users = users
             mode = Mode(users: users)
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             self.conversation = conversation
             mode = Mode(conversationType: conversation.conversationType, users: users)
         }
@@ -315,7 +315,7 @@ final class ConversationAvatarView: UIView {
 
     private func updateCornerRadius() {
         switch mode {
-        case .one(serviceUser: let serviceUser):
+        case let .one(serviceUser: serviceUser):
             layer.cornerRadius = serviceUser ? 0 : layer.bounds.width / 2.0
             clippingView.layer.cornerRadius = serviceUser ? 0 : clippingView.layer.bounds.width / 2.0
         default:

@@ -51,21 +51,21 @@ final class TextFieldValidator {
                 return .invalidEmail
             }
 
-        case .password(let rules, _):
+        case let .password(rules, _):
             switch rules.validatePassword(text) {
             case .valid:
                 return nil
 
-            case .invalid(let violations):
+            case let .invalid(violations):
                 return .invalidPassword(violations)
             }
 
-        case .passcode(let rules, _):
+        case let .passcode(rules, _):
             switch rules.validatePassword(text) {
             case .valid:
                 return nil
 
-            case .invalid(let violations):
+            case let .invalid(violations):
                 return .invalidPassword(violations)
             }
 
@@ -100,7 +100,7 @@ extension PasswordRuleSet {
 extension TextFieldValidator.ValidationError: LocalizedError {
     var errorDescription: String? {
         switch self {
-        case .tooShort(kind: let kind):
+        case let .tooShort(kind: kind):
             switch kind {
             case .name:
                 return L10n.Localizable.Name.Guidance.tooshort
@@ -115,7 +115,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             case .username:
                 return L10n.Localizable.Name.Guidance.tooshort
             }
-        case .tooLong(kind: let kind):
+        case let .tooLong(kind: kind):
             switch kind {
             case .name:
                 return L10n.Localizable.Name.Guidance.toolong
@@ -132,9 +132,9 @@ extension TextFieldValidator.ValidationError: LocalizedError {
             }
         case .invalidEmail:
             return L10n.Localizable.Email.Guidance.invalid
-        case .custom(let description):
+        case let .custom(description):
             return description
-        case .invalidPassword(let violations):
+        case let .invalidPassword(violations):
             return violations.contains(.tooLong) ? L10n.Localizable.Password.Guidance.toolong : PasswordRuleSet.localizedErrorMessage
         case .invalidUsername:
             return "invalid"

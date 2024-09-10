@@ -201,7 +201,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             viewControllers[viewControllers.count - 1] = stepViewController
             presenter.setViewControllers(viewControllers, animated: true)
 
-        case .rewindToOrReset(let milestone):
+        case let .rewindToOrReset(milestone):
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
             if let rewindedController {
@@ -290,13 +290,13 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .completeBackupStep:
                 unauthenticatedSession.continueAfterBackupImportStep()
 
-            case .executeFeedbackAction(let action):
+            case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
 
-            case .presentAlert(let alertModel):
+            case let .presentAlert(alertModel):
                 presentAlert(for: alertModel)
 
-            case .presentErrorAlert(let alertModel):
+            case let .presentErrorAlert(alertModel):
                 presentErrorAlert(for: alertModel)
 
             case .completeLoginFlow:
@@ -307,58 +307,58 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .startPostLoginFlow:
                 registerPostLoginObserversIfNeeded()
 
-            case .transition(let nextStep, let mode):
+            case let .transition(nextStep, mode):
                 stateController.transition(to: nextStep, mode: mode)
 
-            case .requestEmailVerificationCode(let email, let password):
+            case let .requestEmailVerificationCode(email, password):
                 requestEmailVerificationCode(email: email, password: password, isResend: false)
 
             case .configureNotifications:
                 sessionManager.configureUserNotifications()
 
-            case .startIncrementalUserCreation(let unregisteredUser):
+            case let .startIncrementalUserCreation(unregisteredUser):
                 stateController.transition(to: .incrementalUserCreation(unregisteredUser, .start))
                 eventResponderChain.handleEvent(ofType: .registrationStepSuccess)
 
-            case .setMarketingConsent(let consentValue):
+            case let .setMarketingConsent(consentValue):
                 setMarketingConsent(consentValue)
 
             case .completeUserRegistration:
                 finishRegisteringUser()
 
-            case .unwindState(let popController):
+            case let .unwindState(popController):
                 unwindState(popController: popController)
 
-            case .openURL(let url):
+            case let .openURL(url):
                 openURL(url)
 
             case .repeatAction:
                 repeatAction()
 
-            case .displayInlineError(let error):
+            case let .displayInlineError(error):
                 currentViewController?.displayError(error)
 
-            case .continueFlowWithLoginCode(let code):
+            case let .continueFlowWithLoginCode(code):
                 continueFlow(withVerificationCode: code)
 
-            case .startRegistrationFlow(let unverifiedCredential):
+            case let .startRegistrationFlow(unverifiedCredential):
                 activateNetworkSessions { [weak self] _ in
                     self?.startRegistration(unverifiedCredential)
                 }
 
-            case .setFullName(let fullName):
+            case let .setFullName(fullName):
                 updateUnregisteredUser(\.name, fullName)
 
-            case .setUserPassword(let password):
+            case let .setUserPassword(password):
                 updateUnregisteredUser(\.password, password)
 
-            case .setUsername(let username):
+            case let .setUsername(username):
                 updateUsername(username)
 
-            case .updateBackendEnvironment(let url):
+            case let .updateBackendEnvironment(url):
                 companyLoginController?.updateBackendEnvironment(with: url)
 
-            case .startCompanyLogin(let code):
+            case let .startCompanyLogin(code):
                 activateNetworkSessions { [weak self] _ in
                     self?.startCompanyLoginFlowIfPossible(linkCode: code)
                 }
@@ -366,16 +366,16 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .startSSOFlow:
                 startAutomaticSSOFlow()
 
-            case .startLoginFlow(let request, let credentials):
+            case let .startLoginFlow(request, credentials):
                 startLoginFlow(request: request, proxyCredentials: credentials)
 
             case .startBackupFlow:
                 backupRestoreController.startBackupFlow()
 
-            case .signOut(let warn):
+            case let .signOut(warn):
                 signOut(warn: warn)
 
-            case .addEmailAndPassword(let newCredentials):
+            case let .addEmailAndPassword(newCredentials):
                 setEmailCredentialsForCurrentUser(newCredentials)
 
             case .configureDevicePermissions:
@@ -620,7 +620,7 @@ extension AuthenticationCoordinator {
     /// Computes the post registration fields, if any.
     private func currentPostRegistrationFields() -> AuthenticationPostRegistrationFields? {
         switch stateController.currentStep {
-        case .createUser(let unregisteredUser):
+        case let .createUser(unregisteredUser):
             guard let marketingConsent = unregisteredUser.marketingConsent else {
                 return nil
             }
@@ -651,7 +651,7 @@ extension AuthenticationCoordinator {
         let action = { [weak self] in
 
             switch request {
-            case .email(let address, let password):
+            case let .email(address, password):
                 let credentials = UserEmailCredentials(email: address, password: password)
                 self?.startActivityIndicator()
                 self?.stateController.transition(to: .authenticateEmailCredentials(credentials))
@@ -694,9 +694,9 @@ extension AuthenticationCoordinator {
     /// Resends the verification code to the user, if allowed by the current state.
     private func resendVerificationCode() {
         switch stateController.currentStep {
-        case .enterEmailVerificationCode(let email, let password, _):
+        case let .enterEmailVerificationCode(email, password, _):
             requestEmailVerificationCode(email: email, password: password, isResend: true)
-        case .enterActivationCode(let credential, let user):
+        case let .enterActivationCode(credential, user):
             sendActivationCode(credential, user, isResend: true)
         default:
             log.error("Cannot send verification code in the current state (\(stateController.currentStep)")
@@ -710,10 +710,10 @@ extension AuthenticationCoordinator {
 
     private func continueFlow(withVerificationCode code: String) {
         switch stateController.currentStep {
-        case .enterEmailVerificationCode(let email, let password, _):
+        case let .enterEmailVerificationCode(email, password, _):
             let credentials = UserEmailCredentials(email: email, password: password, emailVerificationCode: code)
             requestEmailLogin(with: credentials)
-        case .enterActivationCode(let unverifiedEmail, let user):
+        case let .enterActivationCode(unverifiedEmail, user):
             activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
         default:
             log.error("Cannot continue flow with user code in the current state (\(stateController.currentStep)")

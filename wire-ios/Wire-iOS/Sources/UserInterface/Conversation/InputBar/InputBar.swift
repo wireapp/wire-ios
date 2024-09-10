@@ -67,9 +67,9 @@ enum InputBarState: Equatable {
 
     var isEphemeral: Bool {
         switch self {
-        case .markingDown(let ephemeral):
+        case let .markingDown(ephemeral):
             return ephemeral.isEphemeral
-        case .writing(let ephemeral):
+        case let .writing(ephemeral):
             return ephemeral.isEphemeral
         default:
             return false
@@ -78,9 +78,9 @@ enum InputBarState: Equatable {
 
     var isEphemeralEnabled: Bool {
         switch self {
-        case .markingDown(let ephemeral):
+        case let .markingDown(ephemeral):
             return ephemeral == .message
-        case .writing(let ephemeral):
+        case let .writing(ephemeral):
             return ephemeral == .message
         default:
             return false
@@ -407,7 +407,7 @@ final class InputBar: UIView {
                     self.textView.text = nil
                 }
 
-            case .editing(let text, let mentions):
+            case let .editing(text, mentions):
                 self.setInputBarText(text, mentions: mentions)
                 self.secondaryButtonsView.setEditBarView()
 
@@ -506,7 +506,7 @@ final class InputBar: UIView {
     }
 
     fileprivate func updateEditViewState() {
-        if case .editing(let text, _) = inputBarState {
+        if case let .editing(text, _) = inputBarState {
             let canUndo = textView.undoManager?.canUndo ?? false
             editingView.undoButton.isEnabled = canUndo
 

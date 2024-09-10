@@ -95,7 +95,7 @@ final class SavableImage: NSObject {
         let source = createSource()
 
         let cleanup: (Bool) -> Void = { [source] success in
-            if case .gif(let url) = source {
+            if case let .gif(url) = source {
                 try? FileManager.default.removeItem(at: url)
             }
 
@@ -120,9 +120,9 @@ final class SavableImage: NSObject {
     // Has to be called from inside a `photoLibrary.perform` block
     private func saveImage(using source: Source) {
         switch source {
-        case .gif(let url):
+        case let .gif(url):
             _ = assetChangeRequestType.creationRequestForAssetFromImage(atFileURL: url)
-        case .image(let data):
+        case let .image(data):
             assetCreationRequestType.forAsset().addResource(with: .photo, data: data, options: PHAssetResourceCreationOptions())
         }
     }

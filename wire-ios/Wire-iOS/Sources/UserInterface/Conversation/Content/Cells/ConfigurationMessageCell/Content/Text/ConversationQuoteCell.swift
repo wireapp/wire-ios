@@ -238,7 +238,7 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.text = object.restrictionDescription?.localizedUppercase
 
         switch object.content {
-        case .text(let attributedContent):
+        case let .text(attributedContent):
             let mutableAttributedContent = NSMutableAttributedString(attributedString: attributedContent)
             // Trim the string to first four lines to prevent last line narrower spacing issue
             mutableAttributedContent.paragraphTailTruncated()
@@ -248,7 +248,7 @@ final class ConversationReplyContentView: UIView {
             contentTextView.isAccessibilityElement = true
             assetThumbnail.isHidden = true
             assetThumbnail.isAccessibilityElement = false
-        case .imagePreview(let resource, let isVideo):
+        case let .imagePreview(resource, isVideo):
             assetThumbnail.setResource(resource, isVideoPreview: isVideo)
             assetThumbnail.isHidden = false
             assetThumbnail.accessibilityIdentifier = object.contentType

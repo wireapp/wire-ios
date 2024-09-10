@@ -40,10 +40,10 @@ final class NotificationsAPIClient: NotificationsAPIClientProtocol, Loggable {
         logger.trace("fetching event with eventID (\(eventID, privacy: .public))")
 
         switch try await networkSession.execute(endpoint: API.fetchNotification(eventID: eventID)) {
-        case .success(let event):
+        case let .success(event):
             return event
 
-        case .failure(let error):
+        case let .failure(error):
             throw error
         }
     }
@@ -86,7 +86,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
         logger.trace("parsing response: \(response, privacy: .public)")
 
         switch response {
-        case .success(let response) where response.status == 200:
+        case let .success(response) where response.status == 200:
             logger.trace("decoding response payload")
 
             guard let payload = try? JSONSerialization.jsonObject(with: response.data, options: []) as? [AnyHashable: Any] else {
@@ -115,7 +115,7 @@ struct NotificationByIDEndpoint: Endpoint, Loggable {
 
             return .success(event)
 
-        case .failure(let response):
+        case let .failure(response):
             switch (response.code, response.label) {
             case (404, "not-found"):
                 return .failure(.notifcationNotFound)

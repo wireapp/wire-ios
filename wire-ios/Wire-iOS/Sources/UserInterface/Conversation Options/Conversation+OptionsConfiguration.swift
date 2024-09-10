@@ -92,7 +92,7 @@ extension ZMConversation {
                 switch result {
                 case .success:
                     completion(.success(()))
-                case .failure(let error):
+                case let .failure(error):
                     completion(.failure(error))
                 }
             }
@@ -107,7 +107,7 @@ extension ZMConversation {
                 switch result {
                 case .success:
                     completion(.success(()))
-                case .failure(let error):
+                case let .failure(error):
                     completion(.failure(error))
                 }
             }

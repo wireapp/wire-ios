@@ -186,25 +186,25 @@ final class AuthenticationEventResponderChain {
         log.info("Event handling manager received event: \(eventType)")
 
         switch eventType {
-        case .flowStart(let error, let numberOfAccounts):
+        case let .flowStart(error, numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
-        case .backupReady(let existingAccount):
+        case let .backupReady(existingAccount):
             handleEvent(with: backupEventHandlers, context: existingAccount)
-        case .clientRegistrationError(let error, let accountID):
+        case let .clientRegistrationError(error, accountID):
             handleEvent(with: clientRegistrationErrorHandlers, context: (error, accountID))
         case .clientRegistrationSuccess:
             handleEvent(with: clientRegistrationSuccessHandlers, context: ())
-        case .authenticationFailure(let error):
+        case let .authenticationFailure(error):
             handleEvent(with: loginErrorHandlers, context: error)
         case .loginCodeAvailable:
             handleEvent(with: loginCodeHandlers, context: ())
-        case .registrationError(let error):
+        case let .registrationError(error):
             handleEvent(with: registrationErrorHandlers, context: error)
         case .registrationStepSuccess:
             handleEvent(with: registrationSuccessHandlers, context: ())
-        case .userProfileChange(let changeInfo):
+        case let .userProfileChange(changeInfo):
             handleEvent(with: userProfileChangeObservers, context: changeInfo)
-        case .userInput(let value):
+        case let .userInput(value):
             handleEvent(with: userInputObservers, context: value)
         case .deviceConfigurationComplete:
             handleEvent(with: deviceConfigurationHandlers, context: ())

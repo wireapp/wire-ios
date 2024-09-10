@@ -65,7 +65,7 @@ extension ContactsViewController {
         do {
             guard let contact = (user as? ZMSearchUser)?.contact else { throw InvitationError.noContactInformation }
             try invite(contact: contact, from: view)
-        } catch InvitationError.canNotSend(let client) {
+        } catch let InvitationError.canNotSend(client) {
             present(unableToSendController(client: client), animated: true)
         } catch {
             zmLog.error("Could not invite contact: \(error.localizedDescription)")

@@ -119,7 +119,7 @@ final class LegalHoldDisclosureController: UserObserving {
         case .enabled:
             discloseEnabledStateIfPossible()
 
-        case .pending(let request):
+        case let .pending(request):
             disclosePendingRequestIfPossible(request)
 
         case .disabled:
@@ -196,14 +196,14 @@ final class LegalHoldDisclosureController: UserObserving {
             alertController = LegalHoldAlertFactory.makeLegalHoldDeactivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
         case .warningAboutEnabled:
             alertController = LegalHoldAlertFactory.makeLegalHoldActivatedAlert(for: selfUserLegalHoldSubject, suggestedStateChangeHandler: assignState)
-        case .warningAboutPendingRequest(let request, let fingerprint):
+        case let .warningAboutPendingRequest(request, fingerprint):
             alertController = LegalHoldAlertFactory.makeLegalHoldActivationAlert(
                 for: request,
                 fingerprint: fingerprint,
                 user: selfUserLegalHoldSubject,
                 suggestedStateChangeHandler: assignState
             )
-        case .warningAboutAcceptationResult(let alert):
+        case let .warningAboutAcceptationResult(alert):
             alertController = alert
         case .acceptingRequest, .none:
             break

@@ -73,15 +73,15 @@ extension AppState: CustomDebugStringConvertible {
             "locked"
         case .authenticated:
             "authenticated"
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             "unauthenticated: \(error.debugDescription)"
-        case .blacklisted(reason: let reason):
+        case let .blacklisted(reason: reason):
             "blacklisted: \(reason)"
         case .jailbroken:
             "jailbroken"
         case .certificateEnrollmentRequired:
             "certificateEnrollmentRequired"
-        case .databaseFailure(reason: let reason):
+        case let .databaseFailure(reason: reason):
             "databaseFailure: \(reason)"
         case .migrating:
             "migrating"
@@ -102,19 +102,19 @@ extension AppState: SafeForLoggingStringConvertible {
             return "locked"
         case .authenticated:
             return "authenticated"
-        case .unauthenticated(let error):
+        case let .unauthenticated(error):
             return "unauthenticated \(error?.localizedDescription ?? "<nil>")"
-        case .blacklisted(let reason):
+        case let .blacklisted(reason):
             return "blacklisted \(reason)"
         case .jailbroken:
             return "jailbroken"
         case .certificateEnrollmentRequired:
             return "certificateEnrollmentRequired"
-        case .databaseFailure(let reason):
+        case let .databaseFailure(reason):
             return "databaseFailure \(reason)"
         case .migrating:
             return "migrating"
-        case .loading(let account, let from):
+        case let .loading(account, from):
             return "loading account: \(account.userIdentifier.safeForLoggingDescription), from: \(from?.userIdentifier.safeForLoggingDescription ?? "<nil>")"
         }
     }

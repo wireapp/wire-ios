@@ -106,7 +106,7 @@ final class ZMUserConsentTests: DatabaseTest {
             switch result {
             case .failure:
                 XCTFail()
-            case .success(let result):
+            case let .success(result):
                 XCTAssertTrue(result)
                 fetchedData.fulfill()
             }
@@ -130,7 +130,7 @@ final class ZMUserConsentTests: DatabaseTest {
 
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.unknown)
                 receivedError.fulfill()
             case .success:
@@ -155,7 +155,7 @@ final class ZMUserConsentTests: DatabaseTest {
         // WHEN
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.notAvailable)
                 receivedError.fulfill()
             case .success:
@@ -206,7 +206,7 @@ final class ZMUserConsentTests: DatabaseTest {
         // when
         selfUser.setConsent(to: true, for: .marketing, on: mockTransportSession) { result in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.unknown)
                 receivedError.fulfill()
             case .success:

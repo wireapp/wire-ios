@@ -116,7 +116,7 @@ extension XCTestCase {
         line: UInt = #line
     ) {
         assertMethodCompletesWithValidation(method: method) { result in
-            guard case .failure(let error) = result else {
+            guard case let .failure(error) = result else {
                 return XCTFail("expected failure", file: file, line: line)
             }
 
@@ -165,7 +165,7 @@ extension XCTestCase {
             switch result {
             case .success:
                 break
-            case .failure(let error):
+            case let .failure(error):
                 XCTFail(message(error), file: file, line: line)
             }
         }
@@ -178,7 +178,7 @@ extension XCTestCase {
             switch result {
             case .success:
                 XCTFail("Expected a failure of type \(expectedFailure) but got a success", file: file, line: line)
-            case .failure(let failure):
+            case let .failure(failure):
                 XCTAssertEqual(expectedFailure, failure, file: file, line: line)
             }
         }

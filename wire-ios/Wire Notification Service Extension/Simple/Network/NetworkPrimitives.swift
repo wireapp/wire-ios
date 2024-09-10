@@ -44,10 +44,10 @@ enum NetworkResponse: CustomStringConvertible {
 
     var description: String {
         switch self {
-        case .success(let response):
+        case let .success(response):
             return response.description
 
-        case .failure(let response):
+        case let .failure(response):
             return response.description
         }
     }

@@ -46,13 +46,13 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         var id: UUID {
             switch self {
-            case .button(let item):
+            case let .button(item):
                 return item.id
 
-            case .text(let item):
+            case let .text(item):
                 return item.id
 
-            case .destination(let item):
+            case let .destination(item):
                 return item.id
             }
         }

@@ -129,8 +129,8 @@ enum ParagraphStyleDescriptor {
     var style: NSParagraphStyle {
         let style = NSMutableParagraphStyle()
         switch self {
-        case .lineSpacing(let height): style.lineSpacing = height
-        case .paragraphSpacing(let spacing): style.paragraphSpacing = spacing
+        case let .lineSpacing(height): style.lineSpacing = height
+        case let .paragraphSpacing(spacing): style.paragraphSpacing = spacing
         }
         return style
     }

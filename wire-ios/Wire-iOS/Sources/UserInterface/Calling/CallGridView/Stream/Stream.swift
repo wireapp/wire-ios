@@ -34,12 +34,12 @@ extension Stream: Differentiable {
     }
 
     var microphoneState: MicrophoneState? {
-        guard case .connected(_, let state) = callParticipantState else { return nil }
+        guard case let .connected(_, state) = callParticipantState else { return nil }
         return state
     }
 
     var videoState: VideoState? {
-        guard case .connected(let state, _) = callParticipantState else { return nil }
+        guard case let .connected(state, _) = callParticipantState else { return nil }
         return state
     }
 }

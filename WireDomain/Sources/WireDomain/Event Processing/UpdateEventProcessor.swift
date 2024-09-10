@@ -41,22 +41,22 @@ struct UpdateEventProcessor {
 
     func processEvent(_ event: UpdateEvent) async throws {
         switch event {
-        case .conversation(let event):
+        case let .conversation(event):
             try await conversationEventProcessor.processEvent(event)
 
-        case .featureConfig(let event):
+        case let .featureConfig(event):
             try await featureconfigEventProcessor.processEvent(event)
 
-        case .federation(let event):
+        case let .federation(event):
             try await federationEventProcessor.processEvent(event)
 
-        case .user(let event):
+        case let .user(event):
             try await userEventProcessor.processEvent(event)
 
-        case .team(let event):
+        case let .team(event):
             try await teamEventProcessor.processEvent(event)
 
-        case .unknown(let event):
+        case let .unknown(event):
             print("can not process unknown event: \(event)")
         }
     }

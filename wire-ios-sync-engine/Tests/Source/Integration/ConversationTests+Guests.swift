@@ -79,7 +79,7 @@ class ConversationTests_Guests: IntegrationTest {
                 switch result {
                 case .success:
                     XCTFail()
-                case .failure(let error):
+                case let .failure(error):
                     XCTAssertEqual(error as! WirelessLinkError, WirelessLinkError.noConversation)
                     didFail.fulfill()
                 }
@@ -107,7 +107,7 @@ class ConversationTests_Guests: IntegrationTest {
         // when
         conversation.fetchWirelessLink(in: self.userSession!) { result in
             switch result {
-            case .success(let link):
+            case let .success(link):
                 XCTAssertNil(link.uri)
             case .failure:
                 XCTFail()
@@ -143,7 +143,7 @@ class ConversationTests_Guests: IntegrationTest {
         // when
         conversation.fetchWirelessLink(in: self.userSession!) { result in
             switch result {
-            case .success(let link):
+            case let .success(link):
                 XCTAssertEqual(link.uri, existingLink.uri)
             case .failure:
                 XCTFail()

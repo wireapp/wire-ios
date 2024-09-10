@@ -46,13 +46,13 @@ enum ProfileAction: Equatable {
     var buttonText: String {
         switch self {
         case .createGroup: return L10n.Localizable.Profile.createConversationButtonTitle
-        case .mute(let isMuted): return isMuted
+        case let .mute(isMuted): return isMuted
             ? L10n.Localizable.Meta.Menu.Silence.unmute
             : L10n.Localizable.Meta.Menu.Silence.mute
         case .manageNotifications: return L10n.Localizable.Meta.Menu.configureNotifications
         case .archive: return L10n.Localizable.Meta.Menu.archive
         case .deleteContents: return L10n.Localizable.Meta.Menu.clearContent
-        case .block(let isBlocked): return isBlocked
+        case let .block(isBlocked): return isBlocked
             ? L10n.Localizable.Profile.unblockButtonTitle
             : L10n.Localizable.Profile.blockButtonTitle
         case .openOneToOne: return L10n.Localizable.Profile.openConversationButtonTitle

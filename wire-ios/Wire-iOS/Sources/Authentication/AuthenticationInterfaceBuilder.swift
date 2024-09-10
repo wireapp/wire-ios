@@ -74,7 +74,7 @@ final class AuthenticationInterfaceBuilder {
             landingViewController.configure(with: featureProvider)
             return landingViewController
 
-        case .reauthenticate(let credentials, _, let isSignedOut):
+        case let .reauthenticate(credentials, _, isSignedOut):
             let viewController: AuthenticationStepController
 
             if credentials?.usesCompanyLogin == true, credentials?.hasPassword == false {
@@ -100,7 +100,7 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .provideCredentials(let prefill):
+        case let .provideCredentials(prefill):
             return makeCredentialsViewController(for: .login(prefill))
 
         case .createCredentials:
@@ -116,14 +116,14 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .deleteClient(let clients):
+        case let .deleteClient(clients):
             return RemoveClientStepViewController(clients: clients)
 
-        case .noHistory(_, let context):
+        case let .noHistory(_, context):
             let backupStep = BackupRestoreStepDescription(context: context)
             return makeViewController(for: backupStep)
 
-        case .enterEmailVerificationCode(let email, _, _):
+        case let .enterEmailVerificationCode(email, _, _):
             let verifyEmailStep = VerifyEmailStepDescription(email: email, canChangeEmail: false)
             return makeViewController(for: verifyEmailStep)
 
@@ -142,11 +142,11 @@ final class AuthenticationInterfaceBuilder {
             let viewController = makeViewController(for: addUsernameStep)
             return viewController
 
-        case .enterActivationCode(let unverifiedEmail, _):
+        case let .enterActivationCode(unverifiedEmail, _):
             let step = VerifyEmailStepDescription(email: unverifiedEmail)
             return makeViewController(for: step)
 
-        case .pendingEmailLinkVerification(let emailCredentials):
+        case let .pendingEmailLinkVerification(emailCredentials):
             let verifyEmailStep = EmailLinkVerificationStepDescription(emailAddress: emailCredentials.email!)
 
             let viewController = makeViewController(for: verifyEmailStep)
@@ -157,10 +157,10 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .incrementalUserCreation(let user, let registrationStep):
+        case let .incrementalUserCreation(user, registrationStep):
             return makeRegistrationStepViewController(for: registrationStep, user: user)
 
-        case .switchBackend(let url):
+        case let .switchBackend(url):
             let viewController = PreBackendSwitchViewController()
             viewController.backendURL = url
             return viewController
@@ -169,7 +169,7 @@ final class AuthenticationInterfaceBuilder {
             let viewController = EnrollE2EIdentityStepDescription()
             return makeViewController(for: viewController)
 
-        case .enrollE2EIdentitySuccess(let certificateDetails):
+        case let .enrollE2EIdentitySuccess(certificateDetails):
             let viewController = SuccessfulCertificateEnrollmentViewController()
             viewController.certificateDetails = certificateDetails
             viewController.onOkTapped = { viewController in

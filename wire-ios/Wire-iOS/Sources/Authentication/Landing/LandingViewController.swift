@@ -467,7 +467,7 @@ final class LandingViewController: AuthenticationStepViewController {
         subMessageLabel.text = Landing.welcomeSubmessage
 
         switch backendEnvironment.environmentType.value {
-        case .custom(let url):
+        case let .custom(url):
             guard SecurityFlags.customBackend.isEnabled else {
                 return
             }

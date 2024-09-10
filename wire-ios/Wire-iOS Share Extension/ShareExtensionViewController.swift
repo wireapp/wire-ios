@@ -300,7 +300,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     self.presentSendingProgress(mode: .sending)
                 }
 
-            case .sending(let progress):
+            case let .sending(progress):
                 WireLogger.shareExtension.info("progress event: sending with progress: (\(progress))")
                 self.progressViewController?.progress = progress
 
@@ -313,7 +313,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
                 })
 
-            case .conversationDidDegrade((let users, let strategyChoice)):
+            case let .conversationDidDegrade((users, strategyChoice)):
                 WireLogger.shareExtension.warn("progress event: converation did degrade")
                 if let conversation = postContent.target {
                     self.conversationDidDegrade(
@@ -337,7 +337,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
                 self.present(alert, animated: true)
 
-            case .error(let error):
+            case let .error(error):
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
 
                 if let errorDescription = (error as? UnsentSendableError)?.errorDescription {
@@ -394,14 +394,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                 }
 
                 switch previewItem {
-                case .image(let image):
+                case let .image(image):
                     self.preview?.image = image
                     self.preview?.displayMode = displayMode
 
-                case .placeholder(let iconType):
+                case let .placeholder(iconType):
                     self.preview?.setIcon(iconType, size: .medium, color: UIColor.Wire.secondaryLabel)
 
-                case .remoteURL(let url):
+                case let .remoteURL(url):
                     self.preview?.setIcon(.browser, size: .medium, color: UIColor.Wire.secondaryLabel)
                     self.fetchWebsitePreview(for: url)
                 }

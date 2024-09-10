@@ -139,9 +139,9 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         }
 
         switch item {
-        case .supportedValue(let value):
+        case let .supportedValue(value):
             configure(cell, for: value, disabled: false)
-        case .unsupportedValue(let value):
+        case let .unsupportedValue(value):
             configure(cell, for: value, disabled: true)
         case .customValue:
             cell.title = "Custom"
@@ -171,7 +171,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             item.cancel()
             activityIndicator.stop()
 
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 self.handle(error: error)
             }
         }
@@ -190,7 +190,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             }
 
             switch result {
-            case .success(let value):
+            case let .success(value):
                 self.updateTimeout(MessageDestructionTimeoutValue(rawValue: value))
             default:
                 break
@@ -210,7 +210,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
         let selectedItem = items[indexPath.row]
 
         switch selectedItem {
-        case .supportedValue(let value):
+        case let .supportedValue(value):
             guard canSelectItem(with: value) else {
                 break
             }

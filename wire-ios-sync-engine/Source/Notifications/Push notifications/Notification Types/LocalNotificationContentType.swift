@@ -104,7 +104,7 @@ public enum LocalNotificationContentType: Equatable {
             guard let textData = message.composite.items.compactMap({ $0.text }).first else { return nil }
             self = .text(textData.content, isMention: textData.isMentioningSelf(selfUser), isReply: false)
 
-        case .asset(let assetData):
+        case let .asset(assetData):
             switch assetData.original.metaData {
             case .audio?:
                 self = .audio

@@ -200,9 +200,9 @@ extension CompanyLoginController {
         let parsingResult = CompanyLoginRequestDetector.parse(input: input)
 
         switch parsingResult {
-        case .ssoCode(let uuid):
+        case let .ssoCode(uuid):
             attemptLoginWithSSOCode(uuid)
-        case .domain(let domain):
+        case let .domain(domain):
             lookup(domain: domain)
         case .unknown:
             presentCompanyLoginAlert(prefilledInput: input, error: .invalidFormat)
@@ -245,7 +245,7 @@ extension CompanyLoginController {
         case .invalidCode:
             presentCompanyLoginAlert(error: .invalidCode, ssoOnly: true)
 
-        case .invalidStatus(let status):
+        case let .invalidStatus(status):
             presentCompanyLoginAlert(error: .invalidStatus(status), ssoOnly: true)
 
         case .unknown:
@@ -275,7 +275,7 @@ extension CompanyLoginController {
             guard let self else { return }
             delegate?.controller(self, showLoadingView: false)
 
-            guard case .success(let settings) = result, let ssoCode = settings.ssoCode else {
+            guard case let .success(settings) = result, let ssoCode = settings.ssoCode else {
                 guard promptOnError else { return }
                 displayCompanyLoginPrompt(ssoOnly: true)
                 return
@@ -298,7 +298,7 @@ extension CompanyLoginController {
             self.delegate?.controller(self, showLoadingView: false)
 
             switch result {
-            case .success(let domainInfo):
+            case let .success(domainInfo):
                 self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
             case .failure:
                 self.presentCompanyLoginAlert(error: .domainNotRegistered)
@@ -321,14 +321,14 @@ extension CompanyLoginController {
             self.delegate?.controller(self, showLoadingView: false)
 
             switch result {
-            case .success(let backendEnvironment):
+            case let .success(backendEnvironment):
                 self.requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                     self.startAutomaticSSOFlow(promptOnError: false)
                 }
-            case .failure(let error):
+            case let .failure(error):
                 if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
                     self.presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {

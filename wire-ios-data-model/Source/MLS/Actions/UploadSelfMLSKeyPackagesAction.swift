@@ -46,7 +46,7 @@ public class UploadSelfMLSKeyPackagesAction: EntityAction {
                 return "Prekey credential does not match qualified client ID."
             case .clientNotFound:
                 return "Client not found."
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

@@ -105,7 +105,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     var preview: SettingsCellPreview = .none {
         didSet {
             switch preview {
-            case .text(let string):
+            case let .text(string):
                 valueLabel.text = string
                 badgeLabel.text = ""
                 badge.isHidden = true
@@ -114,7 +114,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
                 imagePreview.accessibilityValue = nil
                 imagePreview.isAccessibilityElement = false
 
-            case .badge(let value):
+            case let .badge(value):
                 valueLabel.text = ""
                 badgeLabel.text = "\(value)"
                 badge.isHidden = false
@@ -123,7 +123,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
                 imagePreview.accessibilityValue = nil
                 imagePreview.isAccessibilityElement = false
 
-            case .image(let image):
+            case let .image(image):
                 valueLabel.text = ""
                 badgeLabel.text = ""
                 badge.isHidden = true
@@ -132,7 +132,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
                 imagePreview.accessibilityValue = "image"
                 imagePreview.isAccessibilityElement = true
 
-            case .color(let color):
+            case let .color(color):
                 valueLabel.text = ""
                 badgeLabel.text = ""
                 badge.isHidden = true

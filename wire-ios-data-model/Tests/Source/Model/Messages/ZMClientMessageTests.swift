@@ -289,7 +289,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             // then
             XCTAssertEqual(message.dataSet.count, 1)
             switch message.underlyingMessage?.content {
-            case .text(let data)?:
+            case let .text(data)?:
                 XCTAssertNotNil(data)
             default:
                 XCTFail()
@@ -316,7 +316,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             // then
             XCTAssertEqual(message.dataSet.count, 1)
             switch message.underlyingMessage?.content {
-            case .text(let data)?:
+            case let .text(data)?:
                 XCTAssertNotNil(data)
             default:
                 XCTFail()

@@ -30,15 +30,15 @@ struct AddParticipantsViewModel {
     var botCanBeAdded: Bool {
         switch context {
         case .create: return false
-        case .add(let conversation): return conversation.botCanBeAdded
+        case let .add(conversation): return conversation.botCanBeAdded
         }
     }
 
     var selectedUsers: UserSet {
         switch context {
-        case .add(let conversation) where conversation.conversationType == .oneOnOne:
+        case let .add(conversation) where conversation.conversationType == .oneOnOne:
             return conversation.connectedUserType.map { [$0] } ?? []
-        case .create(let values): return values.participants
+        case let .create(values): return values.participants
         default: return []
         }
     }
@@ -51,7 +51,7 @@ struct AddParticipantsViewModel {
 
     var filterConversation: ZMConversation? {
         switch context {
-        case .add(let conversation) where conversation.conversationType == .group: return conversation as? ZMConversation
+        case let .add(conversation) where conversation.conversationType == .group: return conversation as? ZMConversation
         default: return nil
         }
     }
@@ -66,7 +66,7 @@ struct AddParticipantsViewModel {
     var confirmButtonTitle: String? {
         switch context {
         case .create: return nil
-        case .add(let conversation):
+        case let .add(conversation):
             if conversation.conversationType == .oneOnOne {
                 return L10n.Localizable.Peoplepicker.Button.createConversation.capitalized
             } else {
@@ -82,7 +82,7 @@ struct AddParticipantsViewModel {
             item.tintColor = SemanticColors.Icon.foregroundDefault
             item.accessibilityIdentifier = "close"
             return item
-        case .create(let values):
+        case let .create(values):
             let key = values.participants.isEmpty ? L10n.Localizable.Peoplepicker.Group.skip : L10n.Localizable.Peoplepicker.Group.done
             let newItem: UIBarButtonItem = .createNavigationRightBarButtonItem(title: key,
                                                                                action: action)

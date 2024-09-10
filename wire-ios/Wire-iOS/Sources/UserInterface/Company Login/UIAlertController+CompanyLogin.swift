@@ -88,7 +88,7 @@ extension UIAlertController {
                 return LoginSSOErrorAlertLocale.DomainAssociatedWithWrongServer.message
             case .invalidCode:
                 return LoginSSOErrorAlertLocale.InvalidCode.message
-            case .invalidStatus(let status):
+            case let .invalidStatus(status):
                 return LoginSSOErrorAlertLocale.InvalidStatus.message(String(status))
             case .unknown:
                 return LoginSSOErrorAlertLocale.Unknown.message

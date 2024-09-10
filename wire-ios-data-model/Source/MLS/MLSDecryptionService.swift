@@ -176,7 +176,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             }
 
             return results
-        } catch CoreCryptoError.CryptoError(let error) {
+        } catch let CoreCryptoError.CryptoError(error) {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
 
             switch error {

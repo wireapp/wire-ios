@@ -61,7 +61,7 @@ public class CoreCryptoKeyProvider {
             WireLogger.coreCrypto.info("Found legacy core crypto key. Deleting...")
             try KeychainManager.deleteItem(legacyItem)
             WireLogger.coreCrypto.info("Deleted legacy core crypto key")
-        } catch KeychainManager.Error.failedToDeleteItemFromKeychain(let error) {
+        } catch let KeychainManager.Error.failedToDeleteItemFromKeychain(error) {
             WireLogger.coreCrypto.error("Failed to delete legacy core crypto key: \(String(describing: error))")
         } catch {
             // key was not found. no action needed

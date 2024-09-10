@@ -61,7 +61,7 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
     }
 
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard request == nil, case .fetching(let start) = status else {
+        guard request == nil, case let .fetching(start) = status else {
             return nil
         }
 

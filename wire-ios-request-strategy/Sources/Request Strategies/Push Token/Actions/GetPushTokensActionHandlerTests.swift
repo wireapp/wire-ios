@@ -71,7 +71,7 @@ class GetPushTokensActionHandlerTests: MessagingTestBase {
         var receivedTokens = [PushToken]()
 
         action.onResult { result in
-            guard case .success(let tokens) = result else { return }
+            guard case let .success(tokens) = result else { return }
             receivedTokens = tokens
             didSucceed.fulfill()
         }

@@ -58,13 +58,13 @@ struct ProteusMessageDecryptor: ProteusMessageDecryptorProtocol {
         from eventData: ConversationProteusMessageAddEvent
     ) async throws -> ConversationProteusMessageAddEvent {
         // Only decrypt ciphertext, return plaintext unchanged.
-        guard case .ciphertext(let ciphertext) = eventData.message else {
+        guard case let .ciphertext(ciphertext) = eventData.message else {
             return eventData
         }
 
         let ciphertextData = try validateCiphertext(ciphertext)
 
-        if case .ciphertext(let externalCiphertext) = eventData.externalData {
+        if case let .ciphertext(externalCiphertext) = eventData.externalData {
             try validateExternalCiphertext(externalCiphertext)
         }
 

@@ -136,9 +136,9 @@ final class HTMLStringBuffer {
     /// Returns the value of the string, with unescaped HTML entities.
     func stringValue(removingEntities removeEntities: Bool) -> String {
         let stringValue: String = switch storage {
-        case .retained(let ptr):
+        case let .retained(ptr):
             String(cString: ptr)
-        case .unowned(let ptr):
+        case let .unowned(ptr):
             String(cString: ptr)
         }
 
@@ -149,9 +149,9 @@ final class HTMLStringBuffer {
 /// Compares an HTML string with an UTF-8 Swift string.
 func == (lhs: HTMLStringBuffer, rhs: String) -> Bool {
     switch lhs.storage {
-    case .retained(let ptr):
+    case let .retained(ptr):
         return xmlStrEqual(ptr, rhs) == 1
-    case .unowned(let ptr):
+    case let .unowned(ptr):
         return xmlStrEqual(ptr, rhs) == 1
     }
 }

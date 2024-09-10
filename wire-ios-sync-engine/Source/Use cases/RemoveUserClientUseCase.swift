@@ -79,7 +79,7 @@ class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     private func handleFailure(_ failure: NetworkError, userClient: UserClient) async throws {
         switch failure {
-        case .invalidRequestError(let failureResponse, _):
+        case let .invalidRequestError(failureResponse, _):
             switch failureResponse.label {
             case .clientNotFound:
                 // the client existed locally but not remotely, we delete it locally

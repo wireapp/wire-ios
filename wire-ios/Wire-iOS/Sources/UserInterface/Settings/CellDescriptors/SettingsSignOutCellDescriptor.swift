@@ -54,7 +54,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             ZMUserSession.shared()?.logout(credentials: UserEmailCredentials(email: "", password: password ?? "")) { [weak topMostViewController] result in
                 Task { @MainActor in self.activityIndicator.stop() }
                 TrackingManager.shared.disableAnalyticsSharing = false
-                if case .failure(let error) = result {
+                if case let .failure(error) = result {
                     topMostViewController?.showAlert(for: error)
                 }
             }

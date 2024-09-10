@@ -39,7 +39,7 @@ final class PushChannel: PushChannelProtocol {
         return try webSocket.open().map { [weak self, decoder] message in
             do {
                 switch message {
-                case .data(let data):
+                case let .data(data):
                     print("received web socket data, decoding...")
                     let envelope = try decoder.decode(UpdateEventEnvelopeV0.self, from: data)
                     return envelope.toAPIModel()

@@ -90,10 +90,10 @@ class MockURLSession: DataTaskSession {
         }
 
         switch scheduledResponse {
-        case .success(let data, let response):
+        case let .success(data, response):
             respondToTask(mockTask, with: data, response: response)
 
-        case .error(let error):
+        case let .error(error):
             failTask(mockTask, with: error)
         }
     }

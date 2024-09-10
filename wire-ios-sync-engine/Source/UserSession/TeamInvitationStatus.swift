@@ -46,9 +46,9 @@ extension InviteResult: Equatable {}
 
 public func == (lhs: InviteResult, rhs: InviteResult) -> Bool {
     switch (lhs, rhs) {
-    case (InviteResult.success(email: let lhsEmail), InviteResult.success(email: let rhsEmail)):
+    case let (InviteResult.success(email: lhsEmail), InviteResult.success(email: rhsEmail)):
         return lhsEmail == rhsEmail
-    case (InviteResult.failure(email: let lhsEmail, error: let lhsError), InviteResult.failure(email: let rhsEmail, error: let rhsError)):
+    case let (InviteResult.failure(email: lhsEmail, error: lhsError), InviteResult.failure(email: rhsEmail, error: rhsError)):
         return lhsEmail == rhsEmail && lhsError == rhsError
     default:
         return false

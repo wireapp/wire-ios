@@ -216,7 +216,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
             case (.disabled, _):
                 notifyChange(.selfDeletingMessagesIsDisabled)
 
-            case (.enabled, let enforcedTimeout) where enforcedTimeout > 0:
+            case let (.enabled, enforcedTimeout) where enforcedTimeout > 0:
                 notifyChange(.selfDeletingMessagesIsEnabled(enforcedTimeout: enforcedTimeout))
 
             case (.enabled, _):

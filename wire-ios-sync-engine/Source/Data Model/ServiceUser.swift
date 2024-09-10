@@ -220,7 +220,7 @@ extension ServiceUser {
             messageProtocol: .proteus
         ) {
             switch $0 {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.add(
                     serviceUser: serviceUserData,
                     transportSession: transportSession,
@@ -232,12 +232,12 @@ extension ServiceUser {
                         context.saveOrRollback()
                         completionHandler(.success(conversation))
 
-                    case .failure(let error):
+                    case let .failure(error):
                         completionHandler(.failure(error))
                     }
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 completionHandler(.failure(error))
             }
         }

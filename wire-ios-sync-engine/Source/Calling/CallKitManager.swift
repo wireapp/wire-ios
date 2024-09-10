@@ -212,7 +212,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         delegate?.lookupConversation(by: callHandle) { result in
-            guard case .success(let conversation) = result else { return }
+            guard case let .success(conversation) = result else { return }
             completion(conversation)
         }
     }
@@ -572,7 +572,7 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 call.observer.startObservingChanges(in: conversation)
 
                 call.observer.onAnswered = {
@@ -598,7 +598,7 @@ extension CallKitManager: CXProviderDelegate {
                 update.localizedCallerName = conversation.localizedCallerNameForOutgoingCall()
                 provider.reportCall(with: action.callUUID, updated: update)
 
-            case .failure(let error):
+            case let .failure(error):
                 self.logger.error("fail: perform start call action: can't fetch conversation: \(error)")
                 self.log("fail CXStartCallAction because can't fetch conversation: \(error)")
                 action.fail()
@@ -631,7 +631,7 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 call.observer.startObservingChanges(in: conversation)
 
                 call.observer.onEstablished = { [weak self] in
@@ -667,7 +667,7 @@ extension CallKitManager: CXProviderDelegate {
                     action.fail()
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 self.logger.error("fail: perform answer call action: couldn't fetch conversation: \(error)")
                 self.log("fail CXAnswerCallAction because can't fetch conversation: \(error)")
                 action.fail()
@@ -701,13 +701,13 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.voiceChannel?.leave()
                 action.fulfill()
                 self.callRegister.unregisterCall(call)
                 self.logger.info("success: perform end call action")
 
-            case .failure(let error):
+            case let .failure(error):
                 self.logger.error("fail: perform end call action: couldn't fetch conversation: \(error)")
                 self.log("fail CXEndCallAction because can't fetch conversation: \(error)")
                 action.fail()
@@ -738,11 +738,11 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.voiceChannel?.muted = action.isOnHold
                 action.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 self.log("fail CXSetHeldCallAction because can't fetch conversation: \(error)")
                 action.fail()
             }
@@ -771,11 +771,11 @@ extension CallKitManager: CXProviderDelegate {
             }
 
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 conversation.voiceChannel?.muted = action.isMuted
                 action.fulfill()
 
-            case .failure(let error):
+            case let .failure(error):
                 self.log("fail CXSetMutedCallAction because can't fetch conversation: \(error)")
                 action.fail()
             }
@@ -837,7 +837,7 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
                 )
             }
 
-        case .terminating(let reason):
+        case let .terminating(reason):
             logger.info("will report call ended, reason: \(reason)")
             reportCallEnded(
                 in: conversation,

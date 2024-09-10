@@ -71,9 +71,9 @@ extension ConversationNewDeviceSystemMessageCell {
               let zClientViewController = ZClientViewController.shared else { return false }
 
         switch linkTarget {
-        case .user(let user):
+        case let .user(user):
             zClientViewController.openClientListScreen(for: user)
-        case .conversation(let conversation):
+        case let .conversation(conversation):
             zClientViewController.openDetailScreen(for: conversation)
         }
 

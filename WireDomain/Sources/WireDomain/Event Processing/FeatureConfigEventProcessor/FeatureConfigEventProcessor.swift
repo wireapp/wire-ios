@@ -37,7 +37,7 @@ struct FeatureConfigEventProcessor {
 
     func processEvent(_ event: FeatureConfigEvent) async throws {
         switch event {
-        case .update(let event):
+        case let .update(event):
             try await updateEventProcessor.processEvent(event)
         }
     }

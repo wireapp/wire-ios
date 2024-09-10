@@ -316,7 +316,7 @@ extension UserProfileImageUpdateStatus: UserProfileImageUploadStatusProtocol {
     /// - Returns: Image data if there is image of this size ready for upload
     internal func consumeImage(for size: ProfileImageSize) -> Data? {
         switch imageState(for: size) {
-        case .upload(image: let image):
+        case let .upload(image: image):
             setState(state: .uploading, for: size)
             return image
         default:

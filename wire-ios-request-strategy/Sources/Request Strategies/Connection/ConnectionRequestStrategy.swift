@@ -99,7 +99,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         case .v0:
             localConnectionListSync.fetch { [weak self] result in
                 switch result {
-                case .success(let connectionList):
+                case let .success(connectionList):
                     self?.createConnectionsAndFinishSyncPhase(connectionList.connections,
                                                               hasMore: connectionList.hasMore)
                 case .failure:
@@ -110,7 +110,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
         case .v1, .v2, .v3, .v4, .v5, .v6:
             connectionListSync.fetch { [weak self] result in
                 switch result {
-                case .success(let connectionList):
+                case let .success(connectionList):
                     self?.createConnectionsAndFinishSyncPhase(connectionList.connections,
                                                               hasMore: connectionList.hasMore)
                 case .failure:

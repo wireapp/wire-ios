@@ -604,7 +604,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withMessageDependencyResolverReturning(result: Result<Void, MessageDependencyResolverError>) -> Arrangement {
             messageDependencyResolver.waitForDependenciesToResolveFor_MockMethod = { _ in
-                if case .failure(let error) = result {
+                if case let .failure(error) = result {
                     throw error
                 }
             }
@@ -644,7 +644,7 @@ final class MessageSenderTests: MessagingTestBase {
             switch result {
             case .success:
                 sessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
-            case .failure(let error):
+            case let .failure(error):
                 sessionEstablisher.establishSessionWithApiVersion_MockError = error
             }
             return self
@@ -652,9 +652,9 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withBroadcastProteusMessage(returning result: Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
             switch result {
-            case .success(let value):
+            case let .success(value):
                 messageApi.broadcastProteusMessageMessage_MockValue = value
-            case .failure(let error):
+            case let .failure(error):
                 messageApi.broadcastProteusMessageMessage_MockError = error
             }
             return self
@@ -662,9 +662,9 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withSendProteusMessage(returning result: Result<(Payload.MessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
             switch result {
-            case .success(let value):
+            case let .success(value):
                 messageApi.sendProteusMessageMessageConversationID_MockValue = value
-            case .failure(let error):
+            case let .failure(error):
                 messageApi.sendProteusMessageMessageConversationID_MockError = error
             }
             return self
@@ -672,9 +672,9 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withSendMlsMessage(returning result: Result<(Payload.MLSMessageSendingStatus, ZMTransportResponse), NetworkError>) -> Arrangement {
             switch result {
-            case .success(let value):
+            case let .success(value):
                 messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockValue = value
-            case .failure(let error):
+            case let .failure(error):
                 messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockError = error
             }
             return self

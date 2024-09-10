@@ -60,7 +60,7 @@ enum BuildType: Equatable {
         case .alpha, .beta, .development, .internal, .releaseCandidate:
             return bundleID
 
-        case .custom(let bundleID):
+        case let .custom(bundleID):
             return bundleID
         }
     }
@@ -85,7 +85,7 @@ enum BuildType: Equatable {
         case .releaseCandidate:
             return "com.wearezeta.zclient.rc"
 
-        case .custom(let bundleID):
+        case let .custom(bundleID):
             return bundleID
         }
     }

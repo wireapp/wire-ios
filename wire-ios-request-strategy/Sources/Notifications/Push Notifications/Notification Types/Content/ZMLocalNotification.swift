@@ -189,7 +189,7 @@ extension LocalNotificationType {
             return true
         }
 
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -202,7 +202,7 @@ extension LocalNotificationType {
     }
 
     var shouldDecreaseUnreadCount: Bool {
-        guard case LocalNotificationType.event(let contentType) = self else {
+        guard case let LocalNotificationType.event(contentType) = self else {
             return false
         }
 
@@ -215,7 +215,7 @@ extension LocalNotificationType {
     }
 
     var shouldIncreaseUnreadMentionCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -229,7 +229,7 @@ extension LocalNotificationType {
     }
 
     var shouldIncreaseUnreadReplyCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 

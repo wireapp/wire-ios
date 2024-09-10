@@ -42,7 +42,7 @@ public enum CompositeMessageItem {
 
 extension CompositeMessageItem {
     public var textData: TextMessageData? {
-        guard case .text(let data) = self else { return nil }
+        guard case let .text(data) = self else { return nil }
         return data
     }
 }

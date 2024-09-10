@@ -64,7 +64,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         for event in eventEnvelope.events {
             switch event {
-            case .conversation(.proteusMessageAdd(let eventData)):
+            case let .conversation(.proteusMessageAdd(eventData)):
                 WireLogger.updateEvent.info(
                     "decrypting proteus event...",
                     attributes: logAttributes

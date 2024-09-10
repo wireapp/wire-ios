@@ -55,13 +55,13 @@ final class CallDegradationController: UIViewController {
 
     fileprivate func updateState() {
         switch state {
-        case .outgoing(reason: let degradationReason):
+        case let .outgoing(reason: degradationReason):
             switch degradationReason {
             case .invalidCertificate:
                 visibleAlertController = UIAlertController.makeOutgoingDegradedMLSCall { [weak self] continueDegradedCall in
                     continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
                 }
-            case .degradedUser(user: let degradeduser):
+            case let .degradedUser(user: degradeduser):
                 visibleAlertController = UIAlertController.makeOutgoingDegradedProteusCall(
                     degradedUser: degradeduser?.value) { [weak self] continueDegradedCall in
                         if continueDegradedCall {

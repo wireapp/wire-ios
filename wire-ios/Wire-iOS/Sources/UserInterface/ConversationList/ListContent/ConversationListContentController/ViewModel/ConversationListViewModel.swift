@@ -52,7 +52,7 @@ final class ConversationListViewModel: NSObject {
 
             var identifier: SectionIdentifier {
                 switch self {
-                case.folder(label: let label):
+                case let .folder(label: label):
                     return label.remoteIdentifier?.transportString() ?? "folder"
                 default:
                     return canonicalName
@@ -81,7 +81,7 @@ final class ConversationListViewModel: NSObject {
                     return "groups"
                 case .favorites:
                     return "favorites"
-                case .folder(label: let label):
+                case let .folder(label: label):
                     return label.name ?? "folder"
                 }
             }
@@ -98,7 +98,7 @@ final class ConversationListViewModel: NSObject {
                     return L10n.Localizable.List.Section.groups
                 case .favorites:
                     return L10n.Localizable.List.Section.favorites
-                case .folder(label: let label):
+                case let .folder(label: label):
                     return label.name
                 }
             }
@@ -115,7 +115,7 @@ final class ConversationListViewModel: NSObject {
                     return true
                 case (.favorites, .favorites):
                     return true
-                case (.folder(let lhsLabel), .folder(let rhsLabel)):
+                case let (.folder(lhsLabel), .folder(rhsLabel)):
                     return lhsLabel === rhsLabel
                 default:
                     return false
@@ -374,7 +374,7 @@ final class ConversationListViewModel: NSObject {
             conversationListType = .groups
         case .favorites:
             conversationListType = .favorites
-        case .folder(label: let label):
+        case let .folder(label: label):
             conversationListType = .folder(label)
         }
 
@@ -650,7 +650,7 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             .groups
         case .favorites:
             .favorites
-        case .folder(let label):
+        case let .folder(label):
             .folder(label: label)
         case .archived:
             nil

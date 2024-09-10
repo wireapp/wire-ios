@@ -308,7 +308,7 @@ public class MLSEventProcessor: MLSEventProcessing {
                 return "missing group ID"
             case .missingMLSService:
                 return "missing mlsService"
-            case .other(reason: let reason):
+            case let .other(reason: reason):
                 return reason
             }
         }

@@ -327,7 +327,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         switch action {
         case .createGroup:
             bringUpConversationCreationFlow()
-        case .mute(let isMuted):
+        case let .mute(isMuted):
             viewModel.updateMute(enableNotifications: isMuted)
         case .manageNotifications:
             presentNotificationsOptions(from: targetView)

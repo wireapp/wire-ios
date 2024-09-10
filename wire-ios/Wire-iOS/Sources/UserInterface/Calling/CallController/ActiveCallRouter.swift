@@ -187,7 +187,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
             let alert: UIAlertController = switch reason {
-            case .degradedUser(user: let user):
+            case let .degradedUser(user: user):
                 UIAlertController.makeOutgoingDegradedProteusCall(
                     degradedUser: user?.value,
                     callEnded: true,
@@ -217,7 +217,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
             let alert: UIAlertController = switch reason {
-            case .degradedUser(user: let user):
+            case let .degradedUser(user: user):
                 UIAlertController.makeIncomingDegradedProteusCall(
                     degradedUser: user?.value,
                     callEnded: false,

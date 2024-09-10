@@ -137,7 +137,7 @@ extension CallQualityController: WireCallCenterCallStateObserver {
         switch callState {
         case .established:
             handleCallStart(in: conversation)
-        case .terminating(let terminationReason):
+        case let .terminating(terminationReason):
             handleCallCompletion(in: conversation, reason: terminationReason, eventDate: eventDate)
         case .incoming:
             // When call incoming, dismiss CallQuality VC in CallController.presentCall

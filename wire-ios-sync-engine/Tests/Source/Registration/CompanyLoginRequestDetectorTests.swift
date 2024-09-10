@@ -280,7 +280,7 @@ final class CompanyLoginRequestDetectorTests: XCTestCase {
 
         // WHEN
         let result = CompanyLoginRequestDetector.parse(input: email)
-        if case CompanyLoginRequestDetector.ParserResult.domain(let domain) = result {
+        if case let CompanyLoginRequestDetector.ParserResult.domain(domain) = result {
             resultDomain = domain
             valuesEqual = true
         }

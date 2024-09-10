@@ -256,7 +256,7 @@ extension MockTransportSession {
             return errorResponse(withCode: 412, reason: "legalhold-not-pending", apiVersion: apiVersion)
         case .enabled:
             return errorResponse(withCode: 409, reason: "legalhold-already-enabled", apiVersion: apiVersion)
-        case .pending(let pendingClient):
+        case let .pending(pendingClient):
             guard member.user.acceptLegalHold(with: pendingClient) == true else {
                 return errorResponse(withCode: 400, reason: "legalhold-status-bad", apiVersion: apiVersion)
             }

@@ -23,7 +23,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
     func testThatButtonTouchActionInsertsMessageInConversationIfNoneIsSelected() {
         // GIVEN
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(), compositeItemText()))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
         let conversation = self.conversation(withMessage: message)
 
         // WHEN
@@ -39,7 +39,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         // GIVEN
         let buttonItem = compositeItemButton()
         let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
         let conversation = self.conversation(withMessage: message)
 
         uiMOC.performAndWait {
@@ -61,7 +61,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let id = "123"
         let buttonItem = compositeItemButton(buttonID: id)
         let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
         _ = conversation(withMessage: message)
 
         // WHEN
@@ -79,7 +79,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let id = "123"
         let buttonItem = compositeItemButton(buttonID: id)
         let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
+        guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
         let conversation = self.conversation(withMessage: message, addSender: false)
 
         // WHEN

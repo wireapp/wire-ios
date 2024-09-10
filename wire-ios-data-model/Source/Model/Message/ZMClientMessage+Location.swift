@@ -35,7 +35,7 @@ extension ZMClientMessage: LocationMessageData {
         switch content {
         case .location:
             return self
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
             case .location?:
                 return self

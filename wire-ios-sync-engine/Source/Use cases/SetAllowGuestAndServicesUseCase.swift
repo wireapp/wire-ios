@@ -57,7 +57,7 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
             switch result {
             case .success:
                 completion(.success(()))
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(.networkError(error)))
             }
         }

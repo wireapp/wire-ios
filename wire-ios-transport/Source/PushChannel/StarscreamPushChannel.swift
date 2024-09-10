@@ -238,7 +238,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
             onClose()
         case .text:
             break
-        case .binary(let data):
+        case let .binary(data):
             WireLogger.pushChannel.debug("Received data")
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(data)

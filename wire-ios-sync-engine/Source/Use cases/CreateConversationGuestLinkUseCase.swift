@@ -49,7 +49,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
                 allowServices: conversation.allowServices
             ) { result in
                 switch result {
-                case .failure(let error):
+                case let .failure(error):
                     completion(.failure(.failedToEnableGuestAccess(error)))
                 case .success:
                     createGuestLink(conversation: conversation, password: password, completion)
@@ -82,9 +82,9 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
 
         action.perform(in: context.notificationContext) { result in
             switch result {
-            case .success(let link):
+            case let .success(link):
                 completion(.success(link))
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(.networkError(error)))
             }
         }

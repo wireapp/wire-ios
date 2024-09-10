@@ -190,7 +190,7 @@ extension ConversationListViewController.ViewModel {
 
             selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
                 switch result {
-                case .failure(let error):
+                case let .failure(error):
                     switch error {
                     case ConsentRequestError.notAvailable:
                         // don't show the alert there is no consent to show

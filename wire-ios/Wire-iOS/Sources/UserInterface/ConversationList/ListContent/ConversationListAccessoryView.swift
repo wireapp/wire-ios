@@ -190,7 +190,7 @@ final class ConversationListAccessoryView: UIView {
             return iconView
         case .typing:
             return .none
-        case .unreadMessages(let count):
+        case let .unreadMessages(count):
             textLabel.text = String(count)
             textLabel.textColor = textLabelColor
             accessibilityValue = ConversationsListAccessibility.BadgeView.value(count)

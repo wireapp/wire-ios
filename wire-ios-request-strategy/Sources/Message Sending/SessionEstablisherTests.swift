@@ -120,9 +120,9 @@ final class SessionEstablisherTests: MessagingTestBase {
 
         func withFetchPrekeyAPI(returning result: Result<Payload.PrekeyByQualifiedUserID, NetworkError>) -> Arrangement {
             switch result {
-            case.success(let payload):
+            case let .success(payload):
                 prekeyApi.fetchPrekeysFor_MockValue = payload
-            case .failure(let error):
+            case let .failure(error):
                 prekeyApi.fetchPrekeysFor_MockError = error
             }
             return self

@@ -413,14 +413,14 @@ extension AuthenticationStepController {
 
     func updateValidation(_ suggestedValidation: ValueValidation?) {
         switch suggestedValidation {
-        case .info(let infoText)?:
+        case let .info(infoText)?:
             errorLabel.accessibilityIdentifier = "validation-rules"
             errorLabel.text = infoText
             errorLabel.textColor = UIColor.Team.placeholderColor
             errorLabelContainer.isHidden = false
             showSecondaryView(for: nil)
 
-        case .error(let error, let showVisualFeedback)?:
+        case let .error(error, showVisualFeedback)?:
             UIAccessibility.post(notification: .screenChanged, argument: errorLabel)
             if !showVisualFeedback {
                 // If we do not want to show an error (eg if all the text was deleted,

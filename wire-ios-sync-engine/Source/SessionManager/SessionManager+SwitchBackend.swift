@@ -49,7 +49,7 @@ extension SessionManager {
         BackendEnvironment.fetchEnvironment(url: url) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let environment):
+                case let .success(environment):
                     completion(.success(environment))
                 case .failure:
                     completion(.failure(SwitchBackendError.invalidBackend))

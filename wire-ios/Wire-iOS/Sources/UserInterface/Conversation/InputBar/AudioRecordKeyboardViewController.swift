@@ -346,7 +346,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
             state = .effects
 
-            if case .failure(let error) = result, let error = error as? RecordingError, let alert = recorder.alertForRecording(error: error) {
+            if case let .failure(error) = result, let error = error as? RecordingError, let alert = recorder.alertForRecording(error: error) {
                 present(alert, animated: true, completion: .none)
             }
         }

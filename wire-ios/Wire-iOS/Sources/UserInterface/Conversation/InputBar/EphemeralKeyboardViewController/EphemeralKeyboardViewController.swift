@@ -134,7 +134,7 @@ final class EphemeralKeyboardViewController: UIViewController {
             }
 
             switch result {
-            case .success(let value):
+            case let .success(value):
                 self.delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
             default:
                 break

@@ -35,7 +35,7 @@ final class CallGridViewController: UIViewController {
 
     static var maxItemsPerPage: Int {
         switch CallingConfiguration.config.streamLimit {
-        case .limit(amount: let amount): return amount
+        case let .limit(amount: amount): return amount
         case .noLimit: return 8
         }
     }
@@ -261,7 +261,7 @@ final class CallGridViewController: UIViewController {
             } else if isMaximized(stream: stream) {
                 hintView.show(hint: .goBackOrZoom)
             }
-        case .maximizationChanged(stream: let stream, maximized: let maximized):
+        case let .maximizationChanged(stream: stream, maximized: maximized):
             if maximized {
                 hintView.show(hint: stream.isSharingVideo ? .goBackOrZoom : .goBack)
             } else {

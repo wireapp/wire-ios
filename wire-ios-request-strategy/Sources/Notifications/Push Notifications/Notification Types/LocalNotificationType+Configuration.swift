@@ -33,7 +33,7 @@ extension LocalNotificationType {
             return .newMessage
         case .event:
             return .newMessage
-        case .message(let contentType):
+        case let .message(contentType):
             switch contentType {
             case .knock:
                 return .ping
@@ -51,11 +51,11 @@ extension LocalNotificationType {
 extension PushNotificationCategory {
     fileprivate init(notificationType: LocalNotificationType) {
         switch notificationType {
-        case .calling(let callState):
+        case let .calling(callState):
             self.init(callState: callState)
-        case .event(let eventType):
+        case let .event(eventType):
             self.init(eventType: eventType)
-        case .message(let contentType):
+        case let .message(contentType):
             self.init(contentType: contentType)
         case .failedMessage:
             self = .conversation

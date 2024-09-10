@@ -112,7 +112,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     object.expire()
                     self.localNotificationDispatcher.didFailToSend(object)
 
-                    if case NetworkError.invalidRequestError(let responseFailure, _) = error,
+                    if case let NetworkError.invalidRequestError(responseFailure, _) = error,
                        responseFailure.label == .missingLegalholdConsent {
                         self.context.zm_userInterface.performGroupedBlock {
                             NotificationInContext(

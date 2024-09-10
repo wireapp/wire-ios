@@ -53,7 +53,7 @@ public enum EnvironmentType: Equatable {
             return "elna"
         case .foma:
             return "foma"
-        case .custom(url: let url):
+        case let .custom(url: url):
             return "custom-\(url.absoluteString)"
         }
     }

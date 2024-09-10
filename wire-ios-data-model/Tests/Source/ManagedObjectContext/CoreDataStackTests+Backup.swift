@@ -200,7 +200,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         XCTAssertThrowsError(try result.get()) { error in
 
             switch error as? CoreDataStack.BackupError {
-            case .failedToWrite(let failureError):
+            case let .failedToWrite(failureError):
 
                 switch failureError as? CoreDataStack.BackupError {
                 case .missingEAREncryptionKey:

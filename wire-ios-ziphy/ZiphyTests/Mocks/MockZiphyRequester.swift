@@ -68,9 +68,9 @@ final class MockZiphyRequester: ZiphyURLRequester {
         }
 
         switch response {
-        case .success(let data, let urlResponse):
+        case let .success(data, urlResponse):
             completionHandler(data, urlResponse, nil)
-        case .error(let error):
+        case let .error(error):
             completionHandler(nil, nil, error)
         }
     }

@@ -50,49 +50,49 @@ struct ConversationEventProcessor {
 
     func processEvent(_ event: ConversationEvent) async throws {
         switch event {
-        case .accessUpdate(let event):
+        case let .accessUpdate(event):
             try await accessUpdateEventProcessor.processEvent(event)
 
-        case .codeUpdate(let event):
+        case let .codeUpdate(event):
             try await codeUpdateEventProcessor.processEvent(event)
 
-        case .create(let event):
+        case let .create(event):
             try await createEventProcessor.processEvent(event)
 
-        case .delete(let event):
+        case let .delete(event):
             try await deleteEventProcessor.processEvent(event)
 
-        case .memberJoin(let event):
+        case let .memberJoin(event):
             try await memberJoinEventProcessor.processEvent(event)
 
-        case .memberLeave(let event):
+        case let .memberLeave(event):
             try await memberLeaveEventProcessor.processEvent(event)
 
-        case .memberUpdate(let event):
+        case let .memberUpdate(event):
             try await memberUpdateEventProcessor.processEvent(event)
 
-        case .messageTimerUpdate(let event):
+        case let .messageTimerUpdate(event):
             try await messageTimerUpdateEventProcessor.processEvent(event)
 
-        case .mlsMessageAdd(let event):
+        case let .mlsMessageAdd(event):
             try await mlsMessageAddEventProcessor.processEvent(event)
 
-        case .mlsWelcome(let event):
+        case let .mlsWelcome(event):
             try await mlsWelcomeEventProcessor.processEvent(event)
 
-        case .proteusMessageAdd(let event):
+        case let .proteusMessageAdd(event):
             try await proteusMessageAddEventProcessor.processEvent(event)
 
-        case .protocolUpdate(let event):
+        case let .protocolUpdate(event):
             try await protocolUpdateEventProcessor.processEvent(event)
 
-        case .receiptModeUpdate(let event):
+        case let .receiptModeUpdate(event):
             try await receiptModeUpdateEventProcessor.processEvent(event)
 
-        case .rename(let event):
+        case let .rename(event):
             try await renameEventProcessor.processEvent(event)
 
-        case .typing(let event):
+        case let .typing(event):
             try await typingEventProcessor.processEvent(event)
         }
     }

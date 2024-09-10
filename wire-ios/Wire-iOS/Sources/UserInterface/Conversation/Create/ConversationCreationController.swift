@@ -278,7 +278,7 @@ final class ConversationCreationController: UIViewController {
 extension ConversationCreationController: AddParticipantsConversationCreationDelegate {
     func addParticipantsViewController(_ addParticipantsViewController: AddParticipantsViewController, didPerform action: AddParticipantsViewController.CreateAction) {
         switch action {
-        case .updatedUsers(let users):
+        case let .updatedUsers(users):
             values.participants = users
 
         case .create:
@@ -311,7 +311,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 addParticipantsViewController.setLoadingView(isVisible: false)
 
                 switch result {
-                case .success(let conversation):
+                case let .success(conversation):
                     delegate?.conversationCreationController(
                         self,
                         didCreateConversation: conversation
@@ -320,10 +320,10 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
                 case .failure(.networkError(.missingLegalholdConsent)):
                     showMissingLegalholdConsentAlert()
 
-                case .failure(.networkError(.nonFederatingDomains(let domains))):
+                case let .failure(.networkError(.nonFederatingDomains(domains))):
                     showNonFederatingDomainsAlert(domains: domains)
 
-                case .failure(let error):
+                case let .failure(error):
                     WireLogger.conversation.error("failed to create conversation: \(String(describing: error))")
                     showGenericErrorAlert()
                 }
@@ -413,7 +413,7 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
         errorSection.clearError()
         switch value {
         case .error: navigationItem.rightBarButtonItem?.isEnabled = false
-        case .valid(let text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
+        case let .valid(text): navigationItem.rightBarButtonItem?.isEnabled = !text.isEmpty
         }
     }
 

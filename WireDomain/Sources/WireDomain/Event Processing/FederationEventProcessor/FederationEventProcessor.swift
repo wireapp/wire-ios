@@ -38,10 +38,10 @@ struct FederationEventProcessor {
 
     func processEvent(_ event: FederationEvent) async throws {
         switch event {
-        case .connectionRemoved(let event):
+        case let .connectionRemoved(event):
             try await connectionRemovedEventProcessor.processEvent(event)
 
-        case .delete(let event):
+        case let .delete(event):
             try await deleteEventProcessor.processEvent(event)
         }
     }

@@ -440,7 +440,7 @@ final class ProteusToMLSMigrationCoordinatorTests: ZMBaseManagedObjectTest {
         switch status {
         case .canStart:
             setMigrationReadiness(to: true)
-        case .cannotStart(reason: let reason):
+        case let .cannotStart(reason: reason):
             setMockValues(
                 isAPIV5Supported: reason != .unsupportedAPIVersion,
                 isClientSupportingMLS: reason != .clientDoesntSupportMLS,

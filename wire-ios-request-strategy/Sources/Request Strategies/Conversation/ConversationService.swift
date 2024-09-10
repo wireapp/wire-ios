@@ -90,7 +90,7 @@ public final class ConversationService: ConversationServiceInterface {
         createGroupFlow.start()
         let flowCompletion = { [weak self] (result: Swift.Result<ZMConversation, ConversationCreationFailure>) in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 self?.createGroupFlow.fail(error)
             case .success:
                 self?.createGroupFlow.succeed()
@@ -137,11 +137,11 @@ public final class ConversationService: ConversationServiceInterface {
             messageProtocol: .proteus
         ) { result in
             switch result {
-            case .success(let conversation):
+            case let .success(conversation):
                 user.oneOnOneConversation = conversation
                 completion(.success(conversation))
 
-            case .failure(let error):
+            case let .failure(error):
                 completion(.failure(error))
             }
         }
@@ -222,14 +222,14 @@ public final class ConversationService: ConversationServiceInterface {
             createGroupFlow.checkpoint(description: "create Group with user ids: \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
             createGroup(withUsers: users) { result in
                 switch result {
-                case .failure(.networkError(.unreachableDomains(let domains))):
+                case let .failure(.networkError(.unreachableDomains(domains))):
                     let unreachableUsers = users.belongingTo(domains: domains)
                     let reachableUsers = Set(users).subtracting(unreachableUsers)
 
                     self.createGroupFlow.checkpoint(description: "retry create Group with unreachableUsers \(users.map { $0.remoteIdentifier.transportString() }.joined(separator: ","))")
                     createGroup(withUsers: reachableUsers) { retryResult in
 
-                        if case .success(let conversation) = retryResult {
+                        if case let .success(conversation) = retryResult {
                             conversation.appendFailedToAddUsersSystemMessage(
                                 users: unreachableUsers,
                                 sender: .selfUser(in: self.context),
@@ -292,7 +292,7 @@ public final class ConversationService: ConversationServiceInterface {
 
             self.context.perform {
                 switch result {
-                case .success(let objectID):
+                case let .success(objectID):
                     Task {
                         do {
                             try await self.handleMLSConversationIfNeeded(
@@ -324,7 +324,7 @@ public final class ConversationService: ConversationServiceInterface {
                     self.context.enqueueDelayedSave()
                     completion(.failure(.networkError(.notConnected)))
 
-                case .failure(let failure):
+                case let .failure(failure):
                     completion(.failure(.networkError(failure)))
                 }
             }

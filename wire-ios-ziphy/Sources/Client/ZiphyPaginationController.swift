@@ -55,13 +55,13 @@ final class ZiphyPaginationController {
 
     func updatePagination(_ result: ZiphyResult<[Ziph]>, filter: ((Ziph) -> Bool)?) {
         switch result {
-        case .success(let insertedZiphs):
+        case let .success(insertedZiphs):
             let newItems = insertedZiphs.filter { filter?($0) ?? true }
             ziphs.append(contentsOf: newItems)
             offset = ziphs.count
             self.updateBlock?(.success(newItems))
 
-        case .failure(let error):
+        case let .failure(error):
             if case .noMorePages = error {
                 isAtEnd = true
             }

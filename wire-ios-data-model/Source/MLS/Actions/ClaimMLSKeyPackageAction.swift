@@ -47,7 +47,7 @@ public class ClaimMLSKeyPackageAction: EntityAction {
                 return "User domain or user not found."
             case .emptyKeyPackages:
                 return "The list of key packages is empty"
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

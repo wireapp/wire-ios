@@ -166,7 +166,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         case .incoming(video: _, shouldRing: false, degraded: _):
             mediaManager.stop(sound: .ringingFromThemInCallSound)
             mediaManager.stop(sound: .ringingFromThemSound)
-        case .terminating(reason: let reason):
+        case let .terminating(reason: reason):
             switch reason {
             case .normal, .canceled:
                 break

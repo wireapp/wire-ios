@@ -61,7 +61,7 @@ class AccessTokenEndpointTests: XCTestCase {
         let result = sut.parseResponse(.success(response))
 
         // Then
-        guard case .success(let token) = result else {
+        guard case let .success(token) = result else {
             XCTFail("expected success result")
             return
         }

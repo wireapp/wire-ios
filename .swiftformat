@@ -20,7 +20,8 @@
     enumNamespaces, \
     extensionAccessControl, \
     genericExtensions, \
-    hoistAwait
+    hoistAwait, \
+    hoistPatternLet
 
 # Options
 
@@ -33,3 +34,4 @@
 --emptybraces no-space # emptyBraces
 --enumnamespaces always # enumNamespaces
 --extensionacl on-declarations # extensionAccessControl
+--patternlet hoist # hoistPatternLet

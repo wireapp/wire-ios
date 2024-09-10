@@ -145,9 +145,9 @@ extension ConversationViewController {
             conversation.acknowledgePrivacyWarningAndResendMessages()
         case .cancel:
             conversation.discardPendingMessagesAfterPrivacyChanges()
-        case .sendAnywayWithAction(let closure):
+        case let .sendAnywayWithAction(closure):
             closure(true)
-        case .cancelWithAction(let closure):
+        case let .cancelWithAction(closure):
             closure(false)
         }
     }

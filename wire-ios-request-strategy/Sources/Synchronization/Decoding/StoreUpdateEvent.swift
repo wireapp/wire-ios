@@ -228,7 +228,7 @@ public final class StoredUpdateEvent: NSManagedObject {
                 from: storedEvent,
                 privateKeys: privateKeys
             ) {
-            case .success(let updateEvent):
+            case let .success(updateEvent):
                 result.eventsToProcess.append(updateEvent)
                 result.eventsToDelete.append(storedEvent)
 

@@ -52,10 +52,10 @@ extension UIViewController {
         guard let popoverPresentationController else { return false }
 
         switch configuration {
-        case .barButtonItem(let barButtonItem):
+        case let .barButtonItem(barButtonItem):
             popoverPresentationController.barButtonItem = barButtonItem
 
-        case .sourceView(let sourceView, let sourceRect):
+        case let .sourceView(sourceView, sourceRect):
             popoverPresentationController.sourceView = sourceView
             popoverPresentationController.sourceRect = sourceRect
         }

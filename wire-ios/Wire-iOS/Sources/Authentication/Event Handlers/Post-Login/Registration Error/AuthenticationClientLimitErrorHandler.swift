@@ -39,9 +39,9 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
         let authenticationCredentials: UserCredentials?
 
         switch currentStep {
-        case .noHistory(let credentials, _):
+        case let .noHistory(credentials, _):
             authenticationCredentials = credentials
-        case .authenticateEmailCredentials(let credentials):
+        case let .authenticateEmailCredentials(credentials):
             authenticationCredentials = credentials
         default:
             return nil

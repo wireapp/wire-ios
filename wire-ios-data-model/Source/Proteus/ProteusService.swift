@@ -125,10 +125,10 @@ public final class ProteusService: ProteusServiceInterface {
 
         static func == (lhs: ProteusService.EncryptionError, rhs: ProteusService.EncryptionError) -> Bool {
             switch (lhs, rhs) {
-            case (let failedToEncryptData(lhsError), let failedToEncryptData(rhsError)):
+            case let (failedToEncryptData(lhsError), failedToEncryptData(rhsError)):
                 return lhsError as NSError == rhsError as NSError
 
-            case (let failedToEncryptDataBatch(lhsError), let failedToEncryptDataBatch(rhsError)):
+            case let (failedToEncryptDataBatch(lhsError), failedToEncryptDataBatch(rhsError)):
                 return lhsError as NSError == rhsError as NSError
 
             default:
@@ -185,10 +185,10 @@ public final class ProteusService: ProteusServiceInterface {
 
         public var proteusError: ProteusError {
             switch self {
-            case .failedToDecryptData(let proteusError):
+            case let .failedToDecryptData(proteusError):
                 return proteusError
 
-            case .failedToEstablishSessionFromMessage(let proteusError):
+            case let .failedToEstablishSessionFromMessage(proteusError):
                 return proteusError
             }
         }

@@ -79,7 +79,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
 extension EnvironmentTypeProvider {
     var customUrl: URL? {
         switch value {
-        case .custom(let url):
+        case let .custom(url):
             return url
         default:
             return nil

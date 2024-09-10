@@ -116,7 +116,7 @@ final class CallController: NSObject {
 
     private func isClientOutdated(callState: CallState) -> Bool {
         switch callState {
-        case .terminating(let reason) where reason == .outdatedClient:
+        case let .terminating(reason) where reason == .outdatedClient:
             return true
         default:
             return false

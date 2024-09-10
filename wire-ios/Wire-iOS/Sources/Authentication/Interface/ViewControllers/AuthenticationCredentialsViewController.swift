@@ -91,12 +91,12 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     convenience init(flowType: FlowType, backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
         switch flowType {
-        case .login(let credentials):
+        case let .login(credentials):
             let description = LogInStepDescription()
             self.init(description: description, contentCenterConstraintActivation: false)
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
-        case .reauthentication(let credentials):
+        case let .reauthentication(credentials):
             let description = ReauthenticateStepDescription(prefilledCredentials: credentials)
             self.init(description: description, contentCenterConstraintActivation: false)
             self.prefilledCredentials = credentials

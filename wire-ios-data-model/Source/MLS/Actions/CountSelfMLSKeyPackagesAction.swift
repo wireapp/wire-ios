@@ -40,7 +40,7 @@ public final class CountSelfMLSKeyPackagesAction: EntityAction {
                 return "End point not available"
             case .invalidClientID:
                 return "Invalid clientID"
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

@@ -505,7 +505,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
         syncMOC.performAndWait {
             // Then we send the message to the targeted clients
-            let targetRecipients = if case .clients(let recipients) = sentMessage?.targetRecipients {
+            let targetRecipients = if case let .clients(recipients) = sentMessage?.targetRecipients {
                 recipients.mapValues { clients in
                     clients.map { userClient in
                         userClient.clientId

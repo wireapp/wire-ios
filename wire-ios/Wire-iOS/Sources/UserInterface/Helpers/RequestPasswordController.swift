@@ -67,7 +67,7 @@ final class RequestPasswordController {
             message = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.message
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.password
             okActionStyle = .destructive
-        case .unlock(let unlockMessage):
+        case let .unlock(unlockMessage):
             title = L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
             message = unlockMessage
             placeholder = L10n.Localizable.Self.Settings.AccountDetails.LogOut.Alert.password

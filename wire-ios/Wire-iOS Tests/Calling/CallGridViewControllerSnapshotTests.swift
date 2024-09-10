@@ -363,7 +363,7 @@ extension CallGridViewControllerSnapshotTests {
 
             var event: Wire.CallGridEvent {
                 switch self {
-                case .maximizationChanged(state: let state):
+                case let .maximizationChanged(state: state):
                     return .maximizationChanged(stream: state.stream, maximized: state.isMaximized)
                 case .configurationChanged:
                     return .configurationChanged
@@ -380,7 +380,7 @@ extension CallGridViewControllerSnapshotTests {
 
                 var stream: Wire.Stream? {
                     switch self {
-                    case .two(videoState: let videoState):
+                    case let .two(videoState: videoState):
                         return videoState.stream
                     case .moreThanTwo:
                         return nil
@@ -394,7 +394,7 @@ extension CallGridViewControllerSnapshotTests {
 
                     var isMaximized: Bool {
                         switch self {
-                        case .sharing(isMaximized: let isMaximized):
+                        case let .sharing(isMaximized: isMaximized):
                             return isMaximized
                         default:
                             return false
@@ -426,7 +426,7 @@ extension CallGridViewControllerSnapshotTests {
                     let stubProvider = StreamStubProvider()
 
                     switch self {
-                    case .maximized(isSharingVideo: let isSharingVideo):
+                    case let .maximized(isSharingVideo: isSharingVideo):
                         return stubProvider.stream(videoState: isSharingVideo ? .started : .stopped)
                     case .notMaximized:
                         return stubProvider.stream()
@@ -444,7 +444,7 @@ extension CallGridViewControllerSnapshotTests {
 
             func assert(mockHintView: MockCallGridHintNotificationLabel, file: StaticString = #file, line: UInt = #line) {
                 switch self {
-                case .show(hint: let hint):
+                case let .show(hint: hint):
                     XCTAssertEqual(mockHintView.hint, hint, file: file, line: line)
                 case .showNothing:
                     XCTAssertNil(mockHintView.hint, file: file, line: line)

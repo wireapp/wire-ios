@@ -147,7 +147,7 @@ public final class AccountManager: NSObject {
             switch (lhs.teamName, rhs.teamName) {
             case (.some, .none): return false
             case (.none, .some): return true
-            case (.some(let leftName), .some(let rightName)):
+            case let (.some(leftName), .some(rightName)):
                 guard leftName != rightName else { fallthrough }
                 return leftName < rightName
             default: return lhs.userName < rhs.userName

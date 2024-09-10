@@ -199,9 +199,9 @@ extension ImageSizeLimit {
             return "default"
         case .deviceOptimized:
             return "device"
-        case .maxDimension(let size):
+        case let .maxDimension(size):
             return "max_\(String(Int(size)))"
-        case .maxDimensionForShortSide(let size):
+        case let .maxDimensionForShortSide(size):
             return "maxshort_\(String(Int(size)))"
         }
     }
@@ -256,9 +256,9 @@ extension WireImageResource {
                     image = UIImage(data: imageData)?.decoded
                 case .deviceOptimized:
                     image = UIImage.deviceOptimizedImage(from: imageData)
-                case .maxDimension(let limit):
+                case let .maxDimension(limit):
                     image = UIImage(from: imageData, withMaxSize: limit)
-                case .maxDimensionForShortSide(let limit):
+                case let .maxDimensionForShortSide(limit):
                     image = UIImage(from: imageData, withShorterSideLength: limit)
                 }
             }

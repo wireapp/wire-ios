@@ -209,17 +209,17 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         switch appState {
         case .retryStart:
             retryStart(completion: completion)
-        case .blacklisted(reason: let reason):
+        case let .blacklisted(reason: reason):
             showBlacklisted(reason: reason, completion: completion)
         case .jailbroken:
             showJailbroken(completion: completion)
         case .certificateEnrollmentRequired:
             showCertificateEnrollRequest(completion: completion)
-        case .databaseFailure(let error):
+        case let .databaseFailure(error):
             showDatabaseLoadingFailure(error: error, completion: completion)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completion)
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             screenCurtainWindow.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completion)
@@ -451,7 +451,7 @@ extension AppRootRouter {
 
     private func applicationDidTransition(to appState: AppState) {
         switch appState {
-        case .unauthenticated(error: let error):
+        case let .unauthenticated(error: error):
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:

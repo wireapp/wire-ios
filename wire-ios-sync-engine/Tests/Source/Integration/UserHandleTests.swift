@@ -55,7 +55,7 @@ class UserHandleTests: IntegrationTest {
         XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
         guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
-        case .didCheckAvailabilityOfHandle(let _handle, let available):
+        case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
             XCTAssertTrue(available)
         default:
@@ -79,7 +79,7 @@ class UserHandleTests: IntegrationTest {
         XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
         guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
-        case .didCheckAvailabilityOfHandle(let _handle, let available):
+        case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
             XCTAssertFalse(available)
         default:

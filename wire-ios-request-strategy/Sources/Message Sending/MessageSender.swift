@@ -193,7 +193,7 @@ public final class MessageSender: MessageSenderInterface {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
 
         switch failure {
-        case .missingClients(let messageSendingStatus, _):
+        case let .missingClients(messageSendingStatus, _):
             await proteusPayloadProcessor.updateClientsChanges(
                 from: messageSendingStatus,
                 for: message
@@ -234,7 +234,7 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func handleFederationFailure(networkError: NetworkError, message: any SendableMessage) throws {
-        if case .invalidRequestError(let responseFailure, _) = networkError, responseFailure.code == 533 {
+        if case let .invalidRequestError(responseFailure, _) = networkError, responseFailure.code == 533 {
             switch responseFailure.data?.type {
             case .federation:
                 responseFailure.updateExpirationReason(for: message, with: .federationRemoteError)

@@ -41,7 +41,7 @@ enum CallInfoViewControllerAccessoryType: Equatable {
 
     var participants: CallParticipantsList {
         switch self {
-        case .participantsList(let participants):
+        case let .participantsList(participants):
             return participants
         default:
             return []

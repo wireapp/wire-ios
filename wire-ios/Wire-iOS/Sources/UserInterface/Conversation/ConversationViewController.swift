@@ -412,7 +412,7 @@ final class ConversationViewController: UIViewController {
                 let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
                 let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
-                if case .migratedToMLSGroup(let identifier) = resolvedState {
+                if case let .migratedToMLSGroup(identifier) = resolvedState {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
                 }
             } catch {

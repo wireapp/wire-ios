@@ -166,7 +166,7 @@ extension ZMLocalNotification {
 
 extension LocalNotificationType {
     var shouldIncreaseUnreadCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -179,7 +179,7 @@ extension LocalNotificationType {
     }
 
     var shouldIncreaseUnreadMentionCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 
@@ -193,7 +193,7 @@ extension LocalNotificationType {
     }
 
     var shouldIncreaseUnreadReplyCount: Bool {
-        guard case LocalNotificationType.message(let contentType) = self else {
+        guard case let LocalNotificationType.message(contentType) = self else {
             return false
         }
 

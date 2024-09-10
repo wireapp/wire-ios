@@ -62,7 +62,7 @@ extension StyleKitIcon {
             case .small: 20
             case .medium: 24
             case .large: 48
-            case .custom(let value): value
+            case let .custom(value): value
             }
         }
     }

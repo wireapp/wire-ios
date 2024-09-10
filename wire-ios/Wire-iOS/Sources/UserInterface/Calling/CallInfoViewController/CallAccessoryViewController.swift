@@ -106,9 +106,9 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
 
     private func updateState() {
         switch configuration.accessoryType {
-        case .avatar(let user):
+        case let .avatar(user):
             avatarView.user = user.value
-        case .participantsList(let participants):
+        case let .participantsList(participants):
             participantsViewController.participants = participants
         case .none: break
         }

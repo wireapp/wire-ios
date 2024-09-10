@@ -33,9 +33,9 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
 
     func process(urlAction: URLAction, delegate presentationDelegate: PresentationDelegate?) {
         switch urlAction {
-        case .companyLoginSuccess(let userInfo):
+        case let .companyLoginSuccess(userInfo):
             authenticationStatus.loginSucceeded(with: userInfo)
-        case .startCompanyLogin(let code):
+        case let .startCompanyLogin(code):
             guard delegate?.isAllowedToCreateNewAccount == true else {
                 presentationDelegate?.failedToPerformAction(urlAction, error: SessionManager.AccountError.accountLimitReached)
                 return

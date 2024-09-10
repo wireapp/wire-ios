@@ -225,7 +225,7 @@ extension ZMConversation {
         case .addedClients, .addedUsers:
             appendNewAddedClientSystemMessage(cause: cause)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
-        case .ignoredClients(let clients):
+        case let .ignoredClients(clients):
             appendIgnoredClientsSystemMessage(ignored: clients)
         default:
             break
@@ -344,7 +344,7 @@ extension ZMConversation {
     private func appendLegalHoldEnabledSystemMessageForConversation(cause: SecurityChangeCause) {
         var timestamp: Date?
 
-        if case .addedClients(_, let message) = cause, message?.conversation == self, message?.isUpdatingExistingMessage == false {
+        if case let .addedClients(_, message) = cause, message?.conversation == self, message?.isUpdatingExistingMessage == false {
             timestamp = self.timestamp(before: message)
         }
 
@@ -532,12 +532,12 @@ extension ZMConversation {
 extension ZMConversation {
     fileprivate func appendNewIsSecureSystemMessage(cause: SecurityChangeCause) {
         switch cause {
-        case .removedUsers(let users):
+        case let .removedUsers(users):
             appendNewIsSecureSystemMessage(verified: [], for: users)
-        case .verifiedClients(let userClients):
+        case let .verifiedClients(userClients):
             let users = Set(userClients.compactMap { $0.user })
             appendNewIsSecureSystemMessage(verified: userClients, for: users)
-        case .removedClients(let userClients):
+        case let .removedClients(userClients):
             let users = Set(userClients.keys)
             let clients = Set(userClients.values.flatMap { $0 })
             appendNewIsSecureSystemMessage(verified: clients, for: users)
@@ -576,10 +576,10 @@ extension ZMConversation {
         var addedClients: Set<UserClient> = []
 
         switch cause {
-        case .addedUsers(let users):
+        case let .addedUsers(users):
             affectedUsers = users
             addedUsers = users
-        case .addedClients(let clients, let message):
+        case let .addedClients(clients, message):
             affectedUsers = Set(clients.compactMap(\.user))
             addedClients = clients
             if let message, message.conversation == self {

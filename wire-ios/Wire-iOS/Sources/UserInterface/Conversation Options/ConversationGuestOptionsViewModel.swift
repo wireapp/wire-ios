@@ -239,7 +239,7 @@ final class ConversationGuestOptionsViewModel {
                     self.link = nil
                     self.securedLink = nil
                     self.updateRows()
-                case .failure(let error):
+                case let .failure(error):
                     self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
 
@@ -278,7 +278,7 @@ final class ConversationGuestOptionsViewModel {
             guard let self else { return }
 
             switch result {
-            case .success(let linkData):
+            case let .success(linkData):
                 if linkData.secured {
                     self.securedLink = linkData.uri
                     self.link = nil
@@ -287,7 +287,7 @@ final class ConversationGuestOptionsViewModel {
                     self.securedLink = nil
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
             }
 
@@ -304,9 +304,9 @@ final class ConversationGuestOptionsViewModel {
         createSecureGuestLinkUseCase.invoke(conversation: conversation, password: nil) { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success(let link):
+            case let .success(link):
                 self.link = link
-            case .failure(let error):
+            case let .failure(error):
                 self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
             }
 
@@ -368,7 +368,7 @@ final class ConversationGuestOptionsViewModel {
                     if self.link == nil, self.securedLink == nil, allowGuests {
                         self.fetchLink()
                     }
-                case .failure(let error): self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                case let .failure(error): self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
             }
         }

@@ -190,11 +190,11 @@ extension ZiphyClient {
     /// Performs a data task if the URL request is available, or calls the error otherwise.
     fileprivate func performDataTask<T>(_ potentialRequest: ZiphyResult<URLRequest>, errorHandler: (ZiphyResult<T>) -> Void) -> URLRequestPromise? {
         switch potentialRequest {
-        case .failure(let error):
+        case let .failure(error):
             errorHandler(.failure(error))
             return nil
 
-        case .success(let request):
+        case let .success(request):
             return performDataTask(request, requester: requester)
         }
     }

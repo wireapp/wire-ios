@@ -111,7 +111,7 @@ extension RenameGroupSectionController: SimpleTextFieldDelegate {
         guard let value = textField.value else { return }
 
         switch  value {
-        case .valid(let name):
+        case let .valid(name):
             validName = name
             textField.endEditing(true)
         case .error:

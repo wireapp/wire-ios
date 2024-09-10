@@ -322,7 +322,7 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
         guard let first = self.observer.invokedCallbacks.first else { return }
         switch first {
-        case .emailUpdateDidFail(let _error):
+        case let .emailUpdateDidFail(_error):
             XCTAssertEqual(error, _error as NSError)
         default:
             XCTFail()
@@ -841,7 +841,7 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
         guard let first = self.observer.invokedCallbacks.first else { return }
         switch first {
-        case .didFindHandleSuggestion(let _handle):
+        case let .didFindHandleSuggestion(_handle):
             XCTAssertEqual(handle, _handle)
         default:
             XCTFail()
@@ -862,7 +862,7 @@ final class UserProfileUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
         guard let first = self.observer.invokedCallbacks.first else { return }
         switch first {
-        case .didFindHandleSuggestion(let _handle):
+        case let .didFindHandleSuggestion(_handle):
             XCTAssertEqual(handle, _handle)
         default:
             XCTFail()

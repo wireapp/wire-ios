@@ -573,7 +573,7 @@ extension GenericMessage {
                    blob: externalData
                )
 
-               if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
+               if case let .ignoreAllMissingClientsNotFromUsers(users) = missingClientsStrategy {
                    message.reportMissing = Array(users.map { $0.userId })
                }
 
@@ -611,7 +611,7 @@ extension GenericMessage {
                 blob: externalData
             )
 
-            if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
+            if case let .ignoreAllMissingClientsNotFromUsers(users) = missingClientsStrategy {
                 message.reportMissing = Array(users.map { $0.userId })
             }
 

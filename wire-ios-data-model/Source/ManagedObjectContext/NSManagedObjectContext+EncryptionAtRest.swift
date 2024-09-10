@@ -201,7 +201,7 @@ extension NSManagedObjectContext {
             case .missingContextData:
                 return "Couldn't obtain context data."
 
-            case .cryptobox(let error):
+            case let .cryptobox(error):
                 return error.errorDescription
             }
         }

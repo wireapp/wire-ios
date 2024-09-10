@@ -39,10 +39,10 @@ final class AccessAPIClient: AccessAPIClientProtocol, Loggable {
     func fetchAccessToken() async throws -> AccessToken {
         logger.trace("fetching access token")
         switch try await networkSession.execute(endpoint: API.fetchAccessToken()) {
-        case .success(let accessToken):
+        case let .success(accessToken):
             return accessToken
 
-        case .failure(let error):
+        case let .failure(error):
             throw error
         }
     }
@@ -81,7 +81,7 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
         logger.trace("parsing reponse: \(response, privacy: .public)")
 
         switch response {
-        case .success(let response) where response.status == 200:
+        case let .success(response) where response.status == 200:
             do {
                 logger.trace("decoding response payload")
                 let payload = try JSONDecoder().decode(ResponsePayload.self, from: response.data)
@@ -95,7 +95,7 @@ struct AccessTokenEndpoint: Endpoint, Loggable {
                 return .failure(.failedToDecodePayload)
             }
 
-        case .failure(let response):
+        case let .failure(response):
             switch (response.code, response.label) {
             case (403, "invalid-credentials"):
                 return .failure(.authenticationError)

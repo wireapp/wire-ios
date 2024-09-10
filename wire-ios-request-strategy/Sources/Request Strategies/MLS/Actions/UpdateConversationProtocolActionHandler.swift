@@ -61,7 +61,7 @@ final class UpdateConversationProtocolActionHandler: ActionHandler<UpdateConvers
         switch (statusCode, label, apiFailure) {
         case (200, _, _), (204, _, _):
             action.succeed()
-        case (_, _, .some(let apiFailure)):
+        case let (_, _, .some(apiFailure)):
             action.fail(with: .api(apiFailure))
         case (404, _, _): // edge case, where API doesn't return a label
             action.fail(with: .api(.conversationIdOrDomainNotFound))

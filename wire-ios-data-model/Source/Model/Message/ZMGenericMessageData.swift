@@ -144,9 +144,9 @@ extension ZMGenericMessageData {
                 return "A managed object context is required to process the message data."
             case .failedToSerializeMessage:
                 return "The message data couldn't not be serialized."
-            case .failedToEncrypt(reason: let encryptionError):
+            case let .failedToEncrypt(reason: encryptionError):
                 return "The message data could not be encrypted. \(encryptionError.errorDescription ?? "")"
-            case .failedToDecrypt(reason: let encryptionError):
+            case let .failedToDecrypt(reason: encryptionError):
                 return "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
             }
         }

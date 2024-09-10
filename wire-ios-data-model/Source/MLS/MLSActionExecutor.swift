@@ -305,7 +305,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         do {
             WireLogger.mls.info("generating commit for action (\(String(describing: action))) for group (\(groupID.safeForLoggingDescription))...")
             switch action {
-            case .addMembers(let clients):
+            case let .addMembers(clients):
                 let memberAddMessages = try await coreCrypto.perform {
                     try await $0.addClientsToConversation(
                         conversationId: groupID.data,
@@ -325,7 +325,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                     groupInfo: memberAddMessages.groupInfo
                 )
 
-            case .removeClients(let clients):
+            case let .removeClients(clients):
                 return try await coreCrypto.perform {
                     try await $0.removeClientsFromConversation(
                         conversationId: groupID.data,
@@ -354,7 +354,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
                 return bundle
 
-            case .joinGroup(let groupInfo):
+            case let .joinGroup(groupInfo):
                 let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
                 let conversationInitBundle = try await coreCrypto.perform {
                     let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)

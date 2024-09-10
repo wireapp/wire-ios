@@ -170,7 +170,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            guard case .pending(let legalHoldRequest) = selfUser.legalHoldStatus else { return XCTFail() }
+            guard case let .pending(legalHoldRequest) = selfUser.legalHoldStatus else { return XCTFail() }
             XCTAssertEqual(legalHoldRequest.clientIdentifier, expectedLegalHoldRequest.clientIdentifier)
         }
     }

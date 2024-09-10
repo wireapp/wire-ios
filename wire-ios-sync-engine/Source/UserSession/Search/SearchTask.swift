@@ -147,7 +147,7 @@ public class SearchTask {
 extension SearchTask {
     /// look up a user ID from contacts and teamMembers locally.
     private func performLocalLookup() {
-         guard case .lookup(let userId) = task else { return }
+         guard case let .lookup(userId) = task else { return }
 
         tasksRemaining += 1
 
@@ -198,7 +198,7 @@ extension SearchTask {
     }
 
     func performLocalSearch() {
-        guard case .search(let request) = task else { return }
+        guard case let .search(request) = task else { return }
 
         tasksRemaining += 1
 
@@ -336,7 +336,7 @@ extension SearchTask {
 extension SearchTask {
     func performUserLookup() {
         guard
-            case .lookup(let userId) = task,
+            case let .lookup(userId) = task,
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1
         else { return }
@@ -384,7 +384,7 @@ extension SearchTask {
         guard
             let apiVersion = BackendInfo.apiVersion,
             apiVersion >= .v1,
-            case .search(let searchRequest) = task,
+            case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             !searchRequest.searchOptions.isDisjoint(with: [.directory, .teamMembers, .federated])
         else {
@@ -517,7 +517,7 @@ extension SearchTask {
         guard
             let apiVersion = BackendInfo.apiVersion,
             apiVersion <= .v1,
-            case .search(let searchRequest) = task,
+            case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.directory)
         else { return }
@@ -608,7 +608,7 @@ extension SearchTask {
     func performRemoteSearchForServices() {
         guard
             let apiVersion = BackendInfo.apiVersion,
-            case .search(let searchRequest) = task,
+            case let .search(searchRequest) = task,
             !searchRequest.searchOptions.contains(.localResultsOnly),
             searchRequest.searchOptions.contains(.services)
         else { return }

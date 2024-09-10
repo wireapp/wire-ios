@@ -43,7 +43,7 @@ public class ReplaceSelfMLSKeyPackagesAction: EntityAction {
                 return "MLS protocol error"
             case .mlsIdentityMismatch:
                 return "Key package credential does not match qualified client ID"
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

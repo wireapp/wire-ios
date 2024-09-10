@@ -90,7 +90,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             switch item.value {
             case .noPreference:
                 BackendInfo.preferredAPIVersion = nil
-            case .apiVersion(let version):
+            case let .apiVersion(version):
                 BackendInfo.preferredAPIVersion = version
             }
         }

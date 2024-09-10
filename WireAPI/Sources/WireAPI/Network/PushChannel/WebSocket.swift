@@ -69,11 +69,11 @@ final class WebSocket: WebSocketProtocol {
 
                     connection.receive { result in
                         switch result {
-                        case .success(let message):
+                        case let .success(message):
                             continuation.yield(message)
                             yieldNextMessage()
 
-                        case .failure(let error):
+                        case let .failure(error):
                             continuation.finish(throwing: error)
                         }
                     }

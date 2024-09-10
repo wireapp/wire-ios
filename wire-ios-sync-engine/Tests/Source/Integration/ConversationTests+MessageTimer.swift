@@ -130,7 +130,7 @@ class ConversationMessageTimerTests: IntegrationTest {
         conversation.setMessageDestructionTimeout(timeout, in: userSession!) { result in
             switch result {
             case .success: break
-            case .failure(let error): XCTFail("failed to update timeout \(error)", file: file, line: line)
+            case let .failure(error): XCTFail("failed to update timeout \(error)", file: file, line: line)
             }
         }
 

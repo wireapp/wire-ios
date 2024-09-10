@@ -210,7 +210,7 @@ final class ProfileDetailsContentController: NSObject,
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch contents[section] {
-        case .richProfile(let fields):
+        case let .richProfile(fields):
             return fields.count
         case .readReceiptsStatus:
             return 0
@@ -233,7 +233,7 @@ final class ProfileDetailsContentController: NSObject,
         case .richProfile:
             header.titleLabel.text = L10n.Localizable.Profile.ExtendedMetadata.header.uppercased()
             header.accessibilityIdentifier = "InformationHeader"
-        case .readReceiptsStatus(let enabled):
+        case let .readReceiptsStatus(enabled):
             header.accessibilityIdentifier = "ReadReceiptsStatusHeader"
             if enabled {
                 header.titleLabel.text = L10n.Localizable.Profile.ReadReceiptsEnabledMemo.header.uppercased()
@@ -253,7 +253,7 @@ final class ProfileDetailsContentController: NSObject,
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch contents[indexPath.section] {
-        case .groupAdminStatus(let groupAdminEnabled):
+        case let .groupAdminStatus(groupAdminEnabled):
             let cell = tableView.dequeueReusableCell(withIdentifier: IconToggleSubtitleCell.zm_reuseIdentifier, for: indexPath) as! IconToggleSubtitleCell
 
             cell.configure(with: CellConfiguration.groupAdminToogle(get: {
@@ -266,7 +266,7 @@ final class ProfileDetailsContentController: NSObject,
 
             return cell
 
-        case .richProfile(let fields):
+        case let .richProfile(fields):
             let field = fields[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(style: .default, reuseIdentifier: userPropertyCellID)
             cell.propertyName = field.type
@@ -280,7 +280,7 @@ final class ProfileDetailsContentController: NSObject,
             let cell = tableView.dequeueReusableCell(withIdentifier: UserBlockingReasonCell.zm_reuseIdentifier, for: indexPath) as! UserBlockingReasonCell
             return cell
 
-        case .messageProtocol(let messageProtocol):
+        case let .messageProtocol(messageProtocol):
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: messageProtocolCellID
             ) as? UserPropertyCell ?? UserPropertyCell(

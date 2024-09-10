@@ -49,16 +49,16 @@ protocol AddParticipantsConversationCreationDelegate: AnyObject {
 extension AddParticipantsViewController.Context {
     var includeGuests: Bool {
         switch self {
-        case .add(let conversation):
+        case let .add(conversation):
             return conversation.canAddGuest
-        case .create(let creationValues):
+        case let .create(creationValues):
             return creationValues.allowGuests
         }
     }
 
     var selectionLimit: Int {
         switch self {
-        case .add(let conversation):
+        case let .add(conversation):
             return conversation.freeParticipantSlots
         case .create:
             return ZMConversation.maxParticipantsExcludingSelf
@@ -70,7 +70,7 @@ extension AddParticipantsViewController.Context {
         let max = ZMConversation.maxParticipants
         let message: String
         switch self {
-        case .add(let conversation):
+        case let .add(conversation):
             let freeSpace = conversation.freeParticipantSlots
             message = AddParticipantsAlert.Message.existingConversation(max, freeSpace)
         case .create:
@@ -339,7 +339,7 @@ final class AddParticipantsViewController: UIViewController {
 
     private func updateSelectionValues() {
         // Update view model after selection changed
-        if case .create(let values) = viewModel.context {
+        if case let .create(values) = viewModel.context {
             let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
             let updated = ConversationCreationValues(
                 name: values.name,
@@ -369,7 +369,7 @@ final class AddParticipantsViewController: UIViewController {
     private func updateTitle() {
         title = {
             switch viewModel.context {
-            case .create(let values): return viewModel.title(with: values.participants)
+            case let .create(values): return viewModel.title(with: values.participants)
             case .add: return viewModel.title(with: userSelection.users)
             }
         }()
@@ -458,7 +458,7 @@ extension AddParticipantsViewController: UserSelectionObserver {
 
 extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
     @objc func searchHeaderViewControllerDidConfirmAction(_ searchHeaderViewController: SearchHeaderViewController) {
-        if case .add(let conversation) = viewModel.context {
+        if case let .add(conversation) = viewModel.context {
             self.dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)
             }
@@ -509,7 +509,7 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
             switch result {
             case .success:
                 self.dismiss(animated: true)
-            case .failure(let error):
+            case let .failure(error):
                 guard let controller = self.navigationController?.topViewController else { return }
                 error.displayAddBotError(in: controller)
             }

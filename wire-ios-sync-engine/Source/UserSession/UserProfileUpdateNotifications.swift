@@ -89,15 +89,15 @@ extension UserProfileUpdateStatus {
                     return
             }
             switch note.type {
-            case .emailUpdateDidFail(let error):
+            case let .emailUpdateDidFail(error):
                 observer.emailUpdateDidFail?(error)
             case .passwordUpdateDidFail:
                 observer.passwordUpdateRequestDidFail?()
             case .emailDidSendVerification:
                 observer.didSendVerificationEmail?()
-            case .didCheckAvailabilityOfHandle(let handle, let available):
+            case let .didCheckAvailabilityOfHandle(handle, available):
                 observer.didCheckAvailiabilityOfHandle?(handle: handle, available: available)
-            case .didFailToCheckAvailabilityOfHandle(let handle):
+            case let .didFailToCheckAvailabilityOfHandle(handle):
                 observer.didFailToCheckAvailabilityOfHandle?(handle: handle)
             case .didSetHandle:
                 observer.didSetHandle?()
@@ -105,7 +105,7 @@ extension UserProfileUpdateStatus {
                 observer.didFailToSetHandle?()
             case .didFailToSetHandleBecauseExisting:
                 observer.didFailToSetHandleBecauseExisting?()
-            case .didFindHandleSuggestion(let handle):
+            case let .didFindHandleSuggestion(handle):
                 observer.didFindHandleSuggestion?(handle: handle)
             }
         }

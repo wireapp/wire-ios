@@ -120,7 +120,7 @@ final class BackupRestoreController: NSObject {
                     self.restore(with: url)
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(error)")
                 BackupEvent.importFailed.track()

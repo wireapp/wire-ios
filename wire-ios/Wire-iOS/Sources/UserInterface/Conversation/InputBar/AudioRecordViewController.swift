@@ -280,7 +280,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
             recordingState = .finishedRecording
 
-            if case .failure(let error) = result, let error = error as? RecordingError,
+            if case let .failure(error) = result, let error = error as? RecordingError,
                let alert = recorder.alertForRecording(error: error) {
                 present(alert, animated: true, completion: .none)
             }

@@ -67,47 +67,47 @@ extension GenericMessage {
     public var messageData: MessageCapable? {
         guard let content else { return nil }
         switch content {
-        case .text(let data):
+        case let .text(data):
             return data
-        case .confirmation(let data):
+        case let .confirmation(data):
             return data
-        case .reaction(let data):
+        case let .reaction(data):
             return data
-        case .asset(let data):
+        case let .asset(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             return data.messageData
-        case .clientAction(let data):
+        case let .clientAction(data):
             return data
-        case .cleared(let data):
+        case let .cleared(data):
             return data
-        case .lastRead(let data):
+        case let .lastRead(data):
             return data
-        case .knock(let data):
+        case let .knock(data):
             return data
-        case .external(let data):
+        case let .external(data):
             return data
-        case .availability(let data):
+        case let .availability(data):
             return data
-        case .edited(let data):
+        case let .edited(data):
             return data
-        case .deleted(let data):
+        case let .deleted(data):
             return data
-        case .calling(let data):
+        case let .calling(data):
             return data
-        case .hidden(let data):
+        case let .hidden(data):
             return data
-        case .location(let data):
+        case let .location(data):
             return data
-        case .image(let data):
+        case let .image(data):
             return data
-        case .composite(let data):
+        case let .composite(data):
             return data
-        case .buttonAction(let data):
+        case let .buttonAction(data):
             return data
-        case .buttonActionConfirmation(let data):
+        case let .buttonActionConfirmation(data):
             return data
-        case .dataTransfer(let data):
+        case let .dataTransfer(data):
             return data
         }
     }
@@ -115,11 +115,11 @@ extension GenericMessage {
     var locationData: Location? {
         guard let content else { return nil }
         switch content {
-        case .location(let data):
+        case let .location(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .location(let data)?:
+            case let .location(data)?:
                 return data
             default:
                 return nil
@@ -132,7 +132,7 @@ extension GenericMessage {
     public var compositeData: Composite? {
         guard let content else { return nil }
         switch content {
-        case .composite(let data):
+        case let .composite(data):
             return data
         default:
             return nil
@@ -142,11 +142,11 @@ extension GenericMessage {
     public var imageAssetData: ImageAsset? {
         guard let content else { return nil }
         switch content {
-        case .image(let data):
+        case let .image(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .image(let data)?:
+            case let .image(data)?:
                 return data
             default:
                 return nil
@@ -159,11 +159,11 @@ extension GenericMessage {
     public var assetData: WireProtos.Asset? {
         guard let content else { return nil }
         switch content {
-        case .asset(let data):
+        case let .asset(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .asset(let data)?:
+            case let .asset(data)?:
                 return data
             default:
                 return nil
@@ -176,11 +176,11 @@ extension GenericMessage {
     public var knockData: Knock? {
         guard let content else { return nil }
         switch content {
-        case .knock(let data):
+        case let .knock(data):
             return data
-        case .ephemeral(let data):
+        case let .ephemeral(data):
             switch data.content {
-            case .knock(let data)?:
+            case let .knock(data)?:
                 return data
             default:
                 return nil
@@ -193,14 +193,14 @@ extension GenericMessage {
     public var textData: Text? {
         guard let content else { return nil }
         switch content {
-        case .text(let data):
+        case let .text(data):
             return data
-        case .edited(let messageEdit):
-            if case .text(let data)? = messageEdit.content {
+        case let .edited(messageEdit):
+            if case let .text(data)? = messageEdit.content {
                 return data
             }
-        case .ephemeral(let ephemeral):
-            if case .text(let data)? = ephemeral.content {
+        case let .ephemeral(ephemeral):
+            if case let .text(data)? = ephemeral.content {
                 return data
             }
         default:
@@ -256,7 +256,7 @@ extension GenericMessage {
             return text.linkPreview.compactMap { $0 }
         case .edited:
             return edited.text.linkPreview.compactMap { $0 }
-        case .ephemeral(let ephemeral):
+        case let .ephemeral(ephemeral):
             if case .text? = ephemeral.content {
                 return ephemeral.text.linkPreview.compactMap { $0 }
             } else {
@@ -281,15 +281,15 @@ extension Ephemeral {
     public var messageData: MessageCapable? {
         guard let content else { return nil }
         switch content {
-        case .text(let data):
+        case let .text(data):
             return data
-        case .asset(let data):
+        case let .asset(data):
             return data
-        case .knock(let data):
+        case let .knock(data):
             return data
-        case .location(let data):
+        case let .location(data):
             return data
-        case .image(let data):
+        case let .image(data):
             return data
         }
     }
@@ -366,7 +366,7 @@ extension Proteus_QualifiedNewOtrMessage {
                 $0.clientMismatchStrategy = .reportAll(.init())
             case .ignoreAllMissingClients:
                 $0.clientMismatchStrategy = .ignoreAll(.init())
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 $0.clientMismatchStrategy = .reportOnly(.with({
                     $0.userIds = users.compactMap({
                         guard

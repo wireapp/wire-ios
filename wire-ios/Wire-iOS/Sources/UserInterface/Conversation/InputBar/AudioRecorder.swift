@@ -346,7 +346,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         switch state {
         case .initializing:
             return nil
-        case .recording(let startTime):
+        case let .recording(startTime):
             guard let recorder = audioRecorder else { return nil }
             return recorder.deviceCurrentTime - startTime
         case .stopped:

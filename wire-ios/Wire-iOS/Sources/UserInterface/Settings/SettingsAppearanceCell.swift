@@ -71,12 +71,12 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     var type: SettingsCellPreview = .none {
         didSet {
             switch type {
-            case .image(let image):
+            case let .image(image):
                 iconImageView.image = image
                 iconImageView.backgroundColor = UIColor.clear
                 subtitleLabel.text = nil
                 titleLabelToIconInset.isActive = true
-            case .color(let color):
+            case let .color(color):
                 iconImageView.backgroundColor = color
                 iconImageView.image = .none
                 subtitleLabel.text = AccentColor.current.name

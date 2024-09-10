@@ -108,10 +108,10 @@ final class TeamImageView: UIImageView {
 
     private func updateImage() {
         switch content {
-        case .teamImage(let data):
+        case let .teamImage(data):
             image = UIImage(data: data)
             initialLabel.text = ""
-        case .teamName(let name):
+        case let .teamName(name):
             image = nil
             initialLabel.text = name.first.map(String.init)
         }

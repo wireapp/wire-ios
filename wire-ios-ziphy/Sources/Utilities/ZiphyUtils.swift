@@ -27,7 +27,7 @@ public enum ZiphyResult<T> {
     case failure(ZiphyError)
 
     var error: ZiphyError! {
-        if case .failure(let error) = self {
+        if case let .failure(error) = self {
             return error
         } else {
             return nil

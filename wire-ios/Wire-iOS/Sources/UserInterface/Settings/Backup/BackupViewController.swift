@@ -107,10 +107,10 @@ extension BackupViewController {
                 self.activityIndicator.stop()
 
                 switch backupResult {
-                case .failure(let error):
+                case let .failure(error):
                     self.presentAlert(for: error)
                     BackupEvent.exportFailed.track()
-                case .success(let url):
+                case let .success(url):
                     self.presentShareSheet(with: url, from: indexPath)
                 }
             }

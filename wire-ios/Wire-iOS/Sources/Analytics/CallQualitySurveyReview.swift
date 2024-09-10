@@ -51,7 +51,7 @@ enum CallQualitySurveyReview {
     /// The score provided by the user.
     var score: NSNumber? {
         switch self {
-        case .answered(let score, _): return score as NSNumber
+        case let .answered(score, _): return score as NSNumber
         default: return nil
         }
     }
@@ -59,16 +59,16 @@ enum CallQualitySurveyReview {
     /// The duration of the call.
     var callDuration: NSNumber {
         switch self {
-        case .notDisplayed(_, let duration): return duration as NSNumber
-        case .answered(_, let duration): return duration as NSNumber
-        case .dismissed(let duration): return duration as NSNumber
+        case let .notDisplayed(_, duration): return duration as NSNumber
+        case let .answered(_, duration): return duration as NSNumber
+        case let .dismissed(duration): return duration as NSNumber
         }
     }
 
     /// The reason why the alert was not displayed.
     var ignoreReason: NSString? {
         switch self {
-        case .notDisplayed(let reason, _): return reason.rawValue as NSString
+        case let .notDisplayed(reason, _): return reason.rawValue as NSString
         default: return nil
         }
     }

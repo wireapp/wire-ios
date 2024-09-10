@@ -75,7 +75,7 @@ final class MockPaginatedRequester: ZiphyURLRequester {
         }
 
         switch response {
-        case .success(let ziphs):
+        case let .success(ziphs):
 
             let paginatedResponse: ZiphyPaginatedResponse<[Ziph]>
 
@@ -92,7 +92,7 @@ final class MockPaginatedRequester: ZiphyURLRequester {
             let successResponse = HTTPURLResponse(url: url!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
             completionHandler(paginatedData, successResponse, nil)
 
-        case .error(let error):
+        case let .error(error):
             completionHandler(nil, nil, error)
         }
     }

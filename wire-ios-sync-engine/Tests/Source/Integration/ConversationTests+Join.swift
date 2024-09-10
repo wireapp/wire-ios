@@ -38,7 +38,7 @@ class ConversationTests_Join: ConversationTestsBase {
                             contextProvider: userSession!.coreDataStack,
                             completion: { result in
                                 // THEN
-                                if case .success(let conversation) = result {
+                                if case let .success(conversation) = result {
                                     XCTAssertNotNil(conversation)
                                     XCTAssertTrue(conversation.localParticipants.map(\.remoteIdentifier).contains(selfUser_zmUser.remoteIdentifier))
                                 } else {
@@ -62,7 +62,7 @@ class ConversationTests_Join: ConversationTestsBase {
                             contextProvider: userSession!.coreDataStack,
                             completion: { result in
                                 // THEN
-                                if case .failure(let error) = result {
+                                if case let .failure(error) = result {
                                     XCTAssertEqual(error as! ConversationJoinError, ConversationJoinError.invalidCode)
                                     conversationJoiningFailed.fulfill()
                                 } else {
@@ -86,7 +86,7 @@ class ConversationTests_Join: ConversationTestsBase {
                             contextProvider: userSession!.coreDataStack,
                             completion: { result  in
                                 // THEN
-                                if case .failure(let error) = result {
+                                if case let .failure(error) = result {
                                     XCTAssertEqual(error as! ConversationJoinError, ConversationJoinError.unknown)
                                     userIsParticipant.fulfill()
                                 } else {
@@ -111,7 +111,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       eventProcessor: userSession!.updateEventProcessor!,
                                       contextProvider: userSession!.coreDataStack) { result in
             // THEN
-            if case .success((let conversationID, let conversationName)) = result {
+            if case let .success((conversationID, conversationName)) = result {
                 XCTAssertNotNil(conversationID)
                 XCTAssertNotNil(conversationName)
                 let conversation = ZMConversation.fetch(with: conversationID, in: viewContext)
@@ -136,7 +136,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       eventProcessor: userSession!.updateEventProcessor!,
                                       contextProvider: userSession!.coreDataStack) { result in
             // THEN
-            if case .success((let conversationID, let conversationName)) = result {
+            if case let .success((conversationID, conversationName)) = result {
                 XCTAssertNotNil(conversationID)
                 XCTAssertNotNil(conversationName)
                 let conversation = ZMConversation.fetch(with: conversationID, in: viewContext)
@@ -161,7 +161,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       eventProcessor: userSession!.updateEventProcessor!,
                                       contextProvider: userSession!.coreDataStack) { result in
             // THEN
-            if case .failure(let error) = result {
+            if case let .failure(error) = result {
                 XCTAssertEqual(error as! ConversationFetchError, ConversationFetchError.invalidCode)
                 conversationFetchingFailed.fulfill()
             } else {

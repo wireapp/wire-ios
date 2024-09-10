@@ -196,7 +196,7 @@ extension URLActionRouter: PresentationDelegate {
         switch action {
         case .connectBot:
             presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
-        case .accessBackend(let url):
+        case let .accessBackend(url):
             // Switching backend is handled below, so pass false here.
             decisionHandler(false)
             switchBackend(configURL: url)
@@ -264,14 +264,14 @@ extension URLActionRouter: PresentationDelegate {
             guard let self else { return }
 
             switch result {
-            case .success(let backendEnvironment):
+            case let .success(backendEnvironment):
                 self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                 }
 
-            case .failure(let error):
+            case let .failure(error):
                 let localizedError = self.mapToLocalizedError(error)
                 self.presentLocalizedErrorAlert(localizedError)
             }

@@ -248,7 +248,7 @@ extension ZMClientMessage: ZMImageOwner {
             case .text:
                 messageUpdate = text
 
-            case .ephemeral(let data):
+            case let .ephemeral(data):
                 switch data.content {
                 case .text?:
                     messageUpdate = Ephemeral(

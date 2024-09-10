@@ -131,7 +131,7 @@ final class GuestsBarController: UIViewController {
         case .hidden:
             label.text = nil
             label.accessibilityIdentifier = nil
-        case .visible(let text, let accessibilityIdentifier):
+        case let .visible(text, accessibilityIdentifier):
             label.text = text
             label.font = FontSpec.mediumSemiboldFont.font!
             label.textColor = SemanticColors.Label.textDefaultWhite

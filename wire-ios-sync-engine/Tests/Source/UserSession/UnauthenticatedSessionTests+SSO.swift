@@ -118,11 +118,11 @@ final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
         sut.fetchSSOSettings { result in
 
             switch (result, expectedResult) {
-            case (.success(let lhsSSOSettings), .success(let rhsSSOSettings)):
+            case let (.success(lhsSSOSettings), .success(rhsSSOSettings)):
                 if lhsSSOSettings == rhsSSOSettings {
                     resultExpectation.fulfill()
                 }
-            case (.failure(let lhsError), .failure(let rhsError)):
+            case let (.failure(lhsError), .failure(rhsError)):
                 if (lhsError as? SSOSettingsError) == (rhsError as? SSOSettingsError) {
                     resultExpectation.fulfill()
                 }

@@ -228,7 +228,7 @@ extension ClientMessageTests_OTR_Legacy {
         // Then
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 XCTAssertEqual(users, [self.syncSelfUser, self.syncUser1])
             default:
                 XCTFail()
@@ -280,7 +280,7 @@ extension ClientMessageTests_OTR_Legacy {
         await syncMOC.perform {
             guard let payloadAndStrategy = payload else { return XCTFail() }
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users: users):
                 XCTAssertEqual(users, [self.syncSelfUser])
             default:
                 XCTFail()
@@ -378,7 +378,7 @@ extension ClientMessageTests_OTR_Legacy {
         await syncMOC.perform {
             // Then
             switch unWrappedPayloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(let users):
+            case let .ignoreAllMissingClientsNotFromUsers(users):
                 XCTAssertEqual(users, [self.syncUser1])
             default:
                 XCTFail()

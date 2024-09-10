@@ -33,18 +33,18 @@ enum MediaState: Equatable {
 
     var isSpeakerEnabled: Bool {
         switch self {
-        case .notSendingVideo(let state):
+        case let .notSendingVideo(state):
             return state.isEnabled
-        case .sendingVideo(let state):
+        case let .sendingVideo(state):
             return state.isEnabled
         }
     }
 
     var canSpeakerBeToggled: Bool {
         switch self {
-        case .notSendingVideo(let state):
+        case let .notSendingVideo(state):
             return state.canBeToggled
-        case .sendingVideo(let state):
+        case let .sendingVideo(state):
             return state.canBeToggled
         }
     }

@@ -149,13 +149,13 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func navigate(to destination: NavigationDestination) {
         switch destination {
-        case .conversation(let converation, let message):
+        case let .conversation(converation, message):
             _viewController?.showConversation(converation, at: message)
-        case .connectionRequest(let userId):
+        case let .connectionRequest(userId):
             _viewController?.showConnectionRequest(userId: userId)
         case .conversationList:
             _viewController?.showConversationList()
-        case .userProfile(let user):
+        case let .userProfile(user):
             _viewController?.showUserProfile(user: user)
         }
     }

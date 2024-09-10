@@ -33,7 +33,7 @@ public class RegisterPushTokenAction: EntityAction {
             case .appDoesNotExist:
                 return "Application identifier does not exist."
 
-            case .unknown(let status):
+            case let .unknown(status):
                 return "Unknown error (response status: \(status))"
             }
         }

@@ -97,9 +97,9 @@ final class ConfirmAssetViewController: UIViewController {
         super.viewDidLoad()
 
         switch asset {
-        case .image(let mediaAsset):
+        case let .image(mediaAsset):
             createPreviewPanel(image: mediaAsset)
-        case .video(let url):
+        case let .video(url):
             createVideoPanel(videoURL: url)
         }
 
@@ -142,7 +142,7 @@ final class ConfirmAssetViewController: UIViewController {
     /// Show editing options only if the image is not animated
     var showEditingOptions: Bool {
         switch asset {
-        case .image(let mediaAsset):
+        case let .image(mediaAsset):
             return mediaAsset is UIImage
         case .video:
             return false
@@ -151,7 +151,7 @@ final class ConfirmAssetViewController: UIViewController {
 
     private var imageToolbarFitsInsideImage: Bool {
         switch asset {
-        case .image(let image):
+        case let .image(image):
             return image.size.width > 192 && image.size.height > 96
         case .video:
             return false
@@ -173,7 +173,7 @@ final class ConfirmAssetViewController: UIViewController {
 
     /// open canvas screen if the image is sketchable(e.g. not an animated GIF)
     private func openSketch(in editMode: CanvasViewControllerEditMode) {
-        guard case .image(let mediaAsset) = asset,
+        guard case let .image(mediaAsset) = asset,
             let image = mediaAsset as? UIImage else {
             return
         }
@@ -346,7 +346,7 @@ final class ConfirmAssetViewController: UIViewController {
 
         switch asset {
         // Preview Image
-        case .image(let mediaAsset):
+        case let .image(mediaAsset):
             let imageSize: CGSize = mediaAsset.size
 
             if let imagePreviewView {

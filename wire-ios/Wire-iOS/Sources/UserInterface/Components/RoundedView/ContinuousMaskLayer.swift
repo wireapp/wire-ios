@@ -97,10 +97,10 @@ final class ContinuousMaskLayer: CALayer {
         case .circle:
             cornerRadius = min(bounds.width, bounds.height) / 2
 
-        case .rounded(let radius):
+        case let .rounded(radius):
             cornerRadius = radius
 
-        case .relative(let multiplier, let dimension):
+        case let .relative(multiplier, dimension):
             let base: CGFloat = switch dimension {
             case .width: bounds.width
             case .height: bounds.height

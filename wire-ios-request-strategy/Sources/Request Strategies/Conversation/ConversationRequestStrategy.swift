@@ -203,7 +203,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v0:
             conversationIDsSync.fetch { [weak self] result in
                 switch result {
-                case .success(let conversationIDList):
+                case let .success(conversationIDList):
                     self?.conversationByIDListSync.sync(identifiers: conversationIDList.conversations)
                 case .failure:
                     self?.syncProgress.failCurrentSyncPhase(phase: .fetchingConversations)
@@ -213,7 +213,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         case .v1, .v2, .v3, .v4, .v5, .v6:
             conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
-                case .success(let qualifiedConversationIDList):
+                case let .success(qualifiedConversationIDList):
 
                     // here we could use a different sync, or do the switch inside.
                     self?.conversationByQualifiedIDListSync.sync(identifiers: qualifiedConversationIDList.conversations)
