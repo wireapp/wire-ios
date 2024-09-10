@@ -42,7 +42,8 @@
     redundantInit, \
     redundantInternal, \
     redundantLet, \
-    redundantLetError
+    redundantLetError, \
+    redundantNilInit
 
 # Options
 

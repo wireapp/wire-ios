@@ -66,7 +66,7 @@ extension OperationLoopTests {
     func testThatItMergesUiContextInSyncContext() {
         let userID = UUID()
 
-        var syncUser: ZMUser! = nil
+        var syncUser: ZMUser!
         syncMoc.performGroupedBlock { [unowned self] in
             syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
             self.syncMoc.saveOrRollback()
@@ -90,7 +90,7 @@ extension OperationLoopTests {
     func testThatItMergesSyncContextInUIContext() {
         let userID = UUID()
 
-        var syncUser: ZMUser! = nil
+        var syncUser: ZMUser!
         coreDataStack.syncContext.performGroupedBlock { [unowned self] in
             syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
             self.syncMoc.saveOrRollback()
@@ -100,7 +100,7 @@ extension OperationLoopTests {
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
 
-        var uiUser: ZMUser! = nil
+        var uiUser: ZMUser!
         uiMoc.performGroupedBlock {
             uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             XCTAssertNotNil(uiUser)

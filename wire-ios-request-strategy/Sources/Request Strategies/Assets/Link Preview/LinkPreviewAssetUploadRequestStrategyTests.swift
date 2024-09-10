@@ -210,9 +210,9 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         let assetId = "id123"
         let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
         let domain = UUID().uuidString
-        var message: ZMClientMessage! = nil
-        var otrKey: Data! = nil
-        var sha256: Data! = nil
+        var message: ZMClientMessage!
+        var otrKey: Data!
+        var sha256: Data!
 
         syncMOC.performGroupedBlock {
             let article = self.createArticle()
@@ -247,7 +247,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
 
     func testThatItUpdatesTheLinkPreviewState() {
         // GIVEN
-        var message: ZMClientMessage! = nil
+        var message: ZMClientMessage!
 
         syncMOC.performGroupedBlock {
             let article = self.createArticle()
@@ -282,9 +282,9 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         let assetId = "id123"
         let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
         let domain = UUID().uuidString
-        var message: ZMClientMessage! = nil
-        var otrKey: Data! = nil
-        var sha256: Data! = nil
+        var message: ZMClientMessage!
+        var otrKey: Data!
+        var sha256: Data!
 
         syncMOC.performGroupedBlock {
             let article = self.createArticle()

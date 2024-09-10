@@ -228,8 +228,8 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItStoresTheLastGeneratedPreKeyIDWhenUpdatingAnInsertedObject() {
-        var client: UserClient! = nil
-        var maxID_before: UInt16! = nil
+        var client: UserClient!
+        var maxID_before: UInt16!
         let expectedMaxID: UInt16 = 1
 
         syncMOC.performGroupedBlock {
@@ -259,7 +259,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItStoresTheSignalingKeysWhenUpdatingAnInsertedObject() {
-        var client: UserClient! = nil
+        var client: UserClient!
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.prekeys = [(UInt16(1), "prekey1")]
@@ -697,7 +697,7 @@ extension UserClientRequestStrategyTests {
 
 extension UserClientRequestStrategyTests {
     func testThatItCreatesARequestForClientsThatNeedToUploadSignalingKeys() {
-        var existingClient: UserClient! = nil
+        var existingClient: UserClient!
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -780,7 +780,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func testThatItCreatesARequestForClientsThatNeedToUpdateCapabilities() {
-        var existingClient: UserClient! = nil
+        var existingClient: UserClient!
         syncMOC.performGroupedBlock {
             // given
             self.clientRegistrationStatus.mockPhase = .registered
@@ -857,7 +857,7 @@ extension UserClientRequestStrategyTests {
     }
 
     func test_ItCreatesARequest_ForClientsThatNeedToUpdateMLSPublicKeys() {
-        var existingClient: UserClient! = nil
+        var existingClient: UserClient!
 
         syncMOC.performGroupedBlock {
             // Given
