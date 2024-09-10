@@ -24,19 +24,17 @@ import UniformTypeIdentifiers
 
 private let zmLog = ZMSLog(tag: "UI")
 
-// sourcery: AutoMockable
-public protocol FileMetaDataGenerating {
+// TODO: remove
+public typealias FileMetaDataGenerating = FileMetaDataGeneratorProtocol
 
+// sourcery: AutoMockable
+public protocol FileMetaDataGeneratorProtocol {
+
+    // TODO: is uniformType argument needed?
     func metadataForFile(
         at url: URL,
         name: String,
         uniformType: UTType,
-        completion: @escaping (ZMFileMetadata) -> Void
-    )
-    func metadataForFileAtURL(
-        _ url: URL,
-        UTI uti: String,
-        name: String,
         completion: @escaping (ZMFileMetadata) -> Void
     )
 }
@@ -63,19 +61,11 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
         uniformType: UTType,
         completion: @escaping (ZMFileMetadata) -> Void
     ) {
-        metadataForFileAtURL(url, UTI: uniformType.identifier, name: name, completion: completion)
-    }
+        previewGenerator.generatePreviewForFile(at: url, uniformType: uniformType) { preview in
 
-    public func metadataForFileAtURL(
-        _ url: URL,
-        UTI uti: String,
-        name: String,
-        completion: @escaping (ZMFileMetadata) -> Void
-    ) {
-        previewGenerator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 
-            if AVURLAsset.wr_isAudioVisualUTI(uti) {
+            if AVURLAsset.wr_isAudioVisualUniformType(uniformType) {
                 let asset = AVURLAsset(url: url)
 
                 if let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first {
@@ -92,7 +82,6 @@ public final class FileMetaDataGenerator: FileMetaDataGenerating {
             }
         }
     }
-
 }
 
 extension AVURLAsset {
@@ -112,6 +101,7 @@ extension AVURLAsset {
 }
 
 extension AVAsset {
+
     fileprivate func audioSamplesFromAsset(maxSamples: UInt64) -> [Float]? {
         guard let assetTrack: AVAssetTrack = tracks(withMediaType: AVMediaType.audio).first else {
             return .none
@@ -203,5 +193,4 @@ extension AVAsset {
 
         return sampleData
     }
-
 }

@@ -22,7 +22,7 @@ import XCTest
 
 @testable import Wire
 
-class SettingsDebugReportViewModelTests: XCTestCase {
+final class SettingsDebugReportViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -31,7 +31,7 @@ class SettingsDebugReportViewModelTests: XCTestCase {
     private var mockShareFile: MockShareFileUseCaseProtocol!
     private var mockFetchShareableConversations: MockFetchShareableConversationsUseCaseProtocol!
     private var mockLogsProvider: MockLogFilesProviding!
-    private var mockFileMetaDataGenerator: MockFileMetaDataGenerating!
+    private var mockFileMetaDataGenerator: MockFileMetaDataGeneratorProtocol!
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var coreDataStack: CoreDataStack!
@@ -45,7 +45,7 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         mockShareFile = MockShareFileUseCaseProtocol()
         mockFetchShareableConversations = MockFetchShareableConversationsUseCaseProtocol()
         mockLogsProvider = MockLogFilesProviding()
-        mockFileMetaDataGenerator = MockFileMetaDataGenerating()
+        mockFileMetaDataGenerator = .init()
 
         sut = SettingsDebugReportViewModel(
             router: mockRouter,
@@ -89,11 +89,11 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         mockFetchShareableConversations.invoke_MockValue = [conversation]
         mockLogsProvider.generateLogFilesZip_MockValue = mockURL
         mockLogsProvider.clearLogsDirectory_MockMethod = {}
-        mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_MockMethod = { url, uti, name, completion in
+        mockFileMetaDataGenerator.metadataForFileAtNameUniformTypeCompletion_MockMethod = { url, name, uti, completion in
 
             XCTAssertEqual(url, mockURL)
-            XCTAssertEqual(uti, mockURL.uniformType?.identifier)
             XCTAssertEqual(name, mockURL.lastPathComponent)
+            XCTAssertEqual(uti, mockURL.uniformType)
 
             completion(mockMetadata)
         }
@@ -111,7 +111,7 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         // THEN
         XCTAssertEqual(mockFetchShareableConversations.invoke_Invocations.count, 1)
         XCTAssertEqual(mockLogsProvider.generateLogFilesZip_Invocations.count, 1)
-        XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_Invocations.count, 1)
+        XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtNameUniformTypeCompletion_Invocations.count, 1)
         XCTAssertEqual(mockRouter.presentShareViewControllerDestinationsDebugReport_Invocations.count, 1)
     }
 

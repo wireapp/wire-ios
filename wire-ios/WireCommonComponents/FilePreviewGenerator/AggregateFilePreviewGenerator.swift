@@ -25,20 +25,20 @@ struct AggregateFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
+    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
         !subGenerators.filter {
-            $0.canGeneratePreviewForFile(fileURL, UTI: uti)
+            $0.supportsPreviewGenerationForFile(at: url, uniformType: uniformType)
         }.isEmpty
     }
 
-    func generatePreview(_ fileURL: URL, UTI uti: String, completion: @escaping (UIImage?) -> Void) {
+    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
 
         guard let generator = subGenerators.filter({
-            $0.canGeneratePreviewForFile(fileURL, UTI: uti)
+            $0.supportsPreviewGenerationForFile(at: url, uniformType: uniformType)
         }).first else {
             return completion(.none)
         }
 
-        return generator.generatePreview(fileURL, UTI: uti, completion: completion)
+        return generator.generatePreviewForFile(at: url, uniformType: uniformType, completion: completion)
     }
 }

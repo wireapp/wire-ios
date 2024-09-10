@@ -709,7 +709,7 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
 
 }
 
-public class MockFileMetaDataGenerating: FileMetaDataGenerating {
+public class MockFileMetaDataGeneratorProtocol: FileMetaDataGeneratorProtocol {
 
     // MARK: - Life cycle
 
@@ -729,21 +729,6 @@ public class MockFileMetaDataGenerating: FileMetaDataGenerating {
         }
 
         mock(url, name, uniformType, completion)
-    }
-
-    // MARK: - metadataForFileAtURL
-
-    public var metadataForFileAtURLUTINameCompletion_Invocations: [(url: URL, uti: String, name: String, completion: (ZMFileMetadata) -> Void)] = []
-    public var metadataForFileAtURLUTINameCompletion_MockMethod: ((URL, String, String, @escaping (ZMFileMetadata) -> Void) -> Void)?
-
-    public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        metadataForFileAtURLUTINameCompletion_Invocations.append((url: url, uti: uti, name: name, completion: completion))
-
-        guard let mock = metadataForFileAtURLUTINameCompletion_MockMethod else {
-            fatalError("no mock for `metadataForFileAtURLUTINameCompletion`")
-        }
-
-        mock(url, uti, name, completion)
     }
 
 }

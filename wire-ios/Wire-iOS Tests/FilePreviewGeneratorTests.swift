@@ -35,7 +35,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // When
         let expectation = expectation(description: "Finished generating the preview")
-        sut.generatePreview(pdfURL, type: .pdf) { image in
+        sut.generatePreviewForFile(at: pdfURL, uniformType: .pdf) { image in
             XCTAssertNil(image)
             expectation.fulfill()
         }
@@ -52,7 +52,7 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
         // When
         let expectation = expectation(description: "Finished generating the preview")
-        sut.generatePreview(pdfURL, type: .pdf) { image in
+        sut.generatePreviewForFile(at: pdfURL, uniformType: .pdf) { image in
             XCTAssertNil(image)
             expectation.fulfill()
         }

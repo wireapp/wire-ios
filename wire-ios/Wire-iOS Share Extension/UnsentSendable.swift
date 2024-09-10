@@ -284,10 +284,10 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                 }
 
                 // Generate preview
-                self?.fileMetaDataGenerator.metadataForFileAtURL(
-                    url,
-                    UTI: uniformType.identifier,
-                    name: name ?? url.lastPathComponent
+                self?.fileMetaDataGenerator.metadataForFile(
+                    at: url,
+                    name: name ?? url.lastPathComponent,
+                    uniformType: uniformType
                 ) { [weak self] metadata in
                     self?.metadata = metadata
                     completion()
@@ -355,8 +355,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             do {
                 try FileManager.default.removeTmpIfNeededAndCopy(fileURL: dataURL, tmpURL: tempFileURL)
             } catch {
-                error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
-                return
+                return error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
             }
 
             convertVideoIfNeeded(UTI: UTI, fileURL: tempFileURL, completion: completion)

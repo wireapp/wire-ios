@@ -86,10 +86,10 @@ extension ConversationInputBarViewController {
             return
         }
 
-        FileMetaDataGenerator.shared.metadataForFileAtURL(
-            url,
-            UTI: (url.uniformType ?? .item).identifier,
-            name: url.lastPathComponent
+        fileMetaDataGenerator.metadataForFile(
+            at: url,
+            name: url.lastPathComponent,
+            uniformType: url.uniformType ?? .item
         ) { [weak self] metadata in
 
             guard let self else { return }

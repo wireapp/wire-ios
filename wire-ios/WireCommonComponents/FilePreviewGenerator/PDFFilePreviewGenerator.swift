@@ -19,48 +19,42 @@
 import UIKit
 import UniformTypeIdentifiers
 
-// TODO: remove import
-import CoreServices
-
 struct PDFFilePreviewGenerator: FilePreviewGenerator {
 
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    @available(*, deprecated, message: "TODO: delete")
-    func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        UTTypeConformsTo(uti as CFString, kUTTypePDF)
+    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
+        url.uniformType?.conforms(to: .pdf) ?? false
     }
 
-    func generatePreview(_ fileURL: URL, type: UTType, completion: @escaping (UIImage?) -> Void) {
-        generatePreview(fileURL, UTI: type.identifier, completion: completion)
-    }
+    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
 
-    func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
-        var result: UIImage? = .none
+        var result: UIImage?
         defer {
-            self.callbackQueue.addOperation {
+            callbackQueue.addOperation {
                 completion(result)
             }
         }
+
         UIGraphicsBeginImageContext(thumbnailSize)
-        guard let dataProvider = CGDataProvider(url: fileURL as CFURL),
-                let pdfRef = CGPDFDocument(dataProvider),
-                let pageRef = pdfRef.page(at: 1),
-                let contextRef = UIGraphicsGetCurrentContext() else {
+        guard let dataProvider = CGDataProvider(url: url as CFURL),
+              let pdfRef = CGPDFDocument(dataProvider),
+              let pageRef = pdfRef.page(at: 1),
+              let contextRef = UIGraphicsGetCurrentContext() else {
             return
         }
+
         contextRef.setAllowsAntialiasing(true)
         let cropBox = pageRef.getBoxRect(CGPDFBox.cropBox)
         guard cropBox.size.width != 0,
               cropBox.size.width < 16384,
               cropBox.size.height != 0,
               cropBox.size.height < 16384
-        else {
-            return
-        }
-        let xScale = self.thumbnailSize.width / cropBox.size.width
-        let yScale = self.thumbnailSize.height / cropBox.size.height
+        else { return }
+
+        let xScale = thumbnailSize.width / cropBox.size.width
+        let yScale = thumbnailSize.height / cropBox.size.height
         let scaleToApply = xScale < yScale ? xScale : yScale
         contextRef.concatenate(CGAffineTransform(scaleX: scaleToApply, y: scaleToApply))
         contextRef.drawPDFPage(pageRef)

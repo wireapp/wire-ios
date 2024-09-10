@@ -24,21 +24,7 @@ protocol FilePreviewGenerator {
     var callbackQueue: OperationQueue { get }
     var thumbnailSize: CGSize { get }
 
+    // TODO: second argument needed?
     func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool
-    func generatePreview(for file: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void)
-    // TODO: remove
-    func canGeneratePreviewForFile(_ fileURL: URL, UTI: String) -> Bool
-    func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void)
-}
-
-// TODO: remove
-extension FilePreviewGenerator {
-
-    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
-        canGeneratePreviewForFile(url, UTI: uniformType.identifier)
-    }
-
-    func generatePreview(for file: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
-        generatePreview(file, UTI: uniformType.identifier, completion: completion)
-    }
+    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void)
 }

@@ -25,18 +25,20 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        AVURLAsset.wr_isAudioVisualUTI(uti)
+    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
+        AVURLAsset.wr_isAudioVisualUniformType(uniformType)
     }
 
-    func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
+    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
+
         var result: UIImage? = .none
         defer {
-            self.callbackQueue.addOperation {
+            callbackQueue.addOperation {
                 completion(result)
             }
         }
-        let asset = AVURLAsset(url: fileURL)
+
+        let asset = AVURLAsset(url: url)
         let generator = AVAssetImageGenerator(asset: asset)
         generator.appliesPreferredTrackTransform = true
         let timeTolerance = CMTimeMakeWithSeconds(1, preferredTimescale: 60)
@@ -45,41 +47,46 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
         generator.requestedTimeToleranceAfter = timeTolerance
         let time = CMTimeMakeWithSeconds(asset.duration.seconds * 0.1, preferredTimescale: 60)
         var actualTime = CMTime.zero
-        guard let cgImage = try? generator.copyCGImage(at: time, actualTime: &actualTime),
-            let colorSpace = cgImage.colorSpace else {
-            return
-        }
+        let cgImage = try? generator.copyCGImage(at: time, actualTime: &actualTime)
+        guard let cgImage, let colorSpace = cgImage.colorSpace else { return }
+
         let bitsPerComponent = cgImage.bitsPerComponent
         let bitmapInfo = cgImage.bitmapInfo
         let width = cgImage.width
         let height = cgImage.height
-        let renderRect = AspectFitRectInRect(CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
-                                             into: CGRect(x: 0, y: 0, width: self.thumbnailSize.width, height: self.thumbnailSize.height))
-        guard let context = CGContext(data: nil,
-                                      width: Int(renderRect.size.width),
-                                      height: Int(renderRect.size.height),
-                                      bitsPerComponent: bitsPerComponent,
-                                      bytesPerRow: Int(renderRect.size.width) * 4,
-                                      space: colorSpace,
-                                      bitmapInfo: bitmapInfo.rawValue) else {
-            return
-        }
+        let renderRect = AspectFitRectInRect(
+            CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)),
+            into: CGRect(x: 0, y: 0, width: thumbnailSize.width, height: thumbnailSize.height)
+        )
+        let context = CGContext(
+            data: nil,
+            width: Int(renderRect.size.width),
+            height: Int(renderRect.size.height),
+            bitsPerComponent: bitsPerComponent,
+            bytesPerRow: Int(renderRect.size.width) * 4,
+            space: colorSpace,
+            bitmapInfo: bitmapInfo.rawValue
+        )
+        guard let context else { return }
+
         context.interpolationQuality = CGInterpolationQuality.high
         context.draw(cgImage, in: renderRect)
-        result = context.makeImage().flatMap { UIImage(cgImage: $0) }
+        result = context.makeImage().flatMap { .init(cgImage: $0) }
     }
 }
 
 private func ScaleToAspectFitRectInRect(_ fit: CGRect, into: CGRect) -> CGFloat {
-    guard fit.width != 0, fit.height != 0 else {
-        return 1
-    }
+
+    guard fit.width != 0, fit.height != 0 else { return 1 }
+
     // first try to match width
     let s = into.width / fit.width
+
     // if we scale the height to make the widths equal, does it still fit?
     if fit.height * s <= into.height {
         return s
     }
+
     // no, match height instead
     return into.height / fit.height
 }

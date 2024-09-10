@@ -75,10 +75,10 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
             let conversations = fetchShareableConversations.invoke()
             let logsURL = try logsProvider.generateLogFilesZip()
 
-            fileMetaDataGenerator.metadataForFileAtURL(
-                logsURL,
-                UTI: (logsURL.uniformType ?? .item).identifier,
-                name: logsURL.lastPathComponent
+            fileMetaDataGenerator.metadataForFile(
+                at: logsURL,
+                name: logsURL.lastPathComponent,
+                uniformType: logsURL.uniformType ?? .item
             ) { [weak self] metadata in
 
                 guard let `self` else { return }
@@ -96,6 +96,5 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
         } catch {
             WireLogger.system.error("failed to generate log files \(error)")
         }
-
     }
 }

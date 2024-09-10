@@ -24,28 +24,26 @@ struct ImageFilePreviewGenerator: FilePreviewGenerator {
     let thumbnailSize: CGSize
     let callbackQueue: OperationQueue
 
-    func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        UTType(uti)?.conforms(to: UTType.image) ?? false
+    func supportsPreviewGenerationForFile(at url: URL, uniformType: UTType) -> Bool {
+        uniformType.conforms(to: .image)
     }
 
-    func generatePreview(_ fileURL: URL, UTI: String, completion: @escaping (UIImage?) -> Void) {
+    func generatePreviewForFile(at url: URL, uniformType: UTType, completion: @escaping (UIImage?) -> Void) {
+
         var result: UIImage? = .none
         defer {
-            self.callbackQueue.addOperation {
+            callbackQueue.addOperation {
                 completion(result)
             }
         }
-        guard let src = CGImageSourceCreateWithURL(fileURL as CFURL, nil) else {
-            return
-        }
+
+        guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return }
         let options: [AnyHashable: Any] = [
             kCGImageSourceCreateThumbnailWithTransform as AnyHashable: true,
             kCGImageSourceCreateThumbnailFromImageAlways as AnyHashable: true,
-            kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(self.thumbnailSize.width, self.thumbnailSize.height)
+            kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(thumbnailSize.width, thumbnailSize.height)
         ]
-        guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else {
-            return
-        }
+        guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else { return }
         result = UIImage(cgImage: thumbnail)
     }
 }
