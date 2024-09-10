@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class SharedPreviewGenerator {
+enum SharedPreviewGenerator {
 
     static var generator: AggregateFilePreviewGenerator = {
 
@@ -27,14 +27,14 @@ final class SharedPreviewGenerator {
         let thumbnailSizeDefault = CGSize(width: 120, height: 120)
         let thumbnailSizeVideo = CGSize(width: 640, height: 480)
 
-        let imageGenerator = ImageFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
+        let imageGenerator = ImageFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault, callbackQueue: resultQueue)
         let movieGenerator = MovieFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeVideo)
         let pdfGenerator = PDFFilePreviewGenerator(callbackQueue: resultQueue, thumbnailSize: thumbnailSizeDefault)
 
         return AggregateFilePreviewGenerator(
             subGenerators: [imageGenerator, movieGenerator, pdfGenerator],
-            callbackQueue: resultQueue,
-            thumbnailSize: thumbnailSizeDefault
+            thumbnailSize: thumbnailSizeDefault,
+            callbackQueue: resultQueue
         )
     }()
 }
