@@ -13,7 +13,8 @@
     blankLinesBetweenScopes, \
     braces, \
     conditionalAssignment, \
-    consistentSwitchCaseSpacing
+    consistentSwitchCaseSpacing, \
+    duplicateImports
 
 # Options
 
