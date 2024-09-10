@@ -31,15 +31,5 @@ extension UIScreen {
         return UIEdgeInsets(top: 20.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 
-    @available(*, deprecated, message: "Will be removed")
-    static var hasBottomInset: Bool {
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-           let window = appDelegate.mainWindow {
-            let insets = window.safeAreaInsets
-            return insets.bottom > 0
-        }
-        return false
-    }
-
 
 }
