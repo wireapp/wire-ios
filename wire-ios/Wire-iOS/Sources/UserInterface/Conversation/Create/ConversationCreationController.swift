@@ -193,7 +193,7 @@ final class ConversationCreationController: UIViewController {
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            collectionView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)

@@ -148,7 +148,7 @@ final class GiphyConfirmationViewController: UIViewController {
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            imagePreview.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            imagePreview.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             imagePreview.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             imagePreview.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             imagePreview.bottomAnchor.constraint(equalTo: buttonContainer.topAnchor, constant: -20),

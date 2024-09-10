@@ -124,7 +124,7 @@ final class PinnableThumbnailViewController: UIViewController {
     private func configureConstraints() {
         thumbnailContainerView.translatesAutoresizingMaskIntoConstraints = false
 
-        thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor).isActive = true
+        thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
         thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor).isActive = true
         thumbnailContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         thumbnailContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true

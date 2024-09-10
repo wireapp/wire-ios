@@ -93,7 +93,7 @@ final class RemoveClientsViewController: UIViewController,
         clientsTableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            clientsTableView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            clientsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             clientsTableView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             clientsTableView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
             clientsTableView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor)

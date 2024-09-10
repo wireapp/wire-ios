@@ -255,7 +255,7 @@ final class CallViewController: UIViewController {
         NSLayoutConstraint.activate([
             callGridViewController.view.topAnchor.constraint(equalTo: view.safeTopAnchor),
             callGridViewController.view.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
-            callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
+            callGridViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             callGridViewController.view.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor)
         ])
     }
