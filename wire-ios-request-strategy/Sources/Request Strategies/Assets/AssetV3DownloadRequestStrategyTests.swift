@@ -540,13 +540,13 @@ extension AssetV3DownloadRequestStrategyTests {
                 "text": messageData.base64String()
             ] as NSDictionary
 
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
                 "type": "conversation.otr-message-add",
                 "data": dict,
                 "from": self.selfClient.user!.remoteIdentifier!,
                 "conversation": self.conversation.remoteIdentifier!.transportString(),
                 "time": Date(timeIntervalSince1970: 555_555).transportString()
-            ] as NSDictionary), uuid: nil)!
+            ] as NSDictionary, uuid: nil)!
 
             message = ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil) as? ZMAssetClientMessage
             message.visibleInConversation = self.conversation
@@ -615,13 +615,13 @@ extension AssetV3DownloadRequestStrategyTests {
                 "text": messageData.base64String()
             ] as NSDictionary
 
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
                 "type": "conversation.otr-message-add",
                 "data": dict,
                 "from": self.selfClient.user!.remoteIdentifier!,
                 "conversation": self.conversation.remoteIdentifier!.transportString(),
                 "time": Date(timeIntervalSince1970: 555_555).transportString()
-            ] as NSDictionary), uuid: nil)!
+            ] as NSDictionary, uuid: nil)!
 
             message = ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil) as? ZMAssetClientMessage
             message.visibleInConversation = self.conversation

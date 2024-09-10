@@ -314,6 +314,6 @@ extension Dictionary<String, Any> {
 
 extension Int {
     func logRound(factor: Double = 6) -> Int {
-        return Int(ceil(pow(2, (floor(factor * log2(Double(self))) / factor))))
+        return Int(ceil(pow(2, floor(factor * log2(Double(self))) / factor)))
     }
 }

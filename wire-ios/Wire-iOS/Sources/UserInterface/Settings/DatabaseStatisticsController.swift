@@ -112,7 +112,7 @@ final class DatabaseStatisticsController: UIViewController {
 
                 self.addRow(title: "Asset messages:", contents: "")
 
-                func addSize(of assets: [ZMAssetClientMessage], title: String, filter: ((ZMAssetClientMessage) -> Bool)) {
+                func addSize(of assets: [ZMAssetClientMessage], title: String, filter: (ZMAssetClientMessage) -> Bool) {
                     let filtered = assets.filter(filter)
                     let size = filtered.reduce(0) { count, asset -> Int64 in
                         return count + Int64(asset.size)

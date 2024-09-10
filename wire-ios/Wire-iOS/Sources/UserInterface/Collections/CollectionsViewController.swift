@@ -426,7 +426,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
 
         repeat {
             count += 1
-        } while ((contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(count) > CollectionImageCell.maxCellSize)
+        } while (contentView.collectionView.bounds.size.width - sectionHorizontalInset) / CGFloat(count) > CollectionImageCell.maxCellSize
 
         return count
     }

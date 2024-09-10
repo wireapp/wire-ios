@@ -62,10 +62,10 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
 
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
                 "type": "user.properties-set",
                 "key": "WIRE_RECEIPT_MODE",
-                "value": 1] as ZMTransportData), uuid: nil)!
+                "value": 1] as ZMTransportData, uuid: nil)!
 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
@@ -83,10 +83,10 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             selfUser.needsPropertiesUpdate = false
             selfUser.readReceiptsEnabled = true
 
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
                 "type": "user.properties-set",
                 "key": "WIRE_RECEIPT_MODE",
-                "value": 0] as ZMTransportData), uuid: nil)!
+                "value": 0] as ZMTransportData, uuid: nil)!
 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
@@ -104,9 +104,9 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             selfUser.needsPropertiesUpdate = false
             selfUser.readReceiptsEnabled = true
 
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
                 "type": "user.properties-delete",
-                "key": "WIRE_RECEIPT_MODE"] as ZMTransportData), uuid: nil)!
+                "key": "WIRE_RECEIPT_MODE"] as ZMTransportData, uuid: nil)!
 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)

@@ -36,7 +36,7 @@ class CacheTests: XCTestCase {
         // GIVEN
         let cache = Cache<String, String>(maxCost: 1000, maxElementsCount: 10)
 
-        for item in (0..<10) {
+        for item in 0..<10 {
             cache.set(value: "Hello \(item)", for: "word \(item)", cost: 1)
         }
         // WHEN

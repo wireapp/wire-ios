@@ -45,7 +45,8 @@
     redundantLetError, \
     redundantNilInit, \
     redundantObjc, \
-    redundantOptionalBinding
+    redundantOptionalBinding, \
+    redundantParens
 
 # Options
 

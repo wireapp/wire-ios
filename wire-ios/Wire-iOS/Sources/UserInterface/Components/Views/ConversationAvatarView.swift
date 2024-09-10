@@ -56,7 +56,7 @@ extension Array {
         var workingCopyIndices = [Int](indices)
         var resultIndices = [Int]()
         forEach { _ in
-            let rand: UInt = generator.rand() % (UInt)(workingCopyIndices.count)
+            let rand: UInt = generator.rand() % UInt(workingCopyIndices.count)
 
             resultIndices.append(workingCopyIndices[Int(rand)])
             workingCopyIndices.remove(at: Int(rand))

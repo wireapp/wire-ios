@@ -28,7 +28,7 @@ extension ConversationActionType {
         case .left: return localizationKey(with: "left", senderIsSelfUser: senderIsSelfUser)
         case .added(herself: true): return "content.system.conversation.guest.joined"
         case .added(herself: false): return localizationKey(with: "added", senderIsSelfUser: senderIsSelfUser)
-        case .removed(reason: .legalHoldPolicyConflict): return (localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold")
+        case .removed(reason: .legalHoldPolicyConflict): return localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser) + ".legalhold"
         case .removed: return localizationKey(with: "removed", senderIsSelfUser: senderIsSelfUser)
         case .started(withName: .none), .none: return localizationKey(with: "started", senderIsSelfUser: senderIsSelfUser)
         case .started(withName: .some): return "content.system.conversation.with_name.participants"

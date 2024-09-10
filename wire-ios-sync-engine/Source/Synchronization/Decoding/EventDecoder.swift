@@ -33,7 +33,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
 
 /// Decodes and stores events from various sources to be processed later
 @objcMembers public final class EventDecoder: NSObject {
-    public typealias ConsumeBlock = (([ZMUpdateEvent]) -> Void)
+    public typealias ConsumeBlock = ([ZMUpdateEvent]) -> Void
 
     static var BatchSize: Int {
         if let testingBatchSize {

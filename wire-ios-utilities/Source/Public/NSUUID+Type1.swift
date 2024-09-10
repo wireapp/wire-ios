@@ -33,7 +33,7 @@ extension NSUUID {
         for i in 0..<len {
             var readData: UInt8 = 0
             let finalOctetIndex = len - i - 1
-            let range = Range((Int(start + i))...(Int(start + i)))
+            let range = Range(Int(start + i)...Int(start + i))
             data?.copyBytes(to: &readData, from: range)
             let shiftedData = UInt64(readData) << UInt64(8 * finalOctetIndex)
             result = result | shiftedData

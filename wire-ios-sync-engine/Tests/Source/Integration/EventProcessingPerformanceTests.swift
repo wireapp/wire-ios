@@ -112,14 +112,14 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
 extension MockConversation {
     func insertRandomKnocks(count: Int, from users: [MockUser]) {
-        for _ in (1...count) {
+        for _ in 1...count {
             let knock = try! GenericMessage(content: Knock.with { $0.hotKnock = false }).serializedData()
             insertClientMessage(from: users.randomElement()!, data: knock)
         }
     }
 
     func insertRandomTextMessages(count: Int, from users: [MockUser]) {
-        for counter in (1...count) {
+        for counter in 1...count {
             let text = try! GenericMessage(content: Text(content: "Random message \(counter)")).serializedData()
             insertClientMessage(from: users.randomElement()!, data: text)
         }

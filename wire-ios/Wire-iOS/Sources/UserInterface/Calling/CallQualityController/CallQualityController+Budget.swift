@@ -43,6 +43,6 @@ extension CallQualityController {
         let nextPossibleDate = lastSurveyDate.addingTimeInterval(muteInterval)
 
         // Allow the survey if the mute period is finished
-        return (date >= nextPossibleDate)
+        return date >= nextPossibleDate
     }
 }

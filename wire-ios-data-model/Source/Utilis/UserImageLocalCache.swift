@@ -27,7 +27,7 @@ private let MEGABYTE = UInt(1 * 1000 * 1000)
 extension ZMUser {
     private func cacheIdentifier(suffix: String?) -> String? {
         guard let userRemoteId = remoteIdentifier?.transportString(), let suffix else { return nil }
-        return (userRemoteId + "-" + suffix)
+        return userRemoteId + "-" + suffix
     }
 
     @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {

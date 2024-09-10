@@ -190,7 +190,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
             // save and close old one
             old.save(self.box)
             self.discardFromCache(previousSessionIdentifier)
-        } while(false)
+        } while false
 
         guard clientSession(for: newIdentifier) == nil else {
             // There is an old and a new, delete the old
@@ -327,7 +327,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
     }
 
     public func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool {
-        return (clientSession(for: identifier) != nil)
+        return clientSession(for: identifier) != nil
     }
 
     public func discardCache() {

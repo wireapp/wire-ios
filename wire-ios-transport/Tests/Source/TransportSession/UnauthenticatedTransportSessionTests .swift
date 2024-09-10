@@ -109,7 +109,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
         // when
-        for _ in (0..<3) {
+        for _ in 0..<3 {
             sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         }
 
@@ -120,7 +120,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatEnqueueOneTime_IsNotLimitedByRequestLimit() {
         // given
-        for _ in (0..<3) {
+        for _ in 0..<3 {
             sut.enqueueOneTime(.init(getFromPath: "/", apiVersion: 0))
         }
 
@@ -157,7 +157,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatItDoesNotEnqueueMoreThanThreeRequests() {
         // when
-        for _ in (0..<3) {
+        for _ in 0..<3 {
             let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }
@@ -169,7 +169,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatItDoesEnqueueAnotherRequestAfterTheLastOneHasBeenCompleted() {
         // when
-        for _ in (0..<3) {
+        for _ in 0..<3 {
             let result = sut.enqueueRequest { .init(getFromPath: "/", apiVersion: 0) }
             XCTAssertEqual(result, .success)
         }

@@ -1155,7 +1155,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Mock committing pending proposal.
         let commitPendingProposalsArgumentsActor = GenericArrayActor<(MLSGroupID, Date)>()
         mockMLSActionExecutor.mockCommitPendingProposals = {
-            await commitPendingProposalsArgumentsActor.append((($0, Date())))
+            await commitPendingProposalsArgumentsActor.append(($0, Date()))
             return []
         }
 

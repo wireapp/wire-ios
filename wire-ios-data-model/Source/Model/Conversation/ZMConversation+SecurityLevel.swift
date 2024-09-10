@@ -683,7 +683,7 @@ extension ZMConversation {
         guard !localParticipants.isEmpty,
               isSelfAnActiveMember else { return false }
 
-        let hasOnlyTrustedUsers = localParticipants.allSatisfy { ($0.isTrusted && !$0.clients.isEmpty) }
+        let hasOnlyTrustedUsers = localParticipants.allSatisfy { $0.isTrusted && !$0.clients.isEmpty }
 
         return hasOnlyTrustedUsers && !containsUnconnectedOrExternalParticipant
     }

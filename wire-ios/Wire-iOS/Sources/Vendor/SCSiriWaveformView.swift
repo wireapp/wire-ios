@@ -160,7 +160,7 @@ final class SCSiriWaveformView: UIView {
         for i in 0..<numberOfWaves {
             let context = UIGraphicsGetCurrentContext()
 
-            context?.setLineWidth((i == 0 ? primaryWaveLineWidth : secondaryWaveLineWidth))
+            context?.setLineWidth(i == 0 ? primaryWaveLineWidth : secondaryWaveLineWidth)
 
             // Progress is a value between 1 and -0.5, determined by the current wave idx, which is used to alter the wave's amplitude.
             let progress: Float = 1 - Float(i) / Float(numberOfWaves)

@@ -48,7 +48,7 @@ protocol CallQualityRouterProtocol: AnyObject {
     func presentCallQualityRejection(mainWindow: UIWindow)
 }
 
-typealias PostCallAction = ((@escaping Completion) -> Void)
+typealias PostCallAction = (@escaping Completion) -> Void
 
 // MARK: - ActiveCallRouter
 

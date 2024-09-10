@@ -426,7 +426,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testThatItSetsTheMinimumBackgroundFetchInterval() {
         XCTAssertNotEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalNever)
         XCTAssertGreaterThanOrEqual(application.minimumBackgroundFetchInverval, UIApplication.backgroundFetchIntervalMinimum)
-        XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, (TimeInterval) (20 * 60))
+        XCTAssertLessThanOrEqual(application.minimumBackgroundFetchInverval, TimeInterval (20 * 60))
     }
 
     func testThatItMarksTheConversationsAsRead() throws {

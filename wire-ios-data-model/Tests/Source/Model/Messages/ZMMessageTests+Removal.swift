@@ -162,7 +162,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     }
 
     // Returns whether the message was deleted
-    private func checkThatAMessageIsRemoved(messageCreationBlock: (() -> ZMMessage)) throws -> Bool {
+    private func checkThatAMessageIsRemoved(messageCreationBlock: () -> ZMMessage) throws -> Bool {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()

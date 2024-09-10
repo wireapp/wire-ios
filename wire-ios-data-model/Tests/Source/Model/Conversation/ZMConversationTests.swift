@@ -57,7 +57,7 @@ extension ZMConversationTests {
         let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
-        XCTAssertTrue((result.first is ZMClientMessage))
+        XCTAssertTrue(result.first is ZMClientMessage)
     }
 
     func testThatItInsertsEncryptedTextMessages() throws {
@@ -72,7 +72,7 @@ extension ZMConversationTests {
         let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
-        XCTAssertTrue((result.first is ZMClientMessage))
+        XCTAssertTrue(result.first is ZMClientMessage)
     }
 
     func testThatItInsertsEncryptedImageMessages() throws {
@@ -87,7 +87,7 @@ extension ZMConversationTests {
         let result = try uiMOC.fetch(request)
 
         XCTAssertEqual(result.count, 1)
-        XCTAssertTrue((result.first is ZMAssetClientMessage))
+        XCTAssertTrue(result.first is ZMAssetClientMessage)
     }
 
     // MARK: - Domain tests

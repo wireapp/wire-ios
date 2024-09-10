@@ -353,7 +353,7 @@ enum DebugActions {
             left -= toAppendInThisStep
 
             appendMessages(count: toAppendInThisStep)
-        } while(left > 0)
+        } while left > 0
     }
 
     static func appendMessages(count: Int) {
@@ -367,6 +367,6 @@ enum DebugActions {
             appendMessagesToDatabase(count: thisBatchCount)
 
             currentCount -= thisBatchCount
-        } while (currentCount > 0)
+        } while currentCount > 0
     }
 }

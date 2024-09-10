@@ -30,10 +30,10 @@ public struct ZiphyAnimatedImage: Codable {
 
     public var description: String {
         let values = [
-            ("url = \(url.absoluteString)"),
-            ("width = \(width)"),
-            ("height = \(height)"),
-            ("fileSize = \(fileSize)")
+            "url = \(url.absoluteString)",
+            "width = \(width)",
+            "height = \(height)",
+            "fileSize = \(fileSize)"
         ]
 
         return "<< " + values.joined(separator: ", ") + ">>"

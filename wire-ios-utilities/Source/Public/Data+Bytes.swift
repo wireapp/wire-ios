@@ -44,6 +44,6 @@ extension [Byte] {
 
 extension Byte {
     public static func random() -> Byte {
-        return random(in: (.min)...(.max))
+        return random(in: .min...(.max))
     }
 }

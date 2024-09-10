@@ -146,7 +146,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
                 to: sut,
                 selfMessage: selfMessage,
                 text: "reply test \(index)",
-                timestamp: Date(timeIntervalSince1970: -Double((2 - index)))
+                timestamp: Date(timeIntervalSince1970: -Double(2 - index))
             )
         }
 

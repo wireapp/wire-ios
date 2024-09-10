@@ -89,7 +89,7 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         let resetSessionString = self.resetSessionString()
         let errorDetailsString = self.errorDetailsString(
             errorCode: systemMessage.decryptionErrorCode?.intValue ?? 0,
-            clientIdentifier: (systemMessage.senderClientID ?? "N/A")
+            clientIdentifier: systemMessage.senderClientID ?? "N/A"
         )
 
         var components: [NSAttributedString]

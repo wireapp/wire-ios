@@ -31,7 +31,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let fetchE2EIFeatureConfig: (() -> Feature.E2EI.Config?)
+    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {

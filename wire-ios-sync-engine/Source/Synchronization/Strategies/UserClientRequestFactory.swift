@@ -48,8 +48,8 @@ extension UserClientRequestFactory {
 
         var payload: [String: Any] = [
             "type": client.type.rawValue,
-            "label": (client.label ?? ""),
-            "model": (client.model ?? ""),
+            "label": client.label ?? "",
+            "model": client.model ?? "",
             "class": (client.deviceClass?.rawValue ?? DeviceClass.phone.rawValue),
             "lastkey": lastPreKeyPayloadData,
             "prekeys": preKeysPayloadData,

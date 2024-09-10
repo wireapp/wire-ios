@@ -48,7 +48,7 @@ extension ConversationInputBarViewController {
 
         let (range, attributedText) = handler.replacement(forMention: user, in: text)
 
-        inputBar.textView.replace(range, withAttributedText: (attributedText && inputBar.textView.typingAttributes))
+        inputBar.textView.replace(range, withAttributedText: attributedText && inputBar.textView.typingAttributes)
         playInputHapticFeedback()
         dismissMentionsIfNeeded()
     }

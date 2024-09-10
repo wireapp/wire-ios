@@ -42,7 +42,7 @@ public class Label: ZMManagedObject, LabelType {
     override public var ignoredKeys: Set<AnyHashable>? {
         var ignoredKeys = super.ignoredKeys
 
-        _ = ignoredKeys?.insert((#keyPath(Label.type)))
+        _ = ignoredKeys?.insert(#keyPath(Label.type))
 
         return ignoredKeys
     }

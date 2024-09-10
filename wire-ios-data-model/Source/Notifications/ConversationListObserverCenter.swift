@@ -183,7 +183,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     /// Applys a function on a token and cleares tokens with deallocated lists
-    private func forwardToSnapshots(block: ((ConversationListSnapshot) -> Void)) {
+    private func forwardToSnapshots(block: (ConversationListSnapshot) -> Void) {
         var snapshotsToRemove = [String]()
         for (identifier, snapshot) in listSnapshots {
             guard snapshot.conversationList != nil else {

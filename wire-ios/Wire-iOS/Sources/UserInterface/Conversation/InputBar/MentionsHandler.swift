@@ -64,6 +64,6 @@ final class MentionsHandler: NSObject {
         let endOfString = !attributedString.wholeRange.contains(characterAfterMention)
         let suffix = endOfString || !attributedString.hasSpaceAt(position: characterAfterMention) ? " " : ""
 
-        return (mentionMatchRange, (mentionString + suffix))
+        return (mentionMatchRange, mentionString + suffix)
     }
 }

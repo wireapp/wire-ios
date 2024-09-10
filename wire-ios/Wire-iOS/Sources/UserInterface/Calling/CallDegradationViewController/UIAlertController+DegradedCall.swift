@@ -136,7 +136,7 @@ extension UIAlertController {
     }
 
     static func makeIncomingDegradedMLSCall(
-        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)
+        confirmationBlock: @escaping (_ answerDegradedCall: Bool) -> Void
     ) -> UIAlertController {
         typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
         typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert

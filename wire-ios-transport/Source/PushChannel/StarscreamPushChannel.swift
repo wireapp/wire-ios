@@ -268,7 +268,7 @@ final class StarscreamCertificatePinning: CertificatePinning {
         self.environment = environment
     }
 
-    func evaluateTrust(trust: SecTrust, domain: String?, completion: ((PinningState) -> Void)) {
+    func evaluateTrust(trust: SecTrust, domain: String?, completion: (PinningState) -> Void) {
         if environment.verifyServerTrust(trust: trust, host: domain) {
             completion(.success)
         } else {

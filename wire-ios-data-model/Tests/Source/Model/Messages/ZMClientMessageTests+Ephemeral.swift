@@ -91,7 +91,7 @@ extension ZMClientMessageTests_Ephemeral {
         XCTAssertFalse(message.isEphemeral)
     }
 
-    func checkItCreatesAnEphemeralMessage(messageCreationBlock: ((ZMConversation) -> ZMMessage)) {
+    func checkItCreatesAnEphemeralMessage(messageCreationBlock: (ZMConversation) -> ZMMessage) {
         // given
         conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
 

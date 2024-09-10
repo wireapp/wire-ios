@@ -39,7 +39,7 @@ public protocol EventDecoderProtocol {
 
 /// Decodes and stores events from various sources to be processed later
 public final class EventDecoder: NSObject, EventDecoderProtocol {
-    public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
+    public typealias ConsumeBlock = ([ZMUpdateEvent]) async -> Void
 
     static var BatchSize: Int {
         if let testingBatchSize {

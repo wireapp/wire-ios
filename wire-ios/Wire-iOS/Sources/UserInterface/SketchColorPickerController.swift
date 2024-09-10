@@ -211,7 +211,7 @@ extension SketchColorPickerController: UICollectionViewDataSource, UICollectionV
     }
 
     private var contentWidth: CGFloat {
-        return numberOfItems * colorsCollectionViewLayout.itemSize.width + (max(numberOfItems - 1, 0)) * colorsCollectionViewLayout.minimumInteritemSpacing
+        return numberOfItems * colorsCollectionViewLayout.itemSize.width + max(numberOfItems - 1, 0) * colorsCollectionViewLayout.minimumInteritemSpacing
     }
 
     private var frameWidth: CGFloat {

@@ -108,12 +108,12 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
                         "sender": self.selfClient.remoteIdentifier!,
                         "text": messageData.base64String()] as NSDictionary
 
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: [
                 "type": "conversation.otr-message-add",
                 "data": dict,
                 "from": selfUser.remoteIdentifier!,
                 "conversation": ZMConversation.selfConversation(in: syncMOC).remoteIdentifier!.transportString(),
-                "time": Date(timeIntervalSince1970: 555_555).transportString()] as NSDictionary), uuid: nil)!
+                "time": Date(timeIntervalSince1970: 555_555).transportString()] as NSDictionary, uuid: nil)!
 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)

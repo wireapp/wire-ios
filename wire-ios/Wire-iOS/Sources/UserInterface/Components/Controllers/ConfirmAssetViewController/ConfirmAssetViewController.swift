@@ -29,7 +29,7 @@ final class ConfirmAssetViewController: UIViewController {
         case video(url: URL)
     }
 
-    typealias Confirm = ((_ editedImage: UIImage?) -> Void)
+    typealias Confirm = (_ editedImage: UIImage?) -> Void
     struct Context {
         let asset: Asset
         let onConfirm: Confirm?

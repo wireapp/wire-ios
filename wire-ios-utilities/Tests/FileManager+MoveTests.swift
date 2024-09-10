@@ -71,7 +71,7 @@ class FileManagerMoveTests: XCTestCase {
         try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        for item in (filesToMove + preExistingFiles) {
+        for item in filesToMove + preExistingFiles {
             checkIfFileExists(in: self.tempFolder2, relativePath: item)
         }
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.tempFolder1.path))
@@ -162,7 +162,7 @@ extension FileManagerMoveTests {
         try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        for item in (filesToMove + preExistingFiles) {
+        for item in filesToMove + preExistingFiles {
             checkIfFileExists(in: self.tempFolder2, relativePath: item)
         }
     }

@@ -21,7 +21,7 @@
 extension MLSConferenceInfo {
     public static func random() -> Self {
         .init(
-            epoch: .random(in: (.min)...(.max)),
+            epoch: .random(in: .min...(.max)),
             keyData: Data.random(byteCount: 8),
             members: [.random()]
         )

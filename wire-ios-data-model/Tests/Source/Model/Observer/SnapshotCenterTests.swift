@@ -147,7 +147,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
             ["creator": conv.creator.objectID]
 
         expectedAttributes.forEach {
-            XCTAssertEqual((snapshot.attributes[$0] ?? nil), $1, "values for \($0) don't match")
+            XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1, "values for \($0) don't match")
         }
         XCTAssertEqual(snapshot.toManyRelationships, expectedToManyRelationships)
         XCTAssertEqual(snapshot.toOneRelationships, expectedToOneRelationships)

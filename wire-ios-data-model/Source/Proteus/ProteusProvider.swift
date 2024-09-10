@@ -19,11 +19,11 @@
 import Foundation
 import WireUtilities
 
-public typealias KeyStorePerformBlock<T> = ((UserClientKeysStore) throws -> T)
-public typealias ProteusServicePerformBlock<T> = ((ProteusServiceInterface) throws -> T)
+public typealias KeyStorePerformBlock<T> = (UserClientKeysStore) throws -> T
+public typealias ProteusServicePerformBlock<T> = (ProteusServiceInterface) throws -> T
 
-public typealias KeyStorePerformAsyncBlock<T> = ((UserClientKeysStore) async throws -> T)
-public typealias ProteusServicePerformAsyncBlock<T> = ((ProteusServiceInterface) async throws -> T)
+public typealias KeyStorePerformAsyncBlock<T> = (UserClientKeysStore) async throws -> T
+public typealias ProteusServicePerformAsyncBlock<T> = (ProteusServiceInterface) async throws -> T
 
 public protocol ProteusProviding {
     func perform<T>(

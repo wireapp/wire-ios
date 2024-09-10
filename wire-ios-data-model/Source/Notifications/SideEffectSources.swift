@@ -43,7 +43,7 @@ extension ZMManagedObject {
                               knownKeys: Set<String>,
                               keyStore: DependencyKeyStore,
                               originalChangeKey: String? = nil,
-                              keyMapping: ((String) -> String)) -> ObjectAndChanges {
+                              keyMapping: (String) -> String) -> ObjectAndChanges {
         guard let object else { return [:]}
         let classIdentifier = type(of: object).entityName()
 

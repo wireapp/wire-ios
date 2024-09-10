@@ -286,7 +286,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
     }
 
     var isValid: Bool {
-        return (textFieldValidator.validate(text: text, kind: kind) == nil)
+        return textFieldValidator.validate(text: text, kind: kind) == nil
     }
 
     func updateText(_ text: String) {

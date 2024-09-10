@@ -102,7 +102,7 @@ enum StatusMessageType: Int, CaseIterable {
             return nil
         }
 
-        return (localizationSilencedRootPath + "." + localizationKey)
+        return localizationSilencedRootPath + "." + localizationKey
     }
 
     func localizedString(with count: UInt) -> String? {

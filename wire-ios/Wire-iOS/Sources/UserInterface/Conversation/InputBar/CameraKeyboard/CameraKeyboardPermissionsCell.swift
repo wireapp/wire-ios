@@ -86,7 +86,7 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
         case .ongoingCall:      KeyboardPhotoAccessDeniedLocale.ongoingCall
         }
 
-        descriptionLabel.font = UIFont.systemFont(ofSize: (deniedAuthorization == .ongoingCall ? 14.0 : 16.0),
+        descriptionLabel.font = UIFont.systemFont(ofSize: deniedAuthorization == .ongoingCall ? 14.0 : 16.0,
                                                   weight: UIFont.Weight.light)
         descriptionLabel.text = title
 
