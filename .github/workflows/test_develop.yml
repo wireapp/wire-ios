@@ -1,4 +1,4 @@
-name: Test Develop
+name: Test Develop and Release branches
 
 on:
   workflow_dispatch:
@@ -11,9 +11,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  trigger_tests_develop:
+  trigger_tests:
+    strategy:
+      matrix:
+        branch: [develop, release/cycle-3.113]  # List other branches here
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
-      branch: develop
+      branch: ${{ matrix.branch }}
     secrets: inherit
