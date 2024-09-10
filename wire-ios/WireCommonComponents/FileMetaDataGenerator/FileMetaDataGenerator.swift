@@ -34,7 +34,6 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
         self.previewGenerator = previewGenerator
     }
 
-    // TODO: consider removing
     public convenience init() {
         self.init(previewGenerator: SharedPreviewGenerator.generator)
     }
