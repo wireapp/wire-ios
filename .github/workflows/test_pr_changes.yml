@@ -93,5 +93,5 @@ jobs:
     needs: detect-changes
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      folders: ${{ join(needs.detect-changes.outputs.folders, ', ') }}
+      folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ', ') }}
     secrets: inherit
