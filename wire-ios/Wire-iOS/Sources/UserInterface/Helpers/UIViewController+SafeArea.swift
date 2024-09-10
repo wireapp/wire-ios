@@ -21,13 +21,4 @@ import UIKit
 extension UIView {
 
 
-    @available(*, deprecated, message: "Will be removed")
-    var safeCenterYAnchor: NSLayoutYAxisAnchor {
-        return safeAreaLayoutGuide.centerYAnchor
-    }
-
-    @available(*, deprecated, message: "Will be removed")
-    var safeCenterXAnchor: NSLayoutXAxisAnchor {
-        return safeAreaLayoutGuide.centerXAnchor
-    }
 }
