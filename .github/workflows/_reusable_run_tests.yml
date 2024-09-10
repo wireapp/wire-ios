@@ -85,7 +85,7 @@ jobs:
 
       # Scripts
       - name: Test Scripts
-        if: ${{ contains(inputs.folders, "scripts") || inputs.all }}
+        if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
         run: |
           echo "Scripts has changes"
           echo "Testing Scripts..."
