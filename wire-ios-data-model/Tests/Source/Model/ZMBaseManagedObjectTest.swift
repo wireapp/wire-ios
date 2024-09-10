@@ -50,7 +50,7 @@ extension ZMBaseManagedObjectTest {
         }
 
         let userClient = UserClient.insertNewObject(in: moc)
-        userClient.remoteIdentifier = String.createLegacyAlphanumerical()
+        userClient.remoteIdentifier = String.randomClientIdentifier()
         userClient.user = user
 
         if createSessionWithSelfUser {
