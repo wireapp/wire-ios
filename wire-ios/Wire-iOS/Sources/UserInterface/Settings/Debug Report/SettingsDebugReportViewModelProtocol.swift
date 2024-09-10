@@ -19,7 +19,6 @@
 import UIKit
 
 // sourcery: AutoMockable
-@MainActor
 protocol SettingsDebugReportViewModelProtocol {
 
     /// Send a debug report via email or shows fallback alert if email is not available

@@ -24,15 +24,14 @@ final class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     // MARK: - Properties
 
-    private nonisolated let router: SettingsDebugReportRouterProtocol
-    private nonisolated let shareFile: ShareFileUseCaseProtocol
-    private nonisolated let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
-    private nonisolated let logsProvider: LogFilesProviding
-    private nonisolated let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
+    private let router: SettingsDebugReportRouterProtocol
+    private let shareFile: ShareFileUseCaseProtocol
+    private let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
+    private let logsProvider: LogFilesProviding
+    private let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
 
     // MARK: - Life cycle
 
-    nonisolated
     init(
         router: SettingsDebugReportRouterProtocol,
         shareFile: ShareFileUseCaseProtocol,
