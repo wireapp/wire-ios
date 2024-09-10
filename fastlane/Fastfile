@@ -125,11 +125,11 @@ platform :ios do
         unique_schemes = matching_frameworks.map do |framework|
             framework.schemes
         end.flatten.uniq
-        
+        puts unique_schemes.inspect
         unique_schemes
     end
 
-    desc "Prepare for tests"
+    desc "Run tests for given frameworks"
     lane :test_framework do |options|
         framework_schemes = [
             "Wire-iOS",
@@ -896,7 +896,7 @@ class Framework
 
     def schemes
         result = [scheme]
-        result << relations.map { |framework| framework.scheme }
+        result << relations.map { |framework| framework.schemes }
         result.flatten
     end
     

@@ -142,17 +142,20 @@ jobs:
 
   generate_framework_list:
     needs: run-tests
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.4
     outputs:
       frameworks: ${{ steps.set_frameworks.outputs.frameworks }}
     steps:
       - name: Set frameworks
         id: set_frameworks
         run: |
-          bundle exec fastlane generate_framework_list
+          bundle exec fastlane generate_framework_list folders:.....,.,,,.
 
           echo "::set-output name=frameworks::framework1 framework2 framework3"
-                
+        # otuput name of schemes
+
+  # input:name of schemes                
+  # it just run the test for each scheme
   test_framework:
     runs-on: ubuntu-latest
     needs: generate_framework_list
