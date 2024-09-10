@@ -84,7 +84,7 @@ extension EventDecoder {
         }
 
         if !events.isEmpty {
-            Logging.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
+            Logging.eventProcessing.info("Decrypted/Stored \(events.count) event(s)")
         }
 
         block?(decryptedEvents)

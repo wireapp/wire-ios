@@ -90,7 +90,7 @@ extension ZMConversation {
         public static let OTRArchivedReferenceKey = "otr_archived_ref"
     }
 
-    public func updateCleared(fromPostPayloadEvent event: ZMUpdateEvent ) {
+    public func updateCleared(fromPostPayloadEvent event: ZMUpdateEvent) {
         if let timeStamp = event.timestamp {
             updateCleared(timeStamp, synchronize: true)
         }

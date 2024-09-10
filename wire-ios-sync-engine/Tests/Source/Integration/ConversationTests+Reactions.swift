@@ -55,7 +55,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertEqual(message!.usersReaction.count, 1)
         XCTAssertNotNil(message?.usersReaction[reactionEmoji])
         XCTAssertEqual(message!.usersReaction[reactionEmoji]!.count, 1)
-        XCTAssert(message!.usersReaction[reactionEmoji]?.first === user(for: user1) )
+        XCTAssert(message!.usersReaction[reactionEmoji]?.first === user(for: user1))
         XCTAssertEqual(conversation!.hiddenMessages.count, 0)
     }
 

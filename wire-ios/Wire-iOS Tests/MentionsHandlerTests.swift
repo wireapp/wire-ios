@@ -105,7 +105,7 @@ final class MentionsHandlerTests: XCTestCase {
         XCTAssertEqual(attachments.count, 1)
         guard let mention = attachments.first as? MentionTextAttachment else { XCTFail("Failed to create a mention"); return }
         XCTAssertEqual(mention.user.name, mockUser.name)
-        XCTAssertEqual(range, (query as NSString).range(of: "@bill") )
+        XCTAssertEqual(range, (query as NSString).range(of: "@bill"))
 
         let expected = NSAttributedString(attachment: mention)
         XCTAssertEqual(replacement, expected)
@@ -123,7 +123,7 @@ final class MentionsHandlerTests: XCTestCase {
         XCTAssertEqual(attachments.count, 1)
         guard let mention = attachments.first as? MentionTextAttachment else { XCTFail("Failed to create a mention"); return }
         XCTAssertEqual(mention.user.name, mockUser.name)
-        XCTAssertEqual(range, (query as NSString).range(of: "@bill") )
+        XCTAssertEqual(range, (query as NSString).range(of: "@bill"))
 
         let expected = NSAttributedString(attachment: mention) + " "
 

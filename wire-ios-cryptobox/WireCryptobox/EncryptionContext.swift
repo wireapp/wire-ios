@@ -122,7 +122,7 @@ extension EncryptionContext {
     /// stops using sessions. Nested calls to this method on the same objects on the same
     /// thread are allowed.
     /// - warning: this method is not thread safe
-    public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> Void ) {
+    public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> Void) {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
             self.currentSessionsDirectory =
@@ -143,7 +143,7 @@ extension EncryptionContext {
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: can this be removed?
-    public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void ) async {
+    public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void) async {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
             self.currentSessionsDirectory =

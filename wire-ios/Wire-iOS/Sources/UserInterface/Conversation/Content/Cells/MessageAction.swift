@@ -207,7 +207,7 @@ enum MessageAction: CaseIterable, Equatable {
         case .showInConversation:
             #selector(ConversationMessageActionController.revealMessage)
         case .react:
-            #selector(ConversationMessageActionController.addReaction(reaction:) )
+            #selector(ConversationMessageActionController.addReaction(reaction:))
         case .visitLink:
             #selector(ConversationMessageActionController.visitLink)
         case .present,

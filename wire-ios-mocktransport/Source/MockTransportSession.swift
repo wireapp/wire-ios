@@ -52,7 +52,7 @@ extension MockTransportSession {
         var allEvents = [MockPushEvent]()
         let changedValues = team.changedValues()
         if let teamUpdateEvent = MockTeamEvent.updated(team: team, changedValues: changedValues) {
-            allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
+            allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false))
         }
 
         let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), selfUser: selfUser)

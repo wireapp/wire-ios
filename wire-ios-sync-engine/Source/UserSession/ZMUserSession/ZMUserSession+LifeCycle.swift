@@ -23,7 +23,7 @@ extension ZMUserSession {
         startEphemeralTimers()
     }
 
-    public func application(_ application: ZMApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void ) {
+    public func application(_ application: ZMApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         BackgroundActivityFactory.shared.resume()
 
         syncManagedObjectContext.performGroupedBlock {

@@ -132,7 +132,7 @@ class BackendEnvironmentTests: XCTestCase {
         }
 
         XCTAssertEqual(trust.trustData.count, 1, "Should have one key")
-        guard let data = trust.trustData.first else { XCTFail( ); return }
+        guard let data = trust.trustData.first else { XCTFail(); return }
 
         let hosts = Set(data.hosts.map(\.value))
         XCTAssertEqual(hosts.count, 4)

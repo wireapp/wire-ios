@@ -182,7 +182,7 @@ final class TabBar: UIView {
         setSelectedIndex(selectedIndex, animated: animatesTransition)
     }
 
-    func setSelectedIndex( _ index: Int, animated: Bool) {
+    func setSelectedIndex(_ index: Int, animated: Bool) {
         let changes = { [weak self] in
             self?.selectedIndex = index
             self?.layoutIfNeeded()

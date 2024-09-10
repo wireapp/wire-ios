@@ -33,7 +33,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     final class DummyGenerator: NSObject, ZMRequestGenerator {
         let requestBlock: RequestBlock
 
-        init(requestBlock: @escaping RequestBlock ) {
+        init(requestBlock: @escaping RequestBlock) {
             self.requestBlock = requestBlock
         }
 

@@ -126,7 +126,7 @@ final class ConversationTableViewDataSource: NSObject {
 
         guard let section = currentSections.firstIndex(where: { $0.model == sectionIdentifier }) else { return currentSections }
 
-        for (row, description ) in sectionController.tableViewCellDescriptions.enumerated() {
+        for (row, description) in sectionController.tableViewCellDescriptions.enumerated() {
             if let cell = tableView.cellForRow(at: IndexPath(row: row, section: section)) {
                 cell.accessibilityCustomActions = sectionController.actionController?.makeAccessibilityActions()
                 description.configure(cell: cell, animated: true)

@@ -67,7 +67,8 @@
     spaceInsideBraces, \
     spaceInsideBrackets, \
     spaceInsideComments, \
-    spaceInsideGenerics
+    spaceInsideGenerics, \
+    spaceInsideParens
 
 
 # Options

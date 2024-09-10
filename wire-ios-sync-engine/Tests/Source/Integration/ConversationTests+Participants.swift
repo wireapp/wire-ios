@@ -102,7 +102,7 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // when
         try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
-        XCTAssertTrue( waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         await userSession!.managedObjectContext.perform {
             // then

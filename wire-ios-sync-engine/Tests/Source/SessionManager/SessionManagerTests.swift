@@ -463,7 +463,7 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertTrue(login())
         let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
 
-        let url = try XCTUnwrap( URL(string: "https://example.com"))
+        let url = try XCTUnwrap(URL(string: "https://example.com"))
         let expirationDatesRepository = CRLExpirationDatesRepository(userID: account.userIdentifier)
         expirationDatesRepository.storeCRLExpirationDate(.now, for: url)
 

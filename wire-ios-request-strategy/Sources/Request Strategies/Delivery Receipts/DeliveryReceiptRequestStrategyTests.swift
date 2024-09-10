@@ -205,7 +205,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     func createUpdateEvent(message: GenericMessage,
                            from sender: ZMUser,
                            in conversation: ZMConversation,
-                           timestamp: Date = Date() ) -> ZMUpdateEvent {
+                           timestamp: Date = Date()) -> ZMUpdateEvent {
         let dict: NSDictionary = [
             "recipient": self.selfClient.remoteIdentifier!,
             "sender": self.selfClient.remoteIdentifier!,

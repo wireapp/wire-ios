@@ -28,7 +28,7 @@ extension AVAsset {
     public static func convertAudioToUploadFormat(
         _ inPath: String,
         outPath: String,
-        completion: ((_ success: Bool) -> Void )? = .none) {
+        completion: ((_ success: Bool) -> Void)? = .none) {
         let fileURL = URL(fileURLWithPath: inPath)
         let alteredAsset = AVAsset(url: fileURL)
         let session = AVAssetExportSession(asset: alteredAsset, presetName: AVAssetExportPresetAppleM4A)

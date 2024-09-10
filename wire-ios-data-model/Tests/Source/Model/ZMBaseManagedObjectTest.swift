@@ -42,7 +42,7 @@ extension ZMBaseManagedObjectTest {
         return message
     }
 
-    @objc( createClientForUser:createSessionWithSelfUser:onMOC:)
+    @objc(createClientForUser:createSessionWithSelfUser:onMOC:)
     func createClient(for user: ZMUser, createSessionWithSelfUser: Bool, onMOC moc: NSManagedObjectContext) -> UserClient {
         if user.remoteIdentifier == nil {
             user.remoteIdentifier = UUID.create()

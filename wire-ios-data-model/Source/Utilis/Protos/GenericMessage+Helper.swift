@@ -351,7 +351,7 @@ extension Proteus_QualifiedNewOtrMessage {
                 nativePush: Bool,
                 recipients: [Proteus_QualifiedUserEntry],
                 missingClientsStrategy: MissingClientsStrategy,
-                blob: Data? = nil ) {
+                blob: Data? = nil) {
         self = Proteus_QualifiedNewOtrMessage.with {
             $0.nativePush = nativePush
             $0.sender = sender.clientId

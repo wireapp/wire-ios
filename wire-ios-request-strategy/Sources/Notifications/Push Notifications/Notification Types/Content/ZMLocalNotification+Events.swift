@@ -204,7 +204,7 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
     }
 
     required init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext: NSManagedObjectContext) {
-        if let status = (event.payload["connection"] as? [String: AnyObject] )?["status"] as? String {
+        if let status = (event.payload["connection"] as? [String: AnyObject])?["status"] as? String {
             if status == "accepted" {
                 self.eventType = .connectionRequestAccepted
             } else if status == "pending" {

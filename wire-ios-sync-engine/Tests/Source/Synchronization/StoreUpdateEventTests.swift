@@ -217,7 +217,7 @@ extension StoreUpdateEventTests {
                 }
             #endif
             XCTAssertTrue(storedEvent.isEncrypted)
-            let privateKey = try XCTUnwrap( encryptionKeys?.privateKey)
+            let privateKey = try XCTUnwrap(encryptionKeys?.privateKey)
             let decryptedData = SecKeyCreateDecryptedData(privateKey,
                                                           .eciesEncryptionCofactorX963SHA256AESGCM,
                                                           storedEvent.payload![StoredUpdateEvent.encryptedPayloadKey] as! CFData,

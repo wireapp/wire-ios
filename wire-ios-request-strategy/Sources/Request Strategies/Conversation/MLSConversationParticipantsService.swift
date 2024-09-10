@@ -89,7 +89,7 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
             throw MLSConversationParticipantsError.invalidOperation
         }
 
-        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from: )) }
+        let mlsUsers = await context.perform { users.compactMap(MLSUser.init(from:)) }
 
         do {
             try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)

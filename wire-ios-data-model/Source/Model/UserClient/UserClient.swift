@@ -543,7 +543,7 @@ extension UserClient {
     }
 
     @objc public func missesClients(_ clients: Set<UserClient>) {
-        zmLog.debug("Adding clients(\( clients.count)) to list of missing clients")
+        zmLog.debug("Adding clients(\(clients.count)) to list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
         if !hasLocalModifications(forKey: ZMUserClientMissingKey) {

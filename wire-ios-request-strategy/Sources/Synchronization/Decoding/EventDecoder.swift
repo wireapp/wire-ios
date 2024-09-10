@@ -122,7 +122,7 @@ extension EventDecoder {
         )
 
         if !events.isEmpty {
-            WireLogger.eventProcessing.info("Decrypted/Stored \( events.count) event(s)")
+            WireLogger.eventProcessing.info("Decrypted/Stored \(events.count) event(s)")
         }
 
         return decryptedEvents
