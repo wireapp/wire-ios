@@ -58,7 +58,7 @@ final class ConversationListAccessoryView: UIView {
     }
 
     var activeMediaPlayer: MediaPlayer? {
-        let mediaManager = mediaPlaybackManager ?? AppDelegate.shared.mediaPlaybackManager
+        let mediaManager = mediaPlaybackManager ?? (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager
         return mediaManager?.activeMediaPlayer
     }
 
