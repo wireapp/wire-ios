@@ -20,10 +20,6 @@ import UIKit
 
 extension UIView {
 
-    @available(*, deprecated, message: "Will be removed")
-    var safeAreaLayoutGuideOrFallback: UILayoutGuide {
-        return safeAreaLayoutGuide
-    }
 
     @available(*, deprecated, message: "Will be removed")
     var safeAreaInsetsOrFallback: UIEdgeInsets {
