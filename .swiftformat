@@ -41,7 +41,8 @@
     redundantGet, \
     redundantInit, \
     redundantInternal, \
-    redundantLet
+    redundantLet, \
+    redundantLetError
 
 # Options
 

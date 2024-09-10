@@ -105,7 +105,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
                     type: persistentStoreType
                 )
                 WireLogger.localStorage.info("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
-            } catch let error {
+            } catch {
                 throw CoreDataMigratorError.migrateStoreFailed(error: error)
             }
 
