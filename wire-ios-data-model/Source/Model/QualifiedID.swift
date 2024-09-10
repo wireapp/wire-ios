@@ -70,7 +70,7 @@ extension ZMConversation {
     }
 }
 
-extension Collection where Element == ZMUser {
+extension Collection<ZMUser> {
     public var qualifiedUserIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
 
@@ -78,7 +78,7 @@ extension Collection where Element == ZMUser {
     }
 }
 
-extension Collection where Element == ZMConversation {
+extension Collection<ZMConversation> {
     public var qualifiedIDs: [QualifiedID]? {
         let list = compactMap(\.qualifiedID)
 

@@ -18,7 +18,7 @@
 
 import Foundation
 
-extension Set where Element == ZMUser {
+extension Set<ZMUser> {
     var serviceUsers: Set<ZMUser> {
         return self.filter { $0.isServiceUser }
     }

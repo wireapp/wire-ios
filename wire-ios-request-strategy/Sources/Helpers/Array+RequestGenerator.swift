@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension Array where Element == ZMRequestGenerator {
+extension Array<ZMRequestGenerator> {
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
         return (self as NSArray).nextRequest(for: apiVersion)
     }

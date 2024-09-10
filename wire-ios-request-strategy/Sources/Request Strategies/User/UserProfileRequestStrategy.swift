@@ -376,7 +376,7 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
     }
 }
 
-extension Collection where Element == ZMUser {
+extension Collection<ZMUser> {
     fileprivate func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
         return compactMap { user in
             if let qualifiedID = user.qualifiedID {

@@ -875,7 +875,7 @@ class ConversationByQualifiedIDListTranscoder: IdentifierObjectSyncTranscoder {
     }
 }
 
-extension Collection where Element == ZMConversation {
+extension Collection<ZMConversation> {
     fileprivate func fallbackQualifiedIDs(localDomain: String) -> [QualifiedID] {
         return compactMap { conversation in
             if let qualifiedID = conversation.qualifiedID {

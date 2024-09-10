@@ -284,7 +284,7 @@ extension AnalyticsCountlyProvider: ApplicationStateObserving {
 
 // MARK: - Helpers
 
-extension Dictionary where Key == String, Value == Any {
+extension Dictionary<String, Any> {
     private func countlyValue(rawValue: Any) -> String {
         if let boolValue = rawValue as? Bool {
             return boolValue ? "True" : "False"

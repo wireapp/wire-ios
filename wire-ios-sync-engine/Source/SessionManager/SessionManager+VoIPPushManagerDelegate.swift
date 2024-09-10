@@ -118,7 +118,7 @@ extension VoIPPushPayload {
     }
 }
 
-extension Dictionary where Key == AnyHashable, Value == Any {
+extension Dictionary<AnyHashable, Any> {
     fileprivate var stringIdentifier: String {
         guard
             let data = self["data"] as? [AnyHashable: Any],

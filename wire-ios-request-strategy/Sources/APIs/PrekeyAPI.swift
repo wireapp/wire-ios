@@ -131,7 +131,7 @@ class PrekeyAPIV6: PrekeyAPIV5 {
     }
 }
 
-extension Collection where Element == QualifiedClientID {
+extension Collection<QualifiedClientID> {
     var clientListByUserID: Payload.ClientListByUserID {
         let initial: Payload.ClientListByUserID = [:]
 

@@ -178,7 +178,7 @@ extension PreviewDisplayMode {
 
 // MARK: - Attachment Main
 
-extension Dictionary where Key == AttachmentType, Value == [NSItemProvider] {
+extension Dictionary<AttachmentType, [NSItemProvider]> {
     /**
      * Determines the main preview item for the post.
      *

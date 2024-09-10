@@ -19,6 +19,8 @@
     emptyBraces, \
     enumNamespaces, \
     extensionAccessControl, \
+    # fileHeader, \ TODO
+    genericExtensions
 
 # Options
 

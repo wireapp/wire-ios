@@ -19,7 +19,7 @@
 import Foundation
 import ZipArchive
 
-extension Array where Element == URL {
+extension Array<URL> {
     func zipFiles(filename: String = "archive.zip") -> URL? {
         let archiveURL = URL(fileURLWithPath: NSTemporaryDirectory() + filename)
 
