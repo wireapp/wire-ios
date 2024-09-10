@@ -25,7 +25,8 @@
     hoistTry, \
     indent, \
     initCoderUnavailable, \
-    leadingDelimiters
+    leadingDelimiters, \
+    linebreakAtEndOfFile
 
 # Options
 
