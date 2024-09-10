@@ -81,8 +81,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var launchOptions: LaunchOptions = [:]
 
-    
-
     // TODO [WPB-9867]: remove this property
     @available(*, deprecated, message: "Will be removed")
     var mediaPlaybackManager: MediaPlaybackManager? {
