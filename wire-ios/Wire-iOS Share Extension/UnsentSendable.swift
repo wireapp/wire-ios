@@ -285,7 +285,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
                 // Generate preview
                 Task { [weak self] in
-                    self?.metadata = await self?.fileMetaDataGenerator.metadataForFile(at: url, overriddenName: name)
+                    self?.metadata = await self?.fileMetaDataGenerator.metadataForFile(at: url)
                     completion()
                 }
             }

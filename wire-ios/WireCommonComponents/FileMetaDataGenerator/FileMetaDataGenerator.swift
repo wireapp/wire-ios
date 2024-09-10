@@ -40,7 +40,7 @@ public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
         self.init(previewGenerator: SharedPreviewGenerator.generator)
     }
 
-    public func metadataForFile(at url: URL, overriddenName: String) async -> ZMFileMetadata {
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
 
         let thumbnail: Data?
         do {
