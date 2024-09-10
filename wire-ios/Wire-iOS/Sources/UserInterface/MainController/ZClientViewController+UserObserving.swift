@@ -23,7 +23,10 @@ extension ZClientViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
-            AppDelegate.shared.mainWindow?.tintColor = UIColor.accent()
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+               let window = appDelegate.mainWindow {
+                window.tintColor = UIColor.accent()
+            }
         }
     }
 
