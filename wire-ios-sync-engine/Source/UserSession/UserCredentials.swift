@@ -61,12 +61,12 @@ public class UserCredentials: NSObject {
         return hasher.finalize()
     }
 
-    @objc
+
     public var credentialWithEmail: Bool {
         return email != nil
     }
 
-    @objc
+
     public var credentialWithPhone: Bool {
         return phoneNumber != nil
     }

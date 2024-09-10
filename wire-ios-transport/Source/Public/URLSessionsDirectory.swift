@@ -33,7 +33,7 @@ public final class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
         return [foregroundSession, backgroundSession]
     }
 
-    @objc public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession) {
+    public init(foregroundSession: ZMURLSession, backgroundSession: ZMURLSession) {
         self.foregroundSession = foregroundSession
         self.backgroundSession = backgroundSession
     }

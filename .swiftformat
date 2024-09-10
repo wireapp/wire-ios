@@ -43,7 +43,8 @@
     redundantInternal, \
     redundantLet, \
     redundantLetError, \
-    redundantNilInit
+    redundantNilInit, \
+    redundantObjc
 
 # Options
 

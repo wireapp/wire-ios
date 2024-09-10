@@ -64,7 +64,7 @@ import Foundation
         self.data = data
     }
 
-    @objc public var payload: ZMTransportData {
+    public var payload: ZMTransportData {
         return [
             "team": teamIdentifier,
             "time": timestamp.transportString(),
