@@ -87,8 +87,8 @@ import WireTransport
     @objc func triggerExpiration() {
         isExpiring = true
 
-        tasks.values.forEach {
-            $0.expirationHandler?()
+        for value in tasks.values {
+            value.expirationHandler?()
         }
     }
 

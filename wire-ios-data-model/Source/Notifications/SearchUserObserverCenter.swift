@@ -69,13 +69,13 @@ public class SearchUserSnapshot {
         let newSnapshotValues = SearchUserSnapshot.createSnapshots(searchUser: searchUser)
 
         var changedKeys = [String]()
-        newSnapshotValues.forEach {
-            guard let oldValue = snapshotValues[$0.key] else {
-                changedKeys.append($0.key)
-                return
+        for newSnapshotValue in newSnapshotValues {
+            guard let oldValue = snapshotValues[newSnapshotValue.key] else {
+                changedKeys.append(newSnapshotValue.key)
+                continue
             }
-            if oldValue != $0.value {
-                changedKeys.append($0.key)
+            if oldValue != newSnapshotValue.value {
+                changedKeys.append(newSnapshotValue.key)
             }
         }
         snapshotValues = newSnapshotValues

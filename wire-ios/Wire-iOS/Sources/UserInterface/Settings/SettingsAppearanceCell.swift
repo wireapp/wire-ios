@@ -108,8 +108,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     // MARK: - Helpers
 
     private func createConstraints() {
-        [titleLabel, subtitleLabel, iconImageView, accessoryIconView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [titleLabel, subtitleLabel, iconImageView, accessoryIconView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         let centerConstraint = titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
@@ -142,8 +142,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     }
 
     private func setupView() {
-        [titleLabel, subtitleLabel, iconImageView, accessoryIconView].forEach {
-            contentView.addSubview($0)
+        for item in [titleLabel, subtitleLabel, iconImageView, accessoryIconView] {
+            contentView.addSubview(item)
         }
     }
 }

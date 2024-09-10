@@ -79,8 +79,8 @@ extension ClientMessageTests_OTR_Legacy {
             XCTAssertEqual(clientSet.count, 2 + notSelfClients.count)
             XCTAssertTrue(clientSet.contains(firstClient.clientId))
             XCTAssertTrue(clientSet.contains(secondClient.clientId))
-            notSelfClients.forEach {
-                XCTAssertTrue(clientSet.contains($0.clientId))
+            for notSelfClient in notSelfClients {
+                XCTAssertTrue(clientSet.contains(notSelfClient.clientId))
             }
 
             XCTAssertEqual(createdMessage.reportMissing.count, createdMessage.recipients.count)

@@ -82,8 +82,8 @@ extension AVSMediaManager {
                                            .ringingFromThemSound,
                                            .outgoingKnockSound,
                                            .incomingKnockSound]
-        sounds.forEach {
-            mediaManager.unregisterMedia(byName: $0.rawValue)
+        for sound in sounds {
+            mediaManager.unregisterMedia(byName: sound.rawValue)
         }
 
         mediaManager.registerMedia(fromConfiguration: AVSMediaManager.MediaManagerSoundConfig, inDirectory: audioDir)
@@ -92,8 +92,8 @@ extension AVSMediaManager {
     func unregisterCallRingingSounds() {
         guard let mediaManager = AVSMediaManager.sharedInstance() else { return }
         let sounds: [MediaManagerSound] = [.ringingFromThemInCallSound, .ringingFromThemSound]
-        sounds.forEach {
-            mediaManager.unregisterMedia(byName: $0.rawValue)
+        for sound in sounds {
+            mediaManager.unregisterMedia(byName: sound.rawValue)
         }
     }
 

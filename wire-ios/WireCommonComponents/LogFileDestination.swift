@@ -52,7 +52,7 @@ public enum LogFileDestination: CaseIterable, FileLoggerDestination {
     }
 
     public static func deleteAllLogs() {
-        LogFileDestination.allCases.forEach { destination in
+        for destination in LogFileDestination.allCases {
             if let logURL = destination.log {
                 try? FileManager.default.removeItem(at: logURL)
             }

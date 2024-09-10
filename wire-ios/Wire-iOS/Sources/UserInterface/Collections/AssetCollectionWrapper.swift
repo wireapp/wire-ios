@@ -31,8 +31,8 @@ class MulticastDelegate<T: Any>: NSObject {
     }
 
     func call(_ function: @escaping (T) -> Void) {
-        delegates.allObjects.forEach {
-            function($0 as! T)
+        for object in delegates.allObjects {
+            function(object as! T)
         }
     }
 }

@@ -614,8 +614,8 @@ final class MarkdownTextViewTests: XCTestCase {
     func testThatDeselectingListRemovesItemPrefix_Bullet() {
         // GIVEN
         let text = "Oh Hai!"
-        ["- ", "+ ", "* "].forEach {
-            insertText($0 + text)
+        for item in ["- ", "+ ", "* "] {
+            insertText(item + text)
             // WHEN
             deselect(.uList)
             // THEN
@@ -636,14 +636,14 @@ final class MarkdownTextViewTests: XCTestCase {
     }
 
     func testThatSelectingListBelowExistingItemInsertsNewItemWithCorrectPrefix_Bullet() {
-        ["• ", "- ", "+ ", "* "].forEach {
+        for item in ["• ", "- ", "+ ", "* "] {
             // GIVEN
-            insertText($0 + "Oh Hai!\n")
+            insertText(item + "Oh Hai!\n")
             insertText("OK Bai!")
             // WHEN
             select(.uList)
             // THEN
-            XCTAssertEqual(sut.text, $0 + "Oh Hai!\n" + $0 + "OK Bai!")
+            XCTAssertEqual(sut.text, item + "Oh Hai!\n" + item + "OK Bai!")
             // AFTER
             sut.text = ""
         }

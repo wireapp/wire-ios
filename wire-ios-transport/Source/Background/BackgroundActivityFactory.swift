@@ -203,7 +203,7 @@ import WireUtilities
         let activities = isolationQueue.sync {
             return self.activities
         }
-        activities.forEach { activity in
+        for activity in activities {
             activity.expirationHandler?()
         }
         isolationQueue.sync {
@@ -217,7 +217,7 @@ import WireUtilities
         let allTasksEndedHandlers = self.allTasksEndedHandlers
         self.allTasksEndedHandlers.removeAll()
         mainQueue.async {
-            allTasksEndedHandlers.forEach { handler in
+            for handler in allTasksEndedHandlers {
                 handler()
             }
         }

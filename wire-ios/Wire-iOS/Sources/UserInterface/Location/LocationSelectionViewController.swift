@@ -125,8 +125,8 @@ final class LocationSelectionViewController: UIViewController {
     private func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
-        [mapViewController.view, sendController, toolBar, locationButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [mapViewController.view, sendController, toolBar, locationButton] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         sendControllerHeightConstraint = sendController.heightAnchor.constraint(

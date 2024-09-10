@@ -125,8 +125,8 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
     }
 
     func testThatObfuscatesNotificationsForEphemeralMessages() {
-        [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation].forEach {
-            let note = textNotification($0!, sender: sender, isEphemeral: true)
+        for item in [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation] {
+            let note = textNotification(item!, sender: sender, isEphemeral: true)
             XCTAssertEqual(note?.title, "Someone")
             XCTAssertEqual(note?.body, "Sent a message")
         }
@@ -477,8 +477,8 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatObfuscatesNotificationsForEphemeralImageMessages() {
-        [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation].forEach {
-            let note = imageNote($0!, sender: sender, isEphemeral: true)
+        for item in [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation] {
+            let note = imageNote(item!, sender: sender, isEphemeral: true)
             XCTAssertEqual(note?.title, "Someone")
             XCTAssertEqual(note?.body, "Sent a message")
         }
@@ -564,16 +564,16 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesEphemeralFileAddNotificationsCorrectly() {
-        [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation].forEach {
-            let note = assetNote(.txt, conversation: $0!, sender: sender, isEphemeral: true)
+        for item in [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation] {
+            let note = assetNote(.txt, conversation: item!, sender: sender, isEphemeral: true)
             XCTAssertEqual(note?.title, "Someone")
             XCTAssertEqual(note?.body, "Sent a message")
         }
     }
 
     func testThatItCreatesEphemeralVideoAddNotificationsCorrectly() {
-        [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation].forEach {
-            let note = assetNote(.video, conversation: $0!, sender: sender, isEphemeral: true)
+        for item in [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation] {
+            let note = assetNote(.video, conversation: item!, sender: sender, isEphemeral: true)
             XCTAssertEqual(note?.title, "Someone")
             XCTAssertEqual(note?.body, "Sent a message")
         }
@@ -625,8 +625,8 @@ extension ZMLocalNotificationTests_Message {
     }
 
     func testThatItCreatesEphemeralKnockNotificationsCorrectly() {
-        [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation].forEach {
-            let note = knockNote($0!, sender: sender, isEphemeral: true)
+        for item in [oneOnOneConversation, groupConversation, groupConversationWithoutUserDefinedName, groupConversationWithoutName, invalidConversation] {
+            let note = knockNote(item!, sender: sender, isEphemeral: true)
             XCTAssertEqual(note?.title, "Someone")
             XCTAssertEqual(note?.body, "Sent a message")
         }

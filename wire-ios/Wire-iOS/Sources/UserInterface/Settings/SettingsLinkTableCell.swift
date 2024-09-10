@@ -72,8 +72,8 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
         backgroundView = UIView()
         selectedBackgroundView = UIView()
 
-        [cellNameLabel, cellLinkLabel].forEach {
-            contentView.addSubview($0)
+        for item in [cellNameLabel, cellLinkLabel] {
+            contentView.addSubview(item)
         }
 
         cellLinkLabel.textColor = SemanticColors.Label.textDefault

@@ -27,9 +27,9 @@ extension UIControl.State {
         }
 
         let states: [UIControl.State] = [.disabled, .highlighted, .selected]
-        states.forEach {
-            if contains($0) {
-                expandedStates.append($0)
+        for state in states {
+            if contains(state) {
+                expandedStates.append(state)
             }
         }
 

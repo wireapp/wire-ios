@@ -86,7 +86,7 @@ extension URL {
         let pathComponents = path.components(separatedBy: "/").map { $0.truncated(visibleCharactersCount) }
 
         var queryComponents = components?.queryItems ?? []
-        queryComponents.enumerated().forEach { item in
+        for item in queryComponents.enumerated() {
             var redactedItem = item.element
             // truncates to 8 digits max for ids
             let value = redactedItem.value?.redactedAndTruncated(maxVisibleCharacters: visibleCharactersCount, length: 8) ?? ""

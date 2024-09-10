@@ -25,7 +25,7 @@ extension NSManagedObjectContext: TearDownCapable {
     public func tearDown() {
         performGroupedAndWait { [self] in
             tearDownUserInfo()
-            registeredObjects.forEach { object in
+            for object in registeredObjects {
                 if let tearDownCapable = object as? TearDownCapable {
                     tearDownCapable.tearDown()
                 }

@@ -132,9 +132,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     func testActiveSpeakersIndicators_Conference() {
         // Given / When
-        allParticipantsNames.prefixed(by: 3).forEach {
+        for item in allParticipantsNames.prefixed(by: 3) {
             configuration.streams += [stubProvider.stream(
-                user: MockUserType.createUser(name: $0),
+                user: MockUserType.createUser(name: item),
                 activeSpeakerState: .active(audioLevelNow: 100)
             )]
         }
@@ -162,9 +162,9 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     func testVideoStoppedBorder_Appears_Conference() {
         // Given / When
-        allParticipantsNames.prefixed(by: 3).forEach {
+        for item in allParticipantsNames.prefixed(by: 3) {
             configuration.streams += [stubProvider.stream(
-                user: MockUserType.createUser(name: $0),
+                user: MockUserType.createUser(name: item),
                 videoState: .stopped
             )]
         }
@@ -203,8 +203,8 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
 
     func testPagingIndicator() {
         // given
-        allParticipantsNames.forEach {
-            configuration.streams += [stubProvider.stream(user: MockUserType.createUser(name: $0))]
+        for participantsName in allParticipantsNames {
+            configuration.streams += [stubProvider.stream(user: MockUserType.createUser(name: participantsName))]
         }
 
         // when

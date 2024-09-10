@@ -54,8 +54,8 @@ public final class TimerManager<Identifier: Hashable> {
     }
 
     public func cancelAllTimers() {
-        timers.forEach {
-            $0.value.invalidate()
+        for timer in timers {
+            timer.value.invalidate()
         }
 
         timers.removeAll()

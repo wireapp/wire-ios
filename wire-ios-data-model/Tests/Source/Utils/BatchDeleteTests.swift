@@ -122,12 +122,12 @@ class BatchDeleteTests: ZMTBaseTest {
         try moc.batchDeleteEntities(named: "\(TestEntity.self)", matching: predicate)
 
         // then
-        objects.forEach {
-            XCTAssertFalse($0.isDeleted)
+        for object in objects {
+            XCTAssertFalse(object.isDeleted)
         }
 
-        objectsShouldBeDeleted.forEach {
-            XCTAssertTrue($0.isDeleted)
+        for item in objectsShouldBeDeleted {
+            XCTAssertTrue(item.isDeleted)
         }
     }
 

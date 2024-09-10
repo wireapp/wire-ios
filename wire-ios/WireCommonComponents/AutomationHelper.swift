@@ -234,8 +234,8 @@ extension AutomationHelper {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
         // DELETE
         let filesToDelete = try! FileManager.default.contentsOfDirectory(atPath: sharedContainerURL.path)
-        filesToDelete.forEach {
-            try! FileManager.default.removeItem(atPath: sharedContainerURL.appendingPathComponent($0).path)
+        for item in filesToDelete {
+            try! FileManager.default.removeItem(atPath: sharedContainerURL.appendingPathComponent(item).path)
         }
         // COPY
         try! FileManager.default.copyFolderRecursively(from: packageURL, to: sharedContainerURL, overwriteExistingFiles: true)

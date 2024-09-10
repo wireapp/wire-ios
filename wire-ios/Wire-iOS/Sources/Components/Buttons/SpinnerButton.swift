@@ -102,7 +102,7 @@ final class SpinnerButton: LegacyButton {
         layer.borderWidth = 1
 
         let states: [UIControl.State] = [.normal, .highlighted, .disabled]
-        states.forEach {
+        for state in states {
             let color: UIColor = switch variant {
             case .dark:
                 .white
@@ -110,8 +110,8 @@ final class SpinnerButton: LegacyButton {
                 UIColor.AlarmButton.alarmRed
             }
 
-            setTitleColor(color, for: $0)
-            setBorderColor(UIColor.AlarmButton.alarmRed, for: $0)
+            setTitleColor(color, for: state)
+            setBorderColor(UIColor.AlarmButton.alarmRed, for: state)
         }
     }
 

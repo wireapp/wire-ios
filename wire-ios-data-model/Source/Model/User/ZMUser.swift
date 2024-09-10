@@ -428,7 +428,7 @@ extension ZMUser {
             return $0.conversation
         }
 
-        allGroupConversations.forEach { conversation in
+        for conversation in allGroupConversations {
             if isTeamMember, conversation.team == team {
                 conversation.appendTeamMemberRemovedSystemMessage(user: self, at: timestamp)
             } else {

@@ -788,7 +788,7 @@ extension UserClient {
 
     func changeSecurityLevel(_ securityChangeType: SecurityChangeType, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {
         let conversations = activeConversationsForUserOfClients(clients)
-        conversations.forEach { conversation in
+        for conversation in conversations {
             if !conversation.isReadOnly {
                 let clientsInConversation = clients.filter { client in
                     guard let user = client.user else { return false }

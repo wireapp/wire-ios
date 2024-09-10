@@ -160,7 +160,7 @@ extension Settings {
     }
 
     private func enableLogs(_ tags: Set<String>) {
-        tags.forEach { tag in
+        for tag in tags {
             ZMSLog.set(level: .debug, tag: tag)
         }
     }

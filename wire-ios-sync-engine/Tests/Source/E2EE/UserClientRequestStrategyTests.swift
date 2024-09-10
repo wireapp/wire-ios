@@ -644,9 +644,9 @@ extension UserClientRequestStrategyTests {
                 UserClient.insertNewObject(in: self.syncMOC),
                 UserClient.insertNewObject(in: self.syncMOC)
             ]
-            clients.forEach {
-                $0.remoteIdentifier = "\($0.objectID)"
-                $0.user = ZMUser.selfUser(in: self.syncMOC)
+            for client in clients {
+                client.remoteIdentifier = "\(client.objectID)"
+                client.user = ZMUser.selfUser(in: self.syncMOC)
             }
             self.syncMOC.saveOrRollback()
 
@@ -712,8 +712,8 @@ extension UserClientRequestStrategyTests {
             // when
             existingClient.needsToUploadSignalingKeys = true
             existingClient.setLocallyModifiedKeys(userClientNeedsToUpdateSignalingKeysKeySet)
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
+            for contextChangeTracker in self.sut.contextChangeTrackers {
+                contextChangeTracker.objectsDidChange(existingClientSet)
             }
             let request = self.sut.nextRequest(for: .v0)
 
@@ -748,8 +748,8 @@ extension UserClientRequestStrategyTests {
 
             existingClient.needsToUploadSignalingKeys = true
             existingClient.setLocallyModifiedKeys(userClientNeedsToUpdateSignalingKeysKeySet)
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
+            for contextChangeTracker in self.sut.contextChangeTrackers {
+                contextChangeTracker.objectsDidChange(existingClientSet)
             }
 
             // when
@@ -792,8 +792,8 @@ extension UserClientRequestStrategyTests {
             // when
             existingClient.needsToUpdateCapabilities = true
             existingClient.setLocallyModifiedKeys(userClientNeedsToUpdateCapabilitiesKeySet)
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
+            for contextChangeTracker in self.sut.contextChangeTrackers {
+                contextChangeTracker.objectsDidChange(existingClientSet)
             }
             let request = self.sut.nextRequest(for: .v0)
 
@@ -825,8 +825,8 @@ extension UserClientRequestStrategyTests {
             existingClient.needsToUpdateCapabilities = true
 
             existingClient.setLocallyModifiedKeys(userClientNeedsToUpdateCapabilitiesKeySet)
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
+            for contextChangeTracker in self.sut.contextChangeTrackers {
+                contextChangeTracker.objectsDidChange(existingClientSet)
             }
 
             // when
@@ -870,8 +870,8 @@ extension UserClientRequestStrategyTests {
             existingClient.needsToUploadMLSPublicKeys = true
             existingClient.setLocallyModifiedKeys(Set([UserClient.needsToUploadMLSPublicKeysKey]))
 
-            self.sut.contextChangeTrackers.forEach {
-                $0.objectsDidChange(existingClientSet)
+            for contextChangeTracker in self.sut.contextChangeTrackers {
+                contextChangeTracker.objectsDidChange(existingClientSet)
             }
 
             let request = self.sut.nextRequest(for: .v1)

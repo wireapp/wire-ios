@@ -63,9 +63,9 @@ final class BarController: UIViewController {
 
     private func updateStackView() {
         UIView.animate(withDuration: 0.35) {
-            self.stackView.arrangedSubviews.forEach {
-                self.stackView.removeArrangedSubview($0)
-                $0.removeFromSuperview()
+            for arrangedSubview in self.stackView.arrangedSubviews {
+                self.stackView.removeArrangedSubview(arrangedSubview)
+                arrangedSubview.removeFromSuperview()
             }
 
             self.bars.map { $0.view }.forEach(self.stackView.addArrangedSubview)

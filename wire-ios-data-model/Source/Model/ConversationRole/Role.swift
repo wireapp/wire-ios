@@ -154,7 +154,7 @@ public final class Role: ZMManagedObject {
 
         let role = fetchedRole ?? Role.insertNewObject(in: context)
 
-        actionNames.forEach { actionName in
+        for actionName in actionNames {
             let action = Action.fetchOrCreate(
                 name: actionName,
                 in: context

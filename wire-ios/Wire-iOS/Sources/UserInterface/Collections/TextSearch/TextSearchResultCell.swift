@@ -71,8 +71,8 @@ final class TextSearchResultCell: UITableViewCell {
     }
 
     private func createConstraints() {
-        [userImageView, userImageViewContainer, footerView, messageTextLabel, resultCountView, separatorView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [userImageView, userImageViewContainer, footerView, messageTextLabel, resultCountView, separatorView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             userImageView.heightAnchor.constraint(equalToConstant: 24),

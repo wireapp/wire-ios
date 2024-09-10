@@ -143,8 +143,8 @@ final class DeveloperOptionsController: UIViewController {
         label.text = labelText
         label.textColor = SemanticColors.Label.textDefault
         label.translatesAutoresizingMaskIntoConstraints = false
-        [label, view].forEach {
-            cell.contentView.addSubview($0)
+        for item in [label, view] {
+            cell.contentView.addSubview(item)
         }
 
         NSLayoutConstraint.activate([

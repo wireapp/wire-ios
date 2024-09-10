@@ -638,7 +638,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
         var allStatusMessagesByType: [StatusMessageType: [ZMConversationMessage]] = [:]
 
-        self.matchedTypes.forEach { type in
+        for type in self.matchedTypes {
             allStatusMessagesByType[type] = status.messagesRequiringAttention.filter {
                 StatusMessageType(message: $0) == type
             }

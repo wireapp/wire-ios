@@ -69,11 +69,11 @@ class TypingEventQueue {
     func addItem(conversationID: NSManagedObjectID, isTyping: Bool) {
         if isTyping {
             // end all previous typings
-            conversations.forEach {
-                conversations[$0.key] = false
+            for conversation in conversations {
+                conversations[conversation.key] = false
             }
-            unbalancedConversations.forEach {
-                conversations[$0] = false
+            for unbalancedConversation in unbalancedConversations {
+                conversations[unbalancedConversation] = false
             }
             unbalancedConversations.insert(conversationID)
         } else {
@@ -217,7 +217,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         guard liveEvents else { return }
 
-        events.forEach { event in
+        for event in events {
             process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
         }
     }
@@ -243,7 +243,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
             }
         } else if event.type == .conversationMemberLeave {
             let users = event.users(in: managedObjectContext, createIfNeeded: false)
-            users.forEach { user in
+            for user in users {
                 typing.setIsTyping(false, for: user, in: conversation)
             }
         }

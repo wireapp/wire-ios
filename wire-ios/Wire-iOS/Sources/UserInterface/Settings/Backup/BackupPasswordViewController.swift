@@ -74,9 +74,9 @@ final class BackupPasswordViewController: UIViewController {
         view.backgroundColor = ViewColors.backgroundDefault
         passwordRulesLabel.text = PasswordRuleSet.localizedErrorMessage
 
-        [passwordView, subtitleLabel, passwordRulesLabel].forEach {
-            view.addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [passwordView, subtitleLabel, passwordRulesLabel] {
+            view.addSubview(item)
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         passwordView.placeholder = HistoryBackup.Password.placeholder

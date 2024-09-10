@@ -785,7 +785,7 @@ extension EventDecoderTest {
 
     func insert(_ events: [ZMUpdateEvent], startIndex: Int64 = 0) {
         eventMOC.performGroupedAndWait {
-            events.enumerated().forEach { index, event  in
+            for (index, event) in events.enumerated() {
                 _ = StoredUpdateEvent.encryptAndCreate(event, context: self.eventMOC, index: Int64(startIndex) + Int64(index))
             }
 

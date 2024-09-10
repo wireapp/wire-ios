@@ -137,8 +137,8 @@ final class AudioEffectsPickerViewController: UIViewController {
         view.addSubview(statusBoxView)
         view.addSubview(collectionView)
 
-        [collectionView, progressView, subtitleLabel, statusBoxView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [collectionView, progressView, subtitleLabel, statusBoxView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),

@@ -160,8 +160,8 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
         liveEvents: Bool,
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
-        events.forEach {
-            self.insertMessage(from: $0, prefetchResult: prefetchResult)
+        for event in events {
+            self.insertMessage(from: event, prefetchResult: prefetchResult)
         }
     }
 

@@ -197,10 +197,10 @@ final class MarkdownBarView: UIView {
     }
 
     @objc func resetIcons() {
-        buttons.forEach {
-            $0.setIconColor(enabledStateIconColor, for: .normal)
-            $0.setBorderColor(enabledStateBorderColor, for: .normal)
-            $0.setBackgroundImageColor(enabledStateBackgroundColor, for: .normal)
+        for button in buttons {
+            button.setIconColor(enabledStateIconColor, for: .normal)
+            button.setBorderColor(enabledStateBorderColor, for: .normal)
+            button.setBackgroundImageColor(enabledStateBackgroundColor, for: .normal)
         }
     }
 

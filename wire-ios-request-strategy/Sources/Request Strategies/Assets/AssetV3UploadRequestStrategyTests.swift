@@ -144,7 +144,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotGenerateRequestWhenTransferStateIsNotUploading() {
         let allTransferStatesExpectUploading: [AssetTransferState] = [.uploaded, .uploadingFailed, .uploadingCancelled]
 
-        allTransferStatesExpectUploading.forEach { transferState in
+        for transferState in allTransferStatesExpectUploading {
             syncMOC.performGroupedAndWait {
                 // given
                 let message = self.createFileMessage(transferState: transferState)

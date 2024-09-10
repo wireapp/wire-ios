@@ -362,8 +362,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         // when
         let modifier: (ZMConversation, ZMConversationObserver) -> Void = { conversation, _ in
-            conversation.participantRoles.forEach {
-                $0.role = newRole
+            for participantRole in conversation.participantRoles {
+                participantRole.role = newRole
             }
         }
 
@@ -395,8 +395,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
         // when
         let modifier: (ZMConversation, ZMConversationObserver) -> Void = { conversation, _ in
-            conversation.participantRoles.forEach {
-                $0.role = newRole
+            for participantRole in conversation.participantRoles {
+                participantRole.role = newRole
             }
         }
 

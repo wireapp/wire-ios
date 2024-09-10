@@ -102,8 +102,8 @@ enum CellConfiguration {
     }
 
     static func prepare(_ tableView: UITableView) {
-        allCellTypes.forEach {
-            tableView.register($0, forCellReuseIdentifier: $0.reuseIdentifier)
+        for cellType in allCellTypes {
+            tableView.register(cellType, forCellReuseIdentifier: cellType.reuseIdentifier)
         }
     }
 }

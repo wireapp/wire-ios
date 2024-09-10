@@ -48,8 +48,8 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         guard let objects = self.dependenciesToDependents[dependency] else { return }
         let objectsToRemove = objects.filter { block($0) }
         guard !objectsToRemove.isEmpty else { return }
-        objectsToRemove.forEach {
-            self.remove(dependency: dependency, for: $0)
+        for item in objectsToRemove {
+            self.remove(dependency: dependency, for: item)
         }
     }
 

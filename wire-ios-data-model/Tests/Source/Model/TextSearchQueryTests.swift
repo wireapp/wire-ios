@@ -51,8 +51,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let otherMessage = try! otherConversation.appendText(content: "This is the first message in the other conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 40, normalized: false)
         fillConversationWithMessages(conversation: otherConversation, messageCount: 40, normalized: false)
-        [firstMessage, otherMessage].forEach {
-            $0.normalizedText = nil
+        for item in [firstMessage, otherMessage] {
+            item.normalizedText = nil
         }
 
         XCTAssert(uiMOC.saveOrRollback())
@@ -133,8 +133,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: false)
         let lastMessage = try! conversation.appendText(content: "This is the last message in the conversation") as! ZMMessage
-        [firstMessage, secondMessage, lastMessage].forEach {
-            $0.normalizedText = nil
+        for item in [firstMessage, secondMessage, lastMessage] {
+            item.normalizedText = nil
         }
 
         XCTAssert(uiMOC.saveOrRollback())
@@ -294,8 +294,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let secondMessage = try! conversation.appendText(content: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: true)
         let lastMessage = try! conversation.appendText(content: "This is the last message in the conversation") as! ZMMessage
-        [firstMessage, secondMessage].forEach {
-            $0.normalizedText = nil
+        for item in [firstMessage, secondMessage] {
+            item.normalizedText = nil
         }
 
         XCTAssert(uiMOC.saveOrRollback())

@@ -177,9 +177,9 @@ class DependencyKeyStore {
     /// ["foo" : Set("affectingKey1", "affectingKey2")] --> ["affectingKey1" : Set("foo"), "affectingKey2" : Set("foo")]
     private static func setupEffectedKeys(affectingKeys: [String: Set<String>]) -> [String: Set<String>] {
         var allEffectedKeys = [String: Set<String>]()
-        affectingKeys.forEach { key, values in
-            values.forEach {
-                allEffectedKeys[$0] = (allEffectedKeys[$0] ?? Set()).union([key])
+        for (key, values) in affectingKeys {
+            for value in values {
+                allEffectedKeys[value] = (allEffectedKeys[value] ?? Set()).union([key])
             }
         }
         return allEffectedKeys

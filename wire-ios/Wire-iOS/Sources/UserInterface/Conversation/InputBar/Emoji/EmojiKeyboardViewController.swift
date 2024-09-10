@@ -70,8 +70,8 @@ final class EmojiKeyboardViewController: UIViewController {
     private func createConstraints() {
         guard let sectionViewControllerView = sectionViewController.view else { return }
 
-        [collectionView, sectionViewControllerView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [collectionView, sectionViewControllerView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)

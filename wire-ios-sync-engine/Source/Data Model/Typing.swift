@@ -109,8 +109,8 @@ extension Typing: ZMTimerClient {
 
         syncContext.performGroupedBlock {
             let conversationIds = self.typingUserTimeout.pruneConversationsThatHaveTimoutBefore(date: Date())
-            conversationIds.forEach {
-                if let conversation = self.syncContext.object(with: $0) as? ZMConversation {
+            for conversationId in conversationIds {
+                if let conversation = self.syncContext.object(with: conversationId) as? ZMConversation {
                     self.sendNotification(for: conversation)
                 }
             }

@@ -68,10 +68,10 @@ final class SyncUsersActionHandlerTests: ActionHandlerTestBase<SyncUsersAction, 
     }
 
     func test_itFailsToGenerateRequests_APIBelowV4() throws {
-        [.v0, .v1, .v2, .v3].forEach {
+        for item in [.v0, .v1, .v2, .v3] {
             test_itDoesntGenerateARequest(
                 action: action,
-                apiVersion: $0,
+                apiVersion: item,
                 expectedError: .endpointUnavailable
             )
         }

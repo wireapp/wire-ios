@@ -94,7 +94,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         collectionView.contentInsetAdjustmentBehavior = .never
 
-        [collectionView, footerView].forEach { subview in
+        for subview in [collectionView, footerView] {
             subview.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(subview)
         }
@@ -166,7 +166,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.renameGroupSectionController = renameGroupSectionController
 
         let (participants, serviceUsers) = (conversation.sortedOtherParticipants, conversation.sortedServiceUsers)
-        participants.forEach { user in
+        for user in participants {
             if !userStatuses.keys.contains(user.remoteIdentifier) {
                 userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: false)
             }

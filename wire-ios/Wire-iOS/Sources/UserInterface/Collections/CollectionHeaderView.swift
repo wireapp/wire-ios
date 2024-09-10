@@ -102,8 +102,8 @@ final class CollectionHeaderView: UICollectionReusableView {
         iconImageView.contentMode = .center
         addSubview(iconImageView)
 
-        [titleLabel, actionButton, iconImageView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [titleLabel, actionButton, iconImageView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),

@@ -212,7 +212,7 @@ protocol Mergeable {
 
 extension Dictionary where Value: Mergeable {
     fileprivate mutating func merge(with other: Dictionary) {
-        other.forEach { key, value in
+        for (key, value) in other {
             if let currentValue = self[key] {
                 self[key] = currentValue.merged(with: value)
             } else {
@@ -223,7 +223,7 @@ extension Dictionary where Value: Mergeable {
 
     fileprivate func merged(with other: Dictionary) -> Dictionary {
         var newDict = self
-        other.forEach { key, value in
+        for (key, value) in other {
             newDict[key] = newDict[key]?.merged(with: value) ?? value
         }
         return newDict

@@ -38,8 +38,8 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
         let newLocation = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
         let movedItemNames = try FileManager.default.contentsOfDirectory(atPath: newLocation.path)
         XCTAssertTrue(movedItemNames.count > 0)
-        itemNames.forEach {
-            XCTAssertTrue(movedItemNames.contains($0))
+        for itemName in itemNames {
+            XCTAssertTrue(movedItemNames.contains(itemName))
         }
     }
 

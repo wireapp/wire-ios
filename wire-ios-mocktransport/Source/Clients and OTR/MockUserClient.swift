@@ -122,8 +122,8 @@ extension MockUserClient {
         newClient.time = Date()
 
         let prekeys = MockPreKey.insertNewKeys(withPayload: prekeysPayload, context: context)
-        prekeys.forEach {
-            $0.client = newClient
+        for prekey in prekeys {
+            prekey.client = newClient
         }
 
         let lastPreKey = MockPreKey.insertNewKey(withPayload: lastKeyPayload, context: context)!

@@ -59,8 +59,8 @@ public final class ExtensionSettings: NSObject {
     }
 
     func reset() {
-        ExtensionSettingsKey.allCases.forEach {
-            defaults.removeObject(forKey: $0.rawValue)
+        for item in ExtensionSettingsKey.allCases {
+            defaults.removeObject(forKey: item.rawValue)
         }
     }
 

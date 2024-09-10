@@ -128,11 +128,11 @@ extension UserClient {
     }
 
     fileprivate func clearMessagesMissingRecipient() {
-        messagesMissingRecipient.forEach {
-            if let message = $0 as? ZMOTRMessage {
+        for item in messagesMissingRecipient {
+            if let message = item as? ZMOTRMessage {
                 message.doesNotMissRecipient(self)
             } else {
-                mutableSetValue(forKey: "messagesMissingRecipient").remove($0)
+                mutableSetValue(forKey: "messagesMissingRecipient").remove(item)
             }
         }
     }

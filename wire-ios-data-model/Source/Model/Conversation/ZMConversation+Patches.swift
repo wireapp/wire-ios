@@ -152,7 +152,7 @@ extension ZMConversation {
             fatal("fetchOrAssert failed")
         }
 
-        conversations.forEach { convo in
+        for convo in conversations {
             let users = (convo.value(forKey: oldKey) as! NSOrderedSet).array as? [ZMUser]
             users?.forEach { user in
                 let participantRole = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: convo)

@@ -53,9 +53,9 @@ class CleanupModels107PreAction: CoreDataMigrationAction {
 
         WireLogger.localStorage.info("found (\(duplicates.count)) occurences of duplicate clients", attributes: .safePublic)
 
-        duplicates.forEach { (_, clients: [NSManagedObject]) in
+        for (_, clients) in duplicates {
             guard clients.count > 1 else {
-                return
+                continue
             }
 
             clients.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)

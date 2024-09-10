@@ -193,7 +193,7 @@ final class ConversationAvatarView: UIView {
             }
 
             var index: Int = 0
-            self.userImages().forEach { userImage in
+            for userImage in self.userImages() {
                 userImage.userSession = ZMUserSession.shared()
                 userImage.shouldDesaturate = false
                 userImage.size = mode == .four ? .tiny : .small
@@ -288,7 +288,7 @@ final class ConversationAvatarView: UIView {
         case .none:
             break
         case .one:
-            userImages().forEach { userImage in
+            for userImage in userImages() {
                 userImage.frame = clippingView.bounds
             }
         case .four:
@@ -302,7 +302,7 @@ final class ConversationAvatarView: UIView {
         var xPosition: CGFloat = 0
         var yPosition: CGFloat = 0
 
-        userImages().forEach { userImage in
+        for userImage in userImages() {
             userImage.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
             if xPosition + size.width >= containerSize.width {
                 xPosition = 0

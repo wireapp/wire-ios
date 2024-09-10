@@ -152,16 +152,16 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
         translatesAutoresizingMaskIntoConstraints = false
         backgroundColor = SemanticColors.View.backgroundDefault
 
-        [subtitleLabel, correlationLabel].forEach {
-            $0.textAlignment = .center
-            $0.backgroundColor = .clear
-            addSubview($0)
+        for item in [subtitleLabel, correlationLabel] {
+            item.textAlignment = .center
+            item.backgroundColor = .clear
+            addSubview(item)
         }
     }
 
     private func createConstraints() {
-        [subtitleLabel, correlationLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [subtitleLabel, correlationLabel] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             subtitleLabel.topAnchor.constraint(equalTo: topAnchor),

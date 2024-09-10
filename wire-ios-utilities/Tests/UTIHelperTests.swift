@@ -63,7 +63,7 @@ final class UTIHelperTests: XCTestCase {
                     "audio/mpeg",
                     "audio/x-m4a"]
 
-        suts.forEach { sut in
+        for sut in suts {
             // when & then
             XCTAssert(UTIHelper.conformsToAudioType(mime: sut), "\(sut) does not conform to audio type")
         }
@@ -76,7 +76,7 @@ final class UTIHelperTests: XCTestCase {
                     "public.png",
                     "public.svg-image"]
 
-        suts.forEach { sut in
+        for sut in suts {
             // when & then
             XCTAssert(UTIHelper.conformsToImageType(uti: sut), "\(sut) does not conform to image type")
         }

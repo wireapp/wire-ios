@@ -89,8 +89,8 @@ final class APIMigrationManager {
     }
 
     func persistLastUsedAPIVersion(for sessions: [ZMUserSession], apiVersion: APIVersion) {
-        sessions.forEach {
-            persistLastUsedAPIVersion(for: $0, apiVersion: apiVersion)
+        for session in sessions {
+            persistLastUsedAPIVersion(for: session, apiVersion: apiVersion)
         }
     }
 

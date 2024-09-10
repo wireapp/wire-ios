@@ -91,8 +91,8 @@ final class TextSearchInputView: UIView {
     }
 
     private func createConstraints() {
-        [self, iconView, searchInput, placeholderLabel, clearButton, spinner].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [self, iconView, searchInput, placeholderLabel, clearButton, spinner] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate(

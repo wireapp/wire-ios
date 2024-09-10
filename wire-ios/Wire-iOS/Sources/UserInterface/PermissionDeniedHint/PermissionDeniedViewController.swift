@@ -100,8 +100,8 @@ final class PermissionDeniedViewController: UIViewController {
 
         initialConstraintsCreated = true
 
-        [heroLabel, settingsButton, laterButton].forEach {
-            $0?.translatesAutoresizingMaskIntoConstraints = false
+        for item in [heroLabel, settingsButton, laterButton] {
+            item?.translatesAutoresizingMaskIntoConstraints = false
         }
 
         var constraints = [heroLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),

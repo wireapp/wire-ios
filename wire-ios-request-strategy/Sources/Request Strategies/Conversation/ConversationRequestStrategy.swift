@@ -195,8 +195,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         // Mark all existing conversations to be re-fetched since they might have
         // been deleted. If not the flag will be reset after syncing the conversations
         // with the BE and no extra work will be done.
-        ZMUser.selfUser(in: managedObjectContext).conversations.forEach {
-            $0.needsToBeUpdatedFromBackend = true
+        for conversation in ZMUser.selfUser(in: managedObjectContext).conversations {
+            conversation.needsToBeUpdatedFromBackend = true
         }
 
         switch apiVersion {

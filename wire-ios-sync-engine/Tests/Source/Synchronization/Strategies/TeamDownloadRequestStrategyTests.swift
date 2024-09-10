@@ -69,8 +69,8 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     // MARK: - Helper
 
     fileprivate func boostrapChangeTrackers(with objects: ZMManagedObject...) {
-        sut.contextChangeTrackers.forEach {
-            $0.objectsDidChange(Set(objects))
+        for contextChangeTracker in sut.contextChangeTrackers {
+            contextChangeTracker.objectsDidChange(Set(objects))
         }
     }
 

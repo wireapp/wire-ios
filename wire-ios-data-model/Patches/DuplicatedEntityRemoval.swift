@@ -30,7 +30,7 @@ enum DuplicatedEntityRemoval {
 
     static func deleteDuplicatedClients(in context: NSManagedObjectContext) {
         // Fetch clients having the same remote identifiers
-        context.findDuplicated(by: #keyPath(UserClient.remoteIdentifier)).forEach { (_: String?, clients: [UserClient]) in
+        for (_, clients) in context.findDuplicated(by: #keyPath(UserClient.remoteIdentifier)) {
             // Group clients having the same remote identifiers by user
             clients.filter { !($0.user?.isSelfUser ?? true) }.group(by: ZMUserClientUserKey).forEach { (_: ZMUser, clients: [UserClient]) in
                 UserClient.merge(clients)
@@ -47,9 +47,9 @@ extension UserClient {
         let tail = clients.dropFirst()
         // Merge clients having the same remote identifier and same user
 
-        tail.forEach {
-            firstClient.merge(with: $0)
-            context.delete($0)
+        for item in tail {
+            firstClient.merge(with: item)
+            context.delete(item)
         }
     }
 

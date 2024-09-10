@@ -59,7 +59,7 @@ extension Data {
         var characters: [unichar] = []
         characters.reserveCapacity(count * 2)
 
-        self.forEach { byte in
+        for byte in self {
             characters.append(hexDigits[Int(byte / 16)])
             characters.append(hexDigits[Int(byte % 16)])
         }

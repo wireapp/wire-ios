@@ -54,7 +54,7 @@ extension Array {
         var workingCopy = Array(self)
         var result = Array()
 
-        self.forEach { _ in
+        for _ in self {
             let rand: UInt = generator.rand() % UInt(workingCopy.count)
 
             result.append(workingCopy[Int(rand)])
@@ -126,12 +126,12 @@ public final class ConversationListAvatarView: UIView {
             self.mode = Mode(conversation: conversation)
 
             var index: Int = 0
-            self.userImages().forEach {
-                $0.userSession = ZMUserSession.shared()
-                $0.size = .tiny
-                $0.showInitials = (self.mode == .one)
-                $0.isCircular = false
-                $0.user = stableRandomParticipants[index]
+            for userImage in self.userImages() {
+                userImage.userSession = ZMUserSession.shared()
+                userImage.size = .tiny
+                userImage.showInitials = (self.mode == .one)
+                userImage.isCircular = false
+                userImage.user = stableRandomParticipants[index]
                 index += 1
             }
             self.setNeedsLayout()
@@ -219,8 +219,8 @@ public final class ConversationListAvatarView: UIView {
         var xPosition: CGFloat = 0
         var yPosition: CGFloat = 0
 
-        self.userImages().forEach {
-            $0.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
+        for userImage in self.userImages() {
+            userImage.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
             if xPosition + size.width >= containerSize.width {
                 xPosition = 0
                 yPosition += size.height + inset

@@ -66,10 +66,10 @@ final class ImageToolbarView: UIView {
         let highlightedColor: UIColor = isPlacedOnImage ? .from(scheme: .iconHighlighted, variant: .dark) : .from(scheme: .iconHighlighted)
         let selectedColor: UIColor = isPlacedOnImage ? .accentDarken : .accent()
 
-        [sketchButton, emojiButton, textButton, expandButton].forEach {
-            $0.setIconColor(normalColor, for: .normal)
-            $0.setIconColor(highlightedColor, for: .highlighted)
-            $0.setIconColor(selectedColor, for: .selected)
+        for item in [sketchButton, emojiButton, textButton, expandButton] {
+            item.setIconColor(normalColor, for: .normal)
+            item.setIconColor(highlightedColor, for: .highlighted)
+            item.setIconColor(selectedColor, for: .selected)
         }
     }
 

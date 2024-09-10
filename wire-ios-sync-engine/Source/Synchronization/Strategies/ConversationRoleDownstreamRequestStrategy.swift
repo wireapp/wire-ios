@@ -34,8 +34,8 @@ extension ZMConversation {
 
         // Delete removed roles
         let rolesToDelete = existingRoles.subtracting(newRoles)
-        rolesToDelete.forEach {
-            managedObjectContext?.delete($0)
+        for item in rolesToDelete {
+            managedObjectContext?.delete(item)
         }
     }
 }

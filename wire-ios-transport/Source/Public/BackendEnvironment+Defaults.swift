@@ -84,7 +84,7 @@ extension BackendEnvironment {
     }
 
     public static func migrate(from: UserDefaults, to: UserDefaults) {
-        [EnvironmentType.defaultsKey, BackendEnvironment.defaultsKey].forEach { key in
+        for key in [EnvironmentType.defaultsKey, BackendEnvironment.defaultsKey] {
             UserDefaults.moveValue(forKey: key, from: from, to: to)
         }
     }

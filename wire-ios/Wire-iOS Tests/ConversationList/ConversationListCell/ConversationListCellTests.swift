@@ -235,7 +235,7 @@ final class ConversationListCellTests: XCTestCase {
     func testThatItRendersConversationWithNewMessages() {
         // WHEN
         var messages: [MockMessage] = []
-        (0..<8).forEach {_ in
+        for _ in (0..<8) {
             let message = createNewMessage()
 
             messages.append(message)

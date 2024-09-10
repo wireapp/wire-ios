@@ -88,7 +88,7 @@ extension BasicReactionPicker {
     fileprivate func addButtons() {
         let currentDevice = DeviceWrapper(device: .current)
         var constraints = [NSLayoutConstraint]()
-        emojis.forEach { emoji in
+        for emoji in emojis {
             let button = UIButton()
             button.titleLabel?.font = UIFont.systemFont(ofSize: currentDevice.userInterfaceIdiom == .pad ? 24 : 32)
             button.setTitle(emoji.value, for: .normal)

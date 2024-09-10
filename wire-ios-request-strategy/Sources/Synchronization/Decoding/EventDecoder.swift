@@ -373,7 +373,7 @@ extension EventDecoder {
         await block(filterInvalidEvents(from: events))
 
         await eventMOC.perform { [eventMOC] in
-            storedEvents.forEach { storedEvent in
+            for storedEvent in storedEvents {
                 eventMOC.delete(storedEvent)
                 WireLogger.eventProcessing.info(
                     "delete stored event",

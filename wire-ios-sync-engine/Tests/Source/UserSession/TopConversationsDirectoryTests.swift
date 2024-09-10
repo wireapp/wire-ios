@@ -296,8 +296,8 @@ extension TopConversationsDirectoryTests {
 
         measureMetrics(Swift.type(of: self).defaultPerformanceMetrics, automaticallyStartMeasuring: false) {
             // given
-            (0..<20).forEach {
-                self.createConversation(in: self.uiMOC, fillWithNew: $0, old: 5)
+            for item in (0..<20) {
+                self.createConversation(in: self.uiMOC, fillWithNew: item, old: 5)
             }
 
             // when measuring
@@ -351,13 +351,13 @@ extension TopConversationsDirectoryTests {
 
     func fill(_ conversation: ZMConversation, with messageCount: (new: Int, old: Int), file: StaticString = #file, line: UInt = #line) {
         guard messageCount.new > 0 || messageCount.old > 0 else { return }
-        (0..<messageCount.new).forEach {
-            try! conversation.appendText(content: "Message #\($0)")
+        for item in (0..<messageCount.new) {
+            try! conversation.appendText(content: "Message #\(item)")
         }
 
-        (0..<messageCount.old).forEach {
-            let message = try! conversation.appendText(content: "Message #\($0)") as! ZMMessage
-            message.serverTimestamp = Date(timeIntervalSince1970: TimeInterval($0 * 100))
+        for item in (0..<messageCount.old) {
+            let message = try! conversation.appendText(content: "Message #\(item)") as! ZMMessage
+            message.serverTimestamp = Date(timeIntervalSince1970: TimeInterval(item * 100))
         }
 
         XCTAssertTrue(uiMOC.saveOrRollback(), file: file, line: line)

@@ -54,8 +54,8 @@ extension SelfProfileViewController {
         present(newLoginAlertController, animated: true, completion: .none)
 
         userSession.enqueue {
-            clients.forEach {
-                $0.needsToNotifyUser = false
+            for client in clients {
+                client.needsToNotifyUser = false
             }
         }
     }
@@ -75,7 +75,7 @@ extension SelfProfileViewController {
             }
 
             if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
-                topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: SettingsCellDescriptorType) in
+                for cellDescriptor in topCellGroupDescriptor.allCellDescriptors() {
                     if let cellIdentifier = cellDescriptor.identifier,
                        let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,
                        let topViewController = topCellGroupDescriptor.generateViewController(),
@@ -85,7 +85,7 @@ extension SelfProfileViewController {
                         self.navigationController?.pushViewController(viewController, animated: false)
                         resultViewController = viewController
                     }
-                })
+                }
             }
 
         })

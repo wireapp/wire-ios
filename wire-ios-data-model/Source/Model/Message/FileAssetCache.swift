@@ -762,7 +762,7 @@ public final class FileAssetCache: NSObject {
         if message.imageMessageData != nil {
             let imageFormats: [ZMImageFormat] = [.medium, .original, .preview]
 
-            imageFormats.forEach { format in
+            for format in imageFormats {
                 if let key = Self.cacheKeyForAsset(
                     message,
                     format: format,

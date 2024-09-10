@@ -31,8 +31,8 @@ final class SectionCollectionViewController: NSObject {
             collectionView?.dataSource = self
             collectionView?.delegate = self
 
-            sections.forEach {
-                $0.prepareForUse(in: collectionView)
+            for section in sections {
+                section.prepareForUse(in: collectionView)
             }
 
             collectionView?.reloadData()
@@ -41,8 +41,8 @@ final class SectionCollectionViewController: NSObject {
 
     var sections: [CollectionViewSectionController] {
         didSet {
-            sections.forEach {
-                $0.prepareForUse(in: collectionView)
+            for section in sections {
+                section.prepareForUse(in: collectionView)
             }
 
             collectionView?.reloadData()

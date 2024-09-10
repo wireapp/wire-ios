@@ -37,7 +37,7 @@ extension Collection where Iterator.Element: UserType {
         var foundUsers = Set<HashBoxUser>()
         var results: [UserType] = []
 
-        rules.forEach { rule in
+        for rule in rules {
             let matches = usersToSearch
                 .filter { rule($0) }
                 .filter { !foundUsers.contains(HashBox(value: $0)) }

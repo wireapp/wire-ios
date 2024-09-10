@@ -24,7 +24,7 @@ public final class ManagedObjectContextChangesMerger: NSObject {
     public init(managedObjectContexts: Set<NSManagedObjectContext>) {
         self.managedObjectContexts = managedObjectContexts
         super.init()
-        managedObjectContexts.forEach { moc in
+        for moc in managedObjectContexts {
             NotificationCenter.default.addObserver(self,
                                                    selector: #selector(ManagedObjectContextChangesMerger.contextDidSave(_:)),
                                                    name: NSNotification.Name.NSManagedObjectContextDidSave,
@@ -34,7 +34,7 @@ public final class ManagedObjectContextChangesMerger: NSObject {
 
     @objc func contextDidSave(_ notification: Notification) {
         let mocThatSaved = notification.object as! NSManagedObjectContext
-        managedObjectContexts.subtracting([mocThatSaved]).forEach { moc in
+        for moc in managedObjectContexts.subtracting([mocThatSaved]) {
             moc.perform {
                 moc.mergeChanges(fromContextDidSave: notification)
             }

@@ -41,12 +41,12 @@ public class SnapshotCenter {
     }
 
     func createSnapshots(for insertedObjects: Set<NSManagedObject>) {
-        insertedObjects.forEach {
-            if $0.objectID.isTemporaryID {
-                try? managedObjectContext.obtainPermanentIDs(for: [$0])
+        for insertedObject in insertedObjects {
+            if insertedObject.objectID.isTemporaryID {
+                try? managedObjectContext.obtainPermanentIDs(for: [insertedObject])
             }
-            let newSnapshot = createSnapshot(for: $0)
-            snapshots[$0.objectID] = newSnapshot
+            let newSnapshot = createSnapshot(for: insertedObject)
+            snapshots[insertedObject.objectID] = newSnapshot
         }
     }
 

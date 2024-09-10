@@ -59,7 +59,7 @@ public final class SendableBatchObserver {
     private func updateProgress() {
         var totalProgress: Float = 0
 
-        sendables.forEach { message in
+        for message in sendables {
             if message.isSent {
                 totalProgress += 1.0 / Float(sendables.count)
             } else {

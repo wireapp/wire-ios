@@ -50,8 +50,8 @@ public final class DispatchGroupContext: NSObject {
     func enterAll(except group: ZMSDispatchGroup? = nil) -> [ZMSDispatchGroup] {
         let groups = self.groups.filter { $0 != group }
 
-        groups.forEach {
-            $0.enter()
+        for group in groups {
+            group.enter()
         }
         return groups
     }

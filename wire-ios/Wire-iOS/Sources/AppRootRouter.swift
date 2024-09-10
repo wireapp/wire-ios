@@ -502,7 +502,7 @@ extension AppRootRouter {
         colorScheme.accentColor = .accent()
         colorScheme.variant = Settings.shared.colorSchemeVariant
 
-        UIApplication.shared.windows.forEach { window in
+        for window in UIApplication.shared.windows {
             window.overrideUserInterfaceStyle = Settings.shared.colorScheme.userInterfaceStyle
         }
     }

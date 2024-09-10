@@ -93,15 +93,15 @@ final class CollectionsView: UIView {
     func constrainViews(searchViewController: TextSearchViewController) {
         let searchBar = searchViewController.searchBar
         let resultsView = searchViewController.resultsView
-        [searchBar, resultsView].forEach {
-            addSubview($0)
+        for item in [searchBar, resultsView] {
+            addSubview(item)
         }
 
         let centerYConstraint = noResultsView.centerYAnchor.constraint(equalTo: centerYAnchor)
         centerYConstraint.priority = .defaultLow
 
-        [searchBar, resultsView, collectionView, noResultsView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [searchBar, resultsView, collectionView, noResultsView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: topAnchor),

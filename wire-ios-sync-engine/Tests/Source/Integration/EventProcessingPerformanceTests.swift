@@ -41,7 +41,7 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
         simulateApplicationDidEnterBackground()
         mockTransportSession.performRemoteChanges { _ in
-            self.conversations.forEach { conversation in
+            for conversation in self.conversations {
                 conversation.insertRandomTextMessages(count: 100, from: self.users)
             }
         }
@@ -60,7 +60,7 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
         simulateApplicationDidEnterBackground()
         mockTransportSession.performRemoteChanges { _ in
-            self.conversations.forEach { conversation in
+            for conversation in self.conversations {
                 conversation.insertRandomTextMessages(count: 100, from: self.users)
             }
         }
@@ -79,7 +79,7 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
         simulateApplicationDidEnterBackground()
         mockTransportSession.performRemoteChanges { _ in
-            self.conversations.forEach { conversation in
+            for conversation in self.conversations {
                 conversation.insertRandomKnocks(count: 100, from: self.users)
             }
         }
@@ -112,14 +112,14 @@ class EventProcessingPerformanceTests: IntegrationTest {
 
 extension MockConversation {
     func insertRandomKnocks(count: Int, from users: [MockUser]) {
-        (1...count).forEach { _ in
+        for _ in (1...count) {
             let knock = try! GenericMessage(content: Knock.with { $0.hotKnock = false }).serializedData()
             insertClientMessage(from: users.randomElement()!, data: knock)
         }
     }
 
     func insertRandomTextMessages(count: Int, from users: [MockUser]) {
-        (1...count).forEach { counter in
+        for counter in (1...count) {
             let text = try! GenericMessage(content: Text(content: "Random message \(counter)")).serializedData()
             insertClientMessage(from: users.randomElement()!, data: text)
         }

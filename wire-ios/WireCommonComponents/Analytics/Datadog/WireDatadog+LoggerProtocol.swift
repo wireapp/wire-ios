@@ -89,7 +89,7 @@
             attributes: [LogAttributes] = []
         ) {
             let plainAttributes: [String: any Encodable] = attributes.reduce(into: [:]) { partialResult, logAttribute in
-                logAttribute.forEach { item in
+                for item in logAttribute {
                     partialResult[item.key.rawValue] = item.value
                 }
             }

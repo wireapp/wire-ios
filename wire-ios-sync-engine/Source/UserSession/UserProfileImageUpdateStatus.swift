@@ -174,8 +174,8 @@ extension UserProfileImageUpdateStatus {
     }
 
     private func startPreprocessing(imageData: Data) {
-        ProfileImageSize.allSizes.forEach {
-            setState(state: .preprocessing, for: $0)
+        for siz in ProfileImageSize.allSizes {
+            setState(state: .preprocessing, for: siz)
         }
 
         let imageOwner = UserProfileImageOwner(imageData: imageData)
@@ -256,10 +256,10 @@ extension UserProfileImageUpdateStatus: UserProfileImageUpdateProtocol {
 extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
     public func completedDownsampleOperation(_ operation: ZMImageDownsampleOperationProtocol, imageOwner: ZMImageOwner) {
         syncMOC.performGroupedBlock {
-            ProfileImageSize.allSizes.forEach {
-                if operation.format == $0.imageFormat,
+            for siz in ProfileImageSize.allSizes {
+                if operation.format == siz.imageFormat,
                    let downsampleImageData = operation.downsampleImageData {
-                    self.setState(state: .upload(image: downsampleImageData), for: $0)
+                    self.setState(state: .upload(image: downsampleImageData), for: siz)
                 }
             }
         }

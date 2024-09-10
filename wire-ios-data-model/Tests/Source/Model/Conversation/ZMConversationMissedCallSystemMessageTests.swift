@@ -99,12 +99,12 @@ final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase 
             XCTAssertEqual(message.visibleInConversation, conversation)
             XCTAssertEqual(message.childMessages, Set(messages))
 
-            messages.forEach {
-                XCTAssertEqual($0.users, [user])
-                XCTAssertEqual($0.parentMessage as? ZMSystemMessage, message)
-                XCTAssertEqual($0.systemMessageType, .missedCall)
-                XCTAssertNil($0.visibleInConversation)
-                XCTAssertEqual($0.hiddenInConversation, conversation)
+            for item in messages {
+                XCTAssertEqual(item.users, [user])
+                XCTAssertEqual(item.parentMessage as? ZMSystemMessage, message)
+                XCTAssertEqual(item.systemMessageType, .missedCall)
+                XCTAssertNil(item.visibleInConversation)
+                XCTAssertEqual(item.hiddenInConversation, conversation)
             }
         }
 

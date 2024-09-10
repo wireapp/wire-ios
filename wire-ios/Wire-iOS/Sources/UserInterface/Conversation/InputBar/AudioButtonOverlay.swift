@@ -100,8 +100,8 @@ final class AudioButtonOverlay: UIView {
     }
 
     private func createConstraints() {
-        [audioButton, playButton, sendButton, backgroundView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [audioButton, playButton, sendButton, backgroundView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             audioButton.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -initialViewWidth / 2),

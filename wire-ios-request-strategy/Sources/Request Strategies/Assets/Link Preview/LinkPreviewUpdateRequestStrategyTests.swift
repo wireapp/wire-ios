@@ -155,8 +155,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     }
 
     func process(_ message: ZMClientMessage) {
-        sut.contextChangeTrackers.forEach {
-            $0.objectsDidChange([message])
+        for contextChangeTracker in sut.contextChangeTrackers {
+            contextChangeTracker.objectsDidChange([message])
         }
     }
 }

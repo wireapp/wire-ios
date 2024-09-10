@@ -56,10 +56,10 @@ final class AccountSelectorView: UIView {
     }
 
     private func updateStackView() {
-        stackView.arrangedSubviews.forEach { subview in
+        for subview in stackView.arrangedSubviews {
             subview.removeFromSuperview()
         }
-        accounts.forEach { account in
+        for account in accounts {
             let accountView = AccountViewBuilder(account: account, displayContext: .accountSelector).build()
             accountView.unreadCountStyle = .current
             accountView.onTap = { [weak self] account in

@@ -45,11 +45,11 @@ extension ZMUser {
 
         var result: [ConsentType: Bool] = [:]
 
-        resultArray.forEach {
-            guard let type = $0["type"] as? Int,
-                  let value = $0["value"] as? Int,
+        for item in resultArray {
+            guard let type = item["type"] as? Int,
+                  let value = item["value"] as? Int,
                   let consentType = ConsentType(rawValue: type) else {
-                return
+                continue
             }
 
             let valueBool = (value == 1)

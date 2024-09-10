@@ -82,7 +82,7 @@ final class AssetColletionTests: ModelObjectsTests {
     @discardableResult func insertAssetMessages(count: Int) -> [ZMMessage] {
         var offset: TimeInterval = 0
         var messages = [ZMMessage]()
-        (0..<count).forEach { _ in
+        for _ in (0..<count) {
             let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
             offset += 5
             message.setValue(Date().addingTimeInterval(offset), forKey: "serverTimestamp")

@@ -43,7 +43,7 @@ final class MessageActionTests: XCTestCase {
     }
 
     func testForSystemIcons() {
-        MessageAction.allCases.forEach { action in
+        for action in MessageAction.allCases {
             if let image = action.systemIcon() {
                 let imageView = UIImageView(image: image)
                 snapshotHelper.verify(matching: imageView, named: "\(action)")
@@ -52,7 +52,7 @@ final class MessageActionTests: XCTestCase {
     }
 
     func testForStyleKitIcons() {
-        MessageAction.allCases.forEach { action in
+        for action in MessageAction.allCases {
             if let icon = action.icon {
                 let image = icon.makeImage(size: .tiny, color: .black)
                 snapshotHelper.verify(matching: image, named: "\(action)")

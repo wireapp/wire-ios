@@ -70,8 +70,8 @@ struct SystemLogger: LoggerProtocol {
 
     private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
         var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
+        for attribute in attributes {
+            mergedAttributes.merge(attribute) { _, new in new }
         }
 
         var logger: OSLog = OSLog.default

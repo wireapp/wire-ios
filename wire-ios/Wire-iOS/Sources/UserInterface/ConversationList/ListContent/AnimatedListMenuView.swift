@@ -62,8 +62,8 @@ final class AnimatedListMenuView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        [leftDotView, centerDotView, rightDotView].forEach {
-            addSubview($0)
+        for item in [leftDotView, centerDotView, rightDotView] {
+            addSubview(item)
         }
     }
 
@@ -106,8 +106,8 @@ final class AnimatedListMenuView: UIView {
 
         let leftDotLeftConstraint = leftDotView.leftAnchor.constraint(equalTo: self.leftAnchor)
 
-        dotViews.forEach {$0.widthAnchor.constraint(equalToConstant: dotWidth).isActive = true
-            $0.heightAnchor.constraint(equalToConstant: dotWidth).isActive = true
+        for dotView in dotViews {dotView.widthAnchor.constraint(equalToConstant: dotWidth).isActive = true
+            dotView.heightAnchor.constraint(equalToConstant: dotWidth).isActive = true
         }
 
         let subviewConstraints: [NSLayoutConstraint] = [

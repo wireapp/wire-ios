@@ -63,8 +63,8 @@ final class BackupViewController: UIViewController {
         tableView.tableFooterView = UIView()
         cells = [BackupStatusCell.self, BackupActionCell.self]
 
-        cells.forEach {
-            tableView.register($0.self, forCellReuseIdentifier: $0.reuseIdentifier)
+        for cell in cells {
+            tableView.register(cell.self, forCellReuseIdentifier: cell.reuseIdentifier)
         }
     }
 

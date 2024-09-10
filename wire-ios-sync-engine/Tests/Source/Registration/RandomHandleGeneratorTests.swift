@@ -59,35 +59,35 @@ final class RandomHandleGeneratorTests: XCTestCase {
         XCTAssertEqual(handles.popLast(), expectedNormalized)
 
         // then with digits 1 to 9
-        (1..<10).forEach {
-            XCTAssertEqual(handles.popLast(), expectedNormalized.truncated(at: 20) + "\($0)")
+        for item in (1..<10) {
+            XCTAssertEqual(handles.popLast(), expectedNormalized.truncated(at: 20) + "\(item)")
         }
 
         // then 4 with two digits
         let twoDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 19))[0-9]{2}$", options: [])
-        (0..<4).forEach { _ in
+        for _ in (0..<4) {
             let handle = handles.popLast()
             XCTAssertTrue(twoDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // then 4 with three digits
         let threeDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 18))[0-9]{3}$", options: [])
-        (0..<4).forEach { _ in
+        for _ in (0..<4) {
             let handle = handles.popLast()
             XCTAssertTrue(threeDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // then 6 with four digits
         let sixDigits = try! NSRegularExpression(pattern: "^\(expectedNormalized.truncated(at: 17))[0-9]{4}$", options: [])
-        (0..<6).forEach { _ in
+        for _ in (0..<6) {
             let handle = handles.popLast()
             XCTAssertTrue(sixDigits.matches(handle), "\(String(describing: handle)) does not match")
         }
 
         // now random words
         XCTAssertGreaterThan(handles.count, variations * 4)
-        handles.forEach {
-            XCTAssertFalse($0.hasPrefix(expectedNormalized))
+        for handle in handles {
+            XCTAssertFalse(handle.hasPrefix(expectedNormalized))
         }
     }
 

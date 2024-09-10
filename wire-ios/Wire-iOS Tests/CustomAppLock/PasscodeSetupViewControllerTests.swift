@@ -98,8 +98,8 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
         fillPasscode()
 
         // WHEN
-        PasscodeError.allCases.forEach {
-            sut.setValidationLabelsState(errorReason: $0, passed: true)
+        for item in PasscodeError.allCases {
+            sut.setValidationLabelsState(errorReason: item, passed: true)
         }
 
         // THEN

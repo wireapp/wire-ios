@@ -77,7 +77,7 @@ final class CameraCell: UICollectionViewCell {
         self.changeCameraButton.accessibilityIdentifier = "changeCameraButton"
         self.contentView.addSubview(self.changeCameraButton)
 
-        [self.takePictureButton, self.expandButton, self.changeCameraButton].forEach { button in
+        for button in [self.takePictureButton, self.expandButton, self.changeCameraButton] {
             button.layer.shadowColor = UIColor.black.cgColor
             button.layer.shadowOffset = CGSize(width: 0, height: 0)
             button.layer.shadowRadius = 0.5

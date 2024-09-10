@@ -264,9 +264,9 @@ extension AssetCollectionBatched {
                   !(category.contains(MessageCategory.excludedFromCollection))
             else { return }
 
-            matchingCategories.forEach {
-                if category.contains($0.including), category.intersection($0.excluding) == .none {
-                    sorted[$0]?.append(message)
+            for matchingCategory in matchingCategories {
+                if category.contains(matchingCategory.including), category.intersection(matchingCategory.excluding) == .none {
+                    sorted[matchingCategory]?.append(message)
                 }
             }
         }
@@ -285,9 +285,9 @@ extension AssetCollectionBatched {
         }
 
         let newKeys = Set(other.keys).subtracting(Set(messageMap.keys))
-        newKeys.forEach {
-            if let value = other[$0] {
-                newSortedMessages[$0] = value
+        for newKey in newKeys {
+            if let value = other[newKey] {
+                newSortedMessages[newKey] = value
             }
         }
 

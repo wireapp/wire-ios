@@ -452,8 +452,8 @@ final class ConversationListViewModel: NSObject {
            let sectionNumber = sectionNumber(for: kind) {
             delegate?.listViewModel(self, didUpdateSection: sectionNumber)
         } else {
-            sections.indices.forEach {
-                delegate?.listViewModel(self, didUpdateSection: $0)
+            for index in sections.indices {
+                delegate?.listViewModel(self, didUpdateSection: index)
             }
         }
     }

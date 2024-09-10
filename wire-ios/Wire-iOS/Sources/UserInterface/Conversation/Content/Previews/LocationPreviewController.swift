@@ -91,8 +91,8 @@ final class LocationPreviewController: UIViewController {
     }
 
     private func createConstraints() {
-        [view, containerView, mapView, containerView, addressContainerView, addressLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [view, containerView, mapView, containerView, addressContainerView, addressLabel] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([

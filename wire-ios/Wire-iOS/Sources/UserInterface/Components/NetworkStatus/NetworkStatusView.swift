@@ -99,7 +99,7 @@ final class NetworkStatusView: UIView {
 
         connectingView.delegate = self
 
-        [offlineView, connectingView].forEach { subview in
+        for subview in [offlineView, connectingView] {
             addSubview(subview)
             subview.translatesAutoresizingMaskIntoConstraints = false
         }

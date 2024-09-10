@@ -123,8 +123,8 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     }
 
     private func configureViews() {
-        [button, errorLabel].forEach {
-            addSubview($0)
+        for item in [button, errorLabel] {
+            addSubview(item)
         }
     }
 

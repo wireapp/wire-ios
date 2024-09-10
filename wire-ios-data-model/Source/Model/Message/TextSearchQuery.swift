@@ -264,10 +264,10 @@ public class TextSearchQuery: NSObject {
 
             guard let unwrappedRequest = request,
                   let messagesToIndex = self.syncMOC.fetchOrAssert(request: unwrappedRequest) as? [ZMClientMessage] else { return }
-            messagesToIndex.forEach {
+            for item in messagesToIndex {
                 // We populate the `normalizedText` field, so the search can be 
                 // performed faster on the normalized field the next time.
-                $0.updateNormalizedText()
+                item.updateNormalizedText()
             }
             self.syncMOC.saveOrRollback()
 

@@ -29,7 +29,7 @@ final class ReactionSectionViewController: UIViewController {
     private var selectedType: EmojiSectionType? {
         willSet(value) {
             guard isEnabled, let type = value else { return }
-            typesByButton.forEach { button, sectionType in
+            for (button, sectionType) in typesByButton {
                 button.isSelected = type == sectionType
             }
         }
@@ -38,7 +38,7 @@ final class ReactionSectionViewController: UIViewController {
     var isEnabled = true {
         didSet {
             panGestureRecognizer.isEnabled = isEnabled
-            typesByButton.forEach { button, sectionType in
+            for (button, sectionType) in typesByButton {
                 button.isEnabled = isEnabled
                 button.isSelected = isEnabled && sectionType == selectedType
             }
@@ -72,7 +72,7 @@ final class ReactionSectionViewController: UIViewController {
 
     private func createButtons(_ types: [EmojiSectionType]) {
         sectionButtons = types.map(createSectionButton)
-        zip(types, sectionButtons).forEach { type, button in
+        for (type, button) in zip(types, sectionButtons) {
             typesByButton[button] = type
         }
     }
@@ -131,8 +131,7 @@ final class ReactionSectionViewController: UIViewController {
 
         var constraints = [NSLayoutConstraint]()
 
-        sectionButtons.enumerated().forEach { idx, button in
-
+        for (idx, button) in sectionButtons.enumerated() {
             button.translatesAutoresizingMaskIntoConstraints = false
 
             switch idx {

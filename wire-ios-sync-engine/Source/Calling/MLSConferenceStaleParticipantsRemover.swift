@@ -99,12 +99,12 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 and: input.participants
             )
 
-            newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
-                guard let clientID = MLSClientID(callParticipant: $0) else {
-                    return
+            for item in newAndChangedParticipants.excludingParticipant(withID: input.selfUserID) {
+                guard let clientID = MLSClientID(callParticipant: item) else {
+                    continue
                 }
 
-                switch (subconversationMembers.contains(clientID), $0.state) {
+                switch (subconversationMembers.contains(clientID), item.state) {
                 case (true, .connecting):
                     enqueueRemove(
                         client: clientID,
@@ -132,7 +132,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
         let previousStates = Dictionary(uniqueKeysWithValues: previous.map { (UniqueKey(clientId: $0.clientId, userId: $0.userId), $0.state) })
 
-        current.forEach { participant in
+        for participant in current {
             let participantUniqueKey = UniqueKey(clientId: participant.clientId,
                                                  userId: participant.userId)
             if let previousState = previousStates[participantUniqueKey], previousState != participant.state {

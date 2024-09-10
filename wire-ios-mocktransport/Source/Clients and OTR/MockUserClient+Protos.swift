@@ -84,7 +84,7 @@ extension MockUserClient {
     /// Map a list of clients to a lookup by user
     private static func createUserToClientMapping(for clients: [MockUserClient]) -> [MockUser: [MockUserClient]] {
         var mapped = [MockUser: [MockUserClient]]()
-        clients.forEach { client in
+        for client in clients {
             var previous = mapped[client.user!] ?? [MockUserClient]()
             previous.append(client)
             mapped[client.user!] = previous

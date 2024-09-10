@@ -64,8 +64,8 @@ final class CallStatusView: UIView {
         stackView.spacing = 12
         accessibilityIdentifier = "CallStatusLabel"
         [titleLabel, subtitleLabel].forEach(stackView.addArrangedSubview)
-        [titleLabel, subtitleLabel, bitrateLabel].forEach {
-            $0.textAlignment = .center
+        for item in [titleLabel, subtitleLabel, bitrateLabel] {
+            item.textAlignment = .center
         }
 
         titleLabel.lineBreakMode = .byTruncatingTail
@@ -97,8 +97,8 @@ final class CallStatusView: UIView {
         bitrateLabel.isHidden = !configuration.shouldShowBitrateLabel
         bitrateLabel.bitRateStatus = BitRateStatus(configuration.isConstantBitRate)
 
-        [titleLabel, subtitleLabel, bitrateLabel].forEach {
-            $0.textColor = SemanticColors.Label.textDefault
+        for item in [titleLabel, subtitleLabel, bitrateLabel] {
+            item.textColor = SemanticColors.Label.textDefault
         }
     }
 }

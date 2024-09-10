@@ -50,10 +50,10 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
     }
 
     func test_itFailsToGenerateRequests_APIBelowV5() {
-        [.v0, .v1, .v2, .v3, .v4].forEach {
+        for item in [.v0, .v1, .v2, .v3, .v4] {
             test_itDoesntGenerateARequest(
                 action: action,
-                apiVersion: $0,
+                apiVersion: item,
                 expectedError: .endpointUnavailable
             )
         }
@@ -82,7 +82,7 @@ final class UpdateConversationProtocolActionHandlerTests: ActionHandlerTestBase<
         let apiFailures = UpdateConversationProtocolAction.Failure.APIFailure.allCases
 
         // When, Then
-        apiFailures.forEach { apiFailure in
+        for apiFailure in apiFailures {
             test_itHandlesFailure(
                 status: apiFailure.statusCode,
                 payload: [

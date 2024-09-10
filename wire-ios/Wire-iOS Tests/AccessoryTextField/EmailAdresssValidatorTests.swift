@@ -44,7 +44,7 @@ final class EmailAdresssValidatorTests: XCTestCase {
 
         // WHEN & THEN
 
-        validEmailAddresses.forEach { email in
+        for email in validEmailAddresses {
             XCTAssert(email.isEmail, "failed for \(email)")
         }
     }
@@ -86,7 +86,7 @@ final class EmailAdresssValidatorTests: XCTestCase {
 
         // WHEN & THEN
 
-        invalidEmailAddresses.forEach { email in
+        for email in invalidEmailAddresses {
             XCTAssertFalse(email.isEmail, "failed for \(email)")
         }
     }

@@ -73,7 +73,7 @@ final class SyncStatusTests: MessagingTest {
 
         sut.determineInitialSyncPhase()
 
-        syncPhases.forEach { syncPhase in
+        for syncPhase in syncPhases {
             // then
             XCTAssertEqual(sut.currentSyncPhase, syncPhase)
             // when

@@ -55,9 +55,9 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
-            self.sut.contextChangeTrackers.forEach {
+            for contextChangeTracker in self.sut.contextChangeTrackers {
                 let otherClientSet: Set<NSManagedObject> = [otherClient]
-                $0.objectsDidChange(otherClientSet)
+                contextChangeTracker.objectsDidChange(otherClientSet)
             }
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -79,9 +79,9 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
-            self.sut.contextChangeTrackers.forEach {
+            for contextChangeTracker in self.sut.contextChangeTrackers {
                 let otherClientSet: Set<NSManagedObject> = [otherClient]
-                $0.objectsDidChange(otherClientSet)
+                contextChangeTracker.objectsDidChange(otherClientSet)
             }
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

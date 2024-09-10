@@ -49,10 +49,10 @@ class NotificationLabel: RoundedBlurView {
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
 
-        [blurView, messageLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.clipsToBounds = true
-            addSubview($0)
+        for item in [blurView, messageLabel] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+            item.clipsToBounds = true
+            addSubview(item)
         }
     }
 

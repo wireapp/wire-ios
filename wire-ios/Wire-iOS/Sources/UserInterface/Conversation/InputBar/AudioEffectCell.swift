@@ -49,12 +49,12 @@ final class AudioEffectCell: UICollectionViewCell {
         iconView.isUserInteractionEnabled = false
         [iconView, borderRightView, borderBottomView].forEach(contentView.addSubview)
 
-        [borderRightView, borderBottomView].forEach { v in
+        for v in [borderRightView, borderBottomView] {
             v.backgroundColor = SemanticColors.Icon.foregroundDefaultBlack
         }
 
-        [iconView, borderRightView, borderBottomView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [iconView, borderRightView, borderBottomView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             iconView.topAnchor.constraint(equalTo: contentView.topAnchor),

@@ -100,8 +100,8 @@ class BaseAccountView: UIView {
             CGFloat.AccountView.iconWidth
         }
 
-        [self, dotView, selectionView, imageViewContainer].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [self, dotView, selectionView, imageViewContainer] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate(

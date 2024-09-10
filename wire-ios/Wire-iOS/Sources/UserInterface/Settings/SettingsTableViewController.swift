@@ -83,8 +83,8 @@ class SettingsBaseTableViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [tableView, topSeparator, footerContainer, footerSeparator].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [tableView, topSeparator, footerContainer, footerSeparator] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         let footerContainerHeightConstraint = footerContainer.heightAnchor.constraint(equalToConstant: 0)

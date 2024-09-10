@@ -85,7 +85,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     }
 
     deinit {
-        strategies.forEach { strategy in
+        for strategy in strategies {
             if let strategy = strategy as? TearDownCapable {
                 strategy.tearDown()
             }

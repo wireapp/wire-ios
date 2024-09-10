@@ -138,7 +138,7 @@ class TeamInvitationRequestStrategyTests: MessagingTest {
                                                .failure(email: "", error: .alreadyRegistered),
                                                .failure(email: "", error: .unknown)]
 
-        zip(inviteResults, expectedResults).forEach { tuple in
+        for tuple in zip(inviteResults, expectedResults) {
             let (result, expectedResult) = tuple
             XCTAssertTrue(result == expectedResult)
         }

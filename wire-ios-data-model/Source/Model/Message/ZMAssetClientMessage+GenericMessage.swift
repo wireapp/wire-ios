@@ -109,8 +109,8 @@ extension ZMAssetClientMessage {
         }
 
         var message = GenericMessage()
-        filteredData.forEach {
-            try? message.merge(serializedData: $0)
+        for filteredData in filteredData {
+            try? message.merge(serializedData: filteredData)
         }
         return message
     }

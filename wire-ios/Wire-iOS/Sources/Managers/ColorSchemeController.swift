@@ -43,7 +43,7 @@ final class ColorSchemeController: NSObject {
 
     @objc
     private func settingsColorSchemeDidChange() {
-        UIApplication.shared.windows.forEach { window in
+        for window in UIApplication.shared.windows {
             window.overrideUserInterfaceStyle = Settings.shared.colorScheme.userInterfaceStyle
         }
 

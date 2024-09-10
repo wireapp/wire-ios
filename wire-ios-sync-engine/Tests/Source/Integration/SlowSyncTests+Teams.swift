@@ -47,7 +47,7 @@ class SlowSyncTestsTeams: IntegrationTest {
         // Then
         var fetchedTeams = false, fetchedMembers = false
 
-        mockTransportSession.receivedRequests().forEach { request in
+        for request in mockTransportSession.receivedRequests() {
             switch request.path {
             case "/teams?size=50": fetchedTeams = true
             case "/teams/\(team.identifier)/members": fetchedMembers = true
@@ -102,7 +102,7 @@ class SlowSyncTestsTeams: IntegrationTest {
         // Then
         var fetchedTeams = false, fetchedMembers = false
 
-        mockTransportSession.receivedRequests().forEach { request in
+        for request in mockTransportSession.receivedRequests() {
             switch request.path {
             case "/teams?size=50": fetchedTeams = true
             case "/teams/\(team.identifier)/members": fetchedMembers = true

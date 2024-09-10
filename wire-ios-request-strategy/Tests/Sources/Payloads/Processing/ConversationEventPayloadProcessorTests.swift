@@ -1442,7 +1442,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
             )
 
             let users: [ZMUser] = [.selfUser(in: syncMOC), .insertNewObject(in: syncMOC)]
-            users.forEach { user in
+            for user in users {
                 user.remoteIdentifier = .init()
                 user.domain = owningDomain
                 let membership = Member.insertNewObject(in: syncMOC)

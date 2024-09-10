@@ -99,9 +99,9 @@ extension AddressBookAccessor {
     fileprivate func generateContactCards(range: Range<UInt>) -> [String: [String]] {
         var cards = [String: [String]]()
 
-        self.contacts(range: range).enumerated().forEach {
-            let contact = $0.element
-            cards[contact.localIdentifier ?? "\($0.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
+        for item in self.contacts(range: range).enumerated() {
+            let contact = item.element
+            cards[contact.localIdentifier ?? "\(item.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
                 + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
         }
         return cards

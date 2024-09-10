@@ -27,7 +27,7 @@ final class ZMUpdateEventTypeTests: XCTestCase {
         ]
         let forbiddenRawValues = Set(deletedEvents.values)
 
-        Sut.allCases.forEach { eventType in
+        for eventType in Sut.allCases {
             XCTAssertFalse(forbiddenRawValues.contains(eventType.rawValue))
         }
     }

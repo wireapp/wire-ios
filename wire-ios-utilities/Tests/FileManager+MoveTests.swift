@@ -46,8 +46,8 @@ class FileManagerMoveTests: XCTestCase {
         try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        files.forEach {
-            checkIfFileExists(in: self.tempFolder2, relativePath: $0)
+        for file in files {
+            checkIfFileExists(in: self.tempFolder2, relativePath: file)
         }
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.tempFolder1.path))
     }
@@ -71,8 +71,8 @@ class FileManagerMoveTests: XCTestCase {
         try FileManager.default.moveFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        (filesToMove + preExistingFiles).forEach {
-            checkIfFileExists(in: self.tempFolder2, relativePath: $0)
+        for item in (filesToMove + preExistingFiles) {
+            checkIfFileExists(in: self.tempFolder2, relativePath: item)
         }
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.tempFolder1.path))
     }
@@ -137,9 +137,9 @@ extension FileManagerMoveTests {
         try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        files.forEach {
-            checkIfFileExists(in: self.tempFolder2, relativePath: $0)
-            checkIfFileExists(in: self.tempFolder1, relativePath: $0)
+        for file in files {
+            checkIfFileExists(in: self.tempFolder2, relativePath: file)
+            checkIfFileExists(in: self.tempFolder1, relativePath: file)
         }
     }
 
@@ -162,8 +162,8 @@ extension FileManagerMoveTests {
         try FileManager.default.copyFolderRecursively(from: self.tempFolder1, to: self.tempFolder2, overwriteExistingFiles: true)
 
         // THEN
-        (filesToMove + preExistingFiles).forEach {
-            checkIfFileExists(in: self.tempFolder2, relativePath: $0)
+        for item in (filesToMove + preExistingFiles) {
+            checkIfFileExists(in: self.tempFolder2, relativePath: item)
         }
     }
 
@@ -228,7 +228,7 @@ extension FileManagerMoveTests {
     /// - parameter in: root folder where to create the file
     /// - parameter relativeFilePaths: path of the files to create, relative to the root folder
     func createFiles(in folder: URL, relativeFilePaths: [String], content: String? = nil) {
-        relativeFilePaths.forEach { filePath in
+        for filePath in relativeFilePaths {
             let fullURL = folder.appendingPathComponent(filePath)
             let directory = fullURL.deletingLastPathComponent()
             try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)

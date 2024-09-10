@@ -248,8 +248,8 @@ final class ProfileViewController: UIViewController {
 
         let securityBannerHeight: CGFloat = securityLevelView.isHidden ? 0 : 24
 
-        [securityLevelView, tabsView, profileFooterView, incomingRequestFooter, activityIndicator].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [securityLevelView, tabsView, profileFooterView, incomingRequestFooter, activityIndicator] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         let incomingRequestFooterBottomConstraint = incomingRequestFooter.bottomAnchor.constraint(equalTo: view.bottomAnchor).withPriority(.defaultLow)
 

@@ -95,12 +95,11 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                 .filter({ $0.needsDeliveryConfirmation(managedObjectContext: managedObjectContext) })
                 .partition(by: \.senderUUID)
 
-            eventsBySender.forEach { (senderID: UUID, events: [ZMUpdateEvent]) in
-
+            for (senderID, events) in eventsBySender {
                 let eventsByDomain = events.partition(by: \.senderDomain)
                 let eventsWithoutDomain = events.filter({ $0.senderDomain == nil })
 
-                eventsByDomain.forEach { (domain: String, events: [ZMUpdateEvent]) in
+                for (domain, events) in eventsByDomain {
                     deliveryReceipts.append(deliveryReceipt(for: senderID,
                                                             domain: domain,
                                                             conversation: conversation,

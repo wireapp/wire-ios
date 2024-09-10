@@ -862,8 +862,8 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
         var result: ZMSystemMessage! = nil
         self.performPretendingUiMocIsSyncMoc {
-            users.forEach {
-                conversation.addParticipantAndUpdateConversationState(user: $0, role: nil)
+            for item in users {
+                conversation.addParticipantAndUpdateConversationState(user: item, role: nil)
             }
             result = ZMSystemMessage.createOrUpdate(from: event, in: conversation.managedObjectContext!, prefetchResult: nil)
         }

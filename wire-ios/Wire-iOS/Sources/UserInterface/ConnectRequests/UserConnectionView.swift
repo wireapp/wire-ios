@@ -64,9 +64,9 @@ final class UserConnectionView: UIView, Copyable {
     private func setup() {
         labelContainer.spacing = 0.0
         self.backgroundColor = SemanticColors.View.backgroundConversationView
-        [firstLabel, secondLabel].forEach {
-            $0.numberOfLines = 0
-            $0.textAlignment = .center
+        for item in [firstLabel, secondLabel] {
+            item.numberOfLines = 0
+            item.textAlignment = .center
         }
 
         userImageView.accessibilityLabel = "user image"

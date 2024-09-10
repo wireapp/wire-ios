@@ -187,8 +187,8 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     ]
 
     private func boostrapChangeTrackers(with objects: ZMManagedObject...) {
-        sut.contextChangeTrackers.forEach {
-            $0.objectsDidChange(Set(objects))
+        for contextChangeTracker in sut.contextChangeTrackers {
+            contextChangeTracker.objectsDidChange(Set(objects))
         }
     }
 }

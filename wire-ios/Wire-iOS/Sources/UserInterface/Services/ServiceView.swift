@@ -54,8 +54,8 @@ final class ServiceDetailView: UIView {
     }
 
     private func createConstraints() {
-        [self, serviceView, descriptionTextView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [self, serviceView, descriptionTextView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([

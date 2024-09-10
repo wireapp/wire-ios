@@ -27,7 +27,7 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
     let entityNames = [ZMUser.entityName(), ZMConversation.entityName(), Team.entityName()]
 
     override func execute(in context: NSManagedObjectContext) {
-        entityNames.forEach { entityName in
+        for entityName in entityNames {
             removeNilPrimaryKey(for: entityName, context: context)
             removeDuplicates(for: entityName, context: context)
         }
@@ -57,9 +57,8 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
 
         var duplicates = [String: [NSManagedObject]]()
 
-        duplicateObjects.forEach { (_, objects: [NSManagedObject]) in
-            objects.forEach { object in
-
+        for (_, objects) in duplicateObjects {
+            for object in objects {
                 let uniqueKey = PrimaryKeyGenerator.generateKey(for: object, entityName: entityName)
                 if duplicates[uniqueKey] == nil {
                     duplicates[uniqueKey] = []
@@ -72,10 +71,10 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
 
         var needsSlowSync = false
 
-        duplicates.forEach { (key, objects: [NSManagedObject]) in
+        for (key, objects) in duplicates {
             guard objects.count > 1 else {
                 WireLogger.localStorage.info("skipping object with different domain if any: \(key)", attributes: .safePublic)
-                return
+                continue
             }
             WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
             // for now we just keep one object and mark to sync and drop the rest.

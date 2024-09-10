@@ -23,7 +23,7 @@ extension XCTestCase {
         let timeoutDate = Date(timeIntervalSinceNow: timeout)
         var groupCounter = groups.count
 
-        groups.forEach { group in
+        for group in groups {
             group.notify(queue: DispatchQueue.main, execute: {
                 groupCounter -= 1
             })

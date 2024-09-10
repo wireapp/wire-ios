@@ -75,13 +75,13 @@ final class CallParticipantDetailsView: RoundedBlurView {
 
     override func setupViews() {
         super.setupViews()
-        [microphoneImageView, labelsContainerView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            addSubview($0)
+        for item in [microphoneImageView, labelsContainerView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(item)
         }
-        [nameLabel, connectingLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            labelsContainerView.addArrangedSubview($0)
+        for item in [nameLabel, connectingLabel] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+            labelsContainerView.addArrangedSubview(item)
         }
         connectingLabel.isHidden = true
         connectingLabel.setContentCompressionResistancePriority(.required, for: .horizontal)

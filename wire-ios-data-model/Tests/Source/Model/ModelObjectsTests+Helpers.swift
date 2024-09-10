@@ -49,7 +49,7 @@ extension ModelObjectsTests {
 
         let selfClient: UserClient? = ZMUser.selfUser(in: self.uiMOC).selfClient()
         let user: ZMUser = ZMUser.insertNewObject(in: self.uiMOC)
-        [0...count].forEach({ _ in
+        for _ in [0...count] {
             let client: UserClient = UserClient.insertNewObject(in: self.uiMOC)
             client.user = user
             if trusted {
@@ -57,7 +57,7 @@ extension ModelObjectsTests {
             } else {
                 selfClient?.ignoreClient(client)
             }
-        })
+        }
         return user
     }
 

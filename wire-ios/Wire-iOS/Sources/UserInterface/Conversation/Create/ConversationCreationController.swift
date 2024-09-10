@@ -450,14 +450,14 @@ extension ConversationCreationController {
     }
 
     func expandOptions() {
-        optionsSections.forEach {
-            $0.isHidden = false
+        for optionsSection in optionsSections {
+            optionsSection.isHidden = false
         }
     }
 
     func collapseOptions() {
-        optionsSections.forEach {
-            $0.isHidden = true
+        for optionsSection in optionsSections {
+            optionsSection.isHidden = true
         }
     }
 }

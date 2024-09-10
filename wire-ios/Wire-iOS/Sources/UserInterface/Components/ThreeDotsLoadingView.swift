@@ -60,7 +60,7 @@ final class ThreeDotsLoadingView: UIView {
     // MARK: - Setup views and constraints
 
     func setupViews() {
-        [dot1, dot2, dot3].forEach { dot in
+        for dot in [dot1, dot2, dot3] {
             dot.layer.cornerRadius = dotRadius
             dot.backgroundColor = inactiveColor
         }
@@ -77,7 +77,7 @@ final class ThreeDotsLoadingView: UIView {
             dot3.leftAnchor.constraint(equalTo: dot2.rightAnchor, constant: 4)
         ]
 
-        [dot1, dot2, dot3].forEach { dot in
+        for dot in [dot1, dot2, dot3] {
             constraints.append(contentsOf: [
                 dot.topAnchor.constraint(equalTo: topAnchor),
                 dot.bottomAnchor.constraint(equalTo: bottomAnchor),

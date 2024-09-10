@@ -53,8 +53,8 @@ enum CallParticipantsListCellConfiguration: Hashable {
     }
 
     static func prepare(_ collectionView: UICollectionView) {
-        allCellTypes.forEach {
-            collectionView.register($0, forCellWithReuseIdentifier: $0.reuseIdentifier)
+        for cellType in allCellTypes {
+            collectionView.register(cellType, forCellWithReuseIdentifier: cellType.reuseIdentifier)
         }
     }
 }

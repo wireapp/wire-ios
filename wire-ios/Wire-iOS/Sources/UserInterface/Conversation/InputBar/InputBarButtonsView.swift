@@ -95,13 +95,13 @@ final class InputBarButtonsView: UIView {
     func configureViews() {
         addSubview(buttonInnerContainer)
 
-        buttons.forEach {
+        for button in buttons {
             let action = UIAction { [weak self] _ in
                 self?.anyButtonPressed()
             }
 
-            $0.addAction(action, for: .touchUpInside)
-            buttonInnerContainer.addSubview($0)
+            button.addAction(action, for: .touchUpInside)
+            buttonInnerContainer.addSubview(button)
         }
 
         buttonInnerContainer.clipsToBounds = true
@@ -127,8 +127,8 @@ final class InputBarButtonsView: UIView {
         let widthConstraint = widthAnchor.constraint(equalToConstant: 600)
         widthConstraint.priority = UILayoutPriority(rawValue: 750)
 
-        [buttonInnerContainer, buttonOuterContainer].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [buttonInnerContainer, buttonOuterContainer] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([
@@ -170,10 +170,10 @@ final class InputBarButtonsView: UIView {
             let firstRowButtons = [UIButton](buttons.prefix(customButtonCount))
             let secondRowButtons = [UIButton](buttons.suffix(buttons.count - customButtonCount))
 
-            buttons.forEach {
-                $0.isAccessibilityElement = currentRow == 0
-                    ? firstRowButtons.contains($0)
-                    : secondRowButtons.contains($0)
+            for button in buttons {
+                button.isAccessibilityElement = currentRow == 0
+                    ? firstRowButtons.contains(button)
+                    : secondRowButtons.contains(button)
             }
         }
     }
@@ -472,7 +472,7 @@ final class InputBarButtonsView: UIView {
             setupInsets(for: buttons.last!, position: .last)
         }
 
-        buttons.dropFirst().dropLast().forEach { button in
+        for button in buttons.dropFirst().dropLast() {
             setupInsets(for: button, position: .middle)
         }
     }

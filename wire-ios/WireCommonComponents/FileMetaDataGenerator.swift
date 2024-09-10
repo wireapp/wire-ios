@@ -103,7 +103,7 @@ extension AVAsset {
 
         let ratio: Float64 = Float64(duration.value) / Float64(duration.timescale)
 
-        assetTrack.formatDescriptions.forEach { item in
+        for item in assetTrack.formatDescriptions {
             let formatDescription: CMFormatDescription = item as! CMFormatDescription
             if let mSampleRate: Float64 = CMAudioFormatDescriptionGetStreamBasicDescription(formatDescription)?.pointee.mSampleRate {
                 sampleCount = UInt64(mSampleRate * ratio)

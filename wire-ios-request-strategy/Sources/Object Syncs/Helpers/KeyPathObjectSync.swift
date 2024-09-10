@@ -62,7 +62,7 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
         let objects = objects.compactMap({ $0 as? Transcoder.T })
 
-        objects.forEach { object in
+        for object in objects {
             var mutableObject = object
 
             if object[keyPath: keyPath] {

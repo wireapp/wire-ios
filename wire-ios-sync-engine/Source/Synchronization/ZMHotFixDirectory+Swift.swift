@@ -51,7 +51,7 @@ import Foundation
 
         guard let messages = context.fetchOrAssert(request: fetchRequest) as? [ZMAssetClientMessage] else { return }
 
-        messages.forEach { message in
+        for message in messages {
             message.updateTransferState(.uploadingFailed, synchronize: false)
             if message.imageMessageData != nil {
                 message.expire()
@@ -121,8 +121,8 @@ import Foundation
         let filteredConversations = conversations.filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
 
         // update "you are using this device" message
-        filteredConversations.forEach {
-            $0.replaceNewClientMessageIfNeededWithNewDeviceMesssage()
+        for filteredConversation in filteredConversations {
+            filteredConversation.replaceNewClientMessageIfNeededWithNewDeviceMesssage()
         }
     }
 
@@ -131,7 +131,7 @@ import Foundation
         guard let cachesDirectory = try? fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false) else { return }
         let PINCacheFolders = ["com.pinterest.PINDiskCache.images", "com.pinterest.PINDiskCache.largeUserImages", "com.pinterest.PINDiskCache.smallUserImages"]
 
-        PINCacheFolders.forEach { PINCacheFolder in
+        for PINCacheFolder in PINCacheFolders {
             let cacheDirectory = cachesDirectory.appendingPathComponent(PINCacheFolder, isDirectory: true)
             try? fileManager.removeItem(at: cacheDirectory)
         }

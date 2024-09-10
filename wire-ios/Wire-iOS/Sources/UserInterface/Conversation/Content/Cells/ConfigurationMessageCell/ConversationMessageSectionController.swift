@@ -270,11 +270,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func updateDelegates() {
-        cellDescriptions.forEach({
-            $0.message = message
-            $0.actionController = actionController
-            $0.delegate = cellDelegate
-        })
+        for cellDescription in cellDescriptions {
+            cellDescription.message = message
+            cellDescription.actionController = actionController
+            cellDescription.delegate = cellDelegate
+        }
     }
 
     func recreateCellDescriptions(in context: ConversationMessageContext) {

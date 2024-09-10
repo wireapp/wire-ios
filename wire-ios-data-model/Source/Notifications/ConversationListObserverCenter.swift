@@ -63,8 +63,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         } else {
             zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
             zmLog.ifDebug {
-                conversationList.items.forEach {
-                    zmLog.debug("Conversation in \(conversationList.identifier) includes: \(String(describing: $0.objectID)) with type: \($0.conversationType.rawValue)")
+                for item in conversationList.items {
+                    zmLog.debug("Conversation in \(conversationList.identifier) includes: \(String(describing: item.objectID)) with type: \(item.conversationType.rawValue)")
                 }
             }
         }
@@ -172,11 +172,11 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
         if deleted.count == 0, inserted.count == 0 { return }
         zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
-        inserted.forEach {
-            zmLog.debug("Inserted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
+        for item in inserted {
+            zmLog.debug("Inserted: \(item.objectID) conversationType: \(item.conversationType.rawValue)")
         }
-        deleted.forEach {
-            zmLog.debug("Deleted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")
+        for item in deleted {
+            zmLog.debug("Deleted: \(item.objectID) conversationType: \(item.conversationType.rawValue)")
         }
         insertedConversations.append(contentsOf: inserted)
         deletedConversations.append(contentsOf: deleted)
@@ -185,10 +185,10 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     /// Applys a function on a token and cleares tokens with deallocated lists
     private func forwardToSnapshots(block: ((ConversationListSnapshot) -> Void)) {
         var snapshotsToRemove = [String]()
-        listSnapshots.forEach { identifier, snapshot in
+        for (identifier, snapshot) in listSnapshots {
             guard snapshot.conversationList != nil else {
                 snapshotsToRemove.append(identifier)
-                return
+                continue
             }
             block(snapshot)
         }

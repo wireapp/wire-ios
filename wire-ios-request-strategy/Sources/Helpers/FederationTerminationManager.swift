@@ -80,7 +80,7 @@ extension FederationTerminationManager {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
         if let connectedUsers = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
-            connectedUsers.forEach { user in
+            for user in connectedUsers {
                 user.connection = nil
             }
         }
@@ -90,16 +90,16 @@ extension FederationTerminationManager {
         let sentAndPendingConnectionsPredicate = ZMUser.predicateForSentAndPendingConnections(hostedOnDomain: domain)
         let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: sentAndPendingConnectionsPredicate)
         if let pendingUsers = context.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] {
-            pendingUsers.forEach { user in
+            for user in pendingUsers {
                 user.connection?.status = (user.connection?.status == .pending) ? .ignored : .cancelled
             }
         }
     }
 
     fileprivate func removeUsers(with userDomain: String, fromConversationsOwnedBy domain: String) {
-        conversationsHosted(on: domain, withParticipantsOn: userDomain).forEach {
-            $0.appendFederationTerminationSystemMessage(domains: [userDomain, domain])
-            $0.removeParticipants(with: [userDomain])
+        for item in conversationsHosted(on: domain, withParticipantsOn: userDomain) {
+            item.appendFederationTerminationSystemMessage(domains: [userDomain, domain])
+            item.removeParticipants(with: [userDomain])
         }
     }
 
@@ -109,9 +109,9 @@ extension FederationTerminationManager {
     }
 
     fileprivate func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
-        conversationsNotHosted(on: domains, withParticipantsOn: userDomains).forEach {
-            $0.appendFederationTerminationSystemMessage(domains: userDomains)
-            $0.removeParticipants(with: userDomains)
+        for item in conversationsNotHosted(on: domains, withParticipantsOn: userDomains) {
+            item.appendFederationTerminationSystemMessage(domains: userDomains)
+            item.removeParticipants(with: userDomains)
         }
     }
 

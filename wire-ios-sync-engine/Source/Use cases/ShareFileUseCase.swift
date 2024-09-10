@@ -45,7 +45,7 @@ public struct ShareFileUseCase: ShareFileUseCaseProtocol {
         conversations: [ZMConversation]
     ) {
         contextProvider.viewContext.perform {
-            conversations.forEach { conversation in
+            for conversation in conversations {
                 do {
                     try conversation.appendFile(with: fileMetadata)
                 } catch {

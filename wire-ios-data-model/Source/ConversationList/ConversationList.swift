@@ -192,10 +192,10 @@ public final class ConversationList: NSObject {
 
     func insertConversations(_ conversations: Set<ZMConversation>) {
         var conversations = conversations
-        items.forEach { conversation in
+        for conversation in items {
             conversations.remove(conversation)
         }
-        conversations.forEach { conversation in
+        for conversation in conversations {
             sortInsertConversation(conversation)
         }
     }

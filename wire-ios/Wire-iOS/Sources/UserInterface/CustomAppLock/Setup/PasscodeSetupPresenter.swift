@@ -67,7 +67,7 @@ final class PasscodeSetupPresenter {
 
 extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
     private func resetValidationLabels(errors: Set<PasscodeError>, passed: Bool) {
-        errors.forEach { errorReason in
+        for errorReason in errors {
             userInterface?.setValidationLabelsState(errorReason: errorReason, passed: passed)
         }
     }
@@ -93,7 +93,7 @@ extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
 extension PasscodeSetupPresenter {
     private func passcodeError(from violations: [PasswordValidationResult.Violation]) -> Set<PasscodeError> {
         var passcodeErrors: Set<PasscodeError> = Set()
-        violations.forEach { violation in
+        for violation in violations {
             switch violation {
             case .tooShort:
                 passcodeErrors.insert(.tooShort)
@@ -108,9 +108,9 @@ extension PasscodeSetupPresenter {
 
     private func passcodeError(from missingCharacterClasses: Set<PasswordCharacterClass>) -> Set<PasscodeError> {
         var passcodeErrors: Set<PasscodeError> = Set()
-        passcodeCharacterClasses.forEach {
-            if missingCharacterClasses.contains($0) {
-                switch $0 {
+        for passcodeCharacterClass in passcodeCharacterClasses {
+            if missingCharacterClasses.contains(passcodeCharacterClass) {
+                switch passcodeCharacterClass {
                 case .uppercase:
                     passcodeErrors.insert(.noUppercaseChar)
                 case .lowercase:

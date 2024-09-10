@@ -42,9 +42,9 @@ struct CacheFileRelocator {
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init
         let result = group(fileNames: files.filter { !whitelistedFiles.contains($0) })
         if result.assigned.count == 0 {
-            result.unassigned.forEach {
-                let newLocation = newCacheLocation.appendingPathComponent($0)
-                let oldLocation = oldCacheLocation.appendingPathComponent($0)
+            for item in result.unassigned {
+                let newLocation = newCacheLocation.appendingPathComponent(item)
+                let oldLocation = oldCacheLocation.appendingPathComponent(item)
                 zmLog.debug("Moving non-assigned Cache folder from \(oldLocation) to \(newLocation)")
                 do {
                     try fm.moveItem(at: oldLocation, to: newLocation)

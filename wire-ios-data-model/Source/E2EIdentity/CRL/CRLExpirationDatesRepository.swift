@@ -106,8 +106,8 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
             return
         }
 
-        knownDistributionPoints.forEach {
-            storage.removeObject(forKey: .expirationDate(dp: $0))
+        for knownDistributionPoint in knownDistributionPoints {
+            storage.removeObject(forKey: .expirationDate(dp: knownDistributionPoint))
         }
     }
 

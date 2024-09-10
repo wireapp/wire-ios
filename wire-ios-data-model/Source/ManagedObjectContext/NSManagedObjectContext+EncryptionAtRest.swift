@@ -39,9 +39,9 @@ extension Sequence where Element: NSManagedObject {
                     let context = element.managedObjectContext
 
                     try context?.save()
-                    processed.forEach({
-                        context?.refresh($0, mergeChanges: false)
-                    })
+                    for item in processed {
+                        context?.refresh(item, mergeChanges: false)
+                    }
                     processed = []
                 }
             }

@@ -83,11 +83,11 @@ final class ZMUserConsentTests: DatabaseTest {
              (["results": []], false),
              ([:], false)]
 
-        pairs.forEach {
-            let payload = ZMUser.parse(consentPayload: $0.0 as ZMTransportData)
+        for pair in pairs {
+            let payload = ZMUser.parse(consentPayload: pair.0 as ZMTransportData)
 
             let value = payload[.marketing] ?? false
-            XCTAssertEqual(value, $0.1)
+            XCTAssertEqual(value, pair.1)
         }
     }
 

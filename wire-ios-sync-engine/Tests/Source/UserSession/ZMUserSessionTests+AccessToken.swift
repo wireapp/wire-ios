@@ -27,11 +27,11 @@ final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             let selfClient = createSelfClient()
 
-            APIVersion.allCases.forEach {
+            for item in APIVersion.allCases {
                 test_accessTokenRenewalAfterClientRegistration(
                     userClient: selfClient,
-                    apiVersion: $0,
-                    shouldRenew: $0 > .v2
+                    apiVersion: item,
+                    shouldRenew: item > .v2
                 )
             }
         }

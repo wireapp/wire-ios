@@ -115,8 +115,8 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
 
         stackView.addArrangedSubview(avatarViewContainer)
 
-        [avatarViewContainer, shieldView, guestUserIcon, legalHoldIcon, stackView, titleLabel, checkImageView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [avatarViewContainer, shieldView, guestUserIcon, legalHoldIcon, stackView, titleLabel, checkImageView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         titleLabel.backgroundColor = .clear
@@ -124,8 +124,8 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
         titleLabel.font = .normalLightFont
         titleLabel.setContentCompressionResistancePriority(UILayoutPriority.defaultLow, for: .horizontal)
 
-        [titleLabel, shieldView, guestUserIcon, legalHoldIcon, checkImageView].forEach {
-            stackView.addArrangedSubview($0)
+        for item in [titleLabel, shieldView, guestUserIcon, legalHoldIcon, checkImageView] {
+            stackView.addArrangedSubview(item)
         }
 
         checkImageView.layer.borderColor = SemanticColors.Icon.borderCheckMark.cgColor

@@ -66,9 +66,9 @@ final class CallParticipantView: BaseCallParticipantView {
     override func setupViews() {
         super.setupViews()
 
-        [blurView, pausedLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            insertSubview($0, belowSubview: userDetailsView)
+        for item in [blurView, pausedLabel] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+            insertSubview(item, belowSubview: userDetailsView)
         }
         pausedLabel.textAlignment = .center
     }
@@ -136,9 +136,9 @@ final class CallParticipantView: BaseCallParticipantView {
             insertSubview(scalableView, belowSubview: userDetailsView)
         }
 
-        [scalableView, videoContainerView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.fitIn(view: self)
+        for item in [scalableView, videoContainerView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
+            item.fitIn(view: self)
         }
     }
 

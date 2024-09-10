@@ -60,9 +60,9 @@ extension ZMUserSession {
     }
 
     func restoreDebugCommandsState() {
-        self.debugCommands.values.forEach {
-            let state = self.savedDebugState[$0.keyword] ?? [:]
-            $0.restoreFromState(userSession: self, state: state)
+        for value in self.debugCommands.values {
+            let state = self.savedDebugState[value.keyword] ?? [:]
+            value.restoreFromState(userSession: self, state: state)
         }
     }
 
@@ -249,8 +249,8 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
                 return
             }
 
-            self.currentlyEnabledLogs.forEach {
-                keyStore.encryptionContext.setExtendedLogging(identifier: $0, enabled: true)
+            for currentlyEnabledLog in self.currentlyEnabledLogs {
+                keyStore.encryptionContext.setExtendedLogging(identifier: currentlyEnabledLog, enabled: true)
             }
         }
     }

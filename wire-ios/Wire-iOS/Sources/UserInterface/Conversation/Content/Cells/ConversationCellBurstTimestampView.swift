@@ -51,8 +51,8 @@ final class ConversationCellBurstTimestampView: UIView {
 
     private var separatorHeight: CGFloat = .hairline {
         didSet {
-            heightConstraints.forEach {
-                $0.constant = separatorHeight
+            for heightConstraint in heightConstraints {
+                heightConstraint.constant = separatorHeight
             }
         }
     }

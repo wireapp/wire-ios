@@ -42,8 +42,8 @@ final class IconLabelButtonTests: XCTestCase {
     }
 
     func testIconLabelButton() {
-        IconLabelButtonTestCase.Appearance.allCases.forEach {
-            verify(appearance: $0)
+        for item in IconLabelButtonTestCase.Appearance.allCases {
+            verify(appearance: item)
         }
     }
 
@@ -64,9 +64,9 @@ struct IconLabelButtonTestCase {
         static var allCases: AllCases {
             var cases = AllCases()
 
-            InteractionState.allCases.forEach { interactionState in
-                SelectionState.allCases.forEach { selectionState in
-                    BlurState.allCases.forEach { blurState in
+            for interactionState in InteractionState.allCases {
+                for selectionState in SelectionState.allCases {
+                    for blurState in BlurState.allCases {
                         cases += [.dark(blurState, selectionState, interactionState)]
                     }
                     cases += [.light(selectionState, interactionState)]

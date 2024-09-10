@@ -106,8 +106,8 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
     }
 
     private func scrollToSection(_ section: Int) {
-        sut.view.subviews.forEach {
-            if let collectionView = $0 as? UICollectionView {
+        for subview in sut.view.subviews {
+            if let collectionView = subview as? UICollectionView {
                 collectionView.scrollToItem(at: IndexPath(item: 0, section: section),
                                             at: .top,
                                             animated: false)

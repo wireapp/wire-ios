@@ -547,8 +547,8 @@ final class ConversationInputBarViewController: UIViewController,
 
     @objc func updateInputBarButtons() {
         inputBar.buttonsView.buttons = inputBarButtons
-        inputBarButtons.forEach {
-            $0.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
+        for inputBarButton in inputBarButtons {
+            inputBarButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: .normal)
         }
         inputBar.buttonsView.setNeedsLayout()
     }
@@ -1006,8 +1006,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         mentionButton.accessibilityIdentifier = "mentionButton"
         markdownButton.accessibilityIdentifier = "markdownButton"
 
-        inputBarButtons.forEach {
-            $0.hitAreaPadding = .zero
+        for inputBarButton in inputBarButtons {
+            inputBarButton.hitAreaPadding = .zero
         }
 
         inputBar.textView.delegate = self
@@ -1037,8 +1037,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func createConstraints() {
-        [securityLevelView, inputBar, markdownButton, typingIndicatorView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [securityLevelView, inputBar, markdownButton, typingIndicatorView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         let bottomConstraint = inputBar.bottomAnchor.constraint(equalTo: inputBar.superview!.bottomAnchor)

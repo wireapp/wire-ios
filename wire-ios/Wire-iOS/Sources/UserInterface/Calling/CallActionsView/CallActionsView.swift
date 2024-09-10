@@ -87,7 +87,7 @@ final class CallActionsView: UIView {
     }
 
     private func setupSegmentedView() {
-        VideoGridPresentationMode.allCases.forEach { mode in
+        for mode in VideoGridPresentationMode.allCases {
             speakersAllSegmentedView.addButton(
                 withTitle: mode.title,
                 actionHandler: { [weak self] in self?.updateVideoGridPresentationMode(with: mode) }
@@ -107,8 +107,8 @@ final class CallActionsView: UIView {
     }
 
     private func createConstraints() {
-        [verticalStackView, bottomStackView, cameraButtonDisabled, speakersAllSegmentedView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [verticalStackView, bottomStackView, cameraButtonDisabled, speakersAllSegmentedView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             verticalStackView.topAnchor.constraint(equalTo: topAnchor),

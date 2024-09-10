@@ -102,8 +102,8 @@ final class ArticleView: UIView {
     private func setupConstraints(_ imagePlaceholder: Bool) {
         let imageHeight: CGFloat = imagePlaceholder ? self.imageHeight : 0
 
-        [messageLabel, authorLabel, imageView, obfuscationView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [messageLabel, authorLabel, imageView, obfuscationView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([

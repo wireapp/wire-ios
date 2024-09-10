@@ -69,7 +69,7 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         }
 
         // as per WPB-6485 we ignore the hasMore
-        payload.members.forEach { membershipPayload in
+        for membershipPayload in payload.members {
             membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
         }
 

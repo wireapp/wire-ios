@@ -194,8 +194,8 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
         badge.containedView.addSubview(badgeLabel)
 
-        [iconImageView, cellNameLabel, valueLabel, badge, imagePreview].forEach {
-            contentView.addSubview($0)
+        for item in [iconImageView, cellNameLabel, valueLabel, badge, imagePreview] {
+            contentView.addSubview(item)
         }
 
         createConstraints()
@@ -213,8 +213,8 @@ class SettingsTableCell: SettingsTableCellProtocol {
             trailingBoundaryView.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        [iconImageView, valueLabel, badge, badgeLabel, imagePreview, cellNameLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [iconImageView, valueLabel, badge, badgeLabel, imagePreview, cellNameLabel] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([

@@ -58,7 +58,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         }
 
         self.mockTransportSession.performRemoteChanges { _ in
-            (0..<4).forEach { _ in
+            for _ in (0..<4) {
                 insertMessage()
             }
         }

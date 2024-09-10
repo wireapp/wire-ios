@@ -61,9 +61,9 @@ final class InputBarEditView: UIView {
     }
 
     fileprivate func configureViews() {
-        [undoButton, confirmButton, cancelButton].forEach {
-            addSubview($0)
-            $0.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        for item in [undoButton, confirmButton, cancelButton] {
+            addSubview(item)
+            item.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         }
 
         undoButton.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPressUndoButton)))
@@ -78,8 +78,8 @@ final class InputBarEditView: UIView {
     }
 
     fileprivate func createConstraints() {
-        [undoButton, confirmButton, cancelButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [undoButton, confirmButton, cancelButton] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
         NSLayoutConstraint.activate([
             topAnchor.constraint(equalTo: undoButton.topAnchor),

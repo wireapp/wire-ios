@@ -27,7 +27,7 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
     let entityNames = [ZMUser.entityName(), ZMConversation.entityName()]
 
     override func execute(in context: NSManagedObjectContext) throws {
-        entityNames.forEach { entityName in
+        for entityName in entityNames {
             fillPrimaryKeys(for: entityName, context: context)
         }
     }
@@ -38,7 +38,7 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
             request.fetchBatchSize = batchSize
             let objects = try context.fetch(request)
 
-            objects.forEach { object in
+            for object in objects {
                 let uniqueKey = PrimaryKeyGenerator.generateKey(for: object, entityName: entityName)
                 object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
             }

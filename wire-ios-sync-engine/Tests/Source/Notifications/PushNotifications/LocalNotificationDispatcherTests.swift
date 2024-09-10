@@ -66,10 +66,10 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
             self.conversation1.userDefinedName = "Conversation 1"
             self.conversation2 = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation2.userDefinedName = "Conversation 2"
-            [self.conversation1!, self.conversation2!].forEach {
-                $0.conversationType = .group
-                $0.remoteIdentifier = UUID.create()
-                $0.addParticipantAndUpdateConversationState(user: self.user1, role: nil)
+            for item in [self.conversation1!, self.conversation2!] {
+                item.conversationType = .group
+                item.remoteIdentifier = UUID.create()
+                item.addParticipantAndUpdateConversationState(user: self.user1, role: nil)
             }
             self.conversation2.addParticipantAndUpdateConversationState(user: self.user2, role: nil)
 

@@ -49,7 +49,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
 
-        [conversation1, conversation2].forEach { conversation in
+        for conversation in [conversation1, conversation2] {
             conversation.team = team
             conversation.willAccessValue(forKey: oldKey)
             conversation.setPrimitiveValue(NSNumber(value: true), forKey: oldKey)

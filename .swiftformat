@@ -30,7 +30,8 @@
     linebreaks, \
     modifierOrder, \
     numberFormatting, \
-    opaqueGenericParameters
+    opaqueGenericParameters, \
+    preferForLoop
 
 # Options
 

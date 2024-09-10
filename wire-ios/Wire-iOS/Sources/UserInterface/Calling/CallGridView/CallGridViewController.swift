@@ -161,11 +161,11 @@ final class CallGridViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator].forEach {
-            $0?.translatesAutoresizingMaskIntoConstraints = false
+        for item in [gridView, thumbnailViewController.view, topStack, hintView, networkConditionView, pageIndicator] {
+            item?.translatesAutoresizingMaskIntoConstraints = false
         }
-        [ thumbnailViewController.view].forEach {
-            $0.fitIn(view: view)
+        for item in [ thumbnailViewController.view] {
+            item.fitIn(view: view)
         }
 
         NSLayoutConstraint.activate([
@@ -379,12 +379,12 @@ final class CallGridViewController: UIViewController {
     }
 
     private func updateStates(with streams: [Stream]) {
-        streams.forEach {
-            let view = (cachedStreamView(for: $0) as? CallParticipantView)
+        for item in streams {
+            let view = (cachedStreamView(for: item) as? CallParticipantView)
 
-            view?.stream = $0
+            view?.stream = item
             view?.shouldShowActiveSpeakerFrame = configuration.shouldShowActiveSpeakerFrame
-            view?.isPaused = $0.isPaused
+            view?.isPaused = item.isPaused
             view?.pinchToZoomRule = pinchToZoomRule
             view?.shouldShowBorderWhenVideoIsStopped = shouldShowBorderWhenVideoIsStopped
             view?.accessibilityHint = configuration.callHasTwoParticipants ? "" : view?.accessibilityHint

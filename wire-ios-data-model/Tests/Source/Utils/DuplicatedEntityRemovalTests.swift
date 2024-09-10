@@ -113,9 +113,9 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(client1.trustedByClients, trustedByClients)
         XCTAssertEqual(client1.missedByClient, missedByClient)
 
-        addedOrRemovedInSystemMessages.forEach {
-            XCTAssertTrue($0.clients.contains(client1))
-            XCTAssertFalse($0.clients.contains(client2))
+        for addedOrRemovedInSystemMessage in addedOrRemovedInSystemMessages {
+            XCTAssertTrue(addedOrRemovedInSystemMessage.clients.contains(client1))
+            XCTAssertFalse(addedOrRemovedInSystemMessage.clients.contains(client2))
         }
     }
 }

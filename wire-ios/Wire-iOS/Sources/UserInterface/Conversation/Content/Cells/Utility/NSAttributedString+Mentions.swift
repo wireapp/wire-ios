@@ -110,12 +110,12 @@ extension NSMutableAttributedString {
 
     func highlight(mentions: [TextMarker<(Mention)>],
                    paragraphStyle: NSParagraphStyle? = NSAttributedString.paragraphStyle) {
-        mentions.forEach { textObject in
+        for textObject in mentions {
             let mentionRange = mutableString.range(of: textObject.token)
 
             guard mentionRange.location != NSNotFound else {
                 log.error("Cannot process mention: \(textObject)")
-                return
+                continue
             }
 
             var attributes = self.attributes(at: mentionRange.location, effectiveRange: nil)

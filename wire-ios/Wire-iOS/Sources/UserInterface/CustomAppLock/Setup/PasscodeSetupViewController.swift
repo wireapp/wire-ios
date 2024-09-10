@@ -154,12 +154,12 @@ final class PasscodeSetupViewController: UIViewController {
             stackView.addArrangedSubview($0)
         }
 
-        PasscodeError.allCases.forEach {
-            if let label = validationLabels[$0] {
+        for item in PasscodeError.allCases {
+            if let label = validationLabels[item] {
                 label.font = FontSpec.smallSemiboldFont.font!
                 label.textColor = SemanticColors.Label.textPasswordRulesCheck
                 label.numberOfLines = 0
-                label.attributedText = $0.descriptionWithInvalidIcon
+                label.attributedText = item.descriptionWithInvalidIcon
                 label.isEnabled = false
 
                 stackView.addArrangedSubview(label)

@@ -475,7 +475,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if self.accountManager.accounts.count > 0 {
             WireLogger.sessionManager.debug("Known accounts:")
-            self.accountManager.accounts.forEach { account in
+            for account in self.accountManager.accounts {
                 WireLogger.sessionManager.debug("\(account.userName) -- \(account.userIdentifier) -- \(account.teamName ?? "no team")")
             }
 
@@ -1106,8 +1106,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             activeUserSession != session
         }
 
-        backgroundSessions.keys.forEach {
-            tearDownBackgroundSession(for: $0)
+        for key in backgroundSessions.keys {
+            tearDownBackgroundSession(for: key)
         }
     }
 
@@ -1117,7 +1117,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     deinit {
         DispatchQueue.main.async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
-            backgroundUserSessions.values.forEach { session in
+            for session in backgroundUserSessions.values {
                 session.tearDown()
             }
             blacklistVerificator?.tearDown()
@@ -1526,7 +1526,7 @@ extension SessionManager {
     public func markAllConversationsAsRead(completion: (() -> Void)?) {
         let group = DispatchGroup()
 
-        self.accountManager.accounts.forEach { account in
+        for account in self.accountManager.accounts {
             group.enter()
             self.withSession(for: account) { userSession in
                 userSession.perform {

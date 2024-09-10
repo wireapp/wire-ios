@@ -33,7 +33,7 @@ final class EmojiSectionViewController: UIViewController {
     private var selectedType: EmojiSectionType? {
         willSet(value) {
             guard let type = value else { return }
-            typesByButton.forEach { button, sectionType in
+            for (button, sectionType) in typesByButton {
                 button.isSelected = type == sectionType
             }
         }
@@ -58,7 +58,7 @@ final class EmojiSectionViewController: UIViewController {
 
     private func createButtons(_ types: [EmojiSectionType]) {
         sectionButtons = types.map(createSectionButton)
-        zip(types, sectionButtons).forEach { type, button in
+        for (type, button) in zip(types, sectionButtons) {
             typesByButton[button] = type
         }
     }
@@ -118,14 +118,14 @@ final class EmojiSectionViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        sectionButtons.forEach {
-            $0.removeFromSuperview()
-            view.addSubview($0)
+        for sectionButton in sectionButtons {
+            sectionButton.removeFromSuperview()
+            view.addSubview(sectionButton)
         }
 
         createConstraints()
-        sectionButtons.forEach {
-            $0.hitAreaPadding = CGSize(width: 5, height: view.bounds.height / 2)
+        for sectionButton in sectionButtons {
+            sectionButton.hitAreaPadding = CGSize(width: 5, height: view.bounds.height / 2)
         }
     }
 
@@ -137,8 +137,7 @@ final class EmojiSectionViewController: UIViewController {
 
         var constraints = [NSLayoutConstraint]()
 
-        sectionButtons.enumerated().forEach { idx, button in
-
+        for (idx, button) in sectionButtons.enumerated() {
             button.translatesAutoresizingMaskIntoConstraints = false
 
             switch idx {

@@ -89,8 +89,8 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
 
     /// Forces the strategy to process the message
     func process(_ strategy: LinkPreviewAssetUploadRequestStrategy, message: ZMClientMessage) {
-        strategy.contextChangeTrackers.forEach {
-            $0.objectsDidChange([message])
+        for contextChangeTracker in strategy.contextChangeTrackers {
+            contextChangeTracker.objectsDidChange([message])
         }
     }
 

@@ -31,8 +31,8 @@ final class String_FingerprintTests: XCTestCase {
         let attributedString = fingerprintString.fingerprintString(attributes: regularAttributes, boldAttributes: boldAttributes)
 
         // THEN
-        stride(from: 0, to: 20, by: 6).forEach {
-            let boldRange = NSRange(location: $0, length: 2)
+        for item in stride(from: 0, to: 20, by: 6) {
+            let boldRange = NSRange(location: item, length: 2)
 
             let substring = attributedString.attributedSubstring(from: boldRange)
             let attrs = substring.attributes(at: 0, effectiveRange: nil)
@@ -40,8 +40,8 @@ final class String_FingerprintTests: XCTestCase {
             XCTAssertEqual(attrs as? [NSAttributedString.Key: UIFont], boldAttributes)
         }
 
-        stride(from: 3, to: 20, by: 6).forEach {
-            let regularRange = NSRange(location: $0, length: 2)
+        for item in stride(from: 3, to: 20, by: 6) {
+            let regularRange = NSRange(location: item, length: 2)
 
             let substring = attributedString.attributedSubstring(from: regularRange)
             let attrs = substring.attributes(at: 0, effectiveRange: nil)

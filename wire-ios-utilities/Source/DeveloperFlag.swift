@@ -80,8 +80,8 @@ public enum DeveloperFlag: String, CaseIterable {
     }
 
     public static func clearAllFlags() {
-        allCases.forEach {
-            storage.set(nil, forKey: $0.rawValue)
+        for item in allCases {
+            storage.set(nil, forKey: item.rawValue)
         }
     }
 

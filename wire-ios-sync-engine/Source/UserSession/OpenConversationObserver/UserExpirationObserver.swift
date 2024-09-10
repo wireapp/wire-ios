@@ -42,14 +42,14 @@ import Foundation
 
         expiringUsers.subtract(expired)
 
-        expired.forEach {
-            $0.needsToBeUpdatedFromBackend = true
+        for item in expired {
+            item.needsToBeUpdatedFromBackend = true
         }
 
-        notExpired.forEach {
+        for item in notExpired {
             let timer = ZMTimer(target: self)!
-            timer.fire(afterTimeInterval: $0.expiresAfter)
-            timerForUser[timer] = $0
+            timer.fire(afterTimeInterval: item.expiresAfter)
+            timerForUser[timer] = item
         }
 
         expiringUsers.formUnion(notExpired)

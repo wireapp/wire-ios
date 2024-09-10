@@ -34,9 +34,9 @@ final class LinkInteractionTextViewTests: XCTestCase {
     }
 
     func testThatItOpensNormalLinks() {
-        ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"].forEach {
+        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
             // GIVEN
-            let str = $0
+            let str = item
             let url = URL(string: str)!
             sut.attributedText = NSAttributedString(string: str, attributes: [.link: url])
             // WHEN
@@ -47,9 +47,9 @@ final class LinkInteractionTextViewTests: XCTestCase {
     }
 
     func testThatItDoesNotPreviewNormalLinks() {
-        ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"].forEach {
+        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
             // GIVEN
-            let str = $0
+            let str = item
             let url = URL(string: str)!
             sut.attributedText = NSAttributedString(string: str, attributes: [.link: url])
             // WHEN
@@ -63,10 +63,10 @@ final class LinkInteractionTextViewTests: XCTestCase {
     // confirmation from the user.
 
     func testThatItDoesNotOpenMarkdownLinks() {
-        ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"].forEach {
+        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
             // GIVEN
             let str = "I'm a markdown link!"
-            let url = URL(string: $0)!
+            let url = URL(string: item)!
             let attrs: [NSAttributedString.Key: Any] = [.markdownID: Markdown.link, .link: url]
             sut.attributedText = NSAttributedString(string: str, attributes: attrs)
             // WHEN
@@ -93,10 +93,10 @@ final class LinkInteractionTextViewTests: XCTestCase {
     }
 
     func testThatItDoesNotPreviewMarkdownLinks() {
-        ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"].forEach {
+        for item in ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"] {
             // GIVEN
             let str = "I'm a markdown link!"
-            let url = URL(string: $0)!
+            let url = URL(string: item)!
             let attrs: [NSAttributedString.Key: Any] = [.markdownID: Markdown.link, .link: url]
             sut.attributedText = NSAttributedString(string: str, attributes: attrs)
             // WHEN

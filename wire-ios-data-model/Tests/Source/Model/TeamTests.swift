@@ -103,9 +103,9 @@ final class TeamTests: ZMConversationTestsBase {
         guard let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: users) else { return XCTFail("No conversation") }
 
         // then
-        users.forEach {
-            XCTAssertFalse($0.isGuest(in: conversation))
-            XCTAssertFalse($0.isTeamMember)
+        for user in users {
+            XCTAssertFalse(user.isGuest(in: conversation))
+            XCTAssertFalse(user.isTeamMember)
         }
     }
 

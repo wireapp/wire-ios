@@ -378,8 +378,8 @@ import Foundation
     }
 
     private func forwardNotificationToObserverCenters(changeInfos: [ClassIdentifier: [ObjectChangeInfo]]) {
-        allChangeInfoConsumers.forEach {
-            $0.objectsDidChange(changes: changeInfos)
+        for changeInfoConsumer in allChangeInfoConsumers {
+            changeInfoConsumer.objectsDidChange(changes: changeInfos)
         }
     }
 

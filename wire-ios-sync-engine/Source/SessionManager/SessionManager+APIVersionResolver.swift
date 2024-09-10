@@ -90,8 +90,7 @@ extension SessionManager: APIVersionResolverDelegate {
             guard let self else { return }
 
             self.activeUserSession = nil
-            self.accountManager.accounts.forEach { account in
-
+            for account in self.accountManager.accounts {
                 // 1. Tear down the user sessions
                 DispatchQueue.main.async {
                     dispatchGroup.enter()
@@ -119,7 +118,7 @@ extension SessionManager: APIVersionResolverDelegate {
             dispatchGroup.wait(forInterval: 5)
 
             // 3. Reload sessions
-            self.accountManager.accounts.forEach { account in
+            for account in self.accountManager.accounts {
                 dispatchGroup.enter()
 
                 if account == self.accountManager.selectedAccount {

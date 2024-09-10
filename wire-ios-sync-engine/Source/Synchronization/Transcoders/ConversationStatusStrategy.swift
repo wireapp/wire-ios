@@ -27,8 +27,8 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
         var didUpdateConversation = false
 
-        objects.forEach {
-            if let conv = $0 as? ZMConversation {
+        for object in objects {
+            if let conv = object as? ZMConversation {
                 if conv.hasLocalModifications(forKey: lastReadKey) {
                     do {
                         try ZMConversation.updateSelfConversation(withLastReadOf: conv)
@@ -37,7 +37,7 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
                         didUpdateConversation = true
                     } catch {
                         Logging.messageProcessing.warn("Failed to update last read in self conversation. Reason: \(error.localizedDescription)")
-                        return
+                        continue
                     }
                 }
                 if conv.hasLocalModifications(forKey: clearedKey) {
@@ -49,7 +49,7 @@ public final class ConversationStatusStrategy: ZMObjectSyncStrategy, ZMContextCh
                         didUpdateConversation = true
                     } catch {
                         Logging.messageProcessing.warn("Failed to update cleared in self conversation. Reason: \(error.localizedDescription)")
-                        return
+                        continue
                     }
                 }
             }

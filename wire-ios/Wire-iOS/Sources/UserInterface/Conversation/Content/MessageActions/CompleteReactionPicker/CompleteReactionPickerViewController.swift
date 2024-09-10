@@ -104,8 +104,8 @@ final class CompleteReactionPickerViewController: UIViewController {
     private func createConstraints() {
         guard let sectionViewControllerView = sectionViewController.view else { return }
 
-        [topBar, searchBar, collectionView, sectionViewControllerView].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        for item in [topBar, searchBar, collectionView, sectionViewControllerView] {
+            item.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([

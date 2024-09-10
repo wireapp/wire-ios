@@ -60,8 +60,8 @@ final class CocoaLumberjackLogger: LoggerProtocol {
 
     private func log(_ message: LogConvertible, attributes: [LogAttributes], level: DDLogLevel) {
         var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
+        for attribute in attributes {
+            mergedAttributes.merge(attribute) { _, new in new }
         }
 
         // TODO: [WPB-6432] enable when ZMSLog is cleaned up

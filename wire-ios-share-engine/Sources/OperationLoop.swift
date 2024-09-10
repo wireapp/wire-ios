@@ -71,9 +71,9 @@ final class RequestGeneratorStore {
     }
 
     func tearDown() {
-        strategies.forEach {
-            if $0.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
-                ($0 as? ZMObjectSyncStrategy)?.tearDown()
+        for strategy in strategies {
+            if strategy.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
+                (strategy as? ZMObjectSyncStrategy)?.tearDown()
             }
         }
 
@@ -219,8 +219,8 @@ final class RequestGeneratingOperationLoop {
     }
 
     fileprivate func objectsDidChange(changes: Set<NSManagedObject>) {
-        requestGeneratorStore.changeTrackers.forEach {
-            $0.objectsDidChange(changes)
+        for changeTracker in requestGeneratorStore.changeTrackers {
+            changeTracker.objectsDidChange(changes)
         }
 
         enqueueRequests()

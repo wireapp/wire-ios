@@ -285,9 +285,9 @@ final class ConversationImagesViewController: UIViewController {
         }
 
         buttons.append(deleteButton)
-        buttons.forEach {
-            $0.hitAreaPadding = .zero
-            setupButtonStyle(button: $0)
+        for item in buttons {
+            item.hitAreaPadding = .zero
+            setupButtonStyle(button: item)
         }
 
         return buttons

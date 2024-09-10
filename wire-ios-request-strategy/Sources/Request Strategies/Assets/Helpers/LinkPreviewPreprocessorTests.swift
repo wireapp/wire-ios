@@ -83,8 +83,8 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
 
 extension LinkPreviewPreprocessorTests {
     func testThatItOnlyProcessesMessagesWithLinkPreviewState_WaitingToBeProcessed() {
-        [ZMLinkPreviewState.done, .downloaded, .processed, .uploaded, .waitingToBeProcessed].forEach {
-            assertThatItProcessesMessageWithLinkPreviewState($0, shouldProcess: $0 == .waitingToBeProcessed)
+        for item in [ZMLinkPreviewState.done, .downloaded, .processed, .uploaded, .waitingToBeProcessed] {
+            assertThatItProcessesMessageWithLinkPreviewState(item, shouldProcess: item == .waitingToBeProcessed)
         }
     }
 

@@ -98,8 +98,8 @@ final class TopPeopleCell: UICollectionViewCell {
 
     override func updateConstraints() {
         if !initialConstraintsCreated {
-            [contentView, badgeUserImageView, avatarContainer, conversationImageView, nameLabel].forEach {
-                $0.translatesAutoresizingMaskIntoConstraints = false
+            for item in [contentView, badgeUserImageView, avatarContainer, conversationImageView, nameLabel] {
+                item.translatesAutoresizingMaskIntoConstraints = false
             }
 
             var constraints: [NSLayoutConstraint] = []

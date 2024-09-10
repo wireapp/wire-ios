@@ -71,9 +71,9 @@ extension ZMManagedObject {
         var originalChanges = [String: NSObject?]()
         if let originalChangeKey {
             let requiredKeys = keyStore.requiredKeysForIncludingRawChanges(classIdentifier: classIdentifier, for: self)
-            knownKeys.forEach {
-                if changes[$0] == nil {
-                    changes[$0] = .none as NSObject?
+            for knownKey in knownKeys {
+                if changes[knownKey] == nil {
+                    changes[knownKey] = .none as NSObject?
                 }
             }
             if requiredKeys.isEmpty || !requiredKeys.isDisjoint(with: changes.keys) {
@@ -125,12 +125,12 @@ extension ZMUser: SideEffectSource {
                 partialResult.formUnion(set)
             }
 
-        conversations.forEach {
-            if $0.allUsersTrusted {
+        for conversation in conversations {
+            if conversation.allUsersTrusted {
                 keys.insert(SecurityLevelKey)
             }
             if keys.count > 0 {
-                affectedObjects[$0] = Changes(changedKeys: keys)
+                affectedObjects[conversation] = Changes(changedKeys: keys)
             }
         }
         return affectedObjects

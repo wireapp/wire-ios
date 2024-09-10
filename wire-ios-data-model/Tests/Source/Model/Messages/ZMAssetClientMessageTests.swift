@@ -1395,9 +1395,9 @@ extension ZMAssetClientMessageTests {
     func testThatItRejectsNonGIF_MIME() {
         // GIVEN
 
-        ["text/plain", "application/pdf", "image/jpeg", "video/mp4"].forEach {
+        for item in ["text/plain", "application/pdf", "image/jpeg", "video/mp4"] {
             // WHEN
-            let isGif = UTIHelper.conformsToGifType(mime: $0)
+            let isGif = UTIHelper.conformsToGifType(mime: item)
 
             // THEN
             XCTAssertEqual(isGif, false)

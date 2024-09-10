@@ -48,10 +48,10 @@ class ReplaceSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<Replace
 
     func test_itDoesntGenerateRequests_APIBelowV5() {
         // when the endpoint is unavailable
-        [.v0, .v1, .v2, .v3, .v4].forEach {
+        for item in [.v0, .v1, .v2, .v3, .v4] {
             test_itDoesntGenerateARequest(
                 action: action,
-                apiVersion: $0,
+                apiVersion: item,
                 expectedError: .endpointUnavailable
             )
         }

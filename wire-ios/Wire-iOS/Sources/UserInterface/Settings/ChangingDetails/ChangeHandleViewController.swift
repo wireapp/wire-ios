@@ -113,8 +113,8 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 
     func performWiggleAnimation() {
-        [handleTextField, prefixLabel].forEach {
-            $0.wiggle()
+        for item in [handleTextField, prefixLabel] {
+            item.wiggle()
         }
     }
 

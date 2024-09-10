@@ -161,13 +161,13 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             XCTAssertNotNil(userDictionaries)
             XCTAssertEqual(userDictionaries.count, 22)
 
-            users.forEach({
-                XCTAssertFalse($0.isAccountDeleted)
-            })
+            for user in users {
+                XCTAssertFalse(user.isAccountDeleted)
+            }
 
             XCTAssertGreaterThan(messages.count, 0)
-            messages.forEach {
-                XCTAssertNil($0.normalizedText)
+            for message in messages {
+                XCTAssertNil(message.normalizedText)
             }
 
             directory = nil // need to release

@@ -91,7 +91,7 @@ public class WireCallCenterV3: NSObject {
             VoIPPushHelper.isAVSReady = isReady
 
             if isReady {
-                bufferedEvents.forEach { (item: (event: CallEvent, completionHandler: () -> Void)) in
+                for item in bufferedEvents {
                     let (event, completionHandler) = item
                     handleCallEvent(event, completionHandler: completionHandler)
                 }

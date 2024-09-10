@@ -31,7 +31,7 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
                                                             .location,
                                                             .text("Hello World", isMention: false, isReply: false)]
 
-        contentTypes.forEach { contentType in
+        for contentType in contentTypes {
             XCTAssertTrue(LocalNotificationType.message(contentType).shouldIncreaseUnreadCount)
         }
     }
@@ -40,7 +40,7 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
         let contentTypes: [LocalNotificationContentType] = [.ephemeral(isMention: true, isReply: false),
                                                             .text("Hello World", isMention: true, isReply: false)]
 
-        contentTypes.forEach { contentType in
+        for contentType in contentTypes {
             XCTAssertTrue(LocalNotificationType.message(contentType).shouldIncreaseUnreadMentionCount)
         }
     }
@@ -49,7 +49,7 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
         let contentTypes: [LocalNotificationContentType] = [.ephemeral(isMention: false, isReply: true),
                                                             .text("Hello World", isMention: false, isReply: true)]
 
-        contentTypes.forEach { contentType in
+        for contentType in contentTypes {
             XCTAssertTrue(LocalNotificationType.message(contentType).shouldIncreaseUnreadReplyCount)
         }
     }
@@ -60,7 +60,7 @@ class ZMLocalNotificationTests_UnreadCount: ZMLocalNotificationTests {
                                                             .participantsRemoved(reason: .none),
                                                             .reaction(emoji: "❤️")]
 
-        contentTypes.forEach { contentType in
+        for contentType in contentTypes {
             XCTAssertFalse(LocalNotificationType.message(contentType).shouldIncreaseUnreadCount)
         }
     }

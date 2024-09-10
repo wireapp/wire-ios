@@ -81,8 +81,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
     }
 
     func didReceive(events: [ZMUpdateEvent], conversationMap: [UUID: ZMConversation]) {
-        events.forEach { event in
-
+        for event in events {
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
                 // Fetch the conversation here to avoid refetching every time we try to create a notification
@@ -92,7 +91,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
             if let messageNonce = event.messageNonce {
                 if eventNotifications.notifications.contains(where: { $0.messageNonce == messageNonce }) {
                     // ignore events which we already scheduled a notification for
-                    return
+                    continue
                 }
             }
 

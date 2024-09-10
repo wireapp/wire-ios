@@ -238,9 +238,9 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     }
 
     private func reloadFooters() {
-        viewControllers.all.forEach {
-            $0.subtitle = dataSource.subtitle
-            $0.accessibleSubtitle = dataSource.accessibilitySubtitle
+        for item in viewControllers.all {
+            item.subtitle = dataSource.subtitle
+            item.accessibleSubtitle = dataSource.accessibilitySubtitle
         }
     }
 

@@ -161,7 +161,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         emojiButton.accessibilityIdentifier = "emojiButton"
         emojiButton.accessibilityLabel = Sketch.SelectEmojiButton.description
 
-        [photoButton, drawButton, emojiButton].forEach { iconButton in
+        for iconButton in [photoButton, drawButton, emojiButton] {
             iconButton.layer.cornerRadius = 12
             iconButton.clipsToBounds = true
             iconButton.applyStyle(.iconButtonStyle)

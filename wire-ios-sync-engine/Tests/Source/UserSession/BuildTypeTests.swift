@@ -31,7 +31,7 @@ final class BuildTypeTests: ZMTBaseTest {
                                                                     "com.wearezeta.zclient.internal": .internal,
                                                                     "com.wearezeta.zclient.ios.beta": .beta]
 
-        bundleIdsToTypes.forEach { bundleId, expectedType in
+        for (bundleId, expectedType) in bundleIdsToTypes {
             // WHEN
             let type = WireSyncEngine.BuildType(bundleID: bundleId)
             // THEN
@@ -56,8 +56,7 @@ final class BuildTypeTests: ZMTBaseTest {
                                  .releaseCandidate,
                                  .development]
 
-        suts.forEach { type in
-
+        for type in suts {
             // WHEN
             let certName = type.certificateName
             // THEN
