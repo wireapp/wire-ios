@@ -415,19 +415,21 @@ final class ConversationContentViewController: UIViewController {
     // MARK: - MediaPlayer
     /// Update media bar visiblity
     private func updateMediaBar() {
-        let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+              let mediaPlayingMessage = appDelegate.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage else {
+            return
+        }
 
-        if let mediaPlayingMessage,
-           mediaPlayingMessage.conversationLike === conversation,
+        if mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, didEndDisplayingActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         } else {
-            DispatchQueue.main.async(execute: {
+            DispatchQueue.main.async {
                 self.delegate?.conversationContentViewController(self, willDisplayActiveMediaPlayerFor: mediaPlayingMessage)
-            })
+            }
         }
     }
 
