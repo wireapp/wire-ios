@@ -158,7 +158,6 @@ struct E2EIdentityCertificateDetailsView: View {
 
         certificateView
             .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
-
         .safeAreaInset(edge: .bottom,
                        spacing: .zero) {
             bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
