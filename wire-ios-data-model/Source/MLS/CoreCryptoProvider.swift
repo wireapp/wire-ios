@@ -178,7 +178,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
         // Initialise MLS if we have previously registered an MLS client
         if let mlsClientID {
-            let cipherSuite = UInt16(await featureRespository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let cipherSuite = await UInt16(featureRespository.fetchMLS().config.defaultCipherSuite.rawValue)
             try await coreCrypto.perform { try await $0.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
                 ciphersuites: [cipherSuite],

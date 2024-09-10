@@ -811,10 +811,10 @@ public final class MLSService: MLSServiceInterface {
         for groupID: MLSGroupID,
         parentGroupID: MLSGroupID? = nil
     ) async throws -> MLSCipherSuite {
-        let useCase = CreateMLSGroupUseCase(
+        let useCase = await CreateMLSGroupUseCase(
             parentGroupID: parentGroupID,
-            defaultCipherSuite: await featureRepository.fetchMLS().config.defaultCipherSuite,
-            coreCrypto: try await coreCrypto,
+            defaultCipherSuite: featureRepository.fetchMLS().config.defaultCipherSuite,
+            coreCrypto: try coreCrypto,
             staleKeyMaterialDetector: staleKeyMaterialDetector,
             actionsProvider: actionsProvider,
             notificationContext: notificationContext
@@ -1015,7 +1015,7 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
                 try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
@@ -1070,7 +1070,7 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [Data]()
 
         do {
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             keyPackages = try await coreCrypto.perform {
                 let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 return try await $0.clientKeypackages(
@@ -1424,7 +1424,7 @@ public final class MLSService: MLSServiceInterface {
         logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+            let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let proposal = try await coreCrypto.perform {
                 try await $0.newExternalAddProposal(conversationId: groupID.data,
                                                     epoch: epoch,

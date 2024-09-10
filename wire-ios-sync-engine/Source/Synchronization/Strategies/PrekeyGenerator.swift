@@ -46,9 +46,9 @@ class PrekeyGenerator {
     func generateLastResortPrekey() async throws -> IdPrekeyTuple {
         let lastKey = try await proteusProvider.performAsync(
             withProteusService: { proteusService in
-                return (
-                    id: await proteusService.lastPrekeyID,
-                    prekey: try await proteusService.lastPrekey()
+                return await (
+                    id: proteusService.lastPrekeyID,
+                    prekey: try proteusService.lastPrekey()
                 )
             },
             withKeyStore: { keyStore in

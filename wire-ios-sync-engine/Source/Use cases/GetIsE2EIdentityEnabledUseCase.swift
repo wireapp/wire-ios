@@ -35,7 +35,7 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     }
 
     public func invoke() async throws -> Bool {
-        let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+        let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return try await coreCrypto.perform {
             try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)

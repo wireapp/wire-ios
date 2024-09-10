@@ -269,7 +269,7 @@ public final class MessageSender: MessageSenderInterface {
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
             .sendMLSMessage(message: encryptedData,
                             conversationID: conversationID,
-                            expirationDate: await context.perform { message.expirationDate })
+                            expirationDate: context.perform { message.expirationDate })
 
         await context.perform {
             self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)

@@ -355,7 +355,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 return bundle
 
             case .joinGroup(let groupInfo):
-                let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+                let ciphersuite = await UInt16(featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
                 let conversationInitBundle = try await coreCrypto.perform {
                     let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                     return try await $0.joinByExternalCommit(

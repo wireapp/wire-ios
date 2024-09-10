@@ -114,7 +114,7 @@ class MessageAPIV0: MessageAPI {
             apiVersion: apiVersion.rawValue
         )
 
-        if let expirationDate = (await message.context.perform {
+        if let expirationDate = await (message.context.perform {
             message.expirationDate
         }) {
             request.expire(at: expirationDate)
