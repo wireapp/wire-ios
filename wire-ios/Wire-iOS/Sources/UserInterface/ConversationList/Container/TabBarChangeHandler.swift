@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireUIBase
+import WireUIFoundation
 
 /// Responds to selected tab changes, ensuring the correct _principle_ tab is selected and `Contacts` or `Archive` views
 /// are shown.

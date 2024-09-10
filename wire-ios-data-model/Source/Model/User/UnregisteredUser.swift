@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilitiesPkg
+import WireFoundation
 
 /// The representation of a user that is going through the registration process.
 ///
