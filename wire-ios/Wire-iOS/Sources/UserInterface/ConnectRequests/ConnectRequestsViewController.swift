@@ -123,7 +123,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         let inset: CGFloat = connectionRequests.count > 1 ? 48 : 0
 
-        return max(0, view.safeAreaLayoutGuideOrFallback.layoutFrame.size.height - inset)
+        return max(0, view.safeAreaLayoutGuide.layoutFrame.size.height - inset)
     }
 
     // MARK: - Helpers
