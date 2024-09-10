@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
-import WireUIBase
+import WireUIFoundation
 
 extension SelfProfileViewController {
 
