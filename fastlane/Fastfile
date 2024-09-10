@@ -51,7 +51,7 @@ platform :ios do
         begin
             delete_keychain if is_running_on_ci
         rescue
-            UI.warning("No keychain found, skipping deletion...") 
+            UI.verbose("No keychain found, skipping deletion...") 
         end
     end
 
