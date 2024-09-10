@@ -721,7 +721,7 @@ extension UserClient {
         self.mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
         self.mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
 
-        clients.forEach { client in client.needsToNotifyUser = false; }
+        clients.forEach { client in client.needsToNotifyUser = false }
 
         zmLog.debug("Marking client as trusted")
 

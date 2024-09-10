@@ -53,7 +53,8 @@
     redundantStaticSelf, \
     redundantType, \
     redundantTypedThrows, \
-    redundantVoidReturnType
+    redundantVoidReturnType, \
+    semicolons
 
 # Options
 
