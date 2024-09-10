@@ -58,7 +58,7 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
         return query
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueRef] = value
         query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock

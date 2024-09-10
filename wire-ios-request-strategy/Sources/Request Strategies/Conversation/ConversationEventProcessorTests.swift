@@ -62,7 +62,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     // MARK: - Helpers
 
-    func updateEvent<T: CodableEventData>(from payload: T) -> ZMUpdateEvent {
+    func updateEvent(from payload: some CodableEventData) -> ZMUpdateEvent {
         return updateEvent(
             from: payload,
             conversationID: groupConversation.qualifiedID,

@@ -72,8 +72,8 @@ extension MessagingTestBase {
         return ZMUpdateEvent(fromEventStreamPayload: payload! as ZMTransportData, uuid: UUID())!
     }
 
-    func updateEvent<Event: CodableEventData>(
-        from data: Event,
+    func updateEvent(
+        from data: some CodableEventData,
         conversationID: QualifiedID? = nil,
         senderID: QualifiedID? = nil,
         timestamp: Date? = nil

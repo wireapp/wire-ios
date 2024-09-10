@@ -21,7 +21,7 @@ extension Equatable {
         return isOne(of: others)
     }
 
-    public func isOne<T: Collection>(of others: T) -> Bool where T.Element == Self {
+    public func isOne(of others: some Collection<Self>) -> Bool {
         return others.contains(self)
     }
 }

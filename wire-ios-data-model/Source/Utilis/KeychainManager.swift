@@ -27,7 +27,7 @@ protocol KeychainItemProtocol {
 public enum KeychainManager {
     // MARK: - Keychain access
 
-    static func storeItem<T>(_ item: KeychainItemProtocol, value: T) throws {
+    static func storeItem(_ item: KeychainItemProtocol, value: some Any) throws {
         WireLogger.keychain.info("storing item (\(item.id))")
         let status = SecItemAdd(item.setQuery(value: value) as CFDictionary, nil)
 

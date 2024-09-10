@@ -28,14 +28,14 @@ public struct SwiftDebugging {
         return "<\(type(of: object)) 0x\(String(self.address(object), radix: 16))>"
     }
 
-    public static func sequenceDescription<T>(_ sequence: AnySequence<T>) -> String {
+    public static func sequenceDescription(_ sequence: AnySequence<some Any>) -> String {
         let formattedSequence = sequence
             .map { shortDescription($0) }
             .joined(separator: ", ")
         return "( \(formattedSequence) )"
     }
 
-    public static func sequenceDescription<S: Sequence>(_ sequence: S) -> String {
+    public static func sequenceDescription(_ sequence: some Sequence) -> String {
         let formattedSequence = sequence
             .map { Self.shortDescription($0) }
             .joined(separator: ", ")

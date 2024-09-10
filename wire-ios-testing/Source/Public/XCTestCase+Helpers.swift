@@ -48,8 +48,8 @@ extension XCTestCase {
     public typealias ThrowingBlock = () throws -> Void
     public typealias EquatableError = Error & Equatable
 
-    public func assertItThrows<T: EquatableError>(
-        error expectedError: T,
+    public func assertItThrows(
+        error expectedError: some EquatableError,
         block: AsyncThrowingBlock,
         file: StaticString = #file,
         line: UInt = #line
@@ -71,8 +71,8 @@ extension XCTestCase {
         }
     }
 
-    public func assertItThrows<T: EquatableError>(
-        error expectedError: T,
+    public func assertItThrows(
+        error expectedError: some EquatableError,
         block: ThrowingBlock,
         file: StaticString = #file,
         line: UInt = #line
@@ -157,8 +157,8 @@ extension XCTestCase {
         wait(for: [expectation], timeout: 0.5)
     }
 
-    public func assertSuccess<Value, Failure>(
-        result: Result<Value, Failure>,
+    public func assertSuccess<Failure>(
+        result: Result<some Any, Failure>,
         message: (Failure) -> String = { "Expected to be a success but got a failure with \($0) " },
         file: StaticString = #filePath,
         line: UInt = #line) {
@@ -170,8 +170,8 @@ extension XCTestCase {
         }
     }
 
-    public func assertFailure<Value, Failure: Equatable>(
-        result: Result<Value, Failure>,
+    public func assertFailure<Failure: Equatable>(
+        result: Result<some Any, Failure>,
         expectedFailure: Failure,
         file: StaticString = #filePath,
         line: UInt = #line) {

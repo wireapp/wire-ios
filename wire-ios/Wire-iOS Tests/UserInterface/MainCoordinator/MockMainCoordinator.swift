@@ -29,12 +29,12 @@ final class MockMainCoordinator: MainCoordinating {
         fatalError("Mock method not implemented")
     }
 
-    func openConversation<Message>(
+    func openConversation(
         _ conversation: ZMConversation,
-        scrollTo message: Message,
+        scrollTo message: some ZMConversationMessage,
         focusOnView focus: Bool,
         animated: Bool
-    ) where Message: ZMConversationMessage {
+    ) {
         fatalError("Mock method not implemented")
     }
 

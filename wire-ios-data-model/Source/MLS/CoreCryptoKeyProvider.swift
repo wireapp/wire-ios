@@ -87,7 +87,7 @@ struct CoreCryptoKeychainItem: KeychainItemProtocol {
         ]
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,
@@ -115,7 +115,7 @@ struct LegacyCoreCryptoKeychainItem: KeychainItemProtocol {
         ]
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         return [
             kSecClass: kSecClassKey,
             kSecAttrApplicationTag: tag,

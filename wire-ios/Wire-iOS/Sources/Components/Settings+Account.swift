@@ -55,7 +55,7 @@ extension Settings {
     ///   - value: value to set
     ///   - settingKey: the SettingKey enum
     ///   - account: account to set value
-    func setValue<T>(_ value: T?, settingKey: SettingKey, in account: Account) {
+    func setValue(_ value: (some Any)?, settingKey: SettingKey, in account: Account) {
         let key = settingKey.rawValue
         var accountPayload = self.payload(for: account)
         accountPayload[key] = value

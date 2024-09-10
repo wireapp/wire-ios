@@ -66,7 +66,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     ///
     /// If the identifiers have already been added this method has no effect.
 
-    public func sync<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
+    public func sync(identifiers: some Sequence<Transcoder.T>) {
         let newIdentifiers = Set(identifiers)
 
         if newIdentifiers.isEmpty, downloading.isEmpty, pending.isEmpty {
@@ -82,7 +82,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     ///
     /// If the identifiers have been or are currently being downloaded this method has no effect.
 
-    public func cancel<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
+    public func cancel(identifiers: some Sequence<Transcoder.T>) {
         pending.subtract(identifiers)
     }
 

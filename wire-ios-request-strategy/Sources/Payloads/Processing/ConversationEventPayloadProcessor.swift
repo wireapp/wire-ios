@@ -932,8 +932,8 @@ struct ConversationEventPayloadProcessor {
         }
     }
 
-    func fetchOrCreateConversation<T>(
-        from payload: Payload.ConversationEvent<T>,
+    func fetchOrCreateConversation(
+        from payload: Payload.ConversationEvent<some Any>,
         in context: NSManagedObjectContext
     ) -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
@@ -962,8 +962,8 @@ struct ConversationEventPayloadProcessor {
         return nil
     }
 
-    func fetchOrCreateSender<T>(
-        from payload: Payload.ConversationEvent<T>,
+    func fetchOrCreateSender(
+        from payload: Payload.ConversationEvent<some Any>,
         in context: NSManagedObjectContext
     ) -> ZMUser? {
         guard let userID = payload.from ?? payload.qualifiedFrom?.uuid else {

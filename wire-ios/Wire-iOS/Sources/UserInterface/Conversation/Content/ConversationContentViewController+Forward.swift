@@ -60,7 +60,7 @@ extension Array<ZMConversation> {
 extension ZMMessage: Shareable {
     typealias I = ZMConversation
 
-    func share<ZMConversation>(to: [ZMConversation]) {
+    func share(to: [some Any]) {
         forward(to: to as [AnyObject])
     }
 

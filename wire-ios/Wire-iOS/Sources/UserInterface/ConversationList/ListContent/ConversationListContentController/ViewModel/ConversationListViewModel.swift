@@ -147,7 +147,7 @@ final class ConversationListViewModel: NSObject {
             return kind.identifier
         }
 
-        init<C>(source: ConversationListViewModel.Section, elements: C) where C: Collection, C.Element == SectionItem {
+        init(source: ConversationListViewModel.Section, elements: some Collection<SectionItem>) {
             self.kind = source.kind
             self.collapsed = source.collapsed
             items = Array(elements)

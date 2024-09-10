@@ -222,7 +222,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
      * - parameter description: The cell to add to the message section.
      */
 
-    func add<T: ConversationMessageCellDescription>(description: T) {
+    func add(description: some ConversationMessageCellDescription) {
         cellDescriptions.append(AnyConversationMessageCellDescription(description))
     }
 

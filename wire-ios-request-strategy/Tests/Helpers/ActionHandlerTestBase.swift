@@ -281,7 +281,7 @@ extension ActionHandlerTestBase where Action.Failure: Equatable {
 extension ActionHandlerTestBase {
     // MARK: Payload Encoding
 
-    func transportData<Payload: Encodable>(for payload: Payload?) -> ZMTransportData? {
+    func transportData(for payload: (some Encodable)?) -> ZMTransportData? {
         let data = try! JSONEncoder.defaultEncoder.encode(payload)
         return String(bytes: data, encoding: .utf8) as ZMTransportData?
     }

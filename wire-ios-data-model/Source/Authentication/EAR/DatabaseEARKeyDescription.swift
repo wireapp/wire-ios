@@ -53,7 +53,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
         return query
     }
 
-    func setQuery<T>(value: T) -> [CFString: Any] {
+    func setQuery(value: some Any) -> [CFString: Any] {
         var query = baseQuery
         query[kSecValueData] = value
         return query

@@ -29,7 +29,8 @@
     linebreakAtEndOfFile, \
     linebreaks, \
     modifierOrder, \
-    numberFormatting
+    numberFormatting, \
+    opaqueGenericParameters
 
 # Options
 

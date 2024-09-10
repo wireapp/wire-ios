@@ -121,8 +121,8 @@ extension NSManagedObjectContext {
         }
     }
 
-    private func migrateInstancesTowardEncryptionAtRest<T: MigratableEntity>(
-        type: T.Type,
+    private func migrateInstancesTowardEncryptionAtRest(
+        type: (some MigratableEntity).Type,
         key: VolatileData
     ) throws {
         do {
@@ -137,8 +137,8 @@ extension NSManagedObjectContext {
         }
     }
 
-    private func migrateInstancesAwayFromEncryptionAtRest<T: MigratableEntity>(
-        type: T.Type,
+    private func migrateInstancesAwayFromEncryptionAtRest(
+        type: (some MigratableEntity).Type,
         key: VolatileData
     ) throws {
         do {

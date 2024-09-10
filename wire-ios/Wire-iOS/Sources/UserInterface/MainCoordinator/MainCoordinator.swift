@@ -29,12 +29,12 @@ struct MainCoordinator: MainCoordinating {
         zClientViewController.load(conversation, scrollTo: nil, focusOnView: focus, animated: animated)
     }
 
-    func openConversation<Message>(
+    func openConversation(
         _ conversation: ZMConversation,
-        scrollTo message: Message,
+        scrollTo message: some ZMConversationMessage,
         focusOnView focus: Bool,
         animated: Bool
-    ) where Message: ZMConversationMessage {
+    ) {
         guard let zClientViewController else {
             return WireLogger.mainCoordinator.warn("zClientViewController is nil")
         }

@@ -32,10 +32,9 @@ class ButtonWithLargerHitArea: DynamicFontButton {
         setupAccessibility()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-
-        setupAccessibility()
+        fatalError("init(coder:) has not been implemented")
     }
 
     private func setupAccessibility() {

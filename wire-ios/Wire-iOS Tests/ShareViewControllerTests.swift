@@ -174,7 +174,7 @@ final class MockShareableMessage: MockMessage, Shareable {
 
     typealias I = MockShareViewControllerConversation
 
-    func share<SwiftMockConversation>(to: [SwiftMockConversation]) {
+    func share(to: [some Any]) {
         // no-op
     }
 }

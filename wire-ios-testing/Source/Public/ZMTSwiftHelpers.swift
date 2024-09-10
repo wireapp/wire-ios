@@ -19,7 +19,7 @@
 import Foundation
 import XCTest
 
-public func AssertOptionalNil<T>(_ condition: @autoclosure () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func AssertOptionalNil(_ condition: @autoclosure () -> (some Any)?, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let value = condition() {
         XCTFail("\(value) is not nil: \(message)", file: file, line: line)
     }
@@ -49,7 +49,7 @@ public func AssertDictionaryHasOptionalValue<T: NSObject>(_ dictionary: @autoclo
     }
 }
 
-public func AssertDictionaryHasOptionalNilValue<T: NSObject>(_ dictionary: @autoclosure () -> [String: T?], key: @autoclosure () -> String, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
+public func AssertDictionaryHasOptionalNilValue(_ dictionary: @autoclosure () -> [String: (some NSObject)?], key: @autoclosure () -> String, _ message: String = "", file: StaticString = #file, line: UInt = #line) {
     if let v = dictionary()[key()] {
         AssertOptionalNil(v, message, file: file, line: line)
     } else {

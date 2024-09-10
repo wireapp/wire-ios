@@ -128,7 +128,7 @@ final class UserPropertyNormalizerTests: XCTestCase {
         XCTAssertEqual(normalizationResult.normalizedValue, expectedValue)
     }
 
-    private func assertNormalizationErrorCode<T>(_ normalizationResult: UserPropertyNormalizationResult<T>, _ expectedCode: ZMManagedObjectValidationErrorCode) {
+    private func assertNormalizationErrorCode(_ normalizationResult: UserPropertyNormalizationResult<some Any>, _ expectedCode: ZMManagedObjectValidationErrorCode) {
         guard normalizationResult.validationError != nil else {
             return XCTFail("unexpected success")
         }
