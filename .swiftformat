@@ -69,7 +69,8 @@
     spaceInsideComments, \
     spaceInsideGenerics, \
     spaceInsideParens, \
-    strongOutlets
+    strongOutlets, \
+    strongifiedSelf
 
 
 # Options
