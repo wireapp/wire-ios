@@ -22,10 +22,10 @@ import WireDataModel
 import WireRequestStrategy
 import WireSystem
 
-typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
-    & UserSessionSelfUserClientDelegate
+typealias UserSessionDelegate = UserSessionAppLockDelegate
+    & UserSessionEncryptionAtRestDelegate
     & UserSessionLogoutDelegate
-    & UserSessionAppLockDelegate
+    & UserSessionSelfUserClientDelegate
 
 @objcMembers
 public final class ZMUserSession: NSObject {

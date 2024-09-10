@@ -27,7 +27,7 @@ public enum MessageSendError: Error, Equatable {
     case messageExpired
 }
 
-public typealias SendableMessage = ProteusMessage & MLSMessage
+public typealias SendableMessage = MLSMessage & ProteusMessage
 
 // sourcery: AutoMockable
 public protocol MessageSenderInterface {

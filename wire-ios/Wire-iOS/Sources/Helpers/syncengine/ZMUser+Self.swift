@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 
 #if targetEnvironment(simulator)
-    typealias EditableUser = ZMUser & EditableUserType
+    typealias EditableUser = EditableUserType & ZMUser
 
     protocol SelfUserProviderUI {
         static var selfUser: EditableUser { get }

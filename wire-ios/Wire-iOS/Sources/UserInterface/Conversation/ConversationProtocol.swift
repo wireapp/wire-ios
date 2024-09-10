@@ -65,7 +65,7 @@ protocol InputBarConversation {
     var domain: String? {get}
 }
 
-typealias InputBarConversationType = InputBarConversation & TypingStatusProvider & ConversationLike
+typealias InputBarConversationType = ConversationLike & InputBarConversation & TypingStatusProvider
 
 extension ZMConversation: InputBarConversation {
     var isSelfDeletingMessageSendingDisabled: Bool {
@@ -112,7 +112,7 @@ protocol GroupDetailsConversation {
     var isE2EIEnabled: Bool { get }
 }
 
-typealias GroupDetailsConversationType = GroupDetailsConversation & Conversation
+typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
 
 extension ZMConversation: ConversationStatusProvider {}
 

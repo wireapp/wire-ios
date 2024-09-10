@@ -46,7 +46,7 @@ extension XCTestCase {
 
     public typealias AsyncThrowingBlock = () async throws -> Void
     public typealias ThrowingBlock = () throws -> Void
-    public typealias EquatableError = Error & Equatable
+    public typealias EquatableError = Equatable & Error
 
     public func assertItThrows(
         error expectedError: some EquatableError,

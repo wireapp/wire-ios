@@ -35,7 +35,7 @@ protocol SettingsCellType: AnyObject {
     var icon: StyleKitIcon? {get set}
 }
 
-typealias SettingsTableCellProtocol = UITableViewCell & SettingsCellType
+typealias SettingsTableCellProtocol = SettingsCellType & UITableViewCell
 
 class SettingsTableCell: SettingsTableCellProtocol {
     private let iconImageView: UIImageView = {

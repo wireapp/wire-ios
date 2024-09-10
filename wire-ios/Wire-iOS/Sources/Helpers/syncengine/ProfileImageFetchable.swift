@@ -23,7 +23,7 @@ extension CIContext {
     static var shared = CIContext(options: nil)
 }
 
-typealias ProfileImageFetchableUser = UserType & ProfileImageFetchable
+typealias ProfileImageFetchableUser = ProfileImageFetchable & UserType
 
 protocol ProfileImageFetchable {
     func fetchProfileImage(session: ZMUserSessionInterface,

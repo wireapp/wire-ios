@@ -55,7 +55,7 @@ extension MessageToolboxContent: Comparable {
  * An object that determines what content to display for the given message.
  */
 
-typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
+typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
 
 final class MessageToolboxDataSource {
     typealias ContentSystem = L10n.Localizable.Content.System

@@ -56,7 +56,8 @@
     redundantVoidReturnType, \
     semicolons, \
     # sortDeclarations, \ TODO
-    sortImports
+    sortImports, \
+    sortTypealiases
 
 
 # Options

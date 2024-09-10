@@ -300,7 +300,7 @@ extension NSManagedObjectContext {
 
 // MARK: - Migratable
 
-private typealias MigratableEntity = ZMManagedObject & EncryptionAtRestMigratable
+private typealias MigratableEntity = EncryptionAtRestMigratable & ZMManagedObject
 
 /// A type that needs to be migrated when encryption at rest is enabled / disabled.
 
