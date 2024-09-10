@@ -101,7 +101,7 @@ extension SessionManager: VoIPPushManagerDelegate {
 }
 
 extension VoIPPushPayload {
-    fileprivate func caller(in context: NSManagedObjectContext) -> ZMUser? {
+    private func caller(in context: NSManagedObjectContext) -> ZMUser? {
         return ZMUser.fetch(
             with: senderID,
             domain: senderDomain,
@@ -109,7 +109,7 @@ extension VoIPPushPayload {
         )
     }
 
-    fileprivate func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
+    private func conversation(in context: NSManagedObjectContext) -> ZMConversation? {
         return ZMConversation.fetch(
             with: conversationID,
             domain: conversationDomain,

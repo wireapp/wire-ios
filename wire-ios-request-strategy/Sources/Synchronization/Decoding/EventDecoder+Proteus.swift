@@ -252,7 +252,7 @@ extension ZMUpdateEvent {
         return self.eventData?["recipient"] as? String
     }
 
-    fileprivate var eventData: [String: Any]? {
+    private var eventData: [String: Any]? {
         guard let eventData = (self.payload as? [String: Any])?["data"] as? [String: Any] else {
             return nil
         }
@@ -282,7 +282,7 @@ extension ZMUpdateEvent {
         return data
     }
 
-    fileprivate var payloadKey: String? {
+    private var payloadKey: String? {
         switch type {
         case .conversationOtrMessageAdd:
             return "text"
@@ -295,7 +295,7 @@ extension ZMUpdateEvent {
         }
     }
 
-    fileprivate var externalStringCount: Int {
+    private var externalStringCount: Int {
         return (eventData?["data"] as? String)?.count ?? 0
     }
 }

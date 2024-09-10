@@ -38,7 +38,7 @@ extension ConversationInputBarViewController {
         toggleEphemeralKeyboardVisibility()
     }
 
-    fileprivate func toggleEphemeralKeyboardVisibility() {
+    private func toggleEphemeralKeyboardVisibility() {
         let isEphemeralControllerPresented = ephemeralKeyboardViewController != nil
         let isEphemeralKeyboardPresented = mode == .timeoutConfguration
 

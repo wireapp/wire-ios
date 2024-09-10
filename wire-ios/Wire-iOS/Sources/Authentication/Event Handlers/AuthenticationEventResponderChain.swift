@@ -107,7 +107,7 @@ final class AuthenticationEventResponderChain {
     }
 
     /// Creates and registers the default error handlers.
-    fileprivate func registerDefaultEventHandlers() {
+    private func registerDefaultEventHandlers() {
         // flowStartHandlers
         registerHandler(AuthenticationStartClientLimitErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartE2EIdentityMissingErrorHandler(), to: &flowStartHandlers)
@@ -170,7 +170,7 @@ final class AuthenticationEventResponderChain {
     }
 
     /// Registers a handler inside the specified type erased array.
-    fileprivate func registerHandler<Handler: AuthenticationEventHandler>(_ handler: Handler, to handlerList: inout [AnyAuthenticationEventHandler<Handler.Context>]) {
+    private func registerHandler<Handler: AuthenticationEventHandler>(_ handler: Handler, to handlerList: inout [AnyAuthenticationEventHandler<Handler.Context>]) {
         let box = AnyAuthenticationEventHandler(handler)
         handlerList.append(box)
     }

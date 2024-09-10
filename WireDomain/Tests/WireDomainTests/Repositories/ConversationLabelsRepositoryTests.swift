@@ -250,13 +250,13 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 }
 
 extension ConversationLabelsRepositoryTests {
-    fileprivate func cleanUpEntity() {
+    private func cleanUpEntity() {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Label.fetchRequest()
         let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         _ = try? context.execute(batchDeleteRequest)
     }
 
-    fileprivate func setupConversations() {
+    private func setupConversations() {
         conversation1 = ZMConversation.insertNewObject(in: context)
         conversation1.remoteIdentifier = Scaffolding.conversationLabel1.conversationIDs[0]
 

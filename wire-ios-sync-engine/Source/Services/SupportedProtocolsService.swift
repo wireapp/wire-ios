@@ -158,11 +158,11 @@ extension UserClient {
         return hasMLSIdentity && isRecentlyActive
     }
 
-    fileprivate var hasMLSIdentity: Bool {
+    private var hasMLSIdentity: Bool {
         return !mlsPublicKeys.isEmpty
     }
 
-    fileprivate var isRecentlyActive: Bool {
+    private var isRecentlyActive: Bool {
         if isSelfClient() {
             return true
         }

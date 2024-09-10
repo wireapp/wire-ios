@@ -27,19 +27,19 @@ public class SearchTask {
 
     public typealias ResultHandler = (_ result: SearchResult, _ isCompleted: Bool) -> Void
 
-    fileprivate let transportSession: TransportSessionType
-    fileprivate let searchContext: NSManagedObjectContext
-    fileprivate let contextProvider: ContextProvider
-    fileprivate let searchUsersCache: SearchUsersCache?
+    private let transportSession: TransportSessionType
+    private let searchContext: NSManagedObjectContext
+    private let contextProvider: ContextProvider
+    private let searchUsersCache: SearchUsersCache?
 
-    fileprivate let task: Task
-    fileprivate var userLookupTaskIdentifier: ZMTaskIdentifier?
-    fileprivate var directoryTaskIdentifier: ZMTaskIdentifier?
-    fileprivate var teamMembershipTaskIdentifier: ZMTaskIdentifier?
-    fileprivate var handleTaskIdentifier: ZMTaskIdentifier?
-    fileprivate var servicesTaskIdentifier: ZMTaskIdentifier?
-    fileprivate var resultHandlers: [ResultHandler] = []
-    fileprivate var result = SearchResult(
+    private let task: Task
+    private var userLookupTaskIdentifier: ZMTaskIdentifier?
+    private var directoryTaskIdentifier: ZMTaskIdentifier?
+    private var teamMembershipTaskIdentifier: ZMTaskIdentifier?
+    private var handleTaskIdentifier: ZMTaskIdentifier?
+    private var servicesTaskIdentifier: ZMTaskIdentifier?
+    private var resultHandlers: [ResultHandler] = []
+    private var result = SearchResult(
         contacts: [],
         teamMembers: [],
         addressBook: [],
@@ -49,7 +49,7 @@ public class SearchTask {
         searchUsersCache: nil
     )
 
-    fileprivate var tasksRemaining = 0 {
+    private var tasksRemaining = 0 {
         didSet {
             // only trigger handles if decrement to 0
             if oldValue > tasksRemaining {

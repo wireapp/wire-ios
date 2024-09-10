@@ -86,7 +86,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
     }
 
     /// Load list from persistent store
-    fileprivate func loadList() {
+    private func loadList() {
         guard let ids = self.uiMOC.persistentStoreMetadata(forKey: topConversationsObjectIDKey) as? [String] else {
             return
         }

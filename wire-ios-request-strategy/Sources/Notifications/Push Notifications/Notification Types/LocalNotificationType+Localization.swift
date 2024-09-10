@@ -79,7 +79,7 @@ private let NoConversationNameKey = "noconversationname"
 private let NoUserNameKey = "nousername"
 
 extension LocalNotificationType {
-    fileprivate var baseKey: String {
+    private var baseKey: String {
         switch self {
         case let .message(contentType):
             switch contentType {
@@ -148,7 +148,7 @@ extension LocalNotificationType {
         }
     }
 
-    fileprivate func senderKey(_ sender: ZMUser?, _ conversation: ZMConversation?) -> String? {
+    private func senderKey(_ sender: ZMUser?, _ conversation: ZMConversation?) -> String? {
         guard let sender else { return NoUserNameKey }
 
         if case .failedMessage = self {
@@ -160,7 +160,7 @@ extension LocalNotificationType {
         return nil
     }
 
-    fileprivate func conversationKey(_ conversation: ZMConversation?) -> String? {
+    private func conversationKey(_ conversation: ZMConversation?) -> String? {
         if conversation?.conversationType != .oneOnOne, conversation?.displayName == nil {
             return NoConversationNameKey
         }
@@ -168,7 +168,7 @@ extension LocalNotificationType {
         return nil
     }
 
-    fileprivate func messageBodyText(eventType: LocalNotificationEventType, senderName: String?) -> String {
+    private func messageBodyText(eventType: LocalNotificationEventType, senderName: String?) -> String {
         let senderKey = senderName == nil ? NoUserNameKey : nil
         let localizationKey = [baseKey, senderKey].compactMap { $0 }.joined(separator: ".")
         var arguments: [CVarArg] = []

@@ -127,7 +127,7 @@ extension UserClient {
         selfClient.removeMissingClient(self)
     }
 
-    fileprivate func clearMessagesMissingRecipient() {
+    private func clearMessagesMissingRecipient() {
         for item in messagesMissingRecipient {
             if let message = item as? ZMOTRMessage {
                 message.doesNotMissRecipient(self)

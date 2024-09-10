@@ -875,7 +875,7 @@ extension Date {
         return clamp(between: twoWeeksBefore, and: Date())
     }
 
-    fileprivate func clamp(between fromDate: Date, and toDate: Date) -> Date {
+    private func clamp(between fromDate: Date, and toDate: Date) -> Date {
         if timeIntervalSinceReferenceDate < fromDate.timeIntervalSinceReferenceDate {
             return fromDate
         } else if timeIntervalSinceReferenceDate > toDate.timeIntervalSinceReferenceDate {

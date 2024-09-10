@@ -36,7 +36,8 @@
     redundantBackticks, \
     redundantBreak, \
     redundantClosure, \
-    redundantExtensionACL
+    redundantExtensionACL, \
+    redundantFileprivate
 
 # Options
 

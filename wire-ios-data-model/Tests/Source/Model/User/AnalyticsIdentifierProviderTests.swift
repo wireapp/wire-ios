@@ -118,7 +118,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 // MARK: - Helpers
 
 extension AnalyticsIdentifierProviderTests {
-    fileprivate func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
+    private func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
         let user = selfUser ? self.selfUser! : createUser(in: uiMOC)
         guard inTeam else { return user }
         createMembership(in: uiMOC, user: user, team: createTeam(in: uiMOC))

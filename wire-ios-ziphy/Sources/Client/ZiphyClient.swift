@@ -179,7 +179,7 @@ extension ZiphyClient {
 
 extension ZiphyClient {
     /// Creates a wrapper around a completion handler that calls it on the specified queue.
-    fileprivate func makeCompletionHandler<T>(_ onCompletion: @escaping (T) -> Void) -> (T) -> Void {
+    private func makeCompletionHandler<T>(_ onCompletion: @escaping (T) -> Void) -> (T) -> Void {
         return { value in
             self.callbackQueue.async {
                 onCompletion(value)
@@ -188,7 +188,7 @@ extension ZiphyClient {
     }
 
     /// Performs a data task if the URL request is available, or calls the error otherwise.
-    fileprivate func performDataTask<T>(_ potentialRequest: ZiphyResult<URLRequest>, errorHandler: (ZiphyResult<T>) -> Void) -> URLRequestPromise? {
+    private func performDataTask<T>(_ potentialRequest: ZiphyResult<URLRequest>, errorHandler: (ZiphyResult<T>) -> Void) -> URLRequestPromise? {
         switch potentialRequest {
         case let .failure(error):
             errorHandler(.failure(error))
@@ -200,7 +200,7 @@ extension ZiphyClient {
     }
 
     /// Creates and schedules a request for the given URL request and returns the promise to its reponse.
-    fileprivate func performDataTask(_ request: URLRequest, requester: ZiphyURLRequester) -> URLRequestPromise {
+    private func performDataTask(_ request: URLRequest, requester: ZiphyURLRequester) -> URLRequestPromise {
         let promise = URLRequestPromise(requester: requester)
         let requestIdentifier = requester.performZiphyRequest(request, completionHandler: promise.resolve)
 
@@ -209,7 +209,7 @@ extension ZiphyClient {
     }
 
     /// Decodes a paginated response.
-    fileprivate func decodePaginatedResponse<ZiphyData>(_ data: Data) throws -> ZiphyData where ZiphyData: Codable {
+    private func decodePaginatedResponse<ZiphyData>(_ data: Data) throws -> ZiphyData where ZiphyData: Codable {
         let response: ZiphyPaginatedResponse<ZiphyData>
 
         do {
@@ -229,7 +229,7 @@ extension ZiphyClient {
     }
 
     /// Decodes a response for a single resource.
-    fileprivate func decodeDataResponse<ZiphyData>(_ data: Data) throws -> ZiphyData where ZiphyData: Codable {
+    private func decodeDataResponse<ZiphyData>(_ data: Data) throws -> ZiphyData where ZiphyData: Codable {
         do {
             let decoder = JSONDecoder()
             let response = try decoder.decode(ZiphyDataResponse<ZiphyData>.self, from: data)

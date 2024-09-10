@@ -30,7 +30,7 @@ struct ZiphyRequestGenerator {
      * Creates a request for the specified endpoint and query items, if the resulting URL is valid.
      */
 
-    fileprivate func makeRequest(endpoint: ZiphyEndpoint, query: [URLQueryItem]? = nil) -> ZiphyResult<URLRequest> {
+    private func makeRequest(endpoint: ZiphyEndpoint, query: [URLQueryItem]? = nil) -> ZiphyResult<URLRequest> {
         let path = "/" + ZiphyEndpoint.version + endpoint.resourcePath
 
         var components = URLComponents()

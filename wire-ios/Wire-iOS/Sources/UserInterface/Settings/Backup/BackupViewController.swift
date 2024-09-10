@@ -98,7 +98,7 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Backup Logic
 
 extension BackupViewController {
-    fileprivate func backupActiveAccount(indexPath: IndexPath) {
+    private func backupActiveAccount(indexPath: IndexPath) {
         requestBackupPassword { [weak self] result in
             guard let self, let password = result else { return }
             activityIndicator.start()

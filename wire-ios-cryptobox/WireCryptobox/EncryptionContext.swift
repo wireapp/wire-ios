@@ -162,13 +162,13 @@ extension EncryptionContext {
         self.releaseDirectoryLock()
     }
 
-    fileprivate func acquireDirectoryLock() {
+    private func acquireDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(self.path)")
         }
     }
 
-    fileprivate func releaseDirectoryLock() {
+    private func releaseDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_UN) != 0 {
             fatal("Failed to unlock \(self.path)")
         }

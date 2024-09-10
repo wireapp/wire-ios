@@ -1352,7 +1352,7 @@ extension SessionManager: AccountDeletedObserver {
 // MARK: - Application lifetime notifications
 
 extension SessionManager {
-    @objc fileprivate func applicationWillEnterForeground(_ note: Notification) {
+    @objc private func applicationWillEnterForeground(_ note: Notification) {
         BackgroundActivityFactory.shared.resume()
 
         updateAllUnreadCounts()
@@ -1377,7 +1377,7 @@ extension SessionManager {
         activeUserSession?.appLockController.beginTimer()
     }
 
-    @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
+    @objc private func applicationDidBecomeActive(_ note: Notification) {
         notificationsTracker?.dispatchEvent()
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()

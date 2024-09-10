@@ -215,7 +215,7 @@ extension MessageExpirationTimerTests {
 
 extension MessageExpirationTimerTests {
     /// Creates a message with expiration time
-    fileprivate func clientMessage(expirationTime: TimeInterval) -> ZMClientMessage {
+    private func clientMessage(expirationTime: TimeInterval) -> ZMClientMessage {
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         ZMMessage.setDefaultExpirationTime(expirationTime)
         message.setExpirationDate()
@@ -225,7 +225,7 @@ extension MessageExpirationTimerTests {
     }
 
     /// Checks that the message is expired. Asserts if not.
-    fileprivate func checkExpiration(of message: ZMMessage, file: StaticString = #file, line: UInt = #line) {
+    private func checkExpiration(of message: ZMMessage, file: StaticString = #file, line: UInt = #line) {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         XCTAssertFalse(message.hasChanges, file: file, line: line)
         XCTAssertNil(message.expirationDate, file: file, line: line)

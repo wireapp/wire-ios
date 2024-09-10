@@ -420,7 +420,7 @@ extension ZMUser {
     }
 
     /// Remove user from all group conversations he is a participant of
-    fileprivate func removeFromAllConversations(at timestamp: Date) {
+    private func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
             guard $0.conversation?.conversationType == .group else {
                 return nil

@@ -36,7 +36,7 @@ extension SelfProfileViewController {
         }
     }
 
-    fileprivate func presentNewLoginAlertController(_ clients: [UserClientType]) {
+    private func presentNewLoginAlertController(_ clients: [UserClientType]) {
         let newLoginAlertController = UIAlertController(forNewSelfClients: clients)
 
         let actionManageDevices = UIAlertAction(title: L10n.Localizable.Self.NewDeviceAlert.manageDevices, style: .default) { _ in

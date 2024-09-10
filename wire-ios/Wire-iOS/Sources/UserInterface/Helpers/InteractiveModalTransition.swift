@@ -24,7 +24,7 @@ struct ModalPresentationConfiguration {
 }
 
 extension UIViewControllerContextTransitioning {
-    fileprivate func complete(_ success: Bool) {
+    private func complete(_ success: Bool) {
         completeTransition(!transitionWasCancelled)
     }
 }

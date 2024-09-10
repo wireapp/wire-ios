@@ -25,7 +25,7 @@ extension ZMMessage {
 
     /// If we are adding the message to a degraded conversation we want to expire it immediately
     /// and fire a notification on conversation security level change so that UI could act accordingly
-    fileprivate func expireAndNotifyIfInsertingIntoDegradedConversation() {
+    private func expireAndNotifyIfInsertingIntoDegradedConversation() {
         guard let conversation = self.conversation else { return }
         guard let currentMoc = self.managedObjectContext else { return }
         guard let syncMoc = currentMoc.zm_sync else { return }

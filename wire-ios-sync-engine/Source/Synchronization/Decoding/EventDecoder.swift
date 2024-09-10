@@ -107,7 +107,7 @@ extension EventDecoder {
     /// - parameter events The new events that should be decrypted and stored in the database.
     /// - parameter startingAtIndex The startIndex to be used for the incrementing sortIndex of the stored events.
     /// - Returns: Decrypted events
-    fileprivate func decryptAndStoreEvents(_ events: [ZMUpdateEvent], startingAtIndex startIndex: Int64) -> [ZMUpdateEvent] {
+    private func decryptAndStoreEvents(_ events: [ZMUpdateEvent], startingAtIndex startIndex: Int64) -> [ZMUpdateEvent] {
         let account = Account(userName: "", userIdentifier: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
         let publicKey = try? EncryptionKeys.publicKey(for: account)
         var decryptedEvents: [ZMUpdateEvent] = []
@@ -186,25 +186,25 @@ extension EventDecoder {
 
 extension EventDecoder {
     /// create event ID store if needed
-    fileprivate func createReceivedPushEventIDsStoreIfNecessary() {
+    private func createReceivedPushEventIDsStoreIfNecessary() {
         if self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as? [String] == nil {
             self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
         }
     }
 
     /// List of already received event IDs
-    fileprivate var alreadyReceivedPushEventIDs: Set<UUID> {
+    private var alreadyReceivedPushEventIDs: Set<UUID> {
         let array = self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String]
         return Set(array.compactMap { UUID(uuidString: $0) })
     }
 
     /// List of already received event IDs as strings
-    fileprivate var alreadyReceivedPushEventIDsStrings: Set<String> {
+    private var alreadyReceivedPushEventIDsStrings: Set<String> {
         return Set(self.eventMOC.persistentStoreMetadata(forKey: previouslyReceivedEventIDsKey) as! [String])
     }
 
     /// Store received event IDs 
-    fileprivate func storeReceivedPushEventIDs(from: [ZMUpdateEvent]) {
+    private func storeReceivedPushEventIDs(from: [ZMUpdateEvent]) {
         let uuidToAdd = from
             .filter { $0.source == .pushNotification }
             .compactMap(\.uuid)
@@ -215,7 +215,7 @@ extension EventDecoder {
     }
 
     /// Filters out events that have been received before
-    fileprivate func filterAlreadyReceivedEvents(from: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
+    private func filterAlreadyReceivedEvents(from: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
         let eventIDsToDiscard = self.alreadyReceivedPushEventIDs
         return from.compactMap { event -> ZMUpdateEvent? in
             if event.source != .pushNotification, let uuid = event.uuid {
@@ -227,7 +227,7 @@ extension EventDecoder {
     }
 
     /// Filters out events that shouldn't be processed
-    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
+    private func filterInvalidEvents(from events: [ZMUpdateEvent]) -> [ZMUpdateEvent] {
         let selfConversation = ZMConversation.selfConversation(in: syncMOC)
         let selfUser = ZMUser.selfUser(in: syncMOC)
 

@@ -229,7 +229,7 @@ extension UIView {
 
 extension UIEdgeInsets {
     /// The leading insets, that respect the layout direction.
-    fileprivate func leading(view: UIView) -> CGFloat {
+    private func leading(view: UIView) -> CGFloat {
         if view.isLeftToRight {
             left
         } else {
@@ -238,7 +238,7 @@ extension UIEdgeInsets {
     }
 
     /// The trailing insets, that respect the layout direction.
-    fileprivate func trailing(view: UIView) -> CGFloat {
+    private func trailing(view: UIView) -> CGFloat {
         if view.isLeftToRight {
             right
         } else {

@@ -262,7 +262,7 @@ extension ZMButton {
         )
     }
 
-    fileprivate convenience init(style: ButtonStyle, title: String) {
+    private convenience init(style: ButtonStyle, title: String) {
         self.init(style: style, cornerRadius: 16, fontSpec: .normalSemiboldFont)
         self.setTitle(title, for: .normal)
     }

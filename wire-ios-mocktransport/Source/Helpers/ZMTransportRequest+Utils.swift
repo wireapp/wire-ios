@@ -60,7 +60,7 @@ import Foundation
         return self.pathComponents[index]
     }
 
-    fileprivate var pathComponents: [String] {
+    private var pathComponents: [String] {
         var components = self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
 
         // remove api version from path components

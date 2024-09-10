@@ -431,7 +431,7 @@ extension MessagingTestBase {
     }
 
     /// Creates an encryption context in a temp folder and creates keys
-    fileprivate func setupUsersAndClients() {
+    private func setupUsersAndClients() {
         self.otherUser = self.createUser(alsoCreateClient: true)
         self.otherClient = self.otherUser.clients.first!
         self.thirdUser = self.createUser(alsoCreateClient: true)
@@ -443,7 +443,7 @@ extension MessagingTestBase {
     }
 
     /// Creates self client and user
-    fileprivate func createSelfClient() -> UserClient {
+    private func createSelfClient() -> UserClient {
         let user = ZMUser.selfUser(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
         user.domain = owningDomain
@@ -505,7 +505,7 @@ extension MessagingTestBase {
         return FileManager.default.randomCacheURL!
     }
 
-    fileprivate func deleteAllFilesInCache() {
+    private func deleteAllFilesInCache() {
         let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
         files?.forEach {
             do {

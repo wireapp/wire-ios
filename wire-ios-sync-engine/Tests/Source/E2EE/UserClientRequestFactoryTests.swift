@@ -387,11 +387,11 @@ extension Dictionary<String, Any> {
         value(forKey: .verificationCode)
     }
 
-    fileprivate var lastKey: [String: Any]? {
+    private var lastKey: [String: Any]? {
         value(forKey: .lastkey)
     }
 
-    fileprivate var key: String? {
+    private var key: String? {
         value(forKey: .key)
     }
 
@@ -423,7 +423,7 @@ extension Dictionary<String, Any> {
         value(forKey: .ed25519)
     }
 
-    fileprivate func value<T>(forKey key: PayloadKey) -> T? {
+    private func value<T>(forKey key: PayloadKey) -> T? {
         return self[key.rawValue] as? T
     }
 }

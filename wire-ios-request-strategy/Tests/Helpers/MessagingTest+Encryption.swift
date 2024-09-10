@@ -123,7 +123,7 @@ extension MessagingTestBase {
     /// Returns the encryption context to use for a given client. There are extra cryptobox sessions
     /// that simulate a remote client able to decrypt/encrypt data with its own cryptobox instance.
     /// If the client has no remote identifier, it will create one
-    fileprivate func encryptionContext(for client: UserClient) -> EncryptionContext {
+    private func encryptionContext(for client: UserClient) -> EncryptionContext {
         if client.remoteIdentifier == nil {
             client.remoteIdentifier = UUID.create().transportString()
         }

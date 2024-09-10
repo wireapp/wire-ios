@@ -210,7 +210,7 @@ extension MockUserClient {
         return encryptionContext
     }
 
-    fileprivate var encryptionContext: EncryptionContext {
+    private var encryptionContext: EncryptionContext {
         return MockUserClient.encryptionContext(for: user, clientId: identifier)
     }
 

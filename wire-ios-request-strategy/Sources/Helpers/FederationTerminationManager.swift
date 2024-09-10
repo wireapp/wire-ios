@@ -62,7 +62,7 @@ public final class FederationTerminationManager: FederationTerminationManagerInt
 }
 
 extension FederationTerminationManager {
-    fileprivate func markOneToOneConversationsAsReadOnly(with domain: String) {
+    private func markOneToOneConversationsAsReadOnly(with domain: String) {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
         if let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
@@ -76,7 +76,7 @@ extension FederationTerminationManager {
         }
     }
 
-    fileprivate func removeConnectedUsers(with domain: String) {
+    private func removeConnectedUsers(with domain: String) {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(hostedOnDomain: domain)
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
         if let connectedUsers = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
@@ -86,7 +86,7 @@ extension FederationTerminationManager {
         }
     }
 
-    fileprivate func removeConnectionRequests(with domain: String) {
+    private func removeConnectionRequests(with domain: String) {
         let sentAndPendingConnectionsPredicate = ZMUser.predicateForSentAndPendingConnections(hostedOnDomain: domain)
         let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: sentAndPendingConnectionsPredicate)
         if let pendingUsers = context.fetchOrAssert(request: pendingUsersFetchRequest) as? [ZMUser] {
@@ -96,26 +96,26 @@ extension FederationTerminationManager {
         }
     }
 
-    fileprivate func removeUsers(with userDomain: String, fromConversationsOwnedBy domain: String) {
+    private func removeUsers(with userDomain: String, fromConversationsOwnedBy domain: String) {
         for item in conversationsHosted(on: domain, withParticipantsOn: userDomain) {
             item.appendFederationTerminationSystemMessage(domains: [userDomain, domain])
             item.removeParticipants(with: [userDomain])
         }
     }
 
-    fileprivate func conversationsHosted(on domain: String, withParticipantsOn userDomain: String) -> [ZMConversation] {
+    private func conversationsHosted(on domain: String, withParticipantsOn userDomain: String) -> [ZMConversation] {
         return ZMConversation.groupConversations(hostedOnDomain: domain, in: context)
             .filter { $0.hasLocalParticipantsFrom(Set([userDomain])) }
     }
 
-    fileprivate func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
+    private func removeUsers(with userDomains: [String], fromConversationsNotOwnedBy domains: [String]) {
         for item in conversationsNotHosted(on: domains, withParticipantsOn: userDomains) {
             item.appendFederationTerminationSystemMessage(domains: userDomains)
             item.removeParticipants(with: userDomains)
         }
     }
 
-    fileprivate func conversationsNotHosted(on domains: [String], withParticipantsOn userDomains: [String]) -> [ZMConversation] {
+    private func conversationsNotHosted(on domains: [String], withParticipantsOn userDomains: [String]) -> [ZMConversation] {
         return ZMConversation.groupConversations(notHostedOnDomains: domains, in: context)
             .filter { $0.hasLocalParticipantsFrom(Set(userDomains)) }
     }
@@ -124,7 +124,7 @@ extension FederationTerminationManager {
 // MARK: - Append system messages
 
 extension ZMConversation {
-    fileprivate func appendParticipantsRemovedSystemMessage(_ users: Set<ZMUser>) {
+    private func appendParticipantsRemovedSystemMessage(_ users: Set<ZMUser>) {
         guard let context = managedObjectContext else {
             return
         }

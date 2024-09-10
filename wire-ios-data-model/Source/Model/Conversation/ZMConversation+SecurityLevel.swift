@@ -451,7 +451,7 @@ extension ZMConversation {
     }
 
     /// Expire all pending messages
-    fileprivate func expireAllPendingMessagesBecauseOfSecurityLevelDegradation() {
+    private func expireAllPendingMessagesBecauseOfSecurityLevelDegradation() {
         for message in undeliveredMessages {
             if let clientMessage = message as? ZMClientMessage,
                let genericMessage = clientMessage.underlyingMessage,
@@ -467,7 +467,7 @@ extension ZMConversation {
         }
     }
 
-    fileprivate var undeliveredMessages: [ZMOTRMessage] {
+    private var undeliveredMessages: [ZMOTRMessage] {
         guard let managedObjectContext else { return [] }
 
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
@@ -530,7 +530,7 @@ extension ZMConversation {
 // MARK: - Appending system messages
 
 extension ZMConversation {
-    fileprivate func appendNewIsSecureSystemMessage(cause: SecurityChangeCause) {
+    private func appendNewIsSecureSystemMessage(cause: SecurityChangeCause) {
         switch cause {
         case let .removedUsers(users):
             appendNewIsSecureSystemMessage(verified: [], for: users)
@@ -547,7 +547,7 @@ extension ZMConversation {
         }
     }
 
-    fileprivate func appendNewIsSecureSystemMessage(verified clients: Set<UserClient>, for users: Set<ZMUser>) {
+    private func appendNewIsSecureSystemMessage(verified clients: Set<UserClient>, for users: Set<ZMUser>) {
         guard !users.isEmpty, securityLevel != .secureWithIgnored else {
             return
         }
@@ -569,7 +569,7 @@ extension ZMConversation {
         case verifyLegalHold
     }
 
-    fileprivate func appendNewAddedClientSystemMessage(cause: SecurityChangeCause) {
+    private func appendNewAddedClientSystemMessage(cause: SecurityChangeCause) {
         var timestamp: Date?
         var affectedUsers: Set<ZMUser> = []
         var addedUsers: Set<ZMUser> = []
@@ -602,7 +602,7 @@ extension ZMConversation {
                                  timestamp: timestamp ?? timestampAfterLastMessage())
     }
 
-    fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
+    private func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
         let users = Set(clients.compactMap(\.user))
         self.appendSystemMessage(type: .ignoredClient,
@@ -655,21 +655,21 @@ extension ZMConversation {
 
     /// Returns a timestamp that is shortly (as short as possible) before the given message,
     /// or the last modified date if the message is nil
-    fileprivate func timestamp(before: ZMMessage?) -> Date? {
+    private func timestamp(before: ZMMessage?) -> Date? {
         guard let timestamp = before?.serverTimestamp ?? self.lastModifiedDate else { return nil }
         return timestamp.previousNearestTimestamp
     }
 
     /// Returns a timestamp that is shortly (as short as possible) after the given message,
     /// or the last modified date if the message is nil
-    fileprivate func timestamp(after: ZMConversationMessage?) -> Date? {
+    private func timestamp(after: ZMConversationMessage?) -> Date? {
         guard let timestamp = after?.serverTimestamp ?? self.lastModifiedDate else { return nil }
         return timestamp.nextNearestTimestamp
     }
 
     // Returns a timestamp that is shortly (as short as possible) after the last message in the conversation,
     // or current time if there's no last message
-    fileprivate func timestampAfterLastMessage() -> Date {
+    private func timestampAfterLastMessage() -> Date {
         return timestamp(after: lastMessage) ?? Date()
     }
 }
@@ -688,7 +688,7 @@ extension ZMConversation {
         return hasOnlyTrustedUsers && !containsUnconnectedOrExternalParticipant
     }
 
-    fileprivate var containsUnconnectedOrExternalParticipant: Bool {
+    private var containsUnconnectedOrExternalParticipant: Bool {
         guard let managedObjectContext = self.managedObjectContext else {
             return true
         }
@@ -705,11 +705,11 @@ extension ZMConversation {
         } != nil
     }
 
-    fileprivate var allParticipantsHaveClients: Bool {
+    private var allParticipantsHaveClients: Bool {
         return self.localParticipants.first { $0.clients.count == 0 } == nil
     }
 
-    fileprivate var hasMoreClientsThanSelfClient: Bool {
+    private var hasMoreClientsThanSelfClient: Bool {
         guard
             let context = managedObjectContext,
             let selfClient = ZMUser.selfUser(in: context).selfClient()
@@ -753,7 +753,7 @@ extension ZMSystemMessage {
 extension ZMMessage {
     /// True if the message is a "conversation degraded because of new client"
     /// system message
-    fileprivate var isConversationNotVerifiedSystemMessage: Bool {
+    private var isConversationNotVerifiedSystemMessage: Bool {
         guard let system = self as? ZMSystemMessage else { return false }
         return system.systemMessageType == .ignoredClient
     }

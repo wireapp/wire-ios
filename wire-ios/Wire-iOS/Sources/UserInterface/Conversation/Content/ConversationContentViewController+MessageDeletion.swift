@@ -22,7 +22,7 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
     /// Whether the `Delete for everyone` option should be allowed and shown for this message.
-    fileprivate var canBeDeletedForEveryone: Bool {
+    private var canBeDeletedForEveryone: Bool {
         guard let sender = senderUser,
               let conversation = conversationLike else { return false }
         return sender.isSelfUser && conversation.isSelfAnActiveMember

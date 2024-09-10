@@ -104,7 +104,7 @@ public final class ZiphySearchResultsController {
     // MARK: - Utilities
 
     /// Updates the pagination controller with the given result.
-    fileprivate func updatePagination(_ result: ZiphyResult<[Ziph]>) {
+    private func updatePagination(_ result: ZiphyResult<[Ziph]>) {
         paginationController?.updatePagination(result, filter: {
             guard let size = $0.images[.downsized]?.fileSize else { return false }
             return size.rawValue < self.maxImageSize

@@ -69,7 +69,7 @@ extension NSManagedObjectContext {
     }
 
     /// Discard non commited store metadata
-    fileprivate func discardNonCommitedMetadata() {
+    private func discardNonCommitedMetadata() {
         self.userInfo[metadataKeysToRemove] = [String]()
         self.userInfo[metadataKey] = [String: Any]()
     }
@@ -100,21 +100,21 @@ extension NSManagedObjectContext {
 
     /// Remove key from list of keys that will be deleted next time
     /// the metadata is persisted to disk
-    fileprivate func removeFromNonCommittedDeteledMetadataKeys(key: String) {
+    private func removeFromNonCommittedDeteledMetadataKeys(key: String) {
         var deletedKeys = self.nonCommittedDeletedMetadataKeys
         deletedKeys.remove(key)
         self.userInfo[metadataKeysToRemove] = deletedKeys
     }
 
     /// Adds a key to the list of keys to be deleted next time the metadata is persisted to disk
-    fileprivate func addNonCommittedDeletedMetadataKey(key: String) {
+    private func addNonCommittedDeletedMetadataKey(key: String) {
         var deletedKeys = self.nonCommittedDeletedMetadataKeys
         deletedKeys.insert(key)
         self.userInfo[metadataKeysToRemove] = deletedKeys
     }
 
     /// Set a value in the metadata for the store. The value won't be persisted until the metadata is persisted
-    fileprivate func setPersistentStoreMetadata(data: Any?, key: String) {
+    private func setPersistentStoreMetadata(data: Any?, key: String) {
         let metadata = self.nonCommittedMetadata
         if let data {
             self.removeFromNonCommittedDeteledMetadataKeys(key: key)

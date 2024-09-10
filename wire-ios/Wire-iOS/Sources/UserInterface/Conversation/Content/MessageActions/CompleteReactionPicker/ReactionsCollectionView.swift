@@ -40,7 +40,7 @@ final class ReactionsCollectionView: UICollectionView {
 }
 
 extension ReactionsCollectionView {
-    fileprivate func setupLayout() {
+    private func setupLayout() {
         let currentDevice = DeviceWrapper(device: .current)
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = currentDevice.userInterfaceIdiom == .pad ? 7 : 7
@@ -49,12 +49,12 @@ extension ReactionsCollectionView {
         layout.itemSize = CGSize(width: itemSize, height: itemSize)
     }
 
-    fileprivate func configureObservers() {
+    private func configureObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardPresentation), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    @objc fileprivate func handleKeyboardPresentation(notification: Notification) {
+    @objc private func handleKeyboardPresentation(notification: Notification) {
         let keyboardHeight = UIView.keyboardFrame(in: self, forKeyboardNotification: notification).height
 
         contentInset = UIEdgeInsets(top: 10.0,

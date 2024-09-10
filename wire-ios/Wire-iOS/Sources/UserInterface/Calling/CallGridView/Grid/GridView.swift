@@ -100,7 +100,7 @@ final class GridView: UICollectionView {
 // MARK: - Helpers
 
 extension GridView {
-    fileprivate func firstIndexPath(forPage page: Int) -> IndexPath? {
+    private func firstIndexPath(forPage page: Int) -> IndexPath? {
         let yPosition = CGFloat(page) * bounds.height + 1
         return indexPathForItem(at: CGPoint(x: 0, y: yPosition))
     }
@@ -152,7 +152,7 @@ extension GridView {
         return itemsRemaining > maxItemsPerPage ? maxItemsPerPage : itemsRemaining
     }
 
-    fileprivate func numberOfItemsIn(_ segmentType: SegmentType, for indexPath: IndexPath) -> Int {
+    private func numberOfItemsIn(_ segmentType: SegmentType, for indexPath: IndexPath) -> Int {
         let numberOfItemsInPage = self.numberOfItemsInPage(indexPath: indexPath)
 
         let participantAmount = ParticipantAmount(numberOfItemsInPage)
@@ -175,7 +175,7 @@ extension GridView {
         }
     }
 
-    fileprivate func isOddLastRow(_ indexPath: IndexPath) -> Bool {
+    private func isOddLastRow(_ indexPath: IndexPath) -> Bool {
         guard let numberOfItems = dataSource?.collectionView(self, numberOfItemsInSection: indexPath.section) else {
             return false
         }

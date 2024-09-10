@@ -214,7 +214,7 @@ final class RequestGeneratingOperationLoop {
         requestGeneratorObserver.observedGenerator = { [weak self] in self?.requestGeneratorStore.nextRequest() }
     }
 
-    fileprivate func objectsDidChange(changes: Set<NSManagedObject>) {
+    private func objectsDidChange(changes: Set<NSManagedObject>) {
         for changeTracker in requestGeneratorStore.changeTrackers {
             changeTracker.objectsDidChange(changes)
         }
@@ -227,7 +227,7 @@ final class RequestGeneratingOperationLoop {
         requestGeneratorStore.tearDown()
     }
 
-    fileprivate func enqueueRequests() {
+    private func enqueueRequests() {
         var result: ZMTransportEnqueueResult
 
         repeat {

@@ -32,7 +32,7 @@ extension SelfProfileViewController {
         }
     }
 
-    fileprivate func presentReadReceiptsChangedAlert(with newValue: Bool) {
+    private func presentReadReceiptsChangedAlert(with newValue: Bool) {
         let title = newValue ? L10n.Localizable.Self.ReadReceiptsEnabled.title : L10n.Localizable.Self.ReadReceiptsDisabled.title
         let description = L10n.Localizable.Self.ReadReceiptsDescription.title
 

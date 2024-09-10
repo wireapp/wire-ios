@@ -509,7 +509,7 @@ extension ClientMessageTests_OTR_Legacy {
 
 extension ClientMessageTests_OTR_Legacy {
     /// Returns a string large enough to have to be encoded in an external message
-    fileprivate var stringLargeEnoughToRequireExternal: String {
+    private var stringLargeEnoughToRequireExternal: String {
         var text = "Hello"
         while text.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold) {
             text.append(text)
@@ -518,7 +518,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     /// Asserts that the message metadata is as expected
-    fileprivate func assertMessageMetadata(_ payload: Data!, file: StaticString = #file, line: UInt = #line) {
+    private func assertMessageMetadata(_ payload: Data!, file: StaticString = #file, line: UInt = #line) {
         let messageMetadata = Proteus_NewOtrMessage.with {
             try? $0.merge(serializedData: payload)
         }
@@ -528,7 +528,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     /// Returns a string that is big enough to require external message payload
-    fileprivate func textMessageRequiringExternalMessage(_ numberOfClients: UInt) -> String {
+    private func textMessageRequiringExternalMessage(_ numberOfClients: UInt) -> String {
         var string = "Exponential growth!"
         while string.data(using: .utf8)!.count < Int(ZMClientMessage.byteSizeExternalThreshold / numberOfClients) {
             string += string

@@ -164,7 +164,7 @@ extension MockUser {
         return picture(withTag: "medium")
     }
 
-    fileprivate func picture(withTag tag: String) -> MockPicture? {
+    private func picture(withTag tag: String) -> MockPicture? {
         for picture in pictures {
             if let mockPicture = picture as? MockPicture, mockPicture.info["tag"] as? String == tag {
                 return mockPicture
@@ -273,7 +273,7 @@ extension MockUser {
         return nil
     }
 
-    fileprivate var userPayloadForChangedValues: [String: Any]? {
+    private var userPayloadForChangedValues: [String: Any]? {
         var payload = [String: Any]()
         let regularProperties: Set = [#keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone)]
         let assetIds: Set = [#keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier)]

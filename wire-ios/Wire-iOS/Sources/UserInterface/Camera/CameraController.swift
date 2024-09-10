@@ -289,7 +289,7 @@ extension AVCaptureVideoOrientation {
     /// convert UIDeviceOrientation to AVCaptureVideoOrientation except face up/down
     ///
     /// - Parameter deviceOrientation: a UIDeviceOrientation
-    fileprivate init?(deviceOrientation: UIDeviceOrientation) {
+    private init?(deviceOrientation: UIDeviceOrientation) {
         switch deviceOrientation {
         case .landscapeLeft:        self = .landscapeRight
         case .portrait:             self = .portrait
@@ -299,7 +299,7 @@ extension AVCaptureVideoOrientation {
         }
     }
 
-    fileprivate init?(uiOrientation: UIInterfaceOrientation) {
+    private init?(uiOrientation: UIInterfaceOrientation) {
         switch uiOrientation {
         case .landscapeLeft:        self = .landscapeLeft
         case .portrait:             self = .portrait

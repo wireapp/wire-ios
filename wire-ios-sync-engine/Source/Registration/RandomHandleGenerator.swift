@@ -134,7 +134,7 @@ extension String {
     }
 
     /// Removes punctation and spaces from self and collapses them into a single "_"
-    fileprivate var spacesAndPuctationToUnderscore: String {
+    private var spacesAndPuctationToUnderscore: String {
         let charactersToRemove = CharacterSet.punctuationCharacters
             .union(CharacterSet.whitespacesAndNewlines)
             .union(CharacterSet.controlCharacters)
@@ -144,7 +144,7 @@ extension String {
     }
 
     /// Returns self transliterated to latin base
-    fileprivate var translitteratedToLatin: String {
+    private var translitteratedToLatin: String {
         let mutableString = NSMutableString(string: self) as CFMutableString
         for transform in [kCFStringTransformToLatin, kCFStringTransformStripDiacritics, kCFStringTransformStripCombiningMarks] {
             CFStringTransform(mutableString, nil, transform, false)
@@ -153,7 +153,7 @@ extension String {
     }
 
     /// returns self only with alphanumeric and underscore
-    fileprivate var onlyAlphanumericWithUnderscore: String {
+    private var onlyAlphanumericWithUnderscore: String {
         let allowedCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")
         return self.components(separatedBy: allowedCharacters.inverted).joined(separator: "")
     }

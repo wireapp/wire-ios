@@ -92,7 +92,7 @@ extension URL {
 }
 
 extension URL {
-    fileprivate var tweetbotURL: URL? {
+    private var tweetbotURL: URL? {
         guard isTweet else { return nil }
 
         let components = [
@@ -109,7 +109,7 @@ extension URL {
         return URL(string: tweetbot)
     }
 
-    fileprivate var twitterrificURL: URL? {
+    private var twitterrificURL: URL? {
         return tweetID.flatMap { URL(string: "twitterrific://current/tweet?id=\($0)") }
     }
 

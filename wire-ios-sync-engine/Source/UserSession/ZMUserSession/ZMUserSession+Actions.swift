@@ -65,7 +65,7 @@ import Foundation
         }
     }
 
-    fileprivate func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage? = nil) {
+    private func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage? = nil) {
         sessionManager?.showConversation(conversation, at: message, in: self)
     }
 

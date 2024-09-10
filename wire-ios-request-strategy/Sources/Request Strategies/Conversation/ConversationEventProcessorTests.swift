@@ -809,7 +809,7 @@ extension Encodable {
         return try toDictionary() as ZMTransportData
     }
 
-    fileprivate func toDictionary() throws -> [String: Any] {
+    private func toDictionary() throws -> [String: Any] {
         let data = try JSONEncoder().encode(self)
         let json = try JSONSerialization.jsonObject(with: data, options: [.fragmentsAllowed])
         return json as! [String: Any]

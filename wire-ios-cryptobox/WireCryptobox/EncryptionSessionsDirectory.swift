@@ -498,7 +498,7 @@ class EncryptionSession {
     }
 
     /// Closes the session in CBox
-    fileprivate func closeInCryptobox() {
+    private func closeInCryptobox() {
         zmLog.safePublic("Closing cryptobox session \(id)")
         cbox_session_close(self.implementation.ptr)
     }
@@ -685,7 +685,7 @@ extension EncryptionSession {
 
 extension EncryptionSessionsDirectory {
     /// Returns the file path where the session with the given identifier would be saved
-    fileprivate func filePath(for identifier: EncryptionSessionIdentifier) -> URL {
+    private func filePath(for identifier: EncryptionSessionIdentifier) -> URL {
         return EncryptionSession.expectedPath(root: self.generatingContext.path, for: identifier)
     }
 }

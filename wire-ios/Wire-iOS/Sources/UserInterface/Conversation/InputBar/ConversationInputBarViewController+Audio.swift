@@ -90,7 +90,7 @@ extension ConversationInputBarViewController {
         }
     }
 
-    fileprivate func showAudioRecordViewControllerIfGrantedAccess() {
+    private func showAudioRecordViewControllerIfGrantedAccess() {
         if audioSession.recordPermission == .granted {
             audioRecordViewController?.beginRecording()
         } else {
@@ -136,7 +136,7 @@ extension ConversationInputBarViewController {
         audioRecordViewController = nil
     }
 
-    fileprivate func requestMicrophoneAccess() {
+    private func requestMicrophoneAccess() {
         UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
             guard granted else { return }
         }
@@ -171,7 +171,7 @@ extension ConversationInputBarViewController {
         }
     }
 
-    fileprivate func hideInKeyboardAudioRecordViewController() {
+    private func hideInKeyboardAudioRecordViewController() {
         self.inputBar.textView.resignFirstResponder()
         delay(0.3) {
             self.mode = .textInput
@@ -179,7 +179,7 @@ extension ConversationInputBarViewController {
     }
 
     @objc
-    fileprivate func hideInlineAudioRecordViewController() {
+    private func hideInlineAudioRecordViewController() {
         self.inputBar.buttonContainer.isHidden = false
         guard let audioRecordViewContainer = self.audioRecordViewContainer else {
             return

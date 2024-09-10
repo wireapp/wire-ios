@@ -66,7 +66,7 @@ extension ZMUserSession {
         }
     }
 
-    fileprivate var debugStateUserDefaultsKey: String? {
+    private var debugStateUserDefaultsKey: String? {
         guard
             let identifier = (self.providedSelfUser as! ZMUser).remoteIdentifier
         else { return nil }

@@ -515,7 +515,7 @@ extension ConversationTableViewDataSource {
         )
     }
 
-    fileprivate func timeIntervalToPreviousMessage(from message: ZMConversationMessage, at index: Int) -> TimeInterval? {
+    private func timeIntervalToPreviousMessage(from message: ZMConversationMessage, at index: Int) -> TimeInterval? {
         guard let currentMessageTimestamp = message.serverTimestamp, let previousMessageTimestamp = messagePrevious(to: message, at: index)?.serverTimestamp else {
             return nil
         }
@@ -523,7 +523,7 @@ extension ConversationTableViewDataSource {
         return currentMessageTimestamp.timeIntervalSince(previousMessageTimestamp)
     }
 
-    fileprivate func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
+    private func isFirstMessageOfTheDay(for message: ZMConversationMessage, at index: Int) -> Bool {
         guard let previous = messagePrevious(to: message, at: index)?.serverTimestamp, let current = message.serverTimestamp else { return false }
         return !Calendar.current.isDate(current, inSameDayAs: previous)
     }

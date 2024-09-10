@@ -23,10 +23,10 @@ import Foundation
 class AddressBookSearch {
     /// Maximum number of contacts to consider when matching/searching,
     /// for performance reasons
-    fileprivate let maximumSearchRange: UInt = 3000
+    private let maximumSearchRange: UInt = 3000
 
     /// Address book
-    fileprivate let addressBook: AddressBookAccessor?
+    private let addressBook: AddressBookAccessor?
 
     init(addressBook: AddressBookAccessor? = nil) {
         self.addressBook = addressBook ?? AddressBook.factory()

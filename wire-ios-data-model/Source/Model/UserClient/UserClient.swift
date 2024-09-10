@@ -734,7 +734,7 @@ extension UserClient {
     }
 
     /// Adds to ignored clients, remove from trusted clients, returns the set with the self client excluded
-    fileprivate func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
+    private func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
         let notSelfClients = Set(clients.filter { $0 != self })
 
         guard notSelfClients.count > 0 else { return notSelfClients }

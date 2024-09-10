@@ -140,7 +140,7 @@ extension ZMConversation {
         return false
     }
 
-    fileprivate func updateLastUnreadKnock(_ timestamp: Date?) {
+    private func updateLastUnreadKnock(_ timestamp: Date?) {
         guard let timestamp else { return lastUnreadKnockDate = nil }
 
         if lastUnreadKnockDate == nil || lastUnreadKnockDate! < timestamp {
@@ -148,7 +148,7 @@ extension ZMConversation {
         }
     }
 
-    fileprivate func updateLastUnreadMissedCall(_ timestamp: Date?) {
+    private func updateLastUnreadMissedCall(_ timestamp: Date?) {
         guard let timestamp else {
             lastUnreadMissedCallDate = nil
             return
@@ -237,7 +237,7 @@ extension ZMConversation {
     ///
     /// This method only has an effect when called from the UI context and it's throttled so it's fine to call it repeatedly.
 
-    fileprivate func enqueueMarkAsReadUpdate(_ timestamp: Date) {
+    private func enqueueMarkAsReadUpdate(_ timestamp: Date) {
         guard let managedObjectContext, managedObjectContext.zm_isUserInterfaceContext else { return }
 
         updatePendingLastRead(timestamp)
@@ -262,7 +262,7 @@ extension ZMConversation {
     /// This method can only be run from the UI context but the actual work will happen
     /// on the sync context since that's the context where we update timestamps.
 
-    fileprivate func performMarkAsReadUpdate(in range: ClosedRange<Date>) {
+    private func performMarkAsReadUpdate(in range: ClosedRange<Date>) {
         guard
             managedObjectContext?.zm_isUserInterfaceContext == true,
             let syncMOC = managedObjectContext?.zm_sync

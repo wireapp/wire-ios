@@ -62,7 +62,7 @@ extension IconButton {
         return sendButton
     }
 
-    fileprivate convenience init(
+    private convenience init(
         icon: StyleKitIcon,
         size: StyleKitIcon.Size = .tiny,
         accessibilityId: String,

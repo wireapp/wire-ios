@@ -193,7 +193,7 @@ extension Sequence where Element: SetAlgebra {
 }
 
 extension LazySequence {
-    fileprivate func collect() -> [Self.Element] {
+    private func collect() -> [Self.Element] {
         return Array(self)
     }
 }

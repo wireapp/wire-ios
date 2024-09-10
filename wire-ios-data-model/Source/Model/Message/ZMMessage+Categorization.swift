@@ -110,7 +110,7 @@ let linkParser = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.li
 
 extension ZMMessage {
     /// Category according only to content (excluding likes)
-    fileprivate var categoryFromContent: MessageCategory {
+    private var categoryFromContent: MessageCategory {
         guard !self.isObfuscated, !self.isZombieObject else {
             return .none
         }
@@ -128,7 +128,7 @@ extension ZMMessage {
         return category
     }
 
-    fileprivate var imageCategory: MessageCategory {
+    private var imageCategory: MessageCategory {
         guard let imageMessageData = self.imageMessageData else {
             return .none
         }
@@ -142,7 +142,7 @@ extension ZMMessage {
         return category
     }
 
-    fileprivate var textCategory: MessageCategory {
+    private var textCategory: MessageCategory {
         guard let textData = self.textMessageData,
               let text = textData.messageText, !text.isEmpty else {
             return .none
@@ -161,7 +161,7 @@ extension ZMMessage {
         return category
     }
 
-    fileprivate var fileCategory: MessageCategory {
+    private var fileCategory: MessageCategory {
         guard let fileData = self.fileMessageData,
               self.imageCategory == .none else {
             return .none
@@ -178,14 +178,14 @@ extension ZMMessage {
         return category
     }
 
-    fileprivate var locationCategory: MessageCategory {
+    private var locationCategory: MessageCategory {
         if self.locationMessageData != nil {
             return .location
         }
         return .none
     }
 
-    fileprivate var reactedCategory: MessageCategory {
+    private var reactedCategory: MessageCategory {
         guard !self.reactions.isEmpty else {
             return .none
         }
@@ -196,14 +196,14 @@ extension ZMMessage {
         return .none
     }
 
-    fileprivate var knockCategory: MessageCategory {
+    private var knockCategory: MessageCategory {
         guard self.knockMessageData != nil else {
             return .none
         }
         return .knock
     }
 
-    fileprivate var systemMessageCategory: MessageCategory {
+    private var systemMessageCategory: MessageCategory {
         guard self.systemMessageData != nil else {
             return .none
         }

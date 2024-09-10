@@ -96,7 +96,7 @@ extension AddressBookAccessor {
     }
 
     /// Generate contact cards for the given range of contacts
-    fileprivate func generateContactCards(range: Range<UInt>) -> [String: [String]] {
+    private func generateContactCards(range: Range<UInt>) -> [String: [String]] {
         var cards = [String: [String]]()
 
         for item in self.contacts(range: range).enumerated() {

@@ -393,7 +393,7 @@ extension EventDecoder {
 
 extension EventDecoder {
     /// Filters out events that shouldn't be processed
-    fileprivate func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
+    private func filterInvalidEvents(from events: [ZMUpdateEvent]) async -> [ZMUpdateEvent] {
         let selfConversationID = await syncMOC.perform { ZMConversation.selfConversation(in: self.syncMOC).remoteIdentifier }
         let selfUserID = await syncMOC.perform { ZMUser.selfUser(in: self.syncMOC).remoteIdentifier }
 

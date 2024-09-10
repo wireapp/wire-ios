@@ -360,7 +360,7 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
 extension ConversationParticipantsServiceTests {
     fileprivate typealias DomainUserTuple = (domain: String, user: ZMUser)
 
-    fileprivate func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
+    private func createFederationStubs() async -> (reachables: [DomainUserTuple], unreachables: [DomainUserTuple]) {
         return await uiMOC.perform { [self] in
 
             let applesDomain = "apples.com"
@@ -391,7 +391,7 @@ extension ConversationParticipantsServiceTests {
         }
     }
 
-    fileprivate func assertSystemMessageWasInserted(
+    private func assertSystemMessageWasInserted(
         forUsers users: Set<ZMUser>,
         in conversation: ZMConversation,
         file: StaticString = #file,
@@ -407,7 +407,7 @@ extension ConversationParticipantsServiceTests {
         }
     }
 
-    fileprivate func assertReachableUsersWereAddedOnRetry(
+    private func assertReachableUsersWereAddedOnRetry(
         expectedUsers: Set<ZMUser>,
         file: StaticString = #file,
         line: UInt = #line
@@ -434,7 +434,7 @@ extension ConversationParticipantsServiceTests {
         )
     }
 
-    fileprivate func mockProteusAddParticipantsFailingOnce(with error: FederationError) {
+    private func mockProteusAddParticipantsFailingOnce(with error: FederationError) {
         var firstAttempt = true
 
         mockProteusParticipantsService.addParticipantsTo_MockMethod = { _, _ in
@@ -444,7 +444,7 @@ extension ConversationParticipantsServiceTests {
         }
     }
 
-    fileprivate func mockMLSAddParticipantsFailingOnce(with error: MLSConversationParticipantsError) {
+    private func mockMLSAddParticipantsFailingOnce(with error: MLSConversationParticipantsError) {
         var firstAttempt = true
 
         mockMLSParticipantsService.addParticipantsTo_MockMethod = { _, _ in

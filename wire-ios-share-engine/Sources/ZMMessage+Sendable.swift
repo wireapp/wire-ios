@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 
 extension ZMMessage {
-    fileprivate var reportsProgress: Bool {
+    private var reportsProgress: Bool {
         return fileMessageData != nil || imageMessageData != nil
     }
 }
