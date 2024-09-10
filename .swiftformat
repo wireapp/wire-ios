@@ -33,7 +33,8 @@
     opaqueGenericParameters, \
     preferForLoop, \
     preferKeyPath, \
-    redundantBackticks
+    redundantBackticks, \
+    redundantBreak
 
 # Options
 
