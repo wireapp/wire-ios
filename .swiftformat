@@ -3,4 +3,5 @@
 --rules \
     andOperator, \
     anyObjectProtocol, \
-    applicationMain
+    applicationMain, \
+    assertionFailures

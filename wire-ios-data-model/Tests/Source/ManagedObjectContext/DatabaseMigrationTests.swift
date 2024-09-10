@@ -116,7 +116,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                     "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
                     "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
                     "- Add it to WireDataModel project with the other stores\n\n")
-            assert(false)
+            assertionFailure()
         }
 
         guard allVersions.contains(fixtureVersion) else {

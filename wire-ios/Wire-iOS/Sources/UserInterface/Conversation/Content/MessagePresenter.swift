@@ -61,7 +61,7 @@ final class MessagePresenter: NSObject {
             !fileURL.path.isEmpty
         else {
             let errorMessage = "File URL is missing: \(message.fileMessageData.debugDescription)"
-            assert(false, errorMessage)
+            assertionFailure(errorMessage)
 
             zmLog.error(errorMessage)
             ZMUserSession.shared()?.enqueue({

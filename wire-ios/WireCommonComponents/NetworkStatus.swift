@@ -125,7 +125,7 @@ public final class NetworkStatus: NetworkStatusObservable {
 
     private var reachabilityCallback: SCNetworkReachabilityCallBack = { (_: SCNetworkReachability, _: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) in
         guard let info else {
-            assert(false, "info was NULL in ReachabilityCallback")
+            assertionFailure("info was NULL in ReachabilityCallback")
             return
         }
         let networkStatus = Unmanaged<NetworkStatus>.fromOpaque(info).takeUnretainedValue()
