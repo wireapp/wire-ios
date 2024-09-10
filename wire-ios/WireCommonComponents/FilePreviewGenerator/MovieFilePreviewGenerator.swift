@@ -41,7 +41,7 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
         var actualTime = CMTime.zero
         let cgImage = try? generator.copyCGImage(at: time, actualTime: &actualTime)
         guard let cgImage, let colorSpace = cgImage.colorSpace else {
-            throw MovieFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
 
         let bitsPerComponent = cgImage.bitsPerComponent
@@ -62,7 +62,7 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
             bitmapInfo: bitmapInfo.rawValue
         )
         guard let context else {
-            throw MovieFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
 
         context.interpolationQuality = CGInterpolationQuality.high
@@ -70,13 +70,13 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
         if let cgImage = context.makeImage() {
             return .init(cgImage: cgImage)
         } else {
-            throw MovieFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
     }
 
     // MARK: -
 
-    enum MovieFilePreviewGeneratorError: Error {
+    enum Error: Swift.Error {
         case failedToCreatePreview
     }
 }

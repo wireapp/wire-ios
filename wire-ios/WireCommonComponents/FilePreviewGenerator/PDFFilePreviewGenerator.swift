@@ -36,7 +36,7 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
               let pdfRef = CGPDFDocument(dataProvider),
               let pageRef = pdfRef.page(at: 1),
               let contextRef = UIGraphicsGetCurrentContext() else {
-            throw PDFFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
 
         contextRef.setAllowsAntialiasing(true)
@@ -45,7 +45,7 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
               cropBox.size.width < 16384,
               cropBox.size.height != 0,
               cropBox.size.height < 16384
-        else { throw PDFFilePreviewGeneratorError.failedToCreatePreview }
+        else { throw Error.failedToCreatePreview }
 
         let xScale = thumbnailSize.width / cropBox.size.width
         let yScale = thumbnailSize.height / cropBox.size.height
@@ -56,13 +56,13 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
         if let image = UIGraphicsGetImageFromCurrentImageContext() {
             return image
         } else {
-            throw PDFFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
     }
 
     // MARK: -
 
-    enum PDFFilePreviewGeneratorError: Error {
+    enum Error: Swift.Error {
         case failedToCreatePreview
     }
 }

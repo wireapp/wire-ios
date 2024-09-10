@@ -30,7 +30,7 @@ struct ImageFilePreviewGenerator: FilePreviewGenerator {
     func generatePreviewForFile(at url: URL) async throws -> UIImage {
 
         guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
-            throw ImageFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
         let options: [AnyHashable: Any] = [
             kCGImageSourceCreateThumbnailWithTransform as AnyHashable: true,
@@ -38,14 +38,14 @@ struct ImageFilePreviewGenerator: FilePreviewGenerator {
             kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(thumbnailSize.width, thumbnailSize.height)
         ]
         guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else {
-            throw ImageFilePreviewGeneratorError.failedToCreatePreview
+            throw Error.failedToCreatePreview
         }
         return UIImage(cgImage: thumbnail)
     }
 
     // MARK: -
 
-    enum ImageFilePreviewGeneratorError: Error {
+    enum Error: Swift.Error {
         case failedToCreatePreview
     }
 }

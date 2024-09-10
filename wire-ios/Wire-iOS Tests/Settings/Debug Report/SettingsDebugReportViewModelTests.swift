@@ -39,7 +39,6 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
 
         mockRouter = MockSettingsDebugReportRouterProtocol()
         mockShareFile = MockShareFileUseCaseProtocol()
@@ -70,16 +69,20 @@ final class SettingsDebugReportViewModelTests: XCTestCase {
         mockFileMetaDataGenerator = nil
         coreDataStack = nil
         coreDataStackHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Tests
 
     func testShareReport() async {
+
         // GIVEN
-        let conversation = ZMConversation.insertNewObject(in: coreDataStack.viewContext)
+        let conversation = await coreDataStack.viewContext.perform { [self] in
+            ZMConversation.insertNewObject(in: coreDataStack.viewContext)
+        }
         let mockURL = URL(fileURLWithPath: "mockURL")
-        let mockMetadata = ZMFileMetadata(fileURL: mockURL)
+        let mockMetadata = await coreDataStack.viewContext.perform {
+            ZMFileMetadata(fileURL: mockURL)
+        }
         let mockDebugReport = ShareableDebugReport(
             logFileMetadata: mockMetadata,
             shareFile: mockShareFile

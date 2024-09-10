@@ -26,35 +26,33 @@ final class FilePreviewGeneratorTests: XCTestCase {
 
     private lazy var bundle = Bundle(for: Self.self)
 
-    func testThatItDoesNotBreakOn0x0PDF() async throws {
+    func testThatItThrowsOn0x0PDF() async throws {
 
         // Given
         let pdfURL = try XCTUnwrap(bundle.url(forResource: "0x0", withExtension: "pdf"))
         let sut = PDFFilePreviewGenerator(thumbnailSize: CGSize(width: 100, height: 100))
 
         // When
-        let expectation = expectation(description: "Finished generating the preview")
-        let image = try await sut.generatePreviewForFile(at: pdfURL)
-            XCTAssertNil(image)
-            expectation.fulfill()
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 2)
+        do {
+            _ = try await sut.generatePreviewForFile(at: pdfURL)
+            XCTFail("Unexpected success")
+        } catch PDFFilePreviewGenerator.Error.failedToCreatePreview {
+            // Then
+        }
     }
 
-    func testThatItDoesNotBreakOnHugePDF() async throws {
+    func testThatItThrowsOnHugePDF() async throws {
 
         // Given
         let pdfURL = try XCTUnwrap(bundle.url(forResource: "huge", withExtension: "pdf"))
         let sut = PDFFilePreviewGenerator(thumbnailSize: CGSize(width: 100, height: 100))
 
         // When
-        let expectation = expectation(description: "Finished generating the preview")
-        let image = try await sut.generatePreviewForFile(at: pdfURL)
-            XCTAssertNil(image)
-            expectation.fulfill()
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 2)
+        do {
+            _ = try await sut.generatePreviewForFile(at: pdfURL)
+            XCTFail("Unexpected success")
+        } catch PDFFilePreviewGenerator.Error.failedToCreatePreview {
+            // Then
+        }
     }
 }
