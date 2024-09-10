@@ -28,7 +28,7 @@ extension MockTransportSession {
         let services: [MockService] = MockService.fetchAll(in: managedObjectContext, withPredicate: predicate)
 
         let payload: [String: Any] = [
-            "services": services.map { $0.payload },
+            "services": services.map(\.payload),
             "has_more": false
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)

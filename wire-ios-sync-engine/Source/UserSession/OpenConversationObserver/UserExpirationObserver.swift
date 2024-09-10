@@ -36,8 +36,8 @@ import Foundation
     }
 
     func check(users: Set<ZMUser>) {
-        let allWireless = Set(users.filter { $0.isWirelessUser }).subtracting(expiringUsers)
-        let expired = Set(allWireless.filter { $0.isExpired })
+        let allWireless = Set(users.filter(\.isWirelessUser)).subtracting(expiringUsers)
+        let expired = Set(allWireless.filter(\.isExpired))
         let notExpired = allWireless.subtracting(expired)
 
         expiringUsers.subtract(expired)

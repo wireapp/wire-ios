@@ -103,7 +103,7 @@ public enum LocalNotificationContentType: Equatable {
             self = .text(text, isMention: textMessageData.isMentioningSelf(selfUser), isReply: textMessageData.isQuotingSelf(quotedMessage))
 
         case .composite:
-            guard let textData = message.composite.items.compactMap({ $0.text }).first else { return nil }
+            guard let textData = message.composite.items.compactMap(\.text).first else { return nil }
             self = .text(textData.content, isMention: textData.isMentioningSelf(selfUser), isReply: false)
 
         case let .asset(assetData):

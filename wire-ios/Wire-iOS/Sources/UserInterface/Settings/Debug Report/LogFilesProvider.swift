@@ -116,7 +116,7 @@ struct LogFilesProvider: LogFilesProviding {
         url.appendPathComponent("logs.zip")
         SSZipArchive.createZipFile(
             atPath: url.path,
-            withFilesAtPaths: filesToZip.map { $0.path }
+            withFilesAtPaths: filesToZip.map(\.path)
         )
 
         return url

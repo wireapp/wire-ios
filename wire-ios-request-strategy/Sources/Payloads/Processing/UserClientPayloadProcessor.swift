@@ -44,7 +44,7 @@ final class UserClientPayloadProcessor {
 
         // Mark new clients as ignored
         await context.perform {
-            let newClients = Set(clients.filter({ $0.isInserted }))
+            let newClients = Set(clients.filter(\.isInserted))
             selfClient.addNewClientsToIgnored(newClients)
             selfClient.updateSecurityLevelAfterDiscovering(newClients)
         }

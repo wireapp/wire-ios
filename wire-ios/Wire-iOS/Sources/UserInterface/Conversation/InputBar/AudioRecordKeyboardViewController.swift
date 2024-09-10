@@ -358,7 +358,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func updateRecordingState(_ state: State) {
-        let allViews = Set(view.subviews.flatMap { $0.subviews })
+        let allViews = Set(view.subviews.flatMap(\.subviews))
         let visibleViews = self.visibleViews(forState: state)
         let hiddenViews = allViews.subtracting(visibleViews)
 

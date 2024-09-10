@@ -35,7 +35,7 @@ class ReactionsSortingTests: BaseZMMessageTests {
         message.setReactions(["🎃"], forUser: user1, newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes).addingTimeInterval(.tenSeconds))
         self.uiMOC.saveOrRollback()
         // then
-        let result = message.reactionsSortedByCreationDate().map { $0.reactionString }
+        let result = message.reactionsSortedByCreationDate().map(\.reactionString)
         XCTAssertEqual(result, expectedOrder)
     }
 }

@@ -154,11 +154,11 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
                 return XCTFail()
             }
             XCTAssertEqual(
-                Set(adminRole.actions.compactMap { $0.name }),
+                Set(adminRole.actions.compactMap(\.name)),
                 Set(["leave_conversation", "delete_conversation"])
             )
             XCTAssertEqual(
-                Set(memberRole.actions.compactMap { $0.name }),
+                Set(memberRole.actions.compactMap(\.name)),
                 Set(["leave_conversation"])
             )
             XCTAssertFalse(team.needsToDownloadRoles)

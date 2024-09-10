@@ -285,7 +285,7 @@ public class TextSearchQuery: NSObject {
 
     /// Fetches the objects on the UI context and notifies the delegate
     private func notifyDelegate(with messages: [ZMMessage], hasMore: Bool) {
-        let objectIDs = messages.map { $0.objectID }
+        let objectIDs = messages.map(\.objectID)
         uiMOC.performGroupedBlock { [weak self] in
             guard let self else { return }
             let uiMessages = objectIDs.compactMap {

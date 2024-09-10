@@ -307,7 +307,7 @@ extension ZMConversation {
             return
         }
 
-        WireLogger.eventProcessing.debug("Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier.safeForLoggingDescription })")
+        WireLogger.eventProcessing.debug("Sender: \(user.remoteIdentifier?.safeForLoggingDescription ?? "n/a") missing from participant list: \(localParticipants.map(\.remoteIdentifier.safeForLoggingDescription))")
 
         switch conversationType {
         case .group:
@@ -535,7 +535,7 @@ extension ZMConversation {
         case let .removedUsers(users):
             appendNewIsSecureSystemMessage(verified: [], for: users)
         case let .verifiedClients(userClients):
-            let users = Set(userClients.compactMap { $0.user })
+            let users = Set(userClients.compactMap(\.user))
             appendNewIsSecureSystemMessage(verified: userClients, for: users)
         case let .removedClients(userClients):
             let users = Set(userClients.keys)
@@ -604,7 +604,7 @@ extension ZMConversation {
 
     fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
-        let users = Set(clients.compactMap { $0.user })
+        let users = Set(clients.compactMap(\.user))
         self.appendSystemMessage(type: .ignoredClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,

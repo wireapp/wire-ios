@@ -114,7 +114,7 @@ extension MockTransportSession {
 
         let roles = conversation.team?.roles ?? conversation.nonTeamRoles!
         let payload: [String: Any] = [
-            "conversation_roles": roles.map { $0.payload }
+            "conversation_roles": roles.map(\.payload)
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }

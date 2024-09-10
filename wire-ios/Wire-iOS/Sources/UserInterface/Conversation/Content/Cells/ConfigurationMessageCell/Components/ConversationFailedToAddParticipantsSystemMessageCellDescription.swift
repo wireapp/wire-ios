@@ -61,7 +61,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
         let keyString = "content.system.failedtoadd_participants.could_not_be_added"
 
-        let userNames = failedUsers.compactMap { $0.name }
+        let userNames = failedUsers.compactMap(\.name)
         let userNamesJoined = userNames.joined(separator: ", ")
         let text = keyString.localized(args: userNames.count, userNamesJoined)
 

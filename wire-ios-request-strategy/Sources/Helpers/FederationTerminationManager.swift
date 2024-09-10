@@ -159,7 +159,7 @@ extension ZMConversation {
     }
 
     fileprivate func hasLocalParticipantsFrom(_ domains: Set<String>) -> Bool {
-        let localParticipantDomains = Set(localParticipants.compactMap { $0.domain })
+        let localParticipantDomains = Set(localParticipants.compactMap(\.domain))
 
         return domains.isSubset(of: localParticipantDomains)
     }

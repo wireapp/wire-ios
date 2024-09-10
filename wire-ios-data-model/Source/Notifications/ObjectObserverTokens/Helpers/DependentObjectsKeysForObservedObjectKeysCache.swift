@@ -40,7 +40,7 @@ struct DependentObjectsKeysForObservedObjectKeysCache {
 
         for key in keysToObserve {
             var keyPaths = KeySet(type(of: observedObject).keyPathsForValuesAffectingValue(forKey: key.rawValue))
-            keyPaths = keyPaths.filter { $0.isPath }
+            keyPaths = keyPaths.filter(\.isPath)
 
             var objectKeysWithPathsToObserve: [StringKeyPath: KeySet] = [:]
 

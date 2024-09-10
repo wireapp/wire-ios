@@ -574,7 +574,7 @@ extension GenericMessage {
             )
 
             if case let .ignoreAllMissingClientsNotFromUsers(users) = missingClientsStrategy {
-                message.reportMissing = Array(users.map { $0.userId })
+                message.reportMissing = Array(users.map(\.userId))
             }
 
             return message
@@ -612,7 +612,7 @@ extension GenericMessage {
             )
 
             if case let .ignoreAllMissingClientsNotFromUsers(users) = missingClientsStrategy {
-                message.reportMissing = Array(users.map { $0.userId })
+                message.reportMissing = Array(users.map(\.userId))
             }
 
             return message

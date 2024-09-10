@@ -136,7 +136,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
             sut.buttonsBar.buttons.map(\.accessibilityLabel),
             ["Sketch over picture", "Sketch emoji over picture", "Copy picture", "Save picture", "Reveal in conversation", "Delete picture"]
         )
-        print(sut.buttonsBar.buttons.map { $0.accessibilityLabel })
+        print(sut.buttonsBar.buttons.map(\.accessibilityLabel))
 
         // WHEN
         message.isEphemeral = true

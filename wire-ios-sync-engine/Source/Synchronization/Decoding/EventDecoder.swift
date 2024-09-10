@@ -207,7 +207,7 @@ extension EventDecoder {
     fileprivate func storeReceivedPushEventIDs(from: [ZMUpdateEvent]) {
         let uuidToAdd = from
             .filter { $0.source == .pushNotification }
-            .compactMap { $0.uuid }
+            .compactMap(\.uuid)
             .map { $0.transportString() }
         let allUuidStrings = self.alreadyReceivedPushEventIDsStrings.union(uuidToAdd)
 

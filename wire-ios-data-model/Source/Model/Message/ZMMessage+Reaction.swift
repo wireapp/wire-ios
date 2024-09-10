@@ -41,7 +41,7 @@ extension ZMMessage {
     func selfUserReactions() -> Set<String> {
         let result = usersReaction
             .filter { _, users in users.contains(where: \.isSelfUser) }
-            .map { $0.key }
+            .map(\.key)
 
         return Set(result)
     }
@@ -51,7 +51,7 @@ extension ZMMessage {
             .filter { _, users in users.contains { user in
                 !user.isSelfUser
             }}
-            .map { $0.key }
+            .map(\.key)
 
         return Set(result)
     }

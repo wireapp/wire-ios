@@ -36,9 +36,7 @@ class CallKitCallRegister {
     // MARK: - Persistence
 
     private func persistStorage() {
-        VoIPPushHelper.knownCallHandles = storage.values.map {
-            $0.handle.encodedString
-        }
+        VoIPPushHelper.knownCallHandles = storage.values.map(\.handle.encodedString)
     }
 
     // MARK: - Registration

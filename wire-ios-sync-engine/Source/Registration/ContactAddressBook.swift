@@ -82,7 +82,7 @@ extension CNContact: ContactRecord {
     }
 
     var rawPhoneNumbers: [String] {
-        return self.phoneNumbers.map { $0.value.stringValue }
+        return self.phoneNumbers.map(\.value.stringValue)
     }
 
     var firstName: String {
@@ -119,7 +119,7 @@ extension ZMAddressBookContact {
         self.emailAddresses = contact.emailAddresses.compactMap { emailNormalizer($0.value as String) }
 
         // phone
-        self.rawPhoneNumbers = contact.phoneNumbers.map { $0.value.stringValue }
+        self.rawPhoneNumbers = contact.phoneNumbers.map(\.value.stringValue)
 
         // normalize phone
         self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }

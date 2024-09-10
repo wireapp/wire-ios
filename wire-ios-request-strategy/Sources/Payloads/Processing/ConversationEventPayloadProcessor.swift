@@ -226,7 +226,7 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let users = Set(usersAndRoles.map { $0.0 })
+            let users = Set(usersAndRoles.map(\.0))
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
             if newUsers, conversation.conversationType == .group {

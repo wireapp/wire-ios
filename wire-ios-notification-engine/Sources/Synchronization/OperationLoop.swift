@@ -172,8 +172,8 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
     func userInterfaceContextDidSave(notification: Notification, insertedObjects: Set<NSManagedObject>, updatedObjects: Set<NSManagedObject>) {
         merge(changes: notification, intoContext: syncContext)
 
-        let insertedObjectsIds = insertedObjects.map({ $0.objectID })
-        let updatedObjectsIds = updatedObjects.map({ $0.objectID })
+        let insertedObjectsIds = insertedObjects.map(\.objectID)
+        let updatedObjectsIds = updatedObjects.map(\.objectID)
 
         syncContext.performGroupedBlock {
             let insertedObjects = insertedObjectsIds.compactMap(self.syncContext.object)

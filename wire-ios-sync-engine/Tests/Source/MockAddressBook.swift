@@ -99,6 +99,6 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
     }
 
     var expectedHashes: [String] {
-        return self.rawEmails.map { $0.base64EncodedSHADigest } + self.rawPhoneNumbers.map { $0.base64EncodedSHADigest }
+        return self.rawEmails.map(\.base64EncodedSHADigest) + self.rawPhoneNumbers.map(\.base64EncodedSHADigest)
     }
 }

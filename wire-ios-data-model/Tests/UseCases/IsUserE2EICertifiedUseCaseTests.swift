@@ -43,7 +43,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         setupOneOnOneConversations(in: context)
         setupClientIDs(in: context)
         let mockCoreCrypto = MockCoreCryptoProtocol()
-        mockCoreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap { $0.data }
+        mockCoreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
@@ -245,7 +245,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap { $0.data }
+        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
             [
                 userIDs[0]: [
@@ -291,7 +291,7 @@ final class IsUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         // Given
         setupUsersAndClients(in: uiMOC)
         setupClientIDs(in: uiMOC)
-        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap { $0.data }
+        mockSafeCoreCrypto.coreCrypto.getClientIdsConversationId_MockValue = clientIDs.compactMap(\.data)
         mockSafeCoreCrypto.coreCrypto.getUserIdentitiesConversationIdUserIds_MockMethod = { [clientIDs] _, userIDs in
             [
                 userIDs[0]: [

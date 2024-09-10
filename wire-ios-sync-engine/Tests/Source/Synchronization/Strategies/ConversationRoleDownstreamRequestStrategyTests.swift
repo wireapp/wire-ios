@@ -139,8 +139,8 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
                   let member = convo1!.nonTeamRoles.first(where: { $0.name == "wire_member" }) else {
                 return XCTFail()
             }
-            XCTAssertEqual(Set(admin.actions.map { $0.name }), Set(["leave_conversation", "delete_conversation"]))
-            XCTAssertEqual(Set(member.actions.map { $0.name }), Set(["leave_conversation"]))
+            XCTAssertEqual(Set(admin.actions.map(\.name)), Set(["leave_conversation", "delete_conversation"]))
+            XCTAssertEqual(Set(member.actions.map(\.name)), Set(["leave_conversation"]))
         }
     }
 

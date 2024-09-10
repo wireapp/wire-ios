@@ -131,7 +131,7 @@ extension ZMConversation {
             return
         }
 
-        let allParticipants = Set(usersAndRoles.map { $0.0 })
+        let allParticipants = Set(usersAndRoles.map(\.0))
         let removedParticipants = self.localParticipantsExcludingSelf.subtracting(allParticipants)
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
         removeParticipantsAndUpdateConversationState(users: removedParticipants,

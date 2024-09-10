@@ -67,7 +67,7 @@ extension LinkOpeningOption {
     }
 
     static var availableOptions: [Self] {
-        return allOptions.filter { $0.isAvailable }
+        return allOptions.filter(\.isAvailable)
     }
 
     static var optionsAvailable: Bool {

@@ -43,7 +43,7 @@ extension SearchGroup {
         static let all: [SearchGroup] = [.people]
     #else
         static var all: [SearchGroup] {
-            return [.people, .services].filter { $0.accessible }
+            return [.people, .services].filter(\.accessible)
         }
     #endif
 
@@ -405,7 +405,7 @@ final class SearchResultsViewController: UIViewController {
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
         servicesSection.services = searchResult.services
-        federationSection.users = searchResult.directory.filter { $0.isFederated }
+        federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
     }

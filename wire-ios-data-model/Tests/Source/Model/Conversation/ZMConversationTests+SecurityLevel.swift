@@ -241,9 +241,7 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let conversation = ZMConversation.insertGroupConversation(moc: context, participants: users)!
             let selfClient = self.createSelfClient(onMOC: context)
 
-            let allClients = users.flatMap {
-                $0.clients
-            }
+            let allClients = users.flatMap(\.clients)
 
             // when
             selfClient.trustClients(Set(allClients))

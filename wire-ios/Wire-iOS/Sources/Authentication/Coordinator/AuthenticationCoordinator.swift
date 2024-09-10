@@ -527,7 +527,7 @@ extension AuthenticationCoordinator {
 
         for actionModel in alertModel.actions {
             let action = UIAlertAction(title: actionModel.title, style: actionModel.style) { _ in
-                if actionModel.coordinatorActions.contains(where: { $0.retainsModal }) {
+                if actionModel.coordinatorActions.contains(where: \.retainsModal) {
                     self.pendingAlert = alertModel
                 }
 

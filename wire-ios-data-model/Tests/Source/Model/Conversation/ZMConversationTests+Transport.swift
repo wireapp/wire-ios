@@ -29,7 +29,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
             let accessMode = ConversationAccessMode.allowGuests
 
             // when
-            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map({ $0.rawValue }))
+            conversation.updateAccessStatus(accessModes: accessMode.stringValue, accessRoles: accessRoles.map(\.rawValue))
 
             // then
             XCTAssertEqual(conversation.accessMode, accessMode)

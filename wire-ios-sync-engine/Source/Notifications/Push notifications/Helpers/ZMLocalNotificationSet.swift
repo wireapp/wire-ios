@@ -36,7 +36,7 @@ import WireTransport
     private(set) var oldNotifications = [NotificationUserInfo]()
 
     private var allNotifications: [NotificationUserInfo] {
-        return notifications.compactMap { $0.userInfo } + oldNotifications
+        return notifications.compactMap(\.userInfo) + oldNotifications
     }
 
     init(archivingKey: String, keyValueStore: ZMSynchonizableKeyValueStore) {
@@ -93,7 +93,7 @@ import WireTransport
     func cancelCurrentNotifications(_ conversation: ZMConversation) {
         guard notifications.count > 0 else { return }
         let toRemove = notifications.filter { $0.conversationID == conversation.remoteIdentifier }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)
     }
 
@@ -116,7 +116,7 @@ import WireTransport
     func cancelCurrentNotifications(messageNonce: UUID) {
         guard notifications.count > 0 else { return }
         let toRemove = notifications.filter { $0.messageNonce == messageNonce }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)
     }
 }
@@ -127,7 +127,7 @@ extension ZMLocalNotificationSet {
         let toRemove = notifications.filter {
             $0.conversationID == conversation.remoteIdentifier && $0.isCallingNotification
         }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)
     }
 }

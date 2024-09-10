@@ -71,7 +71,7 @@ extension ZMConversation {
 
         // Fill out team specific properties if the conversation was created in the self user team
         if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team, team == selfUserTeam {
-            let members = selfUserTeam.members.compactMap { $0.user }
+            let members = selfUserTeam.members.compactMap(\.user)
             let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
 
             systemMessage.allTeamUsersAdded = users.isSuperset(of: members)

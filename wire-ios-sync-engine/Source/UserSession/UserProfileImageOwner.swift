@@ -41,7 +41,7 @@ public final class UserProfileImageOwner: NSObject, ZMImageOwner {
     }
 
     public func requiredImageFormats() -> NSOrderedSet {
-        return NSOrderedSet(array: UserProfileImageOwner.imageFormats.map { $0.rawValue })
+        return NSOrderedSet(array: UserProfileImageOwner.imageFormats.map(\.rawValue))
     }
 
     public func originalImageData() -> Data? {

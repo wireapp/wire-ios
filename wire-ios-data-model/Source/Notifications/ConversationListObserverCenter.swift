@@ -302,7 +302,7 @@ class ConversationListSnapshot: NSObject {
             needsToRecalculate = false
         }
 
-        let changedSet = Set(conversationChanges.compactMap { $0.conversation })
+        let changedSet = Set(conversationChanges.map(\.conversation))
         guard let newStateUpdate = self.state.updatedState(changedSet, observedObject: list, newSet: list.toOrderedSetState())
         else {
             zmLog.debug("Recalculated list \(list.identifier), but old state is same as new state")
@@ -341,7 +341,7 @@ class ConversationListSnapshot: NSObject {
 
     func logMessage(for conversationChanges: [ConversationChangeInfo], listChanges: ConversationListChangeInfo?) -> String {
         var message = "Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
-        message.append(conversationChanges.map { $0.customDebugDescription }.joined(separator: "\n"))
+        message.append(conversationChanges.map(\.customDebugDescription).joined(separator: "\n"))
 
         guard let changeInfo = listChanges else { return message }
         message.append("\n ConversationListChangeInfo: \(changeInfo.description)")

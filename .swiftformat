@@ -31,7 +31,8 @@
     modifierOrder, \
     numberFormatting, \
     opaqueGenericParameters, \
-    preferForLoop
+    preferForLoop, \
+    preferKeyPath
 
 # Options
 

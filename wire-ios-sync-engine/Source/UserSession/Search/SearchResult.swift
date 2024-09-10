@@ -68,7 +68,7 @@ extension SearchResult {
 
         if searchOptions.contains(.teamMembers),
            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers) {
-            teamMembers = searchUsers.filter({ $0.isTeamMember })
+            teamMembers = searchUsers.filter(\.isTeamMember)
         } else {
             teamMembers = []
         }

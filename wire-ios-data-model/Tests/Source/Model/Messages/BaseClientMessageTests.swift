@@ -186,7 +186,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
             }
             let clientIds = (recipientEntry.clients).map { String(format: "%llx", $0.client.client) }.sorted()
             XCTAssertEqual(clientIds, expectedClientsIds, file: file, line: line)
-            let hasTexts = (recipientEntry.clients).map { $0.hasText }
+            let hasTexts = (recipientEntry.clients).map(\.hasText)
             XCTAssertFalse(hasTexts.contains(false), file: file, line: line)
         }
     }

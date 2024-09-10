@@ -44,7 +44,7 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
         XCTAssertEqual(payloadTeams.count, teams.count, "Response should have \(teams.count) teams", file: file, line: line)
 
         let receivedTeamIdentifiers = payloadTeams.compactMap { $0["id"] as? String }
-        let expectedTeamIdentifiers = teams.map { $0.identifier }
+        let expectedTeamIdentifiers = teams.map(\.identifier)
 
         for expectedId in expectedTeamIdentifiers {
             XCTAssertTrue(receivedTeamIdentifiers.contains(expectedId), "Payload should contain team with identifier '\(expectedId)'", file: file, line: line)

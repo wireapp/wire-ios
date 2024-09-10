@@ -201,14 +201,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
             switch groupID {
             case parentGroupID.data:
-                return [member1, member2, member3].compactMap {
-                    $0.rawValue.utf8Data
-                }
+                return [member1, member2, member3].compactMap(\.rawValue.utf8Data)
 
             case subconversationGroupID.data:
-                return [member1, member2].compactMap {
-                    $0.rawValue.utf8Data
-                }
+                return [member1, member2].compactMap(\.rawValue.utf8Data)
 
             default:
                 return []

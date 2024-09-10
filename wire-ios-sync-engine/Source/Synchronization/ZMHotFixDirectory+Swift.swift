@@ -182,7 +182,7 @@ import Foundation
         let users = context.fetchOrAssert(request: request) as? [ZMUser]
 
         users?.lazy
-            .filter { $0.isConnected }
+            .filter(\.isConnected)
             .forEach { $0.needsToBeUpdatedFromBackend = true }
 
         ZMUser.selfUser(in: context).needsToBeUpdatedFromBackend = true

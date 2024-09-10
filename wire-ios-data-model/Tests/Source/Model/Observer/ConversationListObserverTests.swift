@@ -285,8 +285,8 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
-        XCTAssertEqual(conversationList.items.map { $0.objectID },
-                       [conversation3, conversation2, conversation1].map { $0.objectID }, file: file, line: line)
+        XCTAssertEqual(conversationList.items.map(\.objectID),
+                       [conversation3, conversation2, conversation1].map(\.objectID), file: file, line: line)
 
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         XCTAssertEqual(conversationList.items.count, 3, file: file, line: line)
@@ -296,8 +296,8 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         // then
-        XCTAssertEqual(conversationList.items.map { $0.objectID },
-                       [conversation2, conversation3, conversation1].map { $0.objectID }, file: file, line: line)
+        XCTAssertEqual(conversationList.items.map(\.objectID),
+                       [conversation2, conversation3, conversation1].map(\.objectID), file: file, line: line)
         XCTAssertEqual(conversationList.items.count, 3, file: file, line: line)
         XCTAssertEqual(testObserver.changes.count, 1, file: file, line: line)
         if let first = testObserver.changes.last {

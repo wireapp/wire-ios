@@ -588,7 +588,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private func formattedUserNames(from users: Set<ZMUser>) -> String {
-        let names = users.compactMap { $0.name }.joined(separator: ", ")
+        let names = users.compactMap(\.name).joined(separator: ", ")
         return names
     }
 

@@ -101,8 +101,8 @@ extension AddressBookAccessor {
 
         for item in self.contacts(range: range).enumerated() {
             let contact = item.element
-            cards[contact.localIdentifier ?? "\(item.offset)"] = (contact.emailAddresses.map { $0.base64EncodedSHADigest })
-                + (contact.phoneNumbers.map { $0.base64EncodedSHADigest })
+            cards[contact.localIdentifier ?? "\(item.offset)"] = (contact.emailAddresses.map(\.base64EncodedSHADigest))
+                + (contact.phoneNumbers.map(\.base64EncodedSHADigest))
         }
         return cards
     }
@@ -314,7 +314,7 @@ extension ZMAddressBookContact {
         self.middleName = contact.middleName
         self.nickname = contact.nickname
         self.organization = contact.organization
-        self.emailAddresses = contact.rawEmails.compactMap { $0.validatedEmail }
+        self.emailAddresses = contact.rawEmails.compactMap(\.validatedEmail)
         self.rawPhoneNumbers = contact.rawPhoneNumbers
         self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
         self.localIdentifier = contact.localIdentifier

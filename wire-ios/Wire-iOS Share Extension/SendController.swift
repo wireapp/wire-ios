@@ -117,7 +117,7 @@ final class SendController {
             }
         }
 
-        if unsentSendables.contains(where: { $0.needsPreparation }) {
+        if unsentSendables.contains(where: \.needsPreparation) {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
                 guard let self else { return }
@@ -176,9 +176,9 @@ final class SendController {
     private func prepare(unsentSendables: [UnsentSendable], completion: @escaping () -> Void) {
         let preparationGroup = DispatchGroup()
 
-        unsentSendables.filter { $0.needsPreparation }.forEach {
+        for unsentSendable in unsentSendables.filter(\.needsPreparation) {
             preparationGroup.enter()
-            $0.prepare {
+            unsentSendable.prepare {
                 preparationGroup.leave()
             }
         }

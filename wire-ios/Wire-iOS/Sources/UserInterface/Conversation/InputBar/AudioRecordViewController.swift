@@ -314,7 +314,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func updateRecordingState(_ state: AudioRecordState) {
         let visible = visibleViewsForState(state)
-        let allViews = Set(view.subviews.flatMap { $0.subviews }) // Well, 2 levels 'all'
+        let allViews = Set(view.subviews.flatMap(\.subviews)) // Well, 2 levels 'all'
         let hidden = allViews.subtracting(visible)
 
         visible.forEach { $0.isHidden = false }

@@ -185,7 +185,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
             return onComplete(.success(info:
                 "Enabled:\n" +
                     self.currentlyEnabledLogs
-                    .map { $0.rawValue }
+                    .map(\.rawValue)
                     .joined(separator: "\n")
             ))
         }
@@ -230,9 +230,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
     private let logsKey = "enabledLogs"
 
     private func saveEnabledLogs(userSession: ZMUserSession) {
-        let idsToSave = self.currentlyEnabledLogs.map {
-            $0.rawValue
-        }
+        let idsToSave = self.currentlyEnabledLogs.map(\.rawValue)
         self.saveState(userSession: userSession, state: [logsKey: idsToSave])
     }
 

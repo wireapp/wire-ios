@@ -104,7 +104,7 @@ final class WaveFormView: UIView {
 
     private func updateWaveFormColor() {
         let clearGradientColor = gradientColor.withAlphaComponent(0)
-        let leftColors = [gradientColor, clearGradientColor].map { $0.cgColor }
+        let leftColors = [gradientColor, clearGradientColor].map(\.cgColor)
         leftGradient.gradientLayer.colors = leftColors
         rightGradient.gradientLayer.colors = leftColors
     }

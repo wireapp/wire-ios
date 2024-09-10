@@ -320,7 +320,7 @@ import Foundation
 
         let newUnreads = insertedObjects.lazy
             .compactMap { $0 as? ZMMessage }
-            .filter { $0.isUnreadMessage }
+            .filter(\.isUnreadMessage)
 
         let newUnreadMessages = newUnreads
             .filter { $0.knockMessageData == nil }

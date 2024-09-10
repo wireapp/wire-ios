@@ -83,8 +83,8 @@ extension ZMUser {
         guard selfUser.hasTeam else { return Set() }
 
         let teamMembersInConversationWithSelfUser = selfUser.conversations.lazy
-            .flatMap { $0.participantRoles }
-            .compactMap { $0.user }
+            .flatMap(\.participantRoles)
+            .compactMap(\.user)
             .filter { $0.isOnSameTeam(otherUser: selfUser) && !$0.isSelfUser }
 
         return Set(teamMembersInConversationWithSelfUser)

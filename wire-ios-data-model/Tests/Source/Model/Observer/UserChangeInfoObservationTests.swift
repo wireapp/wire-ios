@@ -92,8 +92,8 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
         XCTAssertEqual(userObserver.notifications.count, changeCount, "Should not have changed further once", file: file, line: line)
 
         guard let changes = userObserver.notifications.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: Set(userInfoChangeKeys.map { $0.rawValue }),
-                                             expectedChangedFields: Set(expectedChangedFields.map { $0.rawValue }))
+        changes.checkForExpectedChangeFields(userInfoKeys: Set(userInfoChangeKeys.map(\.rawValue)),
+                                             expectedChangedFields: Set(expectedChangedFields.map(\.rawValue)))
     }
 
     func testThatItNotifiesTheObserverOfANameChange() {
@@ -467,8 +467,8 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
         XCTAssertEqual(observedUser.clients.count, 1)
         XCTAssertEqual(userChangeInfos.count, 2)
-        XCTAssertEqual(userChangeInfos.map { $0.trustLevelChanged }, [false, true])
-        XCTAssertEqual(userChangeInfos.map { $0.clientsChanged }, [true, false])
+        XCTAssertEqual(userChangeInfos.map(\.trustLevelChanged), [false, true])
+        XCTAssertEqual(userChangeInfos.map(\.clientsChanged), [true, false])
     }
 
     func testThatItNotifiesAboutAnAddedTeam() {

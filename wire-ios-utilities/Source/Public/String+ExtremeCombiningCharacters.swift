@@ -62,9 +62,7 @@ extension String {
             return self
         }
 
-        let isDiacriticsMap = self.unicodeScalars.map {
-            $0.isDiacritics
-        }
+        let isDiacriticsMap = self.unicodeScalars.map(\.isDiacritics)
 
         var newUnicodeScalars = "".unicodeScalars
 

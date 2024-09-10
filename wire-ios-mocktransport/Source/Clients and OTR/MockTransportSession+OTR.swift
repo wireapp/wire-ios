@@ -163,7 +163,7 @@ extension MockTransportSession {
                                 createEventBlock: (MockUserClient, Data, Data) -> MockEvent) {
         let activeUsers = conversation.activeUsers.array as? [MockUser]
         guard let activeClients = activeUsers?.flatMap({ user in
-            return user.userClients.compactMap { $0.identifier }
+            return user.userClients.compactMap(\.identifier)
         }) else {
             return
         }

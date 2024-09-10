@@ -39,7 +39,7 @@ extension String {
         String.matchers
             .flatMap { $0.matches(in: self, options: [], range: range) }
             .sorted { $0.range.lowerBound < $1.range.lowerBound }
-            .map { $0.range }
+            .map(\.range)
             .reduce(into: [NSRange]()) { result, range in
                 guard let last = result.popLast() else {
                     result.append(range)

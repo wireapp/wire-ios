@@ -130,7 +130,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUser3 = createUser(moc: uiMOC, domain: UUID().uuidString)
         let otherUsers = [otherUser1, otherUser2, otherUser3]
 
-        let classifiedDomains = otherUsers.compactMap { $0.domain }
+        let classifiedDomains = otherUsers.compactMap(\.domain)
 
         syncMOC.performAndWait {
             storeClassifiedDomains(with: .enabled, domains: classifiedDomains)
@@ -161,7 +161,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -200,7 +200,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         BackendInfo.isFederationEnabled = false
         BackendInfo.domain = localDomain
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         syncMOC.performAndWait {
@@ -227,7 +227,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2, otherUser3]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -255,7 +255,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true
@@ -284,7 +284,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
         let otherUsers = [otherUser1, otherUser2]
         let localDomain = UUID().uuidString
 
-        let otherUsersDomains = otherUsers.compactMap { $0.domain }
+        let otherUsersDomains = otherUsers.compactMap(\.domain)
         let classifiedDomains = [otherUsersDomains, [localDomain]].flatMap { $0 }
 
         BackendInfo.isFederationEnabled = true

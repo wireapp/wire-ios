@@ -140,7 +140,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     }
 
     func updateSectionSelection() {
-        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map { $0.section }).min()
+        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map(\.section)).min()
         guard let section = minSection  else { return }
         self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
     }

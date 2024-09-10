@@ -74,7 +74,7 @@ extension Permissions: CustomDebugStringConvertible {
     ]
 
     public var debugDescription: String {
-        return "[\(Permissions.descriptions.filter { contains($0.0) }.map { $0.1 }.joined(separator: ", "))]"
+        return "[\(Permissions.descriptions.filter { contains($0.0) }.map(\.1).joined(separator: ", "))]"
     }
 }
 

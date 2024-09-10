@@ -87,7 +87,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         conversation = self.conversation(for: self.groupConversation!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let objectIDs = conversationDirectory?.conversationsIncludingArchived.items.map { $0.objectID }
+        let objectIDs = conversationDirectory?.conversationsIncludingArchived.items.map(\.objectID)
         XCTAssertTrue(objectIDs!.contains(conversationID!))
     }
 
@@ -127,9 +127,9 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         conversation = self.conversation(for: self.groupConversation!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.items.map { $0.objectID }
-        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.items.map { $0.objectID }
-        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.items.map { $0.objectID }
+        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.items.map(\.objectID)
+        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.items.map(\.objectID)
+        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.items.map(\.objectID)
         XCTAssertFalse(conversationsIncludingArchivedObjectIDs!.contains(conversationID!))
         XCTAssertFalse(archivedConversationsObjectIDs!.contains(conversationID!))
         XCTAssertTrue(clearedConversationsObjectIDs!.contains(conversationID!))
@@ -153,7 +153,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let objectIDs = conversationDirectory?.conversationsIncludingArchived.items.map { $0.objectID }
+        let objectIDs = conversationDirectory?.conversationsIncludingArchived.items.map(\.objectID)
         XCTAssertFalse(objectIDs!.contains(conversationID!))
     }
 
@@ -175,7 +175,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let objectIDs = conversationDirectory?.conversationsIncludingArchived.items.map { $0.objectID }
+        let objectIDs = conversationDirectory?.conversationsIncludingArchived.items.map(\.objectID)
         XCTAssertFalse(objectIDs!.contains(conversationID!))
     }
 
@@ -223,9 +223,9 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.items.map { $0.objectID }
-        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.items.map { $0.objectID }
-        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.items.map { $0.objectID }
+        let conversationsIncludingArchivedObjectIDs = conversationDirectory?.conversationsIncludingArchived.items.map(\.objectID)
+        let archivedConversationsObjectIDs = conversationDirectory?.archivedConversations.items.map(\.objectID)
+        let clearedConversationsObjectIDs = conversationDirectory?.clearedConversations.items.map(\.objectID)
         XCTAssertTrue(conversationsIncludingArchivedObjectIDs!.contains(conversationID!))
         XCTAssertTrue(archivedConversationsObjectIDs!.contains(conversationID!))
         XCTAssertFalse(clearedConversationsObjectIDs!.contains(conversationID!))

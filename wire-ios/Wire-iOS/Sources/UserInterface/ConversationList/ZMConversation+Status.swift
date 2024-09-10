@@ -326,7 +326,7 @@ final class CallingMatcher: ConversationStatusMatcher {
 
 final class SecurityAlertMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
-        return status.messagesRequiringAttention.contains(where: { $0.isComposite })
+        return status.messagesRequiringAttention.contains(where: \.isComposite)
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {

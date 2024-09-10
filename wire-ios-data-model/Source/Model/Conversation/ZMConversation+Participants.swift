@@ -91,7 +91,7 @@ extension ZMConversation {
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipants: Set<ZMUser> {
-        return Set(localParticipantRoles.compactMap { $0.user })
+        return Set(localParticipantRoles.compactMap(\.user))
     }
 
     /// Participants that are in the conversation, according to the local state
@@ -172,7 +172,7 @@ extension ZMConversation {
 
         if !addedRoles.isEmpty {
             self.checkIfArchivedStatusChanged(addedSelfUser: addedSelfUser)
-            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap { $0.user }), addedSelfUser: addedSelfUser)
+            self.checkIfVerificationLevelChanged(addedUsers: Set(addedRoles.compactMap(\.user)), addedSelfUser: addedSelfUser)
         }
     }
 
@@ -214,7 +214,7 @@ extension ZMConversation {
     }
 
     private func checkIfVerificationLevelChanged(addedUsers: Set<ZMUser>, addedSelfUser: Bool) {
-        let clients = Set(addedUsers.flatMap { $0.clients })
+        let clients = Set(addedUsers.flatMap(\.clients))
         self.decreaseSecurityLevelIfNeededAfterDiscovering(clients: clients, causedBy: addedUsers)
 
         if addedSelfUser {
@@ -249,7 +249,7 @@ extension ZMConversation {
     @objc
     public func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
         guard let moc = self.managedObjectContext else { return }
-        let existingUsers = Set(self.participantRoles.map { $0.user })
+        let existingUsers = Set(self.participantRoles.map(\.user))
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
 
@@ -264,7 +264,7 @@ extension ZMConversation {
         })
 
         if !removedUsers.isEmpty {
-            let removedSelf = removedUsers.contains(where: { $0.isSelfUser })
+            let removedSelf = removedUsers.contains(where: \.isSelfUser)
             self.checkIfArchivedStatusChanged(removedSelfUser: removedSelf, initiatingUser: initiatingUser)
             self.checkIfVerificationLevelChanged(removedUsers: removedUsers)
         }

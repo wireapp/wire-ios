@@ -249,7 +249,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
 
         let qualifiedIDs = try await context.perform { [context] in
             let users = try context.fetch(fetchRequest) as? [ZMUser]
-            return users?.compactMap { $0.qualifiedID }
+            return users?.compactMap(\.qualifiedID)
         }
 
         guard let qualifiedIDs else { return }

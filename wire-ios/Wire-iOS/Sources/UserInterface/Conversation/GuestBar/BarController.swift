@@ -68,7 +68,7 @@ final class BarController: UIViewController {
                 arrangedSubview.removeFromSuperview()
             }
 
-            self.bars.map { $0.view }.forEach(self.stackView.addArrangedSubview)
+            self.bars.map(\.view).forEach(self.stackView.addArrangedSubview)
         }
     }
 

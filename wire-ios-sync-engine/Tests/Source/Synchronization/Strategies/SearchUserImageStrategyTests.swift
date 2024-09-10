@@ -64,7 +64,7 @@ final class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func userIDs(from searchUsers: Set<ZMSearchUser>) -> Set<UUID> {
-        return Set(searchUsers.compactMap { $0.remoteIdentifier })
+        return Set(searchUsers.compactMap(\.remoteIdentifier))
     }
 
     func userData(previewAssetKey: String?, completeAssetKey: String? = nil, for userID: UUID) -> [String: Any] {

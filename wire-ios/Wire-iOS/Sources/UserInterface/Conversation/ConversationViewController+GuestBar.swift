@@ -53,7 +53,7 @@ extension ConversationViewController {
         }
 
         let head = states[0]
-        let tail = states.dropFirst().map({ $0.localizedLowercase })
+        let tail = states.dropFirst().map(\.localizedLowercase)
         let list = ([head] + tail).joined(separator: ConversationBanner.separator)
 
         if state == .visibleServices {

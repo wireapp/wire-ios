@@ -397,7 +397,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             domain: "example.com"
         )
 
-        let clientIds = [mlsClientID].compactMap { $0.rawValue.utf8Data }
+        let clientIds = [mlsClientID].compactMap(\.rawValue.utf8Data)
 
         let mockCommit = Data.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()

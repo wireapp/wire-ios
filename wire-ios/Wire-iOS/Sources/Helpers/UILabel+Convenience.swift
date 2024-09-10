@@ -27,7 +27,7 @@ extension UILabel {
         weight: FontWeight = .regular,
         color: UIColor) {
         self.init(frame: .zero)
-        text = key.map { $0.localized }
+        text = key.map(\.localized)
         font = FontSpec(size, weight).font
         textColor = color
     }

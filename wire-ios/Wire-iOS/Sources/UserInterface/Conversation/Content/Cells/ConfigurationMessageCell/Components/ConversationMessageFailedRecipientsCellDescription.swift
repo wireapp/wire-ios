@@ -72,7 +72,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
         }
 
         /// The list of participants with incomplete metadata.
-        let usersWithoutName = failedUsers.filter { $0.hasEmptyName }
+        let usersWithoutName = failedUsers.filter(\.hasEmptyName)
         if !usersWithoutName.isEmpty {
             let keyString = "content.system.failedtosend_participants.will_never_get_message"
 

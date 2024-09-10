@@ -59,7 +59,7 @@ final class AvailabilityTests: IntegrationTest {
 
         XCTAssertNil(selfUser.modifiedKeys)
         XCTAssertEqual(expectedRequests.count, mockTransportSession.receivedRequests().count)
-        XCTAssertEqual(Set(expectedRequests), Set(mockTransportSession.receivedRequests().map({ $0.path })))
+        XCTAssertEqual(Set(expectedRequests), Set(mockTransportSession.receivedRequests().map(\.path)))
     }
 
     func testThatAvailabilityIsBroadcastedToAllConnectedUsersAndTeamMembers() {

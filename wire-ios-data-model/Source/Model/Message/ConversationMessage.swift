@@ -352,7 +352,7 @@ extension ZMMessage {
     @objc public var usersReaction: [String: [UserType]] {
         return Array(reactionData)
             .partition(by: \.reactionString)
-            .mapValues { $0.flatMap { $0.users } }
+            .mapValues { $0.flatMap(\.users) }
     }
 
     @objc public func reactionsSortedByCreationDate() -> [ReactionData] {

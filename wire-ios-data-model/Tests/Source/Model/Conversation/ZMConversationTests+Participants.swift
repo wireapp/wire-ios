@@ -91,7 +91,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         sut.removeParticipantsAndUpdateConversationState(users: Set([user2]), initiatingUser: selfUser)
 
         // THEN
-        XCTAssertEqual(sut.localParticipantRoles.map { $0.user }, [user1])
+        XCTAssertEqual(sut.localParticipantRoles.map(\.user), [user1])
     }
 
     func testThatRemoveThenAddParticipants() {
@@ -111,7 +111,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         sut.addParticipantAndUpdateConversationState(user: user2, role: nil)
 
         // THEN
-        XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1, user2]))
+        XCTAssertEqual(Set(sut.participantRoles.map(\.user)), Set([user1, user2]))
         XCTAssertEqual(sut.localParticipants, Set([user1, user2]))
     }
 
@@ -129,7 +129,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         uiMOC.processPendingChanges()
 
         // THEN
-        XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1]))
+        XCTAssertEqual(Set(sut.participantRoles.map(\.user)), Set([user1]))
         XCTAssertEqual(sut.localParticipants, Set([user1]))
 
         XCTAssert(user2.participantRoles.isEmpty, "\(user2.participantRoles)")
@@ -515,7 +515,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap(\.role), [role1, role1])
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {

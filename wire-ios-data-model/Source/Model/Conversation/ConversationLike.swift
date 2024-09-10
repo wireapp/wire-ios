@@ -88,7 +88,7 @@ extension ZMConversation: ConversationLike {
 
     public var sortedServiceUsers: [UserType] {
         localParticipants
-            .filter { $0.isServiceUser }
+            .filter(\.isServiceUser)
             .sortedAscendingPrependingNil(by: \.name)
     }
 

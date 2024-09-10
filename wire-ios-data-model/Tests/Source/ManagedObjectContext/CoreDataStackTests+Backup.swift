@@ -61,7 +61,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             dispatchGroup: self.dispatchGroup,
             databaseKey: databaseKey
         ) {
-            result = $0.map { $0.url }
+            result = $0.map(\.url)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1), file: file, line: line)
 

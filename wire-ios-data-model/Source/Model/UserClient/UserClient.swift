@@ -208,7 +208,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
         }
 
-        requireInternal(relationClients.count <= 1, "Detected duplicate clients: \(relationClients.map({ $0.safeForLoggingDescription }))")
+        requireInternal(relationClients.count <= 1, "Detected duplicate clients: \(relationClients.map(\.safeForLoggingDescription))")
 
         if let client = relationClients.first {
             return client

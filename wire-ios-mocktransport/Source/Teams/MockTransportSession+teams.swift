@@ -94,9 +94,9 @@ extension MockTransportSession {
     }
 
     private func fetchAllTeams(query: [String: Any], apiVersion: APIVersion) -> ZMTransportResponse? {
-        let teams = selfUser.memberships?.map { $0.team } ?? []
+        let teams = selfUser.memberships?.map(\.team) ?? []
         let payload: [String: Any] = [
-            "teams": teams.map { $0.payload },
+            "teams": teams.map(\.payload),
             "has_more": false
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
@@ -170,7 +170,7 @@ extension MockTransportSession {
         }
 
         let payload: [String: Any] = [
-            "members": team.members.map { $0.payload },
+            "members": team.members.map(\.payload),
             "hasMore": false
         ]
 
@@ -187,7 +187,7 @@ extension MockTransportSession {
         }
 
         let payload: [String: Any] = [
-            "members": members.map { $0.payload },
+            "members": members.map(\.payload),
             "hasMore": false
         ]
 
@@ -200,7 +200,7 @@ extension MockTransportSession {
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
 
         let payload: [String: Any] = [
-            "conversation_roles": team.roles.map { $0.payload }
+            "conversation_roles": team.roles.map(\.payload)
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)

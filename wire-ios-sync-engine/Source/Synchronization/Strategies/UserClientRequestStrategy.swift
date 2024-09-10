@@ -486,7 +486,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         // in theory we should also remove the self client and log out, but this will happen
         // next time the user sends a message or when we will receive the "deleted" event
         // for that client
-        let foundClientsIdentifier = Set(clients.compactMap { $0.remoteIdentifier })
+        let foundClientsIdentifier = Set(clients.compactMap(\.remoteIdentifier))
         let selfUser = ZMUser.selfUser(in: context)
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients

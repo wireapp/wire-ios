@@ -120,9 +120,7 @@ protocol SettingsControllerGeneratorType {
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let cellDescriptors: [SettingsCellDescriptorType]
     var visibleCellDescriptors: [SettingsCellDescriptorType] {
-        return self.cellDescriptors.filter {
-            $0.visible
-        }
+        return self.cellDescriptors.filter(\.visible)
     }
 
     var visible: Bool {
@@ -169,9 +167,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     weak var group: SettingsGroupCellDescriptorType?
 
     var visibleItems: [SettingsSectionDescriptorType] {
-        return self.items.filter {
-            $0.visible
-        }
+        return self.items.filter(\.visible)
     }
 
     weak var viewController: UIViewController?

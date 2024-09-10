@@ -164,7 +164,7 @@ extension ZMConversation {
 
         // We need to check if we should add a 'secure' system message in case all participants are trusted
         conversation.increaseSecurityLevelIfNeededAfterTrusting(
-            clients: Set(participantsIncludingSelf.flatMap { $0.clients })
+            clients: Set(participantsIncludingSelf.flatMap(\.clients))
         )
 
         return conversation
