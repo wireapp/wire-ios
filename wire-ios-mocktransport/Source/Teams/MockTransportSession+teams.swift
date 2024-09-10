@@ -52,7 +52,7 @@ extension MockTransportSession {
             response = fetchTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/conversations/*" where request.method == .delete:
             response = deleteTeamConversation(teamId: request.RESTComponents(index: 1), conversationId: request.RESTComponents(index: 3), apiVersion: apiVersion)
-        case "/teams/*/conversations/roles"/* where request.method == .get*/:
+        case "/teams/*/conversations/roles" /* where request.method == .get*/ :
             response = fetchRolesForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/services/whitelisted":
             response = fetchWhitelistedServicesForTeam(with: request.RESTComponents(index: 1), query: request.queryParameters, apiVersion: apiVersion)

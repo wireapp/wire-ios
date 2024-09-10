@@ -600,7 +600,7 @@ extension AssetV3DownloadRequestStrategyTests {
             asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
                                                        mimeType: "image/svg+xml",
                                                        name: nil,
-                                                       imageMetaData: imageMetaData)// Even if we treat them as files, SVGs are sent as images.
+                                                       imageMetaData: imageMetaData) // Even if we treat them as files, SVGs are sent as images.
             asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
                                                          sha256: sha,
                                                          assetId: "someId",

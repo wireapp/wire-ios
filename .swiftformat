@@ -59,7 +59,8 @@
     sortImports, \
     sortTypealiases, \
     spaceAroundBraces, \
-    spaceAroundBrackets
+    spaceAroundBrackets, \
+    spaceAroundComments
 
 
 # Options

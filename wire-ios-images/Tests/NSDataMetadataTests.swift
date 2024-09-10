@@ -146,7 +146,7 @@ class NSDataMetadataTests: XCTestCase {
 
     func testThatItKeepsOrientationMetadataForImageTypes() {
         // GIVEN
-        [// self.data(forResource:"ceiling_rotated_1", extension:"jpg")!,
+        [ // self.data(forResource:"ceiling_rotated_1", extension:"jpg")!,
             self.data(forResource: "unsplash_medium_exif_4", extension: "jpg")!].forEach { data in
             // WHEN
             let originalMetadata = try! data.wr_metadata()

@@ -538,7 +538,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
         let configuration = CallInfoConfiguration(voiceChannel: mockVoiceChannel, preferedVideoPlaceholderState: .hidden, permissions: CallPermissions(), cameraType: .front, userEnabledCBR: false, selfUser: selfUser)
 
         // then
-        assertEquals(fixture.groupAudioEstablishedVideoUnavailable(mockUsers: mockUsers), configuration)// canToggleMediaType
+        assertEquals(fixture.groupAudioEstablishedVideoUnavailable(mockUsers: mockUsers), configuration) // canToggleMediaType
     }
 
     @MainActor

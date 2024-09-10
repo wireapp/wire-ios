@@ -101,8 +101,8 @@ class EmojiOnlyStringTests: XCTestCase {
         // Notice: "⿆" - Kangxi Radicals, start from U0x2F0x it is not a emoji, but CharacterSet.symbols contains it.
         let langaugeStrings = ["ḀẀẶỳ", "ठःअठी३", "勺卉善爨", "Ёжик", "한국어",
                                "ⰀⰁ", // Glagolitic, start from U0x2C0x, containsEmoji return true for this language
-                               "はい",// Hiragana, start from U0x304x
-                               "ブ",// Katakana, start from U0x304x
+                               "はい", // Hiragana, start from U0x304x
+                               "ブ", // Katakana, start from U0x304x
                                "ㄅㄆㄇ", // Bopomofo, start from U0x310x
                                "Ⴀჟჯჰ", // Georgian, updated in uncodie 11.0
                                "ქართული", // Georgian, updated in uncodie 11.0
