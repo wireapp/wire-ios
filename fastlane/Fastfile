@@ -3,6 +3,7 @@ require 'base64'
 require 'httparty'
 require 'json'
 require 'fastlane/action'
+require_relative 'framework'
 
 opt_out_usage
 default_platform(:ios)
@@ -35,7 +36,7 @@ platform :ios do
 
     before_all do |lane|
         ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests, :test_framework, :generate_framework_list, :test_frameworks].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :select_frameworks, :generate_framework_list, :test_frameworks].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -56,8 +57,16 @@ platform :ios do
 
     desc "Test frameworks given folders"
     lane :test_frameworks do |options|
-       schemas = generate_framework_list(folders: options[:folders])
-
+        if options[:all] == "true"
+            schemas = Framework.all.map { |f| f.to_scheme }
+        else
+            if options[:folders] == nil || options[:folders].empty?
+                schemas = select_frameworks()
+            else 
+                schemas = generate_framework_schemes(folders: options[:folders])
+            end
+        end
+       
        # hardcoded values that are required - not meaningful for testing
        options[:build_type] = "Development"
        options[:build_number] = generate_build_number
@@ -69,70 +78,17 @@ platform :ios do
        end
     end
 
-    desc "Generate frameworks list"
-    lane :generate_framework_list do |options|
-        all_folders = [
-            "wire-ios",
-            "wire-ios-canvas",
-            "wire-ios-cryptobox",
-            "wire-ios-data-model",
-            "wire-ios-images",
-            "wire-ios-link-preview",
-            "wire-ios-mocktransport",
-            "wire-ios-notification-engine",
-            "wire-ios-protos",
-            "wire-ios-request-strategy",
-            "wire-ios-share-engine",
-            "wire-ios-sync-engine",
-            "wire-ios-system",
-            "wire-ios-testing",
-            "wire-ios-transport",
-            "wire-ios-utilities",
-            "wire-ios-ziphy",
-            "WireAPI",
-            "WireAnalytics",
-            "WireDomain",
-            "WireUI"
-        ]
+    lane :select_frameworks do |options|
+        framework_schemes = Framework.all.map { |f| f.to_scheme }
+        select_all = "All"  
+        framework_options = framework_schemes + [select_all]
+    
+        UI.select("Select a framework for testing:", framework_options)
+    end
 
-        frameworks = all_folders.reduce({}) do |hash, framework| 
-            hash["#{framework}"] ||= Framework.new(framework) 
-            hash
-        end
-
-        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-notification-engine"])
-        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-share-engine"])
-        frameworks["wire-ios"].add_dependency(frameworks["wire-ios-sync-engine"])
-        
-        frameworks["wire-ios-notification-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-        frameworks["wire-ios-sync-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-        frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireAPI"])
-        frameworks["wire-ios-sync-engine"].add_dependency(frameworks["WireDomain"])
-        frameworks["wire-ios-share-engine"].add_dependency(frameworks["wire-ios-request-strategy"])
-
-        frameworks["wire-ios-request-strategy"].add_dependency(frameworks["wire-ios-data-model"])
-        frameworks["wire-ios-request-strategy"].add_dependency(frameworks["WireAPI"])
-        
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-cryptobox"])
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-images"])
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-link-preview"])
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-protos"])
-        frameworks["wire-ios-data-model"].add_dependency(frameworks["wire-ios-transport"])
-
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-testing"])
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-cryptobox"])
-        frameworks["wire-ios-mocktransport"].add_dependency(frameworks["wire-ios-protos"])
-
-        frameworks["wire-ios-cryptobox"].add_dependency(frameworks["wire-ios-utilities"])
-        frameworks["wire-ios-transport"].add_dependency(frameworks["wire-ios-utilities"])
-        frameworks["wire-ios-link-preview"].add_dependency(frameworks["wire-ios-utilities"])
-        frameworks["wire-ios-images"].add_dependency(frameworks["wire-ios-utilities"])
-
-        frameworks["wire-ios-utilities"].add_dependency(frameworks["wire-ios-system"])
-        frameworks["wire-ios-testing"].add_dependency(frameworks["wire-ios-system"])
-        
-        frameworks["WireDomain"].add_dependency(frameworks["wire-ios-transport"])
-        frameworks["WireDomain"].add_dependency(frameworks["wire-ios-data-model"])
+    desc "Generate list of frameworks' schemes to test from folders"
+    lane :generate_framework_schemes do |options|
+        frameworks = Framework.all      
 
         folders = options[:folders].split(',')
         matching_frameworks = folders.map { |folder| frameworks[folder] }
@@ -140,52 +96,10 @@ platform :ios do
         unique_schemes = matching_frameworks.map do |framework|
             framework.schemes
         end.flatten.uniq
+
         unique_schemes
     end
-
-    desc "Run tests for given frameworks"
-    lane :test_framework do |options|
-        framework_schemes = [
-            "Wire-iOS",
-            "WireCanvas",
-            "WireCryptobox",
-            "WireDataModel",
-            "WireImages",
-            "WireLinkPreview",
-            "WireMockTransport",
-            "WireNotificationEngine",
-            "WireProtos",
-            "WireRequestStrategy",
-            "WireShareEngine",
-            "WireSyncEngine",
-            "WireSystem",
-            "WireTesting",
-            "WireTransport",
-            "WireUtilities",
-            "WireZiphy",
-            "Wire"
-          ]
-        select_all = "All"  
-        framework_options = framework_schemes + [select_all]
     
-        if options[:framework]
-            selected_framework = options[:framework]
-        else
-            selected_framework = UI.select("Select a framework for testing:", framework_options)
-        end
-    
-        build = Build.new(options: options)
-        testplan = options[:testplan] || "AllTests"
-        if selected_framework == select_all
-            framework_schemes.each do |scheme|
-                test_plan(build, scheme, testplan)
-            end           
-        else
-            test_plan(build, selected_framework, testplan)
-        end
-    end
-    
-
     desc "Prepare for tests"
     lane :prepare_for_tests do
         create_simulator_if_needed
@@ -511,7 +425,6 @@ platform :ios do
         )    
 
     end
-
 
     def create_simulator_if_needed
         # Check if the simulator already exists
@@ -894,42 +807,3 @@ class Build
     end
 end
 
-class Framework
-    attr_accessor :name, :dependencies, :relations
-  
-    def initialize(name)
-      @name = name
-      @dependencies = []
-      @relations = []
-    end
-  
-    def add_dependency(dependency)
-      @dependencies << dependency
-      dependency.relations << self
-    end
-
-    def schemes
-        result = [scheme]
-        result << relations.map { |framework| framework.schemes }
-        result.flatten
-    end
-    
-    def scheme
-        to_scheme(name)
-    end
-
-    private
-
-    def to_scheme(name)
-        case name
-        when "wire-ios"
-            "Wire-iOS"
-        when "WireDomain", "WireAPI", "WireAnalytics", "WireUI"
-            name
-        when "wire-ios-mocktransport"
-            "WireMockTransport"
-        else
-            name.gsub('ios-', '').split('-').map.with_index { |part, index| part.capitalize }.join
-        end
-    end
-end
