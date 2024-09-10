@@ -566,7 +566,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
-        if !contentViewController.isScrolledToBottom && !controller.isEditingMessage &&
+        if !contentViewController.isScrolledToBottom, !controller.isEditingMessage,
             !controller.isReplyingToMessage {
             collectionController = nil
             contentViewController.searchQueries = []

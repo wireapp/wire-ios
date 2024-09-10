@@ -274,7 +274,7 @@ final class ZClientViewController: UIViewController {
         super.traitCollectionDidChange(previousTraitCollection)
 
         // if changing from compact width to regular width, make sure current conversation is loaded
-        if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
+        if previousTraitCollection?.horizontalSizeClass == .compact, traitCollection.horizontalSizeClass == .regular {
             if let currentConversation {
                 select(conversation: currentConversation)
             } else {
@@ -618,7 +618,7 @@ final class ZClientViewController: UIViewController {
 
             let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
-            if animated && !isRegularContainer {
+            if animated, !isRegularContainer {
                 let heightConstraint = viewController.view.heightAnchor.constraint(equalToConstant: 0)
                 heightConstraint.isActive = true
 
@@ -671,7 +671,7 @@ final class ZClientViewController: UIViewController {
 
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
-        if isRegularContainer && topOverlayViewController == nil {
+        if isRegularContainer, topOverlayViewController == nil {
             contentTopCompactConstraint.isActive = false
             contentTopRegularConstraint.isActive = true
         } else {

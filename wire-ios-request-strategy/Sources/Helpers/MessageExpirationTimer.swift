@@ -50,7 +50,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
             WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")
         }
 
-        guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
+        guard message.deliveryState != .delivered, message.deliveryState != .sent, message.deliveryState != .read else {
             return
         }
         message.expire()

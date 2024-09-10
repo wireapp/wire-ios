@@ -71,7 +71,7 @@ class OTRTests: IntegrationTest {
 
         var didReregister = false
         self.mockTransportSession.responseGeneratorBlock = { response in
-            if response.path.contains("/clients/") && response.payload?.asDictionary()?["sigkeys"] != nil {
+            if response.path.contains("/clients/"), response.payload?.asDictionary()?["sigkeys"] != nil {
                 didReregister = true
                 return ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
             }
@@ -99,7 +99,7 @@ class OTRTests: IntegrationTest {
         self.mockTransportSession.responseGeneratorBlock = { response in
             guard let payload = response.payload?.asDictionary() else { return nil }
 
-            if response.path.contains("/clients/") && payload["sigkeys"] != nil {
+            if response.path.contains("/clients/"), payload["sigkeys"] != nil {
                 let keys = payload["sigkeys"] as? [String: Any]
                 let macKey = keys?["mackey"] as? String
                 let encKey = keys?["enckey"] as? String

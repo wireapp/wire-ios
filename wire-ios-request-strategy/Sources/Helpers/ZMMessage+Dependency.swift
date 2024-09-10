@@ -114,7 +114,7 @@ extension ZMMessage {
                 selfMessageFound = true
             }
 
-            if selfMessageFound && !sameMessage && previousMessage.shouldBlockFurtherMessages {
+            if selfMessageFound, !sameMessage, previousMessage.shouldBlockFurtherMessages {
                 blockingMessage = previousMessage
                 break
             }

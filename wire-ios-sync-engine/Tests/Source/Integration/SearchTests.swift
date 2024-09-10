@@ -297,7 +297,7 @@ final class SearchTests: IntegrationTest {
         let semaphore = DispatchSemaphore(value: 0)
         var hasRun = false
         mockTransportSession.responseGeneratorBlock = { request in
-            if request.path.hasPrefix("/asset") && !hasRun {
+            if request.path.hasPrefix("/asset"), !hasRun {
                 hasRun = true
                 semaphore.wait()
             }

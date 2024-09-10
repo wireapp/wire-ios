@@ -268,7 +268,7 @@ extension UserProfileUpdateStatus: ZMCredentialProvider {
 
     /// The email credentials being set
     public func emailCredentials() -> UserEmailCredentials? {
-        guard !self.currentlySettingEmail && !self.currentlySettingPassword else {
+        guard !self.currentlySettingEmail, !self.currentlySettingPassword else {
             return nil
         }
         return self.lastEmailAndPassword

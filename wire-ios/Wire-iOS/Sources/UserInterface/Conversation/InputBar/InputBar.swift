@@ -426,7 +426,7 @@ final class InputBar: UIView {
             }
         }
 
-        if animated && self.superview != nil {
+        if animated, self.superview != nil {
             UIView.animate(easing: .easeInOutExpo, duration: 0.3, animations: layoutIfNeeded)
             UIView.transition(with: self.textView, duration: 0.1, options: [], animations: textViewChanges) { _ in
                 self.updateColors()
@@ -451,7 +451,7 @@ final class InputBar: UIView {
     }
 
     fileprivate func updatePlaceholderColors() {
-        if inputBarState.isEphemeral && inputBarState.isEphemeralEnabled {
+        if inputBarState.isEphemeral, inputBarState.isEphemeralEnabled {
             textView.placeholderTextColor = ephemeralColor
         } else {
             textView.placeholderTextColor = placeholderColor

@@ -83,7 +83,7 @@ extension VoiceChannel {
         guard let selfStream else {
             return (nil, sortedStreamsList)
         }
-        if callHasTwoParticipants && sortedStreamsList.count == 1 {
+        if callHasTwoParticipants, sortedStreamsList.count == 1 {
             return (selfStream, sortedStreamsList)
         } else {
             return (nil, [selfStream] + sortedStreamsList)

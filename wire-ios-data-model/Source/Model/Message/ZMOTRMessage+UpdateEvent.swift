@@ -174,7 +174,7 @@ extension ZMOTRMessage {
             // In addition the object will still have a managedObjectContext until the context is finally saved. In this
             // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
             // relationship between the deleted object and the conversation and / or sender
-            guard !isZombieObject(clientMessage) && clientMessage?.nonce != nil else {
+            guard !isZombieObject(clientMessage), clientMessage?.nonce != nil else {
                 WireLogger.eventProcessing.warn("Dropping potential zombie message", attributes: logAttributes)
                 return nil
             }

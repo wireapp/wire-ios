@@ -85,7 +85,7 @@ public final class TeamRolesDownloadRequestStrategy:
     }
 
     private func completeSyncPhaseIfNoTeam() {
-        if self.syncStatus.currentSyncPhase == self.expectedSyncPhase && !self.downstreamSync.hasOutstandingItems {
+        if self.syncStatus.currentSyncPhase == self.expectedSyncPhase, !self.downstreamSync.hasOutstandingItems {
             self.syncStatus.finishCurrentSyncPhase(phase: self.expectedSyncPhase)
         }
     }

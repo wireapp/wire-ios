@@ -152,7 +152,7 @@ extension ZMUser: UserType {
         else {
             return false
         }
-        guard (BackendInfo.apiVersion ?? .v0) >= .v5 && DeveloperFlag.enableMLSSupport.isOn  else {
+        guard (BackendInfo.apiVersion ?? .v0) >= .v5, DeveloperFlag.enableMLSSupport.isOn  else {
             return false
         }
 
@@ -433,7 +433,7 @@ extension ZMUser {
         }
 
         allGroupConversations.forEach { conversation in
-            if isTeamMember && conversation.team == team {
+            if isTeamMember, conversation.team == team {
                 conversation.appendTeamMemberRemovedSystemMessage(user: self, at: timestamp)
             } else {
                 conversation.appendParticipantRemovedSystemMessage(user: self, at: timestamp)

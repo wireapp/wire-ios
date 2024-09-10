@@ -221,7 +221,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
         addCustomBackendViewIfNeeded(to: contentStack, space: 0)
 
-        if stepDescription.subtext == nil && shouldUseScrollView {
+        if stepDescription.subtext == nil, shouldUseScrollView {
             contentStack.addArrangedSubview(emptyView)
             contentStack.setCustomSpacing(56, after: emptyView)
         }

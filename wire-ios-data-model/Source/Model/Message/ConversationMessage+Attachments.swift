@@ -26,7 +26,7 @@ extension ZMConversationMessage {
      */
 
     public func refetchLinkAttachmentsIfNeeded() {
-        guard !needsLinkAttachmentsUpdate && textMessageData != nil else {
+        guard !needsLinkAttachmentsUpdate, textMessageData != nil else {
             return
         }
 

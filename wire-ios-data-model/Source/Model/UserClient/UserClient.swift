@@ -279,7 +279,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 
         if let previousUser = user {
             // increase securityLevel of affected conversations
-            if isLegalHoldDevice && previousUser.isSelfUser {
+            if isLegalHoldDevice, previousUser.isSelfUser {
                 previousUser.needsToAcknowledgeLegalHoldStatus = true
             }
 
@@ -461,7 +461,7 @@ public extension UserClient {
         }
 
         if let selfClient = selfUser.selfClient() {
-            if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
+            if client.remoteIdentifier != selfClient.remoteIdentifier, isNewClient {
 
                 if let selfClientActivationdate = selfClient.activationDate, client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
                     // swiftlint:disable:next todo_requires_jira_link

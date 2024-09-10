@@ -88,7 +88,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
             otherClient.mlsPublicKeys = Bool.random() ? validMLSPublicKeys : invalidMLSPublicKeys
 
             // But make sure we do have an invalid client.
-            if otherClient.lastActiveDate == validLastActiveDate && otherClient.mlsPublicKeys == validMLSPublicKeys {
+            if otherClient.lastActiveDate == validLastActiveDate, otherClient.mlsPublicKeys == validMLSPublicKeys {
                 otherClient.lastActiveDate = invalidLastActiveDate
             }
         }

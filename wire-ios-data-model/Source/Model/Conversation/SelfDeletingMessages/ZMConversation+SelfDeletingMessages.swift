@@ -95,7 +95,7 @@ extension ZMConversation {
             messageTimer: timer
         )
 
-        if isArchived && mutedMessageTypes == .none {
+        if isArchived, mutedMessageTypes == .none {
             isArchived = false
         }
 

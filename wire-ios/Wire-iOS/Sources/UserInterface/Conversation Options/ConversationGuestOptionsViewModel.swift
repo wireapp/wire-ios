@@ -136,14 +136,14 @@ final class ConversationGuestOptionsViewModel {
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
             guard let self else { return }
-            if allowGuests && self.configuration.isCodeEnabled {
+            if allowGuests, self.configuration.isCodeEnabled {
                 self.fetchLink()
             } else {
                 self.updateRows()
             }
         }
 
-        if configuration.allowGuests && configuration.isCodeEnabled {
+        if configuration.allowGuests, configuration.isCodeEnabled {
             fetchLink()
         }
 
@@ -370,7 +370,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.updateRows()
-                    if (self.link == nil && self.securedLink == nil) && allowGuests {
+                    if self.link == nil, self.securedLink == nil, allowGuests {
                         self.fetchLink()
                     }
                 case .failure(let error): self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
@@ -382,7 +382,7 @@ final class ConversationGuestOptionsViewModel {
 
         // In case allow guests mode should be deactivated & guest in conversation, ask the delegate
         // to confirm this action as all guests will be removed.
-        if !allowGuests && configuration.areGuestPresent {
+        if !allowGuests, configuration.areGuestPresent {
             // Make "remove guests and services" warning only appear if guests or services are present
             return delegate?.conversationGuestOptionsViewModel(
                 self,

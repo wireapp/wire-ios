@@ -67,7 +67,7 @@ extension SearchResult {
         services = []
         self.searchUsersCache = searchUsersCache
 
-        if searchOptions.contains(.teamMembers) &&
+        if searchOptions.contains(.teamMembers),
            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers) {
             teamMembers = searchUsers.filter({ $0.isTeamMember })
         } else {

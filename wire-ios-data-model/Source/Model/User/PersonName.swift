@@ -49,7 +49,7 @@
         case .arabicGivenName:
             startIndex = 1
             lastIndex = self.components.count - 1
-            guard self.components.count > 1 && self.components[1].zmIsGodName() else { break }
+            guard self.components.count > 1, self.components[1].zmIsGodName() else { break }
             guard self.components.count > 2 else { return [] }
             startIndex += 1
         }

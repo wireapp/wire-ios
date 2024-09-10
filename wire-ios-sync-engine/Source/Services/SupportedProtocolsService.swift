@@ -71,27 +71,27 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
         }
 
         // All clients are mls ready so we support it if the backend does.
-        if remoteProtocols.contains(.mls) && allClientsMLSReady {
+        if remoteProtocols.contains(.mls), allClientsMLSReady {
             result.insert(.mls)
         }
 
         // Proteus is still supported if migration is pending or still ongoing.
-        if migrationState.isOne(of: .notStarted, .ongoing) && allClientsMLSReady {
+        if migrationState.isOne(of: .notStarted, .ongoing), allClientsMLSReady {
             result.insert(.proteus)
         }
 
         // MLS migration is complete.
-        if remoteProtocols.contains(.mls) && migrationState == .finalised {
+        if remoteProtocols.contains(.mls), migrationState == .finalised {
             result.insert(.mls)
         }
 
         // MLS is forced.
-        if remoteProtocols == [.mls] && migrationState.isOne(of: .disabled, .finalised) {
+        if remoteProtocols == [.mls], migrationState.isOne(of: .disabled, .finalised) {
             result = [.mls]
         }
 
         // Even if proteus isn't supported, migration is pending or still ongoing.
-        if remoteProtocols == [.mls] && !allClientsMLSReady && migrationState.isOne(of: .notStarted, .ongoing) {
+        if remoteProtocols == [.mls], !allClientsMLSReady, migrationState.isOne(of: .notStarted, .ongoing) {
             result = [.proteus]
         }
 

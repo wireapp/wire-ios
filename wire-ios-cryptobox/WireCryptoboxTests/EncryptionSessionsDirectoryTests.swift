@@ -552,8 +552,8 @@ extension EncryptionSessionsDirectoryTests {
 
         // EXPECT
         let token = ZMSLog.addEntryHook { level, tag, entry, _ in
-            if level == .public &&
-                tag == "cryptobox" &&
+            if level == .public,
+                tag == "cryptobox",
                 entry.text.contains("encrypted to cyphertext: cyphertext") {
                 logExpectation.fulfill()
             }
@@ -602,8 +602,8 @@ extension EncryptionSessionsDirectoryTests {
 
         // EXPECT
         let token = ZMSLog.addEntryHook { level, tag, entry, _ in
-            if level == .public &&
-                tag == "cryptobox" &&
+            if level == .public,
+                tag == "cryptobox",
                 entry.text.contains("decrypting prekey cyphertext:") {
                 logExpectation.fulfill()
             }
@@ -631,8 +631,8 @@ extension EncryptionSessionsDirectoryTests {
 
         // EXPECT
         let token = ZMSLog.addEntryHook { level, tag, entry, _ in
-            if level == .public &&
-                tag == "cryptobox" &&
+            if level == .public,
+                tag == "cryptobox",
                 entry.text.contains("decrypting cyphertext:") {
                 logExpectation.fulfill()
             }

@@ -212,7 +212,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
                 return onComplete(.failure(error: "No encryption context"))
             }
 
-            if !isAdding && subject == "all" {
+            if !isAdding, subject == "all" {
                 keyStore.encryptionContext.disableExtendedLoggingOnAllSessions()
                 self.currentlyEnabledLogs = Set()
                 return onComplete(.success(info: "all removed"))

@@ -190,7 +190,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         // After X % of reveal we consider animation should be finished
         let progress = visualDrawerOffset / SwipeMenuCollectionCell.MaxVisualDrawerOffsetRevealDistance
         menuDotsView.setProgress(progress, animated: true)
-        if progress >= 1 && overscrollStartDate == nil {
+        if progress >= 1, overscrollStartDate == nil {
             overscrollStartDate = Date()
         }
 
@@ -202,7 +202,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     }
 
     func size(inCollectionViewSize collectionViewSize: CGSize) -> CGSize {
-        if !ConversationListCell.cachedSize.equalTo(CGSize.zero) && ConversationListCell.cachedSize.width == collectionViewSize.width {
+        if !ConversationListCell.cachedSize.equalTo(CGSize.zero), ConversationListCell.cachedSize.width == collectionViewSize.width {
             return ConversationListCell.cachedSize
         }
 
@@ -229,7 +229,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
         let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
 
-        if activeMediaPlayer != nil &&
+        if activeMediaPlayer != nil,
             activeMediaPlayer?.sourceMessage?.conversationLike === conversation {
             toggleMediaPlayer()
         } else if conversation.canJoinCall {

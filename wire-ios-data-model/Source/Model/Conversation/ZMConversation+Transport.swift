@@ -122,7 +122,7 @@ extension ZMConversation {
             self.hasReadReceiptsEnabled = enabled
 
             // We only want insert a system message if this is an existing conversation (non empty)
-            if receiptModeChanged && self.lastMessage != nil {
+            if receiptModeChanged, self.lastMessage != nil {
                 self.appendMessageReceiptModeIsOnMessage(timestamp: Date())
             }
         }

@@ -80,7 +80,7 @@ final class TextFieldValidator {
             }
         case .username:
             let subset = CharacterSet(charactersIn: text).isSubset(of: HandleValidation.allowedCharacters)
-            guard subset && text.isEqualToUnicodeName else { return .invalidUsername }
+            guard subset, text.isEqualToUnicodeName else { return .invalidUsername }
             guard text.count >= HandleValidation.allowedLength.lowerBound else { return .tooShort(kind: .username) }
             guard text.count <= HandleValidation.allowedLength.upperBound else { return .tooLong(kind: .username) }
         case .unknown: break

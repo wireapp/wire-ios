@@ -60,7 +60,7 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
 
         let actionView = view.targetView(for: message, dataSource: dataSource)
         let shouldDismissModal = action != .delete && action != .copy
-        if messagePresenter.modalTargetController?.presentedViewController != nil &&
+        if messagePresenter.modalTargetController?.presentedViewController != nil,
             shouldDismissModal {
             messagePresenter.modalTargetController?.dismiss(animated: true) {
                 self.messageAction(actionId: action,

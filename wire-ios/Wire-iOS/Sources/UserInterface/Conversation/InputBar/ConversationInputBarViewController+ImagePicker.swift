@@ -96,7 +96,7 @@ extension ConversationInputBarViewController {
             return
         }
 
-        if picker.sourceType == UIImagePickerController.SourceType.camera && UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
+        if picker.sourceType == UIImagePickerController.SourceType.camera, UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(videoTempURL.path),
            MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
             UISaveVideoAtPathToSavedPhotosAlbum(videoTempURL.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
         }

@@ -187,7 +187,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         }
 
         // if the user is viewing their own profile, add the open self-profile screen button
-        if viewer.isSelfUser && user.isSelfUser {
+        if viewer.isSelfUser, user.isSelfUser {
             return [.openSelfProfile]
         }
 
@@ -227,7 +227,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
             }
 
             // If the viewer is not on the same team as the other user, allow blocking
-            if !viewer.canAccessCompanyInformation(of: user) && !user.isWirelessUser {
+            if !viewer.canAccessCompanyInformation(of: user), !user.isWirelessUser {
                 actions.append(.block(isBlocked: false))
             }
 
@@ -258,7 +258,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
                 } else {
                     actions.append(.startOneToOne)
                 }
-            } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
+            } else if user.canBeConnected, !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)
             }
 
@@ -269,7 +269,7 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
             // If the user is not from the same team as the other user, allow blocking
 
-            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && !user.hasEmptyName {
+            if user.isConnected, !isOnSameTeam, !user.isWirelessUser, !user.hasEmptyName {
                 actions.append(.block(isBlocked: false))
             }
 

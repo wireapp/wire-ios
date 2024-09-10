@@ -176,7 +176,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     /// Returns the text field that should be used to become first responder.
     private var logicalFirstResponder: UITextField {
         // If we have a pre-filled email and the password field is empty, start with the password field
-        if hasPrefilledValue && (passwordField.text ?? "").isEmpty {
+        if hasPrefilledValue, (passwordField.text ?? "").isEmpty {
             return passwordField
         } else {
             return emailField
@@ -186,7 +186,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     // MARK: - Submission
 
     @objc func confirmButtonTapped() {
-        guard emailValidationError == nil && passwordValidationError == nil else {
+        guard emailValidationError == nil, passwordValidationError == nil else {
             delegate?.textFieldDidSubmitWithValidationError(self)
             return
         }
@@ -195,7 +195,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
     }
 
     func performMagicTap() -> Bool {
-        guard emailField.isInputValid && passwordField.isInputValid else {
+        guard emailField.isInputValid, passwordField.isInputValid else {
             return false
         }
 

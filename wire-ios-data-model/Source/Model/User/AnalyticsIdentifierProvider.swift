@@ -34,7 +34,7 @@ public struct AnalyticsIdentifierProvider {
     }
 
     func setAnalytics(identifier: UUID, forSelfUser user: ZMUser) {
-        guard user.isSelfUser && user.isTeamMember else { return }
+        guard user.isSelfUser, user.isTeamMember else { return }
 
         user.analyticsIdentifier = identifier.transportString()
 

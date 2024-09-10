@@ -132,7 +132,7 @@ extension ContactsDataSource: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        guard shouldShowSectionIndex && !self.section(at: section).isEmpty else { return nil }
+        guard shouldShowSectionIndex, !self.section(at: section).isEmpty else { return nil }
         return collation.sectionTitles[section]
     }
 

@@ -64,7 +64,7 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
             } catch let error as NSError {
 
                 // specific error message for name string is too short
-                if error.domain == ZMObjectValidationErrorDomain &&
+                if error.domain == ZMObjectValidationErrorDomain,
                     error.code == ZMManagedObjectValidationErrorCode.tooShort.rawValue {
 
                     let alert = UIAlertController(

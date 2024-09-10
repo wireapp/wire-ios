@@ -165,7 +165,7 @@ public final class Canvas: UIView {
     override public func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
 
-        if flattenIndex == 0 && referenceObject != nil {
+        if flattenIndex == 0, referenceObject != nil {
             flatten(upTo: 1)
         }
 
@@ -401,7 +401,7 @@ extension Canvas: UIGestureRecognizerDelegate {
     }
 
     @objc func handleTapGesture(gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .began && selection == nil {
+        if gestureRecognizer.state == .began, selection == nil {
             selectObject(at: gestureRecognizer.location(in: self))
         } else if gestureRecognizer.state == .recognized {
             selectObject(at: gestureRecognizer.location(in: self))

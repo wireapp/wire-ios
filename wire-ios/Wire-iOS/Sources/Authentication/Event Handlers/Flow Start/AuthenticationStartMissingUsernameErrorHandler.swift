@@ -40,7 +40,7 @@ final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventH
         }
 
         // Verify the state
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

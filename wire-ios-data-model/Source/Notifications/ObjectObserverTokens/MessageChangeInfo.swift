@@ -183,7 +183,7 @@ extension ZMSystemMessage {
     }
 
     public var senderChanged: Bool {
-        if self.usersChanged && (self.userChangeInfo?.user as? ZMUser == self.message.sender) {
+        if self.usersChanged, self.userChangeInfo?.user as? ZMUser == self.message.sender {
             return true
         }
         return false

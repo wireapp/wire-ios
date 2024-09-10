@@ -56,7 +56,7 @@ extension VoiceChannel {
 
     func canToggleMediaType(with permissions: CallPermissionsConfiguration,
                             selfUser: UserType) -> Bool {
-        guard !permissions.isVideoDisabledForever && !permissions.isAudioDisabledForever else { return false }
+        guard !permissions.isVideoDisabledForever, !permissions.isAudioDisabledForever else { return false }
 
         // The user can only re-enable their video if the conversation allows GVC
         if videoState == .stopped {

@@ -118,7 +118,7 @@ final class AuthenticatedRouter {
             return
         }
 
-        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
+        if change == .e2eIEnabled, e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 

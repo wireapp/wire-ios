@@ -76,13 +76,13 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         // We do not want to call the completion handler when we cancelled the task,
         // as we cancel it when we received enough data to generate the link preview and will call the completion handler
         // once we parsde the data.
-        if !cancelledTaskIDs.contains(task.taskIdentifier) && error != nil {
+        if !cancelledTaskIDs.contains(task.taskIdentifier), error != nil {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
 
         // In case the `MetaStreamContainer` fails to produce a string to parse, we need to ensure that we still
         // call the completion handler.
-        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead && error == nil {
+        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead, error == nil {
             return completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
     }

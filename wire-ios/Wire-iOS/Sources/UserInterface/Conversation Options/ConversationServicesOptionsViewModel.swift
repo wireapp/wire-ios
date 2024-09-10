@@ -108,7 +108,7 @@ final class ConversationServicesOptionsViewModel {
 
         // In case allow services mode should be deactivated & service in conversation, ask the delegate
         // to confirm this action as all services will be removed.
-        if !allowServices && configuration.areServicePresent {
+        if !allowServices, configuration.areServicePresent {
             // Make "remove services" warning only appear if services are present
             return delegate?.conversationServicesOptionsViewModel(
                 self,

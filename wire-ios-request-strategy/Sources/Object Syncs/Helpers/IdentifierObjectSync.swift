@@ -73,7 +73,7 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     public func sync<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
         let newIdentifiers = Set(identifiers)
 
-        if newIdentifiers.isEmpty && downloading.isEmpty && pending.isEmpty {
+        if newIdentifiers.isEmpty, downloading.isEmpty, pending.isEmpty {
             delegate?.didFinishSyncingAllObjects()
         } else {
             pending.formUnion(Set(identifiers).subtracting(downloading))

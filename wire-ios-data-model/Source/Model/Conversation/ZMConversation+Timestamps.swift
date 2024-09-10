@@ -65,7 +65,7 @@ extension ZMConversation {
             lastReadServerTimeStamp = timestamp
 
             // modified keys are set "automatically" on the uiMOC
-            if synchronize && managedObjectContext.zm_isSyncContext {
+            if synchronize, managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys(Set([ZMConversationLastReadServerTimeStampKey]))
             }
 
@@ -94,7 +94,7 @@ extension ZMConversation {
         if clearedTimeStamp == nil || clearedTimeStamp! < timestamp {
             clearedTimeStamp = timestamp
 
-            if synchronize && managedObjectContext.zm_isSyncContext {
+            if synchronize, managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys(Set([ZMConversationClearedTimeStampKey]))
             }
         }
@@ -107,7 +107,7 @@ extension ZMConversation {
         if archivedChangedTimestamp == nil || archivedChangedTimestamp! < timestamp {
             archivedChangedTimestamp = timestamp
 
-            if synchronize && managedObjectContext.zm_isSyncContext {
+            if synchronize, managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys([ZMConversationArchivedChangedTimeStampKey])
             }
 
@@ -130,7 +130,7 @@ extension ZMConversation {
         if silencedChangedTimestamp == nil || silencedChangedTimestamp! < timestamp {
             silencedChangedTimestamp = timestamp
 
-            if synchronize && managedObjectContext.zm_isSyncContext {
+            if synchronize, managedObjectContext.zm_isSyncContext {
                 setLocallyModifiedKeys([ZMConversationSilencedChangedTimeStampKey])
             }
 

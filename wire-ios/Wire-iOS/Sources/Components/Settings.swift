@@ -186,7 +186,7 @@ class Settings {
 
     func storeCurrentIntensityLevelAsLastUsed() {
         let level = AVSMediaManager.sharedInstance().intensityLevel.rawValue
-        if level >= AVSIntensityLevel.none.rawValue && level <= AVSIntensityLevel.full.rawValue {
+        if level >= AVSIntensityLevel.none.rawValue, level <= AVSIntensityLevel.full.rawValue {
             defaults.setValue(NSNumber(value: level), forKey: SettingKey.avsMediaManagerPersistentIntensity.rawValue)
         }
     }

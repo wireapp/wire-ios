@@ -74,7 +74,7 @@ extension ZMAssetClientMessage {
         let isNotSelfSender = sender == nil || isOtherSender
         if fileHasNoUploadState {
             return false
-        } else if isNotSelfSender && imageNotDownloaded {
+        } else if isNotSelfSender, imageNotDownloaded {
             // we do not destroy images sent by other user that are not downloaded yet, it is synced after asset is downloaded
             return false
         }

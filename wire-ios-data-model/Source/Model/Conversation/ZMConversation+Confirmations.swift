@@ -62,7 +62,7 @@ extension ZMConversation {
             timestamp: timestamp
         )
 
-        if isArchived && mutedMessageTypes == .none {
+        if isArchived, mutedMessageTypes == .none {
             isArchived = false
         }
 

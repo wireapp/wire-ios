@@ -207,7 +207,7 @@ public class TextSearchQuery: NSObject {
             self.notIndexedMessageCount = self.countForNonIndexedMessages()
             zmLog.debug("Searching for \"\(self.originalQuery)\", indexed: \(self.indexedMessageCount), not indexed: \(self.notIndexedMessageCount)")
 
-            if self.indexedMessageCount == 0 && self.notIndexedMessageCount == 0 {
+            if self.indexedMessageCount == 0, self.notIndexedMessageCount == 0 {
                 // No need to perform a search if there are not messages.
                 zmLog.debug("Skipping search as there are no searchable messages.")
                 return self.notifyDelegate(with: [], hasMore: false)
@@ -262,7 +262,7 @@ public class TextSearchQuery: NSObject {
     /// their `noralizedText` property. After the indexing the indexed messages
     /// are queried for the search term and the delegate is notified.
     private func executeQueryForNonIndexedMessages() {
-        guard !cancelled && notIndexedMessageCount > 0 else { return }
+        guard !cancelled, notIndexedMessageCount > 0 else { return }
 
         syncMOC.performGroupedBlock { [weak self] in
             guard let self else { return }

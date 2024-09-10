@@ -108,9 +108,9 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 
             provideHapticFeedback(for: message)
 
-            guard (message.isNormal || message.isSystemMessageWithSoundNotification) &&
-                  message.isRecentMessage &&
-                  !message.isSentBySelfUser &&
+            guard message.isNormal || message.isSystemMessageWithSoundNotification,
+                  message.isRecentMessage,
+                  !message.isSentBySelfUser,
                   !isSilenced else {
                 continue
             }
@@ -132,7 +132,7 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
             let isSilenced = message.isSilenced
             let isSentBySelfUser = message.senderUser?.isSelfUser ?? false
 
-            guard message.isKnock && isRecentMessage && !isSilenced && !isSentBySelfUser else {
+            guard message.isKnock, isRecentMessage, !isSilenced, !isSentBySelfUser else {
                 continue
             }
 

@@ -218,7 +218,7 @@ extension WireProtos.Proteus_UserId {
 
 extension WireProtos.Asset {
     public func validatingFields() -> WireProtos.Asset? {
-        if hasPreview && preview.hasRemote {
+        if hasPreview, preview.hasRemote {
             guard preview.remote.validatingFields() != nil else { return nil }
         }
 

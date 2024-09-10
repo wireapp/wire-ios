@@ -31,7 +31,7 @@ public extension ZMConversation {
             relevantForStatus: relevantForStatus
         )
 
-        if isArchived && mutedMessageTypes == .none {
+        if isArchived, mutedMessageTypes == .none {
             isArchived = false
         }
 

@@ -44,7 +44,7 @@ extension NSItemProvider {
     }
 
     func hasFile(completion: @escaping (Bool) -> Void) {
-        guard !hasImage && !hasVideo && !hasWalletPass else { return completion(false) }
+        guard !hasImage, !hasVideo, !hasWalletPass else { return completion(false) }
         if hasURL {
             fetchURL { [weak self] url in
                 if (url != nil && !url!.isFileURL) || self?.hasData == false {

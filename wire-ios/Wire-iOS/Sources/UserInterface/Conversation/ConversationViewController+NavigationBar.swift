@@ -153,7 +153,7 @@ extension ConversationViewController {
         case .group: return true
         case .oneOnOne:
             if let connection = conversation.oneOnOneUser?.connection,
-               connection.status != .pending && connection.status != .sent {
+               connection.status != .pending, connection.status != .sent {
                 return true
             } else {
                 return nil != conversation.teamRemoteIdentifier

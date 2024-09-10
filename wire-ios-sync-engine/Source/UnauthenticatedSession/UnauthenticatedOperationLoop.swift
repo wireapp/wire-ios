@@ -56,7 +56,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
 
     func newRequestsAvailable() {
         var enqueueMore = true
-        while enqueueMore && shouldEnqueue {
+        while enqueueMore, shouldEnqueue {
             let result = transportSession.enqueueRequest(withGenerator: generator)
             enqueueMore = result == .success
             switch result {

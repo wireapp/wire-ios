@@ -769,7 +769,7 @@ final class ConversationInputBarViewController: UIViewController,
             let inRotation = inRotation
             let isRecording = audioRecordKeyboardViewController?.isRecording ?? false
 
-            if !inRotation && !isRecording {
+            if !inRotation, !isRecording {
                 mode = .textInput
             }
         }

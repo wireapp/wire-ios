@@ -288,7 +288,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// Returns the markdown at the given location.
     private func markdown(at location: Int) -> Markdown {
-        guard location >= 0 && markdownTextStorage.length > location else { return .none }
+        guard location >= 0, markdownTextStorage.length > location else { return .none }
         let markdown = markdownTextStorage.attribute(.markdownID, at: location, effectiveRange: nil) as? Markdown
         return markdown ?? .none
     }

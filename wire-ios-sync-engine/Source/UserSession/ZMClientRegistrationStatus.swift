@@ -298,7 +298,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         needsToFetchFeatureConfigs = needsToRegisterClient
         needsRefreshSelfUser = needsToRegisterClient
 
-        if !needsToRegisterClient && needsToRegisterMLSCLient {
+        if !needsToRegisterClient, needsToRegisterMLSCLient {
             guard let client = ZMUser.selfUser(in: managedObjectContext).selfClient() else {
                 fatal("Expected a self user client to exist")
             }
@@ -522,7 +522,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     func failedFetchingClients(error: NSError?) {
-        if error?.domain == ClientUpdateErrorDomain && error?.code == ClientUpdateError.selfClientIsInvalid.rawValue {
+        if error?.domain == ClientUpdateErrorDomain, error?.code == ClientUpdateError.selfClientIsInvalid.rawValue {
             let selfUser = ZMUser.selfUser(in: managedObjectContext)
             let selfClient = selfUser.selfClient()
 

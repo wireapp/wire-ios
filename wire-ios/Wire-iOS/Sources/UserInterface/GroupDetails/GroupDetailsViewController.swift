@@ -184,7 +184,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
             if admins.count <= maxNumberWithoutTruncation || admins.isEmpty {
                 // Dispay the ShowAll button after the first section.
-                if admins.count >= maxNumberOfDisplayed && (participants.count > maxNumberWithoutTruncation) {
+                if admins.count >= maxNumberOfDisplayed, participants.count > maxNumberWithoutTruncation {
                     let adminSection = ParticipantsSectionController(
                         participants: admins,
                         userStatuses: userStatuses,
@@ -268,7 +268,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 sections.append(optionsSectionController)
             }
 
-            if conversation.teamRemoteIdentifier != nil &&
+            if conversation.teamRemoteIdentifier != nil,
                 user.canModifyReadReceiptSettings(in: conversation) {
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,

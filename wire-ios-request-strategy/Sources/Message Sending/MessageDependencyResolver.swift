@@ -55,7 +55,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 throw MessageDependencyResolverError.legalHoldPendingApproval
             }
 
-            if isSecurityLevelDegraded && !shouldIgnoreTheSecurityLevelCheck {
+            if isSecurityLevelDegraded, !shouldIgnoreTheSecurityLevelCheck {
                 throw MessageDependencyResolverError.securityLevelDegraded
             }
 

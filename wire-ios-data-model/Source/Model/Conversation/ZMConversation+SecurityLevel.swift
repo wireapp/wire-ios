@@ -201,10 +201,10 @@ extension ZMConversation {
 
     private func increaseSecurityLevelIfNeeded(for cause: SecurityChangeCause) {
         guard
-            securityLevel != .secure &&
-            allUsersTrusted &&
-            allParticipantsHaveClients &&
-            hasMoreClientsThanSelfClient &&
+            securityLevel != .secure,
+            allUsersTrusted,
+            allParticipantsHaveClients,
+            hasMoreClientsThanSelfClient,
             conversationType.isOne(of: .group, .oneOnOne, .invalid)
         else {
             return
@@ -216,7 +216,7 @@ extension ZMConversation {
     }
 
     private func degradeSecurityLevelIfNeeded(for cause: SecurityChangeCause) {
-        guard securityLevel == .secure && !allUsersTrusted else {
+        guard securityLevel == .secure, !allUsersTrusted else {
             return
         }
 
@@ -723,7 +723,7 @@ extension ZMConversation {
 
         let clients = localParticipants.flatMap(\.clients)
 
-        if clients.contains(selfClient) && clients.count == 1 {
+        if clients.contains(selfClient), clients.count == 1 {
             return false
         }
 

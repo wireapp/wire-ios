@@ -150,7 +150,7 @@ public extension ZMConversation {
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: self, in: managedObjectContext)
 
-        if self.mutedMessageTypesIncludingAvailability == .regular && (textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage)) {
+        if self.mutedMessageTypesIncludingAvailability == .regular, textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage) {
             return false
         } else {
             return true

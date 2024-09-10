@@ -403,7 +403,7 @@ extension WireCallCenterV3 {
                 activeSpeakerState = kind.state(ofActiveSpeaker: activeSpeaker)
             }
 
-            if kind == .smoothedActiveSpeakers && activeSpeakerState == .inactive {
+            if kind == .smoothedActiveSpeakers, activeSpeakerState == .inactive {
                 return nil
             }
 
@@ -633,7 +633,7 @@ extension WireCallCenterV3 {
             isConferenceCall: conversationType.isConference
         )
 
-        if conversationType.isConference && !canStartConferenceCalls {
+        if conversationType.isConference, !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
             }
@@ -921,7 +921,7 @@ extension WireCallCenterV3 {
     }
 
     private func callType(for conversation: ZMConversation, startedWithVideo: Bool, isConferenceCall: Bool) -> AVSCallType {
-        if !isConferenceCall && conversation.localParticipants.count > legacyVideoParticipantsLimit {
+        if !isConferenceCall, conversation.localParticipants.count > legacyVideoParticipantsLimit {
             return .audioOnly
         } else {
             return startedWithVideo ? .video : .normal

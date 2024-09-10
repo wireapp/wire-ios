@@ -976,7 +976,7 @@ private struct FileCache: Cache {
 
     /// Returns the expected URL of a cache entry
     fileprivate func URLForKey(_ key: String) -> URL {
-        guard key != "." && key != ".." else { fatal("Can't use \(key) as cache key") }
+        guard key != ".", key != ".." else { fatal("Can't use \(key) as cache key") }
         var safeKey = key
         for c in ":\\/%\"" { // see https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
             safeKey = safeKey.replacingOccurrences(of: "\(c)", with: "_")

@@ -97,7 +97,7 @@ extension WireCallCenterV3: ZMConversationObserver {
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
         guard let conversationId = changeInfo.conversation.avsIdentifier else { return }
 
-        if changeInfo.isDeletedChanged && changeInfo.conversation.isDeletedRemotely {
+        if changeInfo.isDeletedChanged, changeInfo.conversation.isDeletedRemotely {
             Self.logger.info("closing call because conversation was deleted")
             closeCall(conversationId: conversationId)
 

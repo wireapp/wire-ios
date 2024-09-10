@@ -29,7 +29,7 @@ extension Analytics {
         }
 
         set {
-            if newValue && (provider?.isOptedOut ?? false) {
+            if newValue, provider?.isOptedOut ?? false {
                 return
             }
 

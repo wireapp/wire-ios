@@ -668,7 +668,7 @@ extension TokenField: TokenizedTextViewDelegate {
             return
         }
 
-        if fraction >= 1 && range.location == self.textView.textStorage.length - 1 {
+        if fraction >= 1, range.location == self.textView.textStorage.length - 1 {
             return
         }
 

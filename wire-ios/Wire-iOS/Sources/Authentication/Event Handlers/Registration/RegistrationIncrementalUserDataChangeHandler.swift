@@ -48,7 +48,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
                 )
             )
 
-        } else if unregisteredUser.password == nil && unregisteredUser.needsPassword {
+        } else if unregisteredUser.password == nil, unregisteredUser.needsPassword {
             return requestIntermediateStep(.setPassword, with: unregisteredUser, mode: .normal)
 
         } else {

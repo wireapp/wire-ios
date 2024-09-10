@@ -132,7 +132,7 @@ extension ZMConversation {
         guard Bundle.developerModeEnabled else { return nil }
         if unreadMessages.count > 0 {
             return .markRead
-        } else if unreadMessages.count == 0 && canMarkAsUnread() {
+        } else if unreadMessages.count == 0, canMarkAsUnread() {
             return .markUnread
         }
         return nil

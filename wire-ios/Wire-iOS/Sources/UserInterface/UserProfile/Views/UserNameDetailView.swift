@@ -84,7 +84,7 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondAccessibilityIdentifier: String? {
-        guard handleText != nil && correlationText != nil else { return nil }
+        guard handleText != nil, correlationText != nil else { return nil }
         return "correlation"
     }
 

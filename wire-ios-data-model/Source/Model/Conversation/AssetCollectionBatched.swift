@@ -261,12 +261,12 @@ extension AssetCollectionBatched {
         let unionIncluding: MessageCategory = matchingCategories.reduce(.none) { $0.union($1.including) }
         messages.forEach { message in
             let category = message.cachedCategory
-            guard     (category.intersection(unionIncluding) != .none)
-                  && !(category.contains(MessageCategory.excludedFromCollection))
+            guard category.intersection(unionIncluding) != .none,
+                  !(category.contains(MessageCategory.excludedFromCollection))
             else { return }
 
             matchingCategories.forEach {
-                if category.contains($0.including) && (category.intersection($0.excluding) == .none) {
+                if category.contains($0.including), category.intersection($0.excluding) == .none {
                     sorted[$0]?.append(message)
                 }
             }

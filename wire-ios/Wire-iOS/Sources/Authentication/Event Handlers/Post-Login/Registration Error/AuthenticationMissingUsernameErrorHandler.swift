@@ -35,7 +35,7 @@ final class AuthenticationMissingUsernameErrorHandler: AuthenticationEventHandle
         }
 
         // Verify the state and ask the user to add a username
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

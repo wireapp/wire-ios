@@ -437,7 +437,7 @@ extension ConversationStatus {
         if completelyMuted {
             // Always summarize for completely muted conversation
             return true
-        } else if showingOnlyMentionsAndReplies && !hasSelfMention && !hasSelfReply {
+        } else if showingOnlyMentionsAndReplies, !hasSelfMention, !hasSelfReply {
             // Summarize when there is no mention
             return true
         } else if hasSelfMention {
@@ -547,7 +547,7 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
             } else {
                 var format = localizationRootPath + "." + localizationKey
 
-                if status.isGroup && type == .missedCall {
+                if status.isGroup, type == .missedCall {
                     format += ".groups"
                     return format.localized(args: sender.name ?? "") && Swift.type(of: self).regularStyle
                 }
@@ -555,7 +555,7 @@ final class NewMessagesMatcher: TypedConversationStatusMatcher {
                 messageDescription = String(format: format.localized, message.textMessageData?.messageText ?? "")
             }
 
-            if status.isGroup && !message.isEphemeral {
+            if status.isGroup, !message.isEphemeral {
                 return (((sender.name ?? "") + ": ") && Swift.type(of: self).emphasisStyle) +
                         (messageDescription && Swift.type(of: self).regularStyle)
             } else {

@@ -155,7 +155,7 @@ extension LocalNotificationType {
     }
 
     fileprivate func conversationKey(_ conversation: ZMConversation?) -> String? {
-        if conversation?.conversationType != .oneOnOne && conversation?.meaningfulDisplayName == nil {
+        if conversation?.conversationType != .oneOnOne, conversation?.meaningfulDisplayName == nil {
             return NoConversationNameKey
         }
 

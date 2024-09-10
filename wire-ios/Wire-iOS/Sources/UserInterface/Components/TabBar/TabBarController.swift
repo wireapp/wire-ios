@@ -168,7 +168,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         return viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 + 1
-            guard index >= 0 && index < viewControllers.count else { return nil }
+            guard index >= 0, index < viewControllers.count else { return nil }
             return viewControllers[index]
         }
     }
@@ -176,7 +176,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         return viewControllers.firstIndex(of: viewController).flatMap {
             let index = $0 - 1
-            guard index >= 0 && index < viewControllers.count else { return nil }
+            guard index >= 0, index < viewControllers.count else { return nil }
             return viewControllers[index]
         }
     }

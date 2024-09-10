@@ -148,7 +148,7 @@ extension NavigationController: UIViewControllerTransitioningDelegate {
 
 extension NavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if self.useDefaultPopGesture && gestureRecognizer == self.dismissGestureRecognizer {
+        if self.useDefaultPopGesture, gestureRecognizer == self.dismissGestureRecognizer {
             return false
         }
         return true

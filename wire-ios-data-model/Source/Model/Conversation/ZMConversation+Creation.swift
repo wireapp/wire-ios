@@ -137,7 +137,7 @@ extension ZMConversation {
     ) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
 
-        if team != nil && !selfUser.canCreateConversation(type: type) {
+        if team != nil, !selfUser.canCreateConversation(type: type) {
             return nil
         }
 

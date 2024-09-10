@@ -92,7 +92,7 @@ final class UserStatusView: TitleView {
                 accessibilityLabel += ", " + L10n.Accessibility.GroupDetails.Conversation.Participants.allYourDevicesProteusVerified
             }
             self.accessibilityLabel = accessibilityLabel
-        } else if availability == .none && options.contains(.allowSettingStatus) {
+        } else if availability == .none, options.contains(.allowSettingStatus) {
             title = L10n.Localizable.Availability.Message.setStatus
             accessibilityLabel = title
         } else if availability != .none {

@@ -35,8 +35,8 @@ extension ZMMessage {
             guard let genericMessage = candidateConfirmationReceipt.underlyingMessage else {
                 return false
             }
-            if genericMessage.hasConfirmation &&
-                genericMessage.confirmation.hasFirstMessageID &&
+            if genericMessage.hasConfirmation,
+                genericMessage.confirmation.hasFirstMessageID,
                 genericMessage.confirmation.firstMessageID == self.nonce?.transportString() {
                 return true
             }
@@ -85,20 +85,20 @@ extension ZMMessage {
         }
 
         // Only the sender of the original message can delete it
-        if senderID != message.sender?.remoteIdentifier && !message.isEphemeral {
+        if senderID != message.sender?.remoteIdentifier, !message.isEphemeral {
             return
         }
 
         let selfUser = ZMUser.selfUser(in: moc)
 
         // Only clients other than self should see the system message
-        if senderID != selfUser.remoteIdentifier && !message.isEphemeral, let sender = message.sender {
+        if senderID != selfUser.remoteIdentifier, !message.isEphemeral, let sender = message.sender {
             let timestamp = message.serverTimestamp ?? Date()
             conversation.appendDeletedForEveryoneSystemMessage(at: timestamp, sender: sender)
         }
 
         // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
-        if message.isEphemeral && message.sender?.remoteIdentifier != selfUser.remoteIdentifier {
+        if message.isEphemeral, message.sender?.remoteIdentifier != selfUser.remoteIdentifier {
             message.removeClearingSender(true)
             stopDeletionTimer(for: message)
         } else {

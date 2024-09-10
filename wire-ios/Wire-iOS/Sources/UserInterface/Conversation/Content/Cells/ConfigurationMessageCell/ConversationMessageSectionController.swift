@@ -161,7 +161,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         if let topContentCellDescription = contentCellDescriptions.first {
             topContentCellDescription.showEphemeralTimer = message.isEphemeral && !message.isObfuscated
 
-            if isSenderVisible && topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
+            if isSenderVisible, topContentCellDescription.baseType == ConversationTextMessageCellDescription.self {
                 topContentCellDescription.topMargin = 0 // We only do this for text content since the text label already contains the spacing
             }
         }
@@ -329,7 +329,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         }
 
         // This message is from the same sender but in a different minute.
-        if context.isSameSenderAsPrevious && !context.isTimestampInSameMinuteAsPreviousMessage {
+        if context.isSameSenderAsPrevious, !context.isTimestampInSameMinuteAsPreviousMessage {
             return true
         }
 

@@ -120,9 +120,9 @@ public final class ConversationList: NSObject {
             let c0 = $0 as! ZMConversation
             let c1 = $1 as! ZMConversation
 
-            if c0.conversationListIndicator == .activeCall && c1.conversationListIndicator != .activeCall {
+            if c0.conversationListIndicator == .activeCall, c1.conversationListIndicator != .activeCall {
                 return .orderedAscending
-            } else if c1.conversationListIndicator == .activeCall && c0.conversationListIndicator != .activeCall {
+            } else if c1.conversationListIndicator == .activeCall, c0.conversationListIndicator != .activeCall {
                 return .orderedDescending
             }
 

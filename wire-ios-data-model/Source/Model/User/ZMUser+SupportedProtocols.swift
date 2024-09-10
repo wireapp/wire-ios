@@ -52,7 +52,7 @@ extension ZMUser {
             guard newValue != currentValue else { return }
 
             // We can't drop support for MLS once we've adopted it.
-            if currentValue.contains(.mls) && !newValue.contains(.mls) {
+            if currentValue.contains(.mls), !newValue.contains(.mls) {
                 return
             }
 

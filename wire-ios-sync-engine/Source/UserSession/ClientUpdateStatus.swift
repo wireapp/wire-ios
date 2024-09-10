@@ -86,7 +86,7 @@ public enum ClientUpdateError: NSInteger {
         if isWaitingToDeleteClients {
             return .deletingClients
         }
-        if isGeneratingPrekeys && prekeys == nil {
+        if isGeneratingPrekeys, prekeys == nil {
             return .generatingPrekeys
         }
         if prekeys == nil {

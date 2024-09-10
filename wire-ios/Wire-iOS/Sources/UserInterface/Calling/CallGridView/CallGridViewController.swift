@@ -482,7 +482,7 @@ final class CallGridViewController: UIViewController {
     private func stream(with streamId: AVSClient) -> Stream? {
         var stream = configuration.streams.first(where: { $0.streamId == streamId })
 
-        if stream == nil && configuration.floatingStream?.streamId == streamId {
+        if stream == nil, configuration.floatingStream?.streamId == streamId {
             stream = configuration.floatingStream
         }
 

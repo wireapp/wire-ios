@@ -68,7 +68,7 @@ extension NSDataDetector {
         if pathComponents.count == 3 {
             // Match soundcloud.com/<artist>/<track>
             return .soundCloudTrack
-        } else if pathComponents.count == 4 && pathComponents[2] == "sets" {
+        } else if pathComponents.count == 4, pathComponents[2] == "sets" {
             // Match soundcloud.com/<user>/sets/<playlist_name>
             return .soundCloudPlaylist
         }

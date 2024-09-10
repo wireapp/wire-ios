@@ -230,7 +230,7 @@ struct ConversationEventPayloadProcessor {
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if newUsers && conversation.conversationType == .group {
+            if newUsers, conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -242,7 +242,7 @@ struct ConversationEventPayloadProcessor {
             let users = Set(users)
             let selfUser = ZMUser.selfUser(in: context)
 
-            if (!users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser)) && conversation.conversationType == .group {
+            if !users.isSubset(of: conversation.localParticipantsExcludingSelf) || users.contains(selfUser), conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }

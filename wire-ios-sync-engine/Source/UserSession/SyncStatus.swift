@@ -176,7 +176,7 @@ extension SyncStatus {
         currentSyncPhase = phase.nextPhase
 
         if currentSyncPhase == .done {
-            if needsToRestartQuickSync && isPushChannelOpen {
+            if needsToRestartQuickSync, isPushChannelOpen {
                 // If the push channel closed while fetching notifications
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents

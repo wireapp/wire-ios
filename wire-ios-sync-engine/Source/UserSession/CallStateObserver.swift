@@ -167,7 +167,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
     private func updateConversation(_ conversation: ZMConversation, with callState: CallState, timestamp: Date?) {
         switch callState {
         case .incoming(_, shouldRing: true, degraded: _):
-            if conversation.isArchived && conversation.mutedMessageTypes != .all {
+            if conversation.isArchived, conversation.mutedMessageTypes != .all {
                 conversation.isArchived = false
             }
 

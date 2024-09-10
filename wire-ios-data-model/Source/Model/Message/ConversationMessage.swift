@@ -383,7 +383,7 @@ extension ZMMessage {
     }
 
     @objc public func startSelfDestructionIfNeeded() -> Bool {
-        if !isZombieObject && isEphemeral, let sender, !sender.isSelfUser {
+        if !isZombieObject, isEphemeral, let sender, !sender.isSelfUser {
             return startDestructionIfNeeded()
         }
         return false

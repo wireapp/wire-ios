@@ -169,14 +169,14 @@ public final class AppLockController: AppLockType {
         // Changing biometrics in device settings is protected by the device passcode, but if
         // the device passcode isn't considered secure enough, then ask for the custom passcode
         // to accept the new biometrics state.
-        if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
+        if biometricsState.biometricsChanged(in: context), !passcodePreference.allowsDevicePasscode {
             WireLogger.appLock.info("need custom passcode because biometrics changed")
             callback(.needCustomPasscode)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
-        if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
+        if !canEvaluatePolicy, passcodePreference.allowsCustomPasscode {
             WireLogger.appLock.info("need custom passcode because device auth is not possible")
             callback(.needCustomPasscode)
             return

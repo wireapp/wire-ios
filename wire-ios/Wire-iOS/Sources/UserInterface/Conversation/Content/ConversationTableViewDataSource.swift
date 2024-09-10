@@ -312,7 +312,7 @@ final class ConversationTableViewDataSource: NSObject {
     func didScroll(tableView: UITableView) {
         let scrolledToTop = (tableView.contentOffset.y + tableView.bounds.height) - tableView.contentSize.height > 0
 
-        if scrolledToTop && hasOlderMessagesToLoad {
+        if scrolledToTop, hasOlderMessagesToLoad {
             // NOTE: we dispatch async because `didScroll(tableView:)` can be called inside a `performBatchUpdate()`,
             // which would cause data source inconsistency if change the fetchLimit.
             DispatchQueue.main.async {
@@ -323,7 +323,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let scrolledToBottom = scrollView.contentOffset.y < 0
-        guard scrolledToBottom && hasNewerMessagesToLoad else { return }
+        guard scrolledToBottom, hasNewerMessagesToLoad else { return }
 
         // We are at the bottom and should load new messages
 

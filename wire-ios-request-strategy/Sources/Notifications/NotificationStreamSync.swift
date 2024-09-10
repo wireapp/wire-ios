@@ -66,7 +66,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
 
        // We only reset the paginator if it is neither in progress nor has more pages to fetch.
-        if listPaginator.status != ZMSingleRequestProgress.inProgress && !listPaginator.hasMoreToFetch {
+        if listPaginator.status != ZMSingleRequestProgress.inProgress, !listPaginator.hasMoreToFetch {
             listPaginator.resetFetching()
         }
 
@@ -98,7 +98,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         }
         let latestEventId = processUpdateEventsAndReturnLastNotificationID(from: response.payload)
 
-        if latestEventId != nil && response.httpStatus != 404 {
+        if latestEventId != nil, response.httpStatus != 404 {
             return latestEventId
         }
 

@@ -157,7 +157,7 @@ final class TokenTextAttachment: NSTextAttachment, TokenContainer {
 
         let shortedTextSize = size(for: shortedText, attributes: attributes)
         let shortedText1Size = size(for: shortedText1, attributes: attributes)
-        if shortedTextSize.width <= maxWidth && shortedText1Size.width > maxWidth {
+        if shortedTextSize.width <= maxWidth, shortedText1Size.width > maxWidth {
             return shortedText
         } else if shortedText1Size.width <= maxWidth {
             // Search in right range

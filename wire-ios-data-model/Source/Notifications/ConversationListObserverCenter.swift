@@ -172,7 +172,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Stores inserted or deleted conversations temporarily until save / merge completes
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
-        if deleted.count == 0 && inserted.count == 0 { return }
+        if deleted.count == 0, inserted.count == 0 { return }
         zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
         inserted.forEach {
             zmLog.debug("Inserted: \($0.objectID) conversationType: \($0.conversationType.rawValue)")

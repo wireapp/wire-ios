@@ -58,7 +58,7 @@ final class UINavigationBarContainer: UIViewController {
         let orientation = UIWindow.interfaceOrientation ?? .unknown
         let deviceType = UIDevice.current.userInterfaceIdiom
 
-        if orientation.isLandscape && deviceType == .phone {
+        if orientation.isLandscape, deviceType == .phone {
             navHeight.constant = landscapeNavbarHeight
         } else {
             navHeight.constant = portraitNavbarHeight

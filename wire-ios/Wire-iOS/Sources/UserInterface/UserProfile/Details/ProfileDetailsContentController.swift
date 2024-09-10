@@ -135,7 +135,7 @@ final class ProfileDetailsContentController: NSObject,
 
         // If viewer can't access rich profile information,
         // delete all rich profile info just for displaying purposes.
-        if !viewerCanAccessRichProfile && !richProfile.isEmpty {
+        if !viewerCanAccessRichProfile, !richProfile.isEmpty {
             richProfile.removeAll()
         }
 
@@ -163,7 +163,7 @@ final class ProfileDetailsContentController: NSObject,
                 let viewerCanChangeOtherRoles = viewer.canModifyOtherMember(in: conversation)
                 let userCanHaveRoleChanged = !user.isWirelessUser && !user.isFederated
 
-                if viewerCanChangeOtherRoles && userCanHaveRoleChanged {
+                if viewerCanChangeOtherRoles, userCanHaveRoleChanged {
                     items.append(.groupAdminStatus(enabled: groupAdminEnabled))
                 }
             }
@@ -173,7 +173,7 @@ final class ProfileDetailsContentController: NSObject,
                 items.append(richProfile)
             }
 
-            if user.isBlocked && user.blockState == .blockedMissingLegalholdConsent {
+            if user.isBlocked, user.blockState == .blockedMissingLegalholdConsent {
                 items.append(.blockingReason)
             }
 

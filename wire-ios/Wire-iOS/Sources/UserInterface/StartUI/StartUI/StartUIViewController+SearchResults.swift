@@ -48,7 +48,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
                                      indexPath: IndexPath,
                                      section: SearchResultsViewControllerSection) {
 
-        if !user.isConnected && !user.isTeamMember {
+        if !user.isConnected, !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
             delegate?.startUI(self, didSelect: user)

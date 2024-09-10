@@ -120,7 +120,7 @@ extension ArticleMetadata {
 
 extension FoursquareLocationMetadata {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type == OpenGraphTypeType.foursquare.rawValue && openGraphData.siteName == .foursquare else { return nil }
+        guard openGraphData.type == OpenGraphTypeType.foursquare.rawValue, openGraphData.siteName == .foursquare else { return nil }
 
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
@@ -134,7 +134,7 @@ extension FoursquareLocationMetadata {
 
 extension InstagramPictureMetadata {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type == OpenGraphTypeType.instagram.rawValue && openGraphData.siteName == .instagram else { return nil }
+        guard openGraphData.type == OpenGraphTypeType.instagram.rawValue, openGraphData.siteName == .instagram else { return nil }
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
         subtitle = openGraphData.content
@@ -146,7 +146,7 @@ extension InstagramPictureMetadata {
 extension TwitterStatusMetadata {
 
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        guard openGraphData.type == OpenGraphTypeType.article.rawValue && openGraphData.siteName == .twitter else { return nil }
+        guard openGraphData.type == OpenGraphTypeType.article.rawValue, openGraphData.siteName == .twitter else { return nil }
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
 
         message = tweetContentFromOpenGraphData(openGraphData)

@@ -38,11 +38,11 @@ final class CallHapticsController {
         defer { lastCallState = newCallState }
         guard lastCallState != newCallState else { return }
 
-        if (false == lastCallState?.isEnding || nil == lastCallState) && newCallState.isEnding {
+        if false == lastCallState?.isEnding || nil == lastCallState, newCallState.isEnding {
             Log.haptics.debug("triggering end event")
             hapticGenerator.trigger(event: .end)
         }
-        if (false == lastCallState?.isEstablished || nil == lastCallState) && newCallState.isEstablished {
+        if false == lastCallState?.isEstablished || nil == lastCallState, newCallState.isEstablished {
             Log.haptics.debug("triggering start event")
             hapticGenerator.trigger(event: .start)
         }

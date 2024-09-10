@@ -260,7 +260,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
     func updateBackgroundColor() {
         backgroundColor = SemanticColors.View.backgroundUserCell
 
-        if isHighlighted && selectionStyle != .none {
+        if isHighlighted, selectionStyle != .none {
             backgroundColor = SemanticColors.View.backgroundUserCellHightLighted
             badge.backgroundColor = SemanticColors.View.backgroundDefaultBlack
             badgeLabel.textColor = SemanticColors.Label.textDefaultWhite

@@ -95,14 +95,14 @@ public struct SetSnapshot<T: Hashable> {
     // Returns the new state and the notification to send after some changes in messages
     public func updatedState(_ updatedObjects: Set<T>, observedObject: NSObject, newSet: OrderedSetState<T>) -> SetStateUpdate<T>? {
 
-        if self.set == newSet && updatedObjects.count == 0 {
+        if self.set == newSet, updatedObjects.count == 0 {
             return nil
         }
 
         let changeSet = ChangedIndexes(start: self.set, end: newSet, updated: updatedObjects, moveType: self.moveType)
         let changeInfo = SetChangeInfo(observedObject: observedObject, changeSet: changeSet, orderedSetState: newSet)
 
-        if changeInfo.insertedIndexes.count == 0 && changeInfo.deletedIndexes.count == 0 && changeInfo.updatedIndexes.count == 0 && changeInfo.movedIndexPairs.count == 0 {
+        if changeInfo.insertedIndexes.count == 0, changeInfo.deletedIndexes.count == 0, changeInfo.updatedIndexes.count == 0, changeInfo.movedIndexPairs.count == 0 {
             return nil
         }
         return SetStateUpdate(newSnapshot: SetSnapshot(set: newSet, moveType: self.moveType),

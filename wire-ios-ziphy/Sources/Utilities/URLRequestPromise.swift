@@ -109,7 +109,7 @@ final class URLRequestPromise: CancelableTask {
      */
 
     func resolve(_ data: Data?, _ response: URLResponse?, _ error: Error?) {
-        guard !isCancelled && !isResolved else {
+        guard !isCancelled, !isResolved else {
             return
         }
 

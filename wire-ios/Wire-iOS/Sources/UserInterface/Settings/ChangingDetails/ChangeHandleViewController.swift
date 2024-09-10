@@ -193,7 +193,7 @@ struct HandleChangeState {
     /// This function does not update the `HandleChangeState` itself.
     func validate(_ handle: String) throws {
         let subset = CharacterSet(charactersIn: handle).isSubset(of: HandleValidation.allowedCharacters)
-        guard subset && handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
+        guard subset, handle.isEqualToUnicodeName else { throw ValidationError.invalidCharacter }
         guard handle.count >= HandleValidation.allowedLength.lowerBound else { throw ValidationError.tooShort }
         guard handle.count <= HandleValidation.allowedLength.upperBound else { throw ValidationError.tooLong }
         guard handle != currentHandle else { throw ValidationError.sameAsPrevious }

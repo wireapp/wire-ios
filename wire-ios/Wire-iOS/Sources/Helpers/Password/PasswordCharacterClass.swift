@@ -62,7 +62,7 @@ enum PasswordCharacterClass: Hashable, Decodable {
         case "ascii-printable": self = .asciiPrintable
         default:
             // Custom sets are wrapped between square brackets
-            guard rawValue.hasPrefix("[") && rawValue.hasSuffix("]") else { return nil }
+            guard rawValue.hasPrefix("["), rawValue.hasSuffix("]") else { return nil }
 
             // Get the contents between the brackets
             let setStartIndex = rawValue.index(after: rawValue.startIndex)

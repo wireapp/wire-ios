@@ -353,7 +353,7 @@ final class FullscreenImageViewController: UIViewController {
                 }
             }
         default:
-            if vectorDistance > 300 && abs(translation.y) > 100 {
+            if vectorDistance > 300, abs(translation.y) > 100 {
                 if isDraggingImage {
                     dismissImageFlicking(withVelocity: velocity)
                 } else {
@@ -422,7 +422,7 @@ final class FullscreenImageViewController: UIViewController {
                 if !isDraggingImage {
                     imageView?.transform = imageViewStartingTransform
                     updateBackgroundColor(progress: 0)
-                    if !scrollView.isDragging && !scrollView.isDecelerating {
+                    if !scrollView.isDragging, !scrollView.isDecelerating {
                         imageView?.center = initialImageViewCenter
                     }
                 }
@@ -481,7 +481,7 @@ final class FullscreenImageViewController: UIViewController {
     func updateBackgroundColor(progress: CGFloat) {
         let orientation = UIDevice.current.orientation
         let interfaceIdiom = UIDevice.current.userInterfaceIdiom
-        if orientation.isLandscape && interfaceIdiom == .phone {
+        if orientation.isLandscape, interfaceIdiom == .phone {
             return
         }
         var newAlpha = 1 - progress

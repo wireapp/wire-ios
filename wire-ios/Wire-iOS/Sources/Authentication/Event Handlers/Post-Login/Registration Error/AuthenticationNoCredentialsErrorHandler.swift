@@ -44,7 +44,7 @@ final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler 
         }
 
         // Verify the state and ask the user to add a password
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

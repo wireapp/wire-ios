@@ -89,7 +89,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         updateRecordingState(recordingState)
 
-        if Bundle.developerModeEnabled && Settings.shared.maxRecordingDurationDebug != 0 {
+        if Bundle.developerModeEnabled, Settings.shared.maxRecordingDurationDebug != 0 {
             self.recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
         }
     }
@@ -364,7 +364,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     func setOverlayState(_ state: AudioButtonOverlayState, animated: Bool) {
         let animations = { self.buttonOverlay.setOverlayState(state) }
 
-        if state.animatable && animated {
+        if state.animatable, animated {
             UIView.animate(
                 withDuration: state.duration,
                 delay: 0,

@@ -30,7 +30,7 @@ import UIKit
         bracketsScanner.charactersToBeSkipped = CharacterSet()
         bracketsScanner.locale = Locale(identifier: "en_US_POSIX")
 
-        if bracketsScanner.scanUpToString("<") != nil && bracketsScanner.scanString("<") != nil {
+        if bracketsScanner.scanUpToString("<") != nil, bracketsScanner.scanString("<") != nil {
             normalizedAddress = bracketsScanner.scanUpToString(">") as NSString?
             if bracketsScanner.scanString(">") == nil {
                 // if there is no > than it's not valid email, we do not need to change input value
@@ -135,7 +135,7 @@ import UIKit
             for case let c as NSString in components {
                 if c.length < 1 || c.rangeOfCharacter(from: invalidSet, options: .literal).location != NSNotFound {
                     // Check if it's a quoted part:
-                    if c.hasPrefix("\"") && c.hasSuffix("\"") {
+                    if c.hasPrefix("\""), c.hasSuffix("\"") {
                         // Allow this regardless of what
                         let quoted = c.substring(with: NSRange(location: 1, length: c.length - 2)) as NSString
                         if quoted.length < 1 || quoted.rangeOfCharacter(from: invalidQuotedSet, options: .literal).location != NSNotFound {

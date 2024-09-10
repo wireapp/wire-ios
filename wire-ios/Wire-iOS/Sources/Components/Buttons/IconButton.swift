@@ -141,7 +141,7 @@ class IconButton: ButtonWithLargerHitArea {
     override func setTitleColor(_ color: UIColor?, for state: UIControl.State) {
         super.setTitleColor(color, for: state)
 
-        if adjustsTitleWhenHighlighted && state.contains(.normal) {
+        if adjustsTitleWhenHighlighted, state.contains(.normal) {
             super.setTitleColor(titleColor(for: .highlighted)?.mix(UIColor.black, amount: 0.4), for: .highlighted)
         }
     }
@@ -177,7 +177,7 @@ class IconButton: ButtonWithLargerHitArea {
                                  for state: UIControl.State) {
         setBackgroundImage(UIImage.singlePixelImage(with: color), for: state)
 
-        if adjustBackgroundImageWhenHighlighted && state.contains(.normal) {
+        if adjustBackgroundImageWhenHighlighted, state.contains(.normal) {
             setBackgroundImage(UIImage.singlePixelImage(with: color.mix(UIColor.black, amount: 0.4)), for: .highlighted)
         }
     }
@@ -313,7 +313,7 @@ class IconButton: ButtonWithLargerHitArea {
             if color != nil {
                 borderColorByState[expandedState.rawValue] = color
 
-                if adjustsBorderColorWhenHighlighted &&
+                if adjustsBorderColorWhenHighlighted,
                     expandedState == .normal {
                     borderColorByState[UIControl.State.highlighted.rawValue] = color?.mix(.black, amount: 0.4)
                 }

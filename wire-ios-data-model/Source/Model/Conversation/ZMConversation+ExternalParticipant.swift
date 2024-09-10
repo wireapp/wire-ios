@@ -73,21 +73,21 @@ extension ZMConversation {
         var state = ExternalParticipantsState()
 
         for user in otherUsers {
-            if canDisplayGuests && user.isFederated {
+            if canDisplayGuests, user.isFederated {
                 state.insert(.visibleRemotes)
             } else if user.isServiceUser {
                 state.insert(.visibleServices)
-            } else if canDisplayExternals && user.isExternalPartner {
+            } else if canDisplayExternals, user.isExternalPartner {
                 state.insert(.visibleExternals)
-            } else if canDisplayGuests && !user.isTeamMember {
+            } else if canDisplayGuests, !user.isTeamMember {
                 state.insert(.visibleGuests)
             }
 
             // Early exit to avoid going through all users if we can avoid it
-            if state.contains(.visibleServices) &&
-               (state.contains(.visibleGuests) || !canDisplayGuests) &&
-               (state.contains(.visibleExternals) || !canDisplayExternals) &&
-               (state.contains(.visibleRemotes) || !canDisplayGuests) {
+            if state.contains(.visibleServices),
+               state.contains(.visibleGuests) || !canDisplayGuests,
+               state.contains(.visibleExternals) || !canDisplayExternals,
+               state.contains(.visibleRemotes) || !canDisplayGuests {
                 break
             }
         }

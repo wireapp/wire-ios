@@ -184,7 +184,7 @@ final class AudioMessageView: UIView, TransferView {
         if isInitial {
             expectingDownload = false
         } else {
-            if fileMessageData.downloadState == .downloaded && expectingDownload {
+            if fileMessageData.downloadState == .downloaded, expectingDownload {
                 playTrack()
                 expectingDownload = false
             }
@@ -488,7 +488,7 @@ extension AudioMessageView: WireCallCenterCallStateObserver {
                 isPausedForIncomingCall = true
             }
         case (.incoming?, .terminating):
-            if isPausedForIncomingCall && !player.isPlaying {
+            if isPausedForIncomingCall, !player.isPlaying {
                 player.play()
             }
             isPausedForIncomingCall = false

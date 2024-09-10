@@ -64,7 +64,7 @@ final class ZMProgressView: UIView {
     }
 
     func setDeterministic(_ determenistic: Bool, animated: Bool) {
-        if self.deterministic != .none && self.deterministic == determenistic {
+        if self.deterministic != .none, self.deterministic == determenistic {
             return
         }
         self.deterministic = determenistic
@@ -78,8 +78,8 @@ final class ZMProgressView: UIView {
     }
 
     fileprivate func updateProgress(_ animated: Bool) {
-        guard self.progress.isNormal &&
-                self.bounds.width != 0 &&
+        guard self.progress.isNormal,
+                self.bounds.width != 0,
                 self.bounds.height != 0 else {
             return
         }

@@ -343,7 +343,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
 
         var remainingKeys = keys
 
-        if keys.contains(ZMConversationUserDefinedNameKey) && conversation.userDefinedName == nil {
+        if keys.contains(ZMConversationUserDefinedNameKey), conversation.userDefinedName == nil {
             let conversationUserDefinedNameKeySet: Set<AnyHashable> = [ZMConversationUserDefinedNameKey]
             conversation.resetLocallyModifiedKeys(conversationUserDefinedNameKeySet)
             remainingKeys.remove(ZMConversationUserDefinedNameKey)

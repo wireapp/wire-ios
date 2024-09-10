@@ -187,7 +187,7 @@ final class VideoMessageView: UIView, TransferView {
             break
         }
 
-        if !previewImageView.isHidden && previewImageView.image != nil {
+        if !previewImageView.isHidden, previewImageView.image != nil {
             visibleViews.append(bottomGradientView)
         }
 

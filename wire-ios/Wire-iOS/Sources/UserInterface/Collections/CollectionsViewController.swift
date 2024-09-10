@@ -225,7 +225,7 @@ final class CollectionsViewController: UIViewController {
     }
 
     private func trackOpeningIfNeeded() {
-        guard shouldTrackOnNextOpen && fetchingDone else { return }
+        guard shouldTrackOnNextOpen, fetchingDone else { return }
 
         shouldTrackOnNextOpen = false
     }

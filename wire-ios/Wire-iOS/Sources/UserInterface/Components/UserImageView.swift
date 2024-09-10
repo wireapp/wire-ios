@@ -145,7 +145,7 @@ class UserImageView: AvatarImageView, UserObserving {
             self.container.backgroundColor = self.containerBackgroundColor(for: user)
         }
 
-        if animated && !ProcessInfo.processInfo.isRunningTests {
+        if animated, !ProcessInfo.processInfo.isRunningTests {
             UIView.transition(with: self, duration: 0.15, options: .transitionCrossDissolve, animations: updateBlock, completion: nil)
         } else {
             updateBlock()

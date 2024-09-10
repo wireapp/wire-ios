@@ -359,7 +359,7 @@ extension SwipeMenuCollectionCell: UIGestureRecognizerDelegate {
         if gestureRecognizer == revealDrawerGestureRecognizer {
 
             let offset = revealDrawerGestureRecognizer.translation(in: self)
-            if swipeViewHorizontalConstraint?.constant == 0 && offset.x < 0 {
+            if swipeViewHorizontalConstraint?.constant == 0, offset.x < 0 {
                 result = false
             } else {
                 result = abs(offset.x) > abs(offset.y)

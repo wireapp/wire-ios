@@ -124,7 +124,7 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
 
     func updateFields(in bounds: CGRect) {
 
-        guard (bounds != .zero) && (bounds != .null) else {
+        guard bounds != .zero, bounds != .null else {
             return
         }
 

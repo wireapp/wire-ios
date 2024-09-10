@@ -35,7 +35,7 @@ final class AuthenticationStartMissingCredentialsErrorHandler: AuthenticationEve
             return nil
         }
 
-        guard statusProvider?.selfUser != nil && statusProvider?.selfUserProfile != nil else {
+        guard statusProvider?.selfUser != nil, statusProvider?.selfUserProfile != nil else {
             return nil
         }
 

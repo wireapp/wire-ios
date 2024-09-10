@@ -27,7 +27,7 @@ extension UIAlertController {
     static var newsletterSubscriptionDialogWasDisplayed = false
 
     static func showNewsletterSubscriptionDialog(over viewController: UIViewController, completionHandler: @escaping ResultHandler) {
-        guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts && !dataCollectionDisabled else { return }
+        guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts, !dataCollectionDisabled else { return }
 
         let alertController = UIAlertController(title: L10n.Localizable.NewsOffers.Consent.title,
                                                 message: L10n.Localizable.NewsOffers.Consent.message,

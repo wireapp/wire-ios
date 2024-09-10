@@ -202,7 +202,7 @@ final class ConnectRequestsViewController: UIViewController,
 
         tableView.reloadData()
 
-        if !isAccepting && !isIgnoring {
+        if !isAccepting, !isIgnoring {
             hideRequestsOrShowNextRequest()
         }
     }

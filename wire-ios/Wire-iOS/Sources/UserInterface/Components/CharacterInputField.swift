@@ -89,7 +89,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
             self.delegate?.didChangeText(self, to: storage)
         }
 
-        if let text = self.text, !wasFilled && self.isFilled {
+        if let text = self.text, !wasFilled, self.isFilled {
             self.delegate?.didFillInput(inputField: self, text: text)
         }
     }

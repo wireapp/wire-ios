@@ -30,7 +30,7 @@ extension ZMMessage {
         guard let currentMoc = self.managedObjectContext else { return }
         guard let syncMoc = currentMoc.zm_sync else { return }
         guard let uiMoc = currentMoc.zm_userInterface else { return }
-        if conversation.isDegraded && self.deliveryState == .pending {
+        if conversation.isDegraded, self.deliveryState == .pending {
             let verificationStatusKey = verificationStatusKey(for: conversation.messageProtocol)
 
             currentMoc.saveOrRollback()

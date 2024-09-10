@@ -37,14 +37,14 @@ extension SettingsCellDescriptorFactory {
     func accountGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
         var sections: [SettingsSectionDescriptorType] = [infoSection(userSession: userSession)]
 
-        if userRightInterfaceType.selfUserIsPermitted(to: .editAccentColor) &&
+        if userRightInterfaceType.selfUserIsPermitted(to: .editAccentColor),
            userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
             sections.append(appearanceSection())
         }
 
         sections.append(privacySection())
 
-        if Bundle.developerModeEnabled && !SecurityFlags.forceEncryptionAtRest.isEnabled {
+        if Bundle.developerModeEnabled, !SecurityFlags.forceEncryptionAtRest.isEnabled {
             sections.append(encryptionAtRestSection())
         }
 

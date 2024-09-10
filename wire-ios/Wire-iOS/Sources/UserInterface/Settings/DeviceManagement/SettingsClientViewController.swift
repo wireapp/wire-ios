@@ -115,7 +115,7 @@ final class SettingsClientViewController: UIViewController,
         setupNavigationTitle()
         // presented modally from conversation
         if let navController = self.navigationController,
-           navController.viewControllers.count > 0 &&
+           navController.viewControllers.count > 0,
             navController.viewControllers[0] == self,
            self.navigationItem.rightBarButtonItem == nil {
 
@@ -338,7 +338,7 @@ final class SettingsClientViewController: UIViewController,
     // MARK: - Copying user client info
 
     func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == ClientSection.info.rawValue && indexPath.row == 0 {
+        if indexPath.section == ClientSection.info.rawValue, indexPath.row == 0 {
             return true
         } else {
             return false

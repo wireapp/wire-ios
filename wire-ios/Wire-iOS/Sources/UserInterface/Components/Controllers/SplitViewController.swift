@@ -189,7 +189,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     // MARK: - animator
     var animatorForRightView: UIViewControllerAnimatedTransitioning {
-        if layoutSize == .compact && isLeftViewControllerRevealed {
+        if layoutSize == .compact, isLeftViewControllerRevealed {
             // Right view is not visible so we should not animate.
             return CrossfadeTransition(duration: 0)
         } else if layoutSize == .regularLandscape {
@@ -291,9 +291,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         let completionBlock: Completion = {
             completion?()
 
-            if self.openPercentage == 0 &&
-                self.layoutSize != .regularLandscape &&
-                (self.leftView.layer.presentation()?.frame == self.leftView.frame || (self.leftView.layer.presentation()?.frame == nil && !animated)) {
+            if self.openPercentage == 0,
+                self.layoutSize != .regularLandscape,
+                self.leftView.layer.presentation()?.frame == self.leftView.frame || (self.leftView.layer.presentation()?.frame == nil && !animated) {
                 self.leftView.isHidden = true
             }
         }
@@ -553,7 +553,7 @@ extension SplitViewController: UIGestureRecognizerDelegate {
             return false
         }
 
-        if isLeftViewControllerRevealed && !isIPadRegular() {
+        if isLeftViewControllerRevealed, !isIPadRegular() {
             return false
         }
 

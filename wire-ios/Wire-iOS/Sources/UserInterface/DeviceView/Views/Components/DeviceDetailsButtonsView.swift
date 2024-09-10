@@ -80,7 +80,7 @@ struct DeviceDetailsButtonsView: View {
                 Divider()
                 showCertificateButton.padding()
             case .notActivated:
-                if !viewModel.isFromConversation && viewModel.isSelfClient {
+                if !viewModel.isFromConversation, viewModel.isSelfClient {
                     Divider()
                     getCertificateButton.padding()
                 }

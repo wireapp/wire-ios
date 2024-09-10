@@ -215,7 +215,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     // MARK: - Single Tap Action
 
     @objc private func onSingleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized && cellDescription?.supportsActions == true {
+        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performSingleTapAction()
         }
     }
@@ -223,7 +223,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     // MARK: - Double Tap Action
 
     @objc private func onDoubleTap(_ gestureRecognizer: UITapGestureRecognizer) {
-        if gestureRecognizer.state == .recognized && cellDescription?.supportsActions == true {
+        if gestureRecognizer.state == .recognized, cellDescription?.supportsActions == true {
             cellDescription?.actionController?.performDoubleTapAction()
         }
     }

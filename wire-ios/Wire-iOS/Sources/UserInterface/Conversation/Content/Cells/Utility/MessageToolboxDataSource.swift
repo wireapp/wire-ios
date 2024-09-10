@@ -113,7 +113,7 @@ final class MessageToolboxDataSource {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
-        else if failedToSend && isSentBySelfUser {
+        else if failedToSend, isSentBySelfUser {
             var detailsString: String
 
             switch message.failedToSendReason {

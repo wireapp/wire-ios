@@ -139,7 +139,7 @@ final class TypingStrategyTests: MessagingTest {
         let expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/typing"
         let expectedPayload = ["status": isTyping ? "started" : "stopped"]
 
-        if let request, (request.path == expectedPath) && (request.method == .post) {
+        if let request, request.path == expectedPath, request.method == .post {
             if let payload = request.payload as? [String: String] {
                 XCTAssertEqual(payload, expectedPayload)
             } else {

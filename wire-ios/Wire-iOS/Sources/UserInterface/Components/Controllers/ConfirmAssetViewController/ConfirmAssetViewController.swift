@@ -198,7 +198,7 @@ final class ConfirmAssetViewController: UIViewController {
 
         imagePreviewView.mediaAsset = image
 
-        if showEditingOptions && imageToolbarFitsInsideImage {
+        if showEditingOptions, imageToolbarFitsInsideImage {
             let imageToolbarViewInsideImage = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarViewInsideImage.isPlacedOnImage = true
             imageToolbarViewInsideImage.sketchButton.addTarget(self, action: #selector(sketchEdit(_:)), for: .touchUpInside)
@@ -214,7 +214,7 @@ final class ConfirmAssetViewController: UIViewController {
     private func createBottomPanel() {
         view.addSubview(bottomPanel)
 
-        if showEditingOptions && !imageToolbarFitsInsideImage {
+        if showEditingOptions, !imageToolbarFitsInsideImage {
             let imageToolbarView = ImageToolbarView(withConfiguraton: .preview)
             imageToolbarView.sketchButton.addTarget(self, action: #selector(sketchEdit(_:)), for: .touchUpInside)
             imageToolbarView.emojiButton.addTarget(self, action: #selector(emojiEdit(_:)), for: .touchUpInside)
