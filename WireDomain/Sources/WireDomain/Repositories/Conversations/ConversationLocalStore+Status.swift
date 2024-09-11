@@ -118,13 +118,17 @@ extension ConversationLocalStore {
         from remoteConversation: WireAPI.Conversation.Member,
         for localConversation: ZMConversation
     ) {
-        if let mutedStatus = remoteConversation.mutedStatus,
-           let mutedReference = remoteConversation.mutedReference {
+        let mutedStatus = remoteConversation.mutedStatus
+        let mutedReference = remoteConversation.mutedReference
+
+        if let mutedStatus, let mutedReference {
             localConversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
         }
 
-        if let archived = remoteConversation.archived,
-           let archivedReference = remoteConversation.archivedReference {
+        let archived = remoteConversation.archived
+        let archivedReference = remoteConversation.archivedReference
+
+        if let archived, let archivedReference {
             localConversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
         }
     }

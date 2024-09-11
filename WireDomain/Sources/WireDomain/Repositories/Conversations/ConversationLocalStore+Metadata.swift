@@ -65,14 +65,16 @@ extension ConversationLocalStore {
             localConversation.epoch = UInt64(epoch)
         }
 
-        if let base64String = remoteConversation.mlsGroupID,
-           let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
+        let base64String = remoteConversation.mlsGroupID
+
+        if let base64String, let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
             localConversation.mlsGroupID = mlsGroupID
         }
 
-        if let ciphersuite = remoteConversation.cipherSuite,
-           let epoch = remoteConversation.epoch,
-           epoch > 0 {
+        let ciphersuite = remoteConversation.cipherSuite
+        let epoch = remoteConversation.epoch
+
+        if let ciphersuite, let epoch, epoch > 0 {
             localConversation.ciphersuite = ciphersuite.toDomainModel()
         }
     }
