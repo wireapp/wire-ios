@@ -68,13 +68,14 @@ final class CallActionsViewSnapshotTests: XCTestCase {
 
     private var sut: CallActionsView!
     private var widthConstraint: NSLayoutConstraint!
-    private let snapshotHelper = SnapshotHelper()
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - tearDown
 
     override func tearDown() {
         sut = nil
         widthConstraint = nil
+        snapshotHelper = nil
         super.tearDown()
     }
 
@@ -83,6 +84,7 @@ final class CallActionsViewSnapshotTests: XCTestCase {
     private func createSut(for layoutSize: CallActionsView.LayoutSize) {
         sut = CallActionsView()
         sut.backgroundColor = .black
+        snapshotHelper = SnapshotHelper()
 
         switch layoutSize {
         case .compact:
