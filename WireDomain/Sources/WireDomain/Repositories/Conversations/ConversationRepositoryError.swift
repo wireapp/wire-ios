@@ -18,17 +18,12 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// Access to conversations API.
-public protocol ConversationsAPI {
+/// Errors originating from `ConversationRepository`.
 
-    /// Fetch all conversation identifiers in batches for ``APIVersion`` v0.
-    func getLegacyConversationIdentifiers() async throws -> PayloadPager<UUID>
+enum ConversationRepositoryError: Error {
 
-    /// Fetch all conversation identifiers in batches available from ``APIVersion`` v1.
-    func getConversationIdentifiers() async throws -> PayloadPager<QualifiedID>
+    /// Unable to delete conversation.
 
-    /// Fetch conversation list with qualified identifiers.
-    func getConversations(for identifiers: [QualifiedID]) async throws -> ConversationList
+    case failedToDeleteConversation(Error)
 
 }
