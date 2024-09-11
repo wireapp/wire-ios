@@ -31,11 +31,12 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "WireDomainTests",
+            name: "WireDomainPkgTests",
             dependencies: [
                 "WireDomainPkg",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
-            ]
+                .product(name: "WireTestingPackage", package: "WireFoundation"),
+            ],
+            path: "./Tests/PackageTests"
         )
     ]
 )
