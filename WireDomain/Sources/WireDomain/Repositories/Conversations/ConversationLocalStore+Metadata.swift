@@ -66,7 +66,8 @@ extension ConversationLocalStore {
         }
 
         if let base64String = remoteConversation.mlsGroupID,
-           let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
+           let mlsGroupID = MLSGroupID(base64Encoded: base64String) 
+        {
             localConversation.mlsGroupID = mlsGroupID
         }
 
