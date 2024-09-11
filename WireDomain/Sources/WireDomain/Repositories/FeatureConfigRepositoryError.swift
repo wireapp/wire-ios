@@ -16,21 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
+import Foundation
 
-extension ZClientViewController: UserObserving {
+/// Errors originating from `FeatureConfigRepository`.
 
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.accentColorValueChanged {
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-               let window = appDelegate.mainWindow {
-                window.tintColor = UIColor.accent()
-            }
-        }
-    }
+enum FeatureConfigRepositoryError: Error {
 
-    @objc func setupUserChangeInfoObserver() {
-        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
-    }
+    /// Unable to fetch feature locally
+
+    case failedToFetchFeatureLocally
+
 }
