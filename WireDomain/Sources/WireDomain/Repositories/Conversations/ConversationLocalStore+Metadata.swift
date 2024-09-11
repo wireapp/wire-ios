@@ -66,12 +66,13 @@ extension ConversationLocalStore {
         }
 
         if let base64String = remoteConversation.mlsGroupID,
-           let mlsGroupID = MLSGroupID(base64Encoded: base64String) 
-        {
+           let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
             localConversation.mlsGroupID = mlsGroupID
         }
 
-        if let ciphersuite = remoteConversation.cipherSuite, let epoch = remoteConversation.epoch, epoch > 0 {
+        if let ciphersuite = remoteConversation.cipherSuite,
+           let epoch = remoteConversation.epoch,
+           epoch > 0 {
             localConversation.ciphersuite = ciphersuite.toDomainModel()
         }
     }
