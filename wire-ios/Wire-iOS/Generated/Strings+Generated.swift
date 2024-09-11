@@ -2083,8 +2083,8 @@ internal enum L10n {
           internal static let generalReason = L10n.tr("Localizable", "content.system.failedtosend_message.general_reason", fallback: "Message could not be sent due to connectivity issues.")
           /// Retry
           internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
-          /// Message was not sent as the upload was cancelled.
-          internal static let userCancelledUploadReason = L10n.tr("Localizable", "content.system.failedtosend_message.user_cancelled_upload_reason", fallback: "Message was not sent as the upload was cancelled.")
+          /// Message not sent as you canceled the upload.
+          internal static let userCancelledUploadReason = L10n.tr("Localizable", "content.system.failedtosend_message.user_cancelled_upload_reason", fallback: "Message not sent as you canceled the upload.")
         }
         internal enum FailedtosendParticipants {
           /// Plural format key: "%#@lu_number_of_participants@"
