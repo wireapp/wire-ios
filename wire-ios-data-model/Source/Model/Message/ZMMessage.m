@@ -252,9 +252,16 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return NO;
 }
 
-- (void)expire;
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason;
 {
+    BOOL wasAlreadyExpired = self.isExpired;
+
     self.isExpired = YES;
+    if (!wasAlreadyExpired) {
+        // It is possible that multiple objects expire a message without the full context of why the message was
+        // originally expired. Don't overwrite the original reason.
+        self.expirationReasonCode = [NSNumber numberWithInteger:expirationReason];
+    }
     [self removeExpirationDate];
     self.conversation.hasUnreadUnsentMessage = YES;
 }

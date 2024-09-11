@@ -459,11 +459,11 @@ extension ZMConversation {
                 let genericMessage = clientMessage.underlyingMessage,
                 genericMessage.hasConfirmation {
                 // Delivery receipt: just expire it
-                message.expire()
+                message.expire(withReason: .other)
             } else {
                 WireLogger.messaging.warn("expiring message due to security degradation " + String(describing: message.nonce?.transportString().readableHash))
                 // All other messages: expire and mark that it caused security degradation
-                message.expire()
+                message.expire(withReason: .other)
                 message.causedSecurityLevelDegradation = true
             }
         }

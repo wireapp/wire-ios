@@ -229,7 +229,7 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         let message: ZMMessage = try! conversation.appendText(content: oldText) as! ZMMessage
         message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
-        message.expire()
+        message.expire(withReason: .other)
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
 
         // when
@@ -293,7 +293,7 @@ extension ZMClientMessageTests_Editing {
         message.textMessageData?.editText(newText, mentions: [], fetchLinkPreview: false)
 
         // when
-        message.expire()
+        message.expire(withReason: .other)
 
         // then
         XCTAssertEqual(message.nonce, originalNonce)
@@ -322,7 +322,7 @@ extension ZMClientMessageTests_Editing {
         message.textMessageData?.editText(newText, mentions: [], fetchLinkPreview: false)
         let editNonce1 = message.nonce
 
-        message.expire()
+        message.expire(withReason: .other)
 
         // when
         message.resend()

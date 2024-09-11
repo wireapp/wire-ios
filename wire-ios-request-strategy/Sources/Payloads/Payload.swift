@@ -541,7 +541,7 @@ public enum Payload {
 
 extension Payload.ResponseFailure {
 
-    func updateExpirationReason(for message: OTREntity, with reason: MessageSendFailure) {
+    func updateExpirationReason(for message: OTREntity, with reason: ExpirationReason) {
         message.expirationReasonCode = NSNumber(value: reason.rawValue)
     }
 

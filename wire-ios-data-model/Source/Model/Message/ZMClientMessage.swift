@@ -91,13 +91,13 @@ public class ZMClientMessage: ZMOTRMessage {
                     #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
-    public override func expire() {
+    public override func expire(withReason reason: ExpirationReason) {
         WireLogger.messaging.warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
             let genericMessage = self.underlyingMessage,
             let content = genericMessage.content else {
-                super.expire()
+                super.expire(withReason: reason)
                 return
         }
 
@@ -119,7 +119,7 @@ public class ZMClientMessage: ZMOTRMessage {
         default:
             break
         }
-        super.expire()
+        super.expire(withReason: reason)
     }
 
     public override func resend() {

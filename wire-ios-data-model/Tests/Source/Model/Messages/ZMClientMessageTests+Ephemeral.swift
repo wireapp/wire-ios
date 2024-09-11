@@ -269,7 +269,7 @@ extension ZMClientMessageTests_Ephemeral {
             let message = try! self.syncConversation.appendText(content: "foo") as! ZMClientMessage
 
             // when
-            message.expire()
+            message.expire(withReason: .other)
             self.spinMainQueue(withTimeout: 0.5)
 
             // then
