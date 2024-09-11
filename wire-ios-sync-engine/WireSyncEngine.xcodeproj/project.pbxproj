@@ -580,6 +580,8 @@
 		E955D3E32C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */; };
 		E965B10C2C3431EC009BEAB3 /* AppendLocationMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E965B10B2C3431EC009BEAB3 /* AppendLocationMessageUseCase.swift */; };
 		E967757F2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E967757E2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift */; };
+		E96970562C8F2F68009F037C /* AppendFileMessageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96970552C8F2F68009F037C /* AppendFileMessageUseCase.swift */; };
+		E96970592C8F354F009F037C /* AppendFileMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */; };
 		E97296252C4A784300C4F1DB /* MessageAppendableConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */; };
 		E97296282C4AA7D300C4F1DB /* AppendImageMessageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */; };
 		E98E5DFC2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */; };
@@ -1443,6 +1445,8 @@
 		E955D3E22C36E9240090BEAB /* AppendKnockMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendKnockMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E965B10B2C3431EC009BEAB3 /* AppendLocationMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendLocationMessageUseCase.swift; sourceTree = "<group>"; };
 		E967757E2BD8237D00EFEED5 /* SetAllowGuestAndServicesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetAllowGuestAndServicesUseCase.swift; sourceTree = "<group>"; };
+		E96970552C8F2F68009F037C /* AppendFileMessageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendFileMessageUseCase.swift; sourceTree = "<group>"; };
+		E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendFileMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAppendableConversation.swift; sourceTree = "<group>"; };
 		E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppendImageMessageUseCaseTests.swift; sourceTree = "<group>"; };
 		E98E5DFB2B8DF45100A2CFF5 /* ResolveOneOnOneConversationsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResolveOneOnOneConversationsUseCaseTests.swift; sourceTree = "<group>"; };
@@ -1752,6 +1756,7 @@
 				E97296262C4AA72100C4F1DB /* AppendImageMessageUseCaseTests.swift */,
 				E948DB132C4AB09D00146025 /* AppendLocationMessageUseCaseTests.swift */,
 				E9DA6FF42C5CDF9A00BF8298 /* DisableAnalyticsSharingUseCaseTests.swift */,
+				E96970572C8F3546009F037C /* AppendFileMessageUseCaseTests.swift */,
 			);
 			path = "Use cases";
 			sourceTree = "<group>";
@@ -2961,6 +2966,7 @@
 				E9A71BD42C33EE080027EC01 /* AppendImageMessageUseCase.swift */,
 				E9A71BD62C33F4850027EC01 /* AppendKnockMessagekUseCase.swift */,
 				E965B10B2C3431EC009BEAB3 /* AppendLocationMessageUseCase.swift */,
+				E96970552C8F2F68009F037C /* AppendFileMessageUseCase.swift */,
 				63C4B3C12C35B07A00C09A93 /* FetchShareableConversationUseCase.swift */,
 				63C4B3C52C35B56A00C09A93 /* ShareFileUseCase.swift */,
 				E97296242C4A784300C4F1DB /* MessageAppendableConversation.swift */,
@@ -3649,6 +3655,7 @@
 				F19F4F4D1E646C3C00F4D8FF /* UserProfileImageUpdateStatusTests.swift in Sources */,
 				167BCB902603CAB200E9D7E3 /* AnalyticsTests.swift in Sources */,
 				1679D1CD1EF97387007B0DF5 /* ZMUserSessionTestsBase+Calling.swift in Sources */,
+				E96970592C8F354F009F037C /* AppendFileMessageUseCaseTests.swift in Sources */,
 				167F383D23E04A93006B6AA9 /* UnauthenticatedSessionTests+SSO.swift in Sources */,
 				63C4B3C82C36A4C900C09A93 /* FetchShareableConversationUseCaseTests.swift in Sources */,
 				16519D6D231EAAF300C9D76D /* Conversation+DeletionTests.swift in Sources */,
@@ -4038,6 +4045,7 @@
 				634976F8268A200C00824A05 /* AVSClient.swift in Sources */,
 				D522571E2062552800562561 /* AssetDeletionRequestStrategy.swift in Sources */,
 				060C06682B7619E300B484C6 /* SelfClientCertificateProvider.swift in Sources */,
+				E96970562C8F2F68009F037C /* AppendFileMessageUseCase.swift in Sources */,
 				161ACB1623F1AFB000ABFF33 /* SessionManager+CallKitManagerDelegate.swift in Sources */,
 				6349770A268A250E00824A05 /* Encodable+JSONString.swift in Sources */,
 				1671F7502B6A7DF500C2D8A3 /* ZMAuthenticationStatus.swift in Sources */,
