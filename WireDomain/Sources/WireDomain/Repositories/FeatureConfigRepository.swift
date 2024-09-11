@@ -230,7 +230,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             )
 
         case .unknown(let featureName):
-            logger.info(
+            logger.warn(
                 "Unknown feature name: \(featureName)"
             )
 
