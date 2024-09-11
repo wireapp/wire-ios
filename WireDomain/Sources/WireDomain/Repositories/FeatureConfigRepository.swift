@@ -49,13 +49,13 @@ protocol FeatureConfigRepositoryProtocol {
     /// - Parameter type: The type of config to retrieve.
     /// - Returns: A `LocalFeature` object with a status and a config (if any).
 
-    func fetchFeatureConfig<T: Decodable>(withName name: Feature.Name, type: T.Type) async throws -> LocalFeature<T>
+    func fetchFeatureConfig<T: Decodable>(with name: Feature.Name, type: T.Type) async throws -> LocalFeature<T>
 
     /// Fetches a flag indicating whether the user should be notified of a given feature.
     /// - Parameter name: The feature name.
     /// - Returns: `true` if user should be notified.
 
-    func fetchNeedsToNotifyUser(forFeatureName name: Feature.Name) async throws -> Bool
+    func fetchNeedsToNotifyUser(for name: Feature.Name) async throws -> Bool
 
     /// Stores a flag indicating whether the user should be notified of a given feature.
     /// - Parameter notifyUser: Whether the user should be notified for a given feature.
@@ -104,7 +104,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         featureStateSubject.eraseToAnyPublisher()
     }
 
-    func fetchFeatureConfig<T: Decodable>(withName name: Feature.Name, type: T.Type) async throws -> LocalFeature<T> {
+    func fetchFeatureConfig<T: Decodable>(with name: Feature.Name, type: T.Type) async throws -> LocalFeature<T> {
         try await context.perform { [self] in
             let feature = try fetchFeature(withName: name)
 
@@ -119,7 +119,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
-    func fetchNeedsToNotifyUser(forFeatureName name: Feature.Name) async throws -> Bool {
+    func fetchNeedsToNotifyUser(for name: Feature.Name) async throws -> Bool {
         try await context.perform { [self] in
             let feature = try fetchFeature(withName: name)
             return feature.needsToNotifyUser
@@ -163,7 +163,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         case .conferenceCalling(let conferenceCallingFeatureConfig):
 
-            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .conferenceCalling)
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(for: .conferenceCalling)
             return FeatureState(
                 name: .conferenceCalling,
                 status: conferenceCallingFeatureConfig.status,
@@ -172,7 +172,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         case .conversationGuestLinks(let conversationGuestLinksFeatureConfig):
 
-            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .conversationGuestLinks)
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(for: .conversationGuestLinks)
             return FeatureState(
                 name: .conversationGuestLinks,
                 status: conversationGuestLinksFeatureConfig.status,
@@ -197,7 +197,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         case .fileSharing(let fileSharingFeatureConfig):
 
-            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .fileSharing)
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(for: .fileSharing)
             return FeatureState(
                 name: .fileSharing,
                 status: fileSharingFeatureConfig.status,
@@ -222,7 +222,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         case .selfDeletingMessages(let selfDeletingMessagesFeatureConfig):
 
-            let needsToNotifyUser = try await fetchNeedsToNotifyUser(forFeatureName: .selfDeletingMessages)
+            let needsToNotifyUser = try await fetchNeedsToNotifyUser(for: .selfDeletingMessages)
             return FeatureState(
                 name: .selfDeletingMessages,
                 status: selfDeletingMessagesFeatureConfig.status,

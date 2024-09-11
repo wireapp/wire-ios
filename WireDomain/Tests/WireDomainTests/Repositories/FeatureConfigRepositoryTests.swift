@@ -93,7 +93,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let result = try await sut.fetchNeedsToNotifyUser(forFeatureName: .conversationGuestLinks)
+        let result = try await sut.fetchNeedsToNotifyUser(for: .conversationGuestLinks)
         XCTAssertEqual(result, true)
     }
 
@@ -108,7 +108,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
         // Then
 
-        let feature = try await sut.fetchFeatureConfig(withName: .appLock, type: Feature.AppLock.Config.self)
+        let feature = try await sut.fetchFeatureConfig(with: .appLock, type: Feature.AppLock.Config.self)
         XCTAssertEqual(feature.status == .enabled, true)
         XCTAssertEqual(feature.config?.enforceAppLock, true)
         XCTAssertEqual(feature.config?.inactivityTimeoutSecs, 2_147_483_647)
