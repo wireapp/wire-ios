@@ -49,9 +49,11 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"
-else
+elif command -v git-lfs > /dev/null 2>&1; then
     echo "ℹ️  Running git lfs install..."
     git lfs install
+else
+    die "git-lfs is not installed."
 fi
 echo ""
 
