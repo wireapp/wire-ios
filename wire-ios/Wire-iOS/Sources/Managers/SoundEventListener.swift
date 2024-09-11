@@ -207,11 +207,7 @@ extension SoundEventListener {
         soundEventWatchDog.startIgnoreDate = Date()
         soundEventWatchDog.isMuted = userSession?.networkState == .onlineSynchronizing
 
-if let appDelegate = UIApplication.shared.delegate as? AppDelegate, appDelegate.launchType == .push {
-        soundEventWatchDog.ignoreTime = SoundEventListener.SoundEventListenerIgnoreTimeForPushStart
-} else {
-        soundEventWatchDog.ignoreTime = 0.0
-}
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             if appDelegate.launchType == .push {
                 soundEventWatchDog.ignoreTime = SoundEventListener.SoundEventListenerIgnoreTimeForPushStart
             } else {
