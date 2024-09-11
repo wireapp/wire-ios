@@ -31,30 +31,29 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var mockGetAccountImageUseCase: MockGetAccountImageUseCase!
 
+    @MainActor
     override func setUp() async throws {
-        await MainActor.run {
 
-            let account = Account.mockAccount(imageData: Data())
-            selfUser = .createSelfUser(name: "Bob")
-            userSession = UserSessionMock(mockUser: selfUser)
+        let account = Account.mockAccount(imageData: Data())
+        selfUser = .createSelfUser(name: "Bob")
+        userSession = UserSessionMock(mockUser: selfUser)
 
-            mockIsSelfUserE2EICertifiedUseCase = .init()
-            mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-            mockGetAccountImageUseCase = .init()
-            mockGetAccountImageUseCase.invoke_MockValue = .init()
+        mockGetAccountImageUseCase = .init()
+        mockGetAccountImageUseCase.invoke_MockValue = .init()
 
-            sut = ConversationListViewController.ViewModel(
-                account: account,
-                selfUserLegalHoldSubject: selfUser,
-                userSession: userSession,
-                isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
-                mainCoordinator: .mock,
-                getAccountImageUseCase: mockGetAccountImageUseCase
-            )
-            mockViewController = MockConversationListContainer(viewModel: sut)
-            sut.viewController = mockViewController
-        }
+        sut = ConversationListViewController.ViewModel(
+            account: account,
+            selfUserLegalHoldSubject: selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase,
+            mainCoordinator: .mock,
+            getAccountImageUseCase: mockGetAccountImageUseCase
+        )
+        mockViewController = MockConversationListContainer(viewModel: sut)
+        sut.viewController = mockViewController
     }
 
     override func tearDown() {
