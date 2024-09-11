@@ -20,7 +20,7 @@ import UIKit
 import WireFoundation
 
 public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
-where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
+    where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
 
     var initalsProvider: InitalsProvider
     var accountImageGenerator: AccountImageGenerator
@@ -33,29 +33,24 @@ where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGener
         self.accountImageGenerator = accountImageGenerator
     }
 
-    public func invoke<User, Account>(user: User, account: Account) async -> UIImage
-    where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol {
-
+    public func invoke(user: some GetAccountImageUseCaseUserProtocol, account: some GetAccountImageUseCaseAccountProtocol) async -> UIImage {
         if let team = user.membership?.team, let teamImageSource = team.teamImageSource ?? account.teamImageSource {
-
             // team image
             if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
                 return accountImage
             }
 
             // team name initials
-            let teamName: String
-            if case .text(let value) = teamImageSource {
-                teamName = value
+            let teamName: String = if case .text(let value) = teamImageSource {
+                value
             } else {
-                teamName = team.name ?? account.teamName ?? ""
+                team.name ?? account.teamName ?? ""
             }
             let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
             let accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
             return accountImage
 
         } else {
-
             // user's custom image
             if let data = account.imageData, let accountImage = UIImage(data: data) {
                 return accountImage
@@ -77,13 +72,13 @@ public protocol GetAccountImageUseCaseInitialsProvider {
 }
 
 /*
-func getInitials(from fullName: String) -> String {
-    // Split the full name by spaces into an array of words
-    let words = fullName.split(separator: " ")
+ func getInitials(from fullName: String) -> String {
+     // Split the full name by spaces into an array of words
+     let words = fullName.split(separator: " ")
 
-    // Map over each word, take the first character, convert to uppercase, and join them
-    let initials = words.compactMap { $0.first?.uppercased() }.joined()
+     // Map over each word, take the first character, convert to uppercase, and join them
+     let initials = words.compactMap { $0.first?.uppercased() }.joined()
 
-    return initials
-}
-*/
+     return initials
+ }
+ */

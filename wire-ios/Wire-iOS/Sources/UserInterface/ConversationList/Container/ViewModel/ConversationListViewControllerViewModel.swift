@@ -20,9 +20,9 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireFoundation
 import WireUserProfile
 
 typealias Completion = () -> Void

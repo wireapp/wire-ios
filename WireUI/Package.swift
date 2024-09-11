@@ -25,13 +25,13 @@ let package = Package(
             dependencies: ["WireDesign", .product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         ),
 
-            .target(
-                name: "WireReusableUIComponents",
-                dependencies: [
-                    "WireDesign",
-                    .product(name: "WireFoundation", package: "WireFoundation")
-                ]
-            ),
+        .target(
+            name: "WireReusableUIComponents",
+            dependencies: [
+                "WireDesign",
+                .product(name: "WireFoundation", package: "WireFoundation")
+            ]
+        ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
@@ -41,7 +41,7 @@ let package = Package(
             ]
         ),
 
-            .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
+        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
         .testTarget(
             name: "WireUIFoundationTests",
             dependencies: [
@@ -51,7 +51,7 @@ let package = Package(
             ]
         ),
 
-            .target(name: "WireUserProfile", dependencies: ["WireFoundation"]),
+        .target(name: "WireUserProfile", dependencies: ["WireFoundation"]),
         .testTarget(
             name: "WireUserProfileTests",
             dependencies: [

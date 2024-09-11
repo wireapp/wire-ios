@@ -24,7 +24,7 @@ import UIKit
 public protocol GetAccountImageUseCaseProtocol {
 
     func invoke<User, Account>(user: User, account: Account) async -> UIImage
-    where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol
+        where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol
 }
 
 // MARK: - Dependencies
