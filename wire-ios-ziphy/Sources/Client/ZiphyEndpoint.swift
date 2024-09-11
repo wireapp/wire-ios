@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The endpoints of the Giphy V1 REST API.
- */
+/// The endpoints of the Giphy V1 REST API.
 
 enum ZiphyEndpoint: String {
     case search

@@ -18,16 +18,12 @@
 
 import UIKit
 
-/**
- * An object that detects company login request wihtin the pasteboard.
- *
- * A session request is a string formatted as `wire-[UUID]`.
- */
+/// An object that detects company login request wihtin the pasteboard.
+/// 
+/// A session request is a string formatted as `wire-[UUID]`.
 
 public final class CompanyLoginRequestDetector: NSObject {
-    /**
-     * A struct that describes the result of a login code detection operation..
-     */
+    /// A struct that describes the result of a login code detection operation..
 
     public struct DetectorResult: Equatable {
         public let code: String // The detected shared identity login code.
@@ -61,12 +57,10 @@ public final class CompanyLoginRequestDetector: NSObject {
 
     // MARK: - Detection
 
-    /**
-     * Tries to extract the session request code from the current pasteboard.
-     *
-     * The processing will be done on a background queue, and the completion
-     * handler will be called on the main thread with the result.
-     */
+    /// Tries to extract the session request code from the current pasteboard.
+    /// 
+    /// The processing will be done on a background queue, and the completion
+    /// handler will be called on the main thread with the result.
 
     public func detectCopiedRequestCode(_ completionHandler: @escaping (DetectorResult?) -> Void) {
         func complete(_ result: DetectorResult?) {
@@ -109,9 +103,7 @@ public final class CompanyLoginRequestDetector: NSObject {
         return email.components(separatedBy: "@").last
     }
 
-    /**
-     * Tries to extract the request ID from the contents of the text.
-     */
+    /// Tries to extract the request ID from the contents of the text.
 
     public static func requestCode(in string: String) -> UUID? {
         guard let prefixRange = string.range(of: "wire-") else {
@@ -126,9 +118,7 @@ public final class CompanyLoginRequestDetector: NSObject {
         return UUID(uuidString: String(codeString))
     }
 
-    /**
-     * Validates the session request code from the user input.
-     */
+    /// Validates the session request code from the user input.
 
     public static func isValidRequestCode(in string: String) -> Bool {
         requestCode(in: string) != nil

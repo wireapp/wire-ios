@@ -135,50 +135,51 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     }
 
     @objc public var currentPhase: ClientRegistrationPhase {
-        /*
-          The flow is as follows
-          ZMClientRegistrationPhaseWaitingForLogin
-          [We try to login / register with the given credentials]
-                     |
-          ZMClientRegistrationPhaseWaitingForSelfUser
-          [We fetch the selfUser]
-                     |
-          [User has email address,
-           and it's not the SSO user]    --> NO  --> ZMClientRegistrationPhaseWaitingForEmailVerfication
-                                                     [user adds email and password, we fetch user from BE]
-                                                 --> ZMClientRegistrationPhaseUnregistered
-                                                     [Client is registered]
-                                                 --> ZMClientRegistrationPhaseRegistered
-                                         --> YES --> Proceed
-          ZMClientRegistrationPhaseUnregistered
-          [We try to register the client without the password]
-                     |
-          [Request succeeds ?]           --> YES --> ZMClientRegistrationPhaseRegistered // this is the case for the first device registered
-                     |
-                     NO
-                     |
-          [User has email address?]      --> YES --> ZMClientRegistrationPhaseWaitingForLogin
-                                                     [User enters password]
-                                                 --> ZMClientRegistrationPhaseUnregistered
-                                                     [User entered correct password ?] -->  YES --> Continue at [User has too many devices]
-                                                                                       -->  NO  --> ZMClientRegistrationPhaseWaitingForLogin
-
-          [User has too many deviced?]    --> YES --> ZMClientRegistrationPhaseFetchingClients
-                                                     [User selects device to delete]
-                                                 --> ZMClientRegistrationPhaseWaitingForDeletion
-                                                     [BE deletes device]
-                                                 --> See [NO]
-                                          --> NO --> ZMClientRegistrationPhaseUnregistered
-                                                     [Client is registered]
-                                                 --> ZMClientRegistrationPhaseRegistered
-
-          [MLS client is required]        --> YES --> ZMClientRegistrationRegisteringMLSClient
-                                                      [MLS Client is registered]
-                                                  --> See [NO]
-                                                      [Client is registered]
-                                          --> NO  --> ZMClientRegistrationPhaseRegistered
-
-         */
+        // The flow is as follows
+        // ZMClientRegistrationPhaseWaitingForLogin
+        // [We try to login / register with the given credentials]
+        //            |
+        // ZMClientRegistrationPhaseWaitingForSelfUser
+        // [We fetch the selfUser]
+        //            |
+        // [User has email address,
+        //  and it's not the SSO user]    --> NO  --> ZMClientRegistrationPhaseWaitingForEmailVerfication
+        //                                            [user adds email and password, we fetch user from BE]
+        //                                        --> ZMClientRegistrationPhaseUnregistered
+        //                                            [Client is registered]
+        //                                        --> ZMClientRegistrationPhaseRegistered
+        //                                --> YES --> Proceed
+        // ZMClientRegistrationPhaseUnregistered
+        // [We try to register the client without the password]
+        //            |
+        // [Request succeeds ?]           --> YES --> ZMClientRegistrationPhaseRegistered // this is the case for the
+        // first device registered
+        //            |
+        //            NO
+        //            |
+        // [User has email address?]      --> YES --> ZMClientRegistrationPhaseWaitingForLogin
+        //                                            [User enters password]
+        //                                        --> ZMClientRegistrationPhaseUnregistered
+        //                                            [User entered correct password ?] -->  YES --> Continue at [User
+        // has too many devices]
+        //                                                                              -->  NO  -->
+        // ZMClientRegistrationPhaseWaitingForLogin
+        //
+        // [User has too many deviced?]    --> YES --> ZMClientRegistrationPhaseFetchingClients
+        //                                            [User selects device to delete]
+        //                                        --> ZMClientRegistrationPhaseWaitingForDeletion
+        //                                            [BE deletes device]
+        //                                        --> See [NO]
+        //                                 --> NO --> ZMClientRegistrationPhaseUnregistered
+        //                                            [Client is registered]
+        //                                        --> ZMClientRegistrationPhaseRegistered
+        //
+        // [MLS client is required]        --> YES --> ZMClientRegistrationRegisteringMLSClient
+        //                                             [MLS Client is registered]
+        //                                         --> See [NO]
+        //                                             [Client is registered]
+        //                                 --> NO  --> ZMClientRegistrationPhaseRegistered
+        //
 
         // we only enter this state when the authentication has succeeded
         if isWaitingForLogin {

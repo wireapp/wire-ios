@@ -94,14 +94,12 @@ struct WireCallCenterActiveSpeakersNotification: SelfPostingNotification {
 // MARK: - Call state observer
 
 public protocol WireCallCenterCallStateObserver: AnyObject {
-    /**
-     Called when the callState changes in a conversation
-
-     - parameter callState: updated state
-     - parameter conversation: where the call is ongoing
-     - parameter caller: user which initiated the call
-     - parameter timestamp: when the call state change occured
-     */
+    /// Called when the callState changes in a conversation
+    ///
+    /// - parameter callState: updated state
+    /// - parameter conversation: where the call is ongoing
+    /// - parameter caller: user which initiated the call
+    /// - parameter timestamp: when the call state change occured
     func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
@@ -156,12 +154,10 @@ public struct WireCallCenterCallErrorNotification: SelfPostingNotification {
 // MARK: - CallParticipantObserver
 
 public protocol WireCallCenterCallParticipantObserver: AnyObject {
-    /**
-     Called when a participant of the call joins / leaves or when their call state changes
-
-     - parameter conversation: where the call is ongoing
-     - parameter particpants: updated list of call participants
-     */
+    /// Called when a participant of the call joins / leaves or when their call state changes
+    ///
+    /// - parameter conversation: where the call is ongoing
+    /// - parameter particpants: updated list of call participants
     func callParticipantsDidChange(conversation: ZMConversation, participants: [CallParticipant])
 }
 

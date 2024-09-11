@@ -35,9 +35,7 @@ public enum ZMConversationLegalHoldStatus: Int16 {
     }
 }
 
-/**
- * Represents a set of client changes in a conversation.
- */
+/// Represents a set of client changes in a conversation.
 
 public struct ZMConversationRemoteClientChangeSet: OptionSet {
     public let rawValue: Int

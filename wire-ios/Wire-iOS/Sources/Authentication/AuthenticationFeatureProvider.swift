@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * An object that provides the available features in the authentication flow.
- */
+/// An object that provides the available features in the authentication flow.
 
 protocol AuthenticationFeatureProvider {
     /// Whether to allow only email login.
@@ -33,9 +31,7 @@ protocol AuthenticationFeatureProvider {
     var allowDirectCompanyLogin: Bool { get }
 }
 
-/**
- * Reads the authentication features from the build settings.
- */
+/// Reads the authentication features from the build settings.
 
 final class BuildSettingAuthenticationFeatureProvider: AuthenticationFeatureProvider {
     var allowOnlyEmailLogin: Bool {

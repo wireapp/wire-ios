@@ -19,46 +19,44 @@
 import XCTest
 @testable import WireDataModel
 
-/**
- * Tests for calculating the state of external users presence in a team conversation.
- *
- * Expected matrix:
- *
- * +---------------------------------------------------------------------------------+
- * | Conversation Type | Self User  | Other Users          | Expected State For Self |
- * |-------------------|------------|----------------------|-------------------------|
- * | 1:1               | Personal   | Personal             | None                    |
- * | 1:1               | Personal   | Team                 | None                    |
- * | 1:1               | Team       | Team                 | None                    |
- * | 1:1               | Team       | Personal             | None                    |
- * | 1:1               | Team       | Service              | None                    |
- * | 1:1               | Team       | External              | None                    |
- * | 1:1               | External   | External             | None                    |
- * | 1:1               | External   | Team                 | None                    |
- * |-------------------|------------|----------------------|-------------------------|
- * | Group             | Personal   | Personal             | None                    |
- * | Group             | Personal   | Team                 | None                    |
- * | Group             | Personal   | Service                 | None                    |
- * | Group             | Team        | Team                 | None                    |
- * | Group             | Team       | Service              | None                    |
- * | Group             | External       | External         | None                    |
- * | Group             | External       | Team              | None                    |
- * | Group             | External       | Service           | None                    |
- * | Group             | Team       | Personal             | Only Guests             |
- * | Group             | External       | Personal             | Only Guests             |
- * | Group             | Team       | Team & Service       | Only Services           |
- * | Group             | Personal   | Team & Service       | Only Services           |
- * | Group             | External       | Team & Service       | Only Services           |
- * | Group             | Team       | External       | Only External           |
- * | Group             | Personal       | External       | Only External           |
- * | Group             | Team       | Personal & Service   | Guests & Services       |
- * | Group             | External       | Personal & Service   | Guests & Services       |
- * | Group             | Team       | Personal & External   | Guests & External       |
- * | Group             | Team       | Personal & External   | External & Services       |
- * | Group             | Personal       | Personal & External   | External & Services       |
- * | Group             | Team       | Personal & Service & External   | Guests & Services & External        |
- * +---------------------------------------------------------------------------------+
- */
+/// Tests for calculating the state of external users presence in a team conversation.
+/// 
+/// Expected matrix:
+/// 
+/// +---------------------------------------------------------------------------------+
+/// | Conversation Type | Self User  | Other Users          | Expected State For Self |
+/// |-------------------|------------|----------------------|-------------------------|
+/// | 1:1               | Personal   | Personal             | None                    |
+/// | 1:1               | Personal   | Team                 | None                    |
+/// | 1:1               | Team       | Team                 | None                    |
+/// | 1:1               | Team       | Personal             | None                    |
+/// | 1:1               | Team       | Service              | None                    |
+/// | 1:1               | Team       | External              | None                    |
+/// | 1:1               | External   | External             | None                    |
+/// | 1:1               | External   | Team                 | None                    |
+/// |-------------------|------------|----------------------|-------------------------|
+/// | Group             | Personal   | Personal             | None                    |
+/// | Group             | Personal   | Team                 | None                    |
+/// | Group             | Personal   | Service                 | None                    |
+/// | Group             | Team        | Team                 | None                    |
+/// | Group             | Team       | Service              | None                    |
+/// | Group             | External       | External         | None                    |
+/// | Group             | External       | Team              | None                    |
+/// | Group             | External       | Service           | None                    |
+/// | Group             | Team       | Personal             | Only Guests             |
+/// | Group             | External       | Personal             | Only Guests             |
+/// | Group             | Team       | Team & Service       | Only Services           |
+/// | Group             | Personal   | Team & Service       | Only Services           |
+/// | Group             | External       | Team & Service       | Only Services           |
+/// | Group             | Team       | External       | Only External           |
+/// | Group             | Personal       | External       | Only External           |
+/// | Group             | Team       | Personal & Service   | Guests & Services       |
+/// | Group             | External       | Personal & Service   | Guests & Services       |
+/// | Group             | Team       | Personal & External   | Guests & External       |
+/// | Group             | Team       | Personal & External   | External & Services       |
+/// | Group             | Personal       | Personal & External   | External & Services       |
+/// | Group             | Team       | Personal & Service & External   | Guests & Services & External        |
+/// +---------------------------------------------------------------------------------+
 
 class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
     enum RelativeUserState {

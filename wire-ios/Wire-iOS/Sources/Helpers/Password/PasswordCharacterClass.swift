@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The characters that can be used in a password safety rule.
- */
+/// The characters that can be used in a password safety rule.
 
 enum PasswordCharacterClass: Hashable, Decodable {
     /// All unicode characters.
@@ -46,10 +44,8 @@ enum PasswordCharacterClass: Hashable, Decodable {
 
     // MARK: - Raw Representation
 
-    /**
-     * Creates the character class from its raw representation.
-     * - parameter rawValue: The string describing the character class.
-     */
+    /// Creates the character class from its raw representation.
+    /// - parameter rawValue: The string describing the character class.
 
     init?(rawValue: String) {
         switch rawValue {

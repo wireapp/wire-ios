@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * A list of images, sorted by their type. When decoding from JSON, only
- * valid images will be included.
- */
+/// A list of images, sorted by their type. When decoding from JSON, only
+/// valid images will be included.
 
 public struct ZiphyAnimatedImageList: Codable {
     fileprivate let images: [ZiphyImageType: ZiphyAnimatedImage]

@@ -19,9 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-/**
- * A view that displays a solid button.
- */
+/// A view that displays a solid button.
 
 final class SolidButtonDescription: ValueSubmission {
     let title: String

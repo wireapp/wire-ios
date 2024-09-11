@@ -19,9 +19,7 @@
 import Foundation
 import WireDataModel
 
-/**
- * Creates call centers.
- */
+/// Creates call centers.
 
 @objcMembers
 public class WireCallCenterV3Factory: NSObject {
@@ -31,16 +29,14 @@ public class WireCallCenterV3Factory: NSObject {
     /// The class to use when creating a voice channel.
     public static var voiceChannelClass: VoiceChannelV3.Type = VoiceChannelV3.self
 
-    /**
-     * Creates a call center with the specified information.
-     * - parameter userId: The identifier of the current signed-in user.
-     * - parameter clientId: The identifier of the current client on the user's account.
-     * - parameter uiMOC: The Core Data context to use to coordinate events.
-     * - parameter flowManager: The object that controls media flow.
-     * - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
-     * - parameter transport: The object that performs network requests when the call center requests them.
-     * - returns: The call center to use for the given configuration.
-     */
+    /// Creates a call center with the specified information.
+    /// - parameter userId: The identifier of the current signed-in user.
+    /// - parameter clientId: The identifier of the current client on the user's account.
+    /// - parameter uiMOC: The Core Data context to use to coordinate events.
+    /// - parameter flowManager: The object that controls media flow.
+    /// - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
+    /// - parameter transport: The object that performs network requests when the call center requests them.
+    /// - returns: The call center to use for the given configuration.
 
     public class func callCenter(
         withUserId userId: AVSIdentifier,

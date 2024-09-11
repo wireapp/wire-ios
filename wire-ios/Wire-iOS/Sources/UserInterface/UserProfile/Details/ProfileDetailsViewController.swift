@@ -21,9 +21,7 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-/**
- * A view controller that displays the details for a user.
- */
+/// A view controller that displays the details for a user.
 
 final class ProfileDetailsViewController: UIViewController {
     /// The user whose profile is displayed.
@@ -42,12 +40,10 @@ final class ProfileDetailsViewController: UIViewController {
         didSet { profileHeaderViewController.isAdminRole = isAdminRole }
     }
 
-    /**
-     * The object that calculates and controls the content to display in the user
-     * details screen. It is also responsible for reacting to user profile updates
-     * that impact the details.
-     * - note: It should be the delegate and data source of the table view.
-     */
+    /// The object that calculates and controls the content to display in the user
+    /// details screen. It is also responsible for reacting to user profile updates
+    /// that impact the details.
+    /// - note: It should be the delegate and data source of the table view.
 
     let contentController: ProfileDetailsContentController
 

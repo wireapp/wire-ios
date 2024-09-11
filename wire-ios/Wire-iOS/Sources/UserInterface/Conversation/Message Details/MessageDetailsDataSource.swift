@@ -25,9 +25,7 @@ enum MessageDetailsDisplayMode: Int {
     case reactions, receipts, combined
 }
 
-/**
- * An object that observes changes in the message data source.
- */
+/// An object that observes changes in the message data source.
 
 protocol MessageDetailsDataSourceObserver: AnyObject {
     /// Called when the message details change.
@@ -37,9 +35,7 @@ protocol MessageDetailsDataSourceObserver: AnyObject {
     func detailsFooterDidChange(_ dataSource: MessageDetailsDataSource)
 }
 
-/**
- * The data source to present message details.
- */
+/// The data source to present message details.
 
 final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving {
     typealias MessageDetails = L10n.Localizable.MessageDetails

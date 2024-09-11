@@ -32,10 +32,8 @@ import WireDesign
 
 // MARK: - Protocols
 
-/**
- * @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
- * should be updated from the cell.
- */
+/// @abstract Top-level protocol for model object of settings. Describes the way cell should be created or how the value
+/// should be updated from the cell.
 protocol SettingsCellDescriptorType: AnyObject {
     static var cellType: SettingsTableCellProtocol.Type { get }
     var visible: Bool { get }

@@ -22,9 +22,7 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-/**
- * The actions that can be performed from the profile details or devices.
- */
+/// The actions that can be performed from the profile details or devices.
 
 enum ProfileAction: Equatable {
     case createGroup
@@ -96,10 +94,8 @@ protocol ProfileActionsFactoryProtocol {
     func makeActionsList(completion: @escaping ([ProfileAction]) -> Void)
 }
 
-/**
- * An object that returns the actions that a user can perform in the scope
- * of a conversation.
- */
+/// An object that returns the actions that a user can perform in the scope
+/// of a conversation.
 
 final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
     // MARK: - Environmemt
@@ -121,13 +117,11 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the action controller with the specified environment.
-     * - parameter user: The user that is displayed in the profile details.
-     * - parameter viewer: The user that wants to perform the actions.
-     * - parameter conversation: The conversation that the user wants to
-     * perform the actions in.
-     */
+    /// Creates the action controller with the specified environment.
+    /// - parameter user: The user that is displayed in the profile details.
+    /// - parameter viewer: The user that wants to perform the actions.
+    /// - parameter conversation: The conversation that the user wants to
+    /// perform the actions in.
 
     init(
         user: UserType,

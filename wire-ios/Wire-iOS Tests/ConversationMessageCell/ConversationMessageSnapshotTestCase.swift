@@ -59,9 +59,7 @@ class ConversationMessageSnapshotTestCase: ZMSnapshotTestCase {
         super.tearDown()
     }
 
-    /**
-     * Performs a snapshot test for a message
-     */
+    /// Performs a snapshot test for a message
     func verify(
         message: ConversationMessage,
         context: ConversationMessageContext? = nil,

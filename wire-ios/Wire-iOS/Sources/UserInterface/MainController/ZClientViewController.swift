@@ -524,9 +524,7 @@ final class ZClientViewController: UIViewController {
         }
     }
 
-    /**
-     * This handles the case where we have to select a list item on startup but there is no previous item saved
-     */
+    /// This handles the case where we have to select a list item on startup but there is no previous item saved
     func selectListItemWhenNoPreviousItemSelected() {
         // check for conversations and pick the first one.. this can be tricky if there are pending updates and
         // we haven't synced yet, but for now we just pick the current first item

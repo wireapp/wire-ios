@@ -22,9 +22,7 @@ import UIKit
 import UniformTypeIdentifiers
 import WireDesign
 
-/**
- * The description of the preview that can be displayed for an attachment.
- */
+/// The description of the preview that can be displayed for an attachment.
 
 enum PreviewItem {
     case image(UIImage)
@@ -33,14 +31,12 @@ enum PreviewItem {
 }
 
 extension SLComposeServiceViewController {
-    /**
-     * Fetches the preview item of the main attachment in the background and provided the result to the UI
-     * for displaying it to the user.
-     *
-     * - parameter completionHandler: The block of code that provided the result of the preview lookup.
-     * - parameter item: The preview item for the attachment, if it could be determined.
-     * - parameter displayMode: The special mode in which the preview should displayed, if any.
-     */
+    /// Fetches the preview item of the main attachment in the background and provided the result to the UI
+    /// for displaying it to the user.
+    /// 
+    /// - parameter completionHandler: The block of code that provided the result of the preview lookup.
+    /// - parameter item: The preview item for the attachment, if it could be determined.
+    /// - parameter displayMode: The special mode in which the preview should displayed, if any.
 
     func fetchMainAttachmentPreview(_ completionHandler: @escaping (
         _ item: PreviewItem?,
@@ -112,11 +108,10 @@ extension SLComposeServiceViewController {
         return attachments.sorted
     }
 
-    /**
-     * Loads the system preview for the item, if possible.
-     *
-     * This method generally works for movies, photos, wallet passes. It does not generate any preview for items shared from the iCloud drive app.
-     */
+    /// Loads the system preview for the item, if possible.
+    /// 
+    /// This method generally works for movies, photos, wallet passes. It does not generate any preview for items shared
+    /// from the iCloud drive app.
 
     private func loadSystemPreviewForAttachment(
         _ item: NSItemProvider,
@@ -191,15 +186,13 @@ extension PreviewDisplayMode {
 // MARK: - Attachment Main
 
 extension [AttachmentType: [NSItemProvider]] {
-    /**
-     * Determines the main preview item for the post.
-     *
-     * We determine this using the following rules:
-     * - media = video AND/OR photo
-     * - passes OR media OR file
-     * - passes OR media OR file > URL
-     * - video > photo
-     */
+    /// Determines the main preview item for the post.
+    /// 
+    /// We determine this using the following rules:
+    /// - media = video AND/OR photo
+    /// - passes OR media OR file
+    /// - passes OR media OR file > URL
+    /// - video > photo
 
     fileprivate var main: (AttachmentType, NSItemProvider)? {
         let sortedAttachments = self

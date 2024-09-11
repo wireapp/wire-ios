@@ -22,13 +22,11 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
-/**
- * WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
- * WireCallCenter.
- *
- * Thread safety: WireCallCenter instance methods should only be called from the main thread, class method can be
- * called from any thread.
- */
+/// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
+/// WireCallCenter.
+/// 
+/// Thread safety: WireCallCenter instance methods should only be called from the main thread, class method can be
+/// called from any thread.
 public class WireCallCenterV3: NSObject {
     static let logger = WireLogger.calling
 
@@ -58,17 +56,13 @@ public class WireCallCenterV3: NSObject {
 
     // MARK: - Calling State
 
-    /**
-     * The date when the call was established (Participants can talk to each other).
-     * - note: This property is only valid when the call state is `.established`.
-     */
+    /// The date when the call was established (Participants can talk to each other).
+    /// - note: This property is only valid when the call state is `.established`.
 
     var establishedDate: Date?
 
-    /**
-     * Whether we use constant bit rate for calls.
-     * - note: Changing this property after the call has started has no effect.
-     */
+    /// Whether we use constant bit rate for calls.
+    /// - note: Changing this property after the call has started has no effect.
 
     var useConstantBitRateAudio = false
 
@@ -118,17 +112,15 @@ public class WireCallCenterV3: NSObject {
         avsWrapper.close()
     }
 
-    /**
-     * Creates a call center with the required details.
-     * - parameter userId: The identifier of the current signed-in user.
-     * - parameter clientId: The identifier of the current client on the user's account.
-     * - parameter avsWrapper: The bridge to use to communicate with and receive events from AVS.
-     * If you don't specify one, a default object will be created. Defaults to `nil`.
-     * - parameter uiMOC: The Core Data context to use to coordinate events.
-     * - parameter flowManager: The object that controls media flow.
-     * - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
-     * - parameter transport: The object that performs network requests when the call center requests them.
-     */
+    /// Creates a call center with the required details.
+    /// - parameter userId: The identifier of the current signed-in user.
+    /// - parameter clientId: The identifier of the current client on the user's account.
+    /// - parameter avsWrapper: The bridge to use to communicate with and receive events from AVS.
+    /// If you don't specify one, a default object will be created. Defaults to `nil`.
+    /// - parameter uiMOC: The Core Data context to use to coordinate events.
+    /// - parameter flowManager: The object that controls media flow.
+    /// - parameter analytics: The object to use to record stats about the call. Defaults to `nil`.
+    /// - parameter transport: The object that performs network requests when the call center requests them.
 
     public required init(
         userId: AVSIdentifier,
@@ -165,14 +157,12 @@ extension WireCallCenterV3 {
         clientsRequestCompletionsByConversationId.removeValue(forKey: conversationId)
     }
 
-    /**
-     * Creates a snapshot for the specified call and adds it to the `callSnapshots` array.
-     * - parameter callState:
-     * - parameter members: The current members of the call.
-     * - parameters callStarter: The ID of the user that started the call.
-     * - parameter video: Whether the call is a video call.
-     * - parameter conversationId: The identifier of the conversation that hosts the call.
-     */
+    /// Creates a snapshot for the specified call and adds it to the `callSnapshots` array.
+    /// - parameter callState:
+    /// - parameter members: The current members of the call.
+    /// - parameters callStarter: The ID of the user that started the call.
+    /// - parameter video: Whether the call is a video call.
+    /// - parameter conversationId: The identifier of the conversation that hosts the call.
 
     func createSnapshot(
         callState: CallState,
@@ -239,51 +229,41 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Checks the state of video calling in the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether the conversation hosts a video call.
-     */
+    /// Checks the state of video calling in the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether the conversation hosts a video call.
 
     public func isVideoCall(conversationId: AVSIdentifier) -> Bool {
         callSnapshots[conversationId]?.isVideo ?? false
     }
 
-    /**
-     * Checks the call bitrate type used in the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether the call is being made with a constant bitrate.
-     */
+    /// Checks the call bitrate type used in the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether the call is being made with a constant bitrate.
 
     public func isContantBitRate(conversationId: AVSIdentifier) -> Bool {
         callSnapshots[conversationId]?.isConstantBitRate ?? false
     }
 
-    /**
-     * Determines the video state of the specified user in the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: The video-sending state of the user inside conversation.
-     */
+    /// Determines the video state of the specified user in the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: The video-sending state of the user inside conversation.
 
     public func videoState(conversationId: AVSIdentifier) -> VideoState {
         callSnapshots[conversationId]?.videoState ?? .stopped
     }
 
-    /**
-     * Determines the call state of the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: The state of calling of conversation, if any.
-     */
+    /// Determines the call state of the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: The state of calling of conversation, if any.
 
     public func callState(conversationId: AVSIdentifier) -> CallState {
         callSnapshots[conversationId]?.callState ?? .none
     }
 
-    /**
-     * Determines the call state of the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether there is an active call in the conversation.
-     */
+    /// Determines the call state of the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether there is an active call in the conversation.
 
     public func isActive(conversationId: AVSIdentifier) -> Bool {
         switch callState(conversationId: conversationId) {
@@ -294,11 +274,9 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Determines the degradation of the conversation.
-     * - parameter conversationId: The identifier of the conversation to check the state of.
-     * - returns: Whether the conversation has degraded security or the call in the conversation has a degraded user.
-     */
+    /// Determines the degradation of the conversation.
+    /// - parameter conversationId: The identifier of the conversation to check the state of.
+    /// - returns: Whether the conversation has degraded security or the call in the conversation has a degraded user.
 
     public func isDegraded(conversationId: AVSIdentifier) -> Bool {
         guard
@@ -819,11 +797,9 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Closes the call in the specified conversation.
-     * - parameter conversationId: The ID of the conversation where the call should be ended.
-     * - parameter reason: The reason why the call should be ended. The default is `.normal` (user action).
-     */
+    /// Closes the call in the specified conversation.
+    /// - parameter conversationId: The ID of the conversation where the call should be ended.
+    /// - parameter reason: The reason why the call should be ended. The default is `.normal` (user action).
 
     public func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
         Self.logger.info("closing call")
@@ -869,10 +845,8 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Rejects an incoming call in the conversation.
-     * - parameter conversationId: The ID of the conversation where the incoming call is hosted.
-     */
+    /// Rejects an incoming call in the conversation.
+    /// - parameter conversationId: The ID of the conversation where the incoming call is hosted.
 
     public func rejectCall(conversationId: AVSIdentifier) {
         Self.logger.info("rejecting call")
@@ -888,11 +862,9 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Ends all the calls. You can specify the identifier of a conversation where the call shouldn't be ended.
-     * - parameter excluding: If you need to terminate all calls except one, pass the identifier of the conversation
-     * that hosts the call to keep alive. If you pass `nil`, all calls will be ended. Defaults to `nil`.
-     */
+    /// Ends all the calls. You can specify the identifier of a conversation where the call shouldn't be ended.
+    /// - parameter excluding: If you need to terminate all calls except one, pass the identifier of the conversation
+    /// that hosts the call to keep alive. If you pass `nil`, all calls will be ended. Defaults to `nil`.
 
     public func endAllCalls(exluding: AVSIdentifier? = nil) {
         Self.logger.info("ending all calls")
@@ -908,11 +880,9 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Enables or disables video for a call.
-     * - parameter conversationId: The identifier of the conversation where the video call is hosted.
-     * - parameter videoState: The new video state for the self user.
-     */
+    /// Enables or disables video for a call.
+    /// - parameter conversationId: The identifier of the conversation where the video call is hosted.
+    /// - parameter videoState: The new video state for the self user.
 
     public func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
         Self.logger.info("setting video state")
@@ -925,11 +895,9 @@ extension WireCallCenterV3 {
         avsWrapper.setVideoState(conversationId: conversationId, videoState: videoState)
     }
 
-    /**
-     * Sets the capture device type to use for video.
-     * - parameter captureDevice: The device type to use to capture video for the call.
-     * - parameter conversationId: The identifier of the conversation where the video call is hosted.
-     */
+    /// Sets the capture device type to use for video.
+    /// - parameter captureDevice: The device type to use to capture video for the call.
+    /// - parameter conversationId: The identifier of the conversation where the video call is hosted.
 
     public func setVideoCaptureDevice(_ captureDevice: CaptureDevice, for conversationId: AVSIdentifier) {
         flowManager.setVideoCaptureDevice(captureDevice, for: conversationId)

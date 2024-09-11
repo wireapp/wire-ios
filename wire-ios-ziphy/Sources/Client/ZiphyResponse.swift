@@ -18,26 +18,20 @@
 
 import Foundation
 
-/**
- * A JSON response that encapsulates a JSON data object.
- */
+/// A JSON response that encapsulates a JSON data object.
 
 struct ZiphyDataResponse<Object>: Codable where Object: Codable {
     let data: Object
 }
 
-/**
- * A JSON response that provides pagination information.
- */
+/// A JSON response that provides pagination information.
 
 struct ZiphyPaginatedResponse<Object>: Codable where Object: Codable {
     let pagination: ZiphyPagination
     let data: Object
 }
 
-/**
- * Pagination information for a JSON response.
- */
+/// Pagination information for a JSON response.
 
 struct ZiphyPagination: Codable {
     let count: Int

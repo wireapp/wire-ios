@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to the lack of a e2e identity enrollment on launch
- */
+/// Handles client registration errors related to the lack of a e2e identity enrollment on launch
 
 final class AuthenticationStartE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

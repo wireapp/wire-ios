@@ -37,12 +37,11 @@ protocol KeyPathObjectSyncTranscoder: AnyObject {
     func cancel(_ object: T)
 }
 
-/**
- KeyPathObjectSync synchronizes objects filtered by a boolean KeyPath which should evaluate to `true` if the object needs to synced.
-
- Note this is only supported for managed objects and for properties which are stored in Core Data.
-
- */
+/// KeyPathObjectSync synchronizes objects filtered by a boolean KeyPath which should evaluate to `true` if the object
+/// needs to synced.
+///
+/// Note this is only supported for managed objects and for properties which are stored in Core Data.
+///
 class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
     // MARK: - Life Cycle
 

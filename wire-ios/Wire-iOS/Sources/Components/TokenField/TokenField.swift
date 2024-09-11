@@ -122,7 +122,7 @@ final class TokenField: UIView {
         }
     }
 
-    /* horisontal distance between tokens, and btw "To:" and first token */
+    // horisontal distance between tokens, and btw "To:" and first token
     var tokenTitleVerticalAdjustment: CGFloat = 1 {
         didSet {
             guard oldValue != tokenTitleVerticalAdjustment else { return }
@@ -161,7 +161,7 @@ final class TokenField: UIView {
 
     // Collapse
 
-    /* in not collapsed state; in collapsed state - 1 line; default to NSUIntegerMax */
+    // in not collapsed state; in collapsed state - 1 line; default to NSUIntegerMax
     var isCollapsed = false
 
     // MARK: - Init

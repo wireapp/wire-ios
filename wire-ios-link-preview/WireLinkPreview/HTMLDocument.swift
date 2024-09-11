@@ -106,9 +106,7 @@ final class HTMLChildrenIterator: IteratorProtocol {
     }
 }
 
-/**
- * Wrapper around a `xmlCharPtr`, that represents an HTML string.
- */
+/// Wrapper around a `xmlCharPtr`, that represents an HTML string.
 
 final class HTMLStringBuffer {
     enum Storage {

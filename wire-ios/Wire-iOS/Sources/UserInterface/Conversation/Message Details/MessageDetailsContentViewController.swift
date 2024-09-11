@@ -29,9 +29,7 @@ struct MessageDetailsSectionDescription {
     var items: [MessageDetailsCellDescription]
 }
 
-/**
- * Displays the list of users for a specified message detail content type.
- */
+/// Displays the list of users for a specified message detail content type.
 
 final class MessageDetailsContentViewController: UIViewController {
     typealias MessageDetails = L10n.Localizable.MessageDetails
@@ -87,9 +85,7 @@ final class MessageDetailsContentViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates a view controller to display message details of a certain type.
-     */
+    /// Creates a view controller to display message details of a certain type.
 
     init(
         contentType: ContentType,
@@ -231,12 +227,10 @@ final class MessageDetailsContentViewController: UIViewController {
         // Update the bottom cell padding to fit the text
         collectionView.contentInset.bottom = footerRegionHeight
 
-        /*
-         We calculate the distance between the bottom of the last cell and the bottom of the view.
-
-         We use this height to move the status label offscreen if needed, and move it up alongside the
-         content if the user scroll up.
-         */
+        // We calculate the distance between the bottom of the last cell and the bottom of the view.
+        //
+        // We use this height to move the status label offscreen if needed, and move it up alongside the
+        // content if the user scroll up.
 
         let offset = scrollView.contentOffset.y + scrollView.contentInset.top
         let scrollableContentHeight = scrollView.contentInset.top + scrollView.contentSize.height + footerRegionHeight
@@ -271,10 +265,8 @@ final class MessageDetailsContentViewController: UIViewController {
 
     // MARK: - Updating the Data
 
-    /**
-     * Updates the list of users for the details.
-     * - parameter sections: The new list of sections to display.
-     */
+    /// Updates the list of users for the details.
+    /// - parameter sections: The new list of sections to display.
 
     func updateData(_ sections: [MessageDetailsSectionDescription]) {
         noResultsView.isHidden = !sections.isEmpty

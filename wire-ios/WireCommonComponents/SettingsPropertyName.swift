@@ -17,19 +17,17 @@
 //
 import Foundation
 
-/**
- Available settings
-
- - ChatHeadsDisabled:      Disable chat heads in conversation and self profile
- - DisableMarkdown:        Disable markdown formatter for messages
- - DarkMode:               Dark mode for conversation
- - PriofileName:           User name
- - SoundAlerts:            Sound alerts level
- - DisableCrashAndAnalyticsSharing: Opt-Out analytics and App Center
- - DisableSendButton:      Opt-Out of new send button
- - DisableLinkPreviews:    Disable link previews for links you send
- - Disable(.*):            Disable some app features (debug)
- */
+/// Available settings
+///
+/// - ChatHeadsDisabled:      Disable chat heads in conversation and self profile
+/// - DisableMarkdown:        Disable markdown formatter for messages
+/// - DarkMode:               Dark mode for conversation
+/// - PriofileName:           User name
+/// - SoundAlerts:            Sound alerts level
+/// - DisableCrashAndAnalyticsSharing: Opt-Out analytics and App Center
+/// - DisableSendButton:      Opt-Out of new send button
+/// - DisableLinkPreviews:    Disable link previews for links you send
+/// - Disable(.*):            Disable some app features (debug)
 public enum SettingsPropertyName: String, CustomStringConvertible {
     // User defaults
     case chatHeadsDisabled = "ChatHeadsDisabled"

@@ -20,9 +20,7 @@ import AVFoundation
 import Foundation
 import MobileCoreServices
 
-/**
- * The list of asset types that the app can show preview of, or play inline.
- */
+/// The list of asset types that the app can show preview of, or play inline.
 
 @objc(ZMRichAssetFileType)
 public enum RichAssetFileType: Int, Equatable {

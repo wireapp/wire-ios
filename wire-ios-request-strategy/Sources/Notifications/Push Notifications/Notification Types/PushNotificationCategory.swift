@@ -19,9 +19,7 @@
 import Foundation
 import UserNotifications
 
-/**
- * The categories of notifications supported by the app.
- */
+/// The categories of notifications supported by the app.
 
 public enum PushNotificationCategory: String, CaseIterable {
     case incomingCall = "incomingCallCategory"

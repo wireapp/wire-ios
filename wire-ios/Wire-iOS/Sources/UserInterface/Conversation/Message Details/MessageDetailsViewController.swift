@@ -21,14 +21,10 @@ import WireDataModel
 import WireDesign
 import WireSyncEngine
 
-/**
- * A view controller wrapping the message details.
- */
+/// A view controller wrapping the message details.
 
 final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate {
-    /**
-     * The collection of view controllers displaying the content.
-     */
+    /// The collection of view controllers displaying the content.
 
     enum ViewControllers {
         /// We are displaying the combined view.
@@ -85,10 +81,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
 
     // MARK: - Initialization
 
-    /**
-     * Creates a details view controller for the specified message displaying the first available tab by default.
-     * - parameter message: The message to display the details of.
-     */
+    /// Creates a details view controller for the specified message displaying the first available tab by default.
+    /// - parameter message: The message to display the details of.
 
     convenience init(
         message: ZMConversationMessage,
@@ -103,13 +97,11 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         )
     }
 
-    /**
-     * Creates a details view controller for the specified message.
-     * - parameter message: The message to display the details of.
-     * - parameter preferredDisplayMode: The display mode to display by default when there are multiple
-     * tabs. Note that this object is only an indication, and will not override the displayed content
-     * if the data source says it is unavailable for the message.
-     */
+    /// Creates a details view controller for the specified message.
+    /// - parameter message: The message to display the details of.
+    /// - parameter preferredDisplayMode: The display mode to display by default when there are multiple
+    /// tabs. Note that this object is only an indication, and will not override the displayed content
+    /// if the data source says it is unavailable for the message.
 
     init(
         message: ZMConversationMessage,

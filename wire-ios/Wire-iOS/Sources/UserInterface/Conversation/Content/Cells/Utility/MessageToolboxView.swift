@@ -45,9 +45,7 @@ extension UILabel {
     }
 }
 
-/**
- * A view that displays information about a message.
- */
+/// A view that displays information about a message.
 
 final class MessageToolboxView: UIView {
     /// The object receiving events.

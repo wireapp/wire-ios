@@ -23,9 +23,7 @@ import WireDesign
 import WireSystem
 import WireTransport
 
-/**
- * The view controller to use to ask the user to enter their credentials.
- */
+/// The view controller to use to ask the user to enter their credentials.
 
 final class AuthenticationCredentialsViewController: AuthenticationStepController,
     EmailPasswordTextFieldDelegate,

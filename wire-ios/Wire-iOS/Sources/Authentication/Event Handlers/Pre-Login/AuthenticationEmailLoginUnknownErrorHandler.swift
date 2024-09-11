@@ -19,9 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handle e-mail login errors that occur for unknown errors.
- */
+/// Handle e-mail login errors that occur for unknown errors.
 
 final class AuthenticationEmailLoginUnknownErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

@@ -130,16 +130,12 @@ final class CameraController {
 
     // MARK: - Device Management
 
-    /**
-     * The capture device for the given camera position, if available.
-     */
+    /// The capture device for the given camera position, if available.
     private func cameraDevice(for position: AVCaptureDevice.Position) -> AVCaptureDevice? {
         AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position)
     }
 
-    /**
-     * The device input for the given camera, if available.
-     */
+    /// The device input for the given camera, if available.
     private func input(for camera: SettingsCamera) -> AVCaptureDeviceInput? {
         switch camera {
         case .front:    frontCameraDeviceInput
@@ -147,9 +143,7 @@ final class CameraController {
         }
     }
 
-    /**
-     * Connects the input for the given camera, if it is available.
-     */
+    /// Connects the input for the given camera, if it is available.
     private func connectInput(for camera: SettingsCamera) {
         guard
             let input = input(for: camera),
@@ -164,11 +158,9 @@ final class CameraController {
         }
     }
 
-    /**
-     * Disconnects the current camera and connects the given camera, but only
-     * if both camera inputs are available. The completion callback is passed
-     * a boolean value indicating whether the change was successful.
-     */
+    /// Disconnects the current camera and connects the given camera, but only
+    /// if both camera inputs are available. The completion callback is passed
+    /// a boolean value indicating whether the change was successful.
     func switchCamera(completion: @escaping (_ currentCamera: SettingsCamera) -> Void) {
         let newCamera = currentCamera == .front ? SettingsCamera.back : .front
 
@@ -193,10 +185,8 @@ final class CameraController {
         }
     }
 
-    /**
-     * Updates the orientation of the video preview layer to best fit the
-     * device/ui orientation.
-     */
+    /// Updates the orientation of the video preview layer to best fit the
+    /// device/ui orientation.
     func updatePreviewOrientation() {
         guard
             let connection = previewLayer.connection,
@@ -210,11 +200,9 @@ final class CameraController {
 
     typealias PhotoResult = (data: Data?, error: Error?)
 
-    /**
-     * Asynchronously attempts to capture a photo within the currently
-     * configured session. The result is passed into the given handler
-     * callback.
-     */
+    /// Asynchronously attempts to capture a photo within the currently
+    /// configured session. The result is passed into the given handler
+    /// callback.
     func capturePhoto(_ handler: @escaping (PhotoResult) -> Void) {
         // For iPad split/slide over mode, the session is not running.
         guard session.isRunning else { return }
@@ -242,11 +230,9 @@ final class CameraController {
         }
     }
 
-    /**
-     * A PhotoCaptureDelegate is responsible for processing the photo buffers
-     * returned from `AVCapturePhotoOutput`. For each photo captured, there is
-     * one unique delegate object responsible.
-     */
+    /// A PhotoCaptureDelegate is responsible for processing the photo buffers
+    /// returned from `AVCapturePhotoOutput`. For each photo captured, there is
+    /// one unique delegate object responsible.
     private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
         private let settings: AVCapturePhotoSettings
         private let handler: (PhotoResult) -> Void

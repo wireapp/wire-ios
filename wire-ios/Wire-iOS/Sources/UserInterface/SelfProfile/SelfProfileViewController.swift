@@ -22,9 +22,7 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 
-/**
- * The first page of the user settings.
- */
+/// The first page of the user settings.
 
 final class SelfProfileViewController: UIViewController {
     var userRightInterfaceType: UserRightInterface.Type
@@ -56,11 +54,9 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the settings screen with the specified user and permissions.
-     * - parameter selfUser: The current user.
-     * - parameter userRightInterfaceType: The type of object to determine the user permissions.
-     */
+    /// Creates the settings screen with the specified user and permissions.
+    /// - parameter selfUser: The current user.
+    /// - parameter userRightInterfaceType: The type of object to determine the user permissions.
 
     init(
         selfUser: SettingsSelfUser,

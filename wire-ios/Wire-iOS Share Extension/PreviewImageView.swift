@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * The aspect ratio of the video view.
- */
+/// The aspect ratio of the video view.
 
 enum PreviewDisplayMode {
     case video
@@ -40,9 +38,7 @@ enum PreviewDisplayMode {
     }
 }
 
-/**
- * An image view used to preview the content of a post.
- */
+/// An image view used to preview the content of a post.
 
 final class PreviewImageView: UIImageView {
     private let detailsContainer = UIView()

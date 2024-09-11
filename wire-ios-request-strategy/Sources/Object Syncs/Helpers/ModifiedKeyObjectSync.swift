@@ -32,12 +32,10 @@ protocol ModifiedKeyObjectSyncTranscoder: AnyObject {
     func synchronize(key: String, for object: Object, completion: @escaping () -> Void)
 }
 
-/**
- ModifiedKeyObjectSync synchronizes an object when a given property has been modified on
- the object.
-
- This only works for core data entities which inherit from `ZMManagedObject`.
- */
+/// ModifiedKeyObjectSync synchronizes an object when a given property has been modified on
+/// the object.
+///
+/// This only works for core data entities which inherit from `ZMManagedObject`.
 class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObject, ZMContextChangeTracker {
     let trackedKey: String
     let modifiedPredicate: NSPredicate?

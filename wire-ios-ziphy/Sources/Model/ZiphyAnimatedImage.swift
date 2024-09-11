@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Represents an animated image provided by Giphy.
- */
+/// Represents an animated image provided by Giphy.
 
 public struct ZiphyAnimatedImage: Codable {
     public let url: URL

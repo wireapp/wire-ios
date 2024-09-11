@@ -26,9 +26,7 @@ protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
 }
 
-/**
- * An object that coordinates restoring a backup.
- */
+/// An object that coordinates restoring a backup.
 
 private let zmLog = ZMSLog(tag: "Backup")
 

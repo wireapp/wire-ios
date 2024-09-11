@@ -25,10 +25,8 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     // MARK: Helpers
 
-    /**
-     *  Some (but not all) of these tests require the team identifier to be
-     *  set. These tests should be called used this method.
-     */
+    ///  Some (but not all) of these tests require the team identifier to be
+    ///  set. These tests should be called used this method.
     func teamTest(_ block: () -> Void) {
         selfUser.teamIdentifier = UUID()
         block()

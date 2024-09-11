@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * A protocol for objects that can start and end background activities.
- */
+/// A protocol for objects that can start and end background activities.
 
 @objc
 public protocol BackgroundActivityManager: NSObjectProtocol {

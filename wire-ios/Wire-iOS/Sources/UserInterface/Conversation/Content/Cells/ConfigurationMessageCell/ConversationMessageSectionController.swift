@@ -44,16 +44,14 @@ extension ZMConversationMessage {
     }
 }
 
-/**
- * An object that provides an interface to build list sections for a single message.
- *
- * A message will be represented as a table/collection section, and the components that make
- * the view of the message (timestamp, reply, content...) will be displayed as individual cells,
- * to reduce the number of cells that are instanciated at a given time.
- *
- * To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
- * the cells from the table or collection view and configuring them with a message.
- */
+/// An object that provides an interface to build list sections for a single message.
+/// 
+/// A message will be represented as a table/collection section, and the components that make
+/// the view of the message (timestamp, reply, content...) will be displayed as individual cells,
+/// to reduce the number of cells that are instanciated at a given time.
+/// 
+/// To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
+/// the cells from the table or collection view and configuring them with a message.
 
 final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     /// The view descriptor of the section.
@@ -246,10 +244,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     // MARK: - Composition
 
-    /**
-     * Adds a cell description to the section.
-     * - parameter description: The cell to add to the message section.
-     */
+    /// Adds a cell description to the section.
+    /// - parameter description: The cell to add to the message section.
 
     func add(description: some ConversationMessageCellDescription) {
         cellDescriptions.append(AnyConversationMessageCellDescription(description))

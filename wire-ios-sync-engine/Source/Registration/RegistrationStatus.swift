@@ -45,9 +45,7 @@ public protocol RegistrationStatusDelegate: AnyObject {
     func activationCodeValidationFailed(with error: Error)
 }
 
-/**
- * A protocol for objects that handle registration of users and teams.
- */
+/// A protocol for objects that handle registration of users and teams.
 
 protocol RegistrationStatusProtocol: AnyObject {
     /// The current registration phase.
@@ -62,9 +60,7 @@ protocol RegistrationStatusProtocol: AnyObject {
 
 // MARK: - Registration Status
 
-/**
- * Handles regisitration of users and teams.
- */
+/// Handles regisitration of users and teams.
 
 public class RegistrationStatus: RegistrationStatusProtocol {
     /// The current phase of registration.
@@ -78,41 +74,33 @@ public class RegistrationStatus: RegistrationStatusProtocol {
 
     // MARK: - Actions
 
-    /**
-     * Sends the activation code to validate the given credentials.
-     * - parameter credentials: The credentials (phone or email) to activate.
-     */
+    /// Sends the activation code to validate the given credentials.
+    /// - parameter credentials: The credentials (phone or email) to activate.
 
     public func sendActivationCode(to unverifiedEmail: String) {
         phase = .sendActivationCode(unverifiedEmail: unverifiedEmail)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
-    /**
-     * Verifies the activation code for the specified credentials witht he backend.
-     * - parameter credentials: The credentials (phone or email) to activate.
-     * - parameter code: The activation code sent by the backend that needs to be verified.
-     */
+    /// Verifies the activation code for the specified credentials witht he backend.
+    /// - parameter credentials: The credentials (phone or email) to activate.
+    /// - parameter code: The activation code sent by the backend that needs to be verified.
 
     public func checkActivationCode(unverifiedEmail: String, code: String) {
         phase = .checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
-    /**
-     * Creates the user with the backend.
-     * - parameter user: The object containing all information needed to register the user.
-     */
+    /// Creates the user with the backend.
+    /// - parameter user: The object containing all information needed to register the user.
 
     public func create(user: UnregisteredUser) {
         phase = .createUser(user: user)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
-    /**
-     * Creates the team with the backend.
-     * - parameter team: The object containing all information needed to register the team.
-     */
+    /// Creates the team with the backend.
+    /// - parameter team: The object containing all information needed to register the team.
 
     public func create(team: UnregisteredTeam) {
         phase = .createTeam(team: team)

@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to end-to-end identity
- */
+/// Handles client registration errors related to end-to-end identity
 
 class AuthenticationE2EIdentityMissingErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

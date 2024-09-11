@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The step to start personal user registration.
- */
+/// The step to start personal user registration.
 
 final class PersonalRegistrationStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?

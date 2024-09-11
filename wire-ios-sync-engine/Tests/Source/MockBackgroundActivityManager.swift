@@ -20,9 +20,7 @@ import UIKit
 import WireTesting
 import WireTransport
 
-/**
- * A controllable objects that mocks the behavior of UIApplication regarding background tasks.
- */
+/// A controllable objects that mocks the behavior of UIApplication regarding background tasks.
 
 @objc
 class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {

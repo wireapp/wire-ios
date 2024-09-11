@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * A pending legal hold client.
- */
+/// A pending legal hold client.
 
 public class MockPendingLegalHoldClient: NSManagedObject {
     /// The user that received a legal hold request.

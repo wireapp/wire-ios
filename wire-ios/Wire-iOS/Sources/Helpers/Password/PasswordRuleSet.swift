@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * A set of password rules that can be used to check if a password is valid.
- */
+/// A set of password rules that can be used to check if a password is valid.
 
 public struct PasswordRuleSet: Decodable, Equatable {
     /// The minimum length of the password.
@@ -43,14 +41,12 @@ public struct PasswordRuleSet: Decodable, Equatable {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the rule set from its required values.
-     * - parameter minimumLength: The minimum length of the password.
-     * - parameter maximumLength: The maximum length of the password.
-     * - parameter allowedCharacters: The characters that are allowed in the password.
-     * - parameter requiredCharacters: The characters that are required in the password. Note that if these are
-     * not included in `allowedCharacters`, they will be added to that set.
-     */
+    /// Creates the rule set from its required values.
+    /// - parameter minimumLength: The minimum length of the password.
+    /// - parameter maximumLength: The maximum length of the password.
+    /// - parameter allowedCharacters: The characters that are allowed in the password.
+    /// - parameter requiredCharacters: The characters that are required in the password. Note that if these are
+    /// not included in `allowedCharacters`, they will be added to that set.
 
     init(
         minimumLength: UInt,
@@ -114,12 +110,10 @@ public struct PasswordRuleSet: Decodable, Equatable {
 
     // MARK: - Validation
 
-    /**
-     * Verifies that the specified password conforms to this password rule set.
-     * - parameter password: The password to validate.
-     * - returns: The validation result. `valid` if the password is valid, or
-     * the description of the error.
-     */
+    /// Verifies that the specified password conforms to this password rule set.
+    /// - parameter password: The password to validate.
+    /// - returns: The validation result. `valid` if the password is valid, or
+    /// the description of the error.
 
     func validatePassword(_ password: String) -> PasswordValidationResult {
         var violations: [PasswordValidationResult.Violation] = []

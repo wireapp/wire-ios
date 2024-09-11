@@ -20,9 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
-/**
- * Handles client registration errors related to the client limit.
- */
+/// Handles client registration errors related to the client limit.
 
 final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

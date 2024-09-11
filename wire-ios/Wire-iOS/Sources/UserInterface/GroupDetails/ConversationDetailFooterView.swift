@@ -21,9 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireSystem
 
-/**
- * A footer view to use to display a bar of actions to perform for a conversation.
- */
+/// A footer view to use to display a bar of actions to perform for a conversation.
 
 class ConversationDetailFooterView: UIView {
     // MARK: - Properties

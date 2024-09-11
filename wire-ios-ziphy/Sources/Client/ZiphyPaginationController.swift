@@ -21,9 +21,7 @@ import Foundation
 /// A block that repeats a previous request, but moves to the given resource offset.
 typealias ZiphyPaginatedFetchBlock = (_ offset: Int) -> CancelableTask?
 
-/**
- * An object that handles pagination of Giphy requests.
- */
+/// An object that handles pagination of Giphy requests.
 
 final class ZiphyPaginationController {
     var ziphs: [Ziph] = []

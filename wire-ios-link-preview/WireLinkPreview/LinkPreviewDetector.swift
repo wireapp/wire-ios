@@ -46,20 +46,21 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
         super.init()
     }
 
-    /**
-     Downloads the link preview data, including their images, for links contained in the text.
-     The preview data is generated from the [Open Graph](http://ogp.me) information contained in the head of the html of the link.
-     For debugging Open Graph please use the [Sharing Debugger](https://developers.facebook.com/tools/debug/sharing).
-
-     The completion block will be called on private background queue, make sure to switch to main or other queue.
-
-     **Attention: For now this method only downloads the preview data (and only one image for this link preview)
-     for the first link found in the text!**
-
-     - parameter text:       The text with potentially contained links, if links are found the preview data is downloaded.
-     - parameter exluding:   Ranges in the text which should be skipped when searching for links.
-     - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
-     */
+    /// Downloads the link preview data, including their images, for links contained in the text.
+    /// The preview data is generated from the [Open Graph](http://ogp.me) information contained in the head of the html
+    /// of the link.
+    /// For debugging Open Graph please use the [Sharing Debugger](https://developers.facebook.com/tools/debug/sharing).
+    ///
+    /// The completion block will be called on private background queue, make sure to switch to main or other queue.
+    ///
+    /// **Attention: For now this method only downloads the preview data (and only one image for this link preview)
+    /// for the first link found in the text!**
+    ///
+    /// - parameter text:       The text with potentially contained links, if links are found the preview data is
+    /// downloaded.
+    /// - parameter exluding:   Ranges in the text which should be skipped when searching for links.
+    /// - parameter completion: The completion closure called when the link previews (and it's images) have been
+    /// downloaded.
     public func downloadLinkPreviews(
         inText text: String,
         excluding: [NSRange] = [],

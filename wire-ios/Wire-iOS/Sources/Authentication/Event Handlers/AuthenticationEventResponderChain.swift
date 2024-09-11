@@ -20,9 +20,7 @@ import Foundation
 import WireDataModel
 import WireSystem
 
-/**
- * Provides information to the event responder chain and executes actions.
- */
+/// Provides information to the event responder chain and executes actions.
 
 protocol AuthenticationEventResponderChainDelegate: AnyObject {
     /// The object providing authentication status info.
@@ -31,26 +29,20 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
     /// The object providing the current authentication state.
     var stateController: AuthenticationStateController { get }
 
-    /**
-     * Executes the specified actions.
-     * - parameter actions: The actions to execute.
-     */
+    /// Executes the specified actions.
+    /// - parameter actions: The actions to execute.
 
     func executeActions(_ actions: [AuthenticationCoordinatorAction])
 }
 
-/**
- * The authentication responder chain is responsible for dispatching events to supported
- * handlers, and determining what actions to execute in response.
- *
- * You configure the responder chain with a delegate, that will be responsible for providing
- * state and who will be responsible from
- */
+/// The authentication responder chain is responsible for dispatching events to supported
+/// handlers, and determining what actions to execute in response.
+/// 
+/// You configure the responder chain with a delegate, that will be responsible for providing
+/// state and who will be responsible from
 
 final class AuthenticationEventResponderChain {
-    /**
-     * The supported event types.
-     */
+    /// The supported event types.
 
     enum EventType {
         case flowStart(NSError?, Int)
@@ -96,10 +88,8 @@ final class AuthenticationEventResponderChain {
     var userInputObservers: [AnyAuthenticationEventHandler<Any>] = []
     var deviceConfigurationHandlers: [AnyAuthenticationEventHandler<Void>] = []
 
-    /**
-     * Configures the object with the given delegate and registers the default observers.
-     * - parameter delegate: The object assisting the responder chain.
-     */
+    /// Configures the object with the given delegate and registers the default observers.
+    /// - parameter delegate: The object assisting the responder chain.
 
     func configure(delegate: AuthenticationEventResponderChainDelegate) {
         self.delegate = delegate
@@ -183,10 +173,8 @@ final class AuthenticationEventResponderChain {
 
     // MARK: - Event Handling
 
-    /**
-     * Call this method to notify the responder chain that a supported event occured.
-     * - parameter eventType: The type of event that occured, and any required context.
-     */
+    /// Call this method to notify the responder chain that a supported event occured.
+    /// - parameter eventType: The type of event that occured, and any required context.
 
     func handleEvent(ofType eventType: EventType) {
         log.info("Event handling manager received event: \(eventType)")

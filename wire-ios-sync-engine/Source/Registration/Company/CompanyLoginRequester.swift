@@ -86,19 +86,15 @@ public enum ValidationError: Equatable {
 }
 
 public protocol CompanyLoginRequesterDelegate: AnyObject {
-    /**
-     * The login requester asks the user to verify their identity on the given website.
-     *
-     * - parameter requester: The requester asking for validation.
-     * - parameter url: The URL where the user should be taken to perform validation.
-     */
+    /// The login requester asks the user to verify their identity on the given website.
+    /// 
+    /// - parameter requester: The requester asking for validation.
+    /// - parameter url: The URL where the user should be taken to perform validation.
 
     func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL)
 }
 
-/**
- * An object that validates the identity of the user and creates a session using company login.
- */
+/// An object that validates the identity of the user and creates a session using company login.
 
 public class CompanyLoginRequester {
     /// The URL scheme that where the callback will be provided.
@@ -123,17 +119,15 @@ public class CompanyLoginRequester {
 
     // MARK: - Token Validation
 
-    /**
-     * Validated a company login token.
-     *
-     * This method will verify a company login token with the backend.
-     * The requester provided by the `enqueueProvider` passed to `init` will
-     * be used to perform the request.
-     *
-     * - parameter host: The backend to validate SSO code against.
-     * - parameter token: The user login token.
-     * - parameter completion: The completion closure called with the validation result.
-     */
+    /// Validated a company login token.
+    /// 
+    /// This method will verify a company login token with the backend.
+    /// The requester provided by the `enqueueProvider` passed to `init` will
+    /// be used to perform the request.
+    /// 
+    /// - parameter host: The backend to validate SSO code against.
+    /// - parameter token: The user login token.
+    /// - parameter completion: The completion closure called with the validation result.
 
     public func validate(host: String, token: UUID, completion: @escaping (ValidationError?) -> Void) {
         guard let url = urlComponents(host: host, token: token).url else { fatalError("Invalid company login url.") }
@@ -151,15 +145,13 @@ public class CompanyLoginRequester {
 
     // MARK: - Identity Request
 
-    /**
-     * Starts the company login flow for the user with the given login token.
-     *
-     * This method constructs the login URL, and calls the `delegate`, that will
-     * handle opening the URL. Typically, this initiates the login flow, which will
-     * open Safari. The `SessionManager` will handle the callback URL.
-     *
-     * - parameter token: The user login token, constructed from the request code.
-     */
+    /// Starts the company login flow for the user with the given login token.
+    /// 
+    /// This method constructs the login URL, and calls the `delegate`, that will
+    /// handle opening the URL. Typically, this initiates the login flow, which will
+    /// open Safari. The `SessionManager` will handle the callback URL.
+    /// 
+    /// - parameter token: The user login token, constructed from the request code.
 
     public func requestIdentity(host: String, token: UUID) {
         let validationToken = CompanyLoginVerificationToken()

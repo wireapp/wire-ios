@@ -18,26 +18,20 @@
 
 import Foundation
 
-/**
- * A protocol for values that can be decoded from a C counterpart from AVS.
- */
+/// A protocol for values that can be decoded from a C counterpart from AVS.
 
 protocol AVSValue {
     /// The type of the value in AVS APIs.
     associatedtype AVSType
 
-    /**
-     * Attemps to convert the value from the AVS type to Swift.
-     * - parameter rawValue: The value to decode from AVS.
-     * - returns: The Swift-converted object, if the `rawValue` was valid.
-     */
+    /// Attemps to convert the value from the AVS type to Swift.
+    /// - parameter rawValue: The value to decode from AVS.
+    /// - returns: The Swift-converted object, if the `rawValue` was valid.
 
     init?(rawValue: AVSType)
 }
 
-/**
- * An enum that can be represented as AVS flags.
- */
+/// An enum that can be represented as AVS flags.
 
 protocol AVSEnum: RawRepresentable, AVSValue {}
 

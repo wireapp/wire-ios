@@ -19,9 +19,7 @@
 import UIKit
 import WireDesign
 
-/**
- * A cell that displays a user property as part of the rich profile data.
- */
+/// A cell that displays a user property as part of the rich profile data.
 
 final class UserPropertyCell: SeparatorTableViewCell {
     private let contentStack = UIStackView()

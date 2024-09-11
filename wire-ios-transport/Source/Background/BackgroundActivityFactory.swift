@@ -19,24 +19,24 @@
 import UIKit
 import WireUtilities
 
-/**
- * Manages the creation and lifecycle of background tasks.
- *
- * To improve the behavior of the app in background contexts, this object starts and stops a single background task,
- * and associates "tokens" to these tasks to keep track of the progress, and handles expiration automatically.
- *
- * When you request background activity:
- * - if there is no active activity: we create a new UIKit background task and save a token
- * - if there are current active activities: we reuse the active UIKit task and save a token
- *
- * When you end a background activity manually:
- * - if the activity was the last in the list: we tell UIKit that the background task ended and remove the token from the list
- * - if there are still other activities in the list: we remove the token from the list
- *
- * When the system sends a background time expiration warning:
- * 1. We notify all the task tokens that they will expire soon, and give them an opportunity to clean up before the app gets suspended
- * 2. We end the active background task and block new activities from starting
- */
+/// Manages the creation and lifecycle of background tasks.
+/// 
+/// To improve the behavior of the app in background contexts, this object starts and stops a single background task,
+/// and associates "tokens" to these tasks to keep track of the progress, and handles expiration automatically.
+/// 
+/// When you request background activity:
+/// - if there is no active activity: we create a new UIKit background task and save a token
+/// - if there are current active activities: we reuse the active UIKit task and save a token
+/// 
+/// When you end a background activity manually:
+/// - if the activity was the last in the list: we tell UIKit that the background task ended and remove the token from
+/// the list
+/// - if there are still other activities in the list: we remove the token from the list
+/// 
+/// When the system sends a background time expiration warning:
+/// 1. We notify all the task tokens that they will expire soon, and give them an opportunity to clean up before the app
+/// gets suspended
+/// 2. We end the active background task and block new activities from starting
 
 @objc
 public final class BackgroundActivityFactory: NSObject {
@@ -79,24 +79,21 @@ public final class BackgroundActivityFactory: NSObject {
 
     // MARK: - Starting Background Activities
 
-    /**
-     * Starts a background activity if possible.
-     * - parameter name: The name of the task, for debugging purposes.
-     * - returns: A token representing the activity, if the background execution is available.
-     * - warning: If this method returns `nil`, you should **not** perform the work yu are planning to do.
-     */
+    /// Starts a background activity if possible.
+    /// - parameter name: The name of the task, for debugging purposes.
+    /// - returns: A token representing the activity, if the background execution is available.
+    /// - warning: If this method returns `nil`, you should **not** perform the work yu are planning to do.
 
     @objc(startBackgroundActivityWithName:)
     public func startBackgroundActivity(name: String) -> BackgroundActivity? {
         startActivityIfPossible(name, nil)
     }
 
-    /**
-     * Starts a background activity if possible.
-     * - parameter name: The name of the task, for debugging purposes.
-     * - parameter expirationHandler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
-     * - warning: If this method returns `nil`, you should **not** perform the work you are planning to do.
-     */
+    /// Starts a background activity if possible.
+    /// - parameter name: The name of the task, for debugging purposes.
+    /// - parameter expirationHandler: The code to execute to clean up the state as the app is about to be suspended.
+    /// This value can be set later.
+    /// - warning: If this method returns `nil`, you should **not** perform the work you are planning to do.
 
     @objc(startBackgroundActivityWithName:expirationHandler:)
     public func startBackgroundActivity(
@@ -106,12 +103,11 @@ public final class BackgroundActivityFactory: NSObject {
         startActivityIfPossible(name, expirationHandler)
     }
 
-    /**
-     * Notifies when all background activites have completed or expired.
-     * - parameter completionHandler: The code to exectute when the background activites are completed. The execution happens on the main queue.
-     *
-     * If there are no running background tasks the completion handler will be called immediately.
-     */
+    /// Notifies when all background activites have completed or expired.
+    /// - parameter completionHandler: The code to exectute when the background activites are completed. The execution
+    /// happens on the main queue.
+    /// 
+    /// If there are no running background tasks the completion handler will be called immediately.
     public func notifyWhenAllBackgroundActivitiesEnd(completionHandler: @escaping (() -> Void)) {
         isolationQueue.sync {
             guard hasValidCurrentBackgroundTask else {
@@ -124,9 +120,7 @@ public final class BackgroundActivityFactory: NSObject {
 
     // MARK: - Management
 
-    /**
-     * Call this method when the app resumes from foreground.
-     */
+    /// Call this method when the app resumes from foreground.
 
     @objc
     public func resume() {
@@ -141,10 +135,8 @@ public final class BackgroundActivityFactory: NSObject {
         }
     }
 
-    /**
-     * Ends the activity and the active background task if possible.
-     * - parameter activity: The activity to end.
-     */
+    /// Ends the activity and the active background task if possible.
+    /// - parameter activity: The activity to end.
 
     @objc
     public func endBackgroundActivity(_ activity: BackgroundActivity) {

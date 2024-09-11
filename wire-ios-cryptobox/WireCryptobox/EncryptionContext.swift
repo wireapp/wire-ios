@@ -21,40 +21,38 @@ import WireSystem
 
 class _CBox: PointerWrapper {}
 
-/**
- A cryptobox context that manages access to sessions, allowing the
- same sessions to be accessed by multuple processes in a safe way.
- Inside a process, only a single session context should be used.
-
- - note:
- In order to be used by multiple processes (see iOS extensions), cryptobox needs to lock the
- directory with the key material as it works on it, so that no other process will touch it.
-
- This class introduces the concept of *encryption context*, similar to the concept of context in Core Data.
- A context must be used only from a single thread. Multiple contexts can refer to the same
- directory on disk, locking the directory when needed so that they don't interfere with
- each other.
-
- Conflicts and race conditions are avoided by loading from disk and saving to disk
- every time a context it used, and locking around these operations.
- This is slow, but extensions are not supposed to need to access
- cryptobox very frequently.
-
- The intended use of this class is:
-
- 1. Create context once, reuse the same context to avoid having to create/load identity
-    (which never changes once created, so no race condition other than during creation)
- 2. use `perform:` with a block to create sessions, prekeys, encrypt and decrypt.
-    During the execution of the block, the directory is locked.
-    When decrypting, the decrypted data should be saved synchronously inside this block
-    (e.g. in case of Core Data, should be inserted and immediately saved) to enforce it
-    being saved before the session state is persisted later.
-    If the decrypted data is not persisted, and there is a crash before the data is
-    persisted, the data is lost forever as it can not be decrypted again once the session
-    is saved.
- 3. When the block passed to `perform:` is completed, the sessions are persisted to disk.
-    The lock is relased.
- */
+/// A cryptobox context that manages access to sessions, allowing the
+/// same sessions to be accessed by multuple processes in a safe way.
+/// Inside a process, only a single session context should be used.
+///
+/// - note:
+/// In order to be used by multiple processes (see iOS extensions), cryptobox needs to lock the
+/// directory with the key material as it works on it, so that no other process will touch it.
+///
+/// This class introduces the concept of *encryption context*, similar to the concept of context in Core Data.
+/// A context must be used only from a single thread. Multiple contexts can refer to the same
+/// directory on disk, locking the directory when needed so that they don't interfere with
+/// each other.
+///
+/// Conflicts and race conditions are avoided by loading from disk and saving to disk
+/// every time a context it used, and locking around these operations.
+/// This is slow, but extensions are not supposed to need to access
+/// cryptobox very frequently.
+///
+/// The intended use of this class is:
+///
+/// 1. Create context once, reuse the same context to avoid having to create/load identity
+///   (which never changes once created, so no race condition other than during creation)
+/// 2. use `perform:` with a block to create sessions, prekeys, encrypt and decrypt.
+///   During the execution of the block, the directory is locked.
+///   When decrypting, the decrypted data should be saved synchronously inside this block
+///   (e.g. in case of Core Data, should be inserted and immediately saved) to enforce it
+///   being saved before the session state is persisted later.
+///   If the decrypted data is not persisted, and there is a crash before the data is
+///   persisted, the data is lost forever as it can not be decrypted again once the session
+///   is saved.
+/// 3. When the block passed to `perform:` is completed, the sessions are persisted to disk.
+///   The lock is relased.
 public final class EncryptionContext: NSObject {
     /// What to do with modified sessions
     public enum ModifiedSessionsBehaviour {

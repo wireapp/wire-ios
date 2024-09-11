@@ -19,9 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * Handles client registration errors related to the lack of e-mail and password credentials.
- */
+/// Handles client registration errors related to the lack of e-mail and password credentials.
 
 final class AuthenticationNoCredentialsErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

@@ -44,9 +44,7 @@ public class UnregisteredUser {
         }
     }
 
-    /**
-     * Creates an empty unregistered user.
-     */
+    /// Creates an empty unregistered user.
 
     public init() {}
 

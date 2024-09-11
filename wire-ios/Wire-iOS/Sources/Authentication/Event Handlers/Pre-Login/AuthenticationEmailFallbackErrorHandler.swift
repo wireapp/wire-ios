@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * Handles error related to e-mail login that were not caught by other handlers.
- * - warning: You need to register this handler after all e-mail error related handlers.
- */
+/// Handles error related to e-mail login that were not caught by other handlers.
+/// - warning: You need to register this handler after all e-mail error related handlers.
 
 final class AuthenticationEmailFallbackErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

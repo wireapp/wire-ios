@@ -18,14 +18,10 @@
 
 import UIKit
 
-/**
- * Represents a request for the user to input text in an alert.
- */
+/// Represents a request for the user to input text in an alert.
 
 struct UserInputRequest {
-    /**
-     * Represents the configuration of an alert text field.
-     */
+    /// Represents the configuration of an alert text field.
 
     struct InputConfiguration {
         /// The placeholder of the text field.
@@ -72,10 +68,8 @@ struct UserInputRequest {
 // MARK: - UIAlertController + UserInputRequest
 
 extension UIAlertController {
-    /**
-     * Creates an alert controller to ask the user for input.
-     * - parameter inputRequest: The description of the data the user needs to input.
-     */
+    /// Creates an alert controller to ask the user for input.
+    /// - parameter inputRequest: The description of the data the user needs to input.
 
     convenience init(inputRequest: UserInputRequest) {
         self.init(title: inputRequest.title, message: inputRequest.message, preferredStyle: .alert)

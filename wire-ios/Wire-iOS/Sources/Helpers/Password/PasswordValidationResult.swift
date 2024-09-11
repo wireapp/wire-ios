@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The result of password validation.
- */
+/// The result of password validation.
 
 enum PasswordValidationResult: Equatable {
     /// The password is valid.

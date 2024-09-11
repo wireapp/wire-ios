@@ -16,21 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/**
- * A class that facilitates writing snapshot tests with mock users.
- *
- * It allows you to create team and non-team users with appropriate initial
- * parameters.
- */
+/// A class that facilitates writing snapshot tests with mock users.
+/// 
+/// It allows you to create team and non-team users with appropriate initial
+/// parameters.
 
 extension MockUser {
-    /**
-     * Creates a self-user with the specified name and team membership.
-     * - parameter name: The name of the user.
-     * - parameter teamID: The ID of the team of the user, or `nil` if they're not on a team.
-     * - returns: A configured mock user object to use as a self-user.
-     * - note: The accent color of a self user is red by default.
-     */
+    /// Creates a self-user with the specified name and team membership.
+    /// - parameter name: The name of the user.
+    /// - parameter teamID: The ID of the team of the user, or `nil` if they're not on a team.
+    /// - returns: A configured mock user object to use as a self-user.
+    /// - note: The accent color of a self user is red by default.
 
     static func createSelfUser(name: String, inTeam teamID: UUID?) -> MockUser {
         let user = MockUser()
@@ -46,13 +42,11 @@ extension MockUser {
         return user
     }
 
-    /**
-     * Creates a connected user with the specified name and team membership.
-     * - parameter name: The name of the user.
-     * - parameter teamID: The ID of the team of the user, or `nil` if they're not on a team.
-     * - returns: A configured mock user object to use as a user the self-user can interact with.
-     * - note: The accent color of a self user is orange by default.
-     */
+    /// Creates a connected user with the specified name and team membership.
+    /// - parameter name: The name of the user.
+    /// - parameter teamID: The ID of the team of the user, or `nil` if they're not on a team.
+    /// - returns: A configured mock user object to use as a user the self-user can interact with.
+    /// - note: The accent color of a self user is orange by default.
 
     static func createConnectedUser(name: String, inTeam teamID: UUID?) -> MockUser {
         let user = MockUser()

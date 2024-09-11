@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles button taps in the authentication flow.
- */
+/// Handles button taps in the authentication flow.
 
 final class AuthenticationButtonTapInputHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

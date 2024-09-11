@@ -22,62 +22,47 @@ import WireSystem
 
 private let log = ZMSLog(tag: "Authentication")
 
-/**
- * A type of object that observes changes from an authentication state controller.
- */
+/// A type of object that observes changes from an authentication state controller.
 
 protocol AuthenticationStateControllerDelegate: AnyObject {
-    /**
-     * Called when the current state changes in the state controller.
-     * - parameter newState: The new state held by the state controller
-     * - parameter mode: The kind of change that occured in the state. This
-     * influences the way we display the new state.
-     */
+    /// Called when the current state changes in the state controller.
+    /// - parameter newState: The new state held by the state controller
+    /// - parameter mode: The kind of change that occured in the state. This
+    /// influences the way we display the new state.
 
     func stateDidChange(_ newState: AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
 }
 
-/**
- * An object that controls the state of authentication. Provides advancement
- * and unwinding functionality.
- */
+/// An object that controls the state of authentication. Provides advancement
+/// and unwinding functionality.
 
 final class AuthenticationStateController {
     enum RewindMilestone: Equatable {
         case createCredentials(_ user: UnregisteredUser)
     }
 
-    /**
-     * The type of change that occured.
-     */
+    /// The type of change that occured.
 
     enum StateChangeMode: Equatable {
-        /**
-         * The state was reset to the new value. All the previous states are invalidated.
-         * You need to push the new interface to the stack and disable the back button.
-         */
+        /// The state was reset to the new value. All the previous states are invalidated.
+        /// You need to push the new interface to the stack and disable the back button.
 
         case reset
 
-        /**
-         * The state was replaced to the new value. Only the top level state is invalidated,
-         * the stack remains available for unwinding. You need to replace the top view controller,
-         * and enable the back button.
-         */
+        /// The state was replaced to the new value. Only the top level state is invalidated,
+        /// the stack remains available for unwinding. You need to replace the top view controller,
+        /// and enable the back button.
 
         case replace
 
-        /**
-         * The state was pushed onto the stack. You can enable the back button, if there are previous
-         * states in the stack.
-         */
+        /// The state was pushed onto the stack. You can enable the back button, if there are previous
+        /// states in the stack.
 
         case normal
 
-        /**
-         * The state rewinds to a given step and pushes to or resets to the new value. All the previous states up to given step are invalidated.
-         * You need to replace the controllers stack and enable the back button.
-         */
+        /// The state rewinds to a given step and pushes to or resets to the new value. All the previous states up to
+        /// given step are invalidated.
+        /// You need to replace the controllers stack and enable the back button.
         case rewindToOrReset(to: RewindMilestone)
     }
 
@@ -100,17 +85,15 @@ final class AuthenticationStateController {
 
     // MARK: - Transitions
 
-    /**
-     * Transitions to the next step in the stack.
-     *
-     * This method changes the current step, asks the delegate to generates a new
-     * interface if needed, and changes the stack, depending on the mode you provide
-     * to perform that operation.
-     *
-     * - parameter step: The step to transition to.
-     * - parameter mode: How we should perform the stack transition. See the documentation
-     * of `StateChangeMode` for more information. Defaults to `StateChangeMode.normal`.
-     */
+    /// Transitions to the next step in the stack.
+    /// 
+    /// This method changes the current step, asks the delegate to generates a new
+    /// interface if needed, and changes the stack, depending on the mode you provide
+    /// to perform that operation.
+    /// 
+    /// - parameter step: The step to transition to.
+    /// - parameter mode: How we should perform the stack transition. See the documentation
+    /// of `StateChangeMode` for more information. Defaults to `StateChangeMode.normal`.
 
     func transition(to step: AuthenticationFlowStep, mode: StateChangeMode = .normal) {
         guard step != currentStep else {
@@ -139,12 +122,10 @@ final class AuthenticationStateController {
         delegate?.stateDidChange(currentStep, mode: mode)
     }
 
-    /**
-     * Reverts to the previous valid state.
-     *
-     * You typically call this method after user interface changes to go back to the last
-     * valid user state.
-     */
+    /// Reverts to the previous valid state.
+    /// 
+    /// You typically call this method after user interface changes to go back to the last
+    /// valid user state.
 
     func unwindState() {
         repeat {

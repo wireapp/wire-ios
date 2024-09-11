@@ -19,15 +19,11 @@
 import UIKit
 import WireDataModel
 
-/**
- * A type of view controller that can be managed by an authentication coordinator.
- */
+/// A type of view controller that can be managed by an authentication coordinator.
 
 typealias AuthenticationStepViewController = AuthenticationCoordinatedViewController & UIViewController
 
-/**
- * An object that builds view controllers for authentication steps.
- */
+/// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {
     /// The object to use when checking for features.
@@ -41,10 +37,8 @@ final class AuthenticationInterfaceBuilder {
 
     // MARK: - Initialization
 
-    /**
-     * Creates an interface builder with the specified set of features.
-     * - parameter featureProvider: The object to use when checking for features
-     */
+    /// Creates an interface builder with the specified set of features.
+    /// - parameter featureProvider: The object to use when checking for features
 
     init(
         featureProvider: AuthenticationFeatureProvider,
@@ -56,16 +50,14 @@ final class AuthenticationInterfaceBuilder {
 
     // MARK: - Interface Building
 
-    /**
-     * Returns the view controller that displays the interface of the authentication step.
-     *
-     * - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
-     * add a case to handle them here, otherwise the method will return `nil`.
-     *
-     * - parameter step: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface of the authentication step.
+    /// 
+    /// - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
+    /// add a case to handle them here, otherwise the method will return `nil`.
+    /// 
+    /// - parameter step: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
         switch step {
@@ -182,15 +174,13 @@ final class AuthenticationInterfaceBuilder {
         }
     }
 
-    /**
-     * Returns the view controller that displays the interface for the given intermediate
-     * registration step.
-     *
-     * - parameter step: The step to create an interface for.
-     * - parameter user: The unregistered user that is being created.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface for the given intermediate
+    /// registration step.
+    /// 
+    /// - parameter step: The step to create an interface for.
+    /// - parameter user: The unregistered user that is being created.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     private func makeRegistrationStepViewController(
         for step: IntermediateRegistrationStep,
@@ -208,13 +198,11 @@ final class AuthenticationInterfaceBuilder {
         }
     }
 
-    /**
-     * Creates a view controller for a step view description.
-     *
-     * - parameter description: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Creates a view controller for a step view description.
+    /// 
+    /// - parameter description: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     private func makeViewController(for description: AuthenticationStepDescription) -> AuthenticationStepController {
         let controller = AuthenticationStepController(description: description)
@@ -232,11 +220,9 @@ final class AuthenticationInterfaceBuilder {
         return controller
     }
 
-    /**
-     * Creates and configures an authentication credentials view controller for the specified flow type.
-     * - parameter flowType: The type of flow to use in the view controller.
-     * - returns: A credentials input view controller configured with the feature provider.
-     */
+    /// Creates and configures an authentication credentials view controller for the specified flow type.
+    /// - parameter flowType: The type of flow to use in the view controller.
+    /// - returns: A credentials input view controller configured with the feature provider.
 
     private func makeCredentialsViewController(
         for flowType: AuthenticationCredentialsViewController

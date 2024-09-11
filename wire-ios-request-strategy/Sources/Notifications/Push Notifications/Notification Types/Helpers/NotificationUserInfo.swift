@@ -19,9 +19,7 @@
 import Foundation
 import UserNotifications
 
-/**
- * User info keys for notifications.
- */
+/// User info keys for notifications.
 
 private enum NotificationUserInfoKey: String {
     case requestID = "requestIDString"
@@ -34,10 +32,8 @@ private enum NotificationUserInfoKey: String {
     case teamName = "teamNameString"
 }
 
-/**
- * A structure that describes the content of the user info payload
- * of user notifications.
- */
+/// A structure that describes the content of the user info payload
+/// of user notifications.
 
 public class NotificationUserInfo: NSObject, NSCoding {
     /// The key under which the storage property is encoded.
@@ -154,12 +150,10 @@ extension NotificationUserInfo {
 // MARK: - Lookup
 
 extension NotificationUserInfo {
-    /**
-     * Fetches the conversion that matches the description stored in this user info fields.
-     *
-     * - parameter managedObjectContext: The context that should be used to perform the lookup.
-     * - returns: The conversation, if found.
-     */
+    /// Fetches the conversion that matches the description stored in this user info fields.
+    /// 
+    /// - parameter managedObjectContext: The context that should be used to perform the lookup.
+    /// - returns: The conversation, if found.
 
     public func conversation(in managedObjectContext: NSManagedObjectContext) -> ZMConversation? {
         guard let remoteID = conversationID else {
@@ -169,13 +163,11 @@ extension NotificationUserInfo {
         return ZMConversation.fetch(with: remoteID, domain: nil, in: managedObjectContext)
     }
 
-    /**
-     * Fetches the message that matches the description stored in this user info fields.
-     *
-     * - parameter conversation: The conversation where the message should be searched.
-     * - parameter managedObjectContext: The context that should be used to perform the lookup.
-     * - returns: The message, if found.
-     */
+    /// Fetches the message that matches the description stored in this user info fields.
+    /// 
+    /// - parameter conversation: The conversation where the message should be searched.
+    /// - parameter managedObjectContext: The context that should be used to perform the lookup.
+    /// - returns: The message, if found.
 
     public func message(in conversation: ZMConversation, managedObjectContext: NSManagedObjectContext) -> ZMMessage? {
         guard let nonce = messageNonce else {
@@ -185,12 +177,10 @@ extension NotificationUserInfo {
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: managedObjectContext)
     }
 
-    /**
-     * Fetches the sender that matches the description stored in this user info fields.
-     *
-     * - parameter managedObjectContext: The context that should be used to perform the lookup.
-     * - returns: The sender of the event, if found.
-     */
+    /// Fetches the sender that matches the description stored in this user info fields.
+    /// 
+    /// - parameter managedObjectContext: The context that should be used to perform the lookup.
+    /// - returns: The sender of the event, if found.
 
     func sender(in managedObjectContext: NSManagedObjectContext) -> ZMUser? {
         guard let senderID else {

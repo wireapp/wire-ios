@@ -31,13 +31,11 @@ public enum LegalHoldActivationError: Error, Equatable {
 }
 
 extension ZMUserSession {
-    /**
-     * Sends a request to accept a legal hold request for the specified user.
-     * - parameter request: The request that was accepted by the user.
-     * - parameter password: The password of the user to send in the payload, if it's not a SSO user.
-     * - parameter completionHandler: The block that will be called with the result of the request.
-     * - parameter error: The error that prevented the approval of legal hold.
-     */
+    /// Sends a request to accept a legal hold request for the specified user.
+    /// - parameter request: The request that was accepted by the user.
+    /// - parameter password: The password of the user to send in the payload, if it's not a SSO user.
+    /// - parameter completionHandler: The block that will be called with the result of the request.
+    /// - parameter error: The error that prevented the approval of legal hold.
 
     public func accept(
         legalHoldRequest: LegalHoldRequest,

@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles the input of the phone number or email to log in.
- */
+/// Handles the input of the phone number or email to log in.
 
 final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

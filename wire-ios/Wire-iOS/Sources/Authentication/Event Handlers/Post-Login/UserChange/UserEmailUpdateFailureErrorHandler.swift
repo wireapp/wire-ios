@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles error when addding the e-mail to the user.
- */
+/// Handles error when addding the e-mail to the user.
 
 final class UserEmailUpdateFailureErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

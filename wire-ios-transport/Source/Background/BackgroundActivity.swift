@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * A token that represents an active background task.
- */
+/// A token that represents an active background task.
 
 private var activityCounter = 0
 private let activityCounterQueue = DispatchQueue(label: "wire-transport.background-activity-counter")
@@ -47,26 +45,24 @@ public final class BackgroundActivity: NSObject {
 
     // MARK: - Execution
 
-    /**
-     * Executes the task.
-     * - parameter block: The block to execute with extended lifetime.
-     * - parameter activity: A reference to the current activity, so you can stop it before your block returns.
-     *
-     * You can take advantage of this method to make sure you don't execute code when background execution
-     * is no longer available, with nil-coleascing.
-     *
-     * For example, when you request:
-     *
-     * ~~~swift
-     * BackgroundActivityFactory.shared.startBackgroundActivity(name: "Test")?.execute {
-     *     defer { BackgroundActivityFactory.shared.endBackgroundActivity($0) }
-     *     // perform the long task
-     *     print("Hello background world")
-     * }
-     * ~~~
-     *
-     * If the app is being suspended, the code will not be executed at all.
-     */
+    /// Executes the task.
+    /// - parameter block: The block to execute with extended lifetime.
+    /// - parameter activity: A reference to the current activity, so you can stop it before your block returns.
+    /// 
+    /// You can take advantage of this method to make sure you don't execute code when background execution
+    /// is no longer available, with nil-coleascing.
+    /// 
+    /// For example, when you request:
+    /// 
+    /// ~~~swift
+    /// BackgroundActivityFactory.shared.startBackgroundActivity(name: "Test")?.execute {
+    ///     defer { BackgroundActivityFactory.shared.endBackgroundActivity($0) }
+    ///     // perform the long task
+    ///     print("Hello background world")
+    /// }
+    /// ~~~
+    /// 
+    /// If the app is being suspended, the code will not be executed at all.
 
     @objc(executeBlock:)
     public func execute(block: @escaping (_ activity: BackgroundActivity) -> Void) {

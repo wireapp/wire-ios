@@ -27,22 +27,18 @@ extension NSDataDetector {
         try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
     }
 
-    /**
-     * Detects whether the text contains at least one link.
-     * - parameter text: The text to check.
-     * - returns: Whether the text contains any links.
-     */
+    /// Detects whether the text contains at least one link.
+    /// - parameter text: The text to check.
+    /// - returns: Whether the text contains any links.
 
     @objc(containsLinkInText:)
     public func containsLink(in text: String) -> Bool {
         !detectLinks(in: text).isEmpty
     }
 
-    /**
-     * Returns a list of URLs in the specified text message.
-     * - parameter text: The text to check.
-     * - returns: The list of detected URLs, or an empty array if detection failed.
-     */
+    /// Returns a list of URLs in the specified text message.
+    /// - parameter text: The text to check.
+    /// - returns: The list of detected URLs, or an empty array if detection failed.
 
     @objc(detectLinksInText:)
     public func detectLinks(in text: String) -> [URL] {
@@ -50,12 +46,10 @@ extension NSDataDetector {
         return matches(in: text, options: [], range: textRange).compactMap(\.url)
     }
 
-    /**
-     * Returns URLs found in text together with their range in within the text.
-     * - parameter text: The text in which to search for URLs.
-     * - parameter excludedRanges: Ranges within the text which should we excluded from the search.
-     * - returns: The list of URLs in the text.
-     */
+    /// Returns URLs found in text together with their range in within the text.
+    /// - parameter text: The text in which to search for URLs.
+    /// - parameter excludedRanges: Ranges within the text which should we excluded from the search.
+    /// - returns: The list of URLs in the text.
 
     public func detectLinksAndRanges(in text: String, excluding excludedRanges: [NSRange] = []) -> [URLWithRange] {
         let wholeTextRange = NSRange(text.startIndex ..< text.endIndex, in: text)

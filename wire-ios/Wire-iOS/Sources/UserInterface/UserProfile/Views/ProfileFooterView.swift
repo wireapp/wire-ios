@@ -26,9 +26,7 @@ protocol ProfileFooterViewDelegate: AnyObject {
     func footerView(_ footerView: ProfileFooterView, shouldPresentMenuWithActions actions: [ProfileAction])
 }
 
-/**
- * The footer of to use in the profile details screen.
- */
+/// The footer of to use in the profile details screen.
 
 final class ProfileFooterView: ConversationDetailFooterView {
     /// The object that will perform the actions on demand.
@@ -48,10 +46,8 @@ final class ProfileFooterView: ConversationDetailFooterView {
         rightButton.accessibilityLabel = L10n.Localizable.Meta.Menu.accessibilityMoreOptionsButton
     }
 
-    /**
-     * Configures the footer to display the specified actions.
-     * - parameter actions: The actions to display in the footer.
-     */
+    /// Configures the footer to display the specified actions.
+    /// - parameter actions: The actions to display in the footer.
 
     func configure(with actions: [ProfileAction]) {
         // Separate the last and first actions

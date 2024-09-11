@@ -20,9 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
-/**
- * Handles the notification informing the user that backups are ready to be imported.
- */
+/// Handles the notification informing the user that backups are ready to be imported.
 
 final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

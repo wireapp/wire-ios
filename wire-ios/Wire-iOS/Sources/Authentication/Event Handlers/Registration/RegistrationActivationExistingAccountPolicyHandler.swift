@@ -21,9 +21,7 @@ import WireDataModel
 
 private typealias AlertStrings = L10n.Localizable.Registration.Alert
 
-/**
- * Handles the case that the user tries to register an account with a phone/e-mail that is already registered.
- */
+/// Handles the case that the user tries to register an account with a phone/e-mail that is already registered.
 
 final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

@@ -72,9 +72,7 @@ enum SettingsPropertyValue: Equatable {
     }
 }
 
-/**
- *  Generic settings property
- */
+///  Generic settings property
 protocol SettingsProperty {
     var propertyName: SettingsPropertyName { get }
     func value() -> SettingsPropertyValue
@@ -88,36 +86,30 @@ extension SettingsProperty {
     }
 }
 
-/**
- Set value to property
-
- - parameter property: Property to set the value on
- - parameter expr:     Property value (raw)
- */
+/// Set value to property
+///
+/// - parameter property: Property to set the value on
+/// - parameter expr:     Property value (raw)
 func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws {
     let value = expr()
 
     try property.set(newValue: SettingsPropertyValue.propertyValue(value))
 }
 
-/**
- Set value to property
-
- - parameter property: Property to set the value on
- - parameter expr:     Property value
- */
+/// Set value to property
+///
+/// - parameter property: Property to set the value on
+/// - parameter expr:     Property value
 func << (property: inout SettingsProperty, expr: @autoclosure () -> SettingsPropertyValue) throws {
     let value = expr()
 
     try property.set(newValue: value)
 }
 
-/**
- Read value from property
-
- - parameter value:    Value to assign
- - parameter property: Property to read the value from
- */
+/// Read value from property
+///
+/// - parameter value:    Value to assign
+/// - parameter property: Property to read the value from
 func << (value: inout Any?, property: SettingsProperty) {
     value = property.rawValue()
 }

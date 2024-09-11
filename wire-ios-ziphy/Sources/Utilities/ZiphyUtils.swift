@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The result of an operation, either success or failure.
- */
+/// The result of an operation, either success or failure.
 
 public enum ZiphyResult<T> {
     case success(T)
@@ -35,24 +33,18 @@ public enum ZiphyResult<T> {
     }
 }
 
-/**
- * A task that can be cancelled.
- */
+/// A task that can be cancelled.
 
 public protocol CancelableTask {
     func cancel()
 }
 
-/**
- * An opaque object that identifies as a single Ziphy network request
- */
+/// An opaque object that identifies as a single Ziphy network request
 
 @objc
 public protocol ZiphyRequestIdentifier {}
 
-/**
- * An object that performs network requests to the Giphy API.
- */
+/// An object that performs network requests to the Giphy API.
 
 public protocol ZiphyURLRequester {
     func performZiphyRequest(

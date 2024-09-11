@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The list of errors that can occur when interacting with the Giphy service.
- */
+/// The list of errors that can occur when interacting with the Giphy service.
 
 public enum ZiphyError: Error {
     case malformedURL(String)

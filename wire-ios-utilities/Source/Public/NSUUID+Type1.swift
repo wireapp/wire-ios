@@ -44,13 +44,12 @@ extension NSUUID {
     /// Returns the type 1 timestamp
     /// - returns: NSDate, or `nil` if the NSUUID is not of Type 1
     @objc public var type1Timestamp: Date? {
-        /*
-         see https://tools.ietf.org/html/rfc4122
-         UUID schema
-         --------------------------------------------------------------------------------------------------------------------------
-         .... | version / time_high 1 | time_high 2 | time_mid 1 | time_mid 2 | time_low 1 | time_low 2 | time_low 3 | time_low 4 |
-         Octet:--7(4-7)-----7(0-3)-----------6------------5------------4------------3------------2------------1-------------0------
-         */
+        // see https://tools.ietf.org/html/rfc4122
+        // UUID schema
+        // --------------------------------------------------------------------------------------------------------------------------
+        // .... | version / time_high 1 | time_high 2 | time_mid 1 | time_mid 2 | time_low 1 | time_low 2 | time_low 3 |
+        // time_low 4 |
+        // Octet:--7(4-7)-----7(0-3)-----------6------------5------------4------------3------------2------------1-------------0------
 
         if !self.isType1UUID {
             return nil

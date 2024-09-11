@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * An integer used in the context of the Giphy API, which encodes numbers
- * as strings.
- */
+/// An integer used in the context of the Giphy API, which encodes numbers
+/// as strings.
 
 public struct ZiphyInt: Codable, ExpressibleByIntegerLiteral {
     /// The integer value wrapped by the object

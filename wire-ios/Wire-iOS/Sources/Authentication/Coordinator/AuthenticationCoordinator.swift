@@ -20,27 +20,21 @@ import UIKit
 import WireReusableUIComponents
 import WireSyncEngine
 
-/**
- * Provides and asks for context when registering users.
- */
+/// Provides and asks for context when registering users.
 
 protocol AuthenticationCoordinatorDelegate: AnyObject {
-    /**
-     * The coordinator finished authenticating the user.
-     */
+    /// The coordinator finished authenticating the user.
 
     func userAuthenticationDidComplete(userSession: UserSession)
 }
 
-/**
- * Manages the flow of authentication for the user. Decides which steps to take for login, registration
- * and team creation.
- *
- * Interaction with the different components is abstracted away in the *actions*. You can execute actions
- * yourself, in response to user interaction. However, most of the time, actions are passed by the responder
- * chain, which is composed of objects that compute the actions to execute in response to a notification
- * or delegate call from one of the abstracted components.
- */
+/// Manages the flow of authentication for the user. Decides which steps to take for login, registration
+/// and team creation.
+/// 
+/// Interaction with the different components is abstracted away in the *actions*. You can execute actions
+/// yourself, in response to user interaction. However, most of the time, actions are passed by the responder
+/// chain, which is composed of objects that compute the actions to execute in response to a notification
+/// or delegate call from one of the abstracted components.
 
 final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
     /// The handle to the OS log for authentication events.
@@ -58,15 +52,13 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
 
     // MARK: - Event Handling Properties
 
-    /**
-     * The object responsible for handling events.
-     *
-     * You use this object to tag events as they happen. It then iterates over the internal
-     * event handlers in the chain, to decide what actions to take.
-     *
-     * The authentication coordinator is the delegate of the event responder chain, as it is
-     * responsible for executing the actions provided by the selected event handler.
-     */
+    /// The object responsible for handling events.
+    /// 
+    /// You use this object to tag events as they happen. It then iterates over the internal
+    /// event handlers in the chain, to decide what actions to take.
+    /// 
+    /// The authentication coordinator is the delegate of the event responder chain, as it is
+    /// responsible for executing the actions provided by the selected event handler.
 
     let eventResponderChain: AuthenticationEventResponderChain
 
@@ -248,9 +240,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         registrationStatus.delegate = self
     }
 
-    /**
-     * Registers the post-login observation tokens if they were not already registered.
-     */
+    /// Registers the post-login observation tokens if they were not already registered.
 
     fileprivate func registerPostLoginObserversIfNeeded() {
         guard postLoginObservers.isEmpty else {
@@ -279,10 +269,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         ]
     }
 
-    /**
-     * Executes the actions in response to an event.
-     * - parameter actions: The actions to execute.
-     */
+    /// Executes the actions in response to an event.
+    /// - parameter actions: The actions to execute.
 
     func executeActions(_ actions: [AuthenticationCoordinatorAction]) {
         for action in actions {
@@ -415,21 +403,17 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 // MARK: - External Input
 
 extension AuthenticationCoordinator {
-    /**
-     * Call this method when the application becomes unauthenticated and that the user
-     * needs to authenticate.
-     *
-     * - parameter error: The error that caused the unauthenticated state, if any.
-     * - parameter numberOfAccounts: The number of accounts that are signed in with the app.
-     */
+    /// Call this method when the application becomes unauthenticated and that the user
+    /// needs to authenticate.
+    /// 
+    /// - parameter error: The error that caused the unauthenticated state, if any.
+    /// - parameter numberOfAccounts: The number of accounts that are signed in with the app.
 
     func startAuthentication(with error: NSError?, numberOfAccounts: Int) {
         eventResponderChain.handleEvent(ofType: .flowStart(error, numberOfAccounts))
     }
 
-    /**
-     * Creates a new unregistered user for starting a registration flow.
-     */
+    /// Creates a new unregistered user for starting a registration flow.
 
     func makeUnregisteredUser() -> UnregisteredUser {
         let user = UnregisteredUser()
@@ -437,14 +421,12 @@ extension AuthenticationCoordinator {
         return user
     }
 
-    /**
-     * Notifies the event responder chain that user input was provided.
-     *
-     * The responder chain will then go through all the input event handlers and
-     * pick the first that accepts the input.
-     *
-     * - parameter input: The input provided by the user.
-     */
+    /// Notifies the event responder chain that user input was provided.
+    /// 
+    /// The responder chain will then go through all the input event handlers and
+    /// pick the first that accepts the input.
+    /// 
+    /// - parameter input: The input provided by the user.
 
     func handleUserInput(_ input: Any) {
         eventResponderChain.handleEvent(ofType: .userInput(input))
@@ -550,14 +532,12 @@ extension AuthenticationCoordinator {
 
     // MARK: - Registration Code
 
-    /**
-     * Starts the registration flow with the specified credentials.
-     *
-     * This step will ask the registration status to send the activation code
-     * by text message or email. It will advance the state to `.sendActivationCode`.
-     *
-     * - parameter credentials: The unverified credentials to register with.
-     */
+    /// Starts the registration flow with the specified credentials.
+    /// 
+    /// This step will ask the registration status to send the activation code
+    /// by text message or email. It will advance the state to `.sendActivationCode`.
+    /// 
+    /// - parameter credentials: The unverified credentials to register with.
 
     private func startRegistration(_ unverifiedEmail: String) {
         guard case let .createCredentials(unregisteredUser) = stateController.currentStep,
@@ -725,10 +705,8 @@ extension AuthenticationCoordinator {
         }
     }
 
-    /**
-     * Checks the verification code provided by the user, and continues to the next appropriate step.
-     * - parameter code: The verification code provided by the user.
-     */
+    /// Checks the verification code provided by the user, and continues to the next appropriate step.
+    /// - parameter code: The verification code provided by the user.
 
     private func continueFlow(withVerificationCode code: String) {
         switch stateController.currentStep {

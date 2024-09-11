@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * The type of easing animations supported by the application.
- */
+/// The type of easing animations supported by the application.
 
 extension EasingFunction {
     var timingFunction: CAMediaTimingFunction {

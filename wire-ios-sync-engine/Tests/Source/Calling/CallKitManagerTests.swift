@@ -521,24 +521,24 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertTrue(action.isFulfilled)
     }
 
-    /* Disabled for now, pending furter investigation
-     func testThatCallAnswerActionFailWhenCallCantBeJoined() {
-     // given
-     let otherUser = self.otherUser(moc: self.uiMOC)
-     let provider = MockProvider(foo: true)
-     let conversation = self.conversation(type: .oneOnOne)
-
-     sut.reportIncomingCall(from: otherUser, in: conversation, video: false)
-     let action = MockCallAnswerAction(call: sut.callUUID(for: conversation)!)
-     self.sut.provider(provider, perform: action)
-
-     // when
-     mockWireCallCenterV3.update(callState: .terminating(reason: .lostMedia), conversationId: conversation.remoteIdentifier!, callerId: otherUser.remoteIdentifier, isVideo: false)
-     XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-     // then
-     XCTAssertTrue(action.hasFailed)
-     }
-     */
+    // Disabled for now, pending furter investigation
+    // func testThatCallAnswerActionFailWhenCallCantBeJoined() {
+    // // given
+    // let otherUser = self.otherUser(moc: self.uiMOC)
+    // let provider = MockProvider(foo: true)
+    // let conversation = self.conversation(type: .oneOnOne)
+    //
+    // sut.reportIncomingCall(from: otherUser, in: conversation, video: false)
+    // let action = MockCallAnswerAction(call: sut.callUUID(for: conversation)!)
+    // self.sut.provider(provider, perform: action)
+    //
+    // // when
+    // mockWireCallCenterV3.update(callState: .terminating(reason: .lostMedia), conversationId:
+    // conversation.remoteIdentifier!, callerId: otherUser.remoteIdentifier, isVideo: false)
+    // XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    // // then
+    // XCTAssertTrue(action.hasFailed)
+    // }
 
     func testThatStartCallActionIsFulfilledWhenCallIsJoined() {
         // given

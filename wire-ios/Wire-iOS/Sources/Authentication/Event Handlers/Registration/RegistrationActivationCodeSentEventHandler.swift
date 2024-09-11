@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles the success of the send activation code request.
- */
+/// Handles the success of the send activation code request.
 
 final class RegistrationActivationCodeSentEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

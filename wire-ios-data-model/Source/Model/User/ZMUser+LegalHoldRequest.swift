@@ -23,9 +23,7 @@ private let log = ZMSLog(tag: "UserClient")
 
 public typealias SelfUserLegalHoldable = EditableUserType & SelfLegalHoldSubject & UserType
 
-/**
- * A protocol for objects that provide the legal hold status for the self user.
- */
+/// A protocol for objects that provide the legal hold status for the self user.
 
 public protocol SelfLegalHoldSubject {
     /// The current legal hold status of the user.
@@ -50,9 +48,7 @@ public protocol SelfLegalHoldSubject {
     func acknowledgeLegalHoldStatus()
 }
 
-/**
- * Describes the status of legal hold for the user.
- */
+/// Describes the status of legal hold for the user.
 
 @frozen
 public enum UserLegalHoldStatus: Equatable {
@@ -66,14 +62,10 @@ public enum UserLegalHoldStatus: Equatable {
     case disabled
 }
 
-/**
- * Describes a request to enable legal hold, created from the update event.
- */
+/// Describes a request to enable legal hold, created from the update event.
 
 public struct LegalHoldRequest: Codable, Hashable {
-    /**
-     * Represents a prekey in the legal hold request.
-     */
+    /// Represents a prekey in the legal hold request.
 
     public struct Prekey: Codable, Hashable {
         /// The ID of the key.
@@ -88,9 +80,7 @@ public struct LegalHoldRequest: Codable, Hashable {
         }
     }
 
-    /**
-     * Represent a client in the legal hold request.
-     */
+    /// Represent a client in the legal hold request.
 
     private struct Client: Codable, Hashable {
         /// The ID of the client
@@ -184,19 +174,15 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    /**
-     * Call this method a pending legal hold request was cancelled
-     */
+    /// Call this method a pending legal hold request was cancelled
 
     public func legalHoldRequestWasCancelled() {
         legalHoldRequest = nil
         needsToAcknowledgeLegalHoldStatus = false
     }
 
-    /**
-     * Call this method when the user accepted the legal hold request.
-     * - parameter request: The request that the user received.
-     */
+    /// Call this method when the user accepted the legal hold request.
+    /// - parameter request: The request that the user received.
 
     public func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
         guard
@@ -227,11 +213,9 @@ extension ZMUser: SelfLegalHoldSubject {
         }
     }
 
-    /**
-     * Adds a legal hold client for the user from the specified legal hold request.
-     * - parameter request: The legal hold request that contains the details of the client.
-     * - returns: The created client, if the state is valid.
-     */
+    /// Adds a legal hold client for the user from the specified legal hold request.
+    /// - parameter request: The legal hold request that contains the details of the client.
+    /// - returns: The created client, if the state is valid.
 
     public func addLegalHoldClient(from request: LegalHoldRequest) async -> UserClient? {
         guard
@@ -265,10 +249,8 @@ extension ZMUser: SelfLegalHoldSubject {
         return legalHoldClient
     }
 
-    /**
-     * Call this method when the user received a legal hold request from their admin.
-     * - parameter request: The request that the user received.
-     */
+    /// Call this method when the user received a legal hold request from their admin.
+    /// - parameter request: The request that the user received.
 
     public func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
         guard request.target == nil || request.target == self.remoteIdentifier else {
@@ -285,9 +267,7 @@ extension ZMUser: SelfLegalHoldSubject {
     /// Whether the user needs to be notified about a legal hold status change.
     @NSManaged public internal(set) var needsToAcknowledgeLegalHoldStatus: Bool
 
-    /**
-     * Call this method when the user acknowledged the last legal hold status.
-     */
+    /// Call this method when the user acknowledged the last legal hold status.
 
     public func acknowledgeLegalHoldStatus() {
         needsToAcknowledgeLegalHoldStatus = false

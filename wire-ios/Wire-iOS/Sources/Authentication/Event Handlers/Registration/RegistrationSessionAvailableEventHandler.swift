@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles the notification informing that the user session has been created after the user registered.
- */
+/// Handles the notification informing that the user session has been created after the user registered.
 
 final class RegistrationSessionAvailableEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

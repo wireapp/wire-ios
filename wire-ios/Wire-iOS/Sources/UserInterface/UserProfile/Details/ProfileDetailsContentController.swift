@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-/**
- * An object that receives notifications from a profile details content controller.
- */
+/// An object that receives notifications from a profile details content controller.
 
 protocol ProfileDetailsContentControllerDelegate: AnyObject {
     /// Called when the profile details change.
@@ -32,17 +30,13 @@ protocol ProfileDetailsContentControllerDelegate: AnyObject {
     func profileGroupRoleDidChange(isAdminRole: Bool)
 }
 
-/**
- * An object that controls the content to display in the user details screen.
- */
+/// An object that controls the content to display in the user details screen.
 
 final class ProfileDetailsContentController: NSObject,
     UITableViewDataSource,
     UITableViewDelegate,
     UserObserving {
-    /**
-     * The type of content that can be displayed in the profile details.
-     */
+    /// The type of content that can be displayed in the profile details.
 
     enum Content: Equatable {
         /// Display rich profile data from SCIM.
@@ -89,13 +83,11 @@ final class ProfileDetailsContentController: NSObject,
 
     // MARK: - Initialization
 
-    /**
-     * Creates the controller to display the profile details for the specified user,
-     * in the scope of the given conversation.
-     * - parameter user: The user to display the details of.
-     * - parameter viewer: The user that will see the details. Most commonly, the self user.
-     * - parameter conversation: The conversation where the profile details will be displayed.
-     */
+    /// Creates the controller to display the profile details for the specified user,
+    /// in the scope of the given conversation.
+    /// - parameter user: The user to display the details of.
+    /// - parameter viewer: The user that will see the details. Most commonly, the self user.
+    /// - parameter conversation: The conversation where the profile details will be displayed.
 
     init(
         user: UserType,

@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * A list of supported link attachments.
- */
+/// A list of supported link attachments.
 
 @objc(ZMLinkAttachmentType)
 public enum LinkAttachmentType: Int {
@@ -31,9 +29,7 @@ public enum LinkAttachmentType: Int {
 
 // MARK: - Media Attachments
 
-/**
- * Represents a link attachment for a single media.
- */
+/// Represents a link attachment for a single media.
 
 @objc(ZMLinkAttachment)
 public final class LinkAttachment: NSObject, NSSecureCoding {
@@ -56,14 +52,12 @@ public final class LinkAttachment: NSObject, NSSecureCoding {
 
     // MARK: Initialization
 
-    /**
-     * Creates a new media thumbnail reference.
-     * - parameter type: The type of the attached media.
-     * - parameter title: The title of the video.
-     * - parameter permalink: The permalink to the media on the provider's website.
-     * - parameter thumbnails: The list of the video thumbnails.
-     * - parameter originalRange: The range of the attachment in the text.
-     */
+    /// Creates a new media thumbnail reference.
+    /// - parameter type: The type of the attached media.
+    /// - parameter title: The title of the video.
+    /// - parameter permalink: The permalink to the media on the provider's website.
+    /// - parameter thumbnails: The list of the video thumbnails.
+    /// - parameter originalRange: The range of the attachment in the text.
 
     @objc
     public init(

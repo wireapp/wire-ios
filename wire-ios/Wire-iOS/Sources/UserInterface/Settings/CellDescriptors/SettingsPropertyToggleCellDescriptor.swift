@@ -21,9 +21,7 @@ import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
-/**
- * @abstract Generates the cell that displays toggle control
- */
+/// @abstract Generates the cell that displays toggle control
 
 final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsToggleCell.self

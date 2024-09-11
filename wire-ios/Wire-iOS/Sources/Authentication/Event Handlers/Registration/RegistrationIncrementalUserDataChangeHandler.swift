@@ -20,9 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 
-/**
- * Handles the change of user data during registration.
- */
+/// Handles the change of user data during registration.
 
 final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

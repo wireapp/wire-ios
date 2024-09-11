@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The view that displays the message to inform the user that they have too many devices.
- */
+/// The view that displays the message to inform the user that they have too many devices.
 
 final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?

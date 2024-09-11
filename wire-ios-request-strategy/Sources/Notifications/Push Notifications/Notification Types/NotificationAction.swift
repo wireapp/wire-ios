@@ -28,9 +28,7 @@ struct NotificationActionTextInputMode {
     let placeholderFormat: String
 }
 
-/**
- * An object that describes a notification that can be performed by the user for a notification.
- */
+/// An object that describes a notification that can be performed by the user for a notification.
 
 protocol NotificationAction {
     /// The identifier of the action.

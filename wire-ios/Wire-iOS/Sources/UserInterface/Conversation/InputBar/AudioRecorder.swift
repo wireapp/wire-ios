@@ -448,7 +448,7 @@ final class AudioPlayerDelegate: NSObject, AVAudioPlayerDelegate {
 // MARK: Power Provider
 
 protocol PowerProvider {
-    func updateMeters() /* call to refresh meter values */
+    func updateMeters() // call to refresh meter values
     func averagePower(forChannel channelNumber: Int) -> Float
 }
 

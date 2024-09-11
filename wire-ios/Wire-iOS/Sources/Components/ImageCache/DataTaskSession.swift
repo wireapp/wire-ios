@@ -20,9 +20,7 @@ import Foundation
 
 // MARK: Protocols
 
-/**
- * A network session task that downloads data.
- */
+/// A network session task that downloads data.
 
 protocol DataTask: AnyObject {
     /// The unique identifier of the task within its session.
@@ -38,9 +36,7 @@ protocol DataTask: AnyObject {
     func resume()
 }
 
-/**
- * An object that schedules and manages data tasks.
- */
+/// An object that schedules and manages data tasks.
 
 protocol DataTaskSession: AnyObject {
     /// Creates a data request task for the given URL.

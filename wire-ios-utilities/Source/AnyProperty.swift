@@ -18,25 +18,21 @@
 
 import Foundation
 
-/**
- * A wrapper that can be used to access a property inside a type-erased box.
- *
- * You typically create this wrapper by passing the object of the type you want
- * to erase, and the key path to the property you want to access inside the box.
- *
- * When you want to access the value, call the `getter()` block.
- */
+/// A wrapper that can be used to access a property inside a type-erased box.
+/// 
+/// You typically create this wrapper by passing the object of the type you want
+/// to erase, and the key path to the property you want to access inside the box.
+/// 
+/// When you want to access the value, call the `getter()` block.
 
 public struct AnyConstantProperty<Value> {
     /// The block that returns the value from the erased object.
     public let getter: () -> Value
 
-    /**
-     * Creates the type-erased accessor for a property inside another object.
-     * - parameter base: The object that contains the property.
-     * - parameter keyPath: The key path to the value.
-     * - note: The `base` object will be retained by the box.
-     */
+    /// Creates the type-erased accessor for a property inside another object.
+    /// - parameter base: The object that contains the property.
+    /// - parameter keyPath: The key path to the value.
+    /// - note: The `base` object will be retained by the box.
 
     public init<Base>(_ base: Base, keyPath: Swift.KeyPath<Base, Value>) {
         getter = {
@@ -45,15 +41,13 @@ public struct AnyConstantProperty<Value> {
     }
 }
 
-/**
- * A wrapper that can be used to get and set a property inside a type-erased box.
- *
- * You typically create this wrapper by passing the object of the type you want
- * to erase, and the key path to the property you want to access inside the box.
- *
- * When you want to get the value, call the `getter()` block. When you want to change
- * the value in the type-erased value, call the `setter()` block with the new value.
- */
+/// A wrapper that can be used to get and set a property inside a type-erased box.
+/// 
+/// You typically create this wrapper by passing the object of the type you want
+/// to erase, and the key path to the property you want to access inside the box.
+/// 
+/// When you want to get the value, call the `getter()` block. When you want to change
+/// the value in the type-erased value, call the `setter()` block with the new value.
 
 public struct AnyMutableProperty<Value> {
     /// The block that returns the value from the erased object.
@@ -62,12 +56,10 @@ public struct AnyMutableProperty<Value> {
     /// The block that changes the value inside the erased object.
     public let setter: (Value) -> Void
 
-    /**
-     * Creates the type-erased accessor for a mutable property inside another object.
-     * - parameter base: The object that contains the property.
-     * - parameter keyPath: The key path to the value.
-     * - note: The `base` object will be retained by the box.
-     */
+    /// Creates the type-erased accessor for a mutable property inside another object.
+    /// - parameter base: The object that contains the property.
+    /// - parameter keyPath: The key path to the value.
+    /// - note: The `base` object will be retained by the box.
 
     public init<Base>(_ base: Base, keyPath: ReferenceWritableKeyPath<Base, Value>) {
         getter = {

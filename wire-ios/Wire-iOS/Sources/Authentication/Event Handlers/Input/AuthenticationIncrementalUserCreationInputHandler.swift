@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles input during the incremental user creation.
- */
+/// Handles input during the incremental user creation.
 
 final class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

@@ -19,10 +19,8 @@
 import CoreGraphics
 
 extension StyleKitIcon {
-    /**
-     * Represents the target size of an icon. You can either use standard values,
-     * or use a raw CGFloat value, without needing to add another case.
-     */
+    /// Represents the target size of an icon. You can either use standard values,
+    /// or use a raw CGFloat value, without needing to add another case.
 
     public enum Size: ExpressibleByIntegerLiteral, RawRepresentable {
         /// 8pt

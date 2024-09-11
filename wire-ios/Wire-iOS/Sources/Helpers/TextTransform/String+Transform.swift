@@ -34,9 +34,7 @@ extension String {
 }
 
 extension NSAttributedString {
-    /**
-     * Creates a new string by applying the given transform.
-     */
+    /// Creates a new string by applying the given transform.
 
     func applying(transform: TextTransform) -> NSAttributedString {
         let newString = self.string.applying(transform: transform)

@@ -19,19 +19,15 @@
 import avs
 import Foundation
 
-/**
- * General error codes for calls
- */
+/// General error codes for calls
 
 public enum CallError: Int32 {
     /// Impossible to receive a call due to incompatible protocol (e.g. older versions)
     case unknownProtocol
 
-    /**
-     * Creates the call error from the AVS flag.
-     * - parameter wcall_error: The flag
-     * - returns: The decoded error, or `nil` if the flag couldn't be processed.
-     */
+    /// Creates the call error from the AVS flag.
+    /// - parameter wcall_error: The flag
+    /// - returns: The decoded error, or `nil` if the flag couldn't be processed.
 
     init?(wcall_error: Int32) {
         switch wcall_error {

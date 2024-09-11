@@ -19,9 +19,7 @@
 import UIKit
 import WireSystem
 
-/**
- * An object that tracks performance issues in the application for debugging purposes.
- */
+/// An object that tracks performance issues in the application for debugging purposes.
 
 final class PerformanceDebugger {
     /// The shared debugger.

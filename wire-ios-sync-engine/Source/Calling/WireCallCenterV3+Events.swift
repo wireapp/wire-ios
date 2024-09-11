@@ -214,16 +214,14 @@ extension WireCallCenterV3 {
         }
     }
 
-    /**
-     * Handles ended calls
-     * If the user answers on the different device, we receive a `WCALL_REASON_ANSWERED_ELSEWHERE` followed by a
-     * `WCALL_REASON_NORMAL` once the call ends.
-     *
-     * If the user leaves an ongoing group conversation or an incoming group call times out, we receive a
-     * `WCALL_REASON_STILL_ONGOING` followed by a `WCALL_REASON_NORMAL` once the call ends.
-     *
-     * If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
-     */
+    /// Handles ended calls
+    /// If the user answers on the different device, we receive a `WCALL_REASON_ANSWERED_ELSEWHERE` followed by a
+    /// `WCALL_REASON_NORMAL` once the call ends.
+    /// 
+    /// If the user leaves an ongoing group conversation or an incoming group call times out, we receive a
+    /// `WCALL_REASON_STILL_ONGOING` followed by a `WCALL_REASON_NORMAL` once the call ends.
+    /// 
+    /// If messageTime is set to 0, the event wasn't caused by a message therefore we don't have a serverTimestamp.
 
     func handleCallEnd(
         reason: CallClosedReason,

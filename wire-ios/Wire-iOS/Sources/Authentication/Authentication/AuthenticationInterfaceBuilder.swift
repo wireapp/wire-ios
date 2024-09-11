@@ -18,27 +18,21 @@
 
 import UIKit
 
-/**
- * A type of view controller that can be managed by an authentication coordinator.
- */
+/// A type of view controller that can be managed by an authentication coordinator.
 
 typealias AuthenticationStepViewController = AuthenticationCoordinatedViewController & UIViewController
 
-/**
- * An object that builds view controllers for authentication steps.
- */
+/// An object that builds view controllers for authentication steps.
 
 final class AuthenticationInterfaceBuilder {
-    /**
-     * Returns the view controller that displays the interface of the authentication step.
-     *
-     * - note: When new steps are added to the list of steps, you need to handle them here,
-     * otherwise the method will return `nil`.
-     *
-     * - parameter step: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface of the authentication step.
+    /// 
+    /// - note: When new steps are added to the list of steps, you need to handle them here,
+    /// otherwise the method will return `nil`.
+    /// 
+    /// - parameter step: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     func makeViewController(for step: AuthenticationFlowStep) -> AuthenticationStepViewController? {
         switch step {
@@ -105,15 +99,13 @@ final class AuthenticationInterfaceBuilder {
         }
     }
 
-    /**
-     * Returns the view controller that displays the interface for the given intermediate
-     * registration step.
-     *
-     * - parameter step: The step to create an interface for.
-     * - parameter user: The unregistered user that is being created.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface for the given intermediate
+    /// registration step.
+    /// 
+    /// - parameter step: The step to create an interface for.
+    /// - parameter user: The unregistered user that is being created.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     private func makeRegistrationStepViewController(
         for step: IntermediateRegistrationStep,
@@ -129,13 +121,11 @@ final class AuthenticationInterfaceBuilder {
         }
     }
 
-    /**
-     * Returns the view controller that displays the interface for the given team creation step.
-     *
-     * - parameter step: The step to create an interface for.
-     * - returns: The view controller to use for this step, or `nil` if the interface builder
-     * does not support this step.
-     */
+    /// Returns the view controller that displays the interface for the given team creation step.
+    /// 
+    /// - parameter step: The step to create an interface for.
+    /// - returns: The view controller to use for this step, or `nil` if the interface builder
+    /// does not support this step.
 
     private func makeTeamCreationStepViewController(for state: TeamCreationState) -> AuthenticationStepViewController? {
         var stepDescription: TeamCreationStepDescription

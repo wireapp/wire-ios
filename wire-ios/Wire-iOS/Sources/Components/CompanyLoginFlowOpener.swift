@@ -26,9 +26,7 @@ protocol CompanyLoginFlowHandlerDelegate: AnyObject {
     func userDidCancelCompanyLoginFlow()
 }
 
-/**
- * Handles opening URLs to validate company login authentication.
- */
+/// Handles opening URLs to validate company login authentication.
 
 final class CompanyLoginFlowHandler {
     /// The delegate of the flow handler.

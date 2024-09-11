@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * User review for call quality.
- */
+/// User review for call quality.
 
 enum CallQualitySurveyReview {
     /// The survey was not displayed.

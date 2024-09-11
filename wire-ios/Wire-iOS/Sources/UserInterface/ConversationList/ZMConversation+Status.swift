@@ -742,21 +742,19 @@ final class UsernameMatcher: ConversationStatusMatcher {
     var combinesWith: [ConversationStatusMatcher] = []
 }
 
-/*
- Matchers priorities (highest first):
-
- (SecurityAlert)
- (SelfUserLeftMatcher)
- (Blocked)
- (Calling)
- (Typing)
- (Silenced)
- (New message / call)
- (Unsent message combines with (Group activity), (New message / call), (Silenced))
- (Group activity)
- (Started conversation)
- (Username)
- */
+// Matchers priorities (highest first):
+//
+// (SecurityAlert)
+// (SelfUserLeftMatcher)
+// (Blocked)
+// (Calling)
+// (Typing)
+// (Silenced)
+// (New message / call)
+// (Unsent message combines with (Group activity), (New message / call), (Silenced))
+// (Group activity)
+// (Started conversation)
+// (Username)
 private var allMatchers: [ConversationStatusMatcher] = {
     let silencedMatcher = SilencedMatcher()
     let newMessageMatcher = NewMessagesMatcher()

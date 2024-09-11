@@ -20,9 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-/**
- * An object that coordinates disclosing the legal hold state to the user.
- */
+/// An object that coordinates disclosing the legal hold state to the user.
 
 final class LegalHoldDisclosureController: UserObserving {
     enum DisclosureState: Equatable {

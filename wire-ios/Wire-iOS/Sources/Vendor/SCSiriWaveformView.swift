@@ -57,51 +57,33 @@ private let kDefaultPrimaryLineWidth: CGFloat = 3
 private let kDefaultSecondaryLineWidth: CGFloat = 1
 
 final class SCSiriWaveformView: UIView {
-    /*
-     * The total number of waves
-     * Default: 5
-     */
+    // The total number of waves
+    // Default: 5
     var numberOfWaves: UInt = 0
-    /*
-     * Color to use when drawing the waves
-     * Default: white
-     */
+    // Color to use when drawing the waves
+    // Default: white
     var waveColor: UIColor = .white
-    /*
-     * Line width used for the proeminent wave
-     * Default: 3f
-     */
+    // Line width used for the proeminent wave
+    // Default: 3f
     var primaryWaveLineWidth: CGFloat = 0
-    /*
-     * Line width used for all secondary waves
-     * Default: 1f
-     */
+    // Line width used for all secondary waves
+    // Default: 1f
     var secondaryWaveLineWidth: CGFloat = 0
-    /*
-     * The amplitude that is used when the incoming amplitude is near zero.
-     * Setting a value greater 0 provides a more vivid visualization.
-     * Default: 01
-     */
+    // The amplitude that is used when the incoming amplitude is near zero.
+    // Setting a value greater 0 provides a more vivid visualization.
+    // Default: 01
     var idleAmplitude: Float = 0
-    /*
-     * The frequency of the sinus wave. The higher the value, the more sinus wave peaks you will have.
-     * Default: 1.5
-     */
+    // The frequency of the sinus wave. The higher the value, the more sinus wave peaks you will have.
+    // Default: 1.5
     var frequency: Float = 0
-    /*
-     * The current amplitude
-     */
+    // The current amplitude
     private(set) var amplitude: Float = 0
-    /*
-     * The lines are joined stepwise, the more dense you draw, the more CPU power is used.
-     * Default: 5
-     */
+    // The lines are joined stepwise, the more dense you draw, the more CPU power is used.
+    // Default: 5
     var density: Float = 0
-    /*
-     * The phase shift that will be applied with each level setting
-     * Change this to modify the animation speed or direction
-     * Default: -0.15
-     */
+    // The phase shift that will be applied with each level setting
+    // Change this to modify the animation speed or direction
+    // Default: -0.15
     var phaseShift: Float = 0
 
     private var phase: Float = 0
@@ -130,9 +112,7 @@ final class SCSiriWaveformView: UIView {
         secondaryWaveLineWidth = kDefaultSecondaryLineWidth
     }
 
-    /*
-     * Tells the waveform to redraw itself using the given level (normalized value)
-     */
+    // Tells the waveform to redraw itself using the given level (normalized value)
     func update(withLevel level: Float) {
         phase += phaseShift
         amplitude = fmax(level, idleAmplitude)

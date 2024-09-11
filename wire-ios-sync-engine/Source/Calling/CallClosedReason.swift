@@ -19,9 +19,7 @@
 import avs
 import Foundation
 
-/**
- * Reasons why a call can be terminated.
- */
+/// Reasons why a call can be terminated.
 
 public enum CallClosedReason: Int32 {
     /// Ongoing call was closed by remote or self user
@@ -59,11 +57,9 @@ public enum CallClosedReason: Int32 {
 
     // MARK: - Briding
 
-    /**
-     * Creates the call closed reason from the AVS flag.
-     * - parameter wcall_reason: The flag
-     * - returns: The decoded reason, or `.unknown` if the flag couldn't be processed.
-     */
+    /// Creates the call closed reason from the AVS flag.
+    /// - parameter wcall_reason: The flag
+    /// - returns: The decoded reason, or `.unknown` if the flag couldn't be processed.
 
     init(wcall_reason: Int32) {
         switch wcall_reason {

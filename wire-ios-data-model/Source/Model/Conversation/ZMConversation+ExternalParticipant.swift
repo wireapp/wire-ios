@@ -21,9 +21,7 @@ import Foundation
 extension ZMConversation {
     static let externalParticipantsStateKey = "externalParticipantsState"
 
-    /**
-     * Represents the possible state of external participants in a conversation.
-     */
+    /// Represents the possible state of external participants in a conversation.
 
     public struct ExternalParticipantsState: OptionSet {
         /// The conversation contains guests that we should warn the self user about.

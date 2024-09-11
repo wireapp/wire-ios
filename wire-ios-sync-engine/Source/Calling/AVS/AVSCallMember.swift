@@ -19,9 +19,7 @@
 import avs
 import Foundation
 
-/**
- * An object that represents the member of an AVS call.
- */
+/// An object that represents the member of an AVS call.
 
 public struct AVSCallMember: Hashable {
     /// The client used in the call.
@@ -38,14 +36,12 @@ public struct AVSCallMember: Hashable {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the call member from its values.
-     * - parameter client: The client used in the call.
-     * - parameter audioState: The state of the audio connection. Defaults to `.connecting`.
-     * - parameter videoState: The state of video connection. Defaults to `stopped`.
-     * - parameter microphoneState: The state of microphone. Defaults to `unmuted`.
-     * - parameter networkQuality: The quality of the network connection. Defaults to `.normal`.
-     */
+    /// Creates the call member from its values.
+    /// - parameter client: The client used in the call.
+    /// - parameter audioState: The state of the audio connection. Defaults to `.connecting`.
+    /// - parameter videoState: The state of video connection. Defaults to `stopped`.
+    /// - parameter microphoneState: The state of microphone. Defaults to `unmuted`.
+    /// - parameter networkQuality: The quality of the network connection. Defaults to `.normal`.
 
     public init(
         client: AVSClient,

@@ -51,9 +51,7 @@ extension MessageToolboxContent: Comparable {
 
 // MARK: - Data Source
 
-/**
- * An object that determines what content to display for the given message.
- */
+/// An object that determines what content to display for the given message.
 
 typealias ConversationMessage = SwiftConversationMessage & ZMConversationMessage
 
@@ -86,11 +84,9 @@ final class MessageToolboxDataSource {
 
     // MARK: - Content
 
-    /**
-     * Updates the contents of the message toolbox.
-     * - parameter widthConstraint: The width available to rend the toolbox contents.
-     * - Returns: A boolean to either update the content of the message toolbox or not
-     */
+    /// Updates the contents of the message toolbox.
+    /// - parameter widthConstraint: The width available to rend the toolbox contents.
+    /// - Returns: A boolean to either update the content of the message toolbox or not
     func shouldUpdateContent(widthConstraint: CGFloat) -> Bool {
         typealias FailedToSendMessage = L10n.Localizable.Content.System.FailedtosendMessage
 

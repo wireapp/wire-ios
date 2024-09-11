@@ -20,9 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 
-/**
- * A view controller that can display the interface from an authentication step.
- */
+/// A view controller that can display the interface from an authentication step.
 
 class AuthenticationStepController: AuthenticationStepViewController {
     /// The step to display.
@@ -76,10 +74,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates the view controller to display the specified interface description.
-     * - parameter description: The description of the step interface.
-     */
+    /// Creates the view controller to display the specified interface description.
+    /// - parameter description: The description of the step interface.
 
     required init(description: AuthenticationStepDescription, contentCenterConstraintActivation: Bool = true) {
         self.stepDescription = description
@@ -120,11 +116,9 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     // MARK: - View Creation
 
-    /**
-     * Creates the main input view for the view controller. Override this method if you need a different
-     * main view than the one provided by the step description, or to customize its behavior.
-     * - returns: The main view to include in the stack.
-     */
+    /// Creates the main input view for the view controller. Override this method if you need a different
+    /// main view than the one provided by the step description, or to customize its behavior.
+    /// - returns: The main view to include in the stack.
 
     /// Override this method to provide a different main view.
     func createMainView() -> UIView {
@@ -213,10 +207,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         secondaryViewsStackView.isHidden = isHidden
     }
 
-    /**
-     * Updates the constrains for display in regular or compact layout.
-     * - parameter isRegular: Whether the current size class is regular.
-     */
+    /// Updates the constrains for display in regular or compact layout.
+    /// - parameter isRegular: Whether the current size class is regular.
 
     func updateConstraints(forRegularLayout isRegular: Bool) {
         if isRegular {

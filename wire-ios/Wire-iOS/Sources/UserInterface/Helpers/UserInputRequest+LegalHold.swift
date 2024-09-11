@@ -20,13 +20,11 @@ import UIKit
 import WireDataModel
 
 extension UserType where Self: SelfLegalHoldSubject {
-    /**
-     * Creates the password input request to respond to a legal hold activation request from the team admin.
-     * - parameter request: The legal hold request that the user received.
-     * - parameter cancellationHandler: The block to execute when the user ignores the legal hold request.
-     * - parameter inputHandler: The block to execute with the password of the user.
-     * - note: If the user dismisses the alert, we will make the legal hold request as acknowledged.
-     */
+    /// Creates the password input request to respond to a legal hold activation request from the team admin.
+    /// - parameter request: The legal hold request that the user received.
+    /// - parameter cancellationHandler: The block to execute when the user ignores the legal hold request.
+    /// - parameter inputHandler: The block to execute with the password of the user.
+    /// - note: If the user dismisses the alert, we will make the legal hold request as acknowledged.
     func makeLegalHoldInputRequest(
         with fingerprint: String,
         cancellationHandler: @escaping () -> Void,

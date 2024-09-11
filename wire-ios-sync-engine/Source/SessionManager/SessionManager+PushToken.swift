@@ -20,19 +20,18 @@ import Foundation
 import PushKit
 
 extension SessionManager {
-    /* Which pushes do we use?
-     *
-     * iOS 15 and later:
-     *    - Standard APNS pushes -> delivered to Notification Service Extension (NSE).
-     *    - Still register for voIP pushes (BUT DON'T REGISTER WITH BACKEND), so that
-     *      the NSE can wake up the main app to notify calls to CallKit (via PushKit).
-     *    - Why? VoIP pushes are restricted for calling only since iOS 13, our exemption
-     *      expires in iOS 15.
-     *
-     * iOS 14 and earlier:
-     *    - VoIP pushes (via PushKit) -> delivered to main app and used to fetch all
-     *      events, regardless if calling or not.
-     */
+    // Which pushes do we use?
+    //
+    // iOS 15 and later:
+    //    - Standard APNS pushes -> delivered to Notification Service Extension (NSE).
+    //    - Still register for voIP pushes (BUT DON'T REGISTER WITH BACKEND), so that
+    //      the NSE can wake up the main app to notify calls to CallKit (via PushKit).
+    //    - Why? VoIP pushes are restricted for calling only since iOS 13, our exemption
+    //      expires in iOS 15.
+    //
+    // iOS 14 and earlier:
+    //    - VoIP pushes (via PushKit) -> delivered to main app and used to fetch all
+    //      events, regardless if calling or not.
 
     // MARK: - Token registration
 

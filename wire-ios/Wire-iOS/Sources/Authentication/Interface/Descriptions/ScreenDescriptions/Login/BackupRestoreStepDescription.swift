@@ -19,9 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-/**
- * The view that displays the restore from backup button.
- */
+/// The view that displays the restore from backup button.
 
 final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
     let views: [ViewDescriptor]
@@ -42,9 +40,7 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
     }
 }
 
-/**
- * The step that displays information about the history.
- */
+/// The step that displays information about the history.
 
 final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?

@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Handles client registration errors related to the lack of a username
- */
+/// Handles client registration errors related to the lack of a username
 
 final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

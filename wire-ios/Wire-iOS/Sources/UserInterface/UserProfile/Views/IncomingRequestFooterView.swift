@@ -27,9 +27,7 @@ protocol IncomingRequestFooterViewDelegate: AnyObject {
     )
 }
 
-/**
- * A view that lets the user accept a connection request.
- */
+/// A view that lets the user accept a connection request.
 
 class IncomingRequestFooterView: UIView {
     let titleLabel = UILabel()

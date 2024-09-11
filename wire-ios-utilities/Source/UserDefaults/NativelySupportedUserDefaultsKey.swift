@@ -21,10 +21,10 @@
 /// designated one and casts values on reading.
 public protocol NativelySupportedUserDefaultsKey {
     associatedtype ValueType // a constraint could be added to only allow supported types
-    /*
-     From the documentation:
-     A default object must be a property list—that is, an instance of (or for collections, a combination of instances of) NSData, NSString, NSNumber, NSDate, NSArray, or NSDictionary. If you want to store any other type of object, you should typically archive it to create an instance of NSData.
-     */
+    // From the documentation:
+    // A default object must be a property list—that is, an instance of (or for collections, a combination of instances
+    // of) NSData, NSString, NSNumber, NSDate, NSArray, or NSDictionary. If you want to store any other type of object,
+    // you should typically archive it to create an instance of NSData.
     var rawValue: String { get set }
 }
 

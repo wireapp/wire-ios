@@ -26,13 +26,11 @@ extension SearchResult {
     /// Creates a new search result with the same results and additional
     /// results obtained by searching through the address book with the same query
     public func extendWithContactsFromAddressBook(_ query: String, contextProvider: ContextProvider) -> SearchResult {
-        /*
-         When I have a search result obtained (either with a local search or from the BE) by matching on Wire
-         users display names or handle, I also want to check if I have any address book contact in my local
-         address book that match the query. However, matching local contacts might overlap in a number of ways
-         with the users that I already found from the Wire search. The following code makes sure that such overlaps
-         are not displayed twice (once for the Wire user, once for the address book contact).
-         */
+        // When I have a search result obtained (either with a local search or from the BE) by matching on Wire
+        // users display names or handle, I also want to check if I have any address book contact in my local
+        // address book that match the query. However, matching local contacts might overlap in a number of ways
+        // with the users that I already found from the Wire search. The following code makes sure that such overlaps
+        // are not displayed twice (once for the Wire user, once for the address book contact).
         let addressBook = AddressBookSearch(addressBook: debug_searchResultAddressBookOverride)
 
         // I don't need to find the address book contacts of users that I already found

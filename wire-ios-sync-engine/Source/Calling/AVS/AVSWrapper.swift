@@ -21,10 +21,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
-/**
- * The type of objects that can provide an interface to calling APIs.
- * This provides strong typing, dependency injection and better testing.
- */
+/// The type of objects that can provide an interface to calling APIs.
+/// This provides strong typing, dependency injection and better testing.
 
 public protocol AVSWrapperType {
     init(userId: AVSIdentifier, clientId: String, observer: UnsafeMutableRawPointer?)

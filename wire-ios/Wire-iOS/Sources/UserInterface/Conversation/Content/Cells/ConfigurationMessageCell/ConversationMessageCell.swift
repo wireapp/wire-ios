@@ -40,9 +40,7 @@ protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
     func conversationMessageShouldUpdate()
 }
 
-/**
- * A generic view that displays conversation contents.
- */
+/// A generic view that displays conversation contents.
 
 protocol ConversationMessageCell: AnyObject {
     /// The object that contains the configuration of the view.
@@ -66,11 +64,9 @@ protocol ConversationMessageCell: AnyObject {
     /// The delegate for the cell.
     var delegate: ConversationMessageCellDelegate? { get set }
 
-    /**
-     * Configures the cell with the specified configuration object.
-     * - parameter object: The view model for the cell.
-     * - parameter animated: True if the view should animate the changes
-     */
+    /// Configures the cell with the specified configuration object.
+    /// - parameter object: The view model for the cell.
+    /// - parameter animated: True if the view should animate the changes
 
     func configure(with object: Configuration, animated: Bool)
 
@@ -107,13 +103,11 @@ extension ConversationMessageCell {
     func prepareForReuse() {}
 }
 
-/**
- * An object that prepares the contents of a conversation cell before
- * it is displayed.
- *
- * The role of this object is to provide a `configuration` view model for
- * the view type it declares as the contents of the cell.
- */
+/// An object that prepares the contents of a conversation cell before
+/// it is displayed.
+/// 
+/// The role of this object is to provide a `configuration` view model for
+/// the view type it declares as the contents of the cell.
 
 protocol ConversationMessageCellDescription: AnyObject {
     /// The view that will be displayed for the cell.
@@ -239,9 +233,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
     }
 }
 
-/**
- * A type erased box containing a conversation message cell description.
- */
+/// A type erased box containing a conversation message cell description.
 
 final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell

@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * A label that can automatically transform the text it presents.
- */
+/// A label that can automatically transform the text it presents.
 
 final class TransformLabel: UILabel {
     override var accessibilityValue: String? {

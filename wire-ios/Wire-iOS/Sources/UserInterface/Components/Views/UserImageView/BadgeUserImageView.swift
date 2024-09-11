@@ -127,11 +127,9 @@ final class BadgeUserImageView: UserImageView {
 
     // MARK: - Interface
 
-    /**
-     * Updates the icon view with the specified icon, with an optional animation.
-     * - parameter icon: The icon to show on the badge.
-     * - parameter animated: Whether to animate the change.
-     */
+    /// Updates the icon view with the specified icon, with an optional animation.
+    /// - parameter icon: The icon to show on the badge.
+    /// - parameter animated: Whether to animate the change.
 
     private func updateIconView(with icon: StyleKitIcon?, animated: Bool) {
         badgeImageView.image = nil

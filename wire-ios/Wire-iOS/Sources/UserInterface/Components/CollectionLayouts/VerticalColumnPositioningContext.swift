@@ -18,9 +18,7 @@
 
 import UIKit
 
-/**
- * The context for computing the position of items.
- */
+/// The context for computing the position of items.
 
 struct VerticalColumnPositioningContext {
     /// The width of the collection view container, minus insets.

@@ -22,9 +22,7 @@ protocol VerticalColumnCollectionViewLayoutDelegate: AnyObject {
     func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize
 }
 
-/**
- * A collection view layout that displays its contents within multiple columns.
- */
+/// A collection view layout that displays its contents within multiple columns.
 
 class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     // MARK: - Configuration

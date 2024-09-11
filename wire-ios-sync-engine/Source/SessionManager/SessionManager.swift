@@ -860,13 +860,11 @@ public final class SessionManager: NSObject, SessionManagerType {
         })
     }
 
-    /**
-     Loads a session for a given account
-
-     - Parameters:
-     - account: account for which to load the session
-     - completion: called when session is loaded or when session fails to load
-     */
+    /// Loads a session for a given account
+    ///
+    /// - Parameters:
+    /// - account: account for which to load the session
+    /// - completion: called when session is loaded or when session fails to load
     func loadSession(for account: Account, completion: @escaping (ZMUserSession?) -> Void) {
         guard environment.isAuthenticated(account) else {
             completion(nil)

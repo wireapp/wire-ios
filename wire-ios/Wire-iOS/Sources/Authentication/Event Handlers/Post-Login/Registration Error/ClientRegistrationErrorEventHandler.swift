@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * A fallback error handler for registration errors.
- */
+/// A fallback error handler for registration errors.
 
 final class ClientRegistrationErrorEventHandler: AuthenticationEventHandler {
     weak var statusProvider: AuthenticationStatusProvider?

@@ -18,11 +18,10 @@
 
 import UIKit
 
-/**
- * @abstract The purpose of this subclass of UITextField is to give the possibility to edit the right-aligned text field
- * with spaces. Default implementation collapses the trailing spaces as you type, which looks confusing. This control
- * can be used "as-is" without any additional configuration.
- */
+/// @abstract The purpose of this subclass of UITextField is to give the possibility to edit the right-aligned text
+/// field
+/// with spaces. Default implementation collapses the trailing spaces as you type, which looks confusing. This control
+/// can be used "as-is" without any additional configuration.
 class TailEditingTextField: UITextField {
     override init(frame: CGRect) {
         super.init(frame: frame)

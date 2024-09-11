@@ -83,7 +83,9 @@
     wrapAttributes, \
     wrapLoopBodies, \
     wrapSingleLineComments, \
-    yodaConditions
+    yodaConditions, \
+    # OPTIONAL
+    blockComments
 
 # Options
 

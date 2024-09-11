@@ -19,10 +19,8 @@
 import Foundation
 import UserNotifications
 
-/**
- * An abstraction of the `UNUserNotificationCenter` object to facilitate
- * mocking for unit tests.
- */
+/// An abstraction of the `UNUserNotificationCenter` object to facilitate
+/// mocking for unit tests.
 
 public protocol UserNotificationCenter: AnyObject {
     /// The object that processes incoming notifications and actions.

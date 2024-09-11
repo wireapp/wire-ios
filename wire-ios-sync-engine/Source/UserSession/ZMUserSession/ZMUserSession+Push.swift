@@ -24,35 +24,33 @@ import WireTransport
 struct PushTokenMetadata {
     let isSandbox: Bool
 
-    /*!
-     @brief There are 4 different application identifiers which map to each of the bundle id's used
-     @discussion
-     com.wearezeta.zclient.ios-development (dev) - <b>com.wire.dev.ent</b>
-
-     com.wearezeta.zclient.ios-internal (internal) - <b>com.wire.int.ent</b>
-
-     com.wearezeta.zclient-alpha - <b>com.wire.ent</b>
-
-     com.wearezeta.zclient.ios (app store) - <b>com.wire</b>
-
-     @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
-     */
+    /// !
+    // @brief There are 4 different application identifiers which map to each of the bundle id's used
+    // @discussion
+    // com.wearezeta.zclient.ios-development (dev) - <b>com.wire.dev.ent</b>
+    //
+    // com.wearezeta.zclient.ios-internal (internal) - <b>com.wire.int.ent</b>
+    //
+    // com.wearezeta.zclient-alpha - <b>com.wire.ent</b>
+    //
+    // com.wearezeta.zclient.ios (app store) - <b>com.wire</b>
+    //
+    // @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
     let appIdentifier: String
 
-    /*!
-     @brief There are 4 transport types which depend on the token type and the environment
-     @discussion <b>APNS</b> -> ZMAPNSTypeNormal (deprecated)
-
-     <b>APNS_VOIP</b> -> ZMAPNSTypeVoIP
-
-     <b>APNS_SANDBOX</b> -> ZMAPNSTypeNormal + Sandbox environment (deprecated)
-
-     <b>APNS_VOIP_SANDBOX</b> -> ZMAPNSTypeVoIP + Sandbox environment
-
-     The non-VoIP types are deprecated at the moment.
-
-     @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
-     */
+    /// !
+    // @brief There are 4 transport types which depend on the token type and the environment
+    // @discussion <b>APNS</b> -> ZMAPNSTypeNormal (deprecated)
+    //
+    // <b>APNS_VOIP</b> -> ZMAPNSTypeVoIP
+    //
+    // <b>APNS_SANDBOX</b> -> ZMAPNSTypeNormal + Sandbox environment (deprecated)
+    //
+    // <b>APNS_VOIP_SANDBOX</b> -> ZMAPNSTypeVoIP + Sandbox environment
+    //
+    // The non-VoIP types are deprecated at the moment.
+    //
+    // @sa https://github.com/zinfra/backend-wiki/wiki/Native-Push-Notifications
 
     var tokenType: PushToken.TokenType
 
@@ -127,12 +125,10 @@ extension ZMUserSession {
 
 // MARK: - UNUserNotificationCenterDelegate
 
-/*
- * Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
- * it should not actually be assigned as the delegate of UNUserNotificationCenter.
- * Instead, the delegate should be the SessionManager, whose repsonsibility it is
- * to forward the method calls to the appropriate user session.
- */
+// Note: Although ZMUserSession conforms to UNUserNotificationCenterDelegate,
+// it should not actually be assigned as the delegate of UNUserNotificationCenter.
+// Instead, the delegate should be the SessionManager, whose repsonsibility it is
+// to forward the method calls to the appropriate user session.
 extension ZMUserSession: UNUserNotificationCenterDelegate {
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
@@ -173,10 +169,9 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
 
     // MARK: Abstractions
 
-    /* The logic for handling notifications/actions is factored out of the
-     * delegate methods because we cannot create `UNNotification` and
-     * `UNNotificationResponse` objects in unit tests.
-     */
+    // The logic for handling notifications/actions is factored out of the
+    // delegate methods because we cannot create `UNNotification` and
+    // `UNNotificationResponse` objects in unit tests.
 
     func handleInAppNotification(
         with userInfo: NotificationUserInfo,

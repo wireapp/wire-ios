@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * The types of image provided by the Giphy API.
- */
+/// The types of image provided by the Giphy API.
 
 public enum ZiphyImageType: String, CodingKey {
     case fixedHeight = "fixed_height"
