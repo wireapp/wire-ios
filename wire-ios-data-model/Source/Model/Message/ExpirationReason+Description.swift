@@ -16,6 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+extension ExpirationReason: CustomStringConvertible {
 
-extension String: Error {}
+    public var description: String {
+        switch self {
+        case .other:
+            "other"
+        case .federationRemoteError:
+            "federationRemoteError"
+        case .cancelled:
+            "cancelled"
+        case .timeout:
+            "timeout"
+        }
+    }
+
+}

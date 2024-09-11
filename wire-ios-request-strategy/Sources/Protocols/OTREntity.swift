@@ -62,7 +62,7 @@ public protocol OTREntity: AnyObject {
     func addFailedToSendRecipients(_ recipients: [ZMUser])
 
     /// Mark the message as expired
-    func expire()
+    func expire(withReason reason: ExpirationReason)
 }
 
 /// HTTP status of a request that has
