@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireTestingPackage
 @testable import WireAPI
 import WireAPISupport
 @testable import WireDataModel

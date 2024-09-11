@@ -17,25 +17,32 @@
 //
 
 import Foundation
-import WireTestingPackage
+import WireDataModel
 
-struct MockJSONPayloadResource {
+// sourcery: AutoMockable
+public protocol SelfUserProviderProtocol {
 
-    let jsonData: Data
+    func fetchSelfUser() -> ZMUser
 
-    init(name: String) throws {
-        guard let url = Bundle.module.url(
-            forResource: name,
-            withExtension: "json"
-        ) else {
-            throw "resource \(name).json not found"
-        }
+}
 
-        do {
-            jsonData = try Data(contentsOf: url)
-        } catch {
-            throw "unable to load data from resource: \(error)"
-        }
+@available(*, deprecated, message: "Use UserRepository instead")
+public final class SelfUserProvider: SelfUserProviderProtocol {
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: - Methods
+
+    public func fetchSelfUser() -> ZMUser {
+        ZMUser.selfUser(in: context)
     }
 
 }

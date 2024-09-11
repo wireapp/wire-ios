@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */ = {isa = PBXBuildFile; fileRef = 01D0DCE92C1C8EA10076CB1C /* WireDomain.docc */; };
 		017F67942C207AA000B6E02D /* WireDomainSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017F67822C207A3200B6E02D /* WireDomainSupport.framework */; };
-		017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */; };
 		017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F67982C20801800B6E02D /* TeamRepositoryTests.swift */; };
 		017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F67A02C20802300B6E02D /* TeamRepositoryError.swift */; };
 		017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 017F679D2C20802300B6E02D /* ConnectionsRepositiory.swift */; };
@@ -36,14 +35,18 @@
 		C93961912C91B05800EA971A /* FeatureConfigModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93961902C91B05800EA971A /* FeatureConfigModelMappings.swift */; };
 		C93961922C91B12800EA971A /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117D2C2C4080004BBD29 /* TestError.swift */; };
 		C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */; };
-		C9534FD62C91899100C99CEE /* UserModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9534FD52C91899100C99CEE /* UserModelMappings.swift */; };
-		C9E8A3AA2C7324D10093DD5C /* ConversationLabelsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3A92C7324D10093DD5C /* ConversationLabelsRepositoryError.swift */; };
+		C9E0C9B12C91B25100CE6607 /* UserModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162356562C2B22A300C6666C /* UserModelMappings.swift */; };
+		C9E0C9B22C91B2F900CE6607 /* ConversationLocalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3D22C7CC2370093DD5C /* ConversationLocalStore.swift */; };
+		C9E0C9B32C91B2F900CE6607 /* ConversationLocalStore+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */; };
+		C9E0C9B42C91B2F900CE6607 /* ConversationLocalStore+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */; };
+		C9E0C9B52C91B2F900CE6607 /* ConversationLocalStore+Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3DF2C7F5BB90093DD5C /* ConversationLocalStore+Group.swift */; };
+		C9E0C9B62C91B2F900CE6607 /* ConversationLocalStore+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3DD2C7F5B5D0093DD5C /* ConversationLocalStore+Status.swift */; };
+		C9E0C9B72C91B31200CE6607 /* ConversationModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3D02C7C7D320093DD5C /* ConversationModelMappings.swift */; };
+		C9E0C9B82C91B32400CE6607 /* ConversationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3CA2C7C78AE0093DD5C /* ConversationRepository.swift */; };
+		C9E0C9B92C91B32400CE6607 /* ConversationRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3CC2C7C78B80093DD5C /* ConversationRepositoryError.swift */; };
+		C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */ = {isa = PBXBuildFile; productRef = C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */; };
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
-		C9E8A3B52C738F0A0093DD5C /* ConversationLabelsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B42C738F0A0093DD5C /* ConversationLabelsRepository.swift */; };
 		C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */; };
-		C9E8A3B92C74C7540093DD5C /* FeatureConfigRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B82C74C7540093DD5C /* FeatureConfigRepository.swift */; };
-		C9E8A3BB2C75D1090093DD5C /* FeatureConfigModelMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BA2C75D1090093DD5C /* FeatureConfigModelMappings.swift */; };
-		C9E8A3BE2C761E1A0093DD5C /* FeatureConfigRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BD2C761E1A0093DD5C /* FeatureConfigRepositoryError.swift */; };
 		C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
@@ -118,7 +121,6 @@
 
 /* Begin PBXFileReference section */
 		017F67822C207A3200B6E02D /* WireDomainSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireDomainSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryTests.swift; sourceTree = "<group>"; };
 		017F67982C20801800B6E02D /* TeamRepositoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamRepositoryTests.swift; sourceTree = "<group>"; };
 		017F679D2C20802300B6E02D /* ConnectionsRepositiory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositiory.swift; sourceTree = "<group>"; };
 		017F679E2C20802300B6E02D /* ConnectionsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsRepositoryError.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				59909A6D2C5BC08B009C41DE /* WireAPISupport in Frameworks */,
 				017F67942C207AA000B6E02D /* WireDomainSupport.framework in Frameworks */,
 				591B6E472C8B09BD009F8A7B /* WireDataModelSupport.framework in Frameworks */,
+				C9E0C9BB2C91B76F00CE6607 /* WireTestingPackage in Frameworks */,
 				01D0DCB12C1C8C880076CB1C /* WireDomain.framework in Frameworks */,
 				CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */,
 			);
@@ -256,7 +259,6 @@
 		017F67992C20801800B6E02D /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
-				017F67972C20801800B6E02D /* ConnectionsRepositoryTests.swift */,
 				C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */,
 				C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */,
 				017F67982C20801800B6E02D /* TeamRepositoryTests.swift */,
@@ -689,6 +691,7 @@
 			name = WireDomainTests;
 			packageProductDependencies = (
 				59909A6C2C5BC08B009C41DE /* WireAPISupport */,
+				C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */,
 			);
 			productName = WireDomainTests;
 			productReference = 01D0DCB02C1C8C880076CB1C /* WireDomainTests.xctest */;
@@ -796,6 +799,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9E0C9B82C91B32400CE6607 /* ConversationRepository.swift in Sources */,
+				C9E0C9B92C91B32400CE6607 /* ConversationRepositoryError.swift in Sources */,
+				C9E0C9B72C91B31200CE6607 /* ConversationModelMappings.swift in Sources */,
+				C9E0C9B22C91B2F900CE6607 /* ConversationLocalStore.swift in Sources */,
+				C9E0C9B32C91B2F900CE6607 /* ConversationLocalStore+Metadata.swift in Sources */,
+				C9E0C9B42C91B2F900CE6607 /* ConversationLocalStore+MLS.swift in Sources */,
+				C9E0C9B52C91B2F900CE6607 /* ConversationLocalStore+Group.swift in Sources */,
+				C9E0C9B62C91B2F900CE6607 /* ConversationLocalStore+Status.swift in Sources */,
+				C9E0C9B12C91B25100CE6607 /* UserModelMappings.swift in Sources */,
 				C93961872C91B02800EA971A /* ConversationLabelsRepositoryError.swift in Sources */,
 				EEAD0A042C46775700CC8658 /* ConversationMLSWelcomeEventProcessor.swift in Sources */,
 				C93961912C91B05800EA971A /* FeatureConfigModelMappings.swift in Sources */,
@@ -804,9 +816,7 @@
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
 				EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */,
 				EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */,
-				C9E8A3AA2C7324D10093DD5C /* ConversationLabelsRepositoryError.swift in Sources */,
 				C939618B2C91B03300EA971A /* FeatureConfigRepository.swift in Sources */,
-				C9534FD62C91899100C99CEE /* UserModelMappings.swift in Sources */,
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
 				EEAD0A2C2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
@@ -829,12 +839,10 @@
 				EEAD0A0E2C46777800CC8658 /* ConversationTypingEventProcessor.swift in Sources */,
 				EEAD0A1E2C46AAF300CC8658 /* UserContactJoinEventProcessor.swift in Sources */,
 				EEAD0A202C46AB8700CC8658 /* UserDeleteEventProcessor.swift in Sources */,
-				C9E8A3B92C74C7540093DD5C /* FeatureConfigRepository.swift in Sources */,
 				EEAD0A152C46A3AB00CC8658 /* TeamDeleteEventProcessor.swift in Sources */,
 				EEAD0A312C46B98D00CC8658 /* FederationConnectionRemovedEventProcessor.swift in Sources */,
 				EEAD09F62C46772000CC8658 /* ConversationCreateEventProcessor.swift in Sources */,
 				EEAD0A1C2C46A99D00CC8658 /* UserConnectionEventProcessor.swift in Sources */,
-				C9E8A3BE2C761E1A0093DD5C /* FeatureConfigRepositoryError.swift in Sources */,
 				017F67AD2C20802C00B6E02D /* ConnectionsRepositoryError.swift in Sources */,
 				EEAD09F82C46772C00CC8658 /* ConversationDeleteEventProcessor.swift in Sources */,
 				EEAD0A112C46A33E00CC8658 /* TeamMemberUpdateEventProcessor.swift in Sources */,
@@ -848,14 +856,12 @@
 				EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */,
 				EECC35A82C2EB70400679448 /* SyncState.swift in Sources */,
 				C93961862C91B02800EA971A /* ConversationLabelsRepository.swift in Sources */,
-				C9E8A3B52C738F0A0093DD5C /* ConversationLabelsRepository.swift in Sources */,
 				EE368CD12C2DAA87009DBAB0 /* TeamEventProcessor.swift in Sources */,
 				EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */,
 				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
 				EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */,
 				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
-				C9E8A3BB2C75D1090093DD5C /* FeatureConfigModelMappings.swift in Sources */,
 				C939618F2C91B03F00EA971A /* SelfUserProvider.swift in Sources */,
 				EEAD0A0C2C46777200CC8658 /* ConversationRenameEventProcessor.swift in Sources */,
 				EE368CD22C2DAA87009DBAB0 /* UpdateEventProcessor.swift in Sources */,
@@ -872,7 +878,6 @@
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
-				017F679B2C20801800B6E02D /* ConnectionsRepositoryTests.swift in Sources */,
 				C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */,
 				CB7979162C738547006FBA58 /* TestSetup.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
@@ -1286,6 +1291,10 @@
 		59909A6C2C5BC08B009C41DE /* WireAPISupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPISupport;
+		};
+		C9E0C9BA2C91B76F00CE6607 /* WireTestingPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireTestingPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

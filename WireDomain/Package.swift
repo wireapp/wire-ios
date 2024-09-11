@@ -17,7 +17,11 @@ let package = Package(
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
-        .target(name: "WireDomainPkg", dependencies: ["WireAPI"], path: "./Sources/Package"),
+        .target(
+            name: "WireDomainPkg",
+            dependencies: ["WireAPI"],
+            path: "./Sources/Package"
+        ),
         .target(
             name: "WireDomainPkgSupport",
             dependencies: ["WireDomainPkg"],
