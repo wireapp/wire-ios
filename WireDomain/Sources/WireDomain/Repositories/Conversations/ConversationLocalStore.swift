@@ -25,16 +25,16 @@ import WireDataModel
 /// The store uses the injected context to perform `CoreData` operations on conversations objects.
 ///
 /// Conversations can have different types with specific actions for each one of them.
-/// 
+///
 /// Check out some of the private methods in `ConversationLocalStore` for a general context.
-/// 
+///
 /// Check out the Confluence page for full details [here](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/20514628/Conversations)
 public protocol ConversationLocalStoreProtocol {
 
     /// Stores a given conversation locally.
     /// - Parameter conversation: The conversation to store locally.
     /// - Parameter isFederationEnabled: A flag indicating whether a `Federation` is enabled.
-    
+
     func storeConversation(
         _ conversation: WireAPI.Conversation,
         isFederationEnabled: Bool
@@ -58,7 +58,7 @@ public protocol ConversationLocalStoreProtocol {
 }
 
 public final class ConversationLocalStore: ConversationLocalStoreProtocol {
-    
+
     enum Error: Swift.Error {
         case noBackendConversationID
     }
@@ -90,22 +90,22 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         guard let conversationType = conversation.type else {
             return
         }
-        
+
         Flow.createGroup.checkpoint(
             description: "create ZMConversation of type \(conversationType))"
         )
-        
+
         guard let id = conversation.id ?? conversation.qualifiedID?.uuid else {
             if conversationType == .group {
                 Flow.createGroup.fail(
                     Error.noBackendConversationID
                 )
             }
-            
+
             eventProcessingLogger.error(
                 "Missing conversationID in \(conversationType) conversation payload, aborting..."
             )
-            
+
             return
         }
 
@@ -141,7 +141,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 remoteConversationID: id,
                 isFederationEnabled: isFederationEnabled
             )
-            
         }
     }
 
@@ -179,7 +178,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     /// Updates or creates a conversation of type `connection` locally.
     ///
     /// See <doc:conversations> and <doc:federation> for more information.
-    /// 
+    ///
     /// - Parameter remoteConversation: The conversation object received from backend.
     /// - Parameter removeConversationID: The conversation ID received from backend.
     /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
@@ -213,7 +212,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     /// - Parameter remoteConversation: The conversation object received from backend.
     /// - Parameter removeConversationID: The conversation ID received from backend.
     /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
-    
+
     private func updateOrCreateSelfConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
@@ -254,7 +253,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     /// - Parameter remoteConversation: The conversation object received from backend.
     /// - Parameter removeConversationID: The conversation ID received from backend.
     /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
-    
+
     private func updateOrCreateGroupConversation(
         remoteConversation: WireAPI.Conversation,
         remoteConversationID: UUID,
@@ -280,7 +279,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             isInitialFetch ?
                 assignMessageProtocol(from: remoteConversation, for: $0) :
                 updateMessageProtocol(from: remoteConversation, for: $0)
-            
+
             Flow.createGroup.checkpoint(
                 description: "conversation created remote id: \($0.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
             )
@@ -300,7 +299,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
                 /// Slow synced conversations should be considered read from the start
                 conversation.lastReadServerTimeStamp = conversation.lastModifiedDate
-                
+
                 Flow.createGroup.checkpoint(
                     description: "new system message for conversation inserted"
                 )
@@ -364,7 +363,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     /// - Parameter remoteConversation: The conversation object received from backend.
     /// - Parameter localConversation: The local conversation to update.
     /// - Parameter isFederationEnabled: A flag indicating whether a federation is enabled.
-    
+
     private func commonUpdate(
         from remoteConversation: WireAPI.Conversation,
         for localConversation: ZMConversation,

@@ -73,6 +73,7 @@ extension ConversationLocalStore {
                 updateEventLogger.warn(
                     "update message protocol from \(localConversation.messageProtocol) to \(newMessageProtocol) is not allowed, ignore event!"
                 )
+
             case .mixed:
                 break /// no update, ignore
             case .mls:
@@ -86,6 +87,7 @@ extension ConversationLocalStore {
                 updateEventLogger.warn(
                     "update message protocol from '\(localConversation.messageProtocol)' to '\(newMessageProtocol)' is not allowed, ignore event!"
                 )
+
             case .mls:
                 break
             }
@@ -111,7 +113,7 @@ extension ConversationLocalStore {
             )
             return
         }
-        
+
         mlsLogger.debug(
             "createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))"
         )

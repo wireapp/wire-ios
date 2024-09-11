@@ -46,7 +46,7 @@ class ConversationRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         conversationsLocalStore = ConversationLocalStore(
-            context: context, 
+            context: context,
             mlsService: MockMLSServiceInterface()
         )
         conversationsAPI = MockConversationsAPI()
@@ -215,7 +215,7 @@ class ConversationRepositoryTests: XCTestCase {
         // Then
         await context.perform { [self] in
             let conversations = fetchConversations(withIds: uuids)
-            
+
             for conversation in conversations {
                 XCTAssertEqual(conversation.needsToBeUpdatedFromBackend, true)
             }
