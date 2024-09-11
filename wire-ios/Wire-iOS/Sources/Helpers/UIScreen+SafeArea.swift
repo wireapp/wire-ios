@@ -25,27 +25,33 @@ extension UIScreen {
     @available(*, deprecated, message: "Use `safeAreaInsets` of UIView.")
     static var safeArea: UIEdgeInsets {
         if hasNotch {
-            return AppDelegate.shared.mainWindow.safeAreaInsets
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                return appDelegate.mainWindow?.safeAreaInsets ?? UIEdgeInsets.zero
+            }
         }
         return UIEdgeInsets(top: 20.0, left: 0.0, bottom: 0.0, right: 0.0)
     }
 
     @available(*, deprecated, message: "Will be removed")
     static var hasBottomInset: Bool {
-        guard let window = AppDelegate.shared.mainWindow else { return false }
-        let insets = window.safeAreaInsets
-
-        return insets.bottom > 0
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let window = appDelegate.mainWindow {
+            let insets = window.safeAreaInsets
+            return insets.bottom > 0
+        }
+        return false
     }
 
     @available(*, deprecated, message: "Will be removed")
     static var hasNotch: Bool {
-        // On iOS12 insets.top == 20 on device without notch.
-        // insets.top == 44 on device with notch.
-        guard let window = AppDelegate.shared.mainWindow else { return false }
-        let insets = window.safeAreaInsets
-
-        return insets.top > 20 || insets.bottom > 0
+        // On iOS12 insets.top == 20 on devices without a notch.
+        // insets.top == 44 on devices with a notch.
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let window = appDelegate.mainWindow {
+            let insets = window.safeAreaInsets
+            return insets.top > 20 || insets.bottom > 0
+        }
+        return false
     }
 
     @available(*, deprecated, message: "Will be removed")
