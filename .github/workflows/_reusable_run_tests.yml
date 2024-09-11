@@ -5,6 +5,10 @@ on:
         type: boolean
         default: false
         required: false
+      wire-user-profile:
+        type: boolean
+        default: false
+        required: false
       wire-reusable-ui-components:
         type: boolean
         default: false
@@ -660,6 +664,29 @@ jobs:
         run: |
           echo "Testing WireUIFoundation..."
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUIFoundation -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui-foundation.log | bundle exec xcpretty --report junit --output build/reports/WireUIFoundation.junit
+          exit ${PIPESTATUS[0]}
+
+      # WireUserProfile
+
+      - name: Test WireUserProfile
+        if: ${{ inputs.wire-user-profile || inputs.all }}
+        run: |
+          echo "WireUserProfile has changes"
+          echo "Building WireUserProfile..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUserProfile -resultBundlePath xcodebuild-wire-user-profile.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-user-profile.log | bundle exec xcpretty
+
+      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
+        if: ${{ inputs.wire-user-profile || inputs.all }}
+        with:
+          results: xcodebuild-wire-user-profile.xcresult
+          warningAnnotations: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test WireUserProfile
+        if: ${{ inputs.wire-user-profile || inputs.all }}
+        run: |
+          echo "Testing WireUserProfile..."
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUserProfile -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-user-profile.log | bundle exec xcpretty --report junit --output build/reports/WireUserProfile.junit
           exit ${PIPESTATUS[0]}
 
       # WireReusableUIComponents

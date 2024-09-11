@@ -385,9 +385,6 @@
 		591B6E152C8B092F009F8A7B /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6C7296F0622001D7C88 /* avs.xcframework */; };
 		59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */; };
 		59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE92B908E150019B726 /* SecurityClassification.swift */; };
-		592E243A2C91BA06000B5D17 /* GetAccountImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592E24392C91BA06000B5D17 /* GetAccountImageUseCase.swift */; };
-		592E243D2C91BA1A000B5D17 /* GetAccountImageUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592E243C2C91BA1A000B5D17 /* GetAccountImageUseCaseProtocol.swift */; };
-		592E24412C91D316000B5D17 /* AccountImageSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592E24402C91D316000B5D17 /* AccountImageSource.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
 		598D04362C89C6FB00B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D04352C89C6FB00B64D71 /* WireFoundation */; };
 		598D04392C89C70500B64D71 /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 598D04382C89C70500B64D71 /* WireFoundation */; };
@@ -1121,10 +1118,6 @@
 		554FEE2022AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+LegalHold.swift"; sourceTree = "<group>"; };
 		59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassificationProviding.swift; sourceTree = "<group>"; };
 		59271BE92B908E150019B726 /* SecurityClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassification.swift; sourceTree = "<group>"; };
-		592E24392C91BA06000B5D17 /* GetAccountImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAccountImageUseCase.swift; sourceTree = "<group>"; };
-		592E243C2C91BA1A000B5D17 /* GetAccountImageUseCaseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAccountImageUseCaseProtocol.swift; sourceTree = "<group>"; };
-		592E24402C91D316000B5D17 /* AccountImageSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountImageSource.swift; sourceTree = "<group>"; };
-		592E24422C91D95C000B5D17 /* AccountImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountImage.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
 		598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2471,17 +2464,6 @@
 			path = SecurityClassification;
 			sourceTree = "<group>";
 		};
-		592E243B2C91BA12000B5D17 /* GetAccountImageUseCase */ = {
-			isa = PBXGroup;
-			children = (
-				592E24422C91D95C000B5D17 /* AccountImage.swift */,
-				592E24402C91D316000B5D17 /* AccountImageSource.swift */,
-				592E24392C91BA06000B5D17 /* GetAccountImageUseCase.swift */,
-				592E243C2C91BA1A000B5D17 /* GetAccountImageUseCaseProtocol.swift */,
-			);
-			path = GetAccountImageUseCase;
-			sourceTree = "<group>";
-		};
 		5996E8992C19CCE1007A52F0 /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
@@ -2863,7 +2845,6 @@
 		EEE46E5528C5EF3B005F48D7 /* Use cases */ = {
 			isa = PBXGroup;
 			children = (
-				592E243B2C91BA12000B5D17 /* GetAccountImageUseCase */,
 				16D74BF32B59670B00160298 /* ChangeUsernameUseCase.swift */,
 				EE8584DA2B6938390045EAD4 /* CreateTeamOneOnOneConversationUseCase.swift */,
 				EEE46E5628C5EF56005F48D7 /* FetchUserClientsUseCase.swift */,
@@ -3739,7 +3720,6 @@
 				59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */,
 				16D74BF42B59670B00160298 /* ChangeUsernameUseCase.swift in Sources */,
 				06025664248E5BC700E060E1 /* (null) in Sources */,
-				592E24412C91D316000B5D17 /* AccountImageSource.swift in Sources */,
 				EE5FEF0521E8948F00E24F7F /* ZMUserSession+DarwinNotificationCenter.swift in Sources */,
 				549815DC1A432BC700A7CE2E /* NSError+ZMUserSession.m in Sources */,
 				1662B0F723D9B29C00B8C7C5 /* UnauthenticatedSession+DomainLookup.swift in Sources */,
@@ -3760,7 +3740,6 @@
 				634976E9268A185A00824A05 /* AVSVideoStreams.swift in Sources */,
 				5EC2C593213827BF00C6CE35 /* WireCallCenterV3+Events.swift in Sources */,
 				EE1DEBBE23D5E12F0087EE1F /* TypingUsersTimeout+Key.swift in Sources */,
-				592E243A2C91BA06000B5D17 /* GetAccountImageUseCase.swift in Sources */,
 				F1C1F3EE1FCF0C85007273E3 /* ZMUserSessionErrorCode+Localized.swift in Sources */,
 				166264742166093800300F45 /* CallEventStatus.swift in Sources */,
 				63C5321F27FDB283009DFFF4 /* SyncStatus.swift in Sources */,
@@ -3895,7 +3874,6 @@
 				1645ECF82448A0A3007A82D6 /* Decodable+JSON.swift in Sources */,
 				63F1DF21294B69B20061565E /* AccessTokenMigration.swift in Sources */,
 				165D3A211E1D43870052E654 /* VoiceChannelV3.swift in Sources */,
-				592E243D2C91BA1A000B5D17 /* GetAccountImageUseCaseProtocol.swift in Sources */,
 				F19F4F3A1E5F1AE400F4D8FF /* UserProfileImageUpdateStatus.swift in Sources */,
 				5498162D1A432BC800A7CE2E /* ZMMissingUpdateEventsTranscoder.m in Sources */,
 				549816451A432BC800A7CE2E /* ZMOperationLoop.m in Sources */,
