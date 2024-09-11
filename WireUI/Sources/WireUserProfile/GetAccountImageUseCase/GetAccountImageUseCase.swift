@@ -22,8 +22,8 @@ import WireFoundation
 public struct GetAccountImageUseCase<User, Account, InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
 where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol, InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
 
-    var user: User
-    var account: Account
+    var user: User // TODO: move into invoke
+    var account: Account // TODO: move into invoke
     var initalsProvider: InitalsProvider
     var accountImageGenerator: AccountImageGenerator
 

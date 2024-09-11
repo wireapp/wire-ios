@@ -22,6 +22,8 @@ import WireCommonComponents
 import WireDataModel
 import WireReusableUIComponents
 import WireSyncEngine
+import WireFoundation
+import WireUserProfile
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
@@ -102,8 +104,7 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
-        @MainActor
-        let miniatureAccountImageFactory = MiniatureAccountImageFactory()
+        let getAccountImageUseCase: GetAccountImageUseCaseProtocol
 
         @MainActor
         init(
@@ -185,7 +186,11 @@ extension ConversationListViewController.ViewModel {
     @MainActor
     private func updateAccountImage() {
         Task {
-            accountImage.image = await AccountImage(userSession, account, miniatureAccountImageFactory)
+            let useCase = GetAccountImageUseCase(
+                user: userSession.selfUser,
+                account: account
+            )
+            accountImage.image = await getAccountImageUseCase.invoke()
             accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
         }
     }
