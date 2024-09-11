@@ -111,7 +111,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         recorder.stopRecording()
-        if isAppLockActive { AppDelegate.shared.mainWindow?.endEditing(true) }
+
+        if isAppLockActive {
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mainWindow?.endEditing(true)
+            }
+        }
     }
 
     // MARK: - View Configuration
@@ -432,10 +437,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.recorder.startRecording { _ in
             self.state = .recording
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
-            AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
+
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mediaPlaybackManager?.audioTrackPlayer.stop()
+            }
         }
     }
-
     @objc func stopRecordButtonPressed(_ button: UIButton?) {
         self.recorder.stopRecording()
     }

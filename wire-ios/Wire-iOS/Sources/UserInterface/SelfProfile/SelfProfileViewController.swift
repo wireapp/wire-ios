@@ -233,7 +233,9 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
         presentingViewController?.dismiss(animated: true) {
-            AppDelegate.shared.mediaPlaybackManager?.stop() // there must be another more appropriate place for this line
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mediaPlaybackManager?.stop()
+            }
             self.accountSelector?.switchTo(account: account)
         }
     }

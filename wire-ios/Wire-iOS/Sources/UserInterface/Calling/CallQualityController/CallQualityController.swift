@@ -63,8 +63,11 @@ class CallQualityController: NSObject {
         #if DISABLE_CALL_QUALITY_SURVEY
         return false
         #else
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+            return false
+        }
         return !AutomationHelper.sharedHelper.disableCallQualitySurvey
-            && AppDelegate.shared.launchType != .unknown
+            && appDelegate.launchType != .unknown
         #endif
     }
 
