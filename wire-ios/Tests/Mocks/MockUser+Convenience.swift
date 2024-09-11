@@ -17,7 +17,7 @@
 //
 
 /// A class that facilitates writing snapshot tests with mock users.
-/// 
+///
 /// It allows you to create team and non-team users with appropriate initial
 /// parameters.
 

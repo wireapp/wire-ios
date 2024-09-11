@@ -146,7 +146,7 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        if convObserver!.notifications.count > 0 {
+        if !convObserver!.notifications.isEmpty {
             return XCTFail()
         }
         guard let messageChangeInfo = messageObserver?.notifications.firstObject  as? MessageChangeInfo else {

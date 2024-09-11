@@ -34,7 +34,7 @@ struct AdaptiveColumnCount {
 }
 
 /// An abstract collection view container that allows displaying the cells into columns.
-/// 
+///
 /// You must implement the `collectionView(_:, sizeOfItemAt:)` method in your subclasses.
 
 class VerticalColumnCollectionViewController: UICollectionViewController, VerticalColumnCollectionViewLayoutDelegate {
@@ -79,7 +79,7 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
     // MARK: - Size Changes
 
     /// Whether the current layout is in regular mode.
-    /// 
+    ///
     /// The default implementation returns `true` if the horizontal size class of the view
     /// is regular. You can override this method for testing purposes.
 
@@ -88,9 +88,9 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
     }
 
     /// Updates the layout of the view in response to a size change.
-    /// 
+    ///
     /// - parameter size: The current size of the view. Defaults to the size of the view's bounds.
-    /// 
+    ///
     /// You can override this method if you need to perform other layout updates when the
     /// size of the view changes.
 

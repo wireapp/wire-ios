@@ -183,7 +183,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Stores inserted or deleted conversations temporarily until save / merge completes
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
-        if deleted.count == 0, inserted.count == 0 { return }
+        if deleted.isEmpty, inserted.isEmpty { return }
         zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
         for item in inserted {
             zmLog.debug("Inserted: \(item.objectID) conversationType: \(item.conversationType.rawValue)")
@@ -320,7 +320,7 @@ class ConversationListSnapshot: NSObject {
     }
 
     func recalculateListAndNotify() {
-        guard let list = self.conversationList, needsToRecalculate || conversationChanges.count > 0 else {
+        guard let list = self.conversationList, needsToRecalculate || !conversationChanges.isEmpty else {
             zmLog.debug("List \(String(describing: self.conversationList?.identifier)) has no changes")
             return
         }
@@ -352,10 +352,10 @@ class ConversationListSnapshot: NSObject {
         conversationChanges: [ConversationChangeInfo],
         listChanges: ConversationListChangeInfo?
     ) {
-        guard listChanges != nil || conversationChanges.count != 0 else { return }
+        guard listChanges != nil || !conversationChanges.isEmpty else { return }
 
         var userInfo = [String: Any]()
-        if conversationChanges.count > 0 {
+        if !conversationChanges.isEmpty {
             userInfo["conversationChangeInfos"] = conversationChanges
         }
         if let changes = listChanges {

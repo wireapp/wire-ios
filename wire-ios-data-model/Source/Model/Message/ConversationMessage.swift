@@ -347,7 +347,7 @@ extension ZMMessage {
 
     @objc public var reactionData: Set<ReactionData> {
         var result = Set<ReactionData>()
-        for reaction in reactions where reaction.users.count > 0 {
+        for reaction in reactions where !reaction.users.isEmpty {
             result.insert(
                 ReactionData(
                     reactionString: reaction.unicodeValue!,

@@ -33,7 +33,7 @@ enum PreviewItem {
 extension SLComposeServiceViewController {
     /// Fetches the preview item of the main attachment in the background and provided the result to the UI
     /// for displaying it to the user.
-    /// 
+    ///
     /// - parameter completionHandler: The block of code that provided the result of the preview lookup.
     /// - parameter item: The preview item for the attachment, if it could be determined.
     /// - parameter displayMode: The special mode in which the preview should displayed, if any.
@@ -101,7 +101,7 @@ extension SLComposeServiceViewController {
 
         if let match = matches.first,
            let item = NSItemProvider(contentsOf: match),
-           attachments.filter(\.hasURL).count == 0 {
+           attachments.filter(\.hasURL).isEmpty {
             attachments.append(item)
         }
 
@@ -109,7 +109,7 @@ extension SLComposeServiceViewController {
     }
 
     /// Loads the system preview for the item, if possible.
-    /// 
+    ///
     /// This method generally works for movies, photos, wallet passes. It does not generate any preview for items shared
     /// from the iCloud drive app.
 
@@ -187,7 +187,7 @@ extension PreviewDisplayMode {
 
 extension [AttachmentType: [NSItemProvider]] {
     /// Determines the main preview item for the post.
-    /// 
+    ///
     /// We determine this using the following rules:
     /// - media = video AND/OR photo
     /// - passes OR media OR file

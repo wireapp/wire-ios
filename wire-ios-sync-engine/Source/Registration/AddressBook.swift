@@ -78,7 +78,7 @@ extension AddressBookAccessor {
             let range: Range<UInt> = startingContactIndex ..< (startingContactIndex + maxNumberOfContacts)
             let cards = self.generateContactCards(range: range)
 
-            guard cards.count > 0 || startingContactIndex > 0 else {
+            guard !cards.isEmpty || startingContactIndex > 0 else {
                 // this should happen if I have zero contacts
                 groupQueue.performGroupedBlock {
                     completion(nil)
@@ -325,7 +325,7 @@ extension ZMAddressBookContact {
         self.localIdentifier = contact.localIdentifier
 
         // ignore contacts with no email nor phones
-        guard self.emailAddresses.count > 0 || self.phoneNumbers.count > 0 else {
+        guard !self.emailAddresses.isEmpty || !self.phoneNumbers.isEmpty else {
             return nil
         }
     }

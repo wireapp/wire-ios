@@ -20,9 +20,9 @@ import XCTest
 @testable import WireDataModel
 
 /// Tests for calculating the state of external users presence in a team conversation.
-/// 
+///
 /// Expected matrix:
-/// 
+///
 /// +---------------------------------------------------------------------------------+
 /// | Conversation Type | Self User  | Other Users          | Expected State For Self |
 /// |-------------------|------------|----------------------|-------------------------|

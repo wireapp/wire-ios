@@ -30,7 +30,7 @@ public final class ZiphySearchResultsController {
     // MARK: - Initialization
 
     /// Creates a new search results controller.
-    /// 
+    ///
     /// - parameter client: The object providing access to the Giphy API.
     /// - parameter pageSize: The maximum number of objects to display on a single page.
     /// - parameter maxImageSize: The maximum size of result images, in megabytes. Defaults to 3 MB.

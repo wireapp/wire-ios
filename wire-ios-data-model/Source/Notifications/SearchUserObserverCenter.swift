@@ -87,7 +87,7 @@ public class SearchUserSnapshot {
 
     /// Post a UserChangeInfo for the specified SearchUser
     func postNotification(changedKeys: [String]) {
-        guard changedKeys.count > 0,
+        guard !changedKeys.isEmpty,
               let searchUser,
               let moc = self.managedObjectContext
         else { return }
@@ -158,7 +158,7 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
 
     /// Matches the userChangeInfo with the searchUser snapshots and updates those if needed
     func usersDidChange(info: UserChangeInfo) {
-        guard snapshots.count > 0 else { return }
+        guard !snapshots.isEmpty else { return }
 
         guard info.nameChanged || info.imageMediumDataChanged || info.imageSmallProfileDataChanged || info
             .connectionStateChanged,

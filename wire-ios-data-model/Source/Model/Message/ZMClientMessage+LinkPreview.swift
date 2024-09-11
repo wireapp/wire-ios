@@ -161,7 +161,7 @@ extension ZMClientMessage: ZMImageOwner {
     // is preprocessed
     @objc
     public func requiredImageFormats() -> NSOrderedSet {
-        if let genericMessage = self.underlyingMessage, genericMessage.linkPreviews.count > 0 {
+        if let genericMessage = self.underlyingMessage, !genericMessage.linkPreviews.isEmpty {
             return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
         }
         return NSOrderedSet()

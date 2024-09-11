@@ -53,7 +53,7 @@ public struct SearchUserAssetKeys {
     public let complete: String?
 
     init?(payload: [String: Any]) {
-        if let assetsPayload = payload[ResponseKey.assets.rawValue] as? [[String: Any]], assetsPayload.count > 0 {
+        if let assetsPayload = payload[ResponseKey.assets.rawValue] as? [[String: Any]], !assetsPayload.isEmpty {
             var previewKey: String?, completeKey: String?
 
             for asset in assetsPayload {

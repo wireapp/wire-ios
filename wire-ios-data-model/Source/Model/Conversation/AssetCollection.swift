@@ -110,7 +110,7 @@ public class AssetCollection: NSObject, ZMCollection {
                 for: syncConversation,
                 matchPairs: self.matchingCategories
             )
-            if categorizedMessages.count > 0 {
+            if !categorizedMessages.isEmpty {
                 let categorized = AssetCollectionBatched.messageMap(
                     messages: categorizedMessages,
                     matchingCategories: self.matchingCategories
@@ -194,7 +194,7 @@ public class AssetCollection: NSObject, ZMCollection {
         if didReachLastMessage {
             self.setFetchingCompleteFor(type: type)
         }
-        if messagesToAnalyze.count == 0 {
+        if messagesToAnalyze.isEmpty {
             if self.fetchingDone {
                 self.notifyDelegateFetchingIsDone(result: (self.assets == nil) ? .noAssetsToFetch : .success)
             }
@@ -238,7 +238,7 @@ public class AssetCollection: NSObject, ZMCollection {
         type: MessagesToFetch?,
         didReachLastMessage: Bool
     ) {
-        if newAssets.count == 0 {
+        if newAssets.isEmpty {
             return
         }
 

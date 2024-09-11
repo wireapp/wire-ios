@@ -151,7 +151,7 @@ extension NotificationUserInfo {
 
 extension NotificationUserInfo {
     /// Fetches the conversion that matches the description stored in this user info fields.
-    /// 
+    ///
     /// - parameter managedObjectContext: The context that should be used to perform the lookup.
     /// - returns: The conversation, if found.
 
@@ -164,7 +164,7 @@ extension NotificationUserInfo {
     }
 
     /// Fetches the message that matches the description stored in this user info fields.
-    /// 
+    ///
     /// - parameter conversation: The conversation where the message should be searched.
     /// - parameter managedObjectContext: The context that should be used to perform the lookup.
     /// - returns: The message, if found.
@@ -178,7 +178,7 @@ extension NotificationUserInfo {
     }
 
     /// Fetches the sender that matches the description stored in this user info fields.
-    /// 
+    ///
     /// - parameter managedObjectContext: The context that should be used to perform the lookup.
     /// - returns: The sender of the event, if found.
 

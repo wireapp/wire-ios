@@ -103,12 +103,12 @@ extension ZMUser: SideEffectSource {
 
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {
         let changes = changedValues()
-        guard changes.count > 0 || knownKeys.count > 0 else { return [:] }
+        guard !changes.isEmpty || !knownKeys.isEmpty else { return [:] }
 
         let allKeys = knownKeys.union(changes.keys)
 
         let conversations = allConversations
-        guard conversations.count > 0 else { return  [:] }
+        guard !conversations.isEmpty else { return  [:] }
 
         let affectedObjects = conversationChanges(
             changedKeys: allKeys,
@@ -144,7 +144,7 @@ extension ZMUser: SideEffectSource {
             if conversation.allUsersTrusted {
                 keys.insert(SecurityLevelKey)
             }
-            if keys.count > 0 {
+            if !keys.isEmpty {
                 affectedObjects[conversation] = Changes(changedKeys: keys)
             }
         }
@@ -153,7 +153,7 @@ extension ZMUser: SideEffectSource {
 
     func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {
         let conversations = allConversations
-        guard conversations.count > 0 else { return  [:] }
+        guard !conversations.isEmpty else { return  [:] }
 
         let classIdentifier = ZMConversation.entityName()
         let affectedKeys = keyStore.observableKeysAffectedByValue(

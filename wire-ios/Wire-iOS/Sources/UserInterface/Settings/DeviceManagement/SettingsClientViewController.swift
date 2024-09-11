@@ -120,7 +120,7 @@ final class SettingsClientViewController: UIViewController,
         setupNavigationTitle()
         // presented modally from conversation
         if let navController = self.navigationController,
-           navController.viewControllers.count > 0,
+           !navController.viewControllers.isEmpty,
            navController.viewControllers[0] == self,
            self.navigationItem.rightBarButtonItem == nil {
             let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(

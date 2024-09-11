@@ -85,7 +85,9 @@
     wrapSingleLineComments, \
     yodaConditions, \
     # OPTIONAL
-    blockComments
+    blockComments, \
+    # docComments - Cannot enable due to our floating doc comment style
+    isEmpty # Rare false positives in situations where a type provides a `count` but not a `isEmpty` property.
 
 # Options
 

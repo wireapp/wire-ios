@@ -86,11 +86,11 @@ final class AuthenticationStateController {
     // MARK: - Transitions
 
     /// Transitions to the next step in the stack.
-    /// 
+    ///
     /// This method changes the current step, asks the delegate to generates a new
     /// interface if needed, and changes the stack, depending on the mode you provide
     /// to perform that operation.
-    /// 
+    ///
     /// - parameter step: The step to transition to.
     /// - parameter mode: How we should perform the stack transition. See the documentation
     /// of `StateChangeMode` for more information. Defaults to `StateChangeMode.normal`.
@@ -123,7 +123,7 @@ final class AuthenticationStateController {
     }
 
     /// Reverts to the previous valid state.
-    /// 
+    ///
     /// You typically call this method after user interface changes to go back to the last
     /// valid user state.
 

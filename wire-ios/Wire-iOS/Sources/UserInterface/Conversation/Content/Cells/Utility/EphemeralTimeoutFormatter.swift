@@ -60,7 +60,7 @@ final class EphemeralTimeoutFormatter {
                     range: NSRange(location: 0, length: hourString.count)
                 )
 
-                if results.count > 0 {
+                if !results.isEmpty {
                     let startIndex = hourString.index(hourString.startIndex, offsetBy: results[0].range.length)
 
                     hourStringWithoutDay = String(hourString[startIndex...])
@@ -69,7 +69,7 @@ final class EphemeralTimeoutFormatter {
                 }
             } catch {}
 
-            if hourStringWithoutDay.count > 0 {
+            if !hourStringWithoutDay.isEmpty {
                 return dayString + " ".localized + hourStringWithoutDay
             } else {
                 return dayString

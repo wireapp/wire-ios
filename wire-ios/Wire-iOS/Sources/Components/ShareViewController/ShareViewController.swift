@@ -140,7 +140,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     @objc
     func onSendButtonPressed(sender: AnyObject?) {
-        if self.selectedDestinations.count > 0 {
+        if !self.selectedDestinations.isEmpty {
             self.shareable.share(to: Array(self.selectedDestinations))
             self.onDismiss?(self, true)
         }

@@ -276,7 +276,7 @@ public final class ProteusService: ProteusServiceInterface {
         let range = await prekeysRange(count, start: start)
         let prekeys = try await generatePrekeys(range)
 
-        guard prekeys.count > 0 else {
+        guard !prekeys.isEmpty else {
             throw PrekeyError.failedToGeneratePrekey
         }
 

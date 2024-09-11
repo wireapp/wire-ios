@@ -763,7 +763,7 @@ extension UserClient {
     /// Will change conversations security level as side effect
     @objc
     public func trustClients(_ clients: Set<UserClient>) {
-        guard clients.count > 0 else { return }
+        guard !clients.isEmpty else { return }
         self.mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
         self.mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
 
@@ -784,7 +784,7 @@ extension UserClient {
     private func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
         let notSelfClients = Set(clients.filter { $0 != self })
 
-        guard notSelfClients.count > 0 else { return notSelfClients }
+        guard !notSelfClients.isEmpty else { return notSelfClients }
 
         zmLog.debug("Marking client as ignored")
 
@@ -798,7 +798,7 @@ extension UserClient {
     @objc
     public func ignoreClients(_ clients: Set<UserClient>) {
         let notSelfClients = self.addIgnoredClients(clients)
-        guard notSelfClients.count > 0 else { return }
+        guard !notSelfClients.isEmpty else { return }
         self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 

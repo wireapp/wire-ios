@@ -92,7 +92,7 @@ public final class Canvas: UIView {
 
     /// hasChanges is true if the canvas has changes which can be un done. See undo()
     public var hasChanges: Bool {
-        sceneExcludingReferenceObject.count > 0
+        !sceneExcludingReferenceObject.isEmpty
     }
 
     private var scene: [Renderable] = []
@@ -244,7 +244,7 @@ public final class Canvas: UIView {
     private func flatten(upTo: Int) {
         let renderables = scene.prefix(upTo: upTo).suffix(from: flattenIndex)
 
-        guard renderables.count > 0 else { return }
+        guard !renderables.isEmpty else { return }
 
         selection?.selected = false
         defer {

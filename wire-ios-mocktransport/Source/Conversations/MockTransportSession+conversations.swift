@@ -499,7 +499,7 @@ extension MockTransportSession {
         }
 
         var onlyForUser = query["report_missing"] as? String
-        if otrMetaData.reportMissing.count > 0, let userId = otrMetaData.reportMissing.first {
+        if !otrMetaData.reportMissing.isEmpty, let userId = otrMetaData.reportMissing.first {
             onlyForUser = UUID(data: userId.uuid)?.transportString()
         }
 

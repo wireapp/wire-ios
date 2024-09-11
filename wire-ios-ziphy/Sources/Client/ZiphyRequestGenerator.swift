@@ -55,7 +55,7 @@ extension ZiphyRequestGenerator {
     }
 
     /// Creates the request to fetch trending images.
-    /// 
+    ///
     /// - parameter resultsLimit: The maximum number of images to fetch.
     /// - parameter offset: The number of the result page to read.
 
@@ -69,7 +69,7 @@ extension ZiphyRequestGenerator {
     }
 
     /// Creates the request to search for an image by name.
-    /// 
+    ///
     /// - parameter term: The search term.
     /// - parameter resultsLimit: The maximum number of images to fetch.
     /// - parameter offset: The number of the result page to read.

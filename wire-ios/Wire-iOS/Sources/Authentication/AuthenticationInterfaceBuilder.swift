@@ -51,10 +51,10 @@ final class AuthenticationInterfaceBuilder {
     // MARK: - Interface Building
 
     /// Returns the view controller that displays the interface of the authentication step.
-    /// 
+    ///
     /// - note: When new steps are added to the `AuthenticationFlowStep` enum, you need to
     /// add a case to handle them here, otherwise the method will return `nil`.
-    /// 
+    ///
     /// - parameter step: The step to create an interface for.
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
     /// does not support this step.
@@ -176,7 +176,7 @@ final class AuthenticationInterfaceBuilder {
 
     /// Returns the view controller that displays the interface for the given intermediate
     /// registration step.
-    /// 
+    ///
     /// - parameter step: The step to create an interface for.
     /// - parameter user: The unregistered user that is being created.
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
@@ -199,7 +199,7 @@ final class AuthenticationInterfaceBuilder {
     }
 
     /// Creates a view controller for a step view description.
-    /// 
+    ///
     /// - parameter description: The step to create an interface for.
     /// - returns: The view controller to use for this step, or `nil` if the interface builder
     /// does not support this step.

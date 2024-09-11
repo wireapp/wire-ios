@@ -155,7 +155,7 @@ extension EventDecoder {
     // This method terminates when no more events are in the database.
     private func process(with encryptionKeys: EncryptionKeys?, _ consumeBlock: ConsumeBlock, firstCall: Bool) {
         let events = fetchNextEventsBatch(with: encryptionKeys)
-        guard events.storedEvents.count > 0 else {
+        guard !events.storedEvents.isEmpty else {
             if firstCall {
                 consumeBlock([])
             }

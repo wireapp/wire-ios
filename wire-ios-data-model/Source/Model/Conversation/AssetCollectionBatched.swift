@@ -98,7 +98,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
                 matchPairs: self
                     .matchingCategories
             )
-            if categorizedMessages.count > 0 {
+            if !categorizedMessages.isEmpty {
                 let categorized = AssetCollectionBatched.messageMap(
                     messages: categorizedMessages,
                     matchingCategories: self.matchingCategories
@@ -194,7 +194,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         type: MessagesToFetch?,
         didReachLastMessage: Bool
     ) {
-        if newAssets.count == 0 {
+        if newAssets.isEmpty {
             return
         }
         uiMOC?.performGroupedBlock { [weak self] in
@@ -291,7 +291,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
 
 extension AssetCollectionBatched {
     static func messageMap(messages: [ZMMessage], matchingCategories: [CategoryMatch]) -> [CategoryMatch: [ZMMessage]] {
-        precondition(messages.count > 0, "messages should contain at least one value")
+        precondition(!messages.isEmpty, "messages should contain at least one value")
         let messagesByFilter = AssetCollectionBatched.categorize(
             messages: messages,
             matchingCategories: matchingCategories

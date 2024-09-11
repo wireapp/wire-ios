@@ -25,7 +25,7 @@ extension ConversationInputBarViewController {
     }
 
     var canInsertMention: Bool {
-        guard isInMentionsFlow, let mentionsView, mentionsView.users.count > 0 else {
+        guard isInMentionsFlow, let mentionsView, !mentionsView.users.isEmpty else {
             return false
         }
         return true

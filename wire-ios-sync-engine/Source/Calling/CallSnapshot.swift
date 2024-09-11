@@ -146,10 +146,10 @@ struct CallSnapshot {
     }
 
     /// Updates the snapshot with the new degraded user.
-    /// 
+    ///
     /// A user degrades the call if they were previously trusted by the self
     /// client and then joined the call with an unverified device.
-    /// 
+    ///
     /// - parameter degradedUser: The user who degraded the call.
 
     func updateDegradedUser(_ degradedUser: ZMUser) -> CallSnapshot {

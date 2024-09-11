@@ -45,11 +45,11 @@ extension ZMConversationMessage {
 }
 
 /// An object that provides an interface to build list sections for a single message.
-/// 
+///
 /// A message will be represented as a table/collection section, and the components that make
 /// the view of the message (timestamp, reply, content...) will be displayed as individual cells,
 /// to reduce the number of cells that are instanciated at a given time.
-/// 
+///
 /// To achieve this, each section controller is assigned a cell description, that is responsible for dequeing
 /// the cells from the table or collection view and configuring them with a message.
 

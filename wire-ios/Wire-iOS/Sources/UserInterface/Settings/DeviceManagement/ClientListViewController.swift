@@ -337,7 +337,7 @@ final class ClientListViewController: UIViewController,
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        if self.selfClient != nil, self.sortedClients.count > 0 {
+        if self.selfClient != nil, !self.sortedClients.isEmpty {
             2
         } else {
             1

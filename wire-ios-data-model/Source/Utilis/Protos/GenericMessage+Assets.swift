@@ -153,7 +153,7 @@ extension WireProtos.Asset.Original {
     /// Returns the normalized loudness as floats between 0 and 1
     public var normalizedLoudnessLevels: [Float] {
         guard audio.hasNormalizedLoudness else { return [] }
-        guard audio.normalizedLoudness.count > 0 else { return [] }
+        guard !audio.normalizedLoudness.isEmpty else { return [] }
 
         let data = audio.normalizedLoudness
         let offsets = 0 ..< data.count

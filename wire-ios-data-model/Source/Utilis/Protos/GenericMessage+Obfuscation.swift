@@ -49,7 +49,7 @@ extension GenericMessage {
             let content = someText.content
             let obfuscatedContent = content.obfuscated()
             var obfuscatedLinkPreviews: [LinkPreview] = []
-            if linkPreviews.count > 0 {
+            if !linkPreviews.isEmpty {
                 let offset = linkPreviews.first!.urlOffset
                 let offsetIndex = obfuscatedContent.index(
                     obfuscatedContent.startIndex,

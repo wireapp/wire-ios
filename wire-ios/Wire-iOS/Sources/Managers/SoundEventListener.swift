@@ -175,7 +175,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
                 key != conversationId
             }
 
-            if otherNonIdleCalls.count > 0 {
+            if !otherNonIdleCalls.isEmpty {
                 playSoundIfAllowed(.ringingFromThemInCallSound)
             } else if sessionManager.callNotificationStyle != .callKit {
                 playSoundIfAllowed(.ringingFromThemSound)

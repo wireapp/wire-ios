@@ -34,7 +34,7 @@ open class PushNotificationStatus: NSObject {
     private let managedObjectContext: NSManagedObjectContext
 
     public var hasEventsToFetch: Bool {
-        eventIdRanking.count > 0
+        !eventIdRanking.isEmpty
     }
 
     public init(managedObjectContext: NSManagedObjectContext) {

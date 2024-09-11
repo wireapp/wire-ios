@@ -19,7 +19,7 @@
 import UIKit
 
 /// An object that detects company login request wihtin the pasteboard.
-/// 
+///
 /// A session request is a string formatted as `wire-[UUID]`.
 
 public final class CompanyLoginRequestDetector: NSObject {
@@ -58,7 +58,7 @@ public final class CompanyLoginRequestDetector: NSObject {
     // MARK: - Detection
 
     /// Tries to extract the session request code from the current pasteboard.
-    /// 
+    ///
     /// The processing will be done on a background queue, and the completion
     /// handler will be called on the main thread with the result.
 

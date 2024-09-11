@@ -759,7 +759,7 @@ extension ZMConversation {
     }
 
     private var allParticipantsHaveClients: Bool {
-        self.localParticipants.first { $0.clients.count == 0 } == nil
+        self.localParticipants.first { $0.clients.isEmpty } == nil
     }
 
     private var hasMoreClientsThanSelfClient: Bool {

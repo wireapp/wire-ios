@@ -440,7 +440,7 @@ extension ZMUserTests_Swift {
             range: NSRange(location: 0, length: filename.count)
         )
 
-        XCTAssertTrue(matches.count > 0)
+        XCTAssertTrue(!matches.isEmpty)
     }
 
     func testFilenameForUser() throws {

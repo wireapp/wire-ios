@@ -38,6 +38,7 @@ open class PushNotificationStatus: NSObject {
     private var isFetching = false
 
     public var hasEventsToFetch: Bool {
+        // swiftformat:disable:next isEmpty
         eventIdRanking.count > 0 && !isFetching
     }
 

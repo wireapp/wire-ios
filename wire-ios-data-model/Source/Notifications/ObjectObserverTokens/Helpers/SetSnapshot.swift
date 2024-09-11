@@ -97,15 +97,15 @@ public struct SetSnapshot<T: Hashable> {
         observedObject: NSObject,
         newSet: OrderedSetState<T>
     ) -> SetStateUpdate<T>? {
-        if self.set == newSet, updatedObjects.count == 0 {
+        if self.set == newSet, updatedObjects.isEmpty {
             return nil
         }
 
         let changeSet = ChangedIndexes(start: self.set, end: newSet, updated: updatedObjects, moveType: self.moveType)
         let changeInfo = SetChangeInfo(observedObject: observedObject, changeSet: changeSet, orderedSetState: newSet)
 
-        if changeInfo.insertedIndexes.count == 0, changeInfo.deletedIndexes.count == 0,
-           changeInfo.updatedIndexes.count == 0, changeInfo.movedIndexPairs.count == 0 {
+        if changeInfo.insertedIndexes.isEmpty, changeInfo.deletedIndexes.isEmpty,
+           changeInfo.updatedIndexes.isEmpty, changeInfo.movedIndexPairs.isEmpty {
             return nil
         }
         return SetStateUpdate(

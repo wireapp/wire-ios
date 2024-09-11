@@ -24,7 +24,7 @@ private let zmLog = ZMSLog(tag: "calling")
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
-/// 
+///
 /// Thread safety: WireCallCenter instance methods should only be called from the main thread, class method can be
 /// called from any thread.
 public class WireCallCenterV3: NSObject {

@@ -215,7 +215,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     override func presentationAnimationDidFinish() {
-        if authenticatedAccounts.count == 0 {
+        if authenticatedAccounts.isEmpty {
             presentNotSignedInMessage()
         }
     }

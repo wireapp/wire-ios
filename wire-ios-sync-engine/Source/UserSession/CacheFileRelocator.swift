@@ -43,7 +43,7 @@ struct CacheFileRelocator {
         // FIXME: Use dictionary grouping in Swift4
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init
         let result = group(fileNames: files.filter { !whitelistedFiles.contains($0) })
-        if result.assigned.count == 0 {
+        if result.assigned.isEmpty {
             for item in result.unassigned {
                 let newLocation = newCacheLocation.appendingPathComponent(item)
                 let oldLocation = oldCacheLocation.appendingPathComponent(item)
@@ -62,7 +62,7 @@ struct CacheFileRelocator {
                     }
                 }
             }
-        } else if result.unassigned.count > 0 {
+        } else if !result.unassigned.isEmpty {
             requireInternal(
                 false,
                 "Caches folder contains items that have not been assigned to an account. Items should always be assigned to an account. Use `FileManager.cachesURLForAccount(with accountIdentifier:, in sharedContainerURL:)` to get the default Cache location for the current account"

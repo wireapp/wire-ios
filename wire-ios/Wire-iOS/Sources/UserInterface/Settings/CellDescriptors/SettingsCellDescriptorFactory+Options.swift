@@ -214,7 +214,7 @@ extension SettingsCellDescriptorFactory {
             descriptors.append(twitterOpeningGroup(for: settingsPropertyFactory.property(.tweetOpeningOption)))
         }
 
-        guard descriptors.count > 0 else {
+        guard !descriptors.isEmpty else {
             return nil
         }
 

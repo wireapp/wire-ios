@@ -19,10 +19,10 @@
 import Foundation
 
 /// A wrapper that can be used to access a property inside a type-erased box.
-/// 
+///
 /// You typically create this wrapper by passing the object of the type you want
 /// to erase, and the key path to the property you want to access inside the box.
-/// 
+///
 /// When you want to access the value, call the `getter()` block.
 
 public struct AnyConstantProperty<Value> {
@@ -42,10 +42,10 @@ public struct AnyConstantProperty<Value> {
 }
 
 /// A wrapper that can be used to get and set a property inside a type-erased box.
-/// 
+///
 /// You typically create this wrapper by passing the object of the type you want
 /// to erase, and the key path to the property you want to access inside the box.
-/// 
+///
 /// When you want to get the value, call the `getter()` block. When you want to change
 /// the value in the type-erased value, call the `setter()` block with the new value.
 

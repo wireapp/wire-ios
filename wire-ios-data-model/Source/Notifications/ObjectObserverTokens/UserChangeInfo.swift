@@ -117,7 +117,7 @@ open class UserChangeInfo: ObjectChangeInfo {
     }
 
     open var trustLevelChanged: Bool {
-        userClientChangeInfos.count != 0
+        !userClientChangeInfos.isEmpty
     }
 
     open var clientsChanged: Bool {

@@ -28,7 +28,7 @@ extension SelfProfileViewController {
         }
         let clientsRequiringUserAttention = Array(selfUser.clientsRequiringUserAttention)
 
-        if clientsRequiringUserAttention.count > 0 {
+        if !clientsRequiringUserAttention.isEmpty {
             self.presentNewLoginAlertController(clientsRequiringUserAttention)
             return true
         } else {

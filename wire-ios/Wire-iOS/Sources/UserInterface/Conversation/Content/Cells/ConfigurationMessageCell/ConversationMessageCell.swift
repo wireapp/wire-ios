@@ -105,7 +105,7 @@ extension ConversationMessageCell {
 
 /// An object that prepares the contents of a conversation cell before
 /// it is displayed.
-/// 
+///
 /// The role of this object is to provide a `configuration` view model for
 /// the view type it declares as the contents of the cell.
 

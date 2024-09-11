@@ -162,7 +162,7 @@ open class UserClientKeysStore: NSObject {
             encryptionContext.perform { sessionsDirectory in
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
-                    if newPreKeys.count == 0 {
+                    if newPreKeys.isEmpty {
                         error = UserClientKeyStoreError.canNotGeneratePreKeys
                     }
                 } catch let anError as NSError {

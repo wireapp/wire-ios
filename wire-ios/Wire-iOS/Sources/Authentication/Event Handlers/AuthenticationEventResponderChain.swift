@@ -37,7 +37,7 @@ protocol AuthenticationEventResponderChainDelegate: AnyObject {
 
 /// The authentication responder chain is responsible for dispatching events to supported
 /// handlers, and determining what actions to execute in response.
-/// 
+///
 /// You configure the responder chain with a delegate, that will be responsible for providing
 /// state and who will be responsible from
 

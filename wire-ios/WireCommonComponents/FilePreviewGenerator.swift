@@ -97,9 +97,9 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        self.subGenerators.filter {
+        !self.subGenerators.filter {
             $0.canGeneratePreviewForFile(fileURL, UTI: uti)
-        }.count > 0
+        }.isEmpty
     }
 
     func generatePreview(_ fileURL: URL, UTI uti: String, completion: @escaping (UIImage?) -> Void) {

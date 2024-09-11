@@ -48,12 +48,12 @@ public final class BackgroundActivity: NSObject {
     /// Executes the task.
     /// - parameter block: The block to execute with extended lifetime.
     /// - parameter activity: A reference to the current activity, so you can stop it before your block returns.
-    /// 
+    ///
     /// You can take advantage of this method to make sure you don't execute code when background execution
     /// is no longer available, with nil-coleascing.
-    /// 
+    ///
     /// For example, when you request:
-    /// 
+    ///
     /// ~~~swift
     /// BackgroundActivityFactory.shared.startBackgroundActivity(name: "Test")?.execute {
     ///     defer { BackgroundActivityFactory.shared.endBackgroundActivity($0) }
@@ -61,7 +61,7 @@ public final class BackgroundActivity: NSObject {
     ///     print("Hello background world")
     /// }
     /// ~~~
-    /// 
+    ///
     /// If the app is being suspended, the code will not be executed at all.
 
     @objc(executeBlock:)

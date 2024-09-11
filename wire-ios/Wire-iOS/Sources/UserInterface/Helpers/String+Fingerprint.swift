@@ -50,7 +50,7 @@ extension String {
         charactersPerLine: Int
     ) -> String {
         if self.count < charactersPerLine {
-            return self.count == 0 ? self : self.fingerprintStringWithSpaces
+            return self.isEmpty ? self : self.fingerprintStringWithSpaces
         }
         var result = ""
         var temp = ""

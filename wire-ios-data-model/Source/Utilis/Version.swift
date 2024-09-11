@@ -39,7 +39,7 @@ public final class Version: NSObject, Comparable {
 
     @objc(compareWithVersion:)
     public func compare(with other: Version) -> ComparisonResult {
-        guard other.arrayRepresentation.count > 0 else { return .orderedDescending }
+        guard !other.arrayRepresentation.isEmpty else { return .orderedDescending }
         guard versionString != other.versionString else { return .orderedSame }
 
         for i in 0 ..< arrayRepresentation.count {

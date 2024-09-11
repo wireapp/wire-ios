@@ -31,7 +31,7 @@ enum TransferApplockKeychain {
 
         guard
             let data = ZMKeychain.data(forAccount: "lockApp"),
-            data.count != 0
+            !data.isEmpty
         else {
             selfUser.isAppLockActive = false
             return

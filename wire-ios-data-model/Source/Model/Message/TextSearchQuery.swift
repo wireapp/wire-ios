@@ -55,7 +55,7 @@ extension ZMClientMessage {
     /// If the input array is empty, this function returns a predicate always evaluating to `false`.
     /// - parameter queryComponents: The array of the search terms to match the normalized text against.
     static func predicateForMessagesMatching(_ queryComponents: [String]) -> NSPredicate {
-        guard queryComponents.count > 0 else { return NSPredicate(value: false) }
+        guard !queryComponents.isEmpty else { return NSPredicate(value: false) }
         let predicates = Set(queryComponents).map { NSPredicate(
             format: "%K CONTAINS[n] %@",
             #keyPath(ZMMessage.normalizedText),

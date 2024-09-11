@@ -20,13 +20,13 @@ import UIKit
 
 extension AuthenticationCoordinator: UINavigationControllerDelegate {
     /// Called when the navigation stack changes.
-    /// 
+    ///
     /// There are three scenarios where this method can be called: pushing, popping and setting view controllers.
-    /// 
+    ///
     /// When a new view controller is **pushed** or the stack is set, the state has already been updated, and the
     /// `currentViewController`
     /// is equal to the view controller being pushed. We don't need to change the state.
-    /// 
+    ///
     /// When the current view controller is **popped**, the state hasn't been updated (because it comes from user
     /// interaction),
     /// so we need to unwind the state and update the current view controller to the one that is currently visible. In

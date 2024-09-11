@@ -563,7 +563,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        if convObserver.notifications.count > 0 {
+        if !convObserver.notifications.isEmpty {
             return XCTFail()
         }
         guard let messageChangeInfo = messageObserver.notifications.first else {

@@ -250,7 +250,7 @@ final class StartUIViewController: UIViewController {
         zmLog.info("Search for \(searchString)")
 
         if groupSelector.group == .people {
-            if searchString.count == 0 {
+            if searchString.isEmpty {
                 searchResults.mode = .list
                 searchResults.searchContactList()
             } else {

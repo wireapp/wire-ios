@@ -51,6 +51,7 @@ public final class StringKeyPath: Hashable {
     }
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {
+        // swiftformat:disable:next isEmpty
         if self.count > 0 {
             if let i = self.rawValue.firstIndex(of: ".") {
                 let head = self.rawValue[..<i]

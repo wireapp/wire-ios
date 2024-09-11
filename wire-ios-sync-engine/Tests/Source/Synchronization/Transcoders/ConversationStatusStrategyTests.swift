@@ -126,7 +126,7 @@ class ConversationStatusStrategyTests: MessagingTest {
             // when
             let request = self.sut.fetchRequestForTrackedObjects()
             let result = try! self.syncMOC.fetch(request!) as! [NSManagedObject]
-            if result.count > 0 {
+            if !result.isEmpty {
                 self.sut.addTrackedObjects(Set<NSManagedObject>(result))
             } else {
                 XCTFail("should fetch insertedConversation")

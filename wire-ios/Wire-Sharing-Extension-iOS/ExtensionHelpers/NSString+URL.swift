@@ -27,7 +27,7 @@ extension NSString {
                 options: [],
                 range: NSRange(location: 0, length: self.length)
             )
-            return matches.count > 0
+            return !matches.isEmpty
         } catch _ as NSError {
             return false
         }

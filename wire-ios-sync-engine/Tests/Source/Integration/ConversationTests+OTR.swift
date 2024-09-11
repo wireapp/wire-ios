@@ -180,7 +180,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                     XCTFail("expected 'conversation' available!")
                     return
                 }
-                XCTAssert(conversation.allMessages.count > 0)
+                XCTAssert(!conversation.allMessages.isEmpty)
 
                 if conversation.allMessages.count < 2 {
                     XCTFail("message count is too low")

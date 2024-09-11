@@ -319,7 +319,7 @@ public final class NetworkSocket: NSObject {
         }
 
         // Check if there is a data to write
-        guard dataBuffer.data.count != 0 else {
+        guard !dataBuffer.data.isEmpty else {
             return
         }
 

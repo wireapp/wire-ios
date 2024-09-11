@@ -46,7 +46,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
             return
         }
 
-        conversation.setIsTyping(textView.text.count > 0)
+        conversation.setIsTyping(!textView.text.isEmpty)
 
         triggerMentionsIfNeeded(from: textView)
         updateRightAccessoryView()
@@ -132,7 +132,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.count > 0 {
+        if !textView.text.isEmpty {
             conversation.setIsTyping(false)
         }
 

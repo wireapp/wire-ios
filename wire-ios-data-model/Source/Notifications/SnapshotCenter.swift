@@ -122,7 +122,7 @@ public class SnapshotCenter {
             changedKeys.insert($0)
         }
         // Update snapshot
-        if changedKeys.count > 0 {
+        if !changedKeys.isEmpty {
             snapshots[object.objectID] = createSnapshot(for: object)
         }
         return changedKeys

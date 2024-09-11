@@ -19,7 +19,7 @@
 import Foundation
 
 /// An object that can detect link attachments in a text message.
-/// 
+///
 /// Link attachments differ from link previews in the fact that they're not added to
 /// the payload of the message. We need to parse them when sending and receiving a
 /// message.
@@ -29,12 +29,12 @@ public protocol LinkAttachmentDetectorType {
     /// The preview data is generated from the [Open Graph](http://ogp.me) information contained in the head of the html
     /// of the link.
     /// For debugging Open Graph please use the [Sharing Debugger](https://developers.facebook.com/tools/debug/sharing).
-    /// 
+    ///
     /// The completion block will be called on private background queue, make sure to switch to main or other queue.
-    /// 
+    ///
     /// **Attention: For now this method only downloads the preview data (and only one image for this link preview)
     /// for the first attachment-eligible link found in the text!**
-    /// 
+    ///
     /// - parameter text:       The text with potentially contained links, if links are found the preview data is
     /// downloaded.
     /// - parameter excludedRanges:   Ranges in the text which should be skipped when searching for links.

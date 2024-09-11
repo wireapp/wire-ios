@@ -20,7 +20,7 @@ import Foundation
 
 extension String {
     var containsURL: Bool {
-        URLMatchesInString.count > 0
+        !URLMatchesInString.isEmpty
     }
 
     var URLsInString: [URL?] {

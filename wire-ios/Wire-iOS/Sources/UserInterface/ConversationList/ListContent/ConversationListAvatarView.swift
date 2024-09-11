@@ -117,7 +117,7 @@ public final class ConversationListAvatarView: UIView {
             }
 
             let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
-            guard stableRandomParticipants.count > 0 else {
+            guard !stableRandomParticipants.isEmpty else {
                 self.clippingView.subviews.forEach { $0.removeFromSuperview() }
                 return
             }

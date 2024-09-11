@@ -57,7 +57,7 @@ extension ConversationListViewController {
         accountView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
 
         if let selfUser = ZMUser.selfUser(),
-           selfUser.clientsRequiringUserAttention.count > 0 {
+           !selfUser.clientsRequiringUserAttention.isEmpty {
             accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
         }
 

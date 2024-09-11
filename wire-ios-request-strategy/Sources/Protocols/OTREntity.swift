@@ -251,7 +251,7 @@ extension OTREntity {
 
     /// Adds clients to those missing for this message
     func registersNewMissingClients(_ missingClients: Set<UserClient>) {
-        guard missingClients.count > 0 else { return }
+        guard !missingClients.isEmpty else { return }
 
         let selfClient = ZMUser.selfUser(in: self.context).selfClient()!
         selfClient.missesClients(missingClients)

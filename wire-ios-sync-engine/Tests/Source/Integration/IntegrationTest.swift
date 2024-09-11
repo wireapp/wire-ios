@@ -582,7 +582,7 @@ extension IntegrationTest {
     @objc(establishSessionWithMockUser:)
     func establishSession(with mockUser: MockUser) {
         mockTransportSession.performRemoteChanges { session in
-            if mockUser.clients.count == 0 {
+            if mockUser.clients.isEmpty {
                 session.registerClient(for: mockUser)
             }
 

@@ -132,7 +132,7 @@ extension ZMAddressBookContact {
         self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
 
         // ignore contacts with no email nor phones
-        guard self.emailAddresses.count > 0 || self.phoneNumbers.count > 0 else {
+        guard !self.emailAddresses.isEmpty || !self.phoneNumbers.isEmpty else {
             return nil
         }
     }

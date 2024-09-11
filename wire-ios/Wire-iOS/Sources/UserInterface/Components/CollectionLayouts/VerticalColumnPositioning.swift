@@ -19,7 +19,7 @@
 import UIKit
 
 /// The positioning of the rows inside the collection container.
-/// 
+///
 /// The positioning is updated incrementally. Call `insertItem(ofSize:at:)` to
 /// add the attributes for the new items, in the order of the collection.
 
@@ -37,7 +37,7 @@ struct VerticalColumnPositioning {
     // MARK: - Calculating the position
 
     /// Creates the positioning for an empty collection, displayed in the given context.
-    /// 
+    ///
     /// - parameter context: The context where the items will be displayed. This will be used
     /// to calculate the attributes of the items.
 
@@ -50,10 +50,10 @@ struct VerticalColumnPositioning {
     }
 
     /// Add an item to the columns. It must be the item immediately succeding the current item.
-    /// 
+    ///
     /// - parameter itemSize: The content size of the new item. This will be scaled appropriately
     /// to fit the column it was assigned.
-    /// 
+    ///
     /// - parameter indexPath: The index path of the new item.
 
     mutating func insertItem(ofSize itemSize: CGSize, at indexPath: IndexPath) {

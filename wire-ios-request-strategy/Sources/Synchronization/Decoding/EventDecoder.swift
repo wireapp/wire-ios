@@ -332,7 +332,7 @@ extension EventDecoder {
     ) async {
         let events = await fetchNextEventsBatch(with: privateKeys, callEventsOnly: callEventsOnly)
 
-        guard events.storedEvents.count > 0 else {
+        guard !events.storedEvents.isEmpty else {
             if firstCall {
                 await consumeBlock([])
             }

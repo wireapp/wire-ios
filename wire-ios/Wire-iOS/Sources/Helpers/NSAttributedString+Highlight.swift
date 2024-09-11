@@ -73,7 +73,7 @@ extension NSString {
                     queryResult.append(currentRange)
                 }
             } while currentRange.location != NSNotFound
-            if queryResult.count > 0 {
+            if !queryResult.isEmpty {
                 result[query] = queryResult
             }
         }

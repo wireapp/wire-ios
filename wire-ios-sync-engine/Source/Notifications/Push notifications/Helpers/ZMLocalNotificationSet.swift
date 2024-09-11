@@ -94,7 +94,7 @@ final class ZMLocalNotificationSet: NSObject {
 
     /// Cancel all notifications created in this run
     func cancelCurrentNotifications(_ conversation: ZMConversation) {
-        guard notifications.count > 0 else { return }
+        guard !notifications.isEmpty else { return }
         let toRemove = notifications.filter { $0.conversationID == conversation.remoteIdentifier }
         notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)
@@ -102,7 +102,7 @@ final class ZMLocalNotificationSet: NSObject {
 
     /// Cancels all notifications created in previous runs
     func cancelOldNotifications(_ conversation: ZMConversation) {
-        guard oldNotifications.count > 0 else { return }
+        guard !oldNotifications.isEmpty else { return }
 
         oldNotifications = oldNotifications.filter { userInfo in
             guard
@@ -117,7 +117,7 @@ final class ZMLocalNotificationSet: NSObject {
 
     /// Cancal all notifications with the given message nonce
     func cancelCurrentNotifications(messageNonce: UUID) {
-        guard notifications.count > 0 else { return }
+        guard !notifications.isEmpty else { return }
         let toRemove = notifications.filter { $0.messageNonce == messageNonce }
         notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map(\.id.uuidString))
         notifications.subtract(toRemove)

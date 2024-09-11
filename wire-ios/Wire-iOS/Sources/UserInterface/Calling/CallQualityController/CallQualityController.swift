@@ -51,7 +51,7 @@ class CallQualityController: NSObject {
     let miminumSignificantCallDuration: TimeInterval = 0
 
     /// Whether the call quality survey can be presented.
-    /// 
+    ///
     /// We only present the call quality survey for internal users and if the application is in the foreground.
 
     var canPresentCallQualitySurvey: Bool {

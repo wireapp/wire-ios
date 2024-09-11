@@ -357,7 +357,7 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             managedObjectContext.enqueueDelayedSave()
         }
 
-        return remainingKeys.count > 0
+        return !remainingKeys.isEmpty
     }
 
     public func shouldRetryToSyncAfterFailed(

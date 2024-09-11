@@ -853,7 +853,7 @@ extension ZMConversation {
             hasUnsentMessages: hasUnreadUnsentMessage,
             messagesRequiringAttention: messagesRequiringAttention,
             messagesRequiringAttentionByType: messagesRequiringAttentionByType,
-            isTyping: typingUsers.count > 0,
+            isTyping: !typingUsers.isEmpty,
             mutedMessageTypes: mutedMessageTypes,
             isOngoingCall: isOngoingCall,
             isBlocked: connectedUser?.isBlocked ?? false,

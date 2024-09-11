@@ -27,7 +27,7 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
 
         _ = UserImageLocalCache(location: oldLocation)
         let itemNames = try FileManager.default.contentsOfDirectory(atPath: oldLocation.path)
-        XCTAssertTrue(itemNames.count > 0)
+        XCTAssertTrue(!itemNames.isEmpty)
 
         let relocator = CacheFileRelocator()
 
@@ -40,7 +40,7 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
             in: self.sharedContainerURL
         )
         let movedItemNames = try FileManager.default.contentsOfDirectory(atPath: newLocation.path)
-        XCTAssertTrue(movedItemNames.count > 0)
+        XCTAssertTrue(!movedItemNames.isEmpty)
         for itemName in itemNames {
             XCTAssertTrue(movedItemNames.contains(itemName))
         }

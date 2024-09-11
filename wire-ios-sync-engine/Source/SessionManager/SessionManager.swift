@@ -499,7 +499,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         WireLogger.sessionManager.debug("Starting the session manager:")
 
-        if self.accountManager.accounts.count > 0 {
+        if !self.accountManager.accounts.isEmpty {
             WireLogger.sessionManager.debug("Known accounts:")
             for account in self.accountManager.accounts {
                 WireLogger.sessionManager

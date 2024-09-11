@@ -44,7 +44,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
     private var searchResults: [UserType] = [] {
         didSet {
-            if searchResults.count > 0 {
+            if !searchResults.isEmpty {
                 collectionViewSelectedIndex = searchResults.count - 1
             } else {
                 collectionViewSelectedIndex = .none
@@ -160,7 +160,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         scrollToLastItem()
 
-        if results.count > 0 {
+        if !results.isEmpty {
             show()
         } else {
             dismiss()

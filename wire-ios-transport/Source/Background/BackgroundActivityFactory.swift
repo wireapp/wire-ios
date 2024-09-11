@@ -20,19 +20,19 @@ import UIKit
 import WireUtilities
 
 /// Manages the creation and lifecycle of background tasks.
-/// 
+///
 /// To improve the behavior of the app in background contexts, this object starts and stops a single background task,
 /// and associates "tokens" to these tasks to keep track of the progress, and handles expiration automatically.
-/// 
+///
 /// When you request background activity:
 /// - if there is no active activity: we create a new UIKit background task and save a token
 /// - if there are current active activities: we reuse the active UIKit task and save a token
-/// 
+///
 /// When you end a background activity manually:
 /// - if the activity was the last in the list: we tell UIKit that the background task ended and remove the token from
 /// the list
 /// - if there are still other activities in the list: we remove the token from the list
-/// 
+///
 /// When the system sends a background time expiration warning:
 /// 1. We notify all the task tokens that they will expire soon, and give them an opportunity to clean up before the app
 /// gets suspended
@@ -106,7 +106,7 @@ public final class BackgroundActivityFactory: NSObject {
     /// Notifies when all background activites have completed or expired.
     /// - parameter completionHandler: The code to exectute when the background activites are completed. The execution
     /// happens on the main queue.
-    /// 
+    ///
     /// If there are no running background tasks the completion handler will be called immediately.
     public func notifyWhenAllBackgroundActivitiesEnd(completionHandler: @escaping (() -> Void)) {
         isolationQueue.sync {

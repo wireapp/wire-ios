@@ -44,7 +44,7 @@ extension ZMUserSession {
                 }
             }
 
-        if conversationsWithIncomingCall.count > 0 {
+        if !conversationsWithIncomingCall.isEmpty {
             return conversationsWithIncomingCall.last
         }
 
