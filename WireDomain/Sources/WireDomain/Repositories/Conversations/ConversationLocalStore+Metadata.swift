@@ -65,9 +65,8 @@ extension ConversationLocalStore {
             localConversation.epoch = UInt64(epoch)
         }
 
-        if
-            let base64String = remoteConversation.mlsGroupID,
-            let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
+        if let base64String = remoteConversation.mlsGroupID,
+           let mlsGroupID = MLSGroupID(base64Encoded: base64String) {
             localConversation.mlsGroupID = mlsGroupID
         }
 
