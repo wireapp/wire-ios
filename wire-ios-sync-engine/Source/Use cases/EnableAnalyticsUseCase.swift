@@ -17,6 +17,7 @@
 //
 
 import Countly
+import Foundation
 import WireAnalytics
 
 // MARK: - EnableAnalyticsSharingUseCaseProtocol
@@ -40,6 +41,8 @@ where UserSession: EnableAnalyticsUseCaseUserSession {
 
     private let analyticsSessionConfiguration: AnalyticsSessionConfiguration
 
+    private let analyticsManagerBuilder: (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol
+
     private let sessionManager: AnalyticsManagerProviding
 
     private let analyticsUserProfile: AnalyticsUserProfile
@@ -54,11 +57,13 @@ where UserSession: EnableAnalyticsUseCaseUserSession {
     ///   - analyticsManager: The analytics manager to use for enabling tracking.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
     init(
+        analyticsManagerBuilder: @escaping (_ appKey: String, _ host: URL) -> some AnalyticsManagerProtocol,
         sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
         userSession: UserSession
     ) {
+        self.analyticsManagerBuilder = analyticsManagerBuilder
         self.sessionManager = sessionManager
         self.analyticsSessionConfiguration = analyticsSessionConfiguration
         self.analyticsUserProfile = analyticsUserProfile
@@ -72,9 +77,9 @@ where UserSession: EnableAnalyticsUseCaseUserSession {
     /// This method calls the `enableTracking` method on the analytics manager
     /// with the provided user profile.
     func invoke() {
-        let analyticsManager = AnalyticsManager(
-            appKey: analyticsSessionConfiguration.countlyKey,
-            host: analyticsSessionConfiguration.host
+        let analyticsManager = analyticsManagerBuilder(
+            analyticsSessionConfiguration.countlyKey,
+            analyticsSessionConfiguration.host
         )
 
         sessionManager.analyticsManager = analyticsManager

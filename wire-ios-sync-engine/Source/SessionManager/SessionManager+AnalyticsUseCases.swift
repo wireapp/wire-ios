@@ -56,6 +56,7 @@ extension SessionManager {
         }
 
         return EnableAnalyticsUseCase(
+            analyticsManagerBuilder: { AnalyticsManager(appKey: $0, host: $1) },
             sessionManager: self,
             analyticsSessionConfiguration: analyticsSessionConfiguration,
             analyticsUserProfile: analyticsUserProfile,

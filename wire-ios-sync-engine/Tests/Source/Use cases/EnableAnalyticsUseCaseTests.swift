@@ -17,6 +17,7 @@
 //
 
 import WireAnalyticsSupport
+import WireAnalytics
 import XCTest
 
 @testable import WireSyncEngine
@@ -36,15 +37,15 @@ final class EnableAnalyticsUseCaseTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-
-        sessionConfiguration = .init(countlyKey: "", host: .init(fileURLWithPath: "/"))
-        userProfile = .init(analyticsIdentifier: "")
+        sessionConfiguration = .init(countlyKey: "testKey", host: .init(fileURLWithPath: "/testPath"))
+        userProfile = .init(analyticsIdentifier: "testIdentifier")
         mockAnalyticsManager = MockAnalyticsManagerProtocol()
+        mockAnalyticsManager.stubbedEnableTrackingResult = MockAnalyticsSessionProtocol()
         mockAnalyticsManagerProvider = MockAnalyticsManagerProviding()
-        mockAnalyticsManagerProvider.analyticsManager = mockAnalyticsManager
         mockUserSession = .init()
 
         sut = .init(
+            analyticsManagerBuilder: { _, _ in self.mockAnalyticsManager },
             sessionManager: mockAnalyticsManagerProvider,
             analyticsSessionConfiguration: sessionConfiguration,
             analyticsUserProfile: userProfile,
@@ -60,11 +61,16 @@ final class EnableAnalyticsUseCaseTests: XCTestCase {
         mockAnalyticsManager = nil
         sessionConfiguration = nil
         userProfile = nil
+        mockUserSession = nil
     }
 
-    // MARK: - Unit Tests
+    func testInvoke_CallsEnableTrackingOnAnalyticsManager() throws {
+        // WHEN
+        sut.invoke()
 
-    func testTODO() {
-        XCTFail("TODO: write tests")
+        // THEN
+        XCTAssertNotNil(mockAnalyticsManagerProvider.analyticsManager, "Analytics manager should not be nil after invoke")
+        XCTAssertTrue(mockAnalyticsManager.invokedEnableTracking, "enableTracking should be called on the analytics manager")
+        XCTAssertEqual(mockAnalyticsManager.invokedEnableTrackingCount, 1, "enableTracking should be called exactly once")
     }
 }
