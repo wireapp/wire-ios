@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// swift-format-ignore-file
 import WireAPI
 import WireDataModel
 
