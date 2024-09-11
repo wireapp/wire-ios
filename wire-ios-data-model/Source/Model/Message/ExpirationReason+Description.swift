@@ -16,27 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+extension ExpirationReason: CustomStringConvertible {
 
-extension ZMMessage: SwiftConversationMessage {
-
-    public var expirationReason: ExpirationReason? {
-        guard
-            isExpired,
-            let reasonCode = expirationReasonCode,
-            let reason = ExpirationReason(rawValue: reasonCode.intValue)
-        else {
-            return nil
+    public var description: String {
+        switch self {
+        case .other:
+            "other"
+        case .federationRemoteError:
+            "federationRemoteError"
+        case .cancelled:
+            "cancelled"
+        case .timeout:
+            "timeout"
         }
-
-        return reason
-    }
-
-    public var failedToSendUsers: [UserType] {
-        guard let recipients = failedToSendRecipients else {
-            return []
-        }
-        return Array(recipients)
     }
 
 }
