@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: remove file
+
 /*
 import UIKit
 import WireDataModel
 import WireSyncEngine
 import WireReusableUIComponents
-
-// TODO: remove file
 
 @MainActor
 func AccountImage(

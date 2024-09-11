@@ -113,7 +113,8 @@ extension ConversationListViewController {
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
-            mainCoordinator: some MainCoordinating
+            mainCoordinator: some MainCoordinating,
+            getAccountImageUseCase: any GetAccountImageUseCaseProtocol
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -124,6 +125,7 @@ extension ConversationListViewController {
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
+            self.getAccountImageUseCase = getAccountImageUseCase
             super.init()
 
             updateE2EICertifiedStatus()
@@ -186,11 +188,8 @@ extension ConversationListViewController.ViewModel {
     @MainActor
     private func updateAccountImage() {
         Task {
-            let useCase = GetAccountImageUseCase(
-                user: userSession.selfUser,
-                account: account
-            )
-            accountImage.image = await getAccountImageUseCase.invoke()
+            let user = userSession.selfUser
+            accountImage.image = await getAccountImageUseCase.invoke(user: user, account: account)
             accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
         }
     }

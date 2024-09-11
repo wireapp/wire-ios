@@ -19,27 +19,22 @@
 import UIKit
 import WireFoundation
 
-public struct GetAccountImageUseCase<User, Account, InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
-where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol, InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
+public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
+where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
 
-    var user: User // TODO: move into invoke
-    var account: Account // TODO: move into invoke
     var initalsProvider: InitalsProvider
     var accountImageGenerator: AccountImageGenerator
 
     public init(
-        user: User,
-        account: Account,
         initalsProvider: InitalsProvider,
         accountImageGenerator: AccountImageGenerator
     ) {
-        self.user = user
-        self.account = account
         self.initalsProvider = initalsProvider
         self.accountImageGenerator = accountImageGenerator
     }
 
-    public func invoke() async -> UIImage {
+    public func invoke<User, Account>(user: User, account: Account) async -> UIImage
+    where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol {
 
         if let team = user.membership?.team, let teamImageSource = team.teamImageSource ?? account.teamImageSource {
 
@@ -75,33 +70,7 @@ where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseA
 
 // MARK: - Dependencies
 
-// The following protocols serve the purpose of decoupling the use case from the actual dependencies.
-
-/// An abstraction of a user for the `GetAccountImageUseCase`.
-public protocol GetAccountImageUseCaseUserProtocol {
-    associatedtype TeamMembership: GetAccountImageUseCaseTeamMembershipProtocol
-    var membership: TeamMembership? { get }
-}
-
-/// An abstraction of a user's team membership for the `GetAccountImageUseCase`.
-public protocol GetAccountImageUseCaseTeamMembershipProtocol {
-    associatedtype Team: GetAccountImageUseCaseTeamProtocol
-    var team: Team { get }
-}
-
-/// An abstraction of a user's team for the `GetAccountImageUseCase`.
-public protocol GetAccountImageUseCaseTeamProtocol {
-    var name: String? { get }
-    var teamImageSource: AccountImageSource? { get }
-}
-
-/// An abstraction of a user account for the `GetAccountImageUseCase`.
-public protocol GetAccountImageUseCaseAccountProtocol {
-    var imageData: Data? { get }
-    var userName: String { get }
-    var teamName: String? { get }
-    var teamImageSource: AccountImageSource? { get }
-}
+// The following protocol serves the purpose of decoupling the use case from the actual dependencies.
 
 public protocol GetAccountImageUseCaseInitialsProvider {
     func initials(from fullName: String) -> String

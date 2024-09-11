@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUserProfile
 
 final class ConversationListViewController: UIViewController {
 
@@ -114,7 +115,8 @@ final class ConversationListViewController: UIViewController {
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            getAccountImageUseCase: GetAccountImageUseCase()
         )
         self.init(
             viewModel: viewModel,
