@@ -322,7 +322,7 @@ platform :ios do
             "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
-            "OTHER_PREPROCESSOR_FLAGS='DATADOG_IMPORT'"
+            "OTHER_PREPROCESSOR_FLAGS=$OTHER_PREPROCESSOR_FLAGS"
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
