@@ -79,6 +79,7 @@ permissions:
 
 jobs:
   changelog:
+    if: github.event_name != 'pull_request'
     uses: ./.github/workflows/changelog.yml
     with:
       is_cloud_build: ${{ inputs.is_cloud_build }}
