@@ -47,6 +47,16 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+if [[ -n "${CI-}" ]]; then
+    echo "Running on CI, skipping git lfs install"
+elif command -v git-lfs > /dev/null 2>&1; then
+    echo "ℹ️  Running git lfs install..."
+    git lfs install
+else
+    die "git-lfs is not installed."
+fi
+echo ""
+
 # Workaround for carthage "The file couldn’t be saved." error
 rm -rf ${TMPDIR}/TemporaryItems/*carthage*
 

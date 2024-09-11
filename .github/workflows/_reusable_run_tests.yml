@@ -132,7 +132,9 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          lfs: 'true'
 
       - name: Retrieve Xcode version
         run: |
@@ -714,7 +716,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Failed snapshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Failed Snapshots and log
@@ -755,7 +757,7 @@ jobs:
           key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
 
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports
@@ -771,7 +773,7 @@ jobs:
           compare_to_earlier_commit: false
 
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: derived-data-xcode
