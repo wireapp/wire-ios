@@ -33,7 +33,7 @@ public final class MainTabBarController: UITabBarController {
         viewControllers![tab.rawValue] as! UINavigationController
     }
 
-    public var selectedTab: Tab {
+    public var currentTab: Tab {
         get { Tab(rawValue: selectedIndex) ?? .conversations }
         set { selectedIndex = newValue.rawValue }
     }
@@ -118,7 +118,7 @@ func MainTabBarController_Preview() -> MainTabBarController {
     for tab in MainTabBarController.Tab.allCases {
         tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
     }
-    tabBarController.selectedTab = .conversations
+    tabBarController.currentTab = .conversations
     return tabBarController
 }
 
