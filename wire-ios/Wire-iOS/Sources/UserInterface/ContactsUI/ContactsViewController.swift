@@ -202,11 +202,14 @@ final class ContactsViewController: UIViewController {
         let padding: CGFloat = 12
 
         UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
-            guard let self else { return }
+            guard let self = self else { return }
+
+            let safeAreaBottomInset = view.safeAreaInsets.bottom
+
             bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
-            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
+            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : safeAreaBottomInset)
+
             view.layoutIfNeeded()
         })
     }
-
 }
