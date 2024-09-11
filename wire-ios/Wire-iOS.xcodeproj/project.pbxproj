@@ -1383,7 +1383,6 @@
 		E9B8EB7B2A0CEB980056E417 /* MessageReactionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */; };
 		E9B8EB802A0CEE160056E417 /* ReactionToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */; };
 		E9C014EB2BFBCB11002574FC /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EA2BFBCB11002574FC /* PickerView.swift */; };
-		E9C014ED2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */; };
 		E9C014EF2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */; };
 		E9C0B3532B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */; };
 		E9C0B3552B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3542B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift */; };
@@ -3392,7 +3391,6 @@
 		E9B8EB7A2A0CEB980056E417 /* MessageReactionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsCell.swift; sourceTree = "<group>"; };
 		E9B8EB7F2A0CEE160056E417 /* ReactionToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionToggle.swift; sourceTree = "<group>"; };
 		E9C014EA2BFBCB11002574FC /* PickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerView.swift; sourceTree = "<group>"; };
-		E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EphemeralKeyboardViewController+UIAlertController.swift"; sourceTree = "<group>"; };
 		E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EphemeralKeyboardViewController+InputBarConversation.swift"; sourceTree = "<group>"; };
 		E9C0B3522B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenamedSystemMessageCell.swift; sourceTree = "<group>"; };
 		E9C0B3542B558B1D00BC80E8 /* ConversationNewDeviceSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationNewDeviceSystemMessageCell.swift; sourceTree = "<group>"; };
@@ -7809,7 +7807,6 @@
 			children = (
 				BF0BDF7F1DAB8923003C61DE /* EphemeralKeyboardViewController.swift */,
 				E9C014EA2BFBCB11002574FC /* PickerView.swift */,
-				E9C014EC2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift */,
 				E9C014EE2BFBCC92002574FC /* EphemeralKeyboardViewController+InputBarConversation.swift */,
 			);
 			path = EphemeralKeyboardViewController;
@@ -9359,7 +9356,6 @@
 				F15650DD21DD10DD00210504 /* ThreeDotsLoadingView.swift in Sources */,
 				871067401C0DC5570035603B /* SettingsPropertyTextValueCellDescriptor.swift in Sources */,
 				8784AE3E1FC2DE5300AAEAB8 /* MediaManagerLoader.swift in Sources */,
-				E9C014ED2BFBCC03002574FC /* EphemeralKeyboardViewController+UIAlertController.swift in Sources */,
 				1695B9D82B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift in Sources */,
 				634497D924A492140000131D /* CallParticipantDetailView.swift in Sources */,
 				A95E561123FBF0C0005F8E8D /* UIViewControllerContextTransitioning+Helper.swift in Sources */,
