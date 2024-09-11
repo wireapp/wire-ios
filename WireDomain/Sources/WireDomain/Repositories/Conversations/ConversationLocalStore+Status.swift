@@ -119,14 +119,12 @@ extension ConversationLocalStore {
         for localConversation: ZMConversation
     ) {
         if let mutedStatus = remoteConversation.mutedStatus,
-           let mutedReference = remoteConversation.mutedReference
-        {
+           let mutedReference = remoteConversation.mutedReference {
             localConversation.updateMutedStatus(status: Int32(mutedStatus), referenceDate: mutedReference)
         }
 
         if let archived = remoteConversation.archived,
-           let archivedReference = remoteConversation.archivedReference
-        {
+           let archivedReference = remoteConversation.archivedReference {
             localConversation.updateArchivedStatus(archived: archived, referenceDate: archivedReference)
         }
     }
