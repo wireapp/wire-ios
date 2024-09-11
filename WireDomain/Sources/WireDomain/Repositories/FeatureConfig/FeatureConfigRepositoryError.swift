@@ -18,4 +18,12 @@
 
 import Foundation
 
-extension String: Error {}
+/// Errors originating from `FeatureConfigRepository`.
+
+enum FeatureConfigRepositoryError: Error {
+
+    /// Unable to fetch feature locally
+
+    case failedToFetchFeatureLocally
+
+}

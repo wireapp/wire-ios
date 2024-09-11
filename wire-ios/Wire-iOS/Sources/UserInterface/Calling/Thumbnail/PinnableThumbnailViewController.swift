@@ -124,10 +124,10 @@ final class PinnableThumbnailViewController: UIViewController {
     private func configureConstraints() {
         thumbnailContainerView.translatesAutoresizingMaskIntoConstraints = false
 
-        thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor).isActive = true
-        thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor).isActive = true
-        thumbnailContainerView.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
-        thumbnailContainerView.bottomAnchor.constraint(equalTo: safeBottomAnchor).isActive = true
+        thumbnailContainerView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        thumbnailContainerView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        thumbnailContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        thumbnailContainerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
 
     // MARK: - Orientation
@@ -145,7 +145,7 @@ final class PinnableThumbnailViewController: UIViewController {
 
         // Calculate the new size of the container
 
-        let insets = view.safeAreaInsetsOrFallback
+        let insets = view.safeAreaInsets
 
         let safeSize = CGSize(width: size.width - insets.left - insets.right,
                               height: size.height - insets.top - insets.bottom)

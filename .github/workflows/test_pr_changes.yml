@@ -47,6 +47,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: 'true'
       - uses: dorny/paths-filter@v2
         id: filter
         with:

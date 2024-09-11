@@ -142,14 +142,14 @@ final class ModalTopBar: UIView {
 
         NSLayoutConstraint.activate([
             // contentStackView
-            contentStackView.leadingAnchor.constraint(greaterThanOrEqualTo: safeLeadingAnchor, constant: 48),
-            contentStackView.centerXAnchor.constraint(equalTo: safeCenterXAnchor),
+            contentStackView.leadingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.leadingAnchor, constant: 48),
+            contentStackView.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
             contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
             contentStackView.trailingAnchor.constraint(lessThanOrEqualTo: dismissButton.leadingAnchor, constant: -12),
             contentStackView.heightAnchor.constraint(greaterThanOrEqualToConstant: 32),
 
             // dismissButton
-            dismissButton.trailingAnchor.constraint(equalTo: safeTrailingAnchor, constant: -16),
+            dismissButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
             dismissButton.centerYAnchor.constraint(equalTo: contentStackView.centerYAnchor),
 
             // separator
