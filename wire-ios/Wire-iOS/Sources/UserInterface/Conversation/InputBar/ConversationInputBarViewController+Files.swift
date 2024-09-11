@@ -94,7 +94,7 @@ extension ConversationInputBarViewController {
 
             guard let self else { return }
 
-            self.impactFeedbackGenerator.prepare()
+            impactFeedbackGenerator.prepare()
 
             userSession.perform { [weak self] in
 
