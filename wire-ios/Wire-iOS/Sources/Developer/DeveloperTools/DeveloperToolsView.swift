@@ -116,5 +116,4 @@ struct DeveloperToolsView_Previews: PreviewProvider {
             DeveloperToolsView(viewModel: DeveloperToolsViewModel())
         }
     }
-
 }

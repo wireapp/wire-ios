@@ -23,7 +23,7 @@ import XCTest
 
 final class UsersAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<UsersAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any UsersAPI>!
 
     // MARK: - Setup
 
