@@ -34,7 +34,7 @@ let package = Package(
             name: "WireDomainPkgTests",
             dependencies: [
                 "WireDomainPkg",
-                .product(name: "WireTestingPackage", package: "WireFoundation"),
+                .product(name: "WireTestingPackage", package: "WireFoundation")
             ],
             path: "./Tests/PackageTests"
         )
