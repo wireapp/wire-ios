@@ -43,6 +43,7 @@ public final class MainTabBarController: UITabBarController {
     public required init() {
         super.init(nibName: nil, bundle: nil)
         setupTabs()
+        self.view.accessibilityIdentifier = "mainTabBar"
     }
 
     @available(*, unavailable)
