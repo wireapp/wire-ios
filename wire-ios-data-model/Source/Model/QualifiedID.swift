@@ -96,6 +96,8 @@ public extension Collection where Element == ZMConversation {
 
 }
 
+// TODO: [WPB-11016] Move this test code from production targets
+#if DEBUG
 public extension QualifiedID {
 
     static func random() -> QualifiedID {
@@ -106,3 +108,4 @@ public extension QualifiedID {
     }
 
 }
+#endif
