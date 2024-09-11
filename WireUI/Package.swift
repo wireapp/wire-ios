@@ -10,7 +10,8 @@ let package = Package(
     products: [
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"])
+        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"]),
+        .library(name: "WireUserProfile", targets: ["WireUserProfile"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -24,13 +25,13 @@ let package = Package(
             dependencies: ["WireDesign", .product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
         ),
 
-        .target(
-            name: "WireReusableUIComponents",
-            dependencies: [
-                "WireDesign",
-                .product(name: "WireFoundation", package: "WireFoundation")
-            ]
-        ),
+            .target(
+                name: "WireReusableUIComponents",
+                dependencies: [
+                    "WireDesign",
+                    .product(name: "WireFoundation", package: "WireFoundation")
+                ]
+            ),
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
@@ -40,13 +41,22 @@ let package = Package(
             ]
         ),
 
-        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
+            .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
         .testTarget(
             name: "WireUIFoundationTests",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireUIFoundation",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
+            ]
+        ),
+
+            .target(name: "WireUserProfile", dependencies: ["WireFoundation"]),
+        .testTarget(
+            name: "WireUserProfileTests",
+            dependencies: [
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                "WireUserProfile"
             ]
         )
     ]

@@ -16,10 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: move into WireDomain or WireUIFoundation
-
 import UIKit
-import WireDataModel
 import WireFoundation
 
 public struct GetAccountImageUseCase<User, Account, InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
