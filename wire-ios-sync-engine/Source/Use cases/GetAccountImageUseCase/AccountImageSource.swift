@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Determines if the provided user is a personal user or a team member and retrieves its
-/// account image. If no account image data is available, an image will be generated using
-/// the initials of either the team name or the person's name.
-public protocol GetAccountImageUseCaseProtocol {
+import Foundation
 
-    func invoke() async -> UIImage
+public enum AccountImageSource {
+    case data(Data), text(String)
 }

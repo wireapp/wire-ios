@@ -16,52 +16,108 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import UIKit
-//import WireDataModel
-//import WireSyncEngine
-//import WireReusableUIComponents
+// TODO: move into WireDomain or WireUIFoundation
 
-/*
+import UIKit
+import WireDataModel
+import WireFoundation
 
-@MainActor
-func AccountImage(
-    _ userSession: UserSession,
-    _ account: Account,
-    _ miniatureAccountImageFactory: MiniatureAccountImageFactory
-) async -> UIImage {
+public struct GetAccountImageUseCase<User, Account, InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
+where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol, InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
 
-    // TODO: trigger fetching?
+    var user: User
+    var account: Account
+    var initalsProvider: InitalsProvider
+    var accountImageGenerator: AccountImageGenerator
 
-    if let team = userSession.selfUser.membership?.team, let teamImageViewContent = team.teamImageViewContent ?? account.teamImageViewContent {
+    public init(
+        user: User,
+        account: Account,
+        initalsProvider: InitalsProvider,
+        accountImageGenerator: AccountImageGenerator
+    ) {
+        self.user = user
+        self.account = account
+        self.initalsProvider = initalsProvider
+        self.accountImageGenerator = accountImageGenerator
+    }
 
-        // Team image
-        if case .teamImage(let data) = teamImageViewContent, let accountImage = UIImage(data: data) {
+    public func invoke() async -> UIImage {
+
+        if let team = user.membership?.team, let teamImageSource = team.teamImageSource ?? account.teamImageSource {
+
+            // team image
+            if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
+                return accountImage
+            }
+
+            // team name initials
+            let teamName: String
+            if case .text(let value) = teamImageSource {
+                teamName = value
+            } else {
+                teamName = team.name ?? account.teamName ?? ""
+            }
+            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
+            let accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
             return accountImage
-        }
 
-        // Team initials
-        let teamName: String
-        if case .teamName(let value) = teamImageViewContent {
-            teamName = value
         } else {
-            teamName = team.name ?? account.teamName ?? ""
+
+            // user's custom image
+            if let data = account.imageData, let accountImage = UIImage(data: data) {
+                return accountImage
+            }
+
+            // image base on user's initials
+            let initials = initalsProvider.initials(from: account.userName)
+            return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
         }
-        let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
-        let accountImage = await miniatureAccountImageFactory.createImage(initials: initials, backgroundColor: .white)
-        return accountImage
-
-    } else {
-
-        // User image
-        if let data = account.imageData, let accountImage = UIImage(data: data) {
-            return accountImage
-        }
-
-        // User initials
-        let personName = PersonName.person(withName: account.userName, schemeTagger: nil)
-        let accountImage = await miniatureAccountImageFactory.createImage(initials: personName.initials, backgroundColor: .white)
-        return accountImage
     }
 }
 
+// MARK: - Dependencies
+
+// The following protocols serve the purpose of decoupling the use case from the actual dependencies.
+
+/// An abstraction of a user for the `GetAccountImageUseCase`.
+public protocol GetAccountImageUseCaseUserProtocol {
+    associatedtype TeamMembership: GetAccountImageUseCaseTeamMembershipProtocol
+    var membership: TeamMembership? { get }
+}
+
+/// An abstraction of a user's team membership for the `GetAccountImageUseCase`.
+public protocol GetAccountImageUseCaseTeamMembershipProtocol {
+    associatedtype Team: GetAccountImageUseCaseTeamProtocol
+    var team: Team { get }
+}
+
+/// An abstraction of a user's team for the `GetAccountImageUseCase`.
+public protocol GetAccountImageUseCaseTeamProtocol {
+    var name: String? { get }
+    var teamImageSource: AccountImageSource? { get }
+}
+
+/// An abstraction of a user account for the `GetAccountImageUseCase`.
+public protocol GetAccountImageUseCaseAccountProtocol {
+    var imageData: Data? { get }
+    var userName: String { get }
+    var teamName: String? { get }
+    var teamImageSource: AccountImageSource? { get }
+}
+
+public protocol GetAccountImageUseCaseInitialsProvider {
+    func initials(from fullName: String) -> String
+}
+
+/*
+func getInitials(from fullName: String) -> String {
+    // Split the full name by spaces into an array of words
+    let words = fullName.split(separator: " ")
+
+    // Map over each word, take the first character, convert to uppercase, and join them
+    let initials = words.compactMap { $0.first?.uppercased() }.joined()
+
+    return initials
+}
 */
