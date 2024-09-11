@@ -16,20 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireDesign
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
-@testable import WireReusableUIComponents
+@testable import WireFoundation
 
-final class MiniatureAccountImageFactoryTests: XCTestCase {
+final class AccountImageGeneratorTests: XCTestCase {
 
-    private var sut: MiniatureAccountImageFactory!
+    private var sut: AccountImageGenerator!
     private var snapshotHelper: SnapshotHelper!
 
+    @MainActor
     override func setUp() async throws {
-        sut = await MainActor.run { .init() }
+        sut = .init()
         snapshotHelper = .init()
             .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
@@ -52,7 +51,7 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
 
     @MainActor
     func testRenderingBlueCA() async {
-        let image = await sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.LightUI.MainColor.blue500)
+        let image = await sut.createImage(initials: "CA", backgroundColor: .init(red: 0.02, green: 0.4, blue: 0.78, alpha: 1))
         let imageView = UIImageView(image: image)
         imageView.frame.size = image.size
 
@@ -60,7 +59,7 @@ final class MiniatureAccountImageFactoryTests: XCTestCase {
             .withUserInterfaceStyle(.light)
             .verify(matching: imageView)
 
-        imageView.image = await sut.createImage(initials: "CA", backgroundColor: BaseColorPalette.DarkUI.MainColor.blue500)
+        imageView.image = await sut.createImage(initials: "CA", backgroundColor: .init(red: 0.33, green: 0.65, blue: 1, alpha: 1))
 
         snapshotHelper
             .withUserInterfaceStyle(.dark)

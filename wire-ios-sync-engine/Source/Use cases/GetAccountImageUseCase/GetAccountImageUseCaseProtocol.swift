@@ -16,11 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+public protocol GetAccountImageUseCaseProtocol {
 
-@testable import WireFoundation
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
+    func invoke() -> UIImage
 }

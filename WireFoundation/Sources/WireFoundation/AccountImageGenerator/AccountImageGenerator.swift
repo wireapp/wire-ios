@@ -19,7 +19,7 @@
 import UIKit
 
 @MainActor
-public struct MiniatureAccountImageFactory: AccountImageFactory {
+public struct AccountImageGenerator: AccountImageGeneratorProtocol {
 
     private let renderer = InitialsRenderer(frame: .init(x: 0, y: 0, width: 40, height: 40))
 
