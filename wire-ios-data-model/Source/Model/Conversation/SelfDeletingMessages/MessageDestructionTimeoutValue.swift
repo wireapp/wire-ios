@@ -102,7 +102,7 @@ extension MessageDestructionTimeoutValue {
     }
 
     public var displayString: String? {
-        guard .none != self else { return NSLocalizedString("input.ephemeral.timeout.none", comment: "") }
+        guard self != .none else { return NSLocalizedString("input.ephemeral.timeout.none", comment: "") }
         return longStyleFormatter.string(from: TimeInterval(rawValue))
     }
 

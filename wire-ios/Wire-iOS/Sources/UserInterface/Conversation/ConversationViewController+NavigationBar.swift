@@ -162,7 +162,7 @@ extension ConversationViewController {
                connection.status != .pending, connection.status != .sent {
                 return true
             } else {
-                return nil != conversation.teamRemoteIdentifier
+                return conversation.teamRemoteIdentifier != nil
             }
         default: return false
         }

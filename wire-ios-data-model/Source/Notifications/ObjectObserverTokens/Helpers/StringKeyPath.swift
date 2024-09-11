@@ -47,7 +47,7 @@ public final class StringKeyPath: Hashable {
     }
 
     public var isPath: Bool {
-        1 < count
+        count > 1
     }
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {

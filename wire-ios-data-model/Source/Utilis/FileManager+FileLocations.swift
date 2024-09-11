@@ -36,7 +36,7 @@ extension FileManager {
         // The app should not allow to run in all those cases.
 
         require(
-            nil != sharedContainerURL,
+            sharedContainerURL != nil,
             "Unable to create shared container url using app group identifier: \(appGroupIdentifier)"
         )
 

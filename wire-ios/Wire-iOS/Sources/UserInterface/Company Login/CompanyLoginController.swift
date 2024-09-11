@@ -84,7 +84,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
             let callbackScheme = Bundle.ssoURLScheme
         else { return nil } // Disable on public builds
 
-        requireInternal(nil != Bundle.ssoURLScheme, "no valid callback scheme")
+        requireInternal(Bundle.ssoURLScheme != nil, "no valid callback scheme")
 
         let requester = CompanyLoginController.createRequester(with: callbackScheme)
 

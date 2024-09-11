@@ -24,7 +24,7 @@ import WireUtilities
 extension ZMUser: UserType {
     @objc public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
-        nil != team || nil != teamIdentifier
+        team != nil || teamIdentifier != nil
     }
 
     /// Whether all user's devices are verified by the selfUser

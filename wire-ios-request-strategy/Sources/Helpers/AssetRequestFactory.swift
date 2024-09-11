@@ -176,6 +176,6 @@ extension ZMConversation {
     }
 
     var hasTeam: Bool {
-        nil != team
+        team != nil
     }
 }

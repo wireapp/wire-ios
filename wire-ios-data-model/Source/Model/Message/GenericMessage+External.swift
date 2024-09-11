@@ -29,7 +29,7 @@ extension GenericMessage {
     /// When sending the an external message the encrypted original message should be attached to the payload
     /// in the  blob field of the protocol buffer.
     /// - Parameter message: the message that should be encrypted to sent it as attached payload in an external message
-    /// - Returns: the encrypted original message, the encryption key and checksum warpped in a 
+    /// - Returns: the encrypted original message, the encryption key and checksum warpped in a
     /// ZMExternalEncryptedDataWithKeys
     static func encryptedDataWithKeys(from message: GenericMessage) -> ZMExternalEncryptedDataWithKeys? {
         guard
