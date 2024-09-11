@@ -49,7 +49,7 @@ public struct AppendFileMessageUseCase: AppendFileMessageUseCaseProtocol {
             } else if fileMessageData.isPDF {
                 contributionType = .fileMessage
             }
-            
+
         }
 
         analyticsSession?.trackEvent(
