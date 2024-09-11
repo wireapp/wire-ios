@@ -73,7 +73,7 @@ final class NetworkStatusView: UIView {
             // Check if the device has a non-zero top safe area inset (indicating a notch or similar feature)
             return window.safeAreaInsets.top > 20 ? 0 : CGFloat.NetworkStatusBar.topMargin
         }
-        
+
         return CGFloat.NetworkStatusBar.topMargin
     }()
 
