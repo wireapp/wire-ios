@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Konuşmalar";
+"sidebar.conversation_filter.all.title" = "Hepsi";
+"sidebar.conversation_filter.favorites.title" = "Favoriler";
+"sidebar.conversation_filter.groups.title" = "Gruplar";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Arşivle";
+
+"sidebar.contacts.title" = "Kişiler";
+"sidebar.contacts.connect.title" = "Bağlan";
+
+"sidebar.settings.title" = "Ayarlar";
+
+"sidebar.support.title" = "Destek";

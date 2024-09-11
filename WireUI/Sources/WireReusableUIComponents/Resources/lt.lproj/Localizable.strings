@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Susirašinėjimai";
+"sidebar.conversation_filter.all.title" = "Visi";
+"sidebar.conversation_filter.favorites.title" = "Svarbiausi";
+"sidebar.conversation_filter.groups.title" = "Grupės";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Archyvuoti";
+
+"sidebar.contacts.title" = "Kontaktai";
+"sidebar.contacts.connect.title" = "Užmegzti kontaktą";
+
+"sidebar.settings.title" = "Nustatymai";
+
+"sidebar.support.title" = "Palaikymas";

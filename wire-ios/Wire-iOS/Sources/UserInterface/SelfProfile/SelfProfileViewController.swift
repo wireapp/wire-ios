@@ -181,7 +181,7 @@ final class SelfProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             // profileContainerView
             profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            profileContainerView.topAnchor.constraint(equalTo: safeTopAnchor),
+            profileContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             profileContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
             // profileView
@@ -195,7 +195,7 @@ final class SelfProfileViewController: UIViewController {
             settingsController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             settingsController.view.topAnchor.constraint(equalTo: profileContainerView.bottomAnchor),
             settingsController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            settingsController.view.bottomAnchor.constraint(equalTo: safeBottomAnchor)
+            settingsController.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 
@@ -233,7 +233,9 @@ extension SelfProfileViewController: AccountSelectorViewDelegate {
         guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
 
         presentingViewController?.dismiss(animated: true) {
-            AppDelegate.shared.mediaPlaybackManager?.stop() // there must be another more appropriate place for this line
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mediaPlaybackManager?.stop()
+            }
             self.accountSelector?.switchTo(account: account)
         }
     }

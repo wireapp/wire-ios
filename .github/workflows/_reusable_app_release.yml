@@ -123,7 +123,6 @@ jobs:
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
       
-      
     steps:
       - name: Add Masks
         run: |

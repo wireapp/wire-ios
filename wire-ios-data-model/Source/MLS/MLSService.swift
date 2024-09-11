@@ -2211,8 +2211,10 @@ private extension TimeInterval {
 // sourcery: AutoMockable
 public protocol ConversationEventProcessorProtocol {
 
+    /// Decodes event's payload and transform it to local model
     func processConversationEvents(_ events: [ZMUpdateEvent]) async
-    func processPayload(_ payload: ZMTransportData)
+    /// Process the events and perform a save on syncContext
+    func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async
 }
 
 actor GroupsBeingRepaired {
