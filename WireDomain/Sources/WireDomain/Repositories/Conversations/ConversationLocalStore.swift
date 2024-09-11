@@ -276,9 +276,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             commonUpdate(from: remoteConversation, for: $0, isFederationEnabled: isFederationEnabled)
             updateConversationStatus(from: remoteConversation, for: $0)
 
-            isInitialFetch ?
-                assignMessageProtocol(from: remoteConversation, for: $0) :
+            if isInitialFetch {
+                assignMessageProtocol(from: remoteConversation, for: $0)
+            } else {
                 updateMessageProtocol(from: remoteConversation, for: $0)
+            }
 
             Flow.createGroup.checkpoint(
                 description: "conversation created remote id: \($0.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"

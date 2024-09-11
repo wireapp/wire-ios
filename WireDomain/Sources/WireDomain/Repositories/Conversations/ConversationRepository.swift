@@ -61,12 +61,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         var qualifiedIds: [WireAPI.QualifiedID]
 
         if let result = try? await conversationsAPI.getLegacyConversationIdentifiers() { /// only for api v0 (see `ConversationsAPIV0` method comment)
-            let uuids = try await result.reduce([UUID](), +)
+            let uuids = try await result.reduce(into: [UUID]()) { partialResult, uuids in
+                partialResult.append(contentsOf: uuids)
+            }
             qualifiedIds = uuids.map { WireAPI.QualifiedID(uuid: $0, domain: backendInfo.domain) }
         } else {
             /// fallback to api versions > v0.
             let ids = try await conversationsAPI.getConversationIdentifiers()
-            qualifiedIds = try await ids.reduce([WireAPI.QualifiedID](), +)
+            qualifiedIds = try await ids.reduce(into: [WireAPI.QualifiedID]()) { partialResult, uuids in
+                partialResult.append(contentsOf: uuids)
+            }
         }
 
         let conversationList = try await conversationsAPI.getConversations(for: qualifiedIds)
