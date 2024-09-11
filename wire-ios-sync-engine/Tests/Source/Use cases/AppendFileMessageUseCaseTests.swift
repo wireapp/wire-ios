@@ -49,7 +49,7 @@ final class AppendFileMessageUseCaseTests: XCTestCase {
         mockAnalyticsSessionProtocol = nil
     }
 
-    func testInvoke_AppendFileInGroupConversation_TracksEventCorrectly() throws {
+    func testInvoke_AppendsFileToGroupConversation_TracksEventCorrectly() throws {
         // GIVEN
         mockConversation.conversationType = .group
         mockConversation.localParticipants = []
