@@ -17,5 +17,32 @@
 //
 
 import Foundation
+import WireDataModel
 
-extension String: Error {}
+// sourcery: AutoMockable
+public protocol SelfUserProviderProtocol {
+
+    func fetchSelfUser() -> ZMUser
+
+}
+
+@available(*, deprecated, message: "Use UserRepository instead")
+public final class SelfUserProvider: SelfUserProviderProtocol {
+
+    // MARK: - Properties
+
+    private let context: NSManagedObjectContext
+
+    // MARK: - Life cycle
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    // MARK: - Methods
+
+    public func fetchSelfUser() -> ZMUser {
+        ZMUser.selfUser(in: context)
+    }
+
+}
