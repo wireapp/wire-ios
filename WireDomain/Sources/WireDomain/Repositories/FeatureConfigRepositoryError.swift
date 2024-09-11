@@ -18,12 +18,12 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// An API access object for endpoints concerning feature configs.
-public protocol FeatureConfigsAPI {
+/// Errors originating from `FeatureConfigRepository`.
 
-    /// Get all feature configs.
-    /// - Returns: All the feature configs.
+enum FeatureConfigRepositoryError: Error {
 
-    func getFeatureConfigs() async throws -> [FeatureConfig]
+    /// Unable to fetch feature locally
+
+    case failedToFetchFeatureLocally
+
 }
