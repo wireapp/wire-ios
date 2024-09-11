@@ -21,7 +21,8 @@ import Foundation
 /// Used to map keys
 struct DependentObjectsKeysForObservedObjectKeysCache {
     // keyPathsOnDependentObjectForKeyOnObservedObject : [displayName : [userDefinedName, user.name, connection.status]]
-    // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName, relatedConnectionStatus, etc.]]
+    // affectedKeysOnObservedObjectForChangedKeysOnDependentObject : [connection.status : [displayName,
+    // relatedConnectionStatus, etc.]]
     //
     let keyPathsOnDependentObjectForKeyOnObservedObject: [StringKeyPath: KeySet]
     let affectedKeysOnObservedObjectForChangedKeysOnDependentObject: [StringKeyPath: KeySet]

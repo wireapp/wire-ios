@@ -360,7 +360,8 @@ final class AudioMessageView: UIView, TransferView {
 
     /// Check if the audioTrackPlayer is playing my track
     ///
-    /// - Returns: true if audioTrackPlayer is playing the audio of this view (not other instance of AudioMessgeView or other audio playing object)
+    /// - Returns: true if audioTrackPlayer is playing the audio of this view (not other instance of AudioMessgeView or
+    /// other audio playing object)
     private func isOwnTrackPlayingInAudioPlayer() -> Bool {
         guard let message = fileMessage,
               let audioTrack = message.audioTrack,
@@ -429,7 +430,8 @@ final class AudioMessageView: UIView, TransferView {
             updateTimeLabel()
             updateProximityObserverState()
         }
-        // When state is completed, there is no info about it is own track or not. Update the time label in this case anyway (set to the length of own audio track)
+        // When state is completed, there is no info about it is own track or not. Update the time label in this case
+        // anyway (set to the length of own audio track)
         else if state == .completed {
             updateTimeLabel()
         } else {

@@ -24,7 +24,8 @@ public protocol ZMEventConsumer: NSObjectProtocol {
     /// or through history download
     /// @param liveEvents true if the events were received through websocket / notifications / notification stream,
     ///    false if received from history download
-    /// @param prefetchResult prefetched conversations and messages that the events belong to, indexed by remote identifier and
+    /// @param prefetchResult prefetched conversations and messages that the events belong to, indexed by remote
+    /// identifier and
     func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?)
 
     /// If conforming to these mothods the object strategy will be asked to extract relevant messages (by nonce)

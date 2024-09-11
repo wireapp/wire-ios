@@ -43,7 +43,8 @@ public enum ClientRegistrationPhase: UInt {
     /// the user has selected a device to delete - we send a request to delete the device
     case waitingForDeletion
 
-    /// the user has registered with phone but needs to register an email address and password to register a second device - we wait until we have emailCredentials
+    /// the user has registered with phone but needs to register an email address and password to register a second
+    /// device - we wait until we have emailCredentials
     case waitingForEmailVerfication
 
     /// the user has not yet selected a handle, which is a requirement for registering a client.
@@ -184,12 +185,14 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return .waitingForLogin
         }
 
-        // before registering client we need to fetch self user to know whether or not the user has registered an email address
+        // before registering client we need to fetch self user to know whether or not the user has registered an email
+        // address
         if isWaitingForSelfUser || needsRefreshSelfUser {
             return .waitingForSelfUser
         }
 
-        // when the registration fails because the password is missing or wrong, we need to stop making requests until we have a new password
+        // when the registration fails because the password is missing or wrong, we need to stop making requests until
+        // we have a new password
         if needsToCheckCredentials && emailCredentials == nil {
             return .waitingForLogin
         }
@@ -202,7 +205,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return .waitingForE2EIEnrollment
         }
 
-        // when the client registration fails because there are too many clients already registered we need to fetch clients from the backend
+        // when the client registration fails because there are too many clients already registered we need to fetch
+        // clients from the backend
         if isWaitingForUserClients {
             return .fetchingClients
         }
@@ -222,7 +226,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             return .waitingForHandle
         }
 
-        // when the user has previously only registered by phone and now wants to register a second device, he needs to register his email address and password first
+        // when the user has previously only registered by phone and now wants to register a second device, he needs to
+        // register his email address and password first
         if isAddingEmailNecessary {
             return .waitingForEmailVerfication
         }
@@ -398,7 +403,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             insertNewClient(for: selfUser)
         } else {
             // there is already an unregistered client in the store
-            // since there is no change in the managedObject, it will not trigger [ZMRequestAvailableNotification notifyNewRequestsAvailable:] automatically
+            // since there is no change in the managedObject, it will not trigger [ZMRequestAvailableNotification
+            // notifyNewRequestsAvailable:] automatically
             // therefore we need to call it here
             WireLogger.userClient.info("unregistered client found. notifying available requests")
             RequestAvailableNotification.notifyNewRequestsAvailable(self)

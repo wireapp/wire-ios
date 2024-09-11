@@ -112,9 +112,11 @@ public class PersonName: NSObject {
     }
 
     static func script(of string: String, schemeTagger: NSLinguisticTagger) -> NameOrder {
-        // We are checking the linguistic scheme in order to distinguisch between differences in the order of given and last name
+        // We are checking the linguistic scheme in order to distinguisch between differences in the order of given and
+        // last name
         // If the name contains latin scheme tag, it uses the first name as the given name
-        // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
+        // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for
+        // god
         schemeTagger.string = string
         let tags = schemeTagger.tags(
             in: NSRange(location: 0, length: schemeTagger.string!.count),
@@ -139,7 +141,8 @@ public class PersonName: NSObject {
         var component: String?
         var lastRange: Range<String.Index>?
 
-        // This is a bit more complicated because we don't want chinese names to be split up by their individual characters
+        // This is a bit more complicated because we don't want chinese names to be split up by their individual
+        // characters
         let options: NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace, .omitOther]
         fullName.enumerateLinguisticTags(
             in: fullRange,

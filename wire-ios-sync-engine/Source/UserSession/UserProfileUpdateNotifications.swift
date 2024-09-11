@@ -28,7 +28,8 @@ public protocol UserProfileUpdateObserver: NSObjectProtocol {
     optional func passwordUpdateRequestDidFail()
 
     /// Invoked when the email could not be set on the backend (duplicated?).
-    /// The password might already have been set though - this is how BE is designed and there's nothing SE can do about it
+    /// The password might already have been set though - this is how BE is designed and there's nothing SE can do about
+    /// it
     @objc
     optional func emailUpdateDidFail(_ error: Error!)
 

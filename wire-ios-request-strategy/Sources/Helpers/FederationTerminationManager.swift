@@ -34,10 +34,12 @@ public final class FederationTerminationManager: FederationTerminationManagerInt
     /// **Changes will be performed:**
     /// - for all conversations owned by self domain, remove all users that belong to `domain` from those conversations;
     /// - for all conversations owned by `domain`, remove all users from self domain from those conversations;
-    /// - for all conversations that are NOT owned from self domain or `domain` and contain users from self domain and `domain`,
+    /// - for all conversations that are NOT owned from self domain or `domain` and contain users from self domain and
+    /// `domain`,
     /// remove users from `domain` and `otherDomain` from those conversations;
     /// - for any connection from a user on self domain to a user on `domain`, delete the connection;
-    /// - for any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations;
+    /// - for any 1:1 conversation, where one of the two users is on `domain`, remove self user from those
+    /// conversations;
     /// - remove connection for all connected users owned by `domain`.
     public func handleFederationTerminationWith(_ domain: String) {
         removeUsers(with: domain, fromConversationsOwnedBy: context.selfDomain)
@@ -50,10 +52,13 @@ public final class FederationTerminationManager: FederationTerminationManagerInt
     }
 
     /// **Changes will be performed:**
-    /// - for all conversations that are NOT owned from `domain` or `otherDomain` and contain users from `domain` and `otherDomain`,
+    /// - for all conversations that are NOT owned from `domain` or `otherDomain` and contain users from `domain` and
+    /// `otherDomain`,
     /// remove users from `domain` and `otherDomain` from those conversations;
-    /// - for all conversations owned by `domain` that contains users from `otherDomain`, remove users from `otherDomain` from those conversations;
-    /// - for all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain` from those conversations.
+    /// - for all conversations owned by `domain` that contains users from `otherDomain`, remove users from
+    /// `otherDomain` from those conversations;
+    /// - for all conversations owned by `otherDomain` that contains users from `domain`, remove users from `domain`
+    /// from those conversations.
     public func handleFederationTerminationBetween(_ domain: String, otherDomain: String) {
         removeUsers(with: [domain, otherDomain], fromConversationsNotOwnedBy: [domain, otherDomain])
         removeUsers(with: domain, fromConversationsOwnedBy: otherDomain)

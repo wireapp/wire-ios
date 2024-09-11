@@ -120,7 +120,8 @@ final class ConversationTableViewDataSource: NSObject {
             )
             let sectionController = self.sectionController(for: tuple.element, at: tuple.offset)
 
-            // Re-create cell description if the context has changed (message has been moved around or received new neighbours).
+            // Re-create cell description if the context has changed (message has been moved around or received new
+            // neighbours).
             if sectionController.context != context || forceRecalculate {
                 sectionController.recreateCellDescriptions(in: context)
             }
@@ -276,7 +277,8 @@ final class ConversationTableViewDataSource: NSObject {
         let fetchRequest = self.fetchRequest()
         fetchRequest
             .fetchLimit = limit +
-            5 // We need to fetch a bit more than requested so that there is overlap between messages in different fetches
+            5 // We need to fetch a bit more than requested so that there is overlap between messages in different
+        // fetches
         fetchRequest.fetchOffset = offset
 
         fetchController = NSFetchedResultsController<ZMMessage>(
@@ -373,7 +375,8 @@ final class ConversationTableViewDataSource: NSObject {
             // 4. Get the frame of that message
             let indexPathRect = tableView.rect(forSection: sectionIndex)
 
-            // 5. Update content offset so it stays visible. To reduce flickering compensate for empty space below the message
+            // 5. Update content offset so it stays visible. To reduce flickering compensate for empty space below the
+            // message
             scrollView.contentOffset = CGPoint(x: 0, y: indexPathRect.minY - 16)
         }
     }

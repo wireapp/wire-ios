@@ -31,7 +31,8 @@ final class ZiphySession: ZiphyURLRequester {
         _ request: URLRequest,
         completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
     ) -> ZiphyRequestIdentifier {
-        // Removing the https://host part from the given URL, so WireSyncEngine can prepend it with the Wire giphy proxy host
+        // Removing the https://host part from the given URL, so WireSyncEngine can prepend it with the Wire giphy proxy
+        // host
         // e.g. url = https://api.giphy.com/v1/gifs/trending?limit=50&offset=0
         //      requestPath = /v1/gifs/trending?limit=50&offset=0
 

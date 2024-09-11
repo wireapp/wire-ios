@@ -106,7 +106,8 @@ public class ZMClientMessage: ZMOTRMessage {
         switch content {
         case .edited:
             // Replace the nonce with the original
-            // This way if we get a delete from a different device while we are waiting for the response it will delete this message
+            // This way if we get a delete from a different device while we are waiting for the response it will delete
+            // this message
             let originalID = underlyingMessage.flatMap { UUID(uuidString: $0.edited.replacingMessageID) }
             nonce = originalID
         case .buttonAction:

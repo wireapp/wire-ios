@@ -192,7 +192,8 @@ extension UserChangeInfo {
 
     // MARK: Registering SearchUserObservers
 
-    /// Adds an observer for all ZMSearchUsers in the given context. You must hold on to the token and use it to unregister.
+    /// Adds an observer for all ZMSearchUsers in the given context. You must hold on to the token and use it to
+    /// unregister.
     ///
     public static func add(
         searchUserObserver observer: UserObserving,

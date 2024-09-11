@@ -215,7 +215,8 @@ extension FileTransferTests_Swift {
             )
         }
 
-        // We no longer process incoming V2 assets so we need to manually set some properties to simulate having received the asset
+        // We no longer process incoming V2 assets so we need to manually set some properties to simulate having
+        // received the asset
         self.userSession?.perform {
             message!.version = 2
             message!.assetId = assetID
@@ -300,7 +301,8 @@ extension FileTransferTests_Swift {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // We no longer process incoming V2 assets so we need to manually set some properties to simulate having received the asset
+        // We no longer process incoming V2 assets so we need to manually set some properties to simulate having
+        // received the asset
         self.userSession?.perform {
             message!.version = 2
             message!.assetId = assetID

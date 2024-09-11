@@ -216,13 +216,20 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testPerformanceOfMessageFetching() {
         // Before caching:
-        // 1 category, 100 paging, messages: average: 0.270, relative standard deviation: 8.876%, values: [0.341864, 0.262725, 0.264362, 0.266097, 0.260730, 0.264372, 0.257983, 0.262659, 0.260060, 0.261362],
-        // 1 category, 200 paging, messages: average: 0.273, relative standard deviation: 9.173%, values: [0.346403, 0.260432, 0.262388, 0.263736, 0.262131, 0.278030, 0.264735, 0.265317, 0.262637, 0.261326],
-        // 1 category, 500 paging, messages: average: 0.286, relative standard deviation: 9.671%, values: [0.368397, 0.275279, 0.274547, 0.276134, 0.275657, 0.275912, 0.274775, 0.274407, 0.278609, 0.288635]
-        // 1 category, 1000 paging, messages: average: 0.299, relative standard deviation: 10.070%, values: [0.388566, 0.289169, 0.283670, 0.287618, 0.287593, 0.287147, 0.296063, 0.292828, 0.287014, 0.288455]
-        // 1 category, 1000 paging, messages: average: 0.286, relative standard deviation: 9.671%, values: [0.368397, 0.275279, 0.274547, 0.276134, 0.275657, 0.275912, 0.274775, 0.274407, 0.278609, 0.288635]
-        // 2 categories, 200 paging - average: 0.512, relative standard deviation: 4.773%, values: [0.584575, 0.500881, 0.510514, 0.499623, 0.502749, 0.502768, 0.505693, 0.502528, 0.505087, 0.503482]
-        // 10.000 messages, 1 category, 200 paging, average: 2.960, relative standard deviation: 5.543%, values: [3.370468, 2.725436, 2.806839, 2.851691, 3.032464, 2.910135, 3.004918, 2.986125, 2.953004, 2.957812]
+        // 1 category, 100 paging, messages: average: 0.270, relative standard deviation: 8.876%, values: [0.341864,
+        // 0.262725, 0.264362, 0.266097, 0.260730, 0.264372, 0.257983, 0.262659, 0.260060, 0.261362],
+        // 1 category, 200 paging, messages: average: 0.273, relative standard deviation: 9.173%, values: [0.346403,
+        // 0.260432, 0.262388, 0.263736, 0.262131, 0.278030, 0.264735, 0.265317, 0.262637, 0.261326],
+        // 1 category, 500 paging, messages: average: 0.286, relative standard deviation: 9.671%, values: [0.368397,
+        // 0.275279, 0.274547, 0.276134, 0.275657, 0.275912, 0.274775, 0.274407, 0.278609, 0.288635]
+        // 1 category, 1000 paging, messages: average: 0.299, relative standard deviation: 10.070%, values: [0.388566,
+        // 0.289169, 0.283670, 0.287618, 0.287593, 0.287147, 0.296063, 0.292828, 0.287014, 0.288455]
+        // 1 category, 1000 paging, messages: average: 0.286, relative standard deviation: 9.671%, values: [0.368397,
+        // 0.275279, 0.274547, 0.276134, 0.275657, 0.275912, 0.274775, 0.274407, 0.278609, 0.288635]
+        // 2 categories, 200 paging - average: 0.512, relative standard deviation: 4.773%, values: [0.584575, 0.500881,
+        // 0.510514, 0.499623, 0.502749, 0.502768, 0.505693, 0.502528, 0.505087, 0.503482]
+        // 10.000 messages, 1 category, 200 paging, average: 2.960, relative standard deviation: 5.543%, values:
+        // [3.370468, 2.725436, 2.806839, 2.851691, 3.032464, 2.910135, 3.004918, 2.986125, 2.953004, 2.957812]
 
         // given
         insertAssetMessages(count: 1000)

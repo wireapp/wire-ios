@@ -46,7 +46,8 @@ extension ZMUser {
     ///
     /// - Parameters:
     ///   - query: search string
-    ///   - connectionStatuses: an array of connections status of the users. E.g. for connected users it is [ZMConnectionStatus.accepted.rawValue]
+    ///   - connectionStatuses: an array of connections status of the users. E.g. for connected users it is
+    /// [ZMConnectionStatus.accepted.rawValue]
     /// - Returns: predicate having search query and supplied connection statuses
     @objc(predicateForUsersWithSearchString:connectionStatusInArray:)
     public static func predicateForUsers(withSearch query: String, connectionStatuses: [Int16]?) -> NSPredicate {

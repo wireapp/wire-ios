@@ -72,7 +72,8 @@ final class ProfileDetailsViewController: UIViewController {
     ) {
         var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideTeamName]
 
-        // The availability status has been moved to the left of the user name, so now we can always hide this status in the user's profile.
+        // The availability status has been moved to the left of the user name, so now we can always hide this status in
+        // the user's profile.
         profileHeaderOptions.insert(.hideAvailability)
 
         self.user = user

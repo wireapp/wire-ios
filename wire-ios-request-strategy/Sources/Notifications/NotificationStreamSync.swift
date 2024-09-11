@@ -150,7 +150,8 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     func appendPotentialGapSystemMessageIfNeeded(with response: ZMTransportResponse) {
         // A 404 by the BE means we can't get all notifications as they are not stored anymore
         // and we want to issue a system message. We still might have a payload with notifications that are newer
-        // than the commissioning time, the system message should be inserted between the old messages and the potentional
+        // than the commissioning time, the system message should be inserted between the old messages and the
+        // potentional
         // newly received ones in the payload.
 
         if response.httpStatus == 404 {

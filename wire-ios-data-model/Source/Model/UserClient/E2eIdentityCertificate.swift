@@ -95,10 +95,12 @@ extension E2eIdentityCertificate {
         return isExpired || (isActivated && comparedDate.now >= renewalNudgingDate)
     }
 
-    /// In order to get `renewalNudgingDate` we should deduct standard deductions from Validity Period (VP) and add it to `notValidBefore` date
+    /// In order to get `renewalNudgingDate` we should deduct standard deductions from Validity Period (VP) and add it
+    /// to `notValidBefore` date
     /// Standard deductions are : Server storage time(HT), Grace period set by team admin(GP),  Random time in a day(UT)
     /// Renewal nudging date = VP - (HT + GP + UT)
-    /// Here we calculate it from the other way where we deduct the standard deductions from the expiry date to get the renewal nudging date
+    /// Here we calculate it from the other way where we deduct the standard deductions from the expiry date to get the
+    /// renewal nudging date
     /// This is done so as to be in sync with Android codebase
     public func renewalNudgingDate(with gracePeriod: TimeInterval) -> Date {
         let standardDeductionsFromExpiry = serverStoragePeriod + gracePeriod + randomPeriod

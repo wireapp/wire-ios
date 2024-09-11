@@ -71,13 +71,15 @@ extension ZMAssetClientMessage {
         let fileHasNoUploadState = fileMessageData != nil
             && underlyingMessage?.assetData?.hasUploaded == false
             && underlyingMessage?.assetData?.hasNotUploaded == false
-        // in super.startDestructionIfNeeded() there is a logic split that triggers destruction or obfuscation depending on sender and context
+        // in super.startDestructionIfNeeded() there is a logic split that triggers destruction or obfuscation depending
+        // on sender and context
         let isOtherSender = sender?.isSelfUser == false && managedObjectContext?.zm_isUserInterfaceContext == true
         let isNotSelfSender = sender == nil || isOtherSender
         if fileHasNoUploadState {
             return false
         } else if isNotSelfSender, imageNotDownloaded {
-            // we do not destroy images sent by other user that are not downloaded yet, it is synced after asset is downloaded
+            // we do not destroy images sent by other user that are not downloaded yet, it is synced after asset is
+            // downloaded
             return false
         }
         return super.startDestructionIfNeeded()

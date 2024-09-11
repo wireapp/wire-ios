@@ -27,7 +27,8 @@ protocol NetworkStatusViewControllerDelegate: AnyObject {
     ///
     /// - networkStatusViewController: caller of this delegate method
     /// - Parameter orientation: orientation to check
-    /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain orientation.
+    /// - Returns: return false if the class conform this protocol does not show NetworkStatusViewController in certain
+    /// orientation.
     func showInIPad(networkStatusViewController: NetworkStatusViewController, with orientation: UIInterfaceOrientation)
         -> Bool
 }
@@ -214,7 +215,8 @@ extension NetworkStatusViewController {
             if shouldShowOnIPad() {
                 networkStatusView.update(state: state, animated: false)
             } else {
-                // When size class changes and delegate view controller disabled to show networkStatusView, hide the networkStatusView
+                // When size class changes and delegate view controller disabled to show networkStatusView, hide the
+                // networkStatusView
                 networkStatusView.update(state: .online, animated: false)
             }
         case .compact, .unspecified:

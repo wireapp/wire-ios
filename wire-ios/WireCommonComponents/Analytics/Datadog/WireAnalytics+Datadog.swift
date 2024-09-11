@@ -40,7 +40,8 @@ extension WireAnalytics {
             shared?.userIdentifier
         }
 
-        /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available, the function just returns.
+        /// Enables Datadog analytics instance if available and makes it a global logger. If Datadog is not available,
+        /// the function just returns.
         /// - Note: this should be called early and **has effect only once**
         public static func enable() {
             enableOnlyOnce.execute()

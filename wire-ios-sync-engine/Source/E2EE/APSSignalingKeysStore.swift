@@ -58,7 +58,8 @@ public final class APSSignalingKeysStore: NSObject {
         SignalingKeys()
     }
 
-    /// we previously stored keys in the key chain. use this method to retreive the previously stored values to move them into the selfClient
+    /// we previously stored keys in the key chain. use this method to retreive the previously stored values to move
+    /// them into the selfClient
     static func keysStoredInKeyChain() -> SignalingKeys? {
         guard let verificationKey = ZMKeychain.data(forAccount: self.verificationKeyAccountName),
               let decryptionKey = ZMKeychain.data(forAccount: self.decryptionKeyAccountName)

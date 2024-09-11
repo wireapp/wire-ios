@@ -182,7 +182,8 @@ final class MessagePresenter: NSObject {
     /// - Parameters:
     ///   - message: message to open
     ///   - targetView: target view when opens the message
-    ///   - delegate: the receiver of action callbacks for the message. Currently only forward and reveal in conversation actions are supported.
+    ///   - delegate: the receiver of action callbacks for the message. Currently only forward and reveal in
+    /// conversation actions are supported.
     func open(
         _ message: ZMConversationMessage,
         targetView: UIView,

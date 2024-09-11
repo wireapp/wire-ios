@@ -229,7 +229,8 @@ extension ZMOTRMessage {
                 return nil
             }
 
-            // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
+            // In case of AssetMessages: If the payload does not match the sha265 digest, calling
+            // `updateWithGenericMessage:updateEvent` will delete the object.
             clientMessage?.update(with: updateEvent, initialUpdate: isNewMessage)
 
             // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true.

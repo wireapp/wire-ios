@@ -29,7 +29,8 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
         }
     }
 
-    /// Controls how far (distance) the @c menuView is revealed per swipe gesture. Default CGFLOAT_MAX, means all the way
+    /// Controls how far (distance) the @c menuView is revealed per swipe gesture. Default CGFLOAT_MAX, means all the
+    /// way
     var maxVisualDrawerOffset: CGFloat = 0 {
         didSet {
             maxMenuViewToSwipeViewLeftConstraint?.constant = maxVisualDrawerOffset
@@ -52,7 +53,8 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
 
     /// View to add menu items to
     let menuView = UIView()
-    // @m called when cell's content is overscrolled by user to the side. General use case for dismissing the cell off the screen.
+    // @m called when cell's content is overscrolled by user to the side. General use case for dismissing the cell off
+    // the screen.
     var overscrollAction: ((_ cell: SwipeMenuCollectionCell?) -> Void)?
 
     private var hasCreatedSwipeMenuConstraints = false

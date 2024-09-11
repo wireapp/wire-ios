@@ -27,7 +27,8 @@ extension MessagePresenter {
     ///   - message: a message with image data
     ///   - actionResponder: a action responder
     ///   - isPreviewing: is peeking with 3D touch?
-    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in navigation controller
+    /// - Returns: if isPreviewing, return a ConversationImagesViewController otherwise return a the view wrapped in
+    /// navigation controller
     func imagesViewController(
         for message: ZMConversationMessage,
         actionResponder: MessageActionResponder,

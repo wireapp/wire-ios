@@ -205,7 +205,8 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
     ) {
         let protectionSpace = challenge.protectionSpace
         if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with this authentication method
+            // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with
+            // this authentication method
             guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host)
             else { return completionHandler(
                 .cancelAuthenticationChallenge,

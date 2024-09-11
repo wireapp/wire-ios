@@ -27,7 +27,8 @@ class LaunchImageViewController: UIViewController {
     private let loadingScreenLabel = UILabel()
     private let activityIndicator = ProgressSpinner()
 
-    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning animation
+    /// Convenience method for showing the @c activityIndicator and @c loadingScreenLabel and start the spinning
+    /// animation
     func showLoadingScreen() {
         shouldShowLoadingScreenOnViewDidLoad = true
         loadingScreenLabel.isHidden = false

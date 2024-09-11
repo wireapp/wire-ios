@@ -155,7 +155,8 @@ class Message_FormattingTests: XCTestCase {
     func testTextWithInvalidLinkAttachment() {
         // given
         let textMessageData =
-            createTextMessageData(withMessageTemplate: "hello:{preview-url}") // NSDataDetector gets confused by this text
+            createTextMessageData(withMessageTemplate: "hello:{preview-url}") // NSDataDetector gets confused by this
+        // text
 
         // when
         let formattedText = NSAttributedString.format(message: textMessageData, isObfuscated: false)

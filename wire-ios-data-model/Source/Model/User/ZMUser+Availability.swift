@@ -135,7 +135,8 @@ extension ZMUser {
 
     private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
 
-    /// Returns an option set describing how we should notify the user about the change in behaviour for the availability feature
+    /// Returns an option set describing how we should notify the user about the change in behaviour for the
+    /// availability feature
     public var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
         get {
             guard let rawValue = managedObjectContext?

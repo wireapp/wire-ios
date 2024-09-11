@@ -39,7 +39,8 @@ private let ZMPushStringFileAdd             = "add.file"             // "[sender
 private let ZMPushStringLocationAdd         = "add.location"         // "[senderName] shared a location"
 
 // currently disabled
-// public let ZMPushStringMessageAddMany      = "add.message.many"    // "x new messages in [conversationName] / from [senderName]"
+// public let ZMPushStringMessageAddMany      = "add.message.many"    // "x new messages in [conversationName] / from
+// [senderName]"
 
 private let ZMPushStringFailedToSend        = "failed.message"       // "Unable to send a message"
 

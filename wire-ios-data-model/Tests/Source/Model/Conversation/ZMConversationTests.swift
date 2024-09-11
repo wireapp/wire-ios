@@ -137,7 +137,8 @@ extension ZMConversationTests {
             XCTAssertEqual(uuid, created.remoteIdentifier)
             XCTAssertEqual(domain, created.domain)
 
-            // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a swift enum
+            // Since the test class is an objc class, we can't set this to false in tearDown because APIVersion is a
+            // swift enum
             BackendInfo.isFederationEnabled = false
         }
     }

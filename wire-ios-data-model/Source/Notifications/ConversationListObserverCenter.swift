@@ -218,7 +218,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     }
 
     public func startObserving() {
-        // list snapshots are automatically re-created when the lists are re-created and `recreateSnapshot(for conversation:)` is called
+        // list snapshots are automatically re-created when the lists are re-created and `recreateSnapshot(for
+        // conversation:)` is called
         zmLog.debug(#function)
 
         managedObjectContext.conversationListDirectory().refetchAllLists(in: managedObjectContext)

@@ -81,7 +81,8 @@
     wrap, \
     wrapArguments, \
     wrapAttributes, \
-    wrapLoopBodies
+    wrapLoopBodies, \
+    wrapSingleLineComments
 
 # Options
 

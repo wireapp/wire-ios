@@ -369,7 +369,8 @@ extension ZMAssetClientMessageTests {
         XCTAssertTrue(sut.isZombieObject)
     }
 
-    /// This is testing a race condition on the receiver side if the sender cancels but not fast enough, and he BE just got the entire payload
+    /// This is testing a race condition on the receiver side if the sender cancels but not fast enough, and he BE just
+    /// got the entire payload
     func testThatItUpdatesTheTransferStateWhenTheCanceledMessageIsMergedAfterUploadingSuccessfully() {
         // given
         let nonce = UUID.create()

@@ -135,7 +135,8 @@ extension ZMMessage {
     }
 
     func removeEmptyReactions() {
-        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of adding them again
+        // Remove "empty" leftover reactions that have no user attached to treat them as fresh reactions in case of
+        // adding them again
         guard let moc = managedObjectContext else { return }
         let reactionsCopy = self.reactions
         for reaction in reactionsCopy where reaction.users.isEmpty {

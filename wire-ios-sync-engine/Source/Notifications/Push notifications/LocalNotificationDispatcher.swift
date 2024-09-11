@@ -191,7 +191,8 @@ extension LocalNotificationDispatcher {
     }
 
     /// Cancels all notifications for a specific conversation
-    /// - note: Notifications for a specific conversation are otherwise deleted automatically when the message window changes and
+    /// - note: Notifications for a specific conversation are otherwise deleted automatically when the message window
+    /// changes and
     /// ZMConversationDidChangeVisibleWindowNotification is called
     public func cancelNotification(for conversation: ZMConversation) {
         self.allNotificationSets.forEach { $0.cancelNotifications(conversation) }

@@ -81,13 +81,15 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Whether the message expects read confirmations.
     var needsReadConfirmation: Bool { get }
 
-    /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
+    /// The textMessageData of the message which also contains potential link previews. If the message has no text, it
+    /// will be nil
     var textMessageData: TextMessageData? { get }
 
     /// The image data associated with the message. If the message has no image, it will be nil
     var imageMessageData: ZMImageMessageData? { get }
 
-    /// The system message data associated with the message. If the message is not a system message data associated, it will be nil
+    /// The system message data associated with the message. If the message is not a system message data associated, it
+    /// will be nil
     var systemMessageData: ZMSystemMessageData? { get }
 
     /// The knock message data associated with the message. If the message is not a knock, it will be nil
@@ -115,7 +117,8 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     var updatedAt: Date? { get }
 
     /// Starts the "self destruction" timer if all conditions are met
-    /// It checks internally if the message is ephemeral, if sender is the other user and if there is already an existing timer
+    /// It checks internally if the message is ephemeral, if sender is the other user and if there is already an
+    /// existing timer
     /// Returns YES if a timer was started by the message call
     func startSelfDestructionIfNeeded() -> Bool
 
@@ -127,14 +130,17 @@ public protocol ZMConversationMessage: NSObjectProtocol {
     /// Override this method in subclasses if needed
     var deletionTimeout: TimeInterval { get }
 
-    /// Returns true if the message is an ephemeral message that was sent by the selfUser and the obfuscation timer already fired
-    /// At this point the genericMessage content is already cleared. You should receive a notification that the content was cleared
+    /// Returns true if the message is an ephemeral message that was sent by the selfUser and the obfuscation timer
+    /// already fired
+    /// At this point the genericMessage content is already cleared. You should receive a notification that the content
+    /// was cleared
     var isObfuscated: Bool { get }
 
     /// Returns the date when a ephemeral message will be destructed or `nil` if th message is not ephemeral
     var destructionDate: Date? { get }
 
-    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session (since the
+    /// Returns whether this is a message that caused the security level of the conversation to degrade in this session
+    /// (since the
     /// app was restarted)
     var causedSecurityLevelDegradation: Bool { get }
 

@@ -214,7 +214,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// - Returns: The group ID of the subgroup
     /// - Throws: An error if the operation fails
     ///
-    /// Fetches the subgroup from the backend and caches it locally with ``SubconversationGroupIDRepository/storeSubconversationGroupID(_:forType:parentGroupID:)``
+    /// Fetches the subgroup from the backend and caches it locally with
+    /// ``SubconversationGroupIDRepository/storeSubconversationGroupID(_:forType:parentGroupID:)``
     ///
     /// If the subgroup's epoch is less than or equal to 0, it creates the subgroup
     /// similarly to ``MLSService/createGroup(for:parentGroupID:)``.
@@ -360,7 +361,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Then we query how many key packages of the self client are available on the backend and
     /// generate and upload new ones if there are less than 50% of the target unclaimed key package count.
     ///
-    /// [confluence use case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/556499553/Use+case+refill+key+packages+MLS)
+    /// [confluence use
+    /// case](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/556499553/Use+case+refill+key+packages+MLS)
 
     func uploadKeyPackagesIfNeeded() async
 
@@ -464,7 +466,8 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     ///
     /// In case of a failure, the group will be wiped.
     ///
-    /// [confluence documentation](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration)
+    /// [confluence
+    /// documentation](https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/746488003/Proteus+to+MLS+Migration)
 
     func startProteusToMLSMigration() async throws
 }

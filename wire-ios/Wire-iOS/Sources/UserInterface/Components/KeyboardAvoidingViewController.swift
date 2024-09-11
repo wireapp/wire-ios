@@ -121,11 +121,13 @@ class KeyboardAvoidingViewController: UIViewController {
         let keyboardFrameInView = UIView.keyboardFrame(in: self.view, forKeyboardNotification: notification)
         var bottomOffset: CGFloat
 
-        // The keyboard frame includes the safe area so we need to substract it since the bottomEdgeConstraint is attached to the safe area.
+        // The keyboard frame includes the safe area so we need to substract it since the bottomEdgeConstraint is
+        // attached to the safe area.
         bottomOffset = -keyboardFrameInView.intersection(view.safeAreaLayoutGuide.layoutFrame).height
 
         // When the keyboard is visible &
-        // this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the bottomOffset should be reduced.
+        // this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the
+        // bottomOffset should be reduced.
         if !keyboardFrameInView.origin.y.isInfinite,
            modalPresentationStyle == .formSheet,
            let frame = presentationController?.frameOfPresentedViewInContainerView {

@@ -66,7 +66,8 @@ extension NSManagedObjectContext {
     public func createDispatchGroups() {
         let groups = [
             ZMSDispatchGroup(label: "ZMSGroupQueue first"),
-            // The secondary group gets -performGroupedBlock: added to it, but is not affected by -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
+            // The secondary group gets -performGroupedBlock: added to it, but is not affected by
+            // -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
             ZMSDispatchGroup(label: "ZMSGroupQueue second"),
         ]
         dispatchGroupContext = DispatchGroupContext(groups: groups)

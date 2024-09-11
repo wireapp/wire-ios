@@ -74,7 +74,8 @@ struct WireURLs: Codable {
     /// Link to an article explaining how to create, share, and revoke a group conversation link.
     let guestLinksInfo: URL
 
-    /// Shown when a user tries to send a message or create a group with users from different backends when one of the backends is not reachable.
+    /// Shown when a user tries to send a message or create a group with users from different backends when one of the
+    /// backends is not reachable.
     /// Links to a support page that explains the issue when one of the backend is offline.
     let unreachableBackendInfo: URL
 

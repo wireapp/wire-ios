@@ -53,7 +53,8 @@ public protocol ConversationLike: AnyObject {
     var domain: String? { get }
 }
 
-// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
+// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another
+// protocol to abstract Swift only properties
 public protocol SwiftConversationLike {
     var accessMode: ConversationAccessMode? { get }
     var accessRoles: Set<ConversationAccessRoleV2> { get }

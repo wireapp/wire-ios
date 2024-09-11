@@ -43,7 +43,8 @@ class ReactionsSortingTests: BaseZMMessageTests {
             forUser: selfUser,
             newReactionsCreationDate: Date(timeIntervalSince1970: .fiveMinutes)
         )
-        // Since all of the emojis were added by the same user each one of them will have different creation date (corresponding to first occurrence)
+        // Since all of the emojis were added by the same user each one of them will have different creation date
+        // (corresponding to first occurrence)
         message.setReactions(
             ["👽", "🤖", "👾"],
             forUser: selfUser,

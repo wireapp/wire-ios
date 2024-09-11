@@ -316,7 +316,8 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     }
 
     func testThatItCreatesPayloadForDeletionOfEphemeralTextMessage_Group_SenderWasDeleted() async throws {
-        // This can happen due to a race condition where we receive a delete for an ephemeral after deleting the same message locally, but before creating the payload
+        // This can happen due to a race condition where we receive a delete for an ephemeral after deleting the same
+        // message locally, but before creating the payload
         let syncMessage = try await self.syncMOC.perform {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)

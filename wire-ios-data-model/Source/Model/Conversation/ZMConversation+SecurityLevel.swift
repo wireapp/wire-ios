@@ -95,7 +95,8 @@ extension ZMConversation {
         !isReadOnly && securityLevel != .secureWithIgnored && legalHoldStatus != .pendingApproval
     }
 
-    /// Verify the legal hold subjects in the conversation. This will synchronize with the backend on who's currently under legal hold.
+    /// Verify the legal hold subjects in the conversation. This will synchronize with the backend on who's currently
+    /// under legal hold.
     @objc
     public func verifyLegalHoldSubjects() {
         needsToVerifyLegalHold = true
@@ -118,21 +119,24 @@ extension ZMConversation {
     }
 
     /// Should be called when client is trusted.
-    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
+    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices
+    /// verified
     @objc(increaseSecurityLevelIfNeededAfterTrustingClients:)
     public func increaseSecurityLevelIfNeededAfterTrusting(clients: Set<UserClient>) {
         applySecurityChanges(cause: .verifiedClients(clients))
     }
 
     /// Should be called when client is deleted.
-    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
+    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices
+    /// verified
     @objc(increaseSecurityLevelIfNeededAfterRemovingClientForUsers:)
     public func increaseSecurityLevelIfNeededAfterRemoving(clients: [ZMUser: Set<UserClient>]) {
         applySecurityChanges(cause: .removedClients(clients))
     }
 
     /// Should be called when a user is deleted.
-    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
+    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices
+    /// verified
     @objc(increaseSecurityLevelIfNeededAfterRemovingUsers:)
     public func increaseSecurityLevelIfNeededAfterRemoving(users: Set<ZMUser>) {
         applySecurityChanges(cause: .removedUsers(users))
@@ -167,7 +171,8 @@ extension ZMConversation {
 
     private func updateLegalHoldState(cause: SecurityChangeCause) {
         guard !needsToVerifyLegalHold, !localParticipants.any({ $0.clients.any(\.needsToBeUpdatedFromBackend) }) else {
-            // We don't update the legal hold status if we are still gathering information about which clients were added/deleted
+            // We don't update the legal hold status if we are still gathering information about which clients were
+            // added/deleted
             return
         }
 
@@ -256,7 +261,8 @@ extension ZMConversation {
 
     // MARK: - Messages
 
-    /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
+    /// Creates a system message that inform that there are pontential lost messages, and that some users were added to
+    /// the conversation
     @objc
     public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
         guard let context = managedObjectContext else { return }

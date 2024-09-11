@@ -75,7 +75,8 @@ public protocol EARServiceInterface: AnyObject {
     func setInitialEARFlagValue(_ enabled: Bool)
 }
 
-/// The EARService is responsible for managing encryption at rest functionality. See <doc:encryption-at-rest> for more information about how encryption at rest works.
+/// The EARService is responsible for managing encryption at rest functionality. See <doc:encryption-at-rest> for more
+/// information about how encryption at rest works.
 
 public class EARService: EARServiceInterface {
     // MARK: - Properties
@@ -106,7 +107,8 @@ public class EARService: EARServiceInterface {
     /// - Parameters:
     ///   - accountID: The id of the self user.
     ///   - databaseContexts: A list of database contexts that require access to the database key.
-    ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when the service is running in app extensions.
+    ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when
+    /// the service is running in app extensions.
     ///   - sharedUserDefaults: The shared user defaults in which to keep track of whether EAR is enabled.
     ///   - authenticationContext: The authentication context used to access encryption keys.
 

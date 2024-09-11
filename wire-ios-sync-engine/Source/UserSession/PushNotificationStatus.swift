@@ -44,7 +44,8 @@ open class PushNotificationStatus: NSObject {
     /// Schedule to fetch an event with a given UUID
     ///
     /// - parameter eventId: UUID of the event to fetch
-    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when there's no more events to fetch
+    /// - parameter completionHandler: The completion handler will be run when event has been downloaded and when
+    /// there's no more events to fetch
     @objc(fetchEventId:completionHandler:)
     public func fetch(eventId: UUID, completionHandler: @escaping () -> Void) {
         guard eventId.isType1UUID else {

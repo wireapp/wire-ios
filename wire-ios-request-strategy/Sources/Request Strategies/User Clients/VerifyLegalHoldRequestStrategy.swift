@@ -18,7 +18,8 @@
 
 import Foundation
 
-/// This strategy observes the `needsToVerifyLegalHold` flag on conversations and fetches an updated list of available clients
+/// This strategy observes the `needsToVerifyLegalHold` flag on conversations and fetches an updated list of available
+/// clients
 /// and verifies that the legal hold status is correct.
 
 @objc

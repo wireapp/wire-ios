@@ -31,8 +31,11 @@ public func == (lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {
 }
 
 /// This class fetches messages and groups them by `MessageCategory` (e.g. files, images, videos etc.)
-/// It first fetches all objects that have previously categorized and then performs one fetch request with fetchBatchSize set. CoreData returns an array  proxy to us that is populated with objects as we iterate through the array. Core Data will get rid of objects again, as they’re no longer accessed.
-/// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it finished categorizing all objects
+/// It first fetches all objects that have previously categorized and then performs one fetch request with
+/// fetchBatchSize set. CoreData returns an array  proxy to us that is populated with objects as we iterate through the
+/// array. Core Data will get rid of objects again, as they’re no longer accessed.
+/// For every categorized batch it will call the delegate with the newly categorized objects and then once again when it
+/// finished categorizing all objects
 public class AssetCollectionBatched: NSObject, ZMCollection {
     private unowned var delegate: AssetCollectionDelegate
     private var assets: [CategoryMatch: [ZMMessage]]?
@@ -59,7 +62,8 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         conversation?.managedObjectContext
     }
 
-    /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been tornDown
+    /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been
+    /// tornDown
     public var fetchingDone: Bool {
         tornDown || (assetMessagesDone && clientMessagesDone)
     }
@@ -223,7 +227,8 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             guard let self else { return }
             var result = result
             if result == .success {
-                // Since we are setting the assets in a performGroupedBlock on the uiMOC, we might not know if there are assets or not when we call notifyDelegateFetchingIsDone. Therefore we check for assets here.
+                // Since we are setting the assets in a performGroupedBlock on the uiMOC, we might not know if there are
+                // assets or not when we call notifyDelegateFetchingIsDone. Therefore we check for assets here.
                 result = (self.assets != nil) ? .success : .noAssetsToFetch
             }
             self.delegate.assetCollectionDidFinishFetching(collection: self, result: result)

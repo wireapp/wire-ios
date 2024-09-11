@@ -175,8 +175,10 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
         }
 
         guard searchUser.user != nil else {
-            // When inserting a connection with a remote user, the user is first inserted into the sync context, then merged into the UI context
-            // Only then the relationship is set between searchUser and user. Therefore we might receive the userChange notification about the updated connectionState BEFORE the relationship is set.
+            // When inserting a connection with a remote user, the user is first inserted into the sync context, then
+            // merged into the UI context
+            // Only then the relationship is set between searchUser and user. Therefore we might receive the userChange
+            // notification about the updated connectionState BEFORE the relationship is set.
             // We will wait until we get notified via `notifyUpdatedSearchUser:`
             return
         }

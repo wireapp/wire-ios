@@ -433,7 +433,8 @@ extension WireCallCenterV3 {
         }
     }
 
-    /// Add observer of particpants in a voice channel. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of particpants in a voice channel. Returns a token which needs to be retained as long as the
+    /// observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     public class func addCallParticipantObserver(
         observer: WireCallCenterCallParticipantObserver,
@@ -443,7 +444,8 @@ extension WireCallCenterV3 {
         addCallParticipantObserver(observer: observer, for: conversation, context: userSession.managedObjectContext)
     }
 
-    /// Add observer of call particpants in a conversation. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of call particpants in a conversation. Returns a token which needs to be retained as long as the
+    /// observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addCallParticipantObserver(
         observer: WireCallCenterCallParticipantObserver,

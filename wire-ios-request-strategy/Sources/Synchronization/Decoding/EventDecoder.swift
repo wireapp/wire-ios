@@ -319,7 +319,8 @@ extension EventDecoder {
         }
     }
 
-    // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the `consumeBlock` for each batch.
+    // Processes the stored events in the database in batches of size EventDecoder.BatchSize` and calls the
+    // `consumeBlock` for each batch.
     // After the `consumeBlock` has been called the stored events are deleted from the database.
     // This method terminates when no more events are in the database.
 

@@ -51,7 +51,8 @@ private final class SuiteCleanUp {
         UserDefaults.standard.removePersistentDomain(forName: suiteName)
 
         // try to even delete the plist file from the simulator usually at
-        // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app id>/Library/Preferences/<suiteName>.plist
+        // ~/Library/Developer/CoreSimulator/Devices/<device id>/data/Containers/Data/Application/<app
+        // id>/Library/Preferences/<suiteName>.plist
         do {
             let fileManager = FileManager.default
             let url = try fileManager

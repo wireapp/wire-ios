@@ -25,9 +25,11 @@ struct CacheFileRelocator {
     private let whitelistedFiles = ["com.apple.nsurlsessiond", ".DS_Store"]
     private let zmLog = ZMSLog(tag: "ZMUserSession")
 
-    /// Checks the Library/Caches folder in the shared container directory for files that have not been assigned to a user account
+    /// Checks the Library/Caches folder in the shared container directory for files that have not been assigned to a
+    /// user account
     /// and moves them to a folder named `wire-account-{accountIdentifier}` if there is no user-account folder yet
-    /// It asserts if the caches folder contains unassigned files even though there is already an existing user account folder as this would be considered a programmer error
+    /// It asserts if the caches folder contains unassigned files even though there is already an existing user account
+    /// folder as this would be considered a programmer error
     func moveCachesIfNeededForAccount(with accountIdentifier: UUID, in sharedContainerURL: URL) {
         let fm = FileManager.default
         let newCacheLocation = fm.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)

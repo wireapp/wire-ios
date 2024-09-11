@@ -21,7 +21,8 @@ import WireDataModel
 
 extension UIView {
     func targetView(for message: ZMConversationMessage!, dataSource: ConversationTableViewDataSource) -> UIView {
-        // If the view is a tableView, search for a visible cell that contains the message and the cell is a SelectableView
+        // If the view is a tableView, search for a visible cell that contains the message and the cell is a
+        // SelectableView
         guard let tableView: UITableView = self as? UITableView else {
             return self
         }

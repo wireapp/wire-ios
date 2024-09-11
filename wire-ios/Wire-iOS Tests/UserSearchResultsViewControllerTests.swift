@@ -36,7 +36,8 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
+        // self user should be a team member and other participants should be guests, in order to show guest icon in the
+        // user cells
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         otherUser = MockUserType.createDefaultOtherUser()

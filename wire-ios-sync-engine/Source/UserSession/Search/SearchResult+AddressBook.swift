@@ -43,8 +43,10 @@ extension SearchResult {
             identifiersToExclude: identifiersOfAlreadyFoundUsers
         )
 
-        // There might also be contacts for which the local address book name match and which are also Wire users, but on Wire their name doesn't match,
-        // so the Wire search did not return them. If I figure out which Wire users they match, I want to include those users into
+        // There might also be contacts for which the local address book name match and which are also Wire users, but
+        // on Wire their name doesn't match,
+        // so the Wire search did not return them. If I figure out which Wire users they match, I want to include those
+        // users into
         // the result as Wire user results, not an non-Wire address book results
 
         let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(

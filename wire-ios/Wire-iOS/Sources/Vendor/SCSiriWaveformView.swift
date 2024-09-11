@@ -162,7 +162,8 @@ final class SCSiriWaveformView: UIView {
 
             context?.setLineWidth(i == 0 ? primaryWaveLineWidth : secondaryWaveLineWidth)
 
-            // Progress is a value between 1 and -0.5, determined by the current wave idx, which is used to alter the wave's amplitude.
+            // Progress is a value between 1 and -0.5, determined by the current wave idx, which is used to alter the
+            // wave's amplitude.
             let progress: Float = 1 - Float(i) / Float(numberOfWaves)
             let normedAmplitude: Float = (1.5 * progress - 0.5) * amplitude
 

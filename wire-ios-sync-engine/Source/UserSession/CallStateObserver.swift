@@ -117,8 +117,10 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 switch (systemMessage.systemMessageType, callState, conversation.conversationType) {
                 case (.missedCall, .terminating(reason: .normal), .group),
                      (.missedCall, .terminating(reason: .canceled), _):
-                    // group calls we didn't join, end with reason .normal. We should still insert a missed call in this case.
-                    // since the systemMessageGenerator keeps track whether we joined or not, we can use it to decide whether we should show a missed call APNS
+                    // group calls we didn't join, end with reason .normal. We should still insert a missed call in this
+                    // case.
+                    // since the systemMessageGenerator keeps track whether we joined or not, we can use it to decide
+                    // whether we should show a missed call APNS
                     self.localNotificationDispatcher.processMissedCall(in: conversation, caller: caller)
                 default:
                     break
@@ -130,7 +132,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
     }
 
     public func updateConversationListIndicator(convObjectID: NSManagedObjectID, callState: CallState) {
-        // We need to switch to the uiContext here because we are making changes that need to be present on the UI when the change notification fires
+        // We need to switch to the uiContext here because we are making changes that need to be present on the UI when
+        // the change notification fires
         uiContext.performGroupedBlock {
             guard let uiConv = (try? self.uiContext.existingObject(with: convObjectID)) as? ZMConversation
             else { return }

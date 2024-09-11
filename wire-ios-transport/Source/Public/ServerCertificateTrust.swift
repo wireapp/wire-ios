@@ -81,7 +81,8 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         guard !pinnedKeys.isEmpty else {
             return true
         }
-        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public key
+        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public
+        // key
         guard let publicKey = publicKeyAssociatedWithServerTrust(serverTrust) else {
             return false
         }

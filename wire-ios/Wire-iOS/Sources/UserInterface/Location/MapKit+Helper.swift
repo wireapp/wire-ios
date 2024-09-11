@@ -40,7 +40,8 @@ extension MKMapView {
     var zoomLevel: Int {
         get {
             let float = log2(360 * (Double(frame.height / 256) / region.span.longitudeDelta))
-            // MKMapView does not like NaN and Infinity, so we return 16 as a default, as 0 would represent the whole world
+            // MKMapView does not like NaN and Infinity, so we return 16 as a default, as 0 would represent the whole
+            // world
             guard float.isNormal else { return 16 }
             return Int(float)
         }

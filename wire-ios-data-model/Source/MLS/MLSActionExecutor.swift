@@ -152,10 +152,12 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
     /// Perform an non-rentrant operation on an MLS group.
     ///
-    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is scheduled
+    /// That is only one operation is allowed execute concurrently, if multiple operations for the same group is
+    /// scheduled
     /// they will be queued and executed in sequence.
     ///
-    /// This is used for operations where ordering is important. For example when sending a commit to add client to a group, this is a two-step operations:
+    /// This is used for operations where ordering is important. For example when sending a commit to add client to a
+    /// group, this is a two-step operations:
     ///
     /// 1. Create pending commit and send to distribution server
     /// 2. Merge pending commit when accepted by distribution server

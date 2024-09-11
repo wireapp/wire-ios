@@ -108,7 +108,8 @@ final class ProfileHeaderViewController: UIViewController {
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
     /// - parameter isUserE2EICertifiedUseCase: Use case for getting the user's MLS verification status.
-    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if `user.isSelfUser` is `true`.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if
+    /// `user.isSelfUser` is `true`.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,

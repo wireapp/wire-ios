@@ -448,7 +448,8 @@ final class ConversationListViewModel: NSObject {
 
             newValue[sectionNumber].items = newList
 
-            // Refresh the section header(since it may be hidden if the sectio is empty) when a section becomes empty/from empty to non-empty
+            // Refresh the section header(since it may be hidden if the sectio is empty) when a section becomes
+            // empty/from empty to non-empty
             if sections[sectionNumber].items.isEmpty || newList.isEmpty {
                 sections = newValue
                 delegate?.listViewModel(self, didUpdateSectionForReload: sectionNumber, animated: true)

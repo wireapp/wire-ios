@@ -106,7 +106,8 @@ final class ExplicitChangeDetector: ChangeDetector {
 
     /// Identify which objects and their observable keys have changed as a result of changes to the given object.
     ///
-    /// E.g if `user.fullName` and `conversation.name` both depend on `user.firstName`, then a change to `user.firstName`
+    /// E.g if `user.fullName` and `conversation.name` both depend on `user.firstName`, then a change to
+    /// `user.firstName`
     /// causes means `user.fullName` and `conversation.name` must be considered changed too. The result of this method
     /// would then be `[user: firstName, user: fullName, conversation: name]`.
     ///

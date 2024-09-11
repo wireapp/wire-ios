@@ -184,7 +184,8 @@ final class ProfileDetailsContentController: NSObject,
         case .oneOnOne:
             let readReceiptsEnabled = viewer.readReceiptsEnabled
             if let richProfile = richProfileInfoWithEmailAndDomain {
-                // If there is rich profile data and the user is allowed to see it, display it and the read receipts status.
+                // If there is rich profile data and the user is allowed to see it, display it and the read receipts
+                // status.
                 contents = [richProfile, .readReceiptsStatus(enabled: readReceiptsEnabled)]
             } else {
                 // If there is no rich profile data, show the read receipts.

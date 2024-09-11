@@ -65,8 +65,10 @@ extension ZMMessage {
         return categoryToStore
     }
 
-    /// Sorted fetch request by category. It will match a Core Data object if the intersection of the Core Data value and ANY of the passed
-    /// in categories is matching that category (in other words, the Core Data value can have more bits set that a certain category and it will
+    /// Sorted fetch request by category. It will match a Core Data object if the intersection of the Core Data value
+    /// and ANY of the passed
+    /// in categories is matching that category (in other words, the Core Data value can have more bits set that a
+    /// certain category and it will
     /// still match).
     public static func fetchRequestMatching(
         categories: Set<MessageCategory>,

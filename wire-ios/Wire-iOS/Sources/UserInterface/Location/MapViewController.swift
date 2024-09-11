@@ -30,7 +30,8 @@ protocol MapViewControllerDelegate: AnyObject {
 // MARK: - MapViewController
 
 /// The MapViewController class is a subclass of UIViewController that manages a map interface using MKMapView.
-/// This class is designed to handle map-related functionalities such as displaying the user’s location, adding and updating annotations, and adjusting the map’s region.
+/// This class is designed to handle map-related functionalities such as displaying the user’s location, adding and
+/// updating annotations, and adjusting the map’s region.
 final class MapViewController: UIViewController {
     // MARK: - Properties
 

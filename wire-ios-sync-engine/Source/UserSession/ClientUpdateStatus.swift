@@ -181,7 +181,8 @@ open class ClientUpdateStatus: NSObject {
             if  errorCode == .clientToDeleteNotFound {
                 // the client existed locally but not remotely, we delete it locally (done by the transcoder)
                 // this should not happen since we just fetched the clients
-                // however if it happens and there is no other client to delete we should notify that all clients where deleted
+                // however if it happens and there is no other client to delete we should notify that all clients where
+                // deleted
                 internalCredentials = nil
                 ZMClientUpdateNotification.notifyDeletionCompleted(
                     remainingClients: selfUserClientsExcludingSelfClient,

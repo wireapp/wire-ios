@@ -90,7 +90,8 @@ public class SnapshotCenter {
     }
 
     /// Before merging the sync into the ui context, we create a snapshot of all changed objects
-    /// This function compares the snapshot values to the current ones and returns all keys and new values where the value changed due to the merge
+    /// This function compares the snapshot values to the current ones and returns all keys and new values where the
+    /// value changed due to the merge
     func extractChangedKeysFromSnapshot(for object: ZMManagedObject) -> Set<String> {
         guard let snapshot = snapshots[object.objectID] else {
             if object.objectID.isTemporaryID {

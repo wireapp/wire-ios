@@ -41,7 +41,8 @@ extension AVSIdentifier {
 
     /// Creates a non optional AVSIdentifier from a string. Crashes when the string format is wrong.
     /// Expected string format: "E621E1F8-C36C-495A-93FC-0C247A3E6E5F@wire.link"
-    /// - Parameter string: A string composed of a UUID string and an optional domain. Components should be separated by "@"
+    /// - Parameter string: A string composed of a UUID string and an optional domain. Components should be separated by
+    /// "@"
     /// - Returns: The avs identifier
 
     public static func from(string: String) -> AVSIdentifier {

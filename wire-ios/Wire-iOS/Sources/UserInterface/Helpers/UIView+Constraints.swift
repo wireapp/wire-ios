@@ -36,7 +36,8 @@ extension UIView {
     }
 
     /// fit self in a container view
-    /// notice bottom and right inset no need to set to negative of top/left, e.g. if you want to add inset to self with 2 pt:
+    /// notice bottom and right inset no need to set to negative of top/left, e.g. if you want to add inset to self with
+    /// 2 pt:
     ///
     /// self.fitIn(view: container, insets: UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2))
     ///

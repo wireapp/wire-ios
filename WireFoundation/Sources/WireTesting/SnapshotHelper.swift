@@ -39,7 +39,8 @@ public struct SnapshotHelper {
     ///
     /// Perceptual precision is the threshold at which two pixels are considered to be the same.
     ///
-    /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value of 0 indicates no precision.
+    /// - Parameter perceptualPrecision: The new perceptual precision. A value of 1 indicates exact precision, a value
+    /// of 0 indicates no precision.
     /// - Returns: A copy of the current helper with the new perceptual precision.
 
     public func withPerceptualPrecision(_ perceptualPrecision: Float) -> Self {
@@ -89,7 +90,8 @@ public struct SnapshotHelper {
 
     /// Creates a copy of the current helper with the overriden snapshot directory.
     ///
-    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment variable `SNAPSHOT_REFERENCE_DIR`.
+    /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment
+    /// variable `SNAPSHOT_REFERENCE_DIR`.
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
     public func withSnapshotDirectory(_ snapshotDirectory: String) -> Self {
@@ -98,9 +100,11 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Creates a copy of the current helper with the snapshot directory set to a path relative to the specified test case file.
+    /// Creates a copy of the current helper with the snapshot directory set to a path relative to the specified test
+    /// case file.
     ///
-    /// Example: from a provided value of `./WireUI/Tests/WireReusableUIComponentsTests/AccountImageView/AccountImageViewSnapshotTests.swift`
+    /// Example: from a provided value of
+    /// `./WireUI/Tests/WireReusableUIComponentsTests/AccountImageView/AccountImageViewSnapshotTests.swift`
     /// the last two path components are deleted and `Resources/ReferenceImages` is appended, resulting in the
     /// value `/Users/christoph/Developer/wireapp/wire-ios0/WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages`.
     ///

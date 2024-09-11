@@ -27,7 +27,8 @@ extension ZMConversation {
         conversations?.forEach { $0.calculateLastUnreadMessages() }
     }
 
-    /// Fetch all conversations that could potentially have unread messages and recalculate the latest unread messages for them.
+    /// Fetch all conversations that could potentially have unread messages and recalculate the latest unread messages
+    /// for them.
     public static func recalculateUnreadMessages(in managedObjectContext: NSManagedObjectContext) {
         let fetchRequest = sortedFetchRequest(with: predicateForConversationConsideredUnread())
 

@@ -483,7 +483,8 @@ final class SearchTests: IntegrationTest {
         else { XCTFail(); return }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // We reset the requests after having performed the search and fetching the users (in comparison to the other tests).
+        // We reset the requests after having performed the search and fetching the users (in comparison to the other
+        // tests).
         mockTransportSession.resetReceivedRequests()
 
         // when requesting medium image

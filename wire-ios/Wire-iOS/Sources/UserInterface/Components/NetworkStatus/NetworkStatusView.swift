@@ -28,13 +28,15 @@ enum NetworkStatusViewState {
 
 // sourcery: AutoMockable
 protocol NetworkStatusViewDelegate: AnyObject {
-    /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is created but not yet appear, if didChangeHeight called with animated = true.
+    /// Set this var to true after viewDidAppear. This flag prevents first layout animation when the UIViewController is
+    /// created but not yet appear, if didChangeHeight called with animated = true.
     var shouldAnimateNetworkStatusView: Bool { get set }
 
     /// bottom margin to the neighbour view
     var bottomMargin: CGFloat { get }
 
-    /// When the networkStatusView changes its height, this delegate method is called. The delegate should refresh its layout in the method.
+    /// When the networkStatusView changes its height, this delegate method is called. The delegate should refresh its
+    /// layout in the method.
     ///
     /// - Parameters:
     ///   - networkStatusView: the delegate caller
@@ -203,7 +205,8 @@ final class NetworkStatusView: UIView {
         log(networkStatus: state)
         var networkStatusViewState = state
 
-        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a blink" visual artifact.
+        // When the app is in background, hide the sync bar and offline bar. It prevents the sync bar is "disappear in a
+        // blink" visual artifact.
         if let activationState = window?.windowScene?.activationState,
            ![.foregroundActive, .foregroundInactive].contains(activationState) {
             networkStatusViewState = .online

@@ -265,7 +265,8 @@ extension SyncStatus {
         pushChannelEstablishedDate = nil
 
         if !currentSyncPhase.isSyncing {
-            // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already syncing)
+            // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already
+            // syncing)
             self.syncStateDelegate?.didStartQuickSync()
         }
     }
@@ -275,8 +276,10 @@ extension SyncStatus {
         pushChannelEstablishedDate = Date()
 
         if currentSyncPhase == .fetchingMissedEvents {
-            // If the push channel closed while we are fetching the notifications, we might be missing notifications that
-            // were sent between the server response and the channel re-opening We therefore need to mark the quick sync to be re-started
+            // If the push channel closed while we are fetching the notifications, we might be missing notifications
+            // that
+            // were sent between the server response and the channel re-opening We therefore need to mark the quick sync
+            // to be re-started
             needsToRestartQuickSync = true
         }
 

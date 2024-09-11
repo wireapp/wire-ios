@@ -193,7 +193,8 @@ class TextView: UITextView {
         overriddenTextInputMode
     }
 
-    /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center vertically)
+    /// custom inset for placeholder, only left and right inset value is applied (The placeholder is align center
+    /// vertically)
     var placeholderTextContainerInset: UIEdgeInsets = .zero {
         didSet {
             placeholderLabelLeftConstraint?.constant = placeholderTextContainerInset.left

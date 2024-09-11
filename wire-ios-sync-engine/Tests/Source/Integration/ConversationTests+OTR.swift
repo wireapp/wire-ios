@@ -512,7 +512,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         userSession?.managedObjectContext.zm_fileAssetCache.deleteMediumEncryptedImageData(for: assetMessage)
         userSession?.managedObjectContext.zm_fileAssetCache.deleteMediumImageData(for: assetMessage)
 
-        // We no longer process incoming V2 assets so we need to manually set some properties to simulate having received the asset
+        // We no longer process incoming V2 assets so we need to manually set some properties to simulate having
+        // received the asset
         userSession?.perform {
             assetMessage.version = 2
             assetMessage.assetId = assetId

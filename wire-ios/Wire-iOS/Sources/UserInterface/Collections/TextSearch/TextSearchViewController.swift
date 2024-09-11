@@ -117,7 +117,8 @@ final class TextSearchViewController: NSObject {
     }
 
     private func setupAccessibility() {
-        /// If noResultsView is not hidden, we should hide elements in the collectionView that are not currently visible.
+        /// If noResultsView is not hidden, we should hide elements in the collectionView that are not currently
+        /// visible.
         if let superview = resultsView.superview as? CollectionsView {
             superview.collectionView.accessibilityElementsHidden = !resultsView.noResultsView.isHidden
         }

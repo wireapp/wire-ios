@@ -215,7 +215,8 @@ class DependencyKeyStore {
         return keys
     }
 
-    /// Returns a set of keys that need to be present in the changesValues of the object so that the object changes will be included in the changeInfo of the specified classIdentifier
+    /// Returns a set of keys that need to be present in the changesValues of the object so that the object changes will
+    /// be included in the changeInfo of the specified classIdentifier
     func requiredKeysForIncludingRawChanges(classIdentifier: String, for object: ZMManagedObject) -> Set<String> {
         switch (classIdentifier, object) {
         case (ZMUser.entityName(), is UserClient):

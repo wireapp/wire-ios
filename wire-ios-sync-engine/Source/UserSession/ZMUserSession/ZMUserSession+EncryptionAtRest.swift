@@ -42,7 +42,8 @@ extension ZMUserSession: UserSessionEncryptionAtRestInterface {
     ///
     /// - Parameters:
     ///   - enabled: When **true**, messages will be encrypted at rest.
-    ///   - skipMigration: When **true**, existing messsages will not be migrated to be under encryption at rest. Defaults to **false**.
+    ///   - skipMigration: When **true**, existing messsages will not be migrated to be under encryption at rest.
+    /// Defaults to **false**.
     ///
     /// - Throws: `MigrationError` if it's not possible to start the migration.
 

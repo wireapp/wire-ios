@@ -44,7 +44,8 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
         //
         // For design reasons, we decided to implement two functions rather than passing the domain from the outside
         // and manually mapping `QualifiedID`. This task can be performed by the caller.
-        // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to understand.
+        // As soon as APIVersion.v0 is removed, the legacy function can be deleted, making the code clean and easy to
+        // understand.
 
         let resourcePath = "/conversations/list-ids/"
         let jsonEncoder = JSONEncoder.defaultEncoder

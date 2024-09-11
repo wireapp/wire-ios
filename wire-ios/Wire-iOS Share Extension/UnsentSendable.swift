@@ -156,7 +156,8 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
         // app extensions have severely limited memory resources & risk termination if they are too greedy. In order to
         // minimize memory consumption we must downscale the images being shared. Standard image scaling methods that
-        // rely on UIImage are too expensive (eg. 12MP image -> approx 48MB UIImage), so we make the system scale the images
+        // rely on UIImage are too expensive (eg. 12MP image -> approx 48MB UIImage), so we make the system scale the
+        // images
         // for us ('free' of charge) by using the image URL & ImageIO library.
         //
 

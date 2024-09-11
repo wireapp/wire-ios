@@ -100,8 +100,10 @@ final class E2ETests: XCTestCase {
 
     /// TODO: check why on CI got result:
     /// XCTAssertEqual failed: ("false") is not equal to ("true") - Should have description
-    /// XCTAssertEqual failed: ("Optional("website")") is not equal to ("Optional("instapp:photo")") - Type should be instapp:photo, found:website
-    /// XCTAssertEqual failed: ("nil") is not equal to ("Optional("Instagram")") - Site name should be Instagram, found: nil
+    /// XCTAssertEqual failed: ("Optional("website")") is not equal to ("Optional("instapp:photo")") - Type should be
+    /// instapp:photo, found:website
+    /// XCTAssertEqual failed: ("nil") is not equal to ("Optional("Instagram")") - Site name should be Instagram, found:
+    /// nil
     func testThatItParsesSampleDataInstagram() {
         let expectation = OpenGraphDataExpectation(
             numberOfImages: 1,

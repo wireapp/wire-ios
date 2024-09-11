@@ -83,7 +83,8 @@ public final class AssetRequestFactory: NSObject {
             apiVersion: apiVersion.rawValue
         )
 
-        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form
+        // `addContentDebugInformation`.
         // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
         request.addContentDebugInformation("Uploading full asset to \(path)")
         request.contentHintForRequestLoop += "Uploading full asset to \(path)"

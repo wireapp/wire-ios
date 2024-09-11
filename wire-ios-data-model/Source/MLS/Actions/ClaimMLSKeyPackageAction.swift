@@ -77,7 +77,8 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     }
 }
 
-// Temporary solution until we know what we need from the result. Once we do, this should move to the action handler extension.
+// Temporary solution until we know what we need from the result. Once we do, this should move to the action handler
+// extension.
 public struct KeyPackage: Codable, Equatable {
     public let client: String
     public let domain: String

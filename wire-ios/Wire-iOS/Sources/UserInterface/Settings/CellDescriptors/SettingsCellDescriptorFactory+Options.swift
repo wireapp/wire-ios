@@ -34,7 +34,8 @@ extension SettingsCellDescriptorFactory {
             callKitSection,
             muteCallSection,
             SecurityFlags.forceConstantBitRateCalls.isEnabled ? nil : VBRSection,
-            // temporary hiding this section because currently we have only one sound. We plan to add more in the future. https://wearezeta.atlassian.net/browse/WPB-455
+            // temporary hiding this section because currently we have only one sound. We plan to add more in the
+            // future. https://wearezeta.atlassian.net/browse/WPB-455
 //            soundsSection,
             externalAppsSection,
             popularDemandSendButtonSection,

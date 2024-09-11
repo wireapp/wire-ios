@@ -40,7 +40,8 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
     let managedObjectContext: NSManagedObjectContext
 
     /// Creates a file processor
-    /// - note: All methods of this object should be called from the thread associated with the passed managedObjectContext
+    /// - note: All methods of this object should be called from the thread associated with the passed
+    /// managedObjectContext
     public init(managedObjectContext: NSManagedObjectContext) {
         self.processingGroup = ZMSDispatchGroup(label: "Asset Preprocessing")
         self.managedObjectContext = managedObjectContext

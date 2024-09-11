@@ -231,7 +231,8 @@ extension AVSWrapper {
 
         /// Callback used to inform the user of a change in the list of active speakers
         ///
-        /// typedef void (wcall_active_speaker_h)(WUSER_HANDLE wuser, const char *convid, const char *json_levels, void *arg);
+        /// typedef void (wcall_active_speaker_h)(WUSER_HANDLE wuser, const char *convid, const char *json_levels, void
+        /// *arg);
 
         typealias ActiveSpeakersChange = @convention(c) (UInt32, StringPtr, StringPtr, ContextRef) -> Void
 

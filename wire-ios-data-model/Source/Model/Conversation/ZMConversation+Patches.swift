@@ -126,7 +126,8 @@ extension ZMConversation {
     }
 
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity.
-    // After creating a new connection, we should add user to the participants roles, because we do not get it from the backend.
+    // After creating a new connection, we should add user to the participants roles, because we do not get it from the
+    // backend.
     static func addUserFromTheConnectionToTheParticipantRoles(in moc: NSManagedObjectContext) {
         guard let allConnections = ZMConnection.connections(inManagedObjectContext: moc) as? [ZMConnection] else {
             return
@@ -174,7 +175,8 @@ extension ZMConversation {
         selfUser.team?.needsToDownloadRoles = true
     }
 
-    // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the `lastServerSyncedActiveParticipants`.
+    // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the
+    // `lastServerSyncedActiveParticipants`.
     // Those need to be migrated to the new relationship
     static func migrateUsersToParticipants(in moc: NSManagedObjectContext) {
         let oldKey = "lastServerSyncedActiveParticipants"
@@ -195,7 +197,8 @@ extension ZMConversation {
         }
     }
 
-    // Model version add a `accessRoleStringsV2` attribute to the `Conversation` entity. The values from accessRoleString, need to be migrated to the new relationship
+    // Model version add a `accessRoleStringsV2` attribute to the `Conversation` entity. The values from
+    // accessRoleString, need to be migrated to the new relationship
     static func forceToFetchConversationAccessRoles(in moc: NSManagedObjectContext) {
         let conversationsToFetch = ZMConversation.fetchRequest()
 

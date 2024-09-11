@@ -49,7 +49,8 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Methods
 
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
-    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
+    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating
+    /// certificate is scheduled else
     /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
     func invoke(endOfPeriod: Date, isUpdateMode: Bool = false) async {
         let timeProvider = SnoozeTimeProvider()

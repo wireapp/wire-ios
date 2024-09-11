@@ -18,7 +18,8 @@
 
 import UIKit
 
-/// A derative of UIView whose main body is completely invisible to touches so they are passed through to whatever is below, yet its subviews and subsubviews in designated classes still process the touches.
+/// A derative of UIView whose main body is completely invisible to touches so they are passed through to whatever is
+/// below, yet its subviews and subsubviews in designated classes still process the touches.
 final class PassthroughTouchesView: UIView {
     override var isOpaque: Bool {
         get {

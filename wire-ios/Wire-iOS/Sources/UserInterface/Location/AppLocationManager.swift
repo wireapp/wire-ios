@@ -43,7 +43,8 @@ protocol AppLocationManagerProtocol: AnyObject {
 
 /// The AppLocationManager class is responsible for handling location-related services using CoreLocation.
 /// It conforms to the AppLocationManagerProtocol and CLLocationManagerDelegate protocols,
-/// providing an interface for requesting location authorization, updating locations, and managing location authorization status.
+/// providing an interface for requesting location authorization, updating locations, and managing location
+/// authorization status.
 final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     // MARK: - Properties
 

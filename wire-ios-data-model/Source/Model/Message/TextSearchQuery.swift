@@ -154,7 +154,8 @@ public class TextSearchQuery: NSObject {
     }
 
     /// Creates a new `TextSearchQuery` object.
-    /// - parameter conversation: The conversation in which the search should be performed. Needs to belong to the UI context.
+    /// - parameter conversation: The conversation in which the search should be performed. Needs to belong to the UI
+    /// context.
     /// - parameter query: The query string which will be searched for in the messages of the conversation.
     /// - parameter delegate: The delegate which will be notified with the results.
     /// - parameter configuration: An optional configuration specifying the fetch batch size (useful in tests).
@@ -229,7 +230,8 @@ public class TextSearchQuery: NSObject {
 
     /// Fetches the next batch of indexed messages in a conversation and notifies
     /// the delegate about the result.
-    /// - parameter callCount: The number of times this method has been called recursivly, used the compute the `fetchOffset`
+    /// - parameter callCount: The number of times this method has been called recursivly, used the compute the
+    /// `fetchOffset`
     /// - parameter completion: The completion handler which will be called after all indexed messages have been queried
     private func executeQueryForIndexedMessages(callCount: Int = 0, completion: @escaping () -> Void) {
         guard !cancelled else { return }

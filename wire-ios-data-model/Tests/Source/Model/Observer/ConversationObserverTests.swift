@@ -1236,7 +1236,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 extension ConversationObserverTests {
     func testPerformanceOfCalculatingChangeNotificationsWhenUserChangesName() {
         // average: 0.056, relative standard deviation: 2.400%, values: [0.056840, 0.054732, 0.059911, 0.056330, 0.055015, 0.055535, 0.055917, 0.056481, 0.056177, 0.056115]
-        // 13/02/17 average: 0.049, relative standard deviation: 4.095%, values: [0.052629, 0.046448, 0.046743, 0.047157, 0.051125, 0.048899, 0.047646, 0.048362, 0.048110, 0.051135]
+        // 13/02/17 average: 0.049, relative standard deviation: 4.095%, values: [0.052629, 0.046448, 0.046743,
+        // 0.047157, 0.051125, 0.048899, 0.047646, 0.048362, 0.048110, 0.051135]
         let count = 50
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
@@ -1289,7 +1290,8 @@ extension ConversationObserverTests {
         // 50: average: 0.026, relative standard deviation: 29.098%, values: [0.047283, 0.023655, 0.024622, 0.025462, 0.029163, 0.024709, 0.024966, 0.020773, 0.020413, 0.019464],
         // 500: average: 0.243, relative standard deviation: 4.039%, values: [0.264489, 0.235209, 0.245864, 0.244984, 0.231789, 0.244359, 0.251886, 0.229036, 0.247700, 0.239637],
 
-        // 13/02/17 - 50 : average: 0.023, relative standard deviation: 27.833%, values: [0.041493, 0.020441, 0.020226, 0.020104, 0.021268, 0.021039, 0.020917, 0.020330, 0.020558, 0.019953]
+        // 13/02/17 - 50 : average: 0.023, relative standard deviation: 27.833%, values: [0.041493, 0.020441, 0.020226,
+        // 0.020104, 0.021268, 0.021039, 0.020917, 0.020330, 0.020558, 0.019953]
         let count = 50
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
@@ -1314,7 +1316,8 @@ extension ConversationObserverTests {
         // 500: average: 0.886, relative standard deviation: 1.875%, values: [0.922453, 0.878736, 0.880529, 0.899234, 0.875889, 0.904563, 0.890234, 0.872045, 0.868912, 0.871016]
         // 500: after adding convList observer average: 1.167, relative standard deviation: 9.521%, values: [1.041614, 1.020351, 1.055602, 1.098007, 1.129816, 1.166439, 1.221696, 1.293128, 1.314360, 1.331703], --> growing due to additional conversation observers
         // 500: after forwarding conversation changes: average: 0.941, relative standard deviation: 2.144%, values: [0.991118, 0.956727, 0.947056, 0.928683, 0.937171, 0.947680, 0.928902, 0.925021, 0.923206, 0.922440] --> constant! yay!
-        // 13/02/17 50: average: 0.104, relative standard deviation: 10.316%, values: [0.134496, 0.097219, 0.106044, 0.100265, 0.098114, 0.097030, 0.105297, 0.099680, 0.098974, 0.099365]
+        // 13/02/17 50: average: 0.104, relative standard deviation: 10.316%, values: [0.134496, 0.097219, 0.106044,
+        // 0.100265, 0.098114, 0.097030, 0.105297, 0.099680, 0.098974, 0.099365]
 
         let count = 50
 

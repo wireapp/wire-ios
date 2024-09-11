@@ -114,7 +114,8 @@ final class SendController {
     }
 
     /// Send (and prepare if needed) the text and attachment items passed into the initializer.
-    /// The passed in `SendingStateCallback` closure will be called multiple times with the current state of the operation.
+    /// The passed in `SendingStateCallback` closure will be called multiple times with the current state of the
+    /// operation.
     func send(progress: @escaping SendingStateCallback) {
         self.timedOut = false
         self.progress = progress

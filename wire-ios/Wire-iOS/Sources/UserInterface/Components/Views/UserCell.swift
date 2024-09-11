@@ -373,7 +373,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
 extension UserCell {
     /// Updates the cell with the provided information.
-    /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this value.
+    /// - parameter userStatus: At the moment only the E2EI and Proteus verification statuses are considered from this
+    /// value.
     func configure(
         userStatus: UserStatus,
         user: UserType, // ideally no UserType instance would be needed

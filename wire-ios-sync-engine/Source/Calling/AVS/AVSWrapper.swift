@@ -413,7 +413,8 @@ public final class AVSWrapper: AVSWrapperType {
         .NetworkQualityChange = { conversationIdRef, userIdRef, clientIdRef, quality, _, _, _, contextRef in
             AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, clientIdRef, quality) {
                 // For conference calls, userId and clientId will be respectively "sft" and "SFT".
-                // This means we cannot create an AVSIdentifier for the userId, because we intentionally crash when the identifier isn't formatted as expected.
+                // This means we cannot create an AVSIdentifier for the userId, because we intentionally crash when the
+                // identifier isn't formatted as expected.
                 // Instead, we pass the values as Strings and let the handler process them
                 $0.handleNetworkQualityChange(
                     conversationId: AVSIdentifier.from(string: $1),

@@ -248,10 +248,14 @@ final class AssetColletionTests: ModelObjectsTests {
 
     func testPerformanceOfMessageFetching() {
         // Before caching:
-        // 1000 messages, 1 category, 500 defaultpaging, average: 0.275, relative standard deviation: 8.967%, values: [0.348496, 0.263188, 0.266409, 0.268903, 0.265612, 0.265829, 0.271573, 0.265206, 0.268697, 0.264837]
-        // 1000 messages, 1 category, 200 defaultpaging, average: 0.304, relative standard deviation: 9.818%, values: [0.390736, 0.285759, 0.293118, 0.290341, 0.293730, 0.281093, 0.292787, 0.305865, 0.306954, 0.302983]
-        // 1000 messages, 2 categories, 500 defaultpaging, average: 0.570, relative standard deviation: 5.990%, values: [0.656057, 0.526296, 0.530267, 0.572129, 0.557102, 0.586183, 0.574734, 0.580168, 0.563595, 0.556718]
-        // 10000 messages, average: 3.495, relative standard deviation: 7.352%, values: [4.259749, 3.372894, 3.389057, 3.404054, 3.363652, 3.400085, 3.416911, 3.417086, 3.442652, 3.488077],
+        // 1000 messages, 1 category, 500 defaultpaging, average: 0.275, relative standard deviation: 8.967%, values:
+        // [0.348496, 0.263188, 0.266409, 0.268903, 0.265612, 0.265829, 0.271573, 0.265206, 0.268697, 0.264837]
+        // 1000 messages, 1 category, 200 defaultpaging, average: 0.304, relative standard deviation: 9.818%, values:
+        // [0.390736, 0.285759, 0.293118, 0.290341, 0.293730, 0.281093, 0.292787, 0.305865, 0.306954, 0.302983]
+        // 1000 messages, 2 categories, 500 defaultpaging, average: 0.570, relative standard deviation: 5.990%, values:
+        // [0.656057, 0.526296, 0.530267, 0.572129, 0.557102, 0.586183, 0.574734, 0.580168, 0.563595, 0.556718]
+        // 10000 messages, average: 3.495, relative standard deviation: 7.352%, values: [4.259749, 3.372894, 3.389057,
+        // 3.404054, 3.363652, 3.400085, 3.416911, 3.417086, 3.442652, 3.488077],
 
         // given
         insertAssetMessages(count: 1000)

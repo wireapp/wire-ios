@@ -736,7 +736,8 @@ extension UserClient {
 
 enum SecurityChangeType {
     case clientTrusted // a client was trusted by the user on this device
-    case clientDiscovered // a client was discovered, either by receiving a missing response, a message, or fetching all clients
+    case clientDiscovered // a client was discovered, either by receiving a missing response, a message, or fetching all
+    // clients
     case clientIgnored // a client was ignored by the user on this device
 
     func changeSecurityLevel(_ conversation: ZMConversation, clients: Set<UserClient>, causedBy: ZMOTRMessage?) {

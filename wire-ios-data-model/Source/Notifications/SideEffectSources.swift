@@ -21,7 +21,8 @@ import Foundation
 typealias ObjectAndChanges = [ZMManagedObject: Changes]
 
 protocol SideEffectSource {
-    /// Returns a map of objects and keys that are affected by an update and it's resulting changedValues mapped by classIdentifier
+    /// Returns a map of objects and keys that are affected by an update and it's resulting changedValues mapped by
+    /// classIdentifier
     /// [classIdentifier : [affectedObject: changedKeys]]
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges
 

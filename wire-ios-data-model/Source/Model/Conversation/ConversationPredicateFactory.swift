@@ -81,7 +81,8 @@ public final class ConversationPredicateFactory: NSObject {
 
     @objc(predicateForOneToOneConversations)
     public func predicateForOneToOneConversations() -> NSPredicate {
-        // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing connection request.
+        // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing
+        // connection request.
         let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             predicateForOneToOneConversation(),
             predicateForUnconnectedConversations(),

@@ -157,7 +157,8 @@ extension ZMClientMessage {
 }
 
 extension ZMClientMessage: ZMImageOwner {
-    // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
+    // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data
+    // is preprocessed
     @objc
     public func requiredImageFormats() -> NSOrderedSet {
         if let genericMessage = self.underlyingMessage, genericMessage.linkPreviews.count > 0 {

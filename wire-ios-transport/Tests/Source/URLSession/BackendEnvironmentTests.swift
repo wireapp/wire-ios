@@ -29,7 +29,8 @@ class BackendEnvironmentTests: XCTestCase {
         super.setUp()
         continueAfterFailure = false
         let mainBundle = Bundle(for: type(of: self))
-        // Note: this is a copy of public config: https://github.com/wireapp/wire-ios-build-configuration/blob/master/Backend.bundle/production.json
+        // Note: this is a copy of public config:
+        // https://github.com/wireapp/wire-ios-build-configuration/blob/master/Backend.bundle/production.json
         guard let backendBundlePath = mainBundle.path(forResource: "Backend", ofType: "bundle")
         else { XCTFail("Could not find Backend.bundle"); return }
         guard let backendBundle = Bundle(path: backendBundlePath)

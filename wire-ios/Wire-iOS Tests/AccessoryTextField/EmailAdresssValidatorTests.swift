@@ -60,9 +60,11 @@ final class EmailAdresssValidatorTests: XCTestCase {
                 "just\"not\"right@example.com",
                 // (quoted strings must be dot separated or the only element making up the local-part)
                 "this is\"not\\allowed@example.com",
-                // (spaces, quotes, and backslashes may only exist when within quoted strings and preceded by a backslash)
+                // (spaces, quotes, and backslashes may only exist when within quoted strings and preceded by a
+                // backslash)
                 "this\\ still\\\"not\\\\allowed@example.com",
-                // (even if escaped (preceded by a backslash), spaces, quotes, and backslashes must still be contained by quotes)
+                // (even if escaped (preceded by a backslash), spaces, quotes, and backslashes must still be contained
+                // by quotes)
                 "tester@example..com", // double dot before @
                 "foo..tester@example.com", // double dot after @
                 "",

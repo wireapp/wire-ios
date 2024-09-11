@@ -31,7 +31,8 @@ public final class SupportedOrientationsDelegatingNavigationControllerDelegate: 
 // MARK: - Associated Object
 
 extension SupportedOrientationsDelegatingNavigationControllerDelegate {
-    /// By setting the instance as delegate and retained associated object we don't need to subclass the navigation controller in order to achieve the desired behavior.
+    /// By setting the instance as delegate and retained associated object we don't need to subclass the navigation
+    /// controller in order to achieve the desired behavior.
     public func setAsDelegateAndNontomicRetainedAssociatedObject(_ navigationController: UINavigationController) {
         navigationController.delegate = self
         objc_setAssociatedObject(navigationController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

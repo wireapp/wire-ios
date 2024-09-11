@@ -25,7 +25,8 @@ import UIKit
 public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     // MARK: - Properties
 
-    /// If set to true then the session manager will delete account data instead of just asking the user to re-authenticate when the cookie or client gets invalidated.
+    /// If set to true then the session manager will delete account data instead of just asking the user to
+    /// re-authenticate when the cookie or client gets invalidated.
     ///
     /// The default value of this property is `false`.
     public var wipeOnCookieInvalid: Bool
@@ -62,7 +63,8 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     /// The default value of this property is `nil`, i.e. threshold is ignored
     public var failedPasswordThresholdBeforeWipe: Int?
 
-    /// The `encryptionAtRestEnabledByDefault` configures if the encryption at rest will be enabled by default for all sessions.
+    /// The `encryptionAtRestEnabledByDefault` configures if the encryption at rest will be enabled by default for all
+    /// sessions.
     ///
     /// The default value of this property is `false`
     public var encryptionAtRestEnabledByDefault: Bool

@@ -146,7 +146,8 @@ final class ConversationGuestOptionsViewController: UIViewController,
         _ viewModel: ConversationGuestOptionsViewModel,
         didReceiveError error: Error
     ) {
-        // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that explains why the user cannot use/create links to join the conversation.
+        // We shouldn't display an error message if the guestLinks feature flag is disabled. There's a UI element that
+        // explains why the user cannot use/create links to join the conversation.
 
         if let error = error as? WirelessLinkError,
            error == .guestLinksDisabled {

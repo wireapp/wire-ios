@@ -124,25 +124,39 @@ public protocol ForegroundNotificationResponder: AnyObject {
 /// Manage the creation of `ZMUserSession` and `UnauthenticatedSession` objects and
 /// the switching between them.
 ///
-/// There are multiple things neccessary in order to store (and switch between) multiple accounts on one device, a couple of them are:
-/// 1. The folder structure in the app sandbox has to be modeled in a way in which files can be associated with a single account.
-/// 2. The login flow should not rely on any persistent state (e.g. no database has to be created on disk before being logged in).
-/// 3. There has to be a persistence layer storing information about accounts and the currently selected / active account.
+/// There are multiple things neccessary in order to store (and switch between) multiple accounts on one device, a
+/// couple of them are:
+/// 1. The folder structure in the app sandbox has to be modeled in a way in which files can be associated with a single
+/// account.
+/// 2. The login flow should not rely on any persistent state (e.g. no database has to be created on disk before being
+/// logged in).
+/// 3. There has to be a persistence layer storing information about accounts and the currently selected / active
+/// account.
 ///
-/// The wire account database and a couple of other related files are stored in the shared container in a folder named by the accounts
-/// `remoteIdentifier`. All information about different accounts on a device are stored by the `AccountManager` (see the documentation
-/// of that class for more information). The `SessionManager`s main responsibility at the moment is checking whether there is a selected
-/// `Account` or not, and creating an `UnauthenticatedSession` or `ZMUserSession` accordingly. An `UnauthenticatedSession` is used
-/// to create requests to either log in existing users or to register new users. It uses its own `UnauthenticatedOperationLoop`,
-/// which is a stripped down version of the regular `ZMOperationLoop`. This unauthenticated operation loop only uses a small subset
-/// of transcoders needed to perform the login / registration (and related phone number verification) requests. For more information
+/// The wire account database and a couple of other related files are stored in the shared container in a folder named
+/// by the accounts
+/// `remoteIdentifier`. All information about different accounts on a device are stored by the `AccountManager` (see the
+/// documentation
+/// of that class for more information). The `SessionManager`s main responsibility at the moment is checking whether
+/// there is a selected
+/// `Account` or not, and creating an `UnauthenticatedSession` or `ZMUserSession` accordingly. An
+/// `UnauthenticatedSession` is used
+/// to create requests to either log in existing users or to register new users. It uses its own
+/// `UnauthenticatedOperationLoop`,
+/// which is a stripped down version of the regular `ZMOperationLoop`. This unauthenticated operation loop only uses a
+/// small subset
+/// of transcoders needed to perform the login / registration (and related phone number verification) requests. For more
+/// information
 /// see `UnauthenticatedOperationLoop`.
 ///
-/// The result of using an `UnauthenticatedSession` is retrieving a remoteIdentifier of a logged in user, as well as a valid cookie.
-/// Once those became available, the session will notify the session manager, which in turn will create a regular `ZMUserSession`.
+/// The result of using an `UnauthenticatedSession` is retrieving a remoteIdentifier of a logged in user, as well as a
+/// valid cookie.
+/// Once those became available, the session will notify the session manager, which in turn will create a regular
+/// `ZMUserSession`.
 /// For more information about the cookie retrieval consult the documentation in `UnauthenticatedSession`.
 ///
-/// The flow creating either an `UnauthenticatedSession` or `ZMUserSession` after creating an instance of `SessionManager`
+/// The flow creating either an `UnauthenticatedSession` or `ZMUserSession` after creating an instance of
+/// `SessionManager`
 /// is depicted on a high level in the following diagram:
 ///
 ///
@@ -166,8 +180,10 @@ public protocol ForegroundNotificationResponder: AnyObject {
 ///                    v
 ///
 /// +------------------+---------------------+
-/// | Check if there is a database present   |        YES           Open the existing database, retrieve the user identifier,
-/// | in the legacy directory (not keyed by  |  +-------------->    create an account with it and select it. Migrate the existing
+/// | Check if there is a database present   |        YES           Open the existing database, retrieve the user
+/// identifier,
+/// | in the legacy directory (not keyed by  |  +-------------->    create an account with it and select it. Migrate the
+/// existing
 /// | the users remoteIdentifier)?           |                      cookie for that account and start at the top again.
 /// +----------------------------------------+
 ///

@@ -85,7 +85,8 @@ public class WireCallCenterV3: NSObject {
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
 
-    /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to AVS.
+    /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to
+    /// AVS.
     var isReady = false {
         didSet {
             VoIPPushHelper.isAVSReady = isReady
@@ -483,9 +484,11 @@ extension WireCallCenterV3 {
 // MARK: - Call ending for oneOnOne conversations
 
 extension WireCallCenterV3 {
-    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is `true`.
+    /// We treat 1:1 calls as conferences (via SFT) if `useSFTForOneToOneCalls` from the `conferenceCalling` feature is
+    /// `true`.
     /// If the other user hangs up, we should end the call for the self user.
-    /// More info (Option 1): https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
+    /// More info (Option 1):
+    /// https://wearezeta.atlassian.net/wiki/spaces/PAD/pages/1314750477/2024-07-29+1+1+calls+over+SFT
     private func shouldEndCall(
         conversationId: AVSIdentifier,
         previousParticipants: [AVSCallMember],
@@ -521,7 +524,8 @@ extension WireCallCenterV3 {
         previousParticipants: [AVSCallMember],
         newParticipants: [AVSCallMember]
     ) -> Bool {
-        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the call should end.
+        /// We assume that the 2nd participant is the other user, and if the other user's audio state is connecting, the
+        /// call should end.
         guard
             previousParticipants.count == 2,
             newParticipants.count == 2,
@@ -1037,9 +1041,11 @@ extension WireCallCenterV3 {
         updateMLSConferenceIfNeededForMissedCall(conversationID: conversationId)
     }
 
-    /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it to the `bufferedEvents`.
+    /// Handles incoming OTR calling messages, and transmist them to AVS when it is ready to process events, or adds it
+    /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
-    /// - parameter completionHandler: called after the call event has been processed (this will for example wait for AVS to signal that it's ready).
+    /// - parameter completionHandler: called after the call event has been processed (this will for example wait for
+    /// AVS to signal that it's ready).
     func processCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
         Self.logger.info("process call event")
         if isReady {

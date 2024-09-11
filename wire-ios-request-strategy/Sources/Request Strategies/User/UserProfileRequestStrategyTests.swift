@@ -93,11 +93,13 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             self.apiVersion = .v0
             self.otherUser.domain = "example.com"
             self.otherUser.needsToBeUpdatedFromBackend = true
-            // By reporting the otherUser did change while on v0, sut will case the legacy transcoder to get in a state where it would produce a next request
+            // By reporting the otherUser did change while on v0, sut will case the legacy transcoder to get in a state
+            // where it would produce a next request
             self.sut.objectsDidChange(Set([self.otherUser]))
 
             // when
-            // By switching to v4 and asking for a next request, we get nil because we would only ask the non legacy transcoder for a request, but it's not in a state to do that
+            // By switching to v4 and asking for a next request, we get nil because we would only ask the non legacy
+            // transcoder for a request, but it's not in a state to do that
             self.apiVersion = .v4
             let request = self.sut.nextRequest(for: self.apiVersion)
 

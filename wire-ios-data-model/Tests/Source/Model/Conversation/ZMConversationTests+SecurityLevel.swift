@@ -1013,7 +1013,9 @@ final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
     }
 
     func testThatAddingABlockedUserThatAlreadyIsMemberOfTheConversationDoesNotDegradeTheConversation() {
-        // This happens when we are blocking a user in a 1on1: We recieve a conversation update from the backend as a response to blocking the user, which then "readds" the user. Since the user is already part of the conversation it should not degrade the conversation.
+        // This happens when we are blocking a user in a 1on1: We recieve a conversation update from the backend as a
+        // response to blocking the user, which then "readds" the user. Since the user is already part of the
+        // conversation it should not degrade the conversation.
 
         // given
         let conversation = self.setupVerifiedConversation()

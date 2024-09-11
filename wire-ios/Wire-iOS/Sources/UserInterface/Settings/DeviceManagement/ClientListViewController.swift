@@ -509,7 +509,8 @@ final class ClientListViewController: UIViewController,
         guard
             let userSession,
             let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID(),
-            // dangerous access: ZMUserSession.e2eiFeature initialises a FeatureRepository using the viewContext, thus the following line must be executed o the main thread
+            // dangerous access: ZMUserSession.e2eiFeature initialises a FeatureRepository using the viewContext, thus
+            // the following line must be executed o the main thread
             userSession.e2eiFeature.isEnabled
         else {
             return

@@ -20,6 +20,7 @@
 /// Determines if the user should be presented a hint, that notifications cannot be shown.
 protocol ShouldPresentNotificationPermissionHintUseCaseProtocol {
     /// Determines if the user should be presented a hint to grant notification permissions.
-    /// - Returns: `true` if the user should be presented a screen for granting notification permissions. `false` will be returned if the permission is already granted or the hint has been presented already within 24 hours.
+    /// - Returns: `true` if the user should be presented a screen for granting notification permissions. `false` will
+    /// be returned if the permission is already granted or the hint has been presented already within 24 hours.
     func invoke() async -> Bool
 }

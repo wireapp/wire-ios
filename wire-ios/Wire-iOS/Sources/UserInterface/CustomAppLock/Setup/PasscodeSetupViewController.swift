@@ -118,7 +118,8 @@ final class PasscodeSetupViewController: UIViewController {
 
     /// init with parameters
     /// - Parameters:
-    ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to follow current window's height
+    ///   - useCompactLayout: Set this to true for reduce font size and spacing for iPhone 4 inch screen. Set to nil to
+    /// follow current window's height
     ///   - context: context  for this screen. Depending on the context, there are a different title and info message.
     ///   - callback: callback for storing passcode result.
     required init(

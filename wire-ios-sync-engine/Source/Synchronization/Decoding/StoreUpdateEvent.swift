@@ -42,7 +42,8 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// - Parameters:
     ///   - event: received events
     ///   - managedObjectContext: current managedObjectContext
-    ///   - index: the passed in `index` is used to enumerate events to be able to fetch and sort them later on in the order they were received
+    ///   - index: the passed in `index` is used to enumerate events to be able to fetch and sort them later on in the
+    /// order they were received
     ///   - publicKey: the publicKey which will be used to encrypt update events
     /// - Returns: storedEvent which will be persisted in a database
     public static func encryptAndCreate(

@@ -176,7 +176,8 @@ final class ParticipantsCellViewModel {
 
     private var nameList: NameList {
         var userNames = shownUsers.map { name(for: $0) }
-        /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only display selfUser
+        /// If users were removed due to legal hold policy conflict and there is a selfUser in that list, we should only
+        /// display selfUser
         if case .removed(reason: .legalHoldPolicyConflict) = action,
            let selfUser = sortedUsers.first(where: \.isSelfUser),
            !sortedUsersWithoutSelf.isEmpty {

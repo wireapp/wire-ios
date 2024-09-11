@@ -80,26 +80,32 @@ public protocol CallActionsInternal: NSObjectProtocol {
 }
 
 public protocol CallObservers: NSObjectProtocol {
-    /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of voice channel state. Returns a token which needs to be retained as long as the observer should
+    /// be active.
     func addCallStateObserver(_ observer: WireCallCenterCallStateObserver) -> Any
 
-    /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of voice channel participants. Returns a token which needs to be retained as long as the observer
+    /// should be active.
     func addParticipantObserver(_ observer: WireCallCenterCallParticipantObserver) -> Any
 
     /// Add observer of voice gain. Returns a token which needs to be retained as long as the observer should be active.
     func addVoiceGainObserver(_ observer: VoiceGainObserver) -> Any
 
-    /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of constant bit rate audio. Returns a token which needs to be retained as long as the observer
+    /// should be active.
     func addConstantBitRateObserver(_ observer: ConstantBitRateAudioObserver) -> Any
 
-    /// Add observer of network quality. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of network quality. Returns a token which needs to be retained as long as the observer should be
+    /// active.
     func addNetworkQualityObserver(_ observer: NetworkQualityObserver) -> Any
 
-    /// Add observer of the mute state. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of the mute state. Returns a token which needs to be retained as long as the observer should be
+    /// active.
     func addMuteStateObserver(_ observer: MuteStateObserver) -> Any
 
     func addActiveSpeakersObserver(_ observer: ActiveSpeakersObserver) -> Any
 
-    /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the observer should be active.
+    /// Add observer of the state of all voice channels. Returns a token which needs to be retained as long as the
+    /// observer should be active.
     static func addCallStateObserver(_ observer: WireCallCenterCallStateObserver, userSession: ZMUserSession) -> Any
 }

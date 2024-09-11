@@ -25,7 +25,8 @@ extension UserType {
         return formatter
     }
 
-    /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
+    /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for
+    /// meta) characters
     ///
     /// - Returns: a string <= 214 characters
     public func filename(suffix: String? = nil) -> String {

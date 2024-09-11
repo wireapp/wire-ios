@@ -30,7 +30,8 @@ public protocol AcmeAPIInterface {
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
 }
 
-/// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI certificate.
+/// This class provides ACME(Automatic Certificate Management Environment) server methods for enrolling an E2EI
+/// certificate.
 public class AcmeAPI: NSObject, AcmeAPIInterface {
     // MARK: - Properties
 

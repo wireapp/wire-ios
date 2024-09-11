@@ -410,8 +410,10 @@ extension GenericMessage {
 
         // Message too big?
         if let data = messageData, UInt(data.count) > ZMClientMessage.byteSizeExternalThreshold, externalData == nil {
-            // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
-            // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
+            // The payload is too big, we therefore rollback the session since we won't use the message we just
+            // encrypted.
+            // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk
+            // of TooDistantFuture.
             messageData = await self.encryptForTransportWithExternalDataBlob(
                 for: recipients,
                 with: missingClientsStrategy,
@@ -486,8 +488,10 @@ extension GenericMessage {
             // Message too big?
             if let data = messageData, UInt(data.count) > ZMClientMessage.byteSizeExternalThreshold,
                externalData == nil {
-                // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
-                // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
+                // The payload is too big, we therefore rollback the session since we won't use the message we just
+                // encrypted.
+                // This will prevent us advancing sender chain multiple time before sending a message, and reduce the
+                // risk of TooDistantFuture.
                 sessionsDirectory.discardCache()
                 messageData = self.encryptForTransportWithExternalDataBlob(
                     for: recipients,

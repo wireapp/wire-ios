@@ -179,7 +179,8 @@ extension ZMConversation {
         }
 
         if let sender = message.sender, sender.isSelfUser {
-            // if the message was sent by the self user we don't want to send a lastRead event, since we consider this message to be already read
+            // if the message was sent by the self user we don't want to send a lastRead event, since we consider this
+            // message to be already read
             updateLastRead(timestamp, synchronize: false)
         }
 
@@ -243,7 +244,8 @@ extension ZMConversation {
     ///
     /// - parameter timestamp: Point in time from which all older messages should be considered read.
     ///
-    /// This method only has an effect when called from the UI context and it's throttled so it's fine to call it repeatedly.
+    /// This method only has an effect when called from the UI context and it's throttled so it's fine to call it
+    /// repeatedly.
 
     private func enqueueMarkAsReadUpdate(_ timestamp: Date) {
         guard let managedObjectContext, managedObjectContext.zm_isUserInterfaceContext else { return }

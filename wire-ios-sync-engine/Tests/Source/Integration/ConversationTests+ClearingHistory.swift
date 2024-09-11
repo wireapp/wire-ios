@@ -82,7 +82,8 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         // when adding new messages
         self.userSession?.perform {
             self
-                .spinMainQueue(withTimeout: 1) // if the message is sent within the same second of clearing the window, it will not be added when resyncing
+                .spinMainQueue(withTimeout: 1) // if the message is sent within the same second of clearing the window,
+            // it will not be added when resyncing
             let message = try! conversation?.appendText(content: "lalala")
             conversation?.markMessagesAsRead(until: message!)
         }
@@ -273,7 +274,8 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         // when
         self.mockTransportSession.performRemoteChanges { _ in
             self
-                .spinMainQueue(withTimeout: 1) // if the action happens within the same second the user clears the history, the event is not added
+                .spinMainQueue(withTimeout: 1) // if the action happens within the same second the user clears the
+            // history, the event is not added
             let message = GenericMessage(
                 content: Text(content: "foo", mentions: [], linkPreviews: [], replyingTo: nil),
                 nonce: UUID.create()
@@ -307,7 +309,8 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         // when
         self.mockTransportSession.performRemoteChanges { _ in
             self
-                .spinMainQueue(withTimeout: 1) // if the action happens within the same second the user clears the history, the event is not added
+                .spinMainQueue(withTimeout: 1) // if the action happens within the same second the user clears the
+            // history, the event is not added
             self.groupConversation.removeUsers(by: self.user2, removedUser: self.user3)
         }
 

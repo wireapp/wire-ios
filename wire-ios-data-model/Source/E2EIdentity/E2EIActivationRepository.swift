@@ -19,7 +19,8 @@
 import Foundation
 
 /// The repository is responsible for storing the e2ei activation date.
-/// The e2ei activation date begins from the moment the client receives the notification that the feature flag is enabled for the team.
+/// The e2ei activation date begins from the moment the client receives the notification that the feature flag is
+/// enabled for the team.
 public protocol E2EIActivationDateRepositoryProtocol {
     var e2eiActivatedAt: Date? { get }
     func storeE2EIActivationDate(_ date: Date)

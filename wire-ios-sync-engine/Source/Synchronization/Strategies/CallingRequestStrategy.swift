@@ -544,7 +544,8 @@ extension CallingRequestStrategy {
 
         let clients: [AVSClient]
 
-        /// This can decode the two types of responses listed below given that v0 uses legacy endpoints and v1 uses federation endpoints
+        /// This can decode the two types of responses listed below given that v0 uses legacy endpoints and v1 uses
+        /// federation endpoints
         ///
         /// When querying the legacy endpoint, this will be the response
         /// {
@@ -578,7 +579,8 @@ extension CallingRequestStrategy {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
             // get the nested container keyed by "missing"
-            // it will contain a list of users and their client ids, but depending on the response, it may be segmented by domains
+            // it will contain a list of users and their client ids, but depending on the response, it may be segmented
+            // by domains
             let nestedContainer = try container.nestedContainer(keyedBy: DynamicKey.self, forKey: .missing)
 
             // define the block used below to extract the clients from a container

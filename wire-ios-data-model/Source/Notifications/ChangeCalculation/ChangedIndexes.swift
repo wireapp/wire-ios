@@ -99,7 +99,8 @@ public struct ChangedIndexes<T: Hashable> {
     /// Reloads using these indexes must be performed AFTER inserts / deletes and moves have COMPLETED
     public let updatedIndexes: IndexSet
 
-    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
+    /// Depending on the moveType, the `from` index either refers to the position of the item in the original set
+    /// (uiCollectionView) or to the position in the intermediate set as moves are iteratively applied (uiTableView)
     public let movedIndexes: [MovedIndex]
 
     public let moveType: SetChangeMoveType

@@ -77,7 +77,8 @@ extension Array where Element: TupleKeyArrayType {
 
 extension NSManagedObjectContext {
     /// Locates the entities of type `T` that have the same value for `keyPath`.
-    /// - Parameter keyPath: valid keyPath that can be fetched from the disk store (computed properties are not permitted).
+    /// - Parameter keyPath: valid keyPath that can be fetched from the disk store (computed properties are not
+    /// permitted).
     /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
 
     func findDuplicated<T: ZMManagedObject, ValueForKey>(by keyPath: String) -> [ValueForKey: [T]] {

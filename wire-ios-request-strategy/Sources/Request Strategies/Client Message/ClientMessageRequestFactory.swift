@@ -119,7 +119,8 @@ extension ClientMessageRequestFactory {
 
         let request = ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
 
-        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form `addContentDebugInformation`.
+        // [WPB-7392] through a refactoring the `contentHintForRequestLoop` was seperated form
+        // `addContentDebugInformation`.
         // Not clear if it is necessary to set `contentHintForRequestLoop` here, but keep the original behavior.
         request
             .addContentDebugInformation(

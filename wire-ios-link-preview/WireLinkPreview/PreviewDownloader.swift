@@ -81,7 +81,8 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         guard let url = task.originalRequest?.url, let completion = completionByURL[url] else { return }
 
         // We do not want to call the completion handler when we cancelled the task,
-        // as we cancel it when we received enough data to generate the link preview and will call the completion handler
+        // as we cancel it when we received enough data to generate the link preview and will call the completion
+        // handler
         // once we parsde the data.
         if !cancelledTaskIDs.contains(task.taskIdentifier), error != nil {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
@@ -163,7 +164,8 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
 extension PreviewDownloader {
     /// This method needs to be in an extension to silence a compiler warning that it `nearly` matches
-    /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
+    /// > Instance method 'urlSession(_:dataTask:didReceiveHTTPResponse:completionHandler:)' nearly matches optional
+    /// requirement 'urlSession(_:dataTask:willCacheResponse:completionHandler:)' of protocol 'URLSessionDataDelegate'
     func urlSession(
         _ session: URLSessionType,
         dataTask: URLSessionDataTaskType,

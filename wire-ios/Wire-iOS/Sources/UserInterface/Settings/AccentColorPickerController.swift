@@ -30,10 +30,14 @@ final class AccentColorPickerController: UIHostingController<AccentColorPicker> 
 
     init(selfUser: EditableUserType, userSession: UserSession) {
         let accentColor = AccentColor(rawValue: selfUser.accentColorValue) ?? .default
-        // Currently, using a `UIHostingController` to host SwiftUI views within a UIKit application makes it difficult to directly work with SwiftUI bindings.
-        // The `UIHostingController` acts as a bridge between UIKit and SwiftUI, and managing SwiftUI bindings across this bridge can be complex and error-prone.
-        // We plan to migrate our settings interface to SwiftUI in the future. Once the transition is complete, we can leverage SwiftUI's binding system more effectively.
-        // This will simplify state management and improve code clarity. At that point, we can replace the closure with a binding to directly manage the selected color state.
+        // Currently, using a `UIHostingController` to host SwiftUI views within a UIKit application makes it difficult
+        // to directly work with SwiftUI bindings.
+        // The `UIHostingController` acts as a bridge between UIKit and SwiftUI, and managing SwiftUI bindings across
+        // this bridge can be complex and error-prone.
+        // We plan to migrate our settings interface to SwiftUI in the future. Once the transition is complete, we can
+        // leverage SwiftUI's binding system more effectively.
+        // This will simplify state management and improve code clarity. At that point, we can replace the closure with
+        // a binding to directly manage the selected color state.
         let colorPickerView = AccentColorPicker(
             selectedColor: accentColor,
             onColorSelect: { accentColor in

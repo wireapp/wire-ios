@@ -21,14 +21,16 @@ import Foundation
 protocol KeyPathObjectSyncTranscoder: AnyObject {
     associatedtype T: Hashable
 
-    /// Called when a object needs to be synchronized. It's the transcoder's responsibillity to call the `completion` handler when the synchronization is successfull or cancel.
+    /// Called when a object needs to be synchronized. It's the transcoder's responsibillity to call the `completion`
+    /// handler when the synchronization is successfull or cancel.
     ///
     /// - parameters:
     ///   - object: Object which should be synchronized
     ///   - completion: called when the object as been synchronized
     func synchronize(_ object: T, completion: @escaping () -> Void)
 
-    /// Called when a object was previously requested to be synchronized but the the condition for synchronizing stop being fulfilled before the object finished synchronizing.
+    /// Called when a object was previously requested to be synchronized but the the condition for synchronizing stop
+    /// being fulfilled before the object finished synchronizing.
     ///
     /// - parameters:
     ///   - object: Object which no longer needs be synchronized.

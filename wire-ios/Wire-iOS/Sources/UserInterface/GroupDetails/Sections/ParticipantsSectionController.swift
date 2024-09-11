@@ -102,7 +102,8 @@ private struct ParticipantsSectionViewModel {
     ///   - totalParticipantsCount: the number of all participants in the conversation
     ///   - clipSection: enable/disable the display of the “ShowAll” button
     ///   - maxParticipants: max number of participants we can display
-    ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants participants
+    ///   - maxDisplayedParticipants: max number of participants we can display, if there are more than maxParticipants
+    /// participants
     ///   - showSectionCount: current view model - a search result or not
     init(
         users: [UserType],

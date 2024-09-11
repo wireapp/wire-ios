@@ -59,7 +59,8 @@ extension NSData {
             throw MetadataError.unknownFormat
         }
 
-        // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
+        // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from
+        // CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
         if type == UTType.gif.identifier as CFString {
             return self
         }
