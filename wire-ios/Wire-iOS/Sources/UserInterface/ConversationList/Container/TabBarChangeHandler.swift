@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireUIFoundation
 
 /// Responds to selected tab changes, ensuring the correct _principle_ tab is selected and `Contacts` or `Archive` views
 /// are shown.
@@ -55,7 +56,7 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        guard let selectedIndex = MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) else {
+        guard let selectedIndex = MainTabBarController.Tab(rawValue: tabBarController.selectedIndex) else {
             fatalError("unexpected selected tab index")
         }
 
@@ -87,9 +88,9 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
     private var principleTabIndex: Int {
         switch principleTab {
         case .conversations:
-            MainTabBarControllerTab.conversations.rawValue
+            MainTabBarController.Tab.conversations.rawValue
         case .folders:
-            MainTabBarControllerTab.folders.rawValue
+            MainTabBarController.Tab.folders.rawValue
         }
     }
 

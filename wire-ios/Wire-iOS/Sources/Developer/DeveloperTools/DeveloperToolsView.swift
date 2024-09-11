@@ -29,7 +29,7 @@ struct DeveloperToolsView: View {
 
     var body: some View {
         List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("Developer tools")
+            .navigationTitle(Text(verbatim: "Developer tools"))
             .navigationBarItems(trailing: dismissButton)
             .alert(isPresented: $viewModel.isPresentingAlert) {
                 Alert(
@@ -80,7 +80,7 @@ struct DeveloperToolsView: View {
     private var dismissButton: some View {
         Button(
             action: { viewModel.handleEvent(.dismissButtonTapped) },
-            label: { Text("Close") }
+            label: { Text(verbatim: "Close") }
         )
     }
 
@@ -116,5 +116,4 @@ struct DeveloperToolsView_Previews: PreviewProvider {
             DeveloperToolsView(viewModel: DeveloperToolsViewModel())
         }
     }
-
 }

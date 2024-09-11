@@ -23,7 +23,7 @@ import XCTest
 
 final class TeamsAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<TeamsAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any TeamsAPI>!
 
     // MARK: - Setup
 
