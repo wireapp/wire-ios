@@ -88,6 +88,8 @@ final class TeamRepository: TeamRepositoryProtocol {
             }
 
             member.needsToBeUpdatedFromBackend = true
+            
+            try context.save()
         }
     }
 

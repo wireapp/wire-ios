@@ -32,6 +32,6 @@ enum TeamRepositoryError: Error {
 
     /// Failed to find team member locally.
 
-    case failedToFindTeamMember(_ membershipId: UUID)
+    case failedToFindTeamMember(_ membershipID: UUID)
 
 }
