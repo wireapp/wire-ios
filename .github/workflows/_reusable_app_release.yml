@@ -130,6 +130,7 @@ jobs:
             echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
       - uses: actions/checkout@v4
         with:
+          lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
       - name: Download changelog     
