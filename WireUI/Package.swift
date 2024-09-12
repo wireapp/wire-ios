@@ -51,7 +51,7 @@ let package = Package(
             ]
         ),
 
-        .target(name: "WireUserProfile", dependencies: ["WireFoundation"]),
+        .target(name: "WireUserProfile", dependencies: ["WireFoundation", "WireDesign"]),
         .testTarget(
             name: "WireUserProfileTests",
             dependencies: [
