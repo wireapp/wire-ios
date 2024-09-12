@@ -17,10 +17,8 @@
 //
 
 import WireDataModelSupport
-import XCTest
-
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 @testable import WireSyncEngine
 
@@ -47,8 +45,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        BackendInfo.enableMocking()
-
         // be sure to call this before initializing sut
         uiMOC.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         mockCookieStorage = MockCookieStorage()
@@ -67,8 +63,6 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         self.mockClientRegistationDelegate = nil
         self.mockCookieStorage = nil
         self.sut = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

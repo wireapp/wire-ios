@@ -18,7 +18,6 @@
 
 import Foundation
 @testable import WireRequestStrategy
-@_spi(MockBackendInfo)
 import WireTransport
 
 class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPackageAction, ClaimMLSKeyPackageActionHandler> {
@@ -69,7 +68,6 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         }
 
         // when the domain is missing
-        BackendInfo.enableMocking()
         BackendInfo.domain = nil
 
         test_itDoesntGenerateARequest(
@@ -82,8 +80,6 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             apiVersion: .v5,
             expectedError: .missingDomain
         )
-
-        BackendInfo.resetMocking()
     }
 
     // MARK: - Response handling

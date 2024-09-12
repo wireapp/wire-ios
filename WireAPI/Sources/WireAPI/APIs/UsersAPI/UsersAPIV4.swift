@@ -82,7 +82,7 @@ struct UserResponseV4: Decodable, ToAPIModelConvertible {
     let email: String?
     let expiresAt: UTCTimeMillis?
     let service: ServiceResponseV0?
-    let supportedProtocols: Set<SupportedProtocol>?
+    let supportedProtocols: Set<MessageProtocol>?
     let legalholdStatus: LegalholdStatusV0
 
     enum CodingKeys: String, CodingKey {

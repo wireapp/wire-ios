@@ -20,7 +20,6 @@
 
 #import "NSString+Normalization.h"
 
-
 @implementation NSString (Normalization)
 
 - (instancetype)normalizedInternal

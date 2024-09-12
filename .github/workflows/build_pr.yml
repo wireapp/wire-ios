@@ -2,7 +2,7 @@ name: Build for PR
 
 on:
   pull_request:
-    types: [ opened, synchronize ]
+    types: [ opened, synchronize, edited, ready_for_review ]
     branches: [ 'develop', 'ci/upload-builds-to-s3-on-pr', 'feat/run-on-pr' ]
 
 concurrency:
@@ -15,7 +15,7 @@ permissions:
 jobs:
   build_develop:
     if: github.event.pull_request.draft == false
-    uses: ./.github/workflows/_reusable_app_release.yml
+    uses: ./.github/workflows/_reusable_app_release_without_changelog.yml
     with:
       datadog_enabled: false
       fastlane_action: development_pr

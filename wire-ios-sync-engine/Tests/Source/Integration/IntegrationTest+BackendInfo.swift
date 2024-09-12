@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@_spi(MockBackendInfo)
 import WireTransport
 
 @objc
 extension IntegrationTest {
 
     // Please try to avoid these methods and call the functions in place.
-
-    func enableBackendInfoMocking() {
-        BackendInfo.enableMocking()
-    }
 
     func setBackendInfoAPIVersion(_ apiVersion: APIVersion) {
         BackendInfo.apiVersion = apiVersion
@@ -40,7 +35,4 @@ extension IntegrationTest {
         BackendInfo.isFederationEnabled = isEnabled
     }
 
-    func resetBackendInfoMocking() {
-        BackendInfo.resetMocking()
-    }
 }

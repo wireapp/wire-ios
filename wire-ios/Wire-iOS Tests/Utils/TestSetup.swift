@@ -16,20 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import WireTransport
+import WireTransportSupport
+import XCTest
 
 /// This class is set as NSPrincipalClass in test suite info.plist
 /// XCTest makes sure to initialise it only once and we can add all global
 /// test setup code here
-final class TestSetup: NSObject, XCTestObservation {
-    private let defaults: TestUserDefaults
+final class TestSetup: NSObject {
 
     override init() {
-        defaults = TestUserDefaults(suiteName: UUID().uuidString)!
-
         super.init()
-        XCTestObservationCenter.shared.addTestObserver(self)
+
+        XCTestObservationCenter.shared.addTestObserver(
+            makeBackendInfoTestObserver(
+                apiVersion: .v0,
+                preferredAPIVersion: nil,
+                domain: "wire.com",
+                isFederationEnabled: false
+            )
+        )
 
         // The snapshot tests expect to be run with CET time zone
         // We make sure that is the case if e.g. tests run on cloud CI provider
@@ -38,19 +44,4 @@ final class TestSetup: NSObject, XCTestObservation {
         }
     }
 
-    func testBundleWillStart(_ testBundle: Bundle) {
-        BackendInfo.storage = defaults
-        BackendInfo.apiVersion = .v0
-        BackendInfo.domain = "wire.com"
-        BackendInfo.isFederationEnabled = false
-
-        defaults.shouldSet = { _, _ in
-            XCTFail("BackendInfo was mutated outside of mocking")
-            return false
-        }
-    }
-
-    func testBundleDidFinish(_ testBundle: Bundle) {
-        defaults.reset()
-    }
 }

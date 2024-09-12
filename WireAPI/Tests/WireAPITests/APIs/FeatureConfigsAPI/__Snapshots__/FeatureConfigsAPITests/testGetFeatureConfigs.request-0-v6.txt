@@ -1,0 +1,4 @@
+- HTTPRequest
+  - path: "/v6/feature-configs"
+  - method: get
+  - body: none

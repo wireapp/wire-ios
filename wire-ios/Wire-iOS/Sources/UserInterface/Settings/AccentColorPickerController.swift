@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireDataModel
+import WireFoundation
 import WireSyncEngine
 import WireUtilities
 

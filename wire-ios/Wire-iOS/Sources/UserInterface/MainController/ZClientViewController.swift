@@ -17,10 +17,12 @@
 //
 
 import avs
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireUIFoundation
 
 final class ZClientViewController: UIViewController {
 
@@ -36,7 +38,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: UITabBarController!
+    private(set) var mainTabBarController: MainTabBarController!
     // TODO [WPB-6647]: Remove in navigation overhaul
     private var tabBarChangeHandler: TabBarChangeHandler!
 
@@ -191,12 +193,9 @@ final class ZClientViewController: UIViewController {
 
         wireSplitViewController.view.backgroundColor = .clear
 
-        mainTabBarController = MainTabBarController(
-            contacts: .init(),
-            conversations: UINavigationController(rootViewController: conversationListViewController),
-            folders: UINavigationController(rootViewController: conversationListWithFoldersViewController),
-            archive: .init()
-        )
+        mainTabBarController = .init()
+        mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
+        mainTabBarController[tab: .folders].viewControllers = [conversationListWithFoldersViewController]
         wireSplitViewController.leftViewController = mainTabBarController
 
         // TODO [WPB-6647]: Remove in navigation overhaul
@@ -291,7 +290,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it shall be deleted. Maybe the MainCoordinator can be used.")
     static var shared: ZClientViewController? {
-        AppDelegate.shared.appRootRouter?.zClientViewController
+        return (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
@@ -651,7 +650,7 @@ final class ZClientViewController: UIViewController {
         topOverlayContainer.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topOverlayContainer)
 
-        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: safeTopAnchor)
+        contentTopRegularConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
         contentTopCompactConstraint = topOverlayContainer.topAnchor.constraint(equalTo: view.topAnchor)
 
         NSLayoutConstraint.activate([

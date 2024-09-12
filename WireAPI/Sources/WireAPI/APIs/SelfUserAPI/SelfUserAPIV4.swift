@@ -56,7 +56,7 @@ struct SelfUserV4: Decodable, ToAPIModelConvertible {
     let qualifiedID: UserID
     let service: ServiceResponseV0?
     let ssoID: SSOIDV0?
-    let supportedProtocols: Set<SupportedProtocol>?
+    let supportedProtocols: Set<MessageProtocol>?
     let teamID: UUID?
 
     enum CodingKeys: String, CodingKey {

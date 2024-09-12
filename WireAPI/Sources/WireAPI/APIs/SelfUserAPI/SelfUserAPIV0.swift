@@ -20,9 +20,9 @@ import Foundation
 
 class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 
@@ -43,7 +43,7 @@ class SelfUserAPIV0: SelfUserAPI, VersionedAPI {
             .parse(response)
     }
 
-    func pushSupportedProtocols(_: Set<SupportedProtocol>) async throws {
+    func pushSupportedProtocols(_: Set<MessageProtocol>) async throws {
         throw SelfUserAPIError.unsupportedEndpointForAPIVersion
     }
 }
