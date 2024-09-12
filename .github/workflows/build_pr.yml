@@ -3,7 +3,7 @@ name: Build for PR
 on:
   pull_request:
     types: [ opened, synchronize, edited, ready_for_review ]
-    branches: [ 'develop', 'ci/upload-builds-to-s3-on-pr', 'feat/run-on-pr' ]
+    branches: [ 'develop' ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
