@@ -37,7 +37,6 @@ extension ConversationListViewController {
         didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
     ) {
 
-        accountImageView?.isTeamAccount = accountImage.isTeamAccount
         accountImageView?.accountImage = accountImage.image
 
         if accountImage.isTeamAccount, let teamName = viewModel.account.teamName ?? viewModel.userSession.selfUser.teamName {
