@@ -339,6 +339,10 @@ final class UserSessionMock: UserSession {
         AppendLocationMessageUseCase(analyticsSession: nil)
     }
 
+    func makeAppendFileMessageUseCase() -> any WireSyncEngine.AppendFileMessageUseCaseProtocol {
+        AppendFileMessageUseCase(analyticsSession: nil)
+    }
+
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     var mlsFeature: Feature.MLS = Feature.MLS(
