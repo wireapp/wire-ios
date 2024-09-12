@@ -28,14 +28,14 @@ struct SettingsCellDescriptorFactory {
     var settingsPropertyFactory: SettingsPropertyFactory
     var userRightInterfaceType: UserRightInterface.Type
 
-    func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func rootGroup(isPublicDomain: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
             rootElements.append(manageTeamCell())
         }
 
-        rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
+        rootElements.append(settingsGroup(isPublicDomain: isPublicDomain, userSession: userSession))
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
@@ -103,10 +103,10 @@ struct SettingsCellDescriptorFactory {
                                                     copiableText: nil)
     }
 
-    func settingsGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
+    func settingsGroup(isPublicDomain: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var topLevelElements = [
             accountGroup(
-                isTeamMember: isTeamMember,
+                isPublicDomain: isPublicDomain,
                 userSession: userSession
             ),
             devicesCell(),

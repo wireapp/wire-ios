@@ -34,7 +34,7 @@ extension ZMUser {
 
 extension SettingsCellDescriptorFactory {
 
-    func accountGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
+    func accountGroup(isPublicDomain: Bool, userSession: UserSession) -> SettingsCellDescriptorType {
         var sections: [SettingsSectionDescriptorType] = [infoSection(userSession: userSession)]
 
         if userRightInterfaceType.selfUserIsPermitted(to: .editAccentColor) &&
@@ -49,7 +49,7 @@ extension SettingsCellDescriptorFactory {
         }
 
         #if !DATA_COLLECTION_DISABLED
-        sections.append(personalInformationSection(isTeamMember: isTeamMember))
+        sections.append(personalInformationSection(isPublicDomain: isPublicDomain))
         #endif
 
         if SecurityFlags.backup.isEnabled {
@@ -132,9 +132,9 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func personalInformationSection(isTeamMember: Bool) -> SettingsSectionDescriptorType {
+    func personalInformationSection(isPublicDomain: Bool) -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
-            cellDescriptors: [dateUsagePermissionsElement(isTeamMember: isTeamMember)],
+            cellDescriptors: [dateUsagePermissionsElement(isPublicDomain: isPublicDomain)],
             header: L10n.Localizable.Self.Settings.AccountPersonalInformationGroup.title
         )
     }
@@ -347,9 +347,10 @@ extension SettingsCellDescriptorFactory {
         })
     }
 
-    func dateUsagePermissionsElement(isTeamMember: Bool) -> SettingsCellDescriptorType {
-        return dataUsagePermissionsGroup(isTeamMember: isTeamMember)
+    func dateUsagePermissionsElement(isPublicDomain: Bool) -> SettingsCellDescriptorType {
+        return dataUsagePermissionsGroup(isPublicDomain: isPublicDomain)
     }
+
     func resetPasswordElement() -> SettingsCellDescriptorType {
         let resetPasswordTitle = L10n.Localizable.Self.Settings.PasswordResetMenu.title
         return SettingsExternalScreenCellDescriptor(title: resetPasswordTitle, isDestructive: false, presentationStyle: .modal, presentationAction: {
