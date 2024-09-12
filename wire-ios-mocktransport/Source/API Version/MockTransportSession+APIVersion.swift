@@ -23,7 +23,7 @@ extension MockTransportSession {
     @objc
     public func processAPIVersionGetRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
 
-        guard isInternalError else {
+        guard !isInternalError else {
             return ZMTransportResponse(payload: nil,
                                        httpStatus: 500,
                                        transportSessionError: nil,
