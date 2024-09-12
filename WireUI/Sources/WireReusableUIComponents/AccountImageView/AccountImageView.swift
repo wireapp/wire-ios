@@ -272,13 +272,3 @@ private extension View {
         }
     }
 }
-
-private extension UIImage {
-
-    static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-        }
-    }
-}

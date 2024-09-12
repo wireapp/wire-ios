@@ -17,10 +17,23 @@
 //
 
 import XCTest
+import WireFoundation
 
-// TODO: implement
+@testable import WireUserProfile
 
-final class PlaceholderTests: XCTestCase {
+final class MockAccount: GetAccountImageUseCaseAccountProtocol {
+    var imageData: Data?
+    var userName = ""
+    var teamName: String?
+    var teamImageSource: AccountImageSource?
+}
 
-    func testNothing() {}
+final class MockInitialsProvider: GetAccountImageUseCaseInitialsProvider {
+    var initialsResult = ""
+    func initials(from userName: String) -> String { initialsResult }
+}
+
+final class MockAccountImageGenerator: AccountImageGeneratorProtocol {
+    var resultImage = UIImage()
+    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage { resultImage }
 }

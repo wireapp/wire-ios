@@ -20,7 +20,9 @@ import UIKit
 import WireFoundation
 
 public struct GetTeamAccountImageUseCase<InitalsProvider, AccountImageGenerator>: GetTeamAccountImageUseCaseProtocol
-    where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
+where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
+
+    typealias Error = GetTeamAccountImageUseCaseError
 
     var initalsProvider: InitalsProvider
     var accountImageGenerator: AccountImageGenerator
@@ -54,9 +56,9 @@ public struct GetTeamAccountImageUseCase<InitalsProvider, AccountImageGenerator>
 
         throw Error.invalidImageSource
     }
+}
 
-    enum Error: Swift.Error {
-        /// Neither valid image data nor a non-empty string has been provided for getting an account image.
-        case invalidImageSource
-    }
+enum GetTeamAccountImageUseCaseError: Error {
+    /// Neither valid image data nor a non-empty string has been provided for getting an account image.
+    case invalidImageSource
 }
