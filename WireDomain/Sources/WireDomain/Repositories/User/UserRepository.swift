@@ -58,9 +58,11 @@ public final class UserRepository: UserRepositoryProtocol {
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
 
-    public init(context: NSManagedObjectContext,
-                usersAPI: any UsersAPI,
-                selfUserAPI: any SelfUserAPI) {
+    public init(
+        context: NSManagedObjectContext,
+        usersAPI: any UsersAPI,
+        selfUserAPI: any SelfUserAPI
+    ) {
         self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
