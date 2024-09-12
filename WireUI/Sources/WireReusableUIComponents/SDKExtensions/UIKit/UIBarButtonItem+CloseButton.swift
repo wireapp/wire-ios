@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireDesign // TODO: could we get rid of this dependency and move the code into WireFoundation?
+import WireDesign
 
 public extension UIBarButtonItem {
     /// Creates a customized close button for use in navigation bars.
