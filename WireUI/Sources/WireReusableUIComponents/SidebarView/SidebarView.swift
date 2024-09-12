@@ -22,7 +22,6 @@ import WireDesign
 public struct SidebarView: View {
 
     public var accountInfo: SidebarAccountInfo?
-    public var availability: Availability?
     @Binding public var conversationFilter: SidebarConversationFilter?
 
     @State private var iconSize: CGSize?
@@ -78,7 +77,7 @@ public struct SidebarView: View {
     private var profileSwitcher: some View {
         if let accountInfo {
             SidebarProfileSwitcherView(accountInfo.displayName, accountInfo.username) {
-                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.isTeamAccount, availability)
+                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.availability)
             }
             .padding(.horizontal, 24)
             .padding(.bottom)
