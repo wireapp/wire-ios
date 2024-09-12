@@ -48,6 +48,8 @@
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */; };
 		C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */; };
+		C9EA769F2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */; };
+		C9EA76A12C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA76A02C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
@@ -164,6 +166,8 @@
 		C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+MLS.swift"; sourceTree = "<group>"; };
 		C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+Metadata.swift"; sourceTree = "<group>"; };
 		C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryTests.swift; sourceTree = "<group>"; };
+		C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCase.swift; sourceTree = "<group>"; };
+		C9EA76A02C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -597,6 +601,7 @@
 			isa = PBXGroup;
 			children = (
 				EEC410242C60D48900E89394 /* SyncManagerTests.swift */,
+				C9EA76A02C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift */,
 			);
 			path = Synchronization;
 			sourceTree = "<group>";
@@ -604,6 +609,7 @@
 		EECC35A42C2EB6C100679448 /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
+				C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */,
 				EECC35A52C2EB6CD00679448 /* SyncManager.swift */,
 				EECC35A72C2EB70400679448 /* SyncState.swift */,
 			);
@@ -860,6 +866,7 @@
 				EEAD0A222C46ABFB00CC8658 /* UserLegalholdDisableEventProcessor.swift in Sources */,
 				EEAD09F22C46604400CC8658 /* ConversationAccessUpdateEventProcessor.swift in Sources */,
 				EEAD0A082C46776400CC8658 /* ConversationProtocolUpdateEventProcessor.swift in Sources */,
+				C9EA769F2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift in Sources */,
 				EE368CD32C2DAA87009DBAB0 /* UserEventProcessor.swift in Sources */,
 				EE57A6FE2C298F380096F242 /* UpdateEventDecryptor.swift in Sources */,
 				C939618F2C91B03F00EA971A /* SelfUserProvider.swift in Sources */,
@@ -884,6 +891,7 @@
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
+				C9EA76A12C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 				C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */,
 			);

@@ -32,6 +32,13 @@ public protocol UserRepositoryProtocol {
 
     func fetchSelfUser() -> ZMUser
 
+    /// Push self user supported protocols
+    /// - Parameter supportedProtocols: A list of supported protocols.
+
+    func pushSelfSupportedProtocols(
+        _ supportedProtocols: Set<WireAPI.MessageProtocol>
+    ) async throws
+
     /// Fetch and persist all locally known users
 
     func pullKnownUsers() async throws
@@ -49,14 +56,24 @@ public final class UserRepository: UserRepositoryProtocol {
 
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
+    private let selfUserAPI: any SelfUserAPI
 
-    public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
+    public init(context: NSManagedObjectContext,
+                usersAPI: any UsersAPI,
+                selfUserAPI: any SelfUserAPI) {
         self.context = context
         self.usersAPI = usersAPI
+        self.selfUserAPI = selfUserAPI
     }
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
+    }
+
+    public func pushSelfSupportedProtocols(
+        _ supportedProtocols: Set<WireAPI.MessageProtocol>
+    ) async throws {
+        try await selfUserAPI.pushSupportedProtocols(supportedProtocols)
     }
 
     public func pullKnownUsers() async throws {

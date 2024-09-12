@@ -23,7 +23,6 @@ import WireAPI
 import WireDataModel
 
 /// Facilitates access to feature configs related domain objects.
-
 protocol FeatureConfigRepositoryProtocol {
 
     /// Pulls feature configs from the server and stores them locally.
