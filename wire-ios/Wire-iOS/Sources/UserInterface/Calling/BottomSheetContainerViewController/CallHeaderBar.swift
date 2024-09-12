@@ -59,7 +59,7 @@ final class CallHeaderBar: UIView {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             verticalStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            verticalStackView.topAnchor.constraint(equalTo: safeTopAnchor, constant: 10.0),
+            verticalStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 10.0),
             verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -6.0),
             minimalizeButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20.0),
             minimalizeButton.centerYAnchor.constraint(equalTo: centerYAnchor),

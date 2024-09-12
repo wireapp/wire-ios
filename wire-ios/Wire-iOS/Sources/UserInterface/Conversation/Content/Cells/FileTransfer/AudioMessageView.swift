@@ -32,7 +32,7 @@ final class AudioMessageView: UIView, TransferView {
     private weak var mediaPlaybackManager: MediaPlaybackManager?
 
     var audioTrackPlayer: AudioTrackPlayer? {
-        let mediaManager = mediaPlaybackManager ?? AppDelegate.shared.mediaPlaybackManager
+        let mediaManager = mediaPlaybackManager ?? (UIApplication.shared.delegate as? AppDelegate)?.mediaPlaybackManager
         let audioTrackPlayer = mediaManager?.audioTrackPlayer
         audioTrackPlayer?.audioTrackPlayerDelegate = self
         return audioTrackPlayer

@@ -56,65 +56,85 @@ import WireDataModel
 
 
 
-class MockConnectionsLocalStoreProtocol: ConnectionsLocalStoreProtocol {
+public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
 
-    // MARK: - storeConnection
+    // MARK: - storeConversation
 
-    var storeConnection_Invocations: [Connection] = []
-    var storeConnection_MockError: Error?
-    var storeConnection_MockMethod: ((Connection) async throws -> Void)?
+    public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
+    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async -> Void)?
 
-    func storeConnection(_ connectionPayload: Connection) async throws {
-        storeConnection_Invocations.append(connectionPayload)
+    public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async {
+        storeConversationIsFederationEnabled_Invocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
 
-        if let error = storeConnection_MockError {
+        guard let mock = storeConversationIsFederationEnabled_MockMethod else {
+            fatalError("no mock for `storeConversationIsFederationEnabled`")
+        }
+
+        await mock(conversation, isFederationEnabled)
+    }
+
+    // MARK: - storeConversationNeedsBackendUpdate
+
+    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
+    public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
+
+    public func storeConversationNeedsBackendUpdate(_ needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
+        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
+
+        guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
+            fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
+        }
+
+        await mock(needsUpdate, qualifiedId)
+    }
+
+    // MARK: - storeFailedConversation
+
+    public var storeFailedConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
+    public var storeFailedConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
+
+    public func storeFailedConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
+        storeFailedConversationWithQualifiedId_Invocations.append(qualifiedId)
+
+        guard let mock = storeFailedConversationWithQualifiedId_MockMethod else {
+            fatalError("no mock for `storeFailedConversationWithQualifiedId`")
+        }
+
+        await mock(qualifiedId)
+    }
+
+}
+
+public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullConversations
+
+    public var pullConversations_Invocations: [Void] = []
+    public var pullConversations_MockError: Error?
+    public var pullConversations_MockMethod: (() async throws -> Void)?
+
+    public func pullConversations() async throws {
+        pullConversations_Invocations.append(())
+
+        if let error = pullConversations_MockError {
             throw error
         }
 
-        guard let mock = storeConnection_MockMethod else {
-            fatalError("no mock for `storeConnection`")
+        guard let mock = pullConversations_MockMethod else {
+            fatalError("no mock for `pullConversations`")
         }
 
-        try await mock(connectionPayload)
-    }
-
-    // MARK: - deleteFederationConnection
-
-    var deleteFederationConnectionWith_Invocations: [String] = []
-    var deleteFederationConnectionWith_MockError: Error?
-    var deleteFederationConnectionWith_MockMethod: ((String) async throws -> Void)?
-
-    func deleteFederationConnection(with domain: String) async throws {
-        deleteFederationConnectionWith_Invocations.append(domain)
-
-        if let error = deleteFederationConnectionWith_MockError {
-            throw error
-        }
-
-        guard let mock = deleteFederationConnectionWith_MockMethod else {
-            fatalError("no mock for `deleteFederationConnectionWith`")
-        }
-
-        try await mock(domain)
-    }
-
-    // MARK: - removeFederationConnection
-
-    var removeFederationConnectionBetweenAnd_Invocations: [(domain: String, otherDomain: String)] = []
-    var removeFederationConnectionBetweenAnd_MockMethod: ((String, String) async -> Void)?
-
-    func removeFederationConnection(between domain: String, and otherDomain: String) async {
-        removeFederationConnectionBetweenAnd_Invocations.append((domain: domain, otherDomain: otherDomain))
-
-        guard let mock = removeFederationConnectionBetweenAnd_MockMethod else {
-            fatalError("no mock for `removeFederationConnectionBetweenAnd`")
-        }
-
-        await mock(domain, otherDomain)
+        try await mock()
     }
 
 }
