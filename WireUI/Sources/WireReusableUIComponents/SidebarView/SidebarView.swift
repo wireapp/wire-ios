@@ -24,6 +24,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var conversationFilter: SidebarConversationFilter?
+    private(set) var connectAction: () -> Void
+    private(set) var settingsAction: () -> Void
+    private(set) var supportAction: () -> Void
     private(set) var accountImageView: (
         _ accountImage: UIImage,
         _ availability: SidebarAccountInfo.Availability?
@@ -56,14 +59,14 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 SidebarMenuItem(icon: "gearshape", iconSize: iconSize) {
                     Text("sidebar.settings.title", bundle: .module)
                 } action: {
-                    print("settings")
+                    settingsAction()
                 }
                 .padding(.horizontal, 16)
 
                 SidebarMenuItem(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
                     Text("sidebar.support.title", bundle: .module)
                 } action: {
-                    print("support")
+                    supportAction()
                 }
                 .padding(.horizontal, 16)
             }
@@ -115,7 +118,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             ) {
                 Text("sidebar.contacts.connect.title", bundle: .module)
             } action: {
-                // TODO: implement
+                connectAction()
             }
         }
         .padding(.horizontal, 16)

@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: remove
-
 import SwiftUI
 
 public final class SidebarViewController: UIHostingController<SidebarViewAdapter<AnyView>> {
