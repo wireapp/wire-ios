@@ -20,6 +20,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
+      wire-user-profile: ${{ steps.filter.outputs.wire-user-profile }}
       wire-reusable-ui-components: ${{ steps.filter.outputs.wire-reusable-ui-components }}
       wire-ui-foundation: ${{ steps.filter.outputs.wire-ui-foundation }}
       wire-design: ${{ steps.filter.outputs.wire-design }}
@@ -55,6 +56,9 @@ jobs:
           filters: |
             wire-ios:
               - 'wire-ios/**'
+            wire-user-profile:
+              - 'WireUI/Sources/WireUserProfile/**'
+              - 'WireUI/Tests/WireUserProfileTests/**'
             wire-reusable-ui-components:
               - 'WireUI/Sources/WireReusableUIComponents/**'
               - 'WireUI/Tests/WireReusableUIComponentsTests/**'
@@ -118,6 +122,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
+      wire-user-profile: ${{ needs.detect-changes.outputs.wire-user-profile == 'true' }}
       wire-reusable-ui-components: ${{ needs.detect-changes.outputs.wire-reusable-ui-components == 'true' }}
       wire-ui-foundation: ${{ needs.detect-changes.outputs.wire-ui-foundation == 'true' }}
       wire-design: ${{ needs.detect-changes.outputs.wire-design == 'true' }}

@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import CoreData
+import UIKit
 
-@testable import WireFoundation
+/// If the personal user has an account image set, this use cases retrieves it.
+/// Otherwise an image will be generated using the initials of the person's name.
+public protocol GetUserAccountImageUseCaseProtocol {
 
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() throws {
-        throw XCTSkip()
-    }
+    func invoke<Account>(account: Account) async throws -> UIImage
+        where Account: GetAccountImageUseCaseAccountProtocol
 }

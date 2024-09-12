@@ -16,13 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import WireUserProfile
 
-@testable import WireFoundation
+final class MockGetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
 
-final class PlaceholderTests: XCTestCase {
+    var invoke_Invocations = [any GetAccountImageUseCaseAccountProtocol]()
+    var invoke_MockValue: UIImage!
 
-    func testNothing() throws {
-        throw XCTSkip()
+    init() {}
+
+    func invoke<Account>(account: Account) async -> UIImage
+    where Account: GetAccountImageUseCaseAccountProtocol {
+        invoke_Invocations += [account]
+        return invoke_MockValue
     }
 }
