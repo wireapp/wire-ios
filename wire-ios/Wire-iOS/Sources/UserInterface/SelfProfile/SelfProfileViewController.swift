@@ -86,7 +86,8 @@ final class SelfProfileViewController: UIViewController {
             userRightInterfaceType: userRightInterfaceType
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
+        let isPublicDomain = selfUser.domain?.domainType == .publicDomain
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(isPublicDomain: isPublicDomain, userSession: userSession)
 
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 

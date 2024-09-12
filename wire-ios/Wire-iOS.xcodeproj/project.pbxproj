@@ -1337,6 +1337,7 @@
 		E90A2F0D28EEC674005AF571 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */; };
 		E90B7DB628117DED001831FB /* DynamicFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7DB528117DED001831FB /* DynamicFontLabel.swift */; };
 		E90BE8EE2BF3A33C00002506 /* ListBackgroundStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */; };
+		E91450F02C92EFC300141B8E /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91450EF2C92EFC300141B8E /* Domain.swift */; };
 		E916CE8C2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */; };
 		E91DCC34278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */; };
 		E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */; };
@@ -3383,6 +3384,7 @@
 		E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyle.swift; sourceTree = "<group>"; };
 		E90B7DB528117DED001831FB /* DynamicFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFontLabel.swift; sourceTree = "<group>"; };
 		E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListBackgroundStyleModifier.swift; sourceTree = "<group>"; };
+		E91450EF2C92EFC300141B8E /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordKeyboardViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsServicesCell.swift; sourceTree = "<group>"; };
 		E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesCell.swift; sourceTree = "<group>"; };
@@ -5698,7 +5700,6 @@
 				D525426920936378001C04C1 /* IconButton+Factory.swift */,
 				D58191FF2091CEBF003BA7EC /* UIStackView+Helper.swift */,
 				EF18C7E31F9E4DA00085A832 /* NSString+FileNameForZMUser.swift */,
-				D5168F292008F3EF00F8222A /* UIEdgeInsets+Adjusting.swift */,
 				6305205F24FFD68100ED295A /* UIEdgeInsets+DeviceOrientation.swift */,
 				D5168F272008ED0700F8222A /* KeyboardBlockObserver.swift */,
 				D5F8BFF32007AC84008F8C3D /* UIView+TableViewHeaderFooterSizing.swift */,
@@ -5877,6 +5878,7 @@
 				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
 				EFDAC64622DE2AD100D63025 /* TeamImageView.swift */,
 				D3BF754A29B093FD008459B5 /* WarningLabelView.swift */,
+				E91450EF2C92EFC300141B8E /* Domain.swift */,
 			);
 			path = SelfProfile;
 			sourceTree = "<group>";
@@ -9293,7 +9295,6 @@
 				EF9FC3F12142AEDE00033ED0 /* ColorSchemeController.swift in Sources */,
 				F1B5D54D2182096B00986911 /* NetworkConditionIndicatorView.swift in Sources */,
 				63F23990269F242B000BFFC6 /* CallActionIconType.swift in Sources */,
-				D5168F2A2008F3EF00F8222A /* UIEdgeInsets+Adjusting.swift in Sources */,
 				BFE4185D209B06D600503C7C /* AVSMediaManager+Helper.swift in Sources */,
 				5E4BC1CC218CA94D00A8682E /* ZMConversationMessage+Date.swift in Sources */,
 				D3DE46052923BB13000F1055 /* BottomSheetContainerViewController.swift in Sources */,
@@ -9852,6 +9853,7 @@
 				E6E557982BBD49A60033E62B /* NetworkQualityType.swift in Sources */,
 				E666EDD62B73E62800C03E2B /* BackupSource.swift in Sources */,
 				6330FCC2249264C900E40B06 /* GridView.swift in Sources */,
+				E91450F02C92EFC300141B8E /* Domain.swift in Sources */,
 				5E8C38AE212DC44E002AE12B /* AuthenticationCoordinator+Navigation.swift in Sources */,
 				87A773CF1DD0B48400ACAA73 /* ObfuscationView.swift in Sources */,
 				BFAC71FB20A1CDAF002711C4 /* VoiceChannel+Helper.swift in Sources */,
