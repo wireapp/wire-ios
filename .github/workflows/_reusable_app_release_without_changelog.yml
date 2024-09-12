@@ -78,13 +78,8 @@ permissions:
   checks: write
 
 jobs:
-  changelog:
-    uses: ./.github/workflows/changelog.yml
-    with:
-      is_cloud_build: ${{ inputs.is_cloud_build }}
       
   build_and_release:
-    needs: changelog
     runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -130,14 +125,8 @@ jobs:
             echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
       - uses: actions/checkout@v4
         with:
-          lfs: 'true'
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog     
-        id: download_changelog
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.changelog.outputs.changelog-name }}    
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
@@ -168,41 +157,8 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
-      - name: Archiving Logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: build-logs
-          path: |
-            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
-            ~/Library/Logs/DiagnosticReports/**
-            build/**
-
-      - name: Archiving env variables
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: post-build-env-${{ inputs.fastlane_action }}
-          path: |
-            **/.post_build/*.env
       - name: Load .env file
         if: always()
         uses: xom9ikk/dotenv@v2.3.0
         with:
           path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@v1.0.2
-        id: base64-decoded-S3_PATHS
-        with:
-          base64: ${{ env.S3_PATHS }}
-      - name: Notify on Wire if succeeded
-        if: success()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: "**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
-      - name: Notify on Wire if failed
-        if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: "🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
