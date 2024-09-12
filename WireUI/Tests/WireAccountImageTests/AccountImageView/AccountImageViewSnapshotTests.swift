@@ -38,27 +38,24 @@ final class AccountImageViewSnapshotTests: XCTestCase {
 
     @MainActor
     func testAllAccountTypesAndAvailabilities() {
-        for isTeamAccount in [false, true] {
-            for availability in Availability.allCases + [Availability?.none] {
-                if #available(iOS 16.0, *) {
-                    // Given
-                    let rootView = AccountImageView_Previews.previewWithNavigationBar(isTeamAccount, availability)
-                    let hostingControllerView = UIHostingController(rootView: rootView).view!
-                    hostingControllerView.frame = UIScreen.main.bounds
-                    let accountType = isTeamAccount ? "team" : "personal"
-                    let testName = if let availability { "\(accountType).\(availability)" } else { "\(accountType).none" }
+        for availability in Availability.allCases + [Availability?.none] {
+            if #available(iOS 16.0, *) {
+                // Given
+                let rootView = AccountImageView_Previews.previewWithNavigationBar(availability)
+                let hostingControllerView = UIHostingController(rootView: rootView).view!
+                hostingControllerView.frame = UIScreen.main.bounds
+                let testName = if let availability { "\(availability)" } else { "none" }
 
-                    // Then
-                    snapshotHelper
-                        .withUserInterfaceStyle(.light)
-                        .verify(matching: hostingControllerView, named: "light", testName: testName)
-                    snapshotHelper
-                        .withUserInterfaceStyle(.dark)
-                        .verify(matching: hostingControllerView, named: "dark", testName: testName)
+                // Then
+                snapshotHelper
+                    .withUserInterfaceStyle(.light)
+                    .verify(matching: hostingControllerView, named: "light", testName: testName)
+                snapshotHelper
+                    .withUserInterfaceStyle(.dark)
+                    .verify(matching: hostingControllerView, named: "dark", testName: testName)
 
-                } else {
-                    XCTFail("iOS 16+ is needed")
-                }
+            } else {
+                XCTFail("iOS 16+ is needed")
             }
         }
     }

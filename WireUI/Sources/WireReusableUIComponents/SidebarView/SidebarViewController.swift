@@ -48,9 +48,10 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
             rootView: SidebarViewAdapter(
                 accountInfo: accountInfo,
                 conversationFilter: conversationFilter,
-                conversationFilterUpdated: { conversationFilter in
-                    self_?.delegate?.sidebarViewController(self_!, didSelect: conversationFilter)
-                },
+                conversationFilterUpdated: { self_?.delegate?.sidebarViewController(self_!, didSelect: $0) },
+                connectAction: { self_?.delegate?.sidebarViewControllerDidSelectConnect(self_!) },
+                settingsAction: { self_?.delegate?.sidebarViewControllerDidSelectSettings(self_!) },
+                supportAction: { self_?.delegate?.sidebarViewControllerDidSelectSupport(self_!) },
                 accountImageView: accountImageView
             )
         )
@@ -71,6 +72,9 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
 
     @State fileprivate(set) var conversationFilter: SidebarConversationFilter?
     fileprivate let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
+    fileprivate var connectAction: () -> Void
+    fileprivate var settingsAction: () -> Void
+    fileprivate var supportAction: () -> Void
     private(set) var accountImageView: (
         _ accountImage: UIImage,
         _ availability: SidebarAccountInfo.Availability?
@@ -80,6 +84,9 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
         SidebarView(
             accountInfo: accountInfo,
             conversationFilter: $conversationFilter,
+            connectAction: connectAction,
+            settingsAction: settingsAction,
+            supportAction: supportAction,
             accountImageView: accountImageView
         )
         .onReceive(conversationFilter.publisher) { conversationFilter in
