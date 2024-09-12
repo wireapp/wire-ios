@@ -19,7 +19,7 @@
 import WireTestingPackage
 import XCTest
 
-@testable import WireUserProfile
+@testable import WireAccountImage
 
 final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
 
