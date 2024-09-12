@@ -57,7 +57,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         // GIVEN
         let sut = self.otherUserConversation!
         let message = try! sut.appendText(content: "text") as! ZMMessage
-        message.expire()
+        message.expire(withReason: .other)
 
         // WHEN
         let status = sut.status.description(for: sut)
