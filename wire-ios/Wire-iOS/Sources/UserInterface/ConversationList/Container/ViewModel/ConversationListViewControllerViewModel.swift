@@ -105,7 +105,7 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
-        let getAccountImageUseCase: GetUserAccountImageUseCaseProtocol
+        let getUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol
 
         @MainActor
         init(
@@ -115,7 +115,7 @@ extension ConversationListViewController {
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
             mainCoordinator: some MainCoordinating,
-            getAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
+            getUserAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -126,7 +126,7 @@ extension ConversationListViewController {
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
-            self.getAccountImageUseCase = getAccountImageUseCase
+            self.getUserAccountImageUseCase = getUserAccountImageUseCase
             super.init()
 
             updateE2EICertifiedStatus()
@@ -190,7 +190,7 @@ extension ConversationListViewController.ViewModel {
     private func updateAccountImage() {
         Task {
             do {
-                accountImage.image = try await getAccountImageUseCase.invoke(account: account)
+                accountImage.image = try await getUserAccountImageUseCase.invoke(account: account)
                 accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
             } catch {
                 WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")

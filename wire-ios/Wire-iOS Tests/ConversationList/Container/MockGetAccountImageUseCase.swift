@@ -18,16 +18,16 @@
 
 import WireUserProfile
 
-final class MockGetAccountImageUseCase: GetAccountImageUseCaseProtocol {
+final class MockGetUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol {
 
-    var invoke_Invocations = [(user: any GetAccountImageUseCaseUserProtocol, account: any GetAccountImageUseCaseAccountProtocol)]()
+    var invoke_Invocations = [any GetAccountImageUseCaseAccountProtocol]()
     var invoke_MockValue: UIImage!
 
     init() {}
 
-    func invoke<User, Account>(user: User, account: Account) async -> UIImage
-    where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol {
-        invoke_Invocations += [(user, account)]
+    func invoke<Account>(account: Account) async -> UIImage
+    where Account: GetAccountImageUseCaseAccountProtocol {
+        invoke_Invocations += [account]
         return invoke_MockValue
     }
 }
