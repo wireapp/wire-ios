@@ -29,10 +29,6 @@ extension SettingsCellDescriptorFactory {
         var developerCellDescriptors: [SettingsCellDescriptorType] = []
 
         developerCellDescriptors.append(
-            ExternalScreen(title: "Logging") { DeveloperOptionsController() }
-        )
-
-        developerCellDescriptors.append(
             Toggle(settingsProperty: settingsPropertyFactory.property(.enableBatchCollections))
         )
 
@@ -116,18 +112,6 @@ extension SettingsCellDescriptorFactory {
             Button(title: "Trigger resyncResources",
                    isDestructive: false,
                    selectAction: DebugActions.triggerResyncResources)
-        )
-
-        developerCellDescriptors.append(
-            Button(title: "What's my analytics id?",
-                   isDestructive: false,
-                   selectAction: DebugActions.showAnalyticsIdentifier)
-        )
-
-        developerCellDescriptors.append(
-            Button(title: "What's the api version?",
-                   isDestructive: false,
-                   selectAction: DebugActions.showAPIVersionInfo)
         )
 
         return SettingsGroupCellDescriptor(items: [SettingsSectionDescriptor(cellDescriptors: developerCellDescriptors)],
