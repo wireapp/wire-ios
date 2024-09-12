@@ -18,6 +18,8 @@
 
 import UIKit
 
+// TODO: move into UserProfile
+
 @MainActor
 public struct AccountImageGenerator: AccountImageGeneratorProtocol {
 
