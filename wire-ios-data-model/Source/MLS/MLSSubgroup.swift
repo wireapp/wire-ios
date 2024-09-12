@@ -20,7 +20,7 @@ import Foundation
 
 public struct MLSSubgroup: Equatable {
 
-    public let cipherSuite: Int
+    public let cipherSuite: Int?
     public let epoch: Int
     public let epochTimestamp: Date?
     public let groupID: MLSGroupID
@@ -28,7 +28,7 @@ public struct MLSSubgroup: Equatable {
     public let parentQualifiedID: QualifiedID
 
     public init(
-        cipherSuite: Int,
+        cipherSuite: Int?,
         epoch: Int,
         epochTimestamp: Date?,
         groupID: MLSGroupID,
