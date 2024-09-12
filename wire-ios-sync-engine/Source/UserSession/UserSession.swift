@@ -221,6 +221,10 @@ public protocol UserSession: AnyObject {
         completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     )
 
+    // MARK: Context provider
+
+    var contextProvider: any ContextProvider { get }
+
     // MARK: Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }

@@ -694,6 +694,19 @@ public final class FileAssetCache: NSObject {
         encryptionKey: Data,
         sha256Digest: Data
     ) -> Data? {
+        // Workaround: when decrypting data for the link preview, the key
+        // and digest are sometimes empty (not sure why). An empty digest
+        // will always fail the digest check and result in deleting the
+        // asset forever. As a workaround, just return nil with these
+        // invalid empty inputs, so next time the asset is fetched with
+        // valid inputs it will succeed.
+        guard
+            !encryptionKey.isEmpty,
+            !sha256Digest.isEmpty
+        else {
+            return nil
+        }
+
         guard let encryptedData = cache.assetData(key) else {
             return nil
         }

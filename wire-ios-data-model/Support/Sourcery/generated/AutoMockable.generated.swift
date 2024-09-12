@@ -690,6 +690,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - conversationCiphersuite
+
+    public var conversationCiphersuiteConversationId_Invocations: [Data] = []
+    public var conversationCiphersuiteConversationId_MockError: Error?
+    public var conversationCiphersuiteConversationId_MockMethod: ((Data) async throws -> WireCoreCrypto.Ciphersuite)?
+    public var conversationCiphersuiteConversationId_MockValue: WireCoreCrypto.Ciphersuite?
+
+    public func conversationCiphersuite(conversationId: Data) async throws -> WireCoreCrypto.Ciphersuite {
+        conversationCiphersuiteConversationId_Invocations.append(conversationId)
+
+        if let error = conversationCiphersuiteConversationId_MockError {
+            throw error
+        }
+
+        if let mock = conversationCiphersuiteConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = conversationCiphersuiteConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `conversationCiphersuiteConversationId`")
+        }
+    }
+
     // MARK: - conversationEpoch
 
     public var conversationEpochConversationId_Invocations: [Data] = []
@@ -2018,11 +2041,11 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - setCallbacks
 
-    public var setCallbacksCallbacks_Invocations: [WireCoreCrypto.CoreCryptoCallbacks] = []
+    public var setCallbacksCallbacks_Invocations: [any WireCoreCrypto.CoreCryptoCallbacks] = []
     public var setCallbacksCallbacks_MockError: Error?
-    public var setCallbacksCallbacks_MockMethod: ((WireCoreCrypto.CoreCryptoCallbacks) async throws -> Void)?
+    public var setCallbacksCallbacks_MockMethod: ((any WireCoreCrypto.CoreCryptoCallbacks) async throws -> Void)?
 
-    public func setCallbacks(callbacks: WireCoreCrypto.CoreCryptoCallbacks) async throws {
+    public func setCallbacks(callbacks: any WireCoreCrypto.CoreCryptoCallbacks) async throws {
         setCallbacksCallbacks_Invocations.append(callbacks)
 
         if let error = setCallbacksCallbacks_MockError {
@@ -3885,22 +3908,22 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - deleteSubgroup
 
-    var deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations: [(conversationID: UUID, domain: String, subgroupType: SubgroupType, context: NotificationContext)] = []
-    var deleteSubgroupConversationIDDomainSubgroupTypeContext_MockError: Error?
-    var deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod: ((UUID, String, SubgroupType, NotificationContext) async throws -> Void)?
+    var deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_Invocations: [(conversationID: UUID, domain: String, subgroupType: SubgroupType, epoch: Int, groupID: MLSGroupID, context: NotificationContext)] = []
+    var deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_MockError: Error?
+    var deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_MockMethod: ((UUID, String, SubgroupType, Int, MLSGroupID, NotificationContext) async throws -> Void)?
 
-    func deleteSubgroup(conversationID: UUID, domain: String, subgroupType: SubgroupType, context: NotificationContext) async throws {
-        deleteSubgroupConversationIDDomainSubgroupTypeContext_Invocations.append((conversationID: conversationID, domain: domain, subgroupType: subgroupType, context: context))
+    func deleteSubgroup(conversationID: UUID, domain: String, subgroupType: SubgroupType, epoch: Int, groupID: MLSGroupID, context: NotificationContext) async throws {
+        deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_Invocations.append((conversationID: conversationID, domain: domain, subgroupType: subgroupType, epoch: epoch, groupID: groupID, context: context))
 
-        if let error = deleteSubgroupConversationIDDomainSubgroupTypeContext_MockError {
+        if let error = deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_MockError {
             throw error
         }
 
-        guard let mock = deleteSubgroupConversationIDDomainSubgroupTypeContext_MockMethod else {
-            fatalError("no mock for `deleteSubgroupConversationIDDomainSubgroupTypeContext`")
+        guard let mock = deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext_MockMethod else {
+            fatalError("no mock for `deleteSubgroupConversationIDDomainSubgroupTypeEpochGroupIDContext`")
         }
 
-        try await mock(conversationID, domain, subgroupType, context)
+        try await mock(conversationID, domain, subgroupType, epoch, groupID, context)
     }
 
     // MARK: - leaveSubconversation
@@ -4516,6 +4539,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock(parentQualifiedID, parentGroupID, subconversationType)
+    }
+
+    // MARK: - deleteSubgroup
+
+    public var deleteSubgroupParentQualifiedID_Invocations: [QualifiedID] = []
+    public var deleteSubgroupParentQualifiedID_MockError: Error?
+    public var deleteSubgroupParentQualifiedID_MockMethod: ((QualifiedID) async throws -> Void)?
+
+    public func deleteSubgroup(parentQualifiedID: QualifiedID) async throws {
+        deleteSubgroupParentQualifiedID_Invocations.append(parentQualifiedID)
+
+        if let error = deleteSubgroupParentQualifiedID_MockError {
+            throw error
+        }
+
+        guard let mock = deleteSubgroupParentQualifiedID_MockMethod else {
+            fatalError("no mock for `deleteSubgroupParentQualifiedID`")
+        }
+
+        try await mock(parentQualifiedID)
     }
 
     // MARK: - generateNewEpoch

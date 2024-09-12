@@ -96,7 +96,7 @@ extension ZMMessage: Shareable {
             }
         } else if isVideo || isAudio || isFile {
             guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
-            FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
+            FileMetaDataGenerator.shared.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
                 ZMUserSession.shared()?.perform {
                     conversations.forEachNonEphemeral {
                         do {
@@ -131,16 +131,6 @@ extension ZMConversationMessage {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = SemanticColors.View.backgroundUserCell
         return view
-    }
-}
-
-extension ZMConversationList {/// TODO mv to DM
-    func shareableConversations(excluding: ConversationLike? = nil) -> [ZMConversation] {
-        return map { $0 as! ZMConversation }.filter { (conversation: ZMConversation) -> (Bool) in
-            return (conversation.conversationType == .oneOnOne || conversation.conversationType == .group) &&
-                conversation.isSelfAnActiveMember &&
-                !(conversation === excluding)
-        }
     }
 }
 

@@ -91,17 +91,25 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesCreateARequestInState_Uploaded() {
         apiVersion = .v1
 
+        var message: ZMClientMessage!
+
         self.syncMOC.performGroupedAndWait { _ in
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.insertMessage(with: .uploaded)
+            message = self.insertMessage(with: .uploaded)
 
             // When
             self.process(message)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        // THEN
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+
+        self.syncMOC.performGroupedAndWait { _ in
+            XCTAssertEqual(message.linkPreviewState, .done)
+            XCTAssertNil(message.expirationDate)
+        }
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
