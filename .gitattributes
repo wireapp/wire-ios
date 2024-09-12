@@ -1,4 +1,4 @@
 *.generated.swift linguist-generated=true
-WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages/**/*.png filter=lfs diff=lfs merge=lfs -text
 WireFoundation/Tests/WireFoundationTests/Resources/ReferenceImages/**/*.png filter=lfs diff=lfs merge=lfs -text
+WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages/**/*.png filter=lfs diff=lfs merge=lfs -text
 WireUI/Tests/WireUserProfileTests/Resources/ReferenceImages/**/*.png filter=lfs diff=lfs merge=lfs -text

@@ -33,18 +33,18 @@ extension GetUserAccountImageUseCase<InitialsProviderAdapter, AccountImageGenera
 
 // MARK: -
 
-private struct InitialsProviderAdapter: GetAccountImageUseCaseInitialsProvider {
-    func initials(from fullName: String) -> String {
-        PersonName.person(withName: fullName, schemeTagger: nil).initials
+extension GetUserAccountImageUseCaseProtocol {
+
+    func invoke(account: Account) async throws -> UIImage {
+        try await invoke(account: AccountAdapter(account: account))
     }
 }
 
 // MARK: -
 
-extension GetUserAccountImageUseCaseProtocol {
-
-    func invoke(account: Account) async throws -> UIImage {
-        try await invoke(account: AccountAdapter(account: account))
+private struct InitialsProviderAdapter: GetAccountImageUseCaseInitialsProvider {
+    func initials(from fullName: String) -> String {
+        PersonName.person(withName: fullName, schemeTagger: nil).initials
     }
 }
 
