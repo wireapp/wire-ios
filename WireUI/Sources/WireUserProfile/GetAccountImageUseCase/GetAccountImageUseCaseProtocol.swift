@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import CoreData
 
 /// Determines if the provided user is a personal user or a team member and retrieves its
 /// account image. If no account image data is available, an image will be generated using
@@ -34,19 +35,19 @@ public protocol GetAccountImageUseCaseProtocol {
 /// An abstraction of a user for the `GetAccountImageUseCase`.
 public protocol GetAccountImageUseCaseUserProtocol {
     associatedtype TeamMembership: GetAccountImageUseCaseTeamMembershipProtocol
-    var membership: TeamMembership? { get }
+    var membership: TeamMembership? { get async }
 }
 
 /// An abstraction of a user's team membership for the `GetAccountImageUseCase`.
 public protocol GetAccountImageUseCaseTeamMembershipProtocol {
     associatedtype Team: GetAccountImageUseCaseTeamProtocol
-    var team: Team? { get }
+    var team: Team? { get async }
 }
 
 /// An abstraction of a user's team for the `GetAccountImageUseCase`.
 public protocol GetAccountImageUseCaseTeamProtocol {
-    var name: String? { get }
-    var teamImageSource: AccountImageSource? { get }
+    var name: String? { get async }
+    var teamImageSource: AccountImageSource? { get async }
 }
 
 /// An abstraction of a user account for the `GetAccountImageUseCase`.

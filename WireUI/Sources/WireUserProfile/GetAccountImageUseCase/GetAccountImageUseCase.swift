@@ -34,7 +34,7 @@ public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: Ge
     }
 
     public func invoke(user: some GetAccountImageUseCaseUserProtocol, account: some GetAccountImageUseCaseAccountProtocol) async -> UIImage {
-        if let team = user.membership?.team, let teamImageSource = team.teamImageSource ?? account.teamImageSource {
+        if let team = await user.membership?.team, let teamImageSource = await team.teamImageSource ?? account.teamImageSource {
             // team image
             if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
                 return accountImage
@@ -44,7 +44,7 @@ public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: Ge
             let teamName: String = if case .text(let value) = teamImageSource {
                 value
             } else {
-                team.name ?? account.teamName ?? ""
+                await team.name ?? account.teamName ?? ""
             }
             let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
             let accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)

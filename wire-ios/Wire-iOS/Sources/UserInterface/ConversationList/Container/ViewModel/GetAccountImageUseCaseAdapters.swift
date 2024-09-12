@@ -56,18 +56,61 @@ extension GetAccountImageUseCaseProtocol {
 
 private struct UserTypeAdapter<User>: GetAccountImageUseCaseUserProtocol where User: UserType {
     private(set) var user: User
-    var membership: TeamMembershipAdapter? { user.membership.map(TeamMembershipAdapter.init(teamMembership:)) }
+    var membership: TeamMembershipAdapter? {
+        get async {
+            if let user = user as? (NSManagedObject & UserType), let context = user.managedObjectContext {
+                await context.perform {
+                    user.membership.map(TeamMembershipAdapter.init(teamMembership:))
+                }
+            } else {
+                user.membership.map(TeamMembershipAdapter.init(teamMembership:))
+            }
+        }
+    }
 }
 
 private struct TeamMembershipAdapter: GetAccountImageUseCaseTeamMembershipProtocol {
     private(set) var teamMembership: TeamMembership
-    var team: TeamAdapter? { teamMembership.team.map(TeamAdapter.init(team:)) }
+    var team: TeamAdapter? {
+        get async {
+            if let context = teamMembership.managedObjectContext {
+                await context.perform {
+                    teamMembership.team.map(TeamAdapter.init(team:))
+                }
+            } else {
+                teamMembership.team.map(TeamAdapter.init(team:))
+            }
+        }
+    }
 }
 
 private struct TeamAdapter: GetAccountImageUseCaseTeamProtocol {
+
     private(set) var team: Team
-    var name: String? { team.name }
-    var teamImageSource: AccountImageSource? { .init(team.teamImageViewContent) }
+
+    var name: String? {
+        get async {
+            if let context = team.managedObjectContext {
+                await context.perform {
+                    team.name
+                }
+            } else {
+                team.name
+            }
+        }
+    }
+
+    var teamImageSource: AccountImageSource? {
+        get async {
+            if let context = team.managedObjectContext {
+                await context.perform {
+                    .init(team.teamImageViewContent)
+                }
+            } else {
+                .init(team.teamImageViewContent)
+            }
+        }
+    }
 }
 
 private struct AccountAdapter: GetAccountImageUseCaseAccountProtocol {
