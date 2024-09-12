@@ -212,7 +212,6 @@ struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-
             previewWithNavigationBar(.none)
 
             ForEach(Availability.allCases, id: \.self) { availability in
