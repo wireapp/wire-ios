@@ -18,9 +18,9 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
-struct SidebarProfileSwitcherView<AccountImageView>: View
-    where AccountImageView: View {
+struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
 
     @State private var accountImageDiameter: CGFloat = 0
 
@@ -79,33 +79,15 @@ private struct ProfileSwitcherHeightKey: PreferenceKey {
 
 // MARK: - Previews
 
-#Preview("Personal Account") {
+#Preview {
     SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
-        AccountImageViewRepresentable(
-            accountImage: .from(solidColor: .brown),
-            isTeamAccount: false,
-            availability: .available
-        )
+        MockAccountView()
     }
 }
 
-#Preview("Team Account") {
-    SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
-        AccountImageViewRepresentable(
-            accountImage: .from(solidColor: .orange),
-            isTeamAccount: true,
-            availability: .busy
-        )
-    }
-}
+private struct MockAccountView: View {
 
-private extension UIImage {
-
-    // TODO: look for all copies and move the code into WireUtilities or WireSystem
-    static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-        }
+    var body: some View {
+        Circle()
     }
 }

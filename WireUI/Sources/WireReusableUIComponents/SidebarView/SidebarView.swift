@@ -18,11 +18,16 @@
 
 import SwiftUI
 import WireDesign
+import WireFoundation
 
-public struct SidebarView: View {
+public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var conversationFilter: SidebarConversationFilter?
+    private(set) var accountImageView: (
+        _ accountImage: UIImage,
+        _ availability: SidebarAccountInfo.Availability?
+    ) -> AccountImageView
 
     @State private var iconSize: CGSize?
 
@@ -76,9 +81,11 @@ public struct SidebarView: View {
     @ViewBuilder
     private var profileSwitcher: some View {
         if let accountInfo {
-            SidebarProfileSwitcherView(accountInfo.displayName, accountInfo.username) {
-                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.availability)
-            }
+            SidebarProfileSwitcherView(
+                displayName: accountInfo.displayName,
+                username: accountInfo.username,
+                accountImageView: { accountImageView(accountInfo.accountImage, accountInfo.availability) }
+            )
             .padding(.horizontal, 24)
             .padding(.bottom)
         }
@@ -161,22 +168,64 @@ private extension SidebarConversationFilter? {
 
 @available(iOS 17, *)
 #Preview {
+    TempX()
+}
+
+private final class TempX: UIHostingController<SidebarView<MockAccountImageView>> {
+    var accountInfo: SidebarAccountInfo? {
+        get { rootView.accountInfo }
+        set { rootView.accountInfo = newValue }
+    }
+    var conversationFilter: SidebarConversationFilter?
+    convenience init() {
+        var self_: TempX?
+        self.init(
+            rootView: .init(
+                accountInfo: .init(),
+                conversationFilter: .init { self_!.conversationFilter } set: { self_!.conversationFilter = $0 },
+                accountImageView: MockAccountImageView.init
+            )
+        )
+        self_ = self
+    }
+}
+
+//struct Temp: View {
+//    @State var accountInfo = SidebarAccountInfo()
+//    @State var conversationFilter: SidebarConversationFilter?
+//    var body: some View {
+//        SidebarView(
+//            accountInfo: accountInfo,
+//            conversationFilter: $conversationFilter,
+//            accountImageView: MockAccountImageView.init(uiImage:availability:)
+//        )
+//    }
+//}
+//
+//@available(iOS 17, *)
+//#Preview {
+//    Temp()
+//}
+
+@available(iOS 17, *)
+#Preview {
     {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         if splitViewController.traitCollection.userInterfaceIdiom != .pad {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        let sidebarViewController = SidebarViewController(
-            accountInfo: .init(
-                displayName: "Firstname Lastname",
-                username: "@username",
-                accountImage: .from(solidColor: .brown),
-                isTeamAccount: false
-            ),
-            availability: .available,
-            conversationFilter: .none
+        //@State var conversationFilter: SidebarConversationFilter?
+        var conversationFilter: SidebarConversationFilter?
+        var sidebarView = SidebarView(
+            accountInfo: .init(),
+            // conversationFilter: $conversationFilter,
+            conversationFilter: .init { conversationFilter } set: { conversationFilter = $0 },
+            accountImageView: MockAccountImageView.init(uiImage:availability:)
         )
+        sidebarView.accountInfo?.displayName = "Firstname Lastname"
+        sidebarView.accountInfo?.username = "@username"
+        let sidebarViewController = UIHostingController(rootView: sidebarView)
         splitViewController.setViewController(sidebarViewController, for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)
@@ -189,6 +238,23 @@ private extension SidebarConversationFilter? {
 
         return splitViewController
     }() as UIViewController
+}
+
+@MainActor private var conversationFilter: SidebarConversationFilter?
+
+private struct MockAccountImageView: View {
+    @State private(set) var uiImage: UIImage
+    @State private(set) var availability: SidebarAccountInfo.Availability?
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Circle()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(Color.brown)
+            Circle()
+                .frame(width: 14, height: 14)
+                .foregroundStyle(Color.green)
+        }
+    }
 }
 
 private final class EmptyViewController: UIHostingController<AnyView> {
@@ -208,16 +274,5 @@ private final class EmptyViewController: UIHostingController<AnyView> {
 private final class HintViewController: UIHostingController<Text> {
     convenience init(_ hint: String) {
         self.init(rootView: Text(verbatim: hint).font(.title2))
-    }
-}
-
-private extension UIImage {
-
-    // TODO: look for all copies and move the code into WireUtilities or WireSystem
-    static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-        }
     }
 }

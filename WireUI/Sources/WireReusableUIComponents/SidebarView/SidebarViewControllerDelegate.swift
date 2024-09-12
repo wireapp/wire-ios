@@ -21,5 +21,5 @@ public protocol SidebarViewControllerDelegate: AnyObject {
     // TODO: can the user change the availability via the sidebar?
     // func sidebarViewController(_ viewController: SidebarViewController, didChange availability: Availability)
 
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?)
+    // func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?)
 }
