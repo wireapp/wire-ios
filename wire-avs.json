@@ -1,3 +1,8 @@
 {
+<<<<<<< HEAD
   "9.8.19": "https://github.com/wireapp/wire-avs/releases/download/9.8.19/avs.xcframework.zip",
 }
+=======
+  "9.7.23": "https://github.com/wireapp/wire-avs/releases/download/9.7.23/avs.xcframework.zip",
+}
+>>>>>>> b67cc3244d (chore: update AVS to 9.7.23 - WPB-10928 (#1904))
