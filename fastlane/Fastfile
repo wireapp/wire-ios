@@ -320,7 +320,11 @@ platform :ios do
             # DataDog values needs to go through WireCommonComponents
             enable_datadog_args = [
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
+<<<<<<< HEAD
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
+=======
+            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}"
+>>>>>>> 875c793ae7 (fix: disable call quality survey - WPB-10935 (#1917))
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
