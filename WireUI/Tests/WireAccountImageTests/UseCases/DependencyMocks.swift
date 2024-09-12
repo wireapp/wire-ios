@@ -17,9 +17,23 @@
 //
 
 import WireFoundation
+import WireAccountImage
 import XCTest
 
 @testable import WireAccountImage
+
+final class MockUser: GetAccountImageUseCaseUserProtocol {
+    var membership: MockTeamMembership?
+}
+
+struct MockTeamMembership: GetAccountImageUseCaseTeamMembershipProtocol {
+    var team: MockTeam?
+}
+
+struct MockTeam: GetAccountImageUseCaseTeamProtocol {
+    var name: String?
+    var teamImageSource: AccountImageSource?
+}
 
 final class MockAccount: GetAccountImageUseCaseAccountProtocol {
     var imageData: Data?
