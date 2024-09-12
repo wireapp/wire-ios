@@ -43,7 +43,7 @@ extension ConversationListViewController {
 
         let user = ZMUser.selfUser(inUserSession: session)
 
-        let accountView = AccountViewBuilder(account: viewModel.account, user: user, displayContext: .conversationListHeader).build()
+        let accountView = PersonalAccountView(account: viewModel.account, user: user, displayContext: .conversationListHeader)
         accountView.unreadCountStyle = .current
         accountView.autoUpdateSelection = false
 
