@@ -20,7 +20,7 @@
 
 import SwiftUI
 
-public final class SidebarViewController<AccountImageView: View>: UIHostingController<SidebarViewAdapter<AccountImageView>> {
+public final class SidebarViewController: UIHostingController<SidebarViewAdapter<AnyView>> {
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
@@ -34,13 +34,16 @@ public final class SidebarViewController<AccountImageView: View>: UIHostingContr
         set { rootView.conversationFilter = newValue }
     }
 
-    public convenience init() {
-        self.init(accountInfo: .init(), conversationFilter: .none)
+    public convenience init(
+        accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
+    ) {
+        self.init(accountInfo: .init(), conversationFilter: .none, accountImageView: accountImageView)
     }
 
     public required init(
         accountInfo: SidebarAccountInfo?,
-        conversationFilter: SidebarConversationFilter?
+        conversationFilter: SidebarConversationFilter?,
+        accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
     ) {
         var self_: SidebarViewController?
         super.init(
@@ -48,9 +51,9 @@ public final class SidebarViewController<AccountImageView: View>: UIHostingContr
                 accountInfo: accountInfo,
                 conversationFilter: conversationFilter,
                 conversationFilterUpdated: { conversationFilter in
-                   // self_?.delegate?.sidebarViewController(self_!, didSelect: conversationFilter)
+                    self_?.delegate?.sidebarViewController(self_!, didSelect: conversationFilter)
                 },
-                accountImageView: { _, _ in fatalError() }
+                accountImageView: accountImageView
             )
         )
         self_ = self

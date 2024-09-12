@@ -168,64 +168,17 @@ private extension SidebarConversationFilter? {
 
 @available(iOS 17, *)
 #Preview {
-    TempX()
-}
-
-private final class TempX: UIHostingController<SidebarView<MockAccountImageView>> {
-    var accountInfo: SidebarAccountInfo? {
-        get { rootView.accountInfo }
-        set { rootView.accountInfo = newValue }
-    }
-    var conversationFilter: SidebarConversationFilter?
-    convenience init() {
-        var self_: TempX?
-        self.init(
-            rootView: .init(
-                accountInfo: .init(),
-                conversationFilter: .init { self_!.conversationFilter } set: { self_!.conversationFilter = $0 },
-                accountImageView: MockAccountImageView.init
-            )
-        )
-        self_ = self
-    }
-}
-
-//struct Temp: View {
-//    @State var accountInfo = SidebarAccountInfo()
-//    @State var conversationFilter: SidebarConversationFilter?
-//    var body: some View {
-//        SidebarView(
-//            accountInfo: accountInfo,
-//            conversationFilter: $conversationFilter,
-//            accountImageView: MockAccountImageView.init(uiImage:availability:)
-//        )
-//    }
-//}
-//
-//@available(iOS 17, *)
-//#Preview {
-//    Temp()
-//}
-
-@available(iOS 17, *)
-#Preview {
     {
         let splitViewController = UISplitViewController(style: .tripleColumn)
         if splitViewController.traitCollection.userInterfaceIdiom != .pad {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        //@State var conversationFilter: SidebarConversationFilter?
-        var conversationFilter: SidebarConversationFilter?
-        var sidebarView = SidebarView(
-            accountInfo: .init(),
-            // conversationFilter: $conversationFilter,
-            conversationFilter: .init { conversationFilter } set: { conversationFilter = $0 },
-            accountImageView: MockAccountImageView.init(uiImage:availability:)
-        )
-        sidebarView.accountInfo?.displayName = "Firstname Lastname"
-        sidebarView.accountInfo?.username = "@username"
-        let sidebarViewController = UIHostingController(rootView: sidebarView)
+        let sidebarViewController = SidebarViewController { accountImage, availability in
+            AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
+        }
+        sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
+        sidebarViewController.accountInfo?.username = "@username"
         splitViewController.setViewController(sidebarViewController, for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)
