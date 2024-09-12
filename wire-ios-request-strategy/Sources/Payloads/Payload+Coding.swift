@@ -74,7 +74,7 @@ extension Decodable {
         do {
             self = try decoder.decode(Self.self, from: payloadData)
         } catch let error {
-            Logging.network.warn("Failed to decode \(Self.self) from payload: \(error)")
+            WireLogger.network.warn("Failed to decode \(Self.self) from payload: \(error)")
             return nil
         }
     }
