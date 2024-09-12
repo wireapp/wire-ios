@@ -20,7 +20,7 @@ import WireDataModel
 import WireFoundation
 import WireUserProfile
 
-extension GetAccountImageUseCase<InitialsProviderAdapter, AccountImageGenerator> {
+extension GetUserAccountImageUseCase<InitialsProviderAdapter, AccountImageGenerator> {
 
     @MainActor
     init() {
@@ -41,16 +41,10 @@ private struct InitialsProviderAdapter: GetAccountImageUseCaseInitialsProvider {
 
 // MARK: -
 
-extension GetAccountImageUseCaseProtocol {
+extension GetUserAccountImageUseCaseProtocol {
 
-    func invoke(
-        user: some UserType,
-        account: Account
-    ) async -> UIImage {
-        await invoke(
-            user: UserTypeAdapter(user: user),
-            account: AccountAdapter(account: account)
-        )
+    func invoke(account: Account) async throws -> UIImage {
+        try await invoke(account: AccountAdapter(account: account))
     }
 }
 
@@ -127,8 +121,8 @@ private extension AccountImageSource {
         switch teamImageViewContent {
         case .teamImage(let data):
             self = .data(data)
-        case .teamName(let string):
-            self = .text(string)
+        case .teamName(let initials):
+            self = .text(initials: initials)
         }
     }
 }

@@ -16,44 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import CoreData
+import Foundation
 
-/// Determines if the provided user is a personal user or a team member and retrieves its
-/// account image. If no account image data is available, an image will be generated using
-/// the initials of either the team name or the person's name.
-public protocol GetAccountImageUseCaseProtocol {
-
-    func invoke<User, Account>(user: User, account: Account) async -> UIImage
-        where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol
-}
-
-// MARK: - Dependencies
-
-// The following protocols serve the purpose of decoupling the use case from the actual dependencies.
-
-/// An abstraction of a user for the `GetAccountImageUseCase`.
+/// An abstraction of a user for the account image use cases.
 public protocol GetAccountImageUseCaseUserProtocol {
     associatedtype TeamMembership: GetAccountImageUseCaseTeamMembershipProtocol
     var membership: TeamMembership? { get async }
 }
 
-/// An abstraction of a user's team membership for the `GetAccountImageUseCase`.
+/// An abstraction of a user's team membership for the account image use cases.
 public protocol GetAccountImageUseCaseTeamMembershipProtocol {
     associatedtype Team: GetAccountImageUseCaseTeamProtocol
     var team: Team? { get async }
 }
 
-/// An abstraction of a user's team for the `GetAccountImageUseCase`.
+/// An abstraction of a user's team for the account image use cases.
 public protocol GetAccountImageUseCaseTeamProtocol {
     var name: String? { get async }
     var teamImageSource: AccountImageSource? { get async }
 }
 
-/// An abstraction of a user account for the `GetAccountImageUseCase`.
+/// An abstraction of a user account for the account image use cases.
 public protocol GetAccountImageUseCaseAccountProtocol {
     var imageData: Data? { get }
     var userName: String { get }
     var teamName: String? { get }
     var teamImageSource: AccountImageSource? { get }
+}
+
+public protocol GetAccountImageUseCaseInitialsProvider {
+    func initials(from fullName: String) -> String
 }

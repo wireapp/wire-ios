@@ -355,7 +355,7 @@
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5994B2BC2C91DBF50098959E /* WireUserProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 5994B2BB2C91DBF50098959E /* WireUserProfile */; };
-		5994B2BE2C91DDBC0098959E /* GetAccountImageUseCaseAdapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5994B2BD2C91DDBC0098959E /* GetAccountImageUseCaseAdapters.swift */; };
+		5994B2BE2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5994B2BD2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift */; };
 		5994B2C02C91F46E0098959E /* MockGetAccountImageUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5994B2BF2C91F46E0098959E /* MockGetAccountImageUseCase.swift */; };
 		5994B2C22C91F4900098959E /* WireUserProfile in Frameworks */ = {isa = PBXBuildFile; productRef = 5994B2C12C91F4900098959E /* WireUserProfile */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
@@ -2349,7 +2349,7 @@
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
-		5994B2BD2C91DDBC0098959E /* GetAccountImageUseCaseAdapters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAccountImageUseCaseAdapters.swift; sourceTree = "<group>"; };
+		5994B2BD2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserAccountImageUseCaseAdapters.swift; sourceTree = "<group>"; };
 		5994B2BF2C91F46E0098959E /* MockGetAccountImageUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGetAccountImageUseCase.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
 		599EA3C72C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewController+UISearchResultsUpdating.swift"; sourceTree = "<group>"; };
@@ -8217,7 +8217,7 @@
 				EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */,
 				EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */,
 				63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */,
-				5994B2BD2C91DDBC0098959E /* GetAccountImageUseCaseAdapters.swift */,
+				5994B2BD2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift */,
 				EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */,
 			);
 			path = ViewModel;
@@ -9686,7 +9686,7 @@
 				87AC33CD2182064F00069C79 /* ReplyComposingView.swift in Sources */,
 				0685008526B36BBC00721F80 /* VideoMessageRestrictionView.swift in Sources */,
 				F15650DB21DD10A100210504 /* UserImageView.swift in Sources */,
-				5994B2BE2C91DDBC0098959E /* GetAccountImageUseCaseAdapters.swift in Sources */,
+				5994B2BE2C91DDBC0098959E /* GetUserAccountImageUseCaseAdapters.swift in Sources */,
 				1639A84922648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift in Sources */,
 				16A94AEB20932841008A5718 /* ShowAllParticipantsCell.swift in Sources */,
 				5EF5C54C209B33E600676405 /* CGSize+AspectRatio.swift in Sources */,

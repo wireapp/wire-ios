@@ -16,19 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum AccentColor: Int16, CaseIterable, Hashable, Sendable {
-    case blue = 1
-    case green
-    // yellow used to be defined here
-    case red = 4
-    case amber
-    case turquoise
-    case purple
-}
+import UIKit
+import CoreData
 
-// MARK: - Default and random value
+/// If the team has an image set, this use cases retrieves it.
+/// If no team image data is available, an image will be generated using the team name's initials.
+public protocol GetTeamAccountImageUseCaseProtocol {
 
-public extension AccentColor {
-    static var `default`: Self { .blue }
-    static var random: Self! { allCases.randomElement() }
+    func invoke<User, Account>(user: User, account: Account) async throws -> UIImage
+        where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol
 }

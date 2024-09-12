@@ -76,6 +76,7 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
+        // TODO: create two properties
         private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
         }
@@ -104,7 +105,7 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
-        let getAccountImageUseCase: GetAccountImageUseCaseProtocol
+        let getAccountImageUseCase: GetUserAccountImageUseCaseProtocol
 
         @MainActor
         init(
@@ -114,7 +115,7 @@ extension ConversationListViewController {
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
             mainCoordinator: some MainCoordinating,
-            getAccountImageUseCase: any GetAccountImageUseCaseProtocol
+            getAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -188,9 +189,13 @@ extension ConversationListViewController.ViewModel {
     @MainActor
     private func updateAccountImage() {
         Task {
-            let user = userSession.selfUser
-            accountImage.image = await getAccountImageUseCase.invoke(user: user, account: account)
-            accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
+            do {
+                accountImage.image = try await getAccountImageUseCase.invoke(account: account)
+                accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
+            } catch {
+                WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
+                accountImage.image = .init()
+            }
         }
     }
 

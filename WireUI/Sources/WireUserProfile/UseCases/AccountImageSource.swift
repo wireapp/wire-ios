@@ -19,5 +19,10 @@
 import Foundation
 
 public enum AccountImageSource {
-    case data(Data), text(String)
+
+    /// An image based on the provided image data is displayed.
+    case data(Data)
+
+    /// An account image based on the provided initials is generated.
+    case text(initials: String)
 }

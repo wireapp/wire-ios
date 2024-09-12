@@ -19,7 +19,7 @@
 import UIKit
 import WireFoundation
 
-public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: GetAccountImageUseCaseProtocol
+public struct GetTeamAccountImageUseCase<InitalsProvider, AccountImageGenerator>: GetTeamAccountImageUseCaseProtocol
     where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
 
     var initalsProvider: InitalsProvider
@@ -33,7 +33,7 @@ public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: Ge
         self.accountImageGenerator = accountImageGenerator
     }
 
-    public func invoke(user: some GetAccountImageUseCaseUserProtocol, account: some GetAccountImageUseCaseAccountProtocol) async -> UIImage {
+    public func invoke(user: some GetAccountImageUseCaseUserProtocol, account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage {
         if let team = await user.membership?.team, let teamImageSource = await team.teamImageSource ?? account.teamImageSource {
             // team image
             if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
@@ -47,26 +47,16 @@ public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: Ge
                 await team.name ?? account.teamName ?? ""
             }
             let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
-            let accountImage = await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
-            return accountImage
-
-        } else {
-            // user's custom image
-            if let data = account.imageData, let accountImage = UIImage(data: data) {
-                return accountImage
+            if !initials.isEmpty {
+                return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
             }
-
-            // image base on user's initials
-            let initials = initalsProvider.initials(from: account.userName)
-            return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
         }
+
+        throw Error.invalidImageSource
     }
-}
 
-// MARK: - Dependencies
-
-// The following protocol serves the purpose of decoupling the use case from the actual dependencies.
-
-public protocol GetAccountImageUseCaseInitialsProvider {
-    func initials(from fullName: String) -> String
+    enum Error: Swift.Error {
+        /// Neither valid image data nor a non-empty string has been provided for getting an account image.
+        case invalidImageSource
+    }
 }
