@@ -95,12 +95,16 @@ extension ConversationInputBarViewController {
             guard let self else { return }
 
             impactFeedbackGenerator.prepare()
-            ZMUserSession.shared()?.perform {
+
+            userSession.perform { [weak self] in
+
+                guard let self else { return }
 
                 self.impactFeedbackGenerator.impactOccurred()
 
                 do {
-                    try conversation.appendFile(with: metadata)
+                    let useCase = self.userSession.makeAppendFileMessageUseCase()
+                    try useCase.invoke(with: metadata, in: conversation)
                 } catch {
                     Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }

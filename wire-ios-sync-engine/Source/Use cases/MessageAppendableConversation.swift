@@ -40,6 +40,12 @@ public protocol MessageAppendableConversation {
     @discardableResult
     func appendLocation(with locationData: LocationData, nonce: UUID) throws -> ZMConversationMessage
 
+    @discardableResult
+    func appendFile(
+        with fileMetadata: ZMFileMetadata,
+        nonce: UUID
+    ) throws -> ZMConversationMessage
+
 }
 
 extension ZMConversation: MessageAppendableConversation {
