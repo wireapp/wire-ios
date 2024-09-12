@@ -157,29 +157,8 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
-      - name: Archiving Logs
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: build-logs
-          path: |
-            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
-            ~/Library/Logs/DiagnosticReports/**
-            build/**
-
-      - name: Archiving env variables
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: post-build-env-${{ inputs.fastlane_action }}
-          path: |
-            **/.post_build/*.env
       - name: Load .env file
         if: always()
         uses: xom9ikk/dotenv@v2.3.0
         with:
           path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@v1.0.2
-        id: base64-decoded-S3_PATHS
-        with:
-          base64: ${{ env.S3_PATHS }}
