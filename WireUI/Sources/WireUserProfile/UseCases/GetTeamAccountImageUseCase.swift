@@ -19,8 +19,7 @@
 import UIKit
 import WireFoundation
 
-public struct GetTeamAccountImageUseCase<InitalsProvider, AccountImageGenerator>: GetTeamAccountImageUseCaseProtocol
-where InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol {
+public struct GetTeamAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol>: GetTeamAccountImageUseCaseProtocol {
 
     typealias Error = GetTeamAccountImageUseCaseError
 
