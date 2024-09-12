@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "WireUserProfile"
-               BuildableName = "WireUserProfile"
-               BlueprintName = "WireUserProfile"
+               BlueprintIdentifier = "WireAccountImage"
+               BuildableName = "WireAccountImage"
+               BlueprintName = "WireAccountImage"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:.swiftpm/WireUserProfile.xctestplan"
+            reference = "container:.swiftpm/WireAccountImage.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -55,9 +55,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "WireUserProfile"
-            BuildableName = "WireUserProfile"
-            BlueprintName = "WireUserProfile"
+            BlueprintIdentifier = "WireAccountImage"
+            BuildableName = "WireAccountImage"
+            BlueprintName = "WireAccountImage"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

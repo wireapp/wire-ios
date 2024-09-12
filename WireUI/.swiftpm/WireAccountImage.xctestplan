@@ -17,8 +17,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireUserProfileTests",
-        "name" : "WireUserProfileTests"
+        "identifier" : "WireAccountImageTests",
+        "name" : "WireAccountImageTests"
       }
     }
   ],

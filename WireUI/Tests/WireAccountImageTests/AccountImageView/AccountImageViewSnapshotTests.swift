@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireUserProfile
+@testable import WireAccountImage
 
 final class AccountImageViewSnapshotTests: XCTestCase {
 

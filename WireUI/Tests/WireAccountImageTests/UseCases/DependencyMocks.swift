@@ -19,7 +19,7 @@
 import WireFoundation
 import XCTest
 
-@testable import WireUserProfile
+@testable import WireAccountImage
 
 final class MockAccount: GetAccountImageUseCaseAccountProtocol {
     var imageData: Data?

@@ -18,7 +18,7 @@
 
 import WireDataModel
 import WireFoundation
-import WireUserProfile
+import WireAccountImage
 
 extension GetUserAccountImageUseCase<InitialsProviderAdapter, AccountImageGenerator> {
 
