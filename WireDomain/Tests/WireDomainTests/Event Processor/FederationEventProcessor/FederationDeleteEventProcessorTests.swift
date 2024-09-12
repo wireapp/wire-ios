@@ -41,7 +41,10 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
     override func setUp() async throws {
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationDeleteEventProcessor(
-            repository: ConnectionsRepository(connectionsAPI: mockAPI, context: context)
+            repository: ConnectionsRepository(
+                connectionsAPI: mockAPI,
+                connectionsLocalStore: ConnectionsLocalStore(context: context)
+            )
         )
         try await super.setUp()
     }

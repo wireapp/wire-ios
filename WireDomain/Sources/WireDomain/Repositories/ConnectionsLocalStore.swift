@@ -17,68 +17,99 @@
 //
 
 import Foundation
+import CoreData
 import WireAPI
 import WireDataModel
 
-/// Facilitate access to connections related domain objects.
-///
-/// A repository provides an abstraction for the access and storage
-/// of domain models, concealing how and where the models are stored
-/// as well as the possible source(s) of the models.
-protocol ConnectionsRepositoryProtocol {
-
-    /// Pull self team metadata frmo the server and store locally.
-
-    func pullConnections() async throws
+// sourcery: AutoMockable
+protocol ConnectionsLocalStoreProtocol {
     
-    /// Deletes a federation connection with the specified domain.
-    ///
-    /// - Parameter domain: The domain to delete the connection for.
-
-    func deleteFederationConnection(with domain: String) async throws
-
-    /// Removes a federation connection between two domains.
-    ///
-    /// - Parameter domain : The domain for which the connection was removed.
-    /// - Parameter otherDomain: The other domain for which the connection was removed.
-
-    func removeFederationConnection(between domain: String, and otherDomain: String) async
+    func storeConnection(
+        _ connectionPayload: Connection
+    ) async throws
+    
+    func deleteFederationConnection(
+        with domain: String
+    ) async throws
+    
+    func removeFederationConnection(
+        between domain: String,
+        and otherDomain: String
+    ) async
+    
 }
 
-struct ConnectionsRepository: ConnectionsRepositoryProtocol {
-
+final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
+    
     // MARK: - Properties
-
-    private let connectionsAPI: any ConnectionsAPI
+    
     private let context: NSManagedObjectContext
-
+    
     // MARK: - Object lifecycle
-
+    
     init(
-        connectionsAPI: any ConnectionsAPI,
         context: NSManagedObjectContext
     ) {
-        self.connectionsAPI = connectionsAPI
         self.context = context
     }
-
+    
     // MARK: - Public
+    
+    /// Save connection and related objects to local storage.
+    /// - Parameter connectionPayload: connection object from WireAPI
 
-    /// Retrieve from backend and store connections locally
+    public func storeConnection(_ connectionPayload: Connection) async throws {
+        try await context.perform { [self] in
 
-    public func pullConnections() async throws {
-        let connectionsPager = try await connectionsAPI.getConnections()
+            let connection = try storedConnection(from: connectionPayload)
 
-        for try await connections in connectionsPager {
-            await withThrowingTaskGroup(of: Void.self) { taskGroup in
-                for connection in connections {
-                    taskGroup.addTask {
-                        try await storeConnection(connection)
-                    }
-                }
-            }
+            let conversation = try storedConversation(from: connectionPayload, with: connection)
+
+            connection.to.oneOnOneConversation = conversation
+
+            try context.save()
         }
     }
+    
+    /// Deletes a federation connection on a specific domain locally.
+    /// - Parameter domain: The domain to delete the connection for.
+
+    public func deleteFederationConnection(with domain: String) async throws {
+        await context.perform { [self] in
+            let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
+            
+            /// For all conversations owned by self domain, remove all users that belong to `domain` from those conversations.
+            removeFederationConnection(
+                with: domain,
+                forConversationsOwnedBy: selfUserDomain
+            )
+            
+            /// For all conversations owned by `domain`, remove all users from self domain from those conversations.
+            removeFederationConnection(
+                with: selfUserDomain,
+                forConversationsOwnedBy: domain
+            )
+            
+            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain and `domain`, remove users from `domain` and `otherDomain` from those conversations.
+            removeFederationConnection(
+                with: [selfUserDomain, domain],
+                forConversationsNotOwnedBy: [selfUserDomain, domain]
+            )
+            
+            /// For any connection from a user on self domain to a user on `domain`, delete the connection.
+            removeConnectionRequests(with: domain)
+            
+            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
+            markOneToOneConversationsAsReadOnly(with: domain)
+            
+            /// Remove connection for all connected users owned by `domain`.
+            removeConnectedUsers(with: domain)
+        }
+    }
+    
+    /// Removes a federation connection between two specific domains locally.
+    /// - Parameter domain: The first domain.
+    /// - Parameter otherDomain: The other domain.
 
     public func removeFederationConnection(
         between domain: String,
@@ -109,51 +140,6 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         }
     }
     
-    public func deleteFederationConnection(with domain: String) async throws {
-        await context.perform { [self] in
-            let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
-            
-            /// For all conversations owned by self domain, remove all users that belong to `domain` from those conversations.
-            
-            removeFederationConnection(
-                with: domain,
-                forConversationsOwnedBy: selfUserDomain
-            )
-            
-            /// For all conversations owned by `domain`, remove all users from self domain from those conversations.
-            
-            removeFederationConnection(
-                with: selfUserDomain,
-                forConversationsOwnedBy: domain
-            )
-            
-            /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain and `domain`, remove users from `domain` and `otherDomain` from those conversations.
-                    
-            removeFederationConnection(
-                with: [selfUserDomain, domain],
-                forConversationsNotOwnedBy: [selfUserDomain, domain]
-            )
-            
-            /// For any connection from a user on self domain to a user on `domain`, delete the connection.
-        
-            removeConnectionRequests(
-                with: domain
-            )
-            
-            /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
-            
-            markOneToOneConversationsAsReadOnly(
-                with: domain
-            )
-            
-            /// Remove connection for all connected users owned by `domain`.
-            
-            removeConnectedUsers(
-                with: domain
-            )
-        }
-    }
-
     // MARK: - Private
 
     private func removeFederationConnection(
@@ -334,22 +320,6 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         }
 
         return participants
-    }
-
-    /// Save connection and related objects to local storage.
-    /// - Parameter connectionPayload: connection object from WireAPI
-
-    private func storeConnection(_ connectionPayload: Connection) async throws {
-        try await context.perform { [self] in
-
-            let connection = try storedConnection(from: connectionPayload)
-
-            let conversation = try storedConversation(from: connectionPayload, with: connection)
-
-            connection.to.oneOnOneConversation = conversation
-
-            try context.save()
-        }
     }
 
     /// Create or update conversation related to the connection's sender
