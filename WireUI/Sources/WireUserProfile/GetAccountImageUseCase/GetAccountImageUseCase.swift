@@ -70,15 +70,3 @@ public struct GetAccountImageUseCase<InitalsProvider, AccountImageGenerator>: Ge
 public protocol GetAccountImageUseCaseInitialsProvider {
     func initials(from fullName: String) -> String
 }
-
-/*
- func getInitials(from fullName: String) -> String {
-     // Split the full name by spaces into an array of words
-     let words = fullName.split(separator: " ")
-
-     // Map over each word, take the first character, convert to uppercase, and join them
-     let initials = words.compactMap { $0.first?.uppercased() }.joined()
-
-     return initials
- }
- */
