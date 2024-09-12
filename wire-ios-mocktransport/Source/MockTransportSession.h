@@ -75,7 +75,10 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic) NSString *domain;
 @property (nonatomic) BOOL federation;
+/// use to mock 404 error
 @property (nonatomic) BOOL isAPIVersionEndpointAvailable;
+/// use to mock 500 error
+@property (nonatomic) BOOL isInternalError;
 
 @property (nonatomic, readonly) NSArray *updateEvents;
 

@@ -72,10 +72,14 @@ final class APIVersionResolver {
         WireLogger.environment.info("received api version response")
 
         guard response.result == .success else {
-            WireLogger.environment.warn("api version response was not success, falling back to v0")
-            BackendInfo.apiVersion = .v0
-            BackendInfo.domain = "wire.com"
-            BackendInfo.isFederationEnabled = false
+            if response.httpStatus == 404 {
+                WireLogger.environment.warn("api version response was not success, falling back to v0")
+                BackendInfo.apiVersion = .v0
+                BackendInfo.domain = "wire.com"
+                BackendInfo.isFederationEnabled = false
+                return
+            }
+            WireLogger.environment.warn("api version response was not successful")
             return
         }
 
@@ -83,7 +87,7 @@ final class APIVersionResolver {
             let data = response.rawData,
             let payload = APIVersionResponsePayload(data)
         else {
-            fatalError()
+            fatal("Couldn't parse api version response payload")
         }
 
         let backendProdVersions = Set(payload.supported.compactMap(APIVersion.init(rawValue:)))
