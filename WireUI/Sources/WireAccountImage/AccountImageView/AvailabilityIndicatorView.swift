@@ -17,14 +17,9 @@
 //
 
 import SwiftUI
-import WireDesign
 
 // MARK: Constants
 
-private let availableColor = ColorTheme.Base.positive
-private let awayColor = ColorTheme.Base.error
-private let busyColor = ColorTheme.Base.warning
-private let backgroundColor = ColorTheme.Backgrounds.surfaceVariant
 private let backgroundBorderWidth: CGFloat = 2
 
 // in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
@@ -37,10 +32,35 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 
 final class AvailabilityIndicatorView: UIView {
 
+    // MARK: - Constants
+
+    enum Defaults {
+        static let availableColor: UIColor = .green
+        static let awayColor: UIColor = .red
+        static let busyColor: UIColor = .brown
+        static let backgroundViewColor: UIColor = .systemBackground
+    }
+
     // MARK: - Properties
 
     var availability: Availability? {
         didSet { setNeedsLayout() }
+    }
+
+    var availableColor: UIColor = Defaults.availableColor {
+        didSet { setNeedsLayout() }
+    }
+
+    var awayColor: UIColor = Defaults.awayColor {
+        didSet { setNeedsLayout() }
+    }
+
+    var busyColor: UIColor = Defaults.busyColor {
+        didSet { setNeedsLayout() }
+    }
+
+    var backgroundViewColor: UIColor = Defaults.backgroundViewColor {
+        didSet { backgroundView.backgroundColor = backgroundViewColor }
     }
 
     // MARK: - Private Properties
@@ -68,7 +88,7 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Methods
 
     private func setupSubviews() {
-        backgroundView.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        backgroundView.backgroundColor = backgroundViewColor
         addSubview(backgroundView)
 
         shapeContainerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -172,11 +192,8 @@ extension AvailabilityIndicatorView {
 }
 
 private struct AvailabilityIndicatorViewRepresentable: UIViewRepresentable {
-
     @State private(set) var availability: Availability?
-
     func makeUIView(context: Context) -> AvailabilityIndicatorView { .init() }
-
     func updateUIView(_ view: AvailabilityIndicatorView, context: Context) {
         view.availability = availability
     }
