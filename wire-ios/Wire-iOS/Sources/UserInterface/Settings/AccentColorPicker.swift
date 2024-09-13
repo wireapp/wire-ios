@@ -50,9 +50,6 @@ struct AccentColorPicker: View {
             .modifier(ListBackgroundStyleModifier())
             .background(Color(SemanticColors.View.backgroundDefault))
         }
-        .onAppear {
-            InjectConfiguration.animation = .interactiveSpring()
-        }
         .enableInjection()
         .toolbar {
             ToolbarItem(placement: .principal) {
