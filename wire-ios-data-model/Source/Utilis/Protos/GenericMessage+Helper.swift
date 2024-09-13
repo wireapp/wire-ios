@@ -343,6 +343,13 @@ public extension Proteus_UserEntry {
             $0.clients = clientEntries
         }
     }
+    
+    init(withProteusUserId id: Proteus_UserId, clientEntries: [Proteus_ClientEntry]) {
+        self = Proteus_UserEntry.with {
+            $0.user = id
+            $0.clients = clientEntries
+        }
+    }
 }
 
 // MARK: - QualifiedNewOtrMessage

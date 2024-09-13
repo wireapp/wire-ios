@@ -512,7 +512,7 @@ extension GenericMessage {
         missingClientsStrategy: MissingClientsStrategy,
         externalData: Data?,
         context: NSManagedObjectContext,
-        using encryptionFunction: EncryptionFunction
+        using encryptionFunction: @escaping EncryptionFunction
     ) async -> Proteus_QualifiedNewOtrMessage {
         let qualifiedUserEntries = await qualifiedUserEntriesWithEncryptedData(
             selfClient,
@@ -611,7 +611,7 @@ extension GenericMessage {
         missingClientsStrategy: MissingClientsStrategy,
         externalData: Data?,
         context: NSManagedObjectContext,
-        using encryptionFunction: EncryptionFunction
+        using encryptionFunction: @escaping EncryptionFunction
     ) async -> Proteus_NewOtrMessage {
         let userEntries = await userEntriesWithEncryptedData(
             selfClient,
@@ -646,7 +646,7 @@ extension GenericMessage {
         selfDomain: String,
         recipients: [ZMUser: Set<UserClient>],
         context: NSManagedObjectContext,
-        using encryptionFunction: EncryptionFunction
+        using encryptionFunction: @escaping EncryptionFunction
     ) async -> [Proteus_QualifiedUserEntry] {
 
         let recipientsByDomain = await context.perform {
@@ -715,26 +715,35 @@ extension GenericMessage {
         _ selfClient: UserClient,
         recipients: [ZMUser: Set<UserClient>],
         context: NSManagedObjectContext,
-        using encryptionFunction: EncryptionFunction
+        using encryptionFunction: @escaping EncryptionFunction
     ) async -> [Proteus_UserEntry] {
-
-        var userEntries = [Proteus_UserEntry]()
-        for (user, clients) in recipients {
-            guard await context.perform({ !user.isAccountDeleted }) else { continue }
-
-            let clientEntries = await clientEntriesWithEncryptedData(
-                selfClient,
-                userClients: clients,
-                context: context,
-                using: encryptionFunction
-            )
-            if !clientEntries.isEmpty {
-                await context.perform {
-                    userEntries.append(.init(withUser: user, clientEntries: clientEntries))
+        
+        return await withTaskGroup(of: Proteus_UserEntry?.self, returning: [Proteus_UserEntry].self) { taskGroup in
+            for (user, clients) in recipients {
+                taskGroup.addTask {
+                    guard let userId = await context.perform({ !user.isAccountDeleted ? user.userId : nil }) else {
+                        return nil
+                    }
+                    let clientEntries = await clientEntriesWithEncryptedData(
+                        selfClient,
+                        userClients: clients,
+                        context: context,
+                        using: encryptionFunction
+                    )
+                    if clientEntries.isEmpty {
+                        return Proteus_UserEntry(withProteusUserId: userId, clientEntries: clientEntries)
+                    } else {
+                        return nil
+                    }
+                }
+            }
+            
+            return await taskGroup.reduce(into: [Proteus_UserEntry]()) { partialResult, userEntry in
+                if let userEntry {
+                    partialResult.append(userEntry)
                 }
             }
         }
-        return userEntries
     }
 
     private func legacyUserEntriesWithEncryptedData(
@@ -765,7 +774,7 @@ extension GenericMessage {
         _ selfClient: UserClient,
         userClients: Set<UserClient>,
         context: NSManagedObjectContext,
-        using encryptionFunction: EncryptionFunction
+        using encryptionFunction: @escaping EncryptionFunction
     ) async -> [Proteus_ClientEntry] {
 
         let filteredClientEntries = await context.perform {
@@ -778,13 +787,19 @@ extension GenericMessage {
             }
         }
 
-        var clientEntries = [Proteus_ClientEntry]()
-        for client in filteredClientEntries {
-            if let clientEntry = await clientEntry(for: client, using: encryptionFunction) {
-                clientEntries.append(clientEntry)
+        return await withTaskGroup(of: Proteus_ClientEntry?.self,  returning: [Proteus_ClientEntry].self) { taskGroup in
+            for client in filteredClientEntries {
+                taskGroup.addTask {
+                    await clientEntry(for: client, using: encryptionFunction)
+                }
+            }
+            
+            return await taskGroup.reduce(into: [Proteus_ClientEntry]()) { partialResult, clientEntry in
+                if let clientEntry {
+                    partialResult.append(clientEntry)
+                }
             }
         }
-        return clientEntries
     }
 
     private func legacyClientEntriesWithEncryptedData(
