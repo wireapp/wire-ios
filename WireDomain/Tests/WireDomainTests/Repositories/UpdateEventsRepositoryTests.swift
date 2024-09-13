@@ -48,6 +48,7 @@ final class UpdateEventsRepositoryTests: XCTestCase {
         updateEventDecryptor = MockUpdateEventDecryptorProtocol()
         lastEventIDRepository = MockLastEventIDRepositoryInterface()
         sut = UpdateEventsRepository(
+            userID: Scaffolding.selfUserID.uuid,
             selfClientID: Scaffolding.selfClientID,
             updateEventsAPI: updateEventsAPI,
             pushChannel: pushChannel,

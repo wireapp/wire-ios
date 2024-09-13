@@ -77,10 +77,17 @@ protocol UpdateEventsRepositoryProtocol {
 
     func storeLastEventEnvelopeID(_ id: UUID)
 
+    /// Pulls and stores the last event ID.
+
+    func pullLastEventID() async throws
+
 }
 
 final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
 
+    // MARK: - Properties
+
+    private let userID: UUID
     private let selfClientID: String
     private let updateEventsAPI: any UpdateEventsAPI
     private let pushChannel: any PushChannelProtocol
@@ -91,7 +98,10 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
+    // MARK: - Object lifecycle
+
     init(
+        userID: UUID,
         selfClientID: String,
         updateEventsAPI: any UpdateEventsAPI,
         pushChannel: any PushChannelProtocol,
@@ -99,12 +109,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
         eventContext: NSManagedObjectContext,
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
+        self.userID = userID
         self.selfClientID = selfClientID
         self.updateEventsAPI = updateEventsAPI
         self.pushChannel = pushChannel
         self.updateEventDecryptor = updateEventDecryptor
         self.eventContext = eventContext
         self.lastEventIDRepository = lastEventIDRepository
+        UpdateEventsUserDefaults.setup(userID: userID)
     }
 
     // MARK: - Pull pending events
@@ -162,6 +174,14 @@ final class UpdateEventsRepository: UpdateEventsRepositoryProtocol {
                 }
             }
         }
+    }
+
+    func pullLastEventID() async throws {
+        let lastEvent = try await updateEventsAPI.getLastUpdateEvent(
+            selfClientID: selfClientID
+        )
+
+        UpdateEventsUserDefaults.lastEventID = lastEvent.id
     }
 
     private func indexOfLastEventEnvelope() async throws -> Int64 {

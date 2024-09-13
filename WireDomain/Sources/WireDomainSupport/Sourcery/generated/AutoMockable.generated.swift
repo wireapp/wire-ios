@@ -378,6 +378,26 @@ class MockUpdateEventsRepositoryProtocol: UpdateEventsRepositoryProtocol {
         mock(id)
     }
 
+    // MARK: - pullLastEventID
+
+    var pullLastEventID_Invocations: [Void] = []
+    var pullLastEventID_MockError: Error?
+    var pullLastEventID_MockMethod: (() async throws -> Void)?
+
+    func pullLastEventID() async throws {
+        pullLastEventID_Invocations.append(())
+
+        if let error = pullLastEventID_MockError {
+            throw error
+        }
+
+        guard let mock = pullLastEventID_MockMethod else {
+            fatalError("no mock for `pullLastEventID`")
+        }
+
+        try await mock()
+    }
+
 }
 
 public class MockUserRepositoryProtocol: UserRepositoryProtocol {
