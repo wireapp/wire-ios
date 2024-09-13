@@ -65,14 +65,12 @@ extension AccountImageViewRepresentable {
 
 extension View {
     func accountImageBorderWidth(_ accountImageBorderWidth: CGFloat) -> some View {
-        modifier(AccountImageBorderWidthModifier(accountImageBorderWidth: accountImageBorderWidth))
+        modifier(AccountImageViewBorderWidthViewModifier(accountImageBorderWidth: accountImageBorderWidth))
     }
 }
 
-struct AccountImageBorderWidthModifier: ViewModifier {
-
+struct AccountImageViewBorderWidthViewModifier: ViewModifier {
     var accountImageBorderWidth: CGFloat
-
     func body(content: Content) -> some View {
         content
             .environment(\.accountImageBorderWidth, accountImageBorderWidth)
@@ -99,9 +97,7 @@ extension View {
 }
 
 struct AccountImageViewBorderColorModifier: ViewModifier {
-
     var accountImageViewBorderColor: UIColor
-
     func body(content: Content) -> some View {
         content
             .environment(\.accountImageViewBorderColor, accountImageViewBorderColor)
