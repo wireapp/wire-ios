@@ -21,12 +21,6 @@ import WireDesign
 
 // MARK: Constants
 
-// TODO: remove commented code
-//private let availableColor = ColorTheme.Base.positive
-//private let awayColor = ColorTheme.Base.error
-//private let busyColor = ColorTheme.Base.warning
-//private let backgroundColor = ColorTheme.Backgrounds.surfaceVariant
-
 private let backgroundBorderWidth: CGFloat = 2
 
 // in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
@@ -38,6 +32,14 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 // MARK: -
 
 final class AvailabilityIndicatorView: UIView {
+
+    enum Defaults {
+        // TODO: remove comments
+        static let availableColor: UIColor = .green // ColorTheme.Base.positive
+        static let awayColor: UIColor = .red // ColorTheme.Base.error
+        static let busyColor: UIColor = .brown // ColorTheme.Base.warning
+        static let backgroundViewColor: UIColor = .systemBackground // ColorTheme.Backgrounds.surfaceVariant
+    }
 
     @Environment(\.availableColor) private var availableColor
     @Environment(\.awayColor) private var awayColor
@@ -181,7 +183,7 @@ struct AvailabilityIndicatorAvailableColorViewModifier: ViewModifier {
 }
 
 private struct AvailableColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = .green
+    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.availableColor
 }
 
 private extension EnvironmentValues {
@@ -207,7 +209,7 @@ struct AvailabilityIndicatorAwayColorViewModifier: ViewModifier {
 }
 
 private struct AwayColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = .red
+    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.awayColor
 }
 
 private extension EnvironmentValues {
@@ -233,7 +235,7 @@ struct AvailabilityIndicatorBusyColorViewModifier: ViewModifier {
 }
 
 private struct BusyColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = .brown
+    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.busyColor
 }
 
 private extension EnvironmentValues {
@@ -259,7 +261,7 @@ struct AvailabilityIndicatorBackgroundColorViewModifier: ViewModifier {
 }
 
 private struct BackgroundColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = .systemBackground
+    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.backgroundViewColor
 }
 
 private extension EnvironmentValues {
