@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireUIFoundation", targets: ["WireUIFoundation"]),
-        .library(name: "WireUserProfile", targets: ["WireUserProfile"])
+        .library(name: "WireAccountImage", targets: ["WireAccountImage"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -51,12 +51,12 @@ let package = Package(
             ]
         ),
 
-        .target(name: "WireUserProfile", dependencies: ["WireFoundation"]),
+        .target(name: "WireAccountImage", dependencies: ["WireFoundation", "WireDesign"]),
         .testTarget(
-            name: "WireUserProfileTests",
+            name: "WireAccountImageTests",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                "WireUserProfile",
+                "WireAccountImage",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
         )

@@ -23,7 +23,7 @@ public struct SidebarAccountInfo {
     public var displayName = ""
     public var username = ""
     public var accountImage = UIImage()
-    public var isTeamAccount = false
+    public var availability: Availability?
 
     public init() {}
 
@@ -31,11 +31,15 @@ public struct SidebarAccountInfo {
         displayName: String,
         username: String,
         accountImage: UIImage,
-        isTeamAccount: Bool
+        availability: Availability?
     ) {
         self.displayName = displayName
         self.username = username
         self.accountImage = accountImage
-        self.isTeamAccount = isTeamAccount
+        self.availability = availability
+    }
+
+    public enum Availability: CaseIterable {
+        case available, busy, away
     }
 }

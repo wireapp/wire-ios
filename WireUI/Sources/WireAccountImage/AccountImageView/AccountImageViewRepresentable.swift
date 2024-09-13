@@ -21,16 +21,13 @@ import SwiftUI
 public struct AccountImageViewRepresentable: UIViewRepresentable {
 
     private let accountImage: UIImage
-    private let isTeamAccount: Bool
     private let availability: Availability?
 
     public init(
         accountImage: UIImage,
-        isTeamAccount: Bool,
         availability: Availability?
     ) {
         self.accountImage = accountImage
-        self.isTeamAccount = isTeamAccount
         self.availability = availability
     }
 
@@ -40,7 +37,6 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
 
     public func updateUIView(_ view: AccountImageView, context: Context) {
         view.accountImage = accountImage
-        view.isTeamAccount = isTeamAccount
         view.availability = availability
     }
 }
@@ -49,12 +45,10 @@ extension AccountImageViewRepresentable {
 
     init(
         _ accountImage: UIImage,
-        _ isTeamAccount: Bool,
         _ availability: Availability?
     ) {
         self.init(
             accountImage: accountImage,
-            isTeamAccount: isTeamAccount,
             availability: availability
         )
     }

@@ -16,24 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireFoundation
-import XCTest
+import UIKit
 
-@testable import WireUserProfile
+/// If the personal user has an account image set, this use cases retrieves it.
+/// Otherwise an image will be generated using the initials of the person's name.
+public protocol GetUserAccountImageUseCaseProtocol {
 
-final class MockAccount: GetAccountImageUseCaseAccountProtocol {
-    var imageData: Data?
-    var userName = ""
-    var teamName: String?
-    var teamImageSource: AccountImageSource?
-}
-
-final class MockInitialsProvider: GetAccountImageUseCaseInitialsProvider {
-    var initialsResult = ""
-    func initials(from userName: String) -> String { initialsResult }
-}
-
-final class MockAccountImageGenerator: AccountImageGeneratorProtocol {
-    var resultImage = UIImage()
-    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage { resultImage }
+    func invoke<Account>(account: Account) async throws -> UIImage
+        where Account: GetAccountImageUseCaseAccountProtocol
 }

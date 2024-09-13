@@ -18,12 +18,19 @@
 
 import SwiftUI
 import WireDesign
-
-public struct SidebarView: View {
+import WireFoundation
+// TODO: snapshot tests
+public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public var accountInfo: SidebarAccountInfo?
-    public var availability: Availability?
     @Binding public var conversationFilter: SidebarConversationFilter?
+    private(set) var connectAction: () -> Void
+    private(set) var settingsAction: () -> Void
+    private(set) var supportAction: () -> Void
+    private(set) var accountImageView: (
+        _ accountImage: UIImage,
+        _ availability: SidebarAccountInfo.Availability?
+    ) -> AccountImageView
 
     @State private var iconSize: CGSize?
 
@@ -52,14 +59,14 @@ public struct SidebarView: View {
                 SidebarMenuItem(icon: "gearshape", iconSize: iconSize) {
                     Text("sidebar.settings.title", bundle: .module)
                 } action: {
-                    print("settings")
+                    settingsAction()
                 }
                 .padding(.horizontal, 16)
 
                 SidebarMenuItem(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
                     Text("sidebar.support.title", bundle: .module)
                 } action: {
-                    print("support")
+                    supportAction()
                 }
                 .padding(.horizontal, 16)
             }
@@ -77,9 +84,11 @@ public struct SidebarView: View {
     @ViewBuilder
     private var profileSwitcher: some View {
         if let accountInfo {
-            SidebarProfileSwitcherView(accountInfo.displayName, accountInfo.username) {
-                AccountImageViewRepresentable(accountInfo.accountImage, accountInfo.isTeamAccount, availability)
-            }
+            SidebarProfileSwitcherView(
+                displayName: accountInfo.displayName,
+                username: accountInfo.username,
+                accountImageView: { accountImageView(accountInfo.accountImage, accountInfo.availability) }
+            )
             .padding(.horizontal, 24)
             .padding(.bottom)
         }
@@ -109,7 +118,7 @@ public struct SidebarView: View {
             ) {
                 Text("sidebar.contacts.connect.title", bundle: .module)
             } action: {
-                // TODO: implement
+                connectAction()
             }
         }
         .padding(.horizontal, 16)
@@ -168,16 +177,11 @@ private extension SidebarConversationFilter? {
             return HintViewController("For previewing please switch to iPad (iOS 17+)!")
         }
 
-        let sidebarViewController = SidebarViewController(
-            accountInfo: .init(
-                displayName: "Firstname Lastname",
-                username: "@username",
-                accountImage: .from(solidColor: .brown),
-                isTeamAccount: false
-            ),
-            availability: .available,
-            conversationFilter: .none
-        )
+        let sidebarViewController = SidebarViewController { accountImage, availability in
+            AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
+        }
+        sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
+        sidebarViewController.accountInfo?.username = "@username"
         splitViewController.setViewController(sidebarViewController, for: .primary)
         splitViewController.setViewController(EmptyViewController(), for: .supplementary)
         splitViewController.setViewController(EmptyViewController(), for: .secondary)
@@ -190,6 +194,23 @@ private extension SidebarConversationFilter? {
 
         return splitViewController
     }() as UIViewController
+}
+
+@MainActor private var conversationFilter: SidebarConversationFilter?
+
+private struct MockAccountImageView: View {
+    @State private(set) var uiImage: UIImage
+    @State private(set) var availability: SidebarAccountInfo.Availability?
+    var body: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Circle()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(Color.brown)
+            Circle()
+                .frame(width: 14, height: 14)
+                .foregroundStyle(Color.green)
+        }
+    }
 }
 
 private final class EmptyViewController: UIHostingController<AnyView> {
@@ -209,16 +230,5 @@ private final class EmptyViewController: UIHostingController<AnyView> {
 private final class HintViewController: UIHostingController<Text> {
     convenience init(_ hint: String) {
         self.init(rootView: Text(verbatim: hint).font(.title2))
-    }
-}
-
-private extension UIImage {
-
-    // TODO: look for all copies and move the code into WireUtilities or WireSystem
-    static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-        }
     }
 }
