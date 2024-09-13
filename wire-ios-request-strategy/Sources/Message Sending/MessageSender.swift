@@ -96,8 +96,15 @@ public final class MessageSender: MessageSenderInterface {
                 "send message - resolve dependencies finished",
                 attributes: logAttributes
             )
-
+            let timePoint = TimePoint(interval: 30, label: "attempt to send message")
+            
             try await attemptToSend(message: message)
+          
+            WireLogger.messaging.debug(
+                "send message - attemptToSend duration: \(timePoint.elapsedTime)",
+                attributes: logAttributes
+            )
+            
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
@@ -115,13 +122,6 @@ public final class MessageSender: MessageSenderInterface {
         guard let apiVersion = BackendInfo.apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
             throw MessageSendError.missingMessageProtocol
-        }
-
-        await context.perform {
-            if message.shouldExpire {
-                message.setExpirationDate()
-                self.context.saveOrRollback()
-            }
         }
 
         do {
@@ -269,6 +269,14 @@ public final class MessageSender: MessageSenderInterface {
 
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
+        
+        await context.perform {
+            if message.shouldExpire {
+                message.setExpirationDate()
+                self.context.saveOrRollback()
+            }
+        }
+        
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
             .sendMLSMessage(message: encryptedData,
                             conversationID: conversationID,
