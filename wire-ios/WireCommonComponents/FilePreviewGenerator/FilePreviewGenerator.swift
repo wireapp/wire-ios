@@ -23,5 +23,5 @@ protocol FilePreviewGenerator {
     var thumbnailSize: CGSize { get }
 
     func supportsPreviewGenerationForFile(at url: URL) -> Bool
-    func generatePreviewForFile(at url: URL) async throws -> UIImage
+    func generatePreviewForFile(at url: URL) throws -> UIImage
 }

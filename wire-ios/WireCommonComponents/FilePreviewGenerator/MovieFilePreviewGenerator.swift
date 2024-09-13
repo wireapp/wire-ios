@@ -28,7 +28,7 @@ struct MovieFilePreviewGenerator: FilePreviewGenerator {
         return AVURLAsset.wr_isAudioVisualUniformType(uniformType)
     }
 
-    func generatePreviewForFile(at url: URL) async throws -> UIImage {
+    func generatePreviewForFile(at url: URL) throws -> UIImage {
 
         let asset = AVURLAsset(url: url)
         let generator = AVAssetImageGenerator(asset: asset)

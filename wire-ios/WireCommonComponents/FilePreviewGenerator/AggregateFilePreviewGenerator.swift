@@ -29,11 +29,11 @@ struct AggregateFilePreviewGenerator: FilePreviewGenerator {
         }.isEmpty
     }
 
-    func generatePreviewForFile(at url: URL) async throws -> UIImage {
+    func generatePreviewForFile(at url: URL) throws -> UIImage {
 
-        let firstGenerator = generators.first(where: { $0.supportsPreviewGenerationForFile(at: url) })
+        let firstGenerator = generators.first { $0.supportsPreviewGenerationForFile(at: url) }
         if let firstGenerator {
-            return try await firstGenerator.generatePreviewForFile(at: url)
+            return try firstGenerator.generatePreviewForFile(at: url)
         }
 
         throw AggregateFilePreviewGeneratorError.noMatchingFilePreviewGeneratorFound

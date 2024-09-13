@@ -27,7 +27,7 @@ struct PDFFilePreviewGenerator: FilePreviewGenerator {
         url.uniformType?.conforms(to: .pdf) ?? false
     }
 
-    func generatePreviewForFile(at url: URL) async throws -> UIImage {
+    func generatePreviewForFile(at url: URL) throws -> UIImage {
 
         UIGraphicsBeginImageContext(thumbnailSize)
         defer { UIGraphicsEndImageContext() }

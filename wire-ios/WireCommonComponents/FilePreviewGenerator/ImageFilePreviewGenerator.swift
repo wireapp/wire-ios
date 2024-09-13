@@ -27,7 +27,7 @@ struct ImageFilePreviewGenerator: FilePreviewGenerator {
         url.uniformType?.conforms(to: .image) ?? false
     }
 
-    func generatePreviewForFile(at url: URL) async throws -> UIImage {
+    func generatePreviewForFile(at url: URL) throws -> UIImage {
 
         guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else {
             throw Error.failedToCreatePreview
