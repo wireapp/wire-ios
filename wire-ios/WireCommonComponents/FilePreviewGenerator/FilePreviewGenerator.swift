@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import UniformTypeIdentifiers
-import WireUtilities
+import UIKit
 
-extension NSItemProvider {
+protocol FilePreviewGenerator {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        }
-    }
+    var thumbnailSize: CGSize { get }
+
+    func supportsPreviewGenerationForFile(at url: URL) -> Bool
+    func generatePreviewForFile(at url: URL) throws -> UIImage
 }
