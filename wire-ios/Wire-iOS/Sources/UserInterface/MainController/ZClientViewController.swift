@@ -24,6 +24,7 @@ import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 import WireUIFoundation
+import WireAccountImage
 
 final class ZClientViewController: UIViewController {
 
@@ -41,7 +42,9 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let sidebarViewController = SidebarViewController()
+    let sidebarViewController = SidebarViewController { accountImage, availability in
+        AnyView(AccountImageViewRepresentable(accountImage: accountImage, availability: availability?.map()))
+    }
 
     private(set) lazy var wireSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
@@ -204,7 +207,13 @@ final class ZClientViewController: UIViewController {
         createTopViewConstraints()
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
-        Task { cachedAccountImage = await AccountImage(userSession, account, .init()) }
+        Task {
+            do {
+                cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
+            } catch {
+                WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
+            }
+        }
 
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         let supplementaryNavigationController = UINavigationController(rootViewController: conversationListViewController)
@@ -774,11 +783,16 @@ extension ZClientViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
-            AppDelegate.shared.mainWindow?.tintColor = UIColor.accent()
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.mainWindow?.tintColor = UIColor.accent()
         }
         if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
             Task { @MainActor [self] in
-                cachedAccountImage = await AccountImage(userSession, account, .init())
+                do {
+                    cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
+                } catch {
+                    WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
+                }
             }
         }
     }
