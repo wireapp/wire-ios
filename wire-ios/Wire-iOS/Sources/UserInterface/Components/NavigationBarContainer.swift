@@ -19,7 +19,7 @@
 import UIKit
 import WireDesign
 
-final class UINavigationBarContainer: UIViewController {
+final class NavigationBarContainer: UIViewController {
 
     let landscapeNavbarHeight: CGFloat = 30.0
     let portraitNavbarHeight: CGFloat = 44.0

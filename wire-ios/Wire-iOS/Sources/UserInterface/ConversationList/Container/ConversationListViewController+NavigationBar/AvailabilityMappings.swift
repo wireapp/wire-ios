@@ -16,12 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireAccountImage
+import WireDataModel
+import WireReusableUIComponents
 
-/// If the personal user has an account image set, this use cases retrieves it.
-/// Otherwise an image will be generated using the initials of the person's name.
-public protocol GetUserAccountImageUseCaseProtocol {
+extension WireDataModel.Availability {
 
-    func invoke<Account>(account: Account) async throws -> UIImage
-        where Account: GetAccountImageUseCaseAccountProtocol
+    /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
+
+    func map() -> WireAccountImage.Availability? {
+        switch self {
+        case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
+        }
+    }
 }

@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import CoreData
 
 /// If the team has an image set, this use cases retrieves it.
 /// If no team image data is available, an image will be generated using the team name's initials.
