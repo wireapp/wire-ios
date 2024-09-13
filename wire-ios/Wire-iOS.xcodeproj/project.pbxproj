@@ -11248,8 +11248,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-ObjC",
-					"-interposable",
 					"-Xlinker",
+					"-interposable",
 				);
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
