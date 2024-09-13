@@ -48,6 +48,7 @@ public final class AccountImageView: UIView {
         didSet { updateAccountImageBorder() }
     }
 
+    // TODO: create code in Wire-iOS which sets this to ColorTheme.Strokes.outline
     public var accountImageViewBorderColor: UIColor = .gray { // ColorTheme.Strokes.outline
         didSet { updateAccountImageBorder() }
     }
