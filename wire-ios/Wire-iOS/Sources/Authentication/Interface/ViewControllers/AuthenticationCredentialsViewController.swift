@@ -425,7 +425,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard textField == self.emailInputField, self.emailInputField.isInputValid else {
+        guard textField == emailInputField, emailInputField.isInputValid else {
             return false
         }
 

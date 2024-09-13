@@ -65,13 +65,13 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         self.voiceChannel = voiceChannel
         self.userSession = userSession
 
-        visibleVoiceChannelViewController = CallViewController(
+        self.visibleVoiceChannelViewController = CallViewController(
             voiceChannel: voiceChannel,
             selfUser: userSession.selfUser,
             isOverlayEnabled: false,
             userSession: userSession
         )
-        callingActionsInfoViewController = CallingActionsInfoViewController(
+        self.callingActionsInfoViewController = CallingActionsInfoViewController(
             participants: voiceChannel.getParticipantsList(),
             selfUser: userSession.selfUser
         )
@@ -85,7 +85,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             .setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
         callingActionsInfoViewController.actionsView.bottomSheetScrollingDelegate = self
         visibleVoiceChannelViewController.configurationObserver = self
-        participantsObserverToken = voiceChannel.addParticipantObserver(self)
+        self.participantsObserverToken = voiceChannel.addParticipantObserver(self)
         visibleVoiceChannelViewController.delegate = self
 
         callDegradationController.targetViewController = self
@@ -160,8 +160,8 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             height: bottomSheetMaxHeight,
             initialOffset: bottomSheetMinimalOffset
         )
-        guard self.configuration != newConfiguration else { return }
-        self.configuration = newConfiguration
+        guard configuration != newConfiguration else { return }
+        configuration = newConfiguration
         callingActionsInfoViewController.updateActionViewHeight()
         callingActionsInfoViewController.actionsView.viewWillRotate(toPortrait: !isLandscape)
         hideBottomSheet()

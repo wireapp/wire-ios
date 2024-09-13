@@ -45,7 +45,7 @@ final class ConversationMissingMessagesSystemMessageCellDescription: Conversatio
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
         let title = ConversationMissingMessagesSystemMessageCellDescription
             .makeAttributedString(systemMessageData: data)
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: StyleKitIcon.exclamationMark.makeImage(
                 size: .tiny,
                 color: IconColors
@@ -54,8 +54,8 @@ final class ConversationMissingMessagesSystemMessageCellDescription: Conversatio
             attributedText: title,
             showLine: true
         )
-        accessibilityLabel = title.string
-        actionController = nil
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 
     private static func makeAttributedString(systemMessageData: ZMSystemMessageData) -> NSAttributedString {

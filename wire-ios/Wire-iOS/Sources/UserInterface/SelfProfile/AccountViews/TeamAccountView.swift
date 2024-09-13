@@ -26,7 +26,7 @@ final class TeamAccountView: BaseAccountView {
 
     required init?(user: ZMUser?, account: Account, displayContext: DisplayContext) {
         if let content = user?.team?.teamImageViewContent ?? account.teamImageViewContent {
-            imageView = TeamImageView(content: content, style: .big)
+            self.imageView = TeamImageView(content: content, style: .big)
         } else {
             return nil
         }
@@ -60,7 +60,7 @@ final class TeamAccountView: BaseAccountView {
         addGestureRecognizer(tapGesture)
 
         if let team = user?.team {
-            teamObserver = TeamChangeInfo.add(observer: self, for: team)
+            self.teamObserver = TeamChangeInfo.add(observer: self, for: team)
             team.requestImage()
         }
     }

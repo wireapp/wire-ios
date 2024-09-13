@@ -50,7 +50,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         configuration.timeoutIntervalForResource = 20
         configuration.httpShouldSetCookies = false
         configuration.isDiscretionary = false
-        session = urlSession ?? Foundation.URLSession(
+        self.session = urlSession ?? Foundation.URLSession(
             configuration: configuration,
             delegate: self,
             delegateQueue: parsingQueue
@@ -128,7 +128,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
         parseMetaHeader(container, url: url) { [weak self] result in
             guard let self else { return }
-            self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
+            completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
 
@@ -141,9 +141,9 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
     func completeAndCleanUp(_ completion: DownloadCompletion, result: OpenGraphData?, url: URL, taskIdentifier: Int) {
         completion(result)
-        self.containerByTaskID[taskIdentifier] = nil
-        self.completionByURL[url] = nil
-        self.cancelledTaskIDs.remove(taskIdentifier)
+        containerByTaskID[taskIdentifier] = nil
+        completionByURL[url] = nil
+        cancelledTaskIDs.remove(taskIdentifier)
     }
 
     func parseMetaHeader(_ container: MetaStreamContainer, url: URL, completion: @escaping DownloadCompletion) {

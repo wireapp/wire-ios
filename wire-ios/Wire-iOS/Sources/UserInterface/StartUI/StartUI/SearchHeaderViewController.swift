@@ -48,7 +48,7 @@ final class SearchHeaderViewController: UIViewController {
 
     init(userSelection: UserSelection) {
         self.userSelection = userSelection
-        clearButton = IconButton(style: .default)
+        self.clearButton = IconButton(style: .default)
 
         super.init(nibName: nil, bundle: nil)
 

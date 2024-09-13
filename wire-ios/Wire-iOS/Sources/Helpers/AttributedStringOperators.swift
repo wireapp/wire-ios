@@ -183,7 +183,7 @@ enum PointOfView: UInt {
 
 extension PointOfView: CustomStringConvertible {
     var description: String {
-        "POV: \(self.suffix)"
+        "POV: \(suffix)"
     }
 }
 
@@ -213,7 +213,7 @@ extension String {
         if povVersion != povPath, !povVersion.isEmpty {
             return povVersion
         } else {
-            return self.localized
+            return localized
         }
     }
 }

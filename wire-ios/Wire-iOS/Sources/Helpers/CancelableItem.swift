@@ -22,7 +22,7 @@ struct CancelableItem {
     private let item: DispatchWorkItem
 
     init(queue: DispatchQueue = .main, delay: TimeInterval, block: @escaping () -> Void) {
-        item = DispatchWorkItem(block: block)
+        self.item = DispatchWorkItem(block: block)
 
         if ProcessInfo.processInfo.isRunningTests {
             block()

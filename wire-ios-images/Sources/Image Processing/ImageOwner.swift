@@ -56,11 +56,11 @@ public final class ImageOwner: NSObject, ZMImageOwner {
     }
 
     public func originalImageData() -> Data? {
-        self.imageData
+        imageData
     }
 
     public func originalImageSize() -> CGSize {
-        self.imageSize
+        imageSize
     }
 
     public func isInline(for format: ZMImageFormat) -> Bool {
@@ -84,7 +84,7 @@ public final class ImageOwner: NSObject, ZMImageOwner {
 
     override public func isEqual(_ object: Any?) -> Bool {
         if let object = object as? ImageOwner {
-            object.nonce == self.nonce && object.imageSize.equalTo(self.imageSize)
+            object.nonce == nonce && object.imageSize.equalTo(imageSize)
         } else {
             false
         }

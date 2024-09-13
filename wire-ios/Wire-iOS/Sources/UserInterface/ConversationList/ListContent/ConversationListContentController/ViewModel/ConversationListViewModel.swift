@@ -153,7 +153,7 @@ final class ConversationListViewModel: NSObject {
         init(source: ConversationListViewModel.Section, elements: some Collection<SectionItem>) {
             self.kind = source.kind
             self.collapsed = source.collapsed
-            items = Array(elements)
+            self.items = Array(elements)
         }
 
         init(
@@ -161,7 +161,7 @@ final class ConversationListViewModel: NSObject {
             conversationDirectory: ConversationDirectoryType,
             collapsed: Bool
         ) {
-            items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
+            self.items = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
             self.kind = kind
             self.collapsed = collapsed
         }
@@ -173,7 +173,7 @@ final class ConversationListViewModel: NSObject {
     private(set) var selectedItem: ConversationListItem? {
         didSet {
             /// expand the section if selcted item is update
-            guard let indexPath = self.indexPath(for: selectedItem),
+            guard let indexPath = indexPath(for: selectedItem),
                   collapsed(at: indexPath.section) else { return }
 
             setCollapsed(sectionIndex: indexPath.section, collapsed: false, batchUpdate: false)
@@ -442,7 +442,7 @@ final class ConversationListViewModel: NSObject {
 
         var newValue: [Section]
         if let kind,
-           let sectionNumber = self.sectionNumber(for: kind) {
+           let sectionNumber = sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
 
@@ -546,9 +546,9 @@ final class ConversationListViewModel: NSObject {
         batchUpdate: Bool = true
     ) {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
-        guard let kind = self.kind(of: sectionIndex) else { return }
+        guard let kind = kind(of: sectionIndex) else { return }
         guard self.collapsed(at: sectionIndex) != collapsed else { return }
-        guard let sectionNumber = self.sectionNumber(for: kind) else { return }
+        guard let sectionNumber = sectionNumber(for: kind) else { return }
 
         if collapsed {
             state.collapsed.insert(kind.identifier)
@@ -589,8 +589,8 @@ final class ConversationListViewModel: NSObject {
         var folderEnabled: Bool
 
         init() {
-            collapsed = []
-            folderEnabled = false
+            self.collapsed = []
+            self.folderEnabled = false
         }
 
         var jsonString: String? {
@@ -666,7 +666,7 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             // TODO: wait for SE update for returning multiple items in changeInfo.updatedLists
             // swiftlint:enable todo_requires_jira_link
             for updatedList in changeInfo.updatedLists {
-                if let kind = self.kind(of: updatedList) {
+                if let kind = kind(of: updatedList) {
                     update(for: kind)
                 }
             }

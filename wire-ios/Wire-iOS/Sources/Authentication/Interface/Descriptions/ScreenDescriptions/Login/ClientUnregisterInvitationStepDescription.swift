@@ -31,15 +31,15 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
     typealias TooManyDevices = L10n.Localizable.Registration.Signin.TooManyDevices
 
     init() {
-        backButton = BackButtonDescription()
-        headline = TooManyDevices.title
-        subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
+        self.backButton = BackButtonDescription()
+        self.headline = TooManyDevices.title
+        self.subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
 
-        mainView = SolidButtonDescription(
+        self.mainView = SolidButtonDescription(
             title: TooManyDevices.ManageButton.title.capitalized,
             accessibilityIdentifier: "manage_devices"
         )
-        secondaryView = nil
-        footerView = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 }

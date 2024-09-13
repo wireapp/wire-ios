@@ -32,7 +32,7 @@ class RequestStrategyTestBase: MessagingTest {
         var mockUserIdentifier: String!
         var mockClientIdentifier: String!
 
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             let mockUser = session.insertUser(withName: "foo")
             let mockClient = session.registerClient(
                 for: mockUser,
@@ -44,9 +44,9 @@ class RequestStrategyTestBase: MessagingTest {
             mockUserIdentifier = mockUser.identifier
         }
 
-        let client = UserClient.insertNewObject(in: self.syncMOC)
+        let client = UserClient.insertNewObject(in: syncMOC)
         client.remoteIdentifier = mockClientIdentifier
-        let user = ZMUser.insertNewObject(in: self.syncMOC)
+        let user = ZMUser.insertNewObject(in: syncMOC)
         user.remoteIdentifier = UUID(uuidString: mockUserIdentifier)
         client.user = user
 

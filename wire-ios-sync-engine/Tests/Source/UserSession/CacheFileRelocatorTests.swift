@@ -22,7 +22,7 @@ import XCTest
 final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
     func testThatItMovesCaches() throws {
         // given
-        let oldLocation = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
+        let oldLocation = FileManager.default.cachesURLForAccount(with: nil, in: sut.sharedContainerURL)
         clearFolder(at: oldLocation)
 
         _ = UserImageLocalCache(location: oldLocation)
@@ -32,12 +32,12 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
         let relocator = CacheFileRelocator()
 
         // when
-        relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
+        relocator.moveCachesIfNeededForAccount(with: userIdentifier, in: sut.sharedContainerURL)
 
         // then
         let newLocation = FileManager.default.cachesURLForAccount(
-            with: self.userIdentifier,
-            in: self.sharedContainerURL
+            with: userIdentifier,
+            in: sharedContainerURL
         )
         let movedItemNames = try FileManager.default.contentsOfDirectory(atPath: newLocation.path)
         XCTAssertTrue(!movedItemNames.isEmpty)
@@ -48,7 +48,7 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
 
     func testWhitelistedFilePersistence() throws {
         // given
-        let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
+        let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: sut.sharedContainerURL)
         clearFolder(at: cachesFolder)
 
         let relocator = CacheFileRelocator()
@@ -56,10 +56,10 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
         // when
         let fileName = "com.apple.nsurlsessiond"
         let fileUrl = try writeTestFile(name: fileName, at: cachesFolder)
-        relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
+        relocator.moveCachesIfNeededForAccount(with: userIdentifier, in: sut.sharedContainerURL)
 
         // then
-        let newFolder = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
+        let newFolder = FileManager.default.cachesURLForAccount(with: userIdentifier, in: sharedContainerURL)
         XCTAssertTrue(
             FileManager.default
                 .fileExists(
@@ -78,7 +78,7 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
 
     func testMovingOfNonWhitelistedFile() throws {
         // given
-        let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
+        let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: sut.sharedContainerURL)
         clearFolder(at: cachesFolder)
 
         let relocator = CacheFileRelocator()
@@ -86,10 +86,10 @@ final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
         // when
         let fileName = "example"
         let fileUrl = try writeTestFile(name: fileName, at: cachesFolder)
-        relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
+        relocator.moveCachesIfNeededForAccount(with: userIdentifier, in: sut.sharedContainerURL)
 
         // then
-        let newFolder = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
+        let newFolder = FileManager.default.cachesURLForAccount(with: userIdentifier, in: sharedContainerURL)
         XCTAssertFalse(
             FileManager.default
                 .fileExists(

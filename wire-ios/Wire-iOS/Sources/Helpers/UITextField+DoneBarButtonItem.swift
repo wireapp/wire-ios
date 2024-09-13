@@ -32,18 +32,18 @@ extension UITextField {
             title: L10n.Localizable.General.done,
             style: .done,
             target: self,
-            action: #selector(self.doneButtonAction)
+            action: #selector(doneButtonAction)
         )
 
         let items = [flexSpace, done]
         doneToolbar.items = items
         doneToolbar.sizeToFit()
 
-        self.inputAccessoryView = doneToolbar
+        inputAccessoryView = doneToolbar
     }
 
     @objc
     func doneButtonAction() {
-        self.resignFirstResponder()
+        resignFirstResponder()
     }
 }

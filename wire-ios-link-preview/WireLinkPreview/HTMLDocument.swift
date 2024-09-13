@@ -95,7 +95,7 @@ final class HTMLChildrenIterator: IteratorProtocol {
     }
 
     func next() -> HTMLElement? {
-        let nextPtr: xmlNodePtr? = if let currentChild = self.currentChild {
+        let nextPtr: xmlNodePtr? = if let currentChild {
             xmlNextElementSibling(currentChild)
         } else {
             xmlFirstElementChild(rootElement)

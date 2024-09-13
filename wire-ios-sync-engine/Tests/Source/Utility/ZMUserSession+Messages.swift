@@ -24,8 +24,8 @@ extension ZMUserSession {
         -> ZMSystemMessage {
         let newTime = conversation.lastServerTimeStamp?.addingTimeInterval(5) ?? Date()
 
-        let user = ZMUser.insertNewObject(in: self.managedObjectContext)
-        let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: self.managedObjectContext)
+        let user = ZMUser.insertNewObject(in: managedObjectContext)
+        let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext)
         message.serverTimestamp = newTime
         message.systemMessageType = .missedCall
         message.sender = user
@@ -39,7 +39,7 @@ extension ZMUserSession {
         let conversation = ZMConversation.insertGroupConversation(session: self, participants: [])!
         conversation.remoteIdentifier = UUID()
 
-        self.insertUnreadDotGeneratingMessageMessage(in: conversation)
+        insertUnreadDotGeneratingMessageMessage(in: conversation)
         // then
         XCTAssertNotNil(conversation.firstUnreadMessage)
         return conversation

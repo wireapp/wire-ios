@@ -128,7 +128,7 @@ final class WireCallCenterV3IntegrationMock: WireCallCenterV3 {
         analytics: AnalyticsType? = nil,
         transport: WireCallCenterTransport
     ) {
-        mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
+        self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
         super.init(
             userId: userId,
             clientId: clientId,
@@ -164,7 +164,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
         analytics: AnalyticsType? = nil,
         transport: WireCallCenterTransport
     ) {
-        mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
+        self.mockAVSWrapper = MockAVSWrapper(userId: userId, clientId: clientId, observer: nil)
         super.init(
             userId: userId,
             clientId: clientId,

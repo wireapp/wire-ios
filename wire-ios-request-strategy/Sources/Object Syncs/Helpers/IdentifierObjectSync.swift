@@ -101,8 +101,8 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
 
             switch response.result {
             case .permanentError, .success:
-                self.downloading.subtract(scheduled)
-                self.transcoder?.didReceive(response: response, for: scheduled) {
+                downloading.subtract(scheduled)
+                transcoder?.didReceive(response: response, for: scheduled) {
                     self.managedObjectContext.perform {
                         if case .permanentError = response.result {
                             self.delegate?.didFailToSyncAllObjects()
@@ -115,14 +115,14 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
                     }
                 }
             default:
-                self.downloading.subtract(scheduled)
-                self.pending.formUnion(scheduled)
+                downloading.subtract(scheduled)
+                pending.formUnion(scheduled)
 
-                if !self.isSyncing {
-                    self.delegate?.didFinishSyncingAllObjects()
+                if !isSyncing {
+                    delegate?.didFinishSyncingAllObjects()
                 }
 
-                self.managedObjectContext.enqueueDelayedSave()
+                managedObjectContext.enqueueDelayedSave()
             }
         })
 

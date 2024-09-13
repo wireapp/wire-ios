@@ -35,7 +35,7 @@ class CallQualityController: NSObject {
         super.init()
 
         if let userSession = ZMUserSession.shared() {
-            token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+            self.token = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         }
     }
 
@@ -108,7 +108,7 @@ class CallQualityController: NSObject {
             return
         }
 
-        guard self.canRequestSurvey(at: callEndDate) else {
+        guard canRequestSurvey(at: callEndDate) else {
             Analytics.shared.tagCallQualityReview(.notDisplayed(reason: .muted, duration: Int(callDuration)))
             return
         }

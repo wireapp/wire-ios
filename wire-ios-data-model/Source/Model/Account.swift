@@ -38,7 +38,7 @@ public final class Account: NSObject, Codable {
 
     public var unreadConversationCount = 0 {
         didSet {
-            if oldValue != self.unreadConversationCount {
+            if oldValue != unreadConversationCount {
                 NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
             }
         }
@@ -78,12 +78,12 @@ public final class Account: NSObject, Codable {
     /// from the account store.
     ///
     public func updateWith(_ account: Account) {
-        guard self.userIdentifier == account.userIdentifier else { return }
-        self.userName = account.userName
-        self.teamName = account.teamName
-        self.imageData = account.imageData
-        self.teamImageData = account.teamImageData
-        self.loginCredentials = account.loginCredentials
+        guard userIdentifier == account.userIdentifier else { return }
+        userName = account.userName
+        teamName = account.teamName
+        imageData = account.imageData
+        teamImageData = account.teamImageData
+        loginCredentials = account.loginCredentials
     }
 
     override public func isEqual(_ object: Any?) -> Bool {

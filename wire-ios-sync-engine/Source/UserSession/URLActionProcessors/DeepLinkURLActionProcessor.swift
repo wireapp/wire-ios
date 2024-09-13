@@ -66,7 +66,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            let viewContext = self.contextProvider.viewContext
+            let viewContext = contextProvider.viewContext
 
             switch response {
             case let .success((conversationId, conversationName, hasPassword)):
@@ -75,9 +75,9 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                     delegate.showConversation(conversation, at: nil)
                     delegate.completedURLAction(urlAction)
                 } else if hasPassword {
-                    self.handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
+                    handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
                 } else {
-                    self.handleJoinWithoutPassword(
+                    handleJoinWithoutPassword(
                         for: conversationName,
                         key: key,
                         code: code,
@@ -87,7 +87,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 }
 
             case let .failure(error):
-                self.handleJoinConversationFailure(error: error, urlAction: urlAction, delegate: delegate)
+                handleJoinConversationFailure(error: error, urlAction: urlAction, delegate: delegate)
             }
         }
     }
@@ -112,7 +112,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            self.joinConversation(key: key, code: code, password: password, delegate: delegate)
+            joinConversation(key: key, code: code, password: password, delegate: delegate)
         }
     }
 
@@ -132,7 +132,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            self.joinConversation(key: key, code: code, password: nil, delegate: delegate)
+            joinConversation(key: key, code: code, password: nil, delegate: delegate)
         }
     }
 
@@ -154,7 +154,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
             switch response {
             case let .success(conversation):
-                self.handleConversationSynchronization(
+                handleConversationSynchronization(
                     conversation: conversation,
                     key: key,
                     code: code,
@@ -174,7 +174,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         code: String,
         delegate: PresentationDelegate
     ) {
-        self.synchronise(conversation) { result in
+        synchronise(conversation) { result in
             DispatchQueue.main.async {
                 switch result {
                 case let .success(syncConversation):

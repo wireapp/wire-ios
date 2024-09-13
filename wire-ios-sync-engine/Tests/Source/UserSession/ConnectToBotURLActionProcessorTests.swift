@@ -36,7 +36,7 @@ final class ConnectToBotURLActionProcessorTests: IntegrationTest {
                 provider: self.serviceProvider.transportString()
             )
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatCompletedURLActionIsCalled_WhenSuccessfullyConnectingToAService() {

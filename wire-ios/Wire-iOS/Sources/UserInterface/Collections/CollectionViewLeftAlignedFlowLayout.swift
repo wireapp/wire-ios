@@ -21,7 +21,7 @@ import UIKit
 // NB: This class assumes that the elements in one section are of the same size.
 final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        newBounds.width != self.collectionView?.bounds.size.width
+        newBounds.width != collectionView?.bounds.size.width
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -30,7 +30,7 @@ final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
         }
 
         var newAttributes = [UICollectionViewLayoutAttributes]()
-        let maxCellWidth = self.collectionView!.bounds.size.width - self.sectionInset.left - self.sectionInset.right
+        let maxCellWidth = collectionView!.bounds.size.width - sectionInset.left - sectionInset.right
 
         for attributes: UICollectionViewLayoutAttributes in oldAttributes {
             guard attributes.representedElementCategory == .cell else {
@@ -39,12 +39,12 @@ final class CollectionViewLeftAlignedFlowLayout: UICollectionViewFlowLayout {
                 continue
             }
 
-            let totalElementsInSection = self.collectionView!.numberOfItems(inSection: attributes.indexPath.section)
+            let totalElementsInSection = collectionView!.numberOfItems(inSection: attributes.indexPath.section)
             let sectionHasLessElementsThanWidth = totalElementsInSection == 1
 
             if sectionHasLessElementsThanWidth {
                 let cellIsFullWidth = attributes.frame.size.width.equal(to: maxCellWidth, e: 1)
-                let cellIsNotLeftAligned = attributes.frame.origin.x != self.sectionInset.left
+                let cellIsNotLeftAligned = attributes.frame.origin.x != sectionInset.left
                 if !cellIsFullWidth, cellIsNotLeftAligned {
                     let inset = (maxCellWidth - CGFloat(totalElementsInSection) * attributes.frame.size.width) / 2
 

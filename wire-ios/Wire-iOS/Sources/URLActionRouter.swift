@@ -62,7 +62,7 @@ class URLActionRouter: URLActionRouterProtocol {
         viewController: @autoclosure @escaping () -> UIViewController,
         sessionManager: SessionManager?
     ) {
-        rootViewController = viewController
+        self.rootViewController = viewController
         self.sessionManager = sessionManager
     }
 
@@ -277,15 +277,15 @@ extension URLActionRouter: PresentationDelegate {
 
             switch result {
             case let .success(backendEnvironment):
-                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
+                requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
                 }
 
             case let .failure(error):
-                let localizedError = self.mapToLocalizedError(error)
-                self.presentLocalizedErrorAlert(localizedError)
+                let localizedError = mapToLocalizedError(error)
+                presentLocalizedErrorAlert(localizedError)
             }
         }
     }

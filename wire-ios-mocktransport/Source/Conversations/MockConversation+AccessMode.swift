@@ -83,7 +83,7 @@ public struct MockConversationAccessMode: OptionSet {
     ]
 
     public var stringValue: [String] {
-        MockConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
+        MockConversationAccessMode.stringValues.compactMap { contains($0) ? $1 : nil }
     }
 
     public static func value(forAllowGuests allowGuests: Bool) -> MockConversationAccessMode {

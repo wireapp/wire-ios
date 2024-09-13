@@ -34,7 +34,7 @@ final class ChangeEmailViewModel {
     }
 
     var validatedEmail: String? {
-        guard let newEmail = self.newEmail else { return nil }
+        guard let newEmail else { return nil }
         guard case .none = emailValidationError else {
             return nil
         }

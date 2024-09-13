@@ -23,7 +23,7 @@ extension String {
 
     /// A data representation of the hexadecimal bytes in this string.
     public func zmHexDecodedData() -> Data? {
-        if String.hexRegex.matches(in: self, range: NSRange(location: 0, length: self.utf16.count)).isEmpty {
+        if String.hexRegex.matches(in: self, range: NSRange(location: 0, length: utf16.count)).isEmpty {
             return nil // does not look like a hexadecimal string
         }
 

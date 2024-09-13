@@ -35,7 +35,7 @@ extension Unicode.Scalar {
     static let cancelTag = Unicode.Scalar(0xE007F)!
 
     var isEmojiComponentOrMiscSymbol: Bool {
-        switch self.value {
+        switch value {
         case 0x200D,       // Zero width joiner
              0x2139,            // the info symobol
              0x2030 ... 0x2BFF,   // Misc symbols
@@ -51,7 +51,7 @@ extension Unicode.Scalar {
     var isEmoji: Bool {
         // Unicode General Category S* contains Sc, Sk, Sm & So, we just interest on So(5855 items)
         (CharacterSet.symbols.contains(self) && !CharacterSet.asciiPrintableSet.contains(self)) ||
-            self.isEmojiComponentOrMiscSymbol
+            isEmojiComponentOrMiscSymbol
     }
 }
 

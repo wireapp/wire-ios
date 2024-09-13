@@ -29,7 +29,7 @@ public class ZMMovedIndex: NSObject {
 
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMMovedIndex else { return false }
-        return other.from == self.from && other.to == self.to
+        return other.from == from && other.to == to
     }
 
     /// - seealso: https://en.wikipedia.org/wiki/Pairing_function#Cantor_pairing_function

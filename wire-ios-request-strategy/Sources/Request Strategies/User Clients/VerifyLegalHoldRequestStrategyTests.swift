@@ -82,7 +82,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         sut = VerifyLegalHoldRequestStrategy(
-            withManagedObjectContext: self.syncMOC,
+            withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus
         )
     }

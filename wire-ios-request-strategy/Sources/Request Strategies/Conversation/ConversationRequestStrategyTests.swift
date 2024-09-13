@@ -230,7 +230,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -245,7 +245,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFinished_WhenThereIsNoConversationsToFetch() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
 
         // when
@@ -259,7 +259,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConversationsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
 
         // when
@@ -273,7 +273,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationMembershipStatusIsQueried_WhenNotFoundDuringSlowSyncPhase() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -288,7 +288,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationIsPendingMetadataRefresh_WhenFailedDuringSlowSyncPhase() {
         // given
-        self.apiVersion = .v4
+        apiVersion = .v4
         startSlowSync()
         fetchConversationListDuringSlowSync()
 
@@ -303,7 +303,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
     func testThatConversationIsCreatedAndMarkedToFetched_WhenFailingDuringSlowSyncPhase() throws {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         let conversationID = QualifiedID(uuid: UUID(), domain: owningDomain)
         startSlowSync()
         fetchConversationListDuringSlowSync()
@@ -333,7 +333,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(oneToOneConversation, with: response, apiVersion: apiVersion)
 
         // then
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
             XCTAssertFalse(self.oneToOneConversation.needsToBeUpdatedFromBackend)
         }
@@ -361,7 +361,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversation(groupConversation, with: response, apiVersion: apiVersion)
 
         // then
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.groupConversation.isSelfAnActiveMember)
         }
     }

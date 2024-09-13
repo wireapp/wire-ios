@@ -61,11 +61,11 @@ extension String {
     // @warning the return value would still contain some amount of diacritic combining characters. The algorithm
     // implemented in the way that the text with valid diacritics should not be sanitized.
     public var removingExtremeCombiningCharacters: String {
-        if self.unicodeScalars.count < extremeDiacriticsViewWindowSize {
+        if unicodeScalars.count < extremeDiacriticsViewWindowSize {
             return self
         }
 
-        let isDiacriticsMap = self.unicodeScalars.map(\.isDiacritics)
+        let isDiacriticsMap = unicodeScalars.map(\.isDiacritics)
 
         var newUnicodeScalars = "".unicodeScalars
 

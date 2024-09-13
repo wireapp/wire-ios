@@ -82,10 +82,10 @@ public struct AVSCallMember: Hashable {
 
 extension AVSCallMember {
     init(member: AVSParticipantsChange.Member) {
-        client = AVSClient(member: member)
-        audioState = member.aestab
-        videoState = member.vrecv
-        microphoneState = member.muted
+        self.client = AVSClient(member: member)
+        self.audioState = member.aestab
+        self.videoState = member.vrecv
+        self.microphoneState = member.muted
     }
 }
 

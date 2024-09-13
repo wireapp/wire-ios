@@ -239,9 +239,9 @@ extension LocalNotificationType {
 
         let conversationName = conversation?.userDefinedName ?? ""
         let senderName = sender?.name ?? ""
-        var senderKey = self.senderKey(sender, conversation)
+        var senderKey = senderKey(sender, conversation)
         var conversationTypeKey: String? = (conversation?.conversationType != .oneOnOne) ? GroupKey : OneOnOneKey
-        let conversationKey = self.conversationKey(conversation)
+        let conversationKey = conversationKey(conversation)
 
         var arguments: [CVarArg] = []
 

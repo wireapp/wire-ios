@@ -37,7 +37,7 @@ final class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoAct
             return nil
         }
 
-        return self.request(
+        return request(
             for: action,
             path: "/conversations/\(action.domain)/\(action.conversationId.transportString())/groupinfo",
             apiVersion: apiVersion,

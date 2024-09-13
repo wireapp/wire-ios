@@ -27,7 +27,7 @@ extension ZMUser {
     /// Refetch the self user's domain.
 
     static func refetchSelfUserDomain(in context: NSManagedObjectContext) {
-        let selfUser = self.selfUser(in: context)
+        let selfUser = selfUser(in: context)
         // Only if the domain is `nil` will we store the domain discovered on the backend.
         // After that, we don't expect it to change and may crash the app if it does.
         selfUser.domain = nil

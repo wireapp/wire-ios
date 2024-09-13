@@ -131,7 +131,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             \.needsToBeUpdatedFromBackend
         )
 
-        conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
+        self.conversationEventProcessor = ConversationEventProcessor(context: managedObjectContext)
         self.addParticipantActionHandler = AddParticipantActionHandler(
             context: managedObjectContext,
             eventProcessor: conversationEventProcessor
@@ -168,9 +168,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             .allowsRequestsWhileWaitingForWebsocket,
         ]
 
-        self.updateSync.transcoder = self
-        self.conversationByIDListSync.delegate = self
-        self.conversationByQualifiedIDListSync.delegate = self
+        updateSync.transcoder = self
+        conversationByIDListSync.delegate = self
+        conversationByQualifiedIDListSync.delegate = self
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {

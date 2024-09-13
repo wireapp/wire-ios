@@ -38,7 +38,7 @@ final class NativePushChannel: NSObject, PushChannelType {
             if keepOpen {
                 scheduleOpen()
             } else {
-                self.close()
+                close()
             }
         }
     }
@@ -103,7 +103,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: GroupQueue) {
-        self.consumerQueue = queue
+        consumerQueue = queue
         self.consumer = consumer
 
         if consumer == nil {

@@ -39,14 +39,14 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     ) {
         self.lastEventIDRepository = eventIDRespository
         super.init()
-        managedObjectContext = moc
+        self.managedObjectContext = moc
 
         moc.performAndWait {
             let selfUser = ZMUser.selfUser(in: moc)
             self.clientID = selfUser.selfClient()?.remoteIdentifier
         }
 
-        listPaginator = ZMSimpleListRequestPaginator(
+        self.listPaginator = ZMSimpleListRequestPaginator(
             basePath: "/notifications",
             startKey: "since",
             pageSize: 500,
@@ -55,7 +55,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         )
 
         self.notificationsTracker = notificationsTracker
-        notificationStreamSyncDelegate = delegate
+        self.notificationStreamSyncDelegate = delegate
     }
 
     public func reset() {
@@ -74,7 +74,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
         WireLogger.notifications.info("generated request to fetch events")
         notificationsTracker?.registerStartStreamFetching()
-        request.add(ZMCompletionHandler(on: self.managedObjectContext, block: { _ in
+        request.add(ZMCompletionHandler(on: managedObjectContext, block: { _ in
             self.notificationsTracker?.registerFinishStreamFetching()
         }))
 
@@ -108,7 +108,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
     }
 
     public func startUUID() -> UUID? {
-        self.lastUpdateEventID
+        lastUpdateEventID
     }
 
     @objc(processUpdateEventsAndReturnLastNotificationIDFromPayload:)
@@ -126,7 +126,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
             .compactMap { ZMUpdateEvent.eventsArray(from: $0 as ZMTransportData, source: source) }
             .flatMap { $0 }
 
-        notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: self.listPaginator.hasMoreToFetch)
+        notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: listPaginator.hasMoreToFetch)
         latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
         tp.warnIfLongerThanInterval()
@@ -165,7 +165,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
                 // to be 1/10th of a second older than the oldest received notification for it to appear above it.
                 timestamp = event?.timestamp?.addingTimeInterval(-offset)
             }
-            ZMConversation.appendNewPotentialGapSystemMessage(at: timestamp, inContext: self.managedObjectContext)
+            ZMConversation.appendNewPotentialGapSystemMessage(at: timestamp, inContext: managedObjectContext)
         }
     }
 }
@@ -178,7 +178,7 @@ extension NotificationStreamSync {
         guard let serverTimeDelta = serverTime?.timeIntervalSinceNow else {
             return
         }
-        self.managedObjectContext.serverTimeDelta = serverTimeDelta
+        managedObjectContext.serverTimeDelta = serverTimeDelta
     }
 
     private func eventDictionariesFrom(payload: ZMTransportData?) -> [[String: Any]]? {

@@ -41,12 +41,12 @@ final class ConversationSessionResetSystemMessageCellDescription: ConversationMe
     init(message: ZMConversationMessage, data: ZMSystemMessageData, sender: UserType) {
         let icon = StyleKitIcon.envelope.makeImage(size: .tiny, color: UIColor.Wire.primaryLabel)
         let title = Self.makeAttributedString(sender)
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: icon,
             attributedText: title,
             showLine: true
         )
-        accessibilityLabel = title.string
+        self.accessibilityLabel = title.string
     }
 
     static func makeAttributedString(_ sender: UserType) -> NSAttributedString {

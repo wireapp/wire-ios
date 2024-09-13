@@ -93,7 +93,7 @@ extension Data {
             throw AESError.keySizeError
         }
 
-        let dataLength = size_t(self.count + kCCBlockSizeAES128)
+        let dataLength = size_t(count + kCCBlockSizeAES128)
         var encryptedData = Data(count: dataLength)
         var copiedBytes: size_t = 0
 
@@ -111,7 +111,7 @@ extension Data {
             keyLength,
             Array(iv),
             Array(self),
-            self.count,
+            count,
             encryptedDataBytes,
             encryptedData.count,
             &copiedBytes

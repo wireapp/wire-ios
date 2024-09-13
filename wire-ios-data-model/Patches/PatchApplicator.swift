@@ -56,7 +56,7 @@ public final class PatchApplicator<T: DataPatchInterface> {
         }
 
         // Get the previous version
-        guard let previousVersion = context.persistentStoreMetadata(forKey: self.lastRunVersionKey) as? Int else {
+        guard let previousVersion = context.persistentStoreMetadata(forKey: lastRunVersionKey) as? Int else {
             // no version was run, this is a fresh install, skipping...
             logger.info("no previous version found, this is a fresh install, skipping...")
             return

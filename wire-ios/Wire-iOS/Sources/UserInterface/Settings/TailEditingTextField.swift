@@ -26,7 +26,7 @@ class TailEditingTextField: UITextField {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        self.setup()
+        setup()
     }
 
     @available(*, unavailable)
@@ -35,17 +35,17 @@ class TailEditingTextField: UITextField {
     }
 
     func setup() {
-        self.addTarget(
+        addTarget(
             self,
             action: #selector(TailEditingTextField.replaceNormalSpacesWithNonBreakingSpaces),
             for: UIControl.Event.editingDidBegin
         )
-        self.addTarget(
+        addTarget(
             self,
             action: #selector(TailEditingTextField.replaceNormalSpacesWithNonBreakingSpaces),
             for: UIControl.Event.editingChanged
         )
-        self.addTarget(
+        addTarget(
             self,
             action: #selector(TailEditingTextField.replaceNonBreakingSpacesWithNormalSpaces),
             for: UIControl.Event.editingDidEnd
@@ -54,18 +54,18 @@ class TailEditingTextField: UITextField {
 
     @objc
     func replaceNormalSpacesWithNonBreakingSpaces() {
-        guard let isContainsNormalSpace = (self.text?.contains(String.breakingSpace)), isContainsNormalSpace else {
+        guard let isContainsNormalSpace = (text?.contains(String.breakingSpace)), isContainsNormalSpace else {
             return
         }
 
-        self.text = self.text?.replacingOccurrences(of: String.breakingSpace, with: String.nonBreakingSpace)
+        text = text?.replacingOccurrences(of: String.breakingSpace, with: String.nonBreakingSpace)
     }
 
     @objc
     func replaceNonBreakingSpacesWithNormalSpaces() {
-        guard let isContainsNonBreakingSpace = (self.text?.contains(String.nonBreakingSpace)),
+        guard let isContainsNonBreakingSpace = (text?.contains(String.nonBreakingSpace)),
               isContainsNonBreakingSpace else { return }
 
-        self.text = self.text?.replacingOccurrences(of: String.nonBreakingSpace, with: String.breakingSpace)
+        text = text?.replacingOccurrences(of: String.nonBreakingSpace, with: String.breakingSpace)
     }
 }

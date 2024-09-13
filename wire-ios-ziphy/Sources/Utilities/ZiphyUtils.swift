@@ -65,7 +65,7 @@ extension URLSession: ZiphyURLRequester {
         _ request: URLRequest,
         completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
     ) -> ZiphyRequestIdentifier {
-        let task = self.dataTask(with: request, completionHandler: completionHandler)
+        let task = dataTask(with: request, completionHandler: completionHandler)
         task.resume()
         return task
     }

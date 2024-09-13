@@ -114,8 +114,8 @@ final class UserSessionMock: UserSession {
         self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
         self.editableSelfUser = editableSelfUser
 
-        searchUsersCache = .init()
-        userProfile = MockUserProfile()
+        self.searchUsersCache = .init()
+        self.userProfile = MockUserProfile()
     }
 
     var lock: SessionLock? = .screen

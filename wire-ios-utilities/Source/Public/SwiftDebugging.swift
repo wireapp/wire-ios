@@ -19,13 +19,13 @@
 import CoreData
 import Foundation
 
-public struct SwiftDebugging {
+public enum SwiftDebugging {
     public static func address(_ object: AnyObject) -> Int {
         unsafeBitCast(object, to: Int.self)
     }
 
     public static func pointerDescription(_ object: NSManagedObject) -> String {
-        "<\(type(of: object)) 0x\(String(self.address(object), radix: 16))>"
+        "<\(type(of: object)) 0x\(String(address(object), radix: 16))>"
     }
 
     public static func sequenceDescription(_ sequence: AnySequence<some Any>) -> String {

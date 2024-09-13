@@ -54,13 +54,13 @@ final class PinnableThumbnailViewController: UIViewController {
         thumbnailView.accessibilityIdentifier = "ThumbnailView"
         self.contentView = contentView
 
-        self.thumbnailContentSize = contentSize
+        thumbnailContentSize = contentSize
         updateThumbnailFrame(animated: false, parentSize: thumbnailContainerView.frame.size)
         pinningBehavior.updateFields(in: thumbnailContainerView.bounds)
     }
 
     func updateThumbnailContentSize(_ newSize: CGSize, animated: Bool) {
-        self.thumbnailContentSize = newSize
+        thumbnailContentSize = newSize
         updateThumbnailFrame(animated: false, parentSize: thumbnailContainerView.frame.size)
     }
 
@@ -103,7 +103,7 @@ final class PinnableThumbnailViewController: UIViewController {
         super.viewDidAppear(animated)
 
         if !hasEnabledPinningBehavior {
-            animator.addBehavior(self.pinningBehavior)
+            animator.addBehavior(pinningBehavior)
             hasEnabledPinningBehavior = true
         }
     }
@@ -278,7 +278,7 @@ final class PinnableThumbnailViewController: UIViewController {
         case .cancelled, .ended:
 
             // Snap the thumbnail to the closest edge
-            let velocity = recognizer.velocity(in: self.thumbnailContainerView)
+            let velocity = recognizer.velocity(in: thumbnailContainerView)
             pinningBehavior.isEnabled = true
             pinningBehavior.addLinearVelocity(velocity)
 

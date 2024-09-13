@@ -33,7 +33,7 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        entitySync = EntityActionSync(actionHandlers: [
+        self.entitySync = EntityActionSync(actionHandlers: [
             SendMLSMessageActionHandler(context: managedObjectContext),
             SendCommitBundleActionHandler(context: managedObjectContext),
             CountSelfMLSKeyPackagesActionHandler(context: managedObjectContext),

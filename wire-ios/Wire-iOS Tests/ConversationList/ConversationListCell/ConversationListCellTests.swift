@@ -41,7 +41,7 @@ private final class MockConversation: MockStableRandomParticipantsConversation,
     var status: ConversationStatus
 
     required init() {
-        status = ConversationStatus(
+        self.status = ConversationStatus(
             isGroup: false,
             hasMessages: false,
             hasUnsentMessages: false,

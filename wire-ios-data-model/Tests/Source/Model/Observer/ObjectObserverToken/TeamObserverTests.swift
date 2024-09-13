@@ -59,21 +59,21 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         customAffectedKeys: AffectedKeys? = nil
     ) {
         // given
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
-        self.token = TeamChangeInfo.add(observer: teamObserver, for: team, managedObjectContext: self.uiMOC)
+        token = TeamChangeInfo.add(observer: teamObserver, for: team, managedObjectContext: uiMOC)
 
         // when
         modifier(team)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let changeCount = teamObserver.notifications.count
         XCTAssertEqual(changeCount, 1)
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(teamObserver.notifications.count, changeCount, "Should not have changed further once")
@@ -87,12 +87,12 @@ class TeamObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfChangedName() {
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         team.name = "bar"
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             team,
             modifier: { $0.name = "foo" },
             expectedChangedFields: [#keyPath(TeamChangeInfo.nameChanged)]
@@ -101,11 +101,11 @@ class TeamObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfChangedImageData() {
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let team = Team.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             team,
             modifier: { $0.imageData = Data("image".utf8) },
             expectedChangedFields: [#keyPath(TeamChangeInfo.imageDataChanged)]
@@ -114,11 +114,11 @@ class TeamObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfInsertedMembers() {
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let team = Team.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             team,
             modifier: {
                 let member = Member.insertNewObject(in: uiMOC)
@@ -130,13 +130,13 @@ class TeamObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfDeletedMembers() {
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         let member = Member.insertNewObject(in: uiMOC)
         member.team = team
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             team,
             modifier: {
                 guard let member = $0.members.first else {

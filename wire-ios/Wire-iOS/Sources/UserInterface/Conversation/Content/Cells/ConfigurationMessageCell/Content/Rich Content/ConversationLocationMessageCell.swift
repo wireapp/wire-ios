@@ -204,6 +204,6 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let accessibilityLabel: String? = nil
 
     init(message: ZMConversationMessage, location: LocationMessageData) {
-        configuration = View.Configuration(location: location, message: message)
+        self.configuration = View.Configuration(location: location, message: message)
     }
 }

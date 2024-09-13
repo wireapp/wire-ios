@@ -69,7 +69,7 @@ extension UserClientType {
     /// We manually add a padding if there was a leading zero
 
     var displayIdentifier: String {
-        guard let remoteIdentifier = self.remoteIdentifier else {
+        guard let remoteIdentifier else {
             return ""
         }
 

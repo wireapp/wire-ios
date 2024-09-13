@@ -45,17 +45,17 @@ extension GenericMessage {
         guard let content else { return }
         switch content {
         case .ephemeral:
-            self.ephemeral.updateLegalHoldStatus(status)
+            ephemeral.updateLegalHoldStatus(status)
         case .reaction:
-            self.reaction.legalHoldStatus = status
+            reaction.legalHoldStatus = status
         case .knock:
-            self.knock.legalHoldStatus = status
+            knock.legalHoldStatus = status
         case .text:
-            self.text.legalHoldStatus = status
+            text.legalHoldStatus = status
         case .location:
-            self.location.legalHoldStatus = status
+            location.legalHoldStatus = status
         case .asset:
-            self.asset.legalHoldStatus = status
+            asset.legalHoldStatus = status
         default:
             return
         }
@@ -65,15 +65,15 @@ extension GenericMessage {
         guard let content else { return }
         switch content {
         case .ephemeral:
-            self.ephemeral.updateExpectsReadConfirmation(value)
+            ephemeral.updateExpectsReadConfirmation(value)
         case .knock:
-            self.knock.expectsReadConfirmation = value
+            knock.expectsReadConfirmation = value
         case .text:
-            self.text.expectsReadConfirmation = value
+            text.expectsReadConfirmation = value
         case .location:
-            self.location.expectsReadConfirmation = value
+            location.expectsReadConfirmation = value
         case .asset:
-            self.asset.expectsReadConfirmation = value
+            asset.expectsReadConfirmation = value
         default:
             return
         }
@@ -101,15 +101,15 @@ extension Ephemeral {
         guard let content else { return }
         switch content {
         case .text:
-            self.text.legalHoldStatus = status
+            text.legalHoldStatus = status
         case .image:
             break
         case .knock:
-            self.knock.legalHoldStatus = status
+            knock.legalHoldStatus = status
         case .asset:
-            self.asset.legalHoldStatus = status
+            asset.legalHoldStatus = status
         case .location:
-            self.location.legalHoldStatus = status
+            location.legalHoldStatus = status
         }
     }
 
@@ -117,15 +117,15 @@ extension Ephemeral {
         guard let content else { return }
         switch content {
         case .text:
-            self.text.expectsReadConfirmation = value
+            text.expectsReadConfirmation = value
         case .image:
             break
         case .knock:
-            self.knock.expectsReadConfirmation = value
+            knock.expectsReadConfirmation = value
         case .asset:
-            self.asset.expectsReadConfirmation = value
+            asset.expectsReadConfirmation = value
         case .location:
-            self.location.expectsReadConfirmation = value
+            location.expectsReadConfirmation = value
         }
     }
 }

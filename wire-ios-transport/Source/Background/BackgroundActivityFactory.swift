@@ -58,7 +58,7 @@ public final class BackgroundActivityFactory: NSObject {
     }
 
     private var hasValidCurrentBackgroundTask: Bool {
-        self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
+        currentBackgroundTask != nil && currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
     }
 
     @objc var mainQueue: DispatchQueue = .main
@@ -189,7 +189,7 @@ public final class BackgroundActivityFactory: NSObject {
 
     /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
-        guard let activityManager = self.activityManager else {
+        guard let activityManager else {
             WireLogger.backgroundActivity.warn(
                 "Handle expiration: failed, activityManager is nil",
                 attributes: .safePublic
@@ -211,7 +211,7 @@ public final class BackgroundActivityFactory: NSObject {
 
     /// Ends the current background task.
     private func finishBackgroundTask() {
-        let allTasksEndedHandlers = self.allTasksEndedHandlers
+        let allTasksEndedHandlers = allTasksEndedHandlers
         self.allTasksEndedHandlers.removeAll()
         mainQueue.async {
             for handler in allTasksEndedHandlers {
@@ -221,7 +221,7 @@ public final class BackgroundActivityFactory: NSObject {
 
         // No need to keep any activities after finishing
         activities.removeAll()
-        if let currentBackgroundTask = self.currentBackgroundTask {
+        if let currentBackgroundTask {
             if let activityManager {
                 // We might get killed pretty soon, let's flush the logs
                 ZMSLog.sync()

@@ -40,15 +40,15 @@ class MessagingTestBase: ZMTBaseTest {
     }
 
     var syncMOC: NSManagedObjectContext! {
-        self.coreDataStack.syncContext
+        coreDataStack.syncContext
     }
 
     var uiMOC: NSManagedObjectContext! {
-        self.coreDataStack.viewContext
+        coreDataStack.viewContext
     }
 
     var eventMOC: NSManagedObjectContext! {
-        self.coreDataStack.eventContext
+        coreDataStack.eventContext
     }
 
     override class func setUp() {
@@ -63,17 +63,17 @@ class MessagingTestBase: ZMTBaseTest {
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
         BackgroundActivityFactory.shared.resume()
 
-        self.deleteAllOtherEncryptionContexts()
-        self.deleteAllFilesInCache()
-        self.accountIdentifier = UUID()
-        self.coreDataStack = createCoreDataStack(
+        deleteAllOtherEncryptionContexts()
+        deleteAllFilesInCache()
+        accountIdentifier = UUID()
+        coreDataStack = createCoreDataStack(
             userIdentifier: accountIdentifier,
             inMemoryStore: useInMemoryStore
         )
         setupCaches(in: coreDataStack)
         setupTimers()
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
 
             self.setupUsersAndClients()
@@ -87,17 +87,17 @@ class MessagingTestBase: ZMTBaseTest {
     override func tearDown() {
         BackgroundActivityFactory.shared.activityManager = nil
 
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
+        _ = waitForAllGroupsToBeEmpty(withTimeout: 10)
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser = nil
             self.otherClient = nil
             self.selfClient = nil
             self.groupConversation = nil
         }
-        self.stopEphemeralMessageTimers()
+        stopEphemeralMessageTimers()
 
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
+        _ = waitForAllGroupsToBeEmpty(withTimeout: 10)
 
         deleteAllFilesInCache()
         deleteAllOtherEncryptionContexts()
@@ -302,7 +302,7 @@ extension MessagingTestBase {
         }
 
         // text content
-        guard let plaintext = self.decryptMessageFromSelf(cypherText: clientEntry.text, to: self.otherClient) else {
+        guard let plaintext = decryptMessageFromSelf(cypherText: clientEntry.text, to: otherClient) else {
             XCTFail("failed to decrypt", file: file, line: line)
             return nil
         }
@@ -316,15 +316,15 @@ extension MessagingTestBase {
 
 extension MessagingTestBase {
     func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.domain = owningDomain
         conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = UUID.create()
-        user.connection = ZMConnection.insertNewObject(in: self.syncMOC)
+        user.connection = ZMConnection.insertNewObject(in: syncMOC)
         user.connection?.status = .accepted
         user.oneOnOneConversation = conversation
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        self.syncMOC.saveOrRollback()
+        syncMOC.saveOrRollback()
         return conversation
     }
 
@@ -346,7 +346,7 @@ extension MessagingTestBase {
         user.domain = owningDomain
 
         if alsoCreateClient {
-            _ = self.createClient(
+            _ = createClient(
                 user: user,
                 in: context
             )
@@ -438,29 +438,29 @@ extension MessagingTestBase {
 
     /// Creates an encryption context in a temp folder and creates keys
     private func setupUsersAndClients() {
-        self.otherUser = self.createUser(alsoCreateClient: true)
-        self.otherClient = self.otherUser.clients.first!
-        self.thirdUser = self.createUser(alsoCreateClient: true)
-        self.selfClient = self.createSelfClient()
+        otherUser = createUser(alsoCreateClient: true)
+        otherClient = otherUser.clients.first!
+        thirdUser = createUser(alsoCreateClient: true)
+        selfClient = createSelfClient()
 
-        self.syncMOC.saveOrRollback()
+        syncMOC.saveOrRollback()
 
-        self.establishSessionFromSelf(to: self.otherClient)
+        establishSessionFromSelf(to: otherClient)
     }
 
     /// Creates self client and user
     private func createSelfClient() -> UserClient {
-        let user = ZMUser.selfUser(in: self.syncMOC)
+        let user = ZMUser.selfUser(in: syncMOC)
         user.remoteIdentifier = UUID.create()
         user.domain = owningDomain
 
-        let selfClient = UserClient.insertNewObject(in: self.syncMOC)
+        let selfClient = UserClient.insertNewObject(in: syncMOC)
         selfClient.remoteIdentifier = "baddeed"
         selfClient.user = user
 
-        self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
+        syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         selfClient.type = .permanent
-        self.syncMOC.saveOrRollback()
+        syncMOC.saveOrRollback()
         return selfClient
     }
 }
@@ -476,15 +476,15 @@ extension MessagingTestBase {
     }
 
     func stopEphemeralMessageTimers() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.zm_teardownMessageObfuscationTimer()
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.uiMOC.performGroupedAndWait {
+        uiMOC.performGroupedAndWait {
             self.uiMOC.zm_teardownMessageDeletionTimer()
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 }
 
@@ -492,7 +492,7 @@ extension MessagingTestBase {
 
 extension MessagingTestBase {
     override var allDispatchGroups: [ZMSDispatchGroup] {
-        super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
+        super.allDispatchGroups + [syncMOC?.dispatchGroup, uiMOC?.dispatchGroup].compactMap { $0 }
     }
 
     func performPretendingUiMocIsSyncMoc(block: () -> Void) {
@@ -513,7 +513,7 @@ extension MessagingTestBase {
 
     private func deleteAllFilesInCache() {
         let files = try? FileManager.default.contentsOfDirectory(
-            at: self.cacheFolder,
+            at: cacheFolder,
             includingPropertiesForKeys: [URLResourceKey.nameKey]
         )
         files?.forEach {

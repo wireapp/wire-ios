@@ -104,7 +104,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     func requestToDownloadAsset(withMessage message: ZMAssetClientMessage) -> ZMTransportRequest {
         // remove image data or it won't be downloaded
-        self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
+        syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
         message.imageMessageData?.requestFileDownload()
         return sut.nextRequest(for: .v0)!
     }
@@ -114,7 +114,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     func testRequestToDownloadAssetIsCreated() {
         // GIVEN
         var message: ZMAssetClientMessage?
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             message = try? self.createV2ImageMessage(withAssetId: UUID()).0
 
             guard let message else {
@@ -147,7 +147,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     func testRequestToDownloadAssetIsNotCreated_WhenAssetIdIsNotAvailable() {
         // GIVEN
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             guard let (message, _) = try? self.createV2ImageMessage(withAssetId: nil) else {
                 XCTFail("failed to create message")
                 return
@@ -264,7 +264,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var message: ZMAssetClientMessage!
         var encryptedData: Data!
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             guard let messageAndEncryptedData = try? self.createV2ImageMessage(withAssetId: UUID()) else {
                 XCTFail("failed to create message")
                 return

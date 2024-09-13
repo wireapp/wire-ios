@@ -39,7 +39,7 @@ final class AVURLAsset_conversionTests: XCTestCase {
         let originalAsset = AVURLAsset(url: videoURL, options: nil)
 
         // WHEN
-        let expectation = self.expectation(description: "Video converted")
+        let expectation = expectation(description: "Video converted")
 
         AVURLAsset.convertVideoToUploadFormat(
             at: videoURL,

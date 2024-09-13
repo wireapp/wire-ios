@@ -49,7 +49,7 @@ extension ZMSLog {
             recordingToken = nil
         }
         if let token = tokenToRemove {
-            self.removeLogHook(token: token)
+            removeLogHook(token: token)
         }
     }
 

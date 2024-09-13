@@ -39,7 +39,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         let mainBundle = Bundle(for: type(of: self))
         let certificatesURL = try XCTUnwrap(mainBundle.url(forResource: "certificates", withExtension: "json"))
         let certsData = try XCTUnwrap(Data(contentsOf: certificatesURL))
-        self.certificates = try XCTUnwrap(decoder.decode(CertificateData.self, from: certsData))
+        certificates = try XCTUnwrap(decoder.decode(CertificateData.self, from: certsData))
 
         mockSchedulerSession = FakeSchedulerSession()
         mockEnvironment = MockEnvironment()

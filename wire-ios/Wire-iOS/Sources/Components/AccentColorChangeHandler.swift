@@ -38,11 +38,11 @@ final class AccentColorChangeHandler: UserObserving {
         handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock,
         userSession: UserSession
     ) {
-        handlerBlock = changeHandler
+        self.handlerBlock = changeHandler
         self.observer = observer
 
         if let selfUser = SelfUser.provider?.providedSelfUser {
-            userObserverToken = userSession.addUserObserver(self, for: selfUser)
+            self.userObserverToken = userSession.addUserObserver(self, for: selfUser)
         }
     }
 

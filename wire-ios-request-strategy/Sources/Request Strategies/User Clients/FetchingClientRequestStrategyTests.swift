@@ -39,7 +39,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
         sut = FetchingClientRequestStrategy(
-            withManagedObjectContext: self.syncMOC,
+            withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus
         )
         NotificationCenter.default.addObserver(
@@ -383,12 +383,12 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         let identifier = UUID.create()
         var user: ZMUser!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = identifier
             user.fetchUserClients()
@@ -396,14 +396,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let expectedDeviceClasses: Set<DeviceClass> = [.phone, .tablet]
             let actualDeviceClasses = Set(user.clients.compactMap(\.deviceClass))
             let expectedIdentifiers: Set<String> = [firstIdentifier, secondIdentifier]
@@ -418,7 +418,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var user: ZMUser!
         var payload: ZMTransportData!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             let (firstIdentifier, secondIdentifier) = (UUID.create().transportString(), UUID.create().transportString())
             payload = self.payloadForOtherClients(firstIdentifier, secondIdentifier)
@@ -432,18 +432,18 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             payload: payload,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(user.clients.count, 2)
             XCTAssertEqual(user.clients, self.selfClient.missingClients)
         }
@@ -453,7 +453,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var payload: ZMTransportData!
         var firstIdentifier: String!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
 
             firstIdentifier = UUID.create().transportString()
@@ -461,25 +461,25 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             self.otherUser.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.otherUser.clients.count, 1)
         }
         let response = ZMTransportResponse(
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.otherUser.clients.count, 1)
             XCTAssertEqual(self.otherUser.clients.first?.remoteIdentifier, firstIdentifier)
         }
@@ -488,14 +488,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
     func testThatItCreatesLegacyRequest_WhenFederationEndpointIsNotAvailable() {
         // GIVEN
         var user: ZMUser!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             user = self.selfClient.user!
             user.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: self.apiVersion)
 
@@ -515,14 +515,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
 
         var user: ZMUser!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             user = self.selfClient.user!
             user.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: self.apiVersion)
 
@@ -542,14 +542,14 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         apiVersion = .v2
 
         var user: ZMUser!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.selfClient.missingClients?.count, 0)
             user = self.selfClient.user!
             user.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: self.apiVersion)
 
@@ -569,7 +569,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotDeleteAnObjectWhenResponseContainsRemoteID() {
         // GIVEN
         var payload: ZMTransportData!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let user = self.otherClient.user
             user?.fetchUserClients()
             payload = [["id": self.otherClient.remoteIdentifier!, "class": "phone"]] as NSArray
@@ -578,19 +578,19 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.otherClient.isDeleted)
         }
     }
@@ -599,27 +599,27 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var payload: ZMTransportData!
         let remoteIdentifier = "aabbccdd0011"
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let response = ZMTransportResponse(
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.selfClient.trustedClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
             XCTAssertNotNil(self.selfClient.ignoredClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
         }
@@ -629,28 +629,28 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var payload: ZMTransportData!
         var client: UserClient!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             client = self.createClient(user: self.otherUser)
             self.otherUser.fetchUserClients()
             payload = [["id": client.remoteIdentifier!, "class": "phone"]] as NSArray
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let response = ZMTransportResponse(
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.selfClient.trustedClients.contains(client))
             XCTAssertTrue(self.selfClient.ignoredClients.contains(client))
         }
@@ -661,7 +661,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         var payload: ZMTransportData!
         let remoteIdentifier = "aabbccdd0011"
         var sessionIdentifier: EncryptionSessionIdentifier!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             sessionIdentifier = EncryptionSessionIdentifier(
                 userId: self.otherUser!.remoteIdentifier.uuidString,
                 clientId: remoteIdentifier
@@ -677,23 +677,23 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
                 ) // just a bogus key is OK
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let response = ZMTransportResponse(
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.selfClient.trustedClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
             XCTAssertNotNil(self.selfClient.ignoredClients.first(where: { $0.remoteIdentifier == remoteIdentifier }))
         }
@@ -703,7 +703,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
         // GIVEN
         let remoteID = "otherRemoteID"
         let payload: [[String: Any]] = [["id": remoteID, "class": "phone"]]
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNotEqual(self.otherClient.remoteIdentifier, remoteID)
             let user = self.otherClient.user
             user?.fetchUserClients()
@@ -713,18 +713,18 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             payload: payload as ZMTransportData,
             httpStatus: 200,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.complete(with: response)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(self.otherClient.isZombieObject)
         }
     }

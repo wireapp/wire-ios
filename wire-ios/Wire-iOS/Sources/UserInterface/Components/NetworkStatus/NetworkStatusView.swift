@@ -60,7 +60,7 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
                 self.view.layoutIfNeeded()
             }
         } else {
-            self.view.layoutIfNeeded()
+            view.layoutIfNeeded()
         }
     }
 }
@@ -97,9 +97,9 @@ final class NetworkStatusView: UIView {
     }
 
     override init(frame: CGRect) {
-        connectingView = BreathLoadingBar.withDefaultAnimationDuration()
+        self.connectingView = BreathLoadingBar.withDefaultAnimationDuration()
         connectingView.accessibilityIdentifier = "LoadBar"
-        offlineView = OfflineBar()
+        self.offlineView = OfflineBar()
 
         super.init(frame: frame)
 
@@ -110,7 +110,7 @@ final class NetworkStatusView: UIView {
             subview.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        state = .online
+        self.state = .online
         backgroundColor = SemanticColors.View.backgroundDefault
         createConstraints()
     }
@@ -151,9 +151,9 @@ final class NetworkStatusView: UIView {
         }
 
         if animated {
-            self.connectingView.animating = false
+            connectingView.animating = false
             if state == .offlineExpanded {
-                self.offlineView.isHidden = false
+                offlineView.isHidden = false
             }
 
             UIView.animate(
@@ -214,14 +214,14 @@ final class NetworkStatusView: UIView {
 
         updateConstraints(networkStatusViewState: networkStatusViewState)
 
-        self.offlineView.state = networkStatusViewState
-        self.connectingView.state = networkStatusViewState
+        offlineView.state = networkStatusViewState
+        connectingView.state = networkStatusViewState
 
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 
     func updateUICompletion(offlineViewHidden: Bool) {
-        self.offlineView.isHidden = offlineViewHidden
+        offlineView.isHidden = offlineViewHidden
     }
 
     // Detects when the view can be touchable

@@ -22,7 +22,7 @@ import WireDesign
 
 extension UIImage {
     func imageScaled(with scaleFactor: CGFloat) -> UIImage? {
-        let size = self.size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
+        let size = size.applying(CGAffineTransform(scaleX: scaleFactor, y: scaleFactor))
         let scale: CGFloat = 0 // Automatically use scale factor of main screens
         let hasAlpha = false
 

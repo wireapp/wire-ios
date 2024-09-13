@@ -39,7 +39,7 @@ final class AvailabilityTests: IntegrationTest {
         // given
         XCTAssertTrue(login())
         mockTransportSession.resetReceivedRequests()
-        let selfUser = ZMUser.selfUser(inUserSession: self.userSession!)
+        let selfUser = ZMUser.selfUser(inUserSession: userSession!)
         let client1 = user1.clients.anyObject() as! MockUserClient
         let client2 = user2.clients.anyObject() as! MockUserClient
 
@@ -68,11 +68,11 @@ final class AvailabilityTests: IntegrationTest {
 
     func testThatAvailabilityIsBroadcastedToAllConnectedUsersAndTeamMembers() {
         // given
-        _ = remotelyInsertTeam(members: [self.selfUser, self.user3, self.user4])
+        _ = remotelyInsertTeam(members: [self.selfUser, user3, user4])
 
         XCTAssertTrue(login())
         mockTransportSession.resetReceivedRequests()
-        let selfUser = ZMUser.selfUser(inUserSession: self.userSession!)
+        let selfUser = ZMUser.selfUser(inUserSession: userSession!)
 
         // when
         userSession?.perform {

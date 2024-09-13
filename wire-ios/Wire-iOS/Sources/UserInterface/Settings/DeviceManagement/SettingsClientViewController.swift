@@ -81,7 +81,7 @@ final class SettingsClientViewController: UIViewController,
         self.edgesForExtendedLayout = []
         self.userClientToken = UserClientChangeInfo.add(observer: self, for: userClient)
 
-        self.viewModel.fingerprintDataClosure = { [weak self] _ in
+        viewModel.fingerprintDataClosure = { [weak self] _ in
             self?.tableView.reloadData()
         }
 
@@ -94,16 +94,16 @@ final class SettingsClientViewController: UIViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.addSubview(self.topSeparator)
-        self.createTableView()
-        self.createConstraints()
+        view.addSubview(topSeparator)
+        createTableView()
+        createConstraints()
 
         if fromConversation {
             setupFromConversationStyle()
         }
         setColor()
 
-        self.viewModel.loadData()
+        viewModel.loadData()
     }
 
     func setupFromConversationStyle() {
@@ -119,10 +119,10 @@ final class SettingsClientViewController: UIViewController,
         super.viewWillAppear(animated)
         setupNavigationTitle()
         // presented modally from conversation
-        if let navController = self.navigationController,
+        if let navController = navigationController,
            !navController.viewControllers.isEmpty,
            navController.viewControllers[0] == self,
-           self.navigationItem.rightBarButtonItem == nil {
+           navigationItem.rightBarButtonItem == nil {
             let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
@@ -130,7 +130,7 @@ final class SettingsClientViewController: UIViewController,
                 }
             )
 
-            self.navigationItem.rightBarButtonItem = doneButtonItem
+            navigationItem.rightBarButtonItem = doneButtonItem
             if fromConversation {
                 let barColor = SemanticColors.View.backgroundDefault
                 navController.navigationBar.barTintColor = barColor
@@ -155,7 +155,7 @@ final class SettingsClientViewController: UIViewController,
         tableView.register(SettingsTableCell.self, forCellReuseIdentifier: type(of: self).resetCellReuseIdentifier)
         tableView.register(SettingsToggleCell.self, forCellReuseIdentifier: type(of: self).verifiedCellReuseIdentifier)
         self.tableView = tableView
-        self.view.addSubview(tableView)
+        view.addSubview(tableView)
     }
 
     private func createConstraints() {
@@ -199,7 +199,7 @@ final class SettingsClientViewController: UIViewController,
     // MARK: - UITableViewDelegate, UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        if self.userClient == userSession.selfUserClient {
+        if userClient == userSession.selfUserClient {
             2
         } else {
             userClient.type == .legalHold ? 3 : 4
@@ -212,7 +212,7 @@ final class SettingsClientViewController: UIViewController,
         case .info:
             return 1
         case .fingerprintAndVerify:
-            if self.userClient == userSession.selfUserClient {
+            if userClient == userSession.selfUserClient {
                 return 1
             } else {
                 return 2
@@ -250,7 +250,7 @@ final class SettingsClientViewController: UIViewController,
                 ) as? FingerprintTableViewCell {
                     cell.selectionStyle = .none
                     cell.separatorInset = .zero
-                    cell.fingerprint = self.viewModel.fingerprintData
+                    cell.fingerprint = viewModel.fingerprintData
                     return cell
                 }
             } else {
@@ -267,7 +267,7 @@ final class SettingsClientViewController: UIViewController,
                     )
                     cell.switchView.accessibilityIdentifier = "device verified"
                     cell.accessibilityIdentifier = "device verified"
-                    cell.switchView.isOn = self.userClient.verified
+                    cell.switchView.isOn = userClient.verified
                     return cell
                 }
             }
@@ -356,7 +356,7 @@ final class SettingsClientViewController: UIViewController,
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.topSeparator.scrollViewDidScroll(scrollView: scrollView)
+        topSeparator.scrollViewDidScroll(scrollView: scrollView)
     }
 
     // MARK: - Copying user client info
@@ -396,7 +396,7 @@ final class SettingsClientViewController: UIViewController,
     // MARK: - UserClientObserver
 
     func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
-        if let tableView = self.tableView {
+        if let tableView {
             tableView.reloadData()
         }
 
@@ -415,7 +415,7 @@ final class SettingsClientViewController: UIViewController,
                 }
             )
             alert.addAction(okAction)
-            self.present(alert, animated: true, completion: .none)
+            present(alert, animated: true, completion: .none)
         }
     }
 }

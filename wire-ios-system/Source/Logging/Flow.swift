@@ -46,7 +46,7 @@ open class Flow {
         name: String
     ) {
         self.name = name
-        logger = WireLogger(tag: tag)
+        self.logger = WireLogger(tag: tag)
     }
 
     // MARK: - Methods

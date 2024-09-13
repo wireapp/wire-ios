@@ -216,7 +216,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         animated: Bool,
         completion: Completion? = nil
     ) {
-        self.internalLeftViewControllerRevealed = leftViewControllerRevealed
+        internalLeftViewControllerRevealed = leftViewControllerRevealed
         updateLeftViewController(animated: animated, completion: completion)
     }
 
@@ -338,7 +338,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
 
     /// return true if right view (mostly conversation screen) is fully visible
     var isRightViewControllerRevealed: Bool {
-        switch self.layoutSize {
+        switch layoutSize {
         case .compact, .regularPortrait:
             !isLeftViewControllerRevealed
         case .regularLandscape:

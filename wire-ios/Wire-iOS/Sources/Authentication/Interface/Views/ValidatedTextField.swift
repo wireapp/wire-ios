@@ -133,7 +133,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
         setNewColors: Bool = false,
         style: TextFieldStyle
     ) {
-        textFieldValidator = TextFieldValidator()
+        self.textFieldValidator = TextFieldValidator()
         self.kind = kind
 
         var textFieldAttributes: Attributes = if setNewColors == false {
@@ -161,7 +161,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer {
             accessoryTrailingInset: accessoryTrailingInset,
             textFieldAttributes: textFieldAttributes
         )
-        self.setupTextFieldProperties()
+        setupTextFieldProperties()
 
         setup()
         setupTextFieldProperties()

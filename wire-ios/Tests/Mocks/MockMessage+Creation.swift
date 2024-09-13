@@ -33,7 +33,7 @@ extension MockMessage {
     }
 }
 
-final class MockMessageFactory {
+enum MockMessageFactory {
     /// Create a template MockMessage with conversation, serverTimestamp, sender and activeParticipants set.
     /// When sender is not provided, create a new self user and assign as sender of the return message
     ///
@@ -242,23 +242,23 @@ final class MockMessageFactory {
     }
 
     static func expiredImageMessage() -> MockMessage? {
-        self.expiredMessage(from: self.imageMessage())
+        expiredMessage(from: imageMessage())
     }
 
     static func expiredVideoMessage() -> MockMessage? {
-        self.expiredMessage(from: self.videoMessage())
+        expiredMessage(from: videoMessage())
     }
 
     static func expiredAudioMessage() -> MockMessage? {
-        self.expiredMessage(from: self.audioMessage())
+        expiredMessage(from: audioMessage())
     }
 
     static func expiredFileMessage() -> MockMessage? {
-        self.expiredMessage(from: self.fileTransferMessage())
+        expiredMessage(from: fileTransferMessage())
     }
 
     static func expiredLinkMessage() -> MockMessage? {
-        self.expiredMessage(from: self.linkMessage())
+        expiredMessage(from: linkMessage())
     }
 
     static func deletedMessage(from message: MockMessage?) -> MockMessage? {
@@ -269,23 +269,23 @@ final class MockMessageFactory {
     }
 
     static func deletedImageMessage() -> MockMessage? {
-        self.deletedMessage(from: self.imageMessage())
+        deletedMessage(from: imageMessage())
     }
 
     static func deletedVideoMessage() -> MockMessage? {
-        self.deletedMessage(from: self.videoMessage())
+        deletedMessage(from: videoMessage())
     }
 
     static func deletedAudioMessage() -> MockMessage? {
-        self.deletedMessage(from: self.audioMessage())
+        deletedMessage(from: audioMessage())
     }
 
     static func deletedFileMessage() -> MockMessage? {
-        self.deletedMessage(from: self.fileTransferMessage())
+        deletedMessage(from: fileTransferMessage())
     }
 
     static func deletedLinkMessage() -> MockMessage? {
-        self.deletedMessage(from: self.linkMessage())
+        deletedMessage(from: linkMessage())
     }
 
     static func passFileTransferMessage() -> MockMessage {

@@ -250,11 +250,11 @@ final class DummyServiceUser: NSObject, ServiceUser {
 final class ServiceUserTests: IntegrationTest {
     override public func setUp() {
         super.setUp()
-        self.createSelfUserAndConversation()
-        self.createExtraUsersAndConversations()
+        createSelfUserAndConversation()
+        createExtraUsersAndConversations()
 
-        XCTAssertTrue(self.login())
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(login())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func createService() -> ServiceUser {
@@ -270,7 +270,7 @@ final class ServiceUserTests: IntegrationTest {
             mockServiceId = mockService.identifier
             mockProviderId = mockService.provider
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         return DummyServiceUser(serviceIdentifier: mockServiceId, providerIdentifier: mockProviderId)
     }
@@ -278,8 +278,8 @@ final class ServiceUserTests: IntegrationTest {
     func testThatItAddsServiceToExistingConversation() throws {
         // given
         let jobIsDone = customExpectation(description: "service is added")
-        let service = self.createService()
-        let conversation = self.conversation(for: self.groupConversation)!
+        let service = createService()
+        let conversation = conversation(for: groupConversation)!
 
         // when
         var result: Result<Void, Error>!
@@ -297,7 +297,7 @@ final class ServiceUserTests: IntegrationTest {
     func testThatItCreatesConversationAndAddsUser() {
         // given
         let jobIsDone = customExpectation(description: "service is added")
-        let service = self.createService()
+        let service = createService()
 
         // when
         service.createConversation(in: userSession!) { result in

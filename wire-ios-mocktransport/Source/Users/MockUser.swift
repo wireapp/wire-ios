@@ -93,7 +93,7 @@ extension MockUser {
 
 extension MockUser {
     public func appendRichInfo(type: String, value: String) {
-        let updatedValues = if let values = self.richProfile {
+        let updatedValues = if let values = richProfile {
             NSMutableArray(array: values)
         } else {
             NSMutableArray()
@@ -128,8 +128,8 @@ extension MockUser {
             return connection.to == self ? connection.from : connection.to
         }
 
-        let connectedToUsers: [MockUser] = self.connectionsTo.compactMap(acceptedUsers)
-        let connectedFromUsers: [MockUser] = self.connectionsFrom.compactMap(acceptedUsers)
+        let connectedToUsers: [MockUser] = connectionsTo.compactMap(acceptedUsers)
+        let connectedFromUsers: [MockUser] = connectionsFrom.compactMap(acceptedUsers)
 
         let teamMembers = currentTeamMembers ?? []
 
@@ -144,7 +144,7 @@ extension MockUser {
 
     // Nil if user is not part of a team
     public var currentTeamMembers: [MockUser]? {
-        self.memberships?.first?.team.members.compactMap(\.user)
+        memberships?.first?.team.members.map(\.user)
     }
 }
 
@@ -205,7 +205,7 @@ extension MockUser {
     }
 
     var data: [String: Any?] {
-        precondition(self.accentID != 0, "Accent ID is not set")
+        precondition(accentID != 0, "Accent ID is not set")
 
         if isAccountDeleted {
             let payload: [String: Any?] = [
@@ -233,13 +233,13 @@ extension MockUser {
                 ],
             ]
 
-            if let providerIdentifier = self.providerIdentifier,
-               let serviceIdentifier = self.serviceIdentifier {
+            if let providerIdentifier,
+               let serviceIdentifier {
                 payload["service"] = ["provider": providerIdentifier,
                                       "id": serviceIdentifier]
             }
 
-            if let team = self.memberships?.first?.team {
+            if let team = memberships?.first?.team {
                 payload["team"] = team.identifier
             }
 
@@ -264,7 +264,7 @@ extension MockUser {
     }
 
     @objc public var mockPushEventForChangedValues: MockPushEvent? {
-        let changedValues = self.changedValues()
+        let changedValues = changedValues()
 
         if changedValues.keys.contains(#keyPath(MockUser.isAccountDeleted)) {
             let payload = ["type": "user.delete", "id": identifier, "time": Date().transportString()] as ZMTransportData

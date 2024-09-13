@@ -25,7 +25,7 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
         // GIVEN
 
         // Setup Session Manager
-        let sessionManager = try XCTUnwrap(self.sessionManager)
+        let sessionManager = try XCTUnwrap(sessionManager)
         let account = addAccount(name: "John Doe", userIdentifier: UUID())
         sessionManager.accountManager.select(account)
 

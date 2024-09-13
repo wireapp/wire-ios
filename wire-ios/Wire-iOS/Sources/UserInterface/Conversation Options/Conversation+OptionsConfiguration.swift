@@ -38,7 +38,7 @@ extension ZMConversation {
             self.conversation = conversation
             self.userSession = userSession
             super.init()
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             conversation.canGenerateGuestLink(in: userSession) { [weak self] result in
                 switch result {

@@ -40,19 +40,19 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
             .allowsRequestsDuringQuickSync,
             .allowsRequestsWhileWaitingForWebsocket,
         ]
-        self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: self.managedObjectContext)
+        self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let shouldBeDeleted: NSNumber = self.managedObjectContext
+        guard let shouldBeDeleted: NSNumber = managedObjectContext
             .persistentStoreMetadata(forKey: DeleteAccountRequestStrategy.userDeletionInitiatedKey) as? NSNumber,
             shouldBeDeleted.boolValue
         else {
             return nil
         }
 
-        self.deleteSync.readyForNextRequestIfNotBusy()
-        return self.deleteSync.nextRequest(for: apiVersion)
+        deleteSync.readyForNextRequestIfNotBusy()
+        return deleteSync.nextRequest(for: apiVersion)
     }
 
     // MARK: - ZMSingleRequestTranscoder
@@ -70,7 +70,7 @@ public final class DeleteAccountRequestStrategy: AbstractRequestStrategy, ZMSing
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         if response.result == .success || response.result == .permanentError {
-            self.managedObjectContext.setPersistentStoreMetadata(
+            managedObjectContext.setPersistentStoreMetadata(
                 NSNumber(value: false),
                 key: DeleteAccountRequestStrategy.userDeletionInitiatedKey
             )

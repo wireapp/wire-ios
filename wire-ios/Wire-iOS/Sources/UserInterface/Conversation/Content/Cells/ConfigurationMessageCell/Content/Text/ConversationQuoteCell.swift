@@ -287,8 +287,8 @@ final class ConversationReplyCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
 
     override init(frame: CGRect) {
-        contentView = ConversationReplyContentView()
-        container = ReplyRoundCornersView(containedView: contentView)
+        self.contentView = ConversationReplyContentView()
+        self.container = ReplyRoundCornersView(containedView: contentView)
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
@@ -337,7 +337,7 @@ final class ConversationReplyCellDescription: ConversationMessageCellDescription
     let accessibilityIdentifier: String? = "ReplyCell"
 
     init(quotedMessage: ZMConversationMessage?) {
-        configuration = View.Configuration(quotedMessage: quotedMessage)
+        self.configuration = View.Configuration(quotedMessage: quotedMessage)
     }
 }
 

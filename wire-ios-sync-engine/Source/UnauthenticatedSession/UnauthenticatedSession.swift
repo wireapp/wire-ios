@@ -101,7 +101,7 @@ public class UnauthenticatedSession: NSObject {
     }
 
     func authenticationErrorIfNotReachable(_ block: () -> Void) {
-        if self.reachability.mayBeReachable {
+        if reachability.mayBeReachable {
             block()
         } else {
             let error = NSError(userSessionErrorCode: .networkError, userInfo: nil)
@@ -142,7 +142,7 @@ extension UnauthenticatedSession: UserInfoParser {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
         cookieStorage.authenticationCookieData = userInfo.cookieData
-        self.authenticationStatus.authenticationCookieData = userInfo.cookieData
-        self.delegate?.session(session: self, createdAccount: account)
+        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        delegate?.session(session: self, createdAccount: account)
     }
 }

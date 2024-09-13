@@ -28,7 +28,7 @@ public struct E2EIClientID: Equatable, Hashable {
     // The string representation of the id.
 
     public var rawValue: String {
-        "\(self.userID):\(self.clientID)@\(self.domain)"
+        "\(userID):\(clientID)@\(domain)"
     }
 
     public init(

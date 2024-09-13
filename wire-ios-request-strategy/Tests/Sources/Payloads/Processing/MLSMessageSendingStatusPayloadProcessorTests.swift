@@ -39,7 +39,7 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatItAddsFailedToSendRecipients() throws {
-        try self.syncMOC.performGroupedAndWait {
+        try syncMOC.performGroupedAndWait {
             // given
             guard let message = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage
             else {

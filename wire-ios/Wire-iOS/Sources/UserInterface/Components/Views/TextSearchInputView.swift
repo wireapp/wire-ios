@@ -42,14 +42,14 @@ final class TextSearchInputView: UIView {
     weak var delegate: TextSearchInputViewDelegate?
     var query = "" {
         didSet {
-            self.updateForSearchQuery()
-            self.delegate?.searchView(self, didChangeQueryTo: self.query)
+            updateForSearchQuery()
+            delegate?.searchView(self, didChangeQueryTo: query)
         }
     }
 
     var placeholderString = "" {
         didSet {
-            self.placeholderLabel.text = placeholderString
+            placeholderLabel.text = placeholderString
         }
     }
 
@@ -135,18 +135,18 @@ final class TextSearchInputView: UIView {
 
     @objc
     func onCancelButtonTouchUpInside(_: AnyObject!) {
-        self.query = ""
-        self.searchInput.text = ""
-        self.searchInput.resignFirstResponder()
+        query = ""
+        searchInput.text = ""
+        searchInput.resignFirstResponder()
     }
 
     fileprivate func updatePlaceholderLabel() {
-        self.placeholderLabel.isHidden = !self.query.isEmpty
+        placeholderLabel.isHidden = !query.isEmpty
     }
 
     fileprivate func updateForSearchQuery() {
-        self.updatePlaceholderLabel()
-        clearButton.isHidden = self.query.isEmpty
+        updatePlaceholderLabel()
+        clearButton.isHidden = query.isEmpty
     }
 }
 
@@ -158,7 +158,7 @@ extension TextSearchInputView: UITextViewDelegate {
         let containsReturn = text.rangeOfCharacter(from: .newlines, options: [], range: .none) != .none
 
         let newText = (currentText as NSString).replacingCharacters(in: range, with: text)
-        self.query = containsReturn ? currentText : newText
+        query = containsReturn ? currentText : newText
 
         if containsReturn {
             let shouldReturn = delegate?.searchViewShouldReturn(self) ?? true
@@ -171,10 +171,10 @@ extension TextSearchInputView: UITextViewDelegate {
     }
 
     func textViewDidBeginEditing(_: UITextView) {
-        self.updatePlaceholderLabel()
+        updatePlaceholderLabel()
     }
 
     func textViewDidEndEditing(_: UITextView) {
-        self.updatePlaceholderLabel()
+        updatePlaceholderLabel()
     }
 }

@@ -49,7 +49,7 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         transitionContext.view(forKey: UITransitionContextViewKey.to)?.layoutIfNeeded()
 
-        let visualEffect = self.visualEffectView.effect
+        let visualEffect = visualEffectView.effect
 
         if reverse {
             UIView.animate(withDuration: 0.35, animations: {
@@ -63,8 +63,8 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
                 transitionContext.completeTransition(didComplete)
             })
         } else {
-            self.visualEffectView.effect = nil
-            for view in self.crossfadingViews {
+            visualEffectView.effect = nil
+            for view in crossfadingViews {
                 view.alpha = 0
             }
 

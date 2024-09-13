@@ -29,7 +29,7 @@ public final class SelfUserRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        actionSync =
+        self.actionSync =
             EntityActionSync(actionHandlers: [PushSupportedProtocolsActionHandler(context: managedObjectContext)])
 
         super.init(

@@ -58,7 +58,7 @@ final class OperationLoopTests: ZMTBaseTest {
         }
 
         self.coreDataStack = coreDataStack
-        self.sut = OperationLoop(
+        sut = OperationLoop(
             userContext: coreDataStack.viewContext,
             syncContext: coreDataStack.syncContext,
             callBackQueue: OperationQueue()
@@ -78,10 +78,10 @@ extension OperationLoopTests {
 
         var syncUser: ZMUser!
         syncMoc.performGroupedBlock { [unowned self] in
-            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
-            self.syncMoc.saveOrRollback()
+            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: syncMoc)
+            syncMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
@@ -92,7 +92,7 @@ extension OperationLoopTests {
             XCTAssertNotNil(uiUser)
             self.uiMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(syncUser.name, "Jean Claude YouKnowWho")
     }
@@ -102,10 +102,10 @@ extension OperationLoopTests {
 
         var syncUser: ZMUser!
         coreDataStack.syncContext.performGroupedBlock { [unowned self] in
-            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
-            self.syncMoc.saveOrRollback()
+            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: syncMoc)
+            syncMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertNotNil(syncUser)
         XCTAssertNil(syncUser.name)
@@ -115,13 +115,13 @@ extension OperationLoopTests {
             uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             XCTAssertNotNil(uiUser)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMoc.performGroupedAndWait {
             syncUser.name = "Jean Claude YouKnowWho"
             self.syncMoc.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(uiUser.name, syncUser.name)
     }

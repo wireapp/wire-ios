@@ -28,10 +28,10 @@ struct CRLURLBuilder {
         self.shouldUseProxy = shouldUseProxy
 
         guard let proxyURLString else {
-            proxyURL = nil
+            self.proxyURL = nil
             return
         }
-        proxyURL = URL(string: proxyURLString)
+        self.proxyURL = URL(string: proxyURLString)
     }
 
     func getURL(from distributionPoint: URL) -> URL {

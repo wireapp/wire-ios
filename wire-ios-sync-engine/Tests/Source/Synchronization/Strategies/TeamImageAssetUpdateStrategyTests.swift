@@ -28,8 +28,8 @@ final class TeamImageAssetUpdateStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
 
         sut = TeamImageAssetUpdateStrategy(withManagedObjectContext: uiMOC, applicationStatus: mockApplicationStatus)
     }

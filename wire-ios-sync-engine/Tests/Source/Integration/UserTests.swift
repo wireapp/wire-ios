@@ -31,7 +31,7 @@ final class UserTests_swift: IntegrationTest {
 
         // Create a conversation and change SelfUser name
 
-        let conversation = self.conversation(for: groupConversation)
+        let conversation = conversation(for: groupConversation)
         _ = conversation?.lastModifiedDate
 
         weak var selfUser = ZMUser.selfUser(inUserSession: userSession!)
@@ -54,7 +54,7 @@ final class UserTests_swift: IntegrationTest {
         var extraUser: MockUser?
         mockTransportSession.performRemoteChanges { [self] session in
             extraUser = session.insertUser(withName: "Max Tester")
-            self.groupConversation.addUsers(by: self.selfUser, addedUsers: [extraUser!])
+            groupConversation.addUsers(by: self.selfUser, addedUsers: [extraUser!])
             XCTAssertNotNil(extraUser?.name)
         }
 

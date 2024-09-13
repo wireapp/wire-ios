@@ -111,7 +111,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
-            let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
+            let message = conversation.appendTextMessage(text, fetchLinkPreview: fetchPreview)
             completion(message)
         }
     }
@@ -120,7 +120,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
         needsPreparation = false
 
-        if let attachment = self.attachment, attachment.hasURL {
+        if let attachment, attachment.hasURL {
             self.attachment?.fetchURL(completion: { _ in
                 completion()
             })
@@ -204,7 +204,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
-            completion(self.imageData.flatMap(self.conversation.appendImage))
+            completion(imageData.flatMap(conversation.appendImage))
         }
     }
 }
@@ -255,16 +255,16 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
             guard let self else { return }
-            completion(self.metadata.flatMap(self.conversation.appendFile))
+            completion(metadata.flatMap(conversation.appendFile))
         }
     }
 
     private func prepareAsFileData(name: String?, completion: @escaping () -> Void) {
-        self.prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
+        prepareAsFile(name: name, typeIdentifier: UTType.data.identifier, completion: completion)
     }
 
     private func prepareAsWalletPass(name: String?, completion: @escaping () -> Void) {
-        self.prepareAsFile(name: nil, typeIdentifier: UnsentFileSendable.passkitUTI, completion: completion)
+        prepareAsFile(name: nil, typeIdentifier: UnsentFileSendable.passkitUTI, completion: completion)
     }
 
     private func prepareAsFile(name: String?, typeIdentifier: String, completion: @escaping () -> Void) {

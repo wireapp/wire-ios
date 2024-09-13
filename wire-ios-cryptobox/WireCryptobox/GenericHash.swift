@@ -55,8 +55,11 @@ public final class GenericHashBuilder {
     private static let size = MemoryLayout<Int>.size
 
     init() {
-        cryptoState = UnsafeMutableRawBufferPointer.allocate(byteCount: crypto_generichash_statebytes(), alignment: 64)
-        opaqueCryptoState = OpaquePointer(cryptoState.baseAddress!)
+        self.cryptoState = UnsafeMutableRawBufferPointer.allocate(
+            byteCount: crypto_generichash_statebytes(),
+            alignment: 64
+        )
+        self.opaqueCryptoState = OpaquePointer(cryptoState.baseAddress!)
 
         crypto_generichash_init(opaqueCryptoState, nil, 0, GenericHashBuilder.size)
     }

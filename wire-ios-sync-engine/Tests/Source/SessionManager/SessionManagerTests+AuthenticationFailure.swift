@@ -92,7 +92,7 @@ final class SessionManagerAuthenticationFailureTests: IntegrationTest {
 
         // load additional account as a background session
         sessionManager!.withSession(for: additionalAccount, perform: { _ in })
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertNotNil(sessionManager?.backgroundUserSessions[additionalAccount.userIdentifier])
 
         // when

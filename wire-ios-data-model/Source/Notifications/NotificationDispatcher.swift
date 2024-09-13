@@ -112,7 +112,7 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
 
         self.managedObjectContext = managedObjectContext
 
-        changeDetectorBuilder = { operationMode in
+        self.changeDetectorBuilder = { operationMode in
             switch operationMode {
             case .normal:
                 let classIdentifiers = [
@@ -142,8 +142,8 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
             }
         }
 
-        operationMode = .normal
-        changeDetector = changeDetectorBuilder(operationMode)
+        self.operationMode = .normal
+        self.changeDetector = changeDetectorBuilder(operationMode)
 
         super.init()
 
@@ -355,7 +355,7 @@ public class NotificationDispatcher: NSObject, TearDownCapable {
     private func fireAllNotifications() {
         let detectedChanges = changeDetector.consumeChanges()
         var changesByClass = [ClassIdentifier: [ObjectChangeInfo]]()
-        let unreadMessages = self.unreadMessages
+        let unreadMessages = unreadMessages
         self.unreadMessages = UnreadMessages()
 
         detectedChanges.forEach { changeInfo in

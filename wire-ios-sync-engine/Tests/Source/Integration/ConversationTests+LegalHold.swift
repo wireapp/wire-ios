@@ -23,7 +23,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
     func testThatItInsertsLegalHoldSystemMessage_WhenDiscoveringLegalHoldClientOnSending() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
@@ -43,7 +43,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
     func testThatItInsertsLegalHoldSystemMessage_WhenLegalHoldClientIsReportedAsDeletedOnSending() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         var legalHoldClient: MockUserClient!
         mockTransportSession.performRemoteChanges { session in
             legalHoldClient = session.registerClient(
@@ -84,7 +84,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform {
+        let (legalHoldUser, groupConversation) = await userSession!.managedObjectContext.perform {
             (
                 self.user(for: self.user1),
                 self.conversation(for: self.groupConversation)
@@ -103,7 +103,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
-        await self.userSession?.managedObjectContext.perform {
+        await userSession?.managedObjectContext.perform {
             legalHoldUser.fetchUserClients()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -114,7 +114,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        await self.userSession!.managedObjectContext.perform {
+        await userSession!.managedObjectContext.perform {
             let lastMessage = groupConversation.lastMessage as? ZMSystemMessage
             XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldEnabled)
             XCTAssertEqual(groupConversation.legalHoldStatus, .pendingApproval)
@@ -125,7 +125,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform {
+        let (legalHoldUser, groupConversation) = await userSession!.managedObjectContext.perform {
             (
                 self.user(for: self.user1),
                 self.conversation(for: self.groupConversation)
@@ -150,7 +150,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
 
         try await conversationParticipantsService.addParticipants([legalHoldUser], to: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        await self.userSession!.managedObjectContext.perform {
+        await userSession!.managedObjectContext.perform {
             XCTAssertEqual(groupConversation.legalHoldStatus, .pendingApproval)
         }
 
@@ -159,7 +159,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        await self.userSession!.managedObjectContext.perform {
+        await userSession!.managedObjectContext.perform {
             let lastMessage = groupConversation.lastMessage as? ZMSystemMessage
             XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldDisabled)
             XCTAssertEqual(groupConversation.legalHoldStatus, .disabled)
@@ -172,9 +172,9 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let selfUserClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let selfUserClient = selfUser.clients.anyObject() as! MockUserClient
         let otherUserClient = user1.clients.anyObject() as! MockUserClient
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
@@ -204,11 +204,11 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let legalHoldUser = self.user(for: user1)!
-        let selfUserClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let legalHoldUser = user(for: user1)!
+        let selfUserClient = selfUser.clients.anyObject() as! MockUserClient
         let otherUserClient = user1.clients.anyObject() as! MockUserClient
         var legalHoldClient: MockUserClient!
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         mockTransportSession.performRemoteChanges { session in
             legalHoldClient = session.registerClient(
@@ -248,9 +248,9 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let selfUserClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let selfUserClient = selfUser.clients.anyObject() as! MockUserClient
         let otherUserClient = user1.clients.anyObject() as! MockUserClient
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // when
         mockTransportSession.performRemoteChanges { _ in
@@ -276,9 +276,9 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let selfUserClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let selfUserClient = selfUser.clients.anyObject() as! MockUserClient
         let otherUserClient = user1.clients.anyObject() as! MockUserClient
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")

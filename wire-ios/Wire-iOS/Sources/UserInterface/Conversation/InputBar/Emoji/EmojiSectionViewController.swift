@@ -48,7 +48,7 @@ final class EmojiSectionViewController: UIViewController {
         setupViews()
         createConstraints()
         view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan)))
-        selectedType = typesByButton.values.first
+        self.selectedType = typesByButton.values.first
     }
 
     @available(*, unavailable)

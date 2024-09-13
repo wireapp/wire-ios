@@ -47,7 +47,7 @@ extension ZMUserSession {
         }
 
         // 1) Check the state
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         guard let teamID = selfUser.team?.remoteIdentifier else {
             return completionHandler(.selfUserNotInTeam)

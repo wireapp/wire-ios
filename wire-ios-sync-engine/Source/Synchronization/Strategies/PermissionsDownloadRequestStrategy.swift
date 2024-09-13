@@ -83,7 +83,7 @@ public final class PermissionsDownloadRequestStrategy: AbstractRequestStrategy, 
     ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
-        sync = ZMDownstreamObjectSync(
+        self.sync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Member.entityName(),
             predicateForObjectsToDownload: Member.predicateForObjectsNeedingToBeUpdated,

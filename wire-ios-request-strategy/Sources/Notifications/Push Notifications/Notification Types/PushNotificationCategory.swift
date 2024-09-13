@@ -68,7 +68,7 @@ public enum PushNotificationCategory: String, CaseIterable {
 
     /// The representation of the category that can be used with `UserNotifications` API.
     var userNotificationCategory: UNNotificationCategory {
-        let userActions = self.actions.map(\.userAction)
+        let userActions = actions.map(\.userAction)
         return UNNotificationCategory(identifier: rawValue, actions: userActions, intentIdentifiers: [], options: [])
     }
 }

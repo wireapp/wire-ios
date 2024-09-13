@@ -124,17 +124,17 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
             switch result {
             case .granted:
-                self.unlockDatabase()
-                self.openAppLock()
+                unlockDatabase()
+                openAppLock()
 
             case .denied:
-                self.presenter.handleResult(.authenticationDenied(self.authenticationType.current))
+                presenter.handleResult(.authenticationDenied(authenticationType.current))
 
             case .needCustomPasscode:
-                self.presenter.handleResult(.customPasscodeNeeded)
+                presenter.handleResult(.customPasscodeNeeded)
 
             case .unavailable:
-                self.presenter.handleResult(.authenticationUnavailable)
+                presenter.handleResult(.authenticationUnavailable)
             }
         }
     }

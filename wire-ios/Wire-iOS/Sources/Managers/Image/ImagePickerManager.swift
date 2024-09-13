@@ -23,7 +23,7 @@ import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
-        guard let imageData = self.pngData() else {
+        guard let imageData = pngData() else {
             return nil
         }
         return imageData.isJPEG ? imageData : UIImage(data: imageData)?.jpegData(compressionQuality: 1.0)

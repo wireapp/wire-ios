@@ -37,14 +37,14 @@ final class SlowSyncTests_NotificationsV3: IntegrationTest {
 
     func test_WhenSinceIdParam404DuringQuickSyncItTriggersASlowSync() {
         internalTestSlowSyncIsPerformedDuringQuickSync(
-            withSinceParameterId: self.mockTransportSession
+            withSinceParameterId: mockTransportSession
                 .invalidSinceParameter400
         )
     }
 
     func test_WhenSinceIdParam400DuringQuickSyncItTriggersASlowSync() {
         internalTestSlowSyncIsPerformedDuringQuickSync(
-            withSinceParameterId: self.mockTransportSession
+            withSinceParameterId: mockTransportSession
                 .unknownSinceParameter404
         )
     }
@@ -54,10 +54,10 @@ final class SlowSyncTests_NotificationsV3: IntegrationTest {
         XCTAssertTrue(login())
 
         // add an invalid /notifications/since
-        self.mockTransportSession.overrideNextSinceParameter = sinceParameter
+        mockTransportSession.overrideNextSinceParameter = sinceParameter
 
         // WHEN
-        self.performQuickSync()
+        performQuickSync()
 
         // THEN
         // ensure it performs slow sync

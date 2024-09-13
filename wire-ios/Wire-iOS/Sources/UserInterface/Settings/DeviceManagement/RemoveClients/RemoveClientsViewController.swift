@@ -45,7 +45,7 @@ final class RemoveClientsViewController: UIViewController,
     // MARK: - Life cycle
 
     required init(clientsList: [UserClient]) {
-        viewModel = RemoveClientsViewController.ViewModel(
+        self.viewModel = RemoveClientsViewController.ViewModel(
             clientsList: clientsList
         )
 
@@ -69,8 +69,8 @@ final class RemoveClientsViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.createTableView()
-        self.createConstraints()
+        createTableView()
+        createConstraints()
     }
 
     // MARK: - Helpers
@@ -88,7 +88,7 @@ final class RemoveClientsViewController: UIViewController,
         clientsTableView.isEditing = true
         clientsTableView.backgroundColor = SemanticColors.View.backgroundDefault
         clientsTableView.separatorStyle = .none
-        self.view.addSubview(clientsTableView)
+        view.addSubview(clientsTableView)
     }
 
     private func createConstraints() {
@@ -106,7 +106,7 @@ final class RemoveClientsViewController: UIViewController,
 
     @objc
     func backPressed(_: AnyObject!) {
-        self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
     func removeUserClient(_ userClient: UserClient) async {

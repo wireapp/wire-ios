@@ -23,7 +23,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
+        let conversation = try XCTUnwrap(conversation(for: emptyGroupConversation))
         let conversationParticipantsService = ConversationParticipantsService(
             context: userSession!
                 .managedObjectContext
@@ -66,7 +66,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
+        let conversation = try XCTUnwrap(conversation(for: emptyGroupConversation))
         let conversationParticipantsService = ConversationParticipantsService(
             context: userSession!
                 .managedObjectContext
@@ -85,14 +85,14 @@ class ConversationTests_Participants: ConversationTestsBase {
             XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
         }
         // Tear down & recreate contexts
-        self.recreateSessionManagerAndDeleteLocalData()
+        recreateSessionManagerAndDeleteLocalData()
         XCTAssertTrue(login())
 
         // then
         await userSession!.managedObjectContext.perform { [self] in
             XCTAssertTrue(
                 self.conversation(for: emptyGroupConversation)!.localParticipants
-                    .contains(user(for: self.user2)!)
+                    .contains(user(for: user2)!)
             )
         }
     }
@@ -101,7 +101,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
+        let conversation = try XCTUnwrap(conversation(for: groupConversation))
         let conversationParticipantsService = ConversationParticipantsService(
             context: userSession!
                 .managedObjectContext
@@ -122,14 +122,14 @@ class ConversationTests_Participants: ConversationTestsBase {
         }
 
         // Tear down & recreate contexts
-        self.recreateSessionManagerAndDeleteLocalData()
+        recreateSessionManagerAndDeleteLocalData()
         XCTAssertTrue(login())
 
         // then
         await userSession!.managedObjectContext.perform { [self] in
             XCTAssertFalse(
                 self.conversation(for: groupConversation)!.localParticipants
-                    .contains(user(for: self.user2)!)
+                    .contains(user(for: user2)!)
             )
         }
     }
@@ -140,7 +140,7 @@ class ConversationTests_Participants: ConversationTestsBase {
 
         // I am faulting conversation, will maintain the "message" relations as faulted
         let conversationList: ConversationList = .conversations(inUserSession: userSession!)
-        let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
+        let conversation1 = try XCTUnwrap(conversation(for: selfToUser1Conversation))
         let previousIndex = try XCTUnwrap(conversationList.items.firstIndex(of: conversation1))
 
         XCTAssertEqual(conversationList.items.count, 5)
@@ -148,7 +148,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         let observer = ConversationListChangeObserver(conversationList: conversationList)
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil),

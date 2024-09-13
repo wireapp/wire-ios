@@ -69,7 +69,7 @@ public class UserProfileUpdateStatus: NSObject {
 
 extension UserProfileUpdateStatus: UserProfile {
     public var lastSuggestedHandle: String? {
-        self.bestHandleSuggestion
+        bestHandleSuggestion
     }
 
     public func requestEmailChange(email: String) throws {
@@ -77,7 +77,7 @@ extension UserProfileUpdateStatus: UserProfile {
             throw UserProfileUpdateError.missingArgument
         }
 
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
             guard selfUser.emailAddress != nil else {
                 self.didFailEmailUpdate(error: UserProfileUpdateError.emailNotSet)
@@ -94,7 +94,7 @@ extension UserProfileUpdateStatus: UserProfile {
             throw UserProfileUpdateError.missingArgument
         }
 
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
             guard selfUser.emailAddress == nil else {
                 self.didFailEmailUpdate(error: UserProfileUpdateError.emailAlreadySet)
@@ -111,7 +111,7 @@ extension UserProfileUpdateStatus: UserProfile {
     }
 
     public func cancelSettingEmailAndPassword() {
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             self.lastEmailAndPassword = nil
             self.emailToSet = nil
             self.passwordToSet = nil
@@ -120,27 +120,27 @@ extension UserProfileUpdateStatus: UserProfile {
     }
 
     public func requestCheckHandleAvailability(handle: String) {
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             self.handleToCheck = handle
             self.newRequestCallback()
         }
     }
 
     public func requestSettingHandle(handle: String) {
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             self.handleToSet = handle
             self.newRequestCallback()
         }
     }
 
     public func cancelSettingHandle() {
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             self.handleToSet = nil
         }
     }
 
     public func suggestHandles() {
-        self.managedObjectContext.performGroupedBlock {
+        managedObjectContext.performGroupedBlock {
             guard self.suggestedHandlesToCheck == nil else {
                 // already searching
                 return
@@ -165,37 +165,37 @@ extension UserProfileUpdateStatus: UserProfile {
 extension UserProfileUpdateStatus {
     /// Invoked when the request to set password succedeed
     func didUpdatePasswordSuccessfully() {
-        self.passwordToSet = nil
+        passwordToSet = nil
     }
 
     /// Invoked when the request to set password failed
     func didFailPasswordUpdate() {
-        self.lastEmailAndPassword = nil
-        self.emailToSet = nil
-        self.passwordToSet = nil
+        lastEmailAndPassword = nil
+        emailToSet = nil
+        passwordToSet = nil
         UserProfileUpdateNotification(type: .passwordUpdateDidFail).post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when the request to change email was sent successfully
     func didUpdateEmailSuccessfully() {
-        self.emailToSet = nil
+        emailToSet = nil
         UserProfileUpdateNotification(type: .emailDidSendVerification)
             .post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when the request to change email failed
     func didFailEmailUpdate(error: Error) {
-        self.lastEmailAndPassword = nil
-        self.emailToSet = nil
-        self.passwordToSet = nil
+        lastEmailAndPassword = nil
+        emailToSet = nil
+        passwordToSet = nil
         UserProfileUpdateNotification(type: .emailUpdateDidFail(error: error))
             .post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when the request to fetch a handle returned not found
     func didNotFindHandle(handle: String) {
-        if self.handleToCheck == handle {
-            self.handleToCheck = nil
+        if handleToCheck == handle {
+            handleToCheck = nil
         }
         UserProfileUpdateNotification(type: .didCheckAvailabilityOfHandle(handle: handle, available: true))
             .post(in: managedObjectContext.notificationContext)
@@ -203,8 +203,8 @@ extension UserProfileUpdateStatus {
 
     /// Invoked when the request to fetch a handle returned successfully
     func didFetchHandle(handle: String) {
-        if self.handleToCheck == handle {
-            self.handleToCheck = nil
+        if handleToCheck == handle {
+            handleToCheck = nil
         }
         UserProfileUpdateNotification(type: .didCheckAvailabilityOfHandle(handle: handle, available: false))
             .post(in: managedObjectContext.notificationContext)
@@ -213,8 +213,8 @@ extension UserProfileUpdateStatus {
     /// Invoked when the request to fetch a handle failed with
     /// an error that is not "not found"
     func didFailRequestToFetchHandle(handle: String) {
-        if self.handleToCheck == handle {
-            self.handleToCheck = nil
+        if handleToCheck == handle {
+            handleToCheck = nil
         }
         UserProfileUpdateNotification(type: .didFailToCheckAvailabilityOfHandle(handle: handle))
             .post(in: managedObjectContext.notificationContext)
@@ -222,42 +222,42 @@ extension UserProfileUpdateStatus {
 
     /// Invoked when the handle was succesfully set
     func didSetHandle() {
-        if let handle = self.handleToSet {
-            ZMUser.selfUser(in: self.managedObjectContext).handle = handle
+        if let handle = handleToSet {
+            ZMUser.selfUser(in: managedObjectContext).handle = handle
         }
-        self.handleToSet = nil
+        handleToSet = nil
         UserProfileUpdateNotification(type: .didSetHandle).post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when the handle was not set because of a generic error
     func didFailToSetHandle() {
-        self.handleToSet = nil
+        handleToSet = nil
         UserProfileUpdateNotification(type: .didFailToSetHandle).post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when the handle was not set because it was already existing
     func didFailToSetAlreadyExistingHandle() {
-        self.handleToSet = nil
+        handleToSet = nil
         UserProfileUpdateNotification(type: .didFailToSetHandleBecauseExisting)
             .post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when a good handle suggestion is found
     func didFindHandleSuggestion(handle: String) {
-        self.bestHandleSuggestion = handle
-        self.suggestedHandlesToCheck = nil
+        bestHandleSuggestion = handle
+        suggestedHandlesToCheck = nil
         UserProfileUpdateNotification(type: .didFindHandleSuggestion(handle: handle))
             .post(in: managedObjectContext.notificationContext)
     }
 
     /// Invoked when all potential suggested handles were not available
     func didNotFindAvailableHandleSuggestion() {
-        if ZMUser.selfUser(in: self.managedObjectContext).handle != nil {
+        if ZMUser.selfUser(in: managedObjectContext).handle != nil {
             // it has handle, no need to keep suggesting
-            self.suggestedHandlesToCheck = nil
+            suggestedHandlesToCheck = nil
         } else {
-            let name = ZMUser.selfUser(in: self.managedObjectContext).name
-            self.suggestedHandlesToCheck = RandomHandleGenerator.generatePossibleHandles(
+            let name = ZMUser.selfUser(in: managedObjectContext).name
+            suggestedHandlesToCheck = RandomHandleGenerator.generatePossibleHandles(
                 displayName: name ?? "",
                 alternativeNames: alternativeAutogeneratedNames
             )
@@ -266,7 +266,7 @@ extension UserProfileUpdateStatus {
 
     /// Invoked when failed to fetch handle suggestion
     func didFailToFindHandleSuggestion() {
-        self.suggestedHandlesToCheck = nil
+        suggestedHandlesToCheck = nil
     }
 }
 
@@ -275,14 +275,14 @@ extension UserProfileUpdateStatus {
 extension UserProfileUpdateStatus: ZMCredentialProvider {
     /// The email credentials being set
     public func emailCredentials() -> UserEmailCredentials? {
-        guard !self.currentlySettingEmail, !self.currentlySettingPassword else {
+        guard !currentlySettingEmail, !currentlySettingPassword else {
             return nil
         }
-        return self.lastEmailAndPassword
+        return lastEmailAndPassword
     }
 
     public func credentialsMayBeCleared() {
-        self.lastEmailAndPassword = nil
+        lastEmailAndPassword = nil
     }
 }
 
@@ -291,53 +291,53 @@ extension UserProfileUpdateStatus: ZMCredentialProvider {
 extension UserProfileUpdateStatus {
     /// Whether the current user has an email set in the profile
     private var selfUserHasEmail: Bool {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
         return selfUser.emailAddress != nil && selfUser.emailAddress != ""
     }
 
     /// Whether the current user has a phone number set in the profile
     private var selfUserHasPhoneNumber: Bool {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
         return selfUser.phoneNumber != nil && selfUser.phoneNumber != ""
     }
 
     /// Whether we are currently changing email
     public var currentlyChangingEmail: Bool {
-        guard self.selfUserHasEmail else {
+        guard selfUserHasEmail else {
             return false
         }
-        return self.emailToSet != nil
+        return emailToSet != nil
     }
 
     /// Whether we are currently setting the email.
     public var currentlySettingEmail: Bool {
-        guard !self.selfUserHasEmail else {
+        guard !selfUserHasEmail else {
             return false
         }
-        return self.emailToSet != nil && self.passwordToSet == nil
+        return emailToSet != nil && passwordToSet == nil
     }
 
     /// Whether we are currently setting the password.
     public var currentlySettingPassword: Bool {
-        guard !self.selfUserHasEmail else {
+        guard !selfUserHasEmail else {
             return false
         }
-        return self.passwordToSet != nil
+        return passwordToSet != nil
     }
 
     /// Whether we are currently waiting to check for availability of a handle
     public var currentlyCheckingHandleAvailability: Bool {
-        self.handleToCheck != nil
+        handleToCheck != nil
     }
 
     /// Whether we are currently requesting a change of handle
     public var currentlySettingHandle: Bool {
-        self.handleToSet != nil
+        handleToSet != nil
     }
 
     /// Whether we are currently looking for a valid suggestion for a handle
     public var currentlyGeneratingHandleSuggestion: Bool {
-        ZMUser.selfUser(in: self.managedObjectContext).handle == nil && self.suggestedHandlesToCheck != nil
+        ZMUser.selfUser(in: managedObjectContext).handle == nil && suggestedHandlesToCheck != nil
     }
 }
 

@@ -26,7 +26,7 @@ class ZMConversation_TypingUsersTests: MessagingTest {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // Then
-        let expectation = self.customExpectation(description: "Notification")
+        let expectation = customExpectation(description: "Notification")
         let assertion: (NotificationInContext) -> Void = { notification in
             XCTAssertEqual(notification.object as? ZMConversation, conversation)
             XCTAssertEqual(notification.userInfo["isTyping"] as? Bool, true)

@@ -101,7 +101,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         self.countlyInstanceType = countlyInstanceType
         self.appKey = countlyAppKey
         self.serverURL = serverURL
-        isOptedOut = false
+        self.isOptedOut = false
         setupApplicationNotifications()
     }
 
@@ -128,7 +128,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         config.manualSessionHandling = true
         config.deviceID = analyticsIdentifier
 
-        config.urlSessionConfiguration = self.sessionConfiguration
+        config.urlSessionConfiguration = sessionConfiguration
         updateCountlyUser(withProperties: userProperties)
 
         countlyInstanceType.sharedInstance().start(with: config)

@@ -69,8 +69,8 @@ public struct SearchUserAssetKeys {
             }
 
             if previewKey != nil || completeKey != nil {
-                preview = previewKey
-                complete = completeKey
+                self.preview = previewKey
+                self.complete = completeKey
                 return
             }
         }
@@ -675,7 +675,7 @@ public class ZMSearchUser: NSObject, UserType {
     public func requestPreviewProfileImage() {
         guard previewImageData == nil else { return }
 
-        if let user = self.user {
+        if let user {
             user.requestPreviewProfileImage()
         } else if let notificationContext = contextProvider?.viewContext.notificationContext {
             NotificationInContext(
@@ -690,7 +690,7 @@ public class ZMSearchUser: NSObject, UserType {
     public func requestCompleteProfileImage() {
         guard completeImageData == nil else { return }
 
-        if let user = self.user {
+        if let user {
             user.requestCompleteProfileImage()
         } else if let notificationContext = contextProvider?.viewContext.notificationContext {
             NotificationInContext(
@@ -709,7 +709,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func imageData(for size: ProfileImageSize) -> Data? {
-        if let user = self.user {
+        if let user {
             user.imageData(for: size)
         } else {
             size == .complete ? completeImageData : previewImageData
@@ -717,7 +717,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {
-        if let user = self.user {
+        if let user {
             user.imageData(for: size, queue: queue, completion: completion)
         } else {
             let imageData = size == .complete ? completeImageData : previewImageData
@@ -743,15 +743,15 @@ public class ZMSearchUser: NSObject, UserType {
     public func update(from payload: [String: Any]) {
         hasDownloadedFullUserProfile = true
 
-        self.assetKeys = SearchUserAssetKeys(payload: payload)
+        assetKeys = SearchUserAssetKeys(payload: payload)
     }
 
     public func reportImageDataHasBeenDeleted() {
-        self.assetKeys = nil
+        assetKeys = nil
     }
 
     public func updateWithTeamMembership(permissions: Permissions?, createdBy: UUID?) {
-        self.internalTeamPermissions = permissions
-        self.internalTeamCreatedBy = createdBy
+        internalTeamPermissions = permissions
+        internalTeamCreatedBy = createdBy
     }
 }

@@ -66,14 +66,14 @@ final class WarningLabelView: UIView {
     func update(withUser user: UserType) {
         typealias profileDetails = L10n.Localizable.Profile.Details
         if user.isPendingApprovalBySelfUser {
-            self.isHidden = false
+            isHidden = false
             label.text = profileDetails.requestedIdentityWarning
         }
         guard let name = user.name else {
-            self.isHidden = true
+            isHidden = true
             return
         }
-        self.isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
+        isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
         label.text = profileDetails.identityWarning(name)
     }
 }

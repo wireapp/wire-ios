@@ -56,10 +56,10 @@ final class VerticalTransition: NSObject, UIViewControllerAnimatedTransitioning 
 
         containerView.layoutIfNeeded()
 
-        let sign = copysign(1.0, self.offset)
+        let sign = copysign(1.0, offset)
         let finalRect = transitionContext.finalFrame(for: toViewController)
-        let toTransfrom = CGAffineTransform(translationX: 0, y: -self.offset)
-        let fromTransform = CGAffineTransform(translationX: 0, y: sign * (finalRect.size.height - abs(self.offset)))
+        let toTransfrom = CGAffineTransform(translationX: 0, y: -offset)
+        let fromTransform = CGAffineTransform(translationX: 0, y: sign * (finalRect.size.height - abs(offset)))
 
         toView.transform = toTransfrom
         fromView.transform = fromTransform

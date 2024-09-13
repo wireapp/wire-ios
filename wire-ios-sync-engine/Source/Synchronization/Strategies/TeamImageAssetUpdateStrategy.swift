@@ -32,7 +32,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
     ) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(
+        self.downstreamRequestSync = ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,
             entityName: Team.entityName(),
             predicateForObjectsToDownload: Team
@@ -40,7 +40,7 @@ public final class TeamImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             managedObjectContext: managedObjectContext
         )
 
-        observer = NotificationInContext.addObserver(
+        self.observer = NotificationInContext.addObserver(
             name: .teamDidRequestAsset,
             context: managedObjectContext.notificationContext,
             using: { [weak self] in

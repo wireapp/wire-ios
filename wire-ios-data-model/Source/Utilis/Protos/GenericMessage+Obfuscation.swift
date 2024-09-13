@@ -29,7 +29,7 @@ extension String {
 
     public func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
-        for char in self.unicodeScalars {
+        for char in unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {
                 obfuscatedVersion.append(char)
             } else {
@@ -43,7 +43,7 @@ extension String {
 extension GenericMessage {
     public func obfuscatedMessage() -> GenericMessage? {
         guard let messageID = (messageID as String?).flatMap(UUID.init(transportString:)) else { return nil }
-        guard case .ephemeral? = self.content else { return nil }
+        guard case .ephemeral? = content else { return nil }
 
         if let someText = textData {
             let content = someText.content

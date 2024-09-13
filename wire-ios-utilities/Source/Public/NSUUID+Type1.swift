@@ -28,7 +28,7 @@ extension NSUUID {
 
     /// Read the given number of octets starting at the given location and reverts the octects order
     fileprivate func readOctectsReverted(_ start: UInt, len: UInt) -> UInt64 {
-        let data = self.data()
+        let data = data()
         var result: UInt64 = 0
         for i in 0 ..< len {
             var readData: UInt8 = 0
@@ -51,14 +51,14 @@ extension NSUUID {
         // time_low 4 |
         // Octet:--7(4-7)-----7(0-3)-----------6------------5------------4------------3------------2------------1-------------0------
 
-        if !self.isType1UUID {
+        if !isType1UUID {
             return nil
         }
 
         // extracting fields
-        let time_low = self.readOctectsReverted(0, len: 4)
-        let time_mid = self.readOctectsReverted(4, len: 2)
-        let time_high_and_variant = self.readOctectsReverted(4 + 2, len: 2)
+        let time_low = readOctectsReverted(0, len: 4)
+        let time_mid = readOctectsReverted(4, len: 2)
+        let time_high_and_variant = readOctectsReverted(4 + 2, len: 2)
         let time_high = (time_high_and_variant & 0x0FFF)
 
         // calculting time
@@ -76,8 +76,8 @@ extension NSUUID {
     /// - Requires: will assert if any UUID is not of type 1
     @objc
     public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
-        assert(self.isType1UUID && type1UUID.isType1UUID)
-        return self.type1Timestamp!.compare(type1UUID.type1Timestamp!)
+        assert(isType1UUID && type1UUID.isType1UUID)
+        return type1Timestamp!.compare(type1UUID.type1Timestamp!)
     }
 
     @objc

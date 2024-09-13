@@ -27,8 +27,8 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
 
         // have to do work on other queues because the main thread can't be blocked
-        let queue1 = DispatchQueue(label: self.name)
-        let queue2 = DispatchQueue(label: self.name)
+        let queue1 = DispatchQueue(label: name)
+        let queue2 = DispatchQueue(label: name)
 
         // coordinate between the two threads to make sure that they are executed in the right order
         let context2CanEnterSemaphore = DispatchSemaphore(value: 0)
@@ -93,8 +93,8 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
 
         let mainContext = EncryptionContext(path: tempDir)
-        let invocation1 = self.expectation(description: "first begin using session")
-        let invocation2 = self.expectation(description: "second begin using session")
+        let invocation1 = expectation(description: "first begin using session")
+        let invocation2 = expectation(description: "second begin using session")
 
         // WHEN
         // enter critical section
@@ -108,7 +108,7 @@ class EncryptionContextTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
     func testThatItReceivesTheSameSessionStatusWithNestedPerform() {
@@ -118,8 +118,8 @@ class EncryptionContextTests: XCTestCase {
         let mainContext = EncryptionContext(path: tempDir)
         var lastStatus: EncryptionSessionsDirectory?
 
-        let invocation1 = self.expectation(description: "first begin using session")
-        let invocation2 = self.expectation(description: "second begin using session")
+        let invocation1 = expectation(description: "first begin using session")
+        let invocation2 = expectation(description: "second begin using session")
 
         // WHEN
 
@@ -135,7 +135,7 @@ class EncryptionContextTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
     func testThatItSafelyEncryptDecryptDuringNestedPerform() {
@@ -171,8 +171,8 @@ class EncryptionContextTests: XCTestCase {
         let mainContext = EncryptionContext(path: tempDir)
         var lastStatus: EncryptionSessionsDirectory?
 
-        let invocation1 = self.expectation(description: "first begin using session")
-        let invocation2 = self.expectation(description: "second begin using session")
+        let invocation1 = expectation(description: "first begin using session")
+        let invocation2 = expectation(description: "second begin using session")
 
         // WHEN
 
@@ -189,7 +189,7 @@ class EncryptionContextTests: XCTestCase {
             XCTAssertFalse(lastStatus === context)
         }
 
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 }
 

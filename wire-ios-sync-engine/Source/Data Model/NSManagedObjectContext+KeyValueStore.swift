@@ -21,10 +21,10 @@ import Foundation
 
 extension NSManagedObjectContext: ZMSynchonizableKeyValueStore {
     public func store(value: PersistableInMetadata?, key: String) {
-        self.setPersistentStoreMetadata(value, key: key)
+        setPersistentStoreMetadata(value, key: key)
     }
 
     public func storedValue(key: String) -> Any? {
-        self.persistentStoreMetadata(forKey: key)
+        persistentStoreMetadata(forKey: key)
     }
 }

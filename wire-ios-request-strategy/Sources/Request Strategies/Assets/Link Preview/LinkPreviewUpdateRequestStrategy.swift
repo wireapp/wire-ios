@@ -48,7 +48,7 @@ public class LinkPreviewUpdateRequestStrategy: NSObject, ZMContextChangeTrackerS
 
         super.init()
 
-        self.modifiedKeysSync.transcoder = self
+        modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {

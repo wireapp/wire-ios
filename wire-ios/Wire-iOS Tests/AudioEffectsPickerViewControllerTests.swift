@@ -31,9 +31,9 @@ final class AudioEffectsPickerViewControllerTests: XCTestCase {
         super.setUp()
         snapshotHelper = SnapshotHelper()
         let path = Bundle(for: type(of: self)).path(forResource: "audio_sample", ofType: "m4a")!
-        self.sut = AudioEffectsPickerViewController(recordingPath: path, duration: TimeInterval(10.0))
-        self.sut.normalizedLoudness = (0 ... 100).map { Float($0) / 100.0 }
-        self.sut.progressView.samples = self.sut.normalizedLoudness
+        sut = AudioEffectsPickerViewController(recordingPath: path, duration: TimeInterval(10.0))
+        sut.normalizedLoudness = (0 ... 100).map { Float($0) / 100.0 }
+        sut.progressView.samples = sut.normalizedLoudness
     }
 
     override func tearDown() {
@@ -43,11 +43,11 @@ final class AudioEffectsPickerViewControllerTests: XCTestCase {
     }
 
     func prepareForSnapshot() -> UIView {
-        self.sut.beginAppearanceTransition(true, animated: false)
-        self.sut.endAppearanceTransition()
+        sut.beginAppearanceTransition(true, animated: false)
+        sut.endAppearanceTransition()
 
         let container = UIView()
-        container.addSubview(self.sut.view)
+        container.addSubview(sut.view)
         container.backgroundColor = SemanticColors.View.backgroundDefault
         container.translatesAutoresizingMaskIntoConstraints = false
         sut.view.translatesAutoresizingMaskIntoConstraints = false
@@ -71,20 +71,20 @@ final class AudioEffectsPickerViewControllerTests: XCTestCase {
     }
 
     func testPlayingProgressState() {
-        let preparedView = self.prepareForSnapshot()
+        let preparedView = prepareForSnapshot()
 
-        self.sut.setState(.playing, animated: false)
+        sut.setState(.playing, animated: false)
         snapshotHelper.verify(matching: preparedView)
     }
 
     func testTooltipState() {
-        let preparedView = self.prepareForSnapshot()
-        self.sut.setState(.tip, animated: false)
+        let preparedView = prepareForSnapshot()
+        sut.setState(.tip, animated: false)
         snapshotHelper.verify(matching: preparedView)
     }
 
     func testEffectSelectedState() {
-        let preparedView = self.prepareForSnapshot()
+        let preparedView = prepareForSnapshot()
 
         sut.selectedAudioEffect = AVSAudioEffectType.chorusMax
         snapshotHelper.verify(matching: preparedView)

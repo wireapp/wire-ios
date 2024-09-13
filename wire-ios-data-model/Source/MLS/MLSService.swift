@@ -809,7 +809,7 @@ public final class MLSService: MLSServiceInterface {
             try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
             return ciphersuite
         } catch {
-            try await self.wipeGroup(groupID)
+            try await wipeGroup(groupID)
             throw error
         }
     }
@@ -832,7 +832,7 @@ public final class MLSService: MLSServiceInterface {
     public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
         do {
             guard let context else { throw MLSAddMembersError.noManagedObjectContext }
-            let ciphersuite = try await self.createGroup(for: groupID)
+            let ciphersuite = try await createGroup(for: groupID)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -1080,7 +1080,7 @@ public final class MLSService: MLSServiceInterface {
             )
 
         } catch {
-            self.logger.warn("failed to fetch unclaimed key packages count with error: \(String(describing: error))")
+            logger.warn("failed to fetch unclaimed key packages count with error: \(String(describing: error))")
             throw MLSKeyPackagesError.failedToCountUnclaimedKeyPackages
         }
     }
@@ -1212,7 +1212,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Out-of-sync conversations
 
     public func repairOutOfSyncConversations() async throws {
-        guard let context = self.context else { return }
+        guard let context else { return }
 
         let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
@@ -1679,7 +1679,7 @@ public final class MLSService: MLSServiceInterface {
 
         logger.info("committing any scheduled pending proposals")
 
-        let groupsWithPendingCommits = await self.sortedGroupsWithPendingCommits()
+        let groupsWithPendingCommits = await sortedGroupsWithPendingCommits()
 
         logger.info("\(groupsWithPendingCommits.count) groups with scheduled pending proposals")
 
@@ -2221,13 +2221,13 @@ public struct MLSUser: Equatable {
     }
 
     public init(from user: ZMUser) {
-        id = user.remoteIdentifier
-        domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
+        self.id = user.remoteIdentifier
+        self.domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID
         } else {
-            selfClientID = nil
+            self.selfClientID = nil
         }
     }
 }

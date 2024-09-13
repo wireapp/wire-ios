@@ -234,7 +234,7 @@ final class TypingIndicatorView: UIView {
                 }
             } else {
                 animatedPen.isAnimating = false
-                self.layoutSubviews()
+                layoutSubviews()
                 UIView.animate(easing: .easeInOutQuad, duration: 0.35, animations: expandLine)
                 UIView.animate(
                     easing: .easeInQuad,
@@ -251,7 +251,7 @@ final class TypingIndicatorView: UIView {
         } else {
             if hidden {
                 collapseLine()
-                self.container.alpha = 0
+                container.alpha = 0
             } else {
                 expandLine()
                 showContainer()

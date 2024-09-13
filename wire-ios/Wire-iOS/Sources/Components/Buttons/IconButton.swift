@@ -96,15 +96,15 @@ class IconButton: ButtonWithLargerHitArea {
         case .default:
             break
         case .circular:
-            circular = true
-            borderWidth = 0
+            self.circular = true
+            self.borderWidth = 0
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             contentHorizontalAlignment = .center
         case .navigation:
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: -5)
             titleLabel?.font = fontSpec.font
             adjustsImageWhenDisabled = false
-            borderWidth = 0
+            self.borderWidth = 0
             contentHorizontalAlignment = .left
         }
     }

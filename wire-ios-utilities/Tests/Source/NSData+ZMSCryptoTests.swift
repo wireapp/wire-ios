@@ -49,8 +49,8 @@ class NSData_ZMSCryptoTests: XCTestCase {
 extension NSData_ZMSCryptoTests {
     func testThatItEncryptsAndDecryptsData_plaintextIV() throws {
         // given
-        let data = self.sampleDecryptedImageData
-        let key = self.sampleKey
+        let data = sampleDecryptedImageData
+        let key = sampleKey
 
         // when
         let encryptedData = try data.zmEncryptPrefixingPlainTextIV(key: key)
@@ -68,11 +68,11 @@ extension NSData_ZMSCryptoTests {
     func testThatTheEncodedDataIsDifferentEveryTime_plaintextIV() throws {
         // given
         var generatedDataSet = Set<Data>()
-        let sampleData = self.sampleDecryptedImageData
+        let sampleData = sampleDecryptedImageData
 
         // when
         for _ in 0 ..< 100 {
-            let data = try sampleData.zmEncryptPrefixingPlainTextIV(key: self.sampleKey)
+            let data = try sampleData.zmEncryptPrefixingPlainTextIV(key: sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -80,11 +80,11 @@ extension NSData_ZMSCryptoTests {
 
     func testThatItDecryptsAndroidImage_plaintextIV() {
         // given
-        let encryptedImage = self.sampleEncryptedImageData
-        let expectedDecryptedImage = self.sampleDecryptedImageData
+        let encryptedImage = sampleEncryptedImageData
+        let expectedDecryptedImage = sampleDecryptedImageData
 
         // when
-        let decryptedImage = encryptedImage.zmDecryptPrefixedPlainTextIV(key: self.sampleKey)
+        let decryptedImage = encryptedImage.zmDecryptPrefixedPlainTextIV(key: sampleKey)
 
         // then
         XCTAssertEqual(decryptedImage, expectedDecryptedImage)
@@ -105,8 +105,8 @@ extension NSData_ZMSCryptoTests {
 extension NSData_ZMSCryptoTests {
     func testThatItEncryptsAndDecryptsData_encryptedIV() {
         // given
-        let data = self.sampleDecryptedImageData
-        let key = self.sampleKey
+        let data = sampleDecryptedImageData
+        let key = sampleKey
 
         // when
         let encryptedData = data.zmEncryptPrefixingIV(key: key)
@@ -124,11 +124,11 @@ extension NSData_ZMSCryptoTests {
     func testThatTheEncodedDataIsDifferentEveryTime_encryptedIV() {
         // given
         var generatedDataSet = Set<Data>()
-        let sampleData = self.sampleDecryptedImageData
+        let sampleData = sampleDecryptedImageData
 
         // when
         for _ in 0 ..< 100 {
-            let data = sampleData.zmEncryptPrefixingIV(key: self.sampleKey)
+            let data = sampleData.zmEncryptPrefixingIV(key: sampleKey)
             XCTAssertFalse(generatedDataSet.contains(data))
             generatedDataSet.insert(data)
         }
@@ -156,9 +156,9 @@ extension NSData_ZMSCryptoTests {
     }
 
     func testThatItReturnsNilIfDecryptingKeyIsNotOfAES256Length() {
-        let badKey = self.sampleKey.subdata(in: Range(0 ... 15))
-        XCTAssertNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: badKey))
-        XCTAssertNotNil(self.sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: self.sampleKey))
+        let badKey = sampleKey.subdata(in: Range(0 ... 15))
+        XCTAssertNil(sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: badKey))
+        XCTAssertNotNil(sampleEncryptedImageData.zmDecryptPrefixedPlainTextIV(key: sampleKey))
     }
 }
 

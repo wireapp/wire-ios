@@ -534,8 +534,8 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         }
 
         if isWaitingForUserClients {
-            self.isWaitingForUserClients = false
-            self.isWaitingForClientsToBeDeleted = true
+            isWaitingForUserClients = false
+            isWaitingForClientsToBeDeleted = true
             notifyCanNotRegisterMoreClients(clientIDs: clientIDs)
         }
     }
@@ -580,7 +580,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     @objc
     public func didFetchSelfUser() {
         WireLogger.userClient.info("did fetch self user")
-        self.needsRefreshSelfUser = false
+        needsRefreshSelfUser = false
 
         if needsToRegisterClient {
             prepareForClientRegistration()
@@ -649,7 +649,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     @objc(needsToRegisterMLSClientInContext:)
     public static func needsToRegisterMLSClient(in context: NSManagedObjectContext) -> Bool {
-        guard !self.needsToRegisterClient(in: context) else {
+        guard !needsToRegisterClient(in: context) else {
             return false
         }
         let hasRegisteredMLSClient = ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient ?? false
@@ -664,7 +664,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple], lastResortPrekey: IdPrekeyTuple) {
         self.prekeys = prekeys
         self.lastResortPrekey = lastResortPrekey
-        self.isGeneratingPrekeys = false
+        isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 

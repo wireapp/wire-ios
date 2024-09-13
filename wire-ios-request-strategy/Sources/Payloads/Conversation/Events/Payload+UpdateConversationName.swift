@@ -36,7 +36,7 @@ extension Payload {
                 return nil
             }
 
-            name = userDefinedName
+            self.name = userDefinedName
         }
 
         init(name: String) {

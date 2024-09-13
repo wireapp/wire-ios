@@ -63,7 +63,7 @@ final class AppLocationManager: NSObject, AppLocationManagerProtocol {
     // MARK: - Init
 
     override init() {
-        locationManager = CLLocationManager()
+        self.locationManager = CLLocationManager()
         super.init()
         locationManager.delegate = self
     }

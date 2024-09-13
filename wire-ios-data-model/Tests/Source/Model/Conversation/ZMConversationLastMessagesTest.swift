@@ -117,11 +117,11 @@ class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
     func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
         let message = try conversation.appendText(content: "Test Message") as! ZMMessage
-        message.sender = ZMUser.selfUser(in: self.uiMOC)
+        message.sender = ZMUser.selfUser(in: uiMOC)
         message.markAsSent()
         message.textMessageData?.editText("Edited Test Message", mentions: [], fetchLinkPreview: true)
 

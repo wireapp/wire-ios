@@ -27,11 +27,11 @@ extension ZMUser {
     }
 
     @objc public var isWirelessUser: Bool {
-        self.expiresAt != nil
+        expiresAt != nil
     }
 
     @objc public var isExpired: Bool {
-        guard let expiresAt = self.expiresAt else {
+        guard let expiresAt else {
             return false
         }
 
@@ -39,7 +39,7 @@ extension ZMUser {
     }
 
     @objc public var expiresAfter: TimeInterval {
-        guard let expiresAt = self.expiresAt else {
+        guard let expiresAt else {
             return 0
         }
 
@@ -53,8 +53,8 @@ extension ZMUser {
     @objc
     public func createOrDeleteMembershipIfBelongingToTeam() {
         guard
-            let teamIdentifier = self.teamIdentifier,
-            let managedObjectContext = self.managedObjectContext,
+            let teamIdentifier,
+            let managedObjectContext,
             let team = Team.fetch(with: teamIdentifier, in: managedObjectContext)
         else {
             return
@@ -72,7 +72,7 @@ extension ZMUser {
     }
 
     private func deleteMembership(in context: NSManagedObjectContext) {
-        if let membership = self.membership {
+        if let membership {
             context.delete(membership)
         }
     }

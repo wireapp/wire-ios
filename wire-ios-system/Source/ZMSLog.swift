@@ -157,7 +157,7 @@ public final class LogHookToken: NSObject {
     fileprivate let token: UUID
 
     override init() {
-        token = UUID()
+        self.token = UUID()
         super.init()
     }
 }

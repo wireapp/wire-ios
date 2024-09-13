@@ -32,7 +32,7 @@ final class CollectionFileCell: CollectionCell {
 
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = self.message else {
+        guard let message else {
             return
         }
 
@@ -116,6 +116,6 @@ final class CollectionFileCell: CollectionCell {
 
 extension CollectionFileCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        self.delegate?.collectionCell(self, performAction: action)
+        delegate?.collectionCell(self, performAction: action)
     }
 }

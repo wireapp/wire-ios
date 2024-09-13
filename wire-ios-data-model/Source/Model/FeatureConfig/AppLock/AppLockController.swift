@@ -130,7 +130,7 @@ public final class AppLockController: AppLockType {
         self.legacyConfig = legacyConfig
         self.authenticationContext = authenticationContext
 
-        featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
+        self.featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
     }
 
     // MARK: - Methods

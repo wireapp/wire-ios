@@ -35,7 +35,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     @NSManaged var sortIndex: Int64
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
-        NSEntityDescription.insertNewObject(forEntityName: self.entityName, into: context) as? StoredUpdateEvent
+        NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as? StoredUpdateEvent
     }
 
     /// Maps a passed in `ZMUpdateEvent` to a `StoredUpdateEvent` which is persisted in a database
@@ -88,7 +88,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// Returns stored events sorted by and up until (including) the defined `stopIndex`
     /// Returns a maximum of `batchSize` events at a time
     public static func nextEvents(_ context: NSManagedObjectContext, batchSize: Int) -> [StoredUpdateEvent] {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
         fetchRequest.fetchLimit = batchSize
         fetchRequest.returnsObjectsAsFaults = false
@@ -98,7 +98,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     /// Returns the highest index of all stored events
     public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
         fetchRequest.fetchBatchSize = 1
         let result = context.fetchOrAssert(request: fetchRequest)

@@ -29,7 +29,7 @@ extension FileManager {
         to destination: URL,
         overwriteExistingFiles: Bool
     ) throws {
-        try self.moveOrCopyFolderRecursively(
+        try moveOrCopyFolderRecursively(
             operation: .move,
             from: source,
             to: destination,
@@ -37,7 +37,7 @@ extension FileManager {
         )
 
         // we moved everything, now we can delete
-        try self.removeItem(at: source)
+        try removeItem(at: source)
     }
 
     /// Copies the content of the folder recursively to another folder.
@@ -48,7 +48,7 @@ extension FileManager {
         to destination: URL,
         overwriteExistingFiles: Bool
     ) throws {
-        try self.moveOrCopyFolderRecursively(
+        try moveOrCopyFolderRecursively(
             operation: .copy,
             from: source,
             to: destination,
@@ -70,7 +70,7 @@ extension FileManager {
         try createAndProtectDirectory(at: destination)
 
         var isDirectory: ObjCBool = false
-        let enumerator = self.enumerator(at: source, includingPropertiesForKeys: [.nameKey, .isDirectoryKey])!
+        let enumerator = enumerator(at: source, includingPropertiesForKeys: [.nameKey, .isDirectoryKey])!
         try enumerator.forEach { item in
             let sourceItem = item as! URL
             guard self.fileExists(atPath: sourceItem.path, isDirectory: &isDirectory) else { return }
@@ -100,9 +100,9 @@ extension FileManager {
     private func apply(_ operation: FileOperation, at source: URL, to destination: URL) throws {
         switch operation {
         case .move:
-            try self.moveItem(at: source, to: destination)
+            try moveItem(at: source, to: destination)
         case .copy:
-            try self.copyItem(at: source, to: destination)
+            try copyItem(at: source, to: destination)
         }
     }
 }

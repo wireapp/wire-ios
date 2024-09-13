@@ -96,7 +96,7 @@ final class SettingsPropertyFactory {
         self.mediaManager = mediaManager
         self.userSession = userSession
         self.selfUser = selfUser
-        userPropertyValidator = UserPropertyValidator()
+        self.userPropertyValidator = UserPropertyValidator()
 
         userSession?.fetchMarketingConsent { [weak self] result in
             switch result {
@@ -121,20 +121,20 @@ final class SettingsPropertyFactory {
         // Profile
         case .profileName:
             let getAction: GetAction = { [unowned self] _ in
-                SettingsPropertyValue.string(value: self.selfUser?.name ?? "")
+                SettingsPropertyValue.string(value: selfUser?.name ?? "")
             }
 
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .string(stringValue):
-                    guard let selfUser = self.selfUser else { requireInternal(
+                    guard let selfUser else { requireInternal(
                         false,
                         "Attempt to modify a user property without a self user"
                     ); break }
 
                     var inOutString: String? = stringValue as String
                     _ = try userPropertyValidator.validate(name: &inOutString)
-                    self.userSession?.enqueue {
+                    userSession?.enqueue {
                         selfUser.name = stringValue
                     }
                 default:
@@ -161,13 +161,13 @@ final class SettingsPropertyFactory {
 
         case .accentColor:
             let getAction: GetAction = { [unowned self] _ in
-                SettingsPropertyValue(self.selfUser?.accentColorValue ?? 0)
+                SettingsPropertyValue(selfUser?.accentColorValue ?? 0)
             }
 
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .number(number):
-                    self.userSession?.enqueue {
+                    userSession?.enqueue {
                         self.selfUser?.accentColorValue = number.int16Value
                     }
                 default:
@@ -181,7 +181,7 @@ final class SettingsPropertyFactory {
             let getAction: GetAction = { [unowned self] _ in
 
                 let settingsColorScheme = SettingsColorScheme(
-                    from: self.userDefaults
+                    from: userDefaults
                         .string(forKey: SettingKey.colorScheme.rawValue)
                 )
 
@@ -192,7 +192,7 @@ final class SettingsPropertyFactory {
                 switch value {
                 case let .number(number):
                     if let settingsColorScheme = SettingsColorScheme(rawValue: Int(number.int64Value)) {
-                        self.userDefaults.set(
+                        userDefaults.set(
                             settingsColorScheme.keyValueString,
                             forKey: SettingKey.colorScheme.rawValue
                         )
@@ -214,7 +214,7 @@ final class SettingsPropertyFactory {
 
         case .soundAlerts:
             let getAction: GetAction = { [unowned self] _ in
-                if let mediaManager = self.mediaManager {
+                if let mediaManager {
                     return SettingsPropertyValue(mediaManager.intensityLevel.rawValue)
                 } else {
                     return SettingsPropertyValue(0)
@@ -225,7 +225,7 @@ final class SettingsPropertyFactory {
                 switch value {
                 case let .number(intValue):
                     if let intensivityLevel = AVSIntensityLevel(rawValue: UInt(truncating: intValue)),
-                       var mediaManager = self.mediaManager {
+                       var mediaManager {
                         mediaManager.intensityLevel = intensivityLevel
                     } else {
                         throw SettingsPropertyError
@@ -239,7 +239,7 @@ final class SettingsPropertyFactory {
 
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in
-                if let tracking = self.tracking {
+                if let tracking {
                     return SettingsPropertyValue(tracking.disableAnalyticsSharing)
                 } else {
                     return SettingsPropertyValue(false)
@@ -247,7 +247,7 @@ final class SettingsPropertyFactory {
             }
 
             let setAction: SetAction = { [unowned self] _, value in
-                if var tracking = self.tracking {
+                if var tracking {
                     switch value {
                     case let .number(number):
                         tracking.disableAnalyticsSharing = number.boolValue
@@ -261,13 +261,13 @@ final class SettingsPropertyFactory {
         case .receiveNewsAndOffers:
 
             let getAction: GetAction = { [unowned self] _ in
-                self.marketingConsent
+                marketingConsent
             }
 
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .number(number):
-                    guard let userSession = self.userSession else { return }
+                    guard let userSession else { return }
 
                     userSession.perform {
                         self.delegate?.asyncMethodDidStart(self)
@@ -288,7 +288,7 @@ final class SettingsPropertyFactory {
 
         case .notificationContentVisible:
             let getAction: GetAction = { [unowned self] _ in
-                if let value = self.userSession?.isNotificationContentHidden {
+                if let value = userSession?.isNotificationContentHidden {
                     return SettingsPropertyValue.number(value: NSNumber(value: value))
                 } else {
                     return .none
@@ -298,7 +298,7 @@ final class SettingsPropertyFactory {
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case let .number(number):
-                    self.userSession?.perform {
+                    userSession?.perform {
                         self.userSession?.isNotificationContentHidden = number.boolValue
                     }
 

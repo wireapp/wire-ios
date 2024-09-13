@@ -72,7 +72,7 @@ final class SwitchBackendViewModel: ObservableObject {
             items.append(selectedItem!)
         }
         self.items = items
-        selectedItemID = selectedItem!.id
+        self.selectedItemID = selectedItem!.id
     }
 
     // MARK: - Events

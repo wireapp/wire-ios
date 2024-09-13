@@ -37,14 +37,14 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     )
 
     init() {
-        backButton = BackButtonDescription()
-        headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
-        subtext = .markdown(from: L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph, style: .login)
-        initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
-        footerView = nil
+        self.backButton = BackButtonDescription()
+        self.headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
+        self.subtext = .markdown(from: L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph, style: .login)
+        self.initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
+        self.footerView = nil
 
         let loginDescription = CTAFooterDescription()
-        secondaryView = loginDescription
+        self.secondaryView = loginDescription
         loginDescription.ctaButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
 
         emailPasswordFieldDescription.textField.delegate = self

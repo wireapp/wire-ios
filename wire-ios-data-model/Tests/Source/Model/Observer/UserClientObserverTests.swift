@@ -52,20 +52,20 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         customAffectedKeys: AffectedKeys? = nil
     ) {
         // given
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         let token = UserClientChangeInfo.add(observer: clientObserver, for: userClient)
 
         // when
         modifier(userClient)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let changeCount = clientObserver.receivedChangeInfo.count
         XCTAssertEqual(changeCount, 1)
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         withExtendedLifetime(token) {
@@ -81,12 +81,12 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfTrustedByClientsChange() {
         // given
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
-        self.uiMOC.saveOrRollback()
+        let client = UserClient.insertNewObject(in: uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             client,
             modifier: { otherClient.trustClient($0) },
             expectedChangedFields: [
@@ -100,13 +100,13 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfIgnoredByClientsChange() {
         // given
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        let client = UserClient.insertNewObject(in: uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         otherClient.trustClient(client)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             client,
             modifier: { otherClient.ignoreClient($0) },
             expectedChangedFields: [
@@ -120,17 +120,17 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         // given
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        let otherClient = UserClient.insertNewObject(in: self.uiMOC)
+        let client = UserClient.insertNewObject(in: uiMOC)
+        let otherClient = UserClient.insertNewObject(in: uiMOC)
         otherClient.trustClient(client)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         let otherObserver = TestUserClientObserver()
         _ = UserClientChangeInfo.add(observer: otherObserver, for: client) // not storing the token
 
         // when
         otherClient.ignoreClient(client)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         XCTAssertEqual(otherObserver.receivedChangeInfo.count, 0)
     }

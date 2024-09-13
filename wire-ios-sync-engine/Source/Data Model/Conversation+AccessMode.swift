@@ -96,7 +96,7 @@ extension ZMConversation {
     }
 
     var isLegacyAccessMode: Bool {
-        self.accessMode == [.invite]
+        accessMode == [.invite]
     }
 
     /// Checks if a guest link can be generated or not
@@ -164,7 +164,7 @@ extension ZMConversation {
     }
 
     public var canManageAccess: Bool {
-        guard let moc = self.managedObjectContext else { return false }
+        guard let moc = managedObjectContext else { return false }
         let selfUser = ZMUser.selfUser(in: moc)
         return selfUser.canModifyAccessControlSettings(in: self)
     }

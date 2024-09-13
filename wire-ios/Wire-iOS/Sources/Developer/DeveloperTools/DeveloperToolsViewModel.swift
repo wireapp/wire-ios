@@ -110,7 +110,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     ) {
         self.router = router
         self.onDismiss = onDismiss
-        sections = []
+        self.sections = []
 
         setupSections()
     }

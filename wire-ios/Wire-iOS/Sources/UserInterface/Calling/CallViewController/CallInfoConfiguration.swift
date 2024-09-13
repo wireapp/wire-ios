@@ -141,21 +141,21 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         self.mediaManager = mediaManager
         self.userEnabledCBR = userEnabledCBR
         self.classification = classification
-        voiceChannelSnapshot = VoiceChannelSnapshot(voiceChannel)
-        degradationState = voiceChannel.degradationState
-        accessoryType = voiceChannel.accessoryType()
-        isMuted = mediaManager.isMicrophoneMuted
-        canToggleMediaType = voiceChannel.canToggleMediaType(with: permissions, selfUser: selfUser)
-        isVideoCall = voiceChannel.internalIsVideoCall
-        isConstantBitRate = voiceChannel.isConstantBitRateAudioActive
-        isForcedCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled
-        title = voiceChannel.conversation?.displayName ?? ""
-        mediaState = voiceChannel.mediaState(with: permissions)
-        videoPlaceholderState = voiceChannel.videoPlaceholderState ?? preferedVideoPlaceholderState
-        disableIdleTimer = voiceChannel.disableIdleTimer
-        callState = voiceChannel.state
-        videoGridPresentationMode = voiceChannel.videoGridPresentationMode
-        allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
+        self.voiceChannelSnapshot = VoiceChannelSnapshot(voiceChannel)
+        self.degradationState = voiceChannel.degradationState
+        self.accessoryType = voiceChannel.accessoryType()
+        self.isMuted = mediaManager.isMicrophoneMuted
+        self.canToggleMediaType = voiceChannel.canToggleMediaType(with: permissions, selfUser: selfUser)
+        self.isVideoCall = voiceChannel.internalIsVideoCall
+        self.isConstantBitRate = voiceChannel.isConstantBitRateAudioActive
+        self.isForcedCBR = SecurityFlags.forceConstantBitRateCalls.isEnabled
+        self.title = voiceChannel.conversation?.displayName ?? ""
+        self.mediaState = voiceChannel.mediaState(with: permissions)
+        self.videoPlaceholderState = voiceChannel.videoPlaceholderState ?? preferedVideoPlaceholderState
+        self.disableIdleTimer = voiceChannel.disableIdleTimer
+        self.callState = voiceChannel.state
+        self.videoGridPresentationMode = voiceChannel.videoGridPresentationMode
+        self.allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
     }
 
     // This property has to be computed in order to return the correct call duration
@@ -177,12 +177,12 @@ private struct VoiceChannelSnapshot {
     let callStartDate: Date
 
     init(_ voiceChannel: VoiceChannel) {
-        callerName = {
+        self.callerName = {
             guard voiceChannel.conversation?.conversationType != .oneOnOne else { return nil }
             return voiceChannel.initiator?.name ?? ""
         }()
-        state = voiceChannel.state
-        callStartDate = voiceChannel.callStartDate ?? .init()
+        self.state = voiceChannel.state
+        self.callStartDate = voiceChannel.callStartDate ?? .init()
     }
 }
 

@@ -83,7 +83,7 @@ final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell,
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        updateImageLayout(isRegular: self.traitCollection.horizontalSizeClass == .regular)
+        updateImageLayout(isRegular: traitCollection.horizontalSizeClass == .regular)
     }
 }
 
@@ -116,7 +116,7 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
 
     init(message: ZMConversationMessage, data: TextMessageData) {
         let showImage = data.linkPreviewHasImage
-        configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
+        self.configuration = View.Configuration(textMessageData: data, showImage: showImage, message: message)
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.LinkMessage.description
     }
 }

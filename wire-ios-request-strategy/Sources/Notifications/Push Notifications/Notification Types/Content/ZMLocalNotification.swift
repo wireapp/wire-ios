@@ -82,7 +82,7 @@ public class ZMLocalNotification: NSObject {
         self.id = userInfo?.messageNonce ?? UUID()
         super.init()
 
-        self.userInfo?.requestID = id
+        userInfo?.requestID = id
     }
 
     /// Returns a configured concrete `UNNotificationContent` object.

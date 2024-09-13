@@ -65,7 +65,7 @@ extension ZMConversation {
     /// Returns an option set of messages types which should be muted
     public var mutedMessageTypes: MutedMessageTypes {
         get {
-            guard let managedObjectContext = self.managedObjectContext else {
+            guard let managedObjectContext else {
                 return .none
             }
 
@@ -79,7 +79,7 @@ extension ZMConversation {
             }
         }
         set {
-            guard let managedObjectContext = self.managedObjectContext else {
+            guard let managedObjectContext else {
                 return
             }
 
@@ -93,7 +93,7 @@ extension ZMConversation {
             }
 
             if managedObjectContext.zm_isUserInterfaceContext,
-               let lastServerTimestamp = self.lastServerTimeStamp {
+               let lastServerTimestamp = lastServerTimeStamp {
                 updateMuted(lastServerTimestamp, synchronize: true)
             }
         }
@@ -102,7 +102,7 @@ extension ZMConversation {
     /// Returns an option set of messages types which should be muted when also considering the
     /// the availability status of the self user.
     public var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
-        guard let managedObjectContext = self.managedObjectContext else {
+        guard let managedObjectContext else {
             return .none
         }
 
@@ -126,7 +126,7 @@ extension ZMUser {
 
 extension ZMConversation {
     public func isMessageSilenced(_ message: GenericMessage?, senderID: UUID?) -> Bool {
-        guard let managedObjectContext = self.managedObjectContext else {
+        guard let managedObjectContext else {
             return false
         }
 
@@ -136,7 +136,7 @@ extension ZMConversation {
             return true
         }
 
-        if self.mutedMessageTypesIncludingAvailability == .none {
+        if mutedMessageTypesIncludingAvailability == .none {
             return false
         }
 
@@ -152,7 +152,7 @@ extension ZMConversation {
         let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
         let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: self, in: managedObjectContext)
 
-        if self.mutedMessageTypesIncludingAvailability == .regular,
+        if mutedMessageTypesIncludingAvailability == .regular,
            textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage) {
             return false
         } else {

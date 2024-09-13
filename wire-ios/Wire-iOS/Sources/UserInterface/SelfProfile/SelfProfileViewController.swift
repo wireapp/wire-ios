@@ -81,14 +81,14 @@ final class SelfProfileViewController: UIViewController {
             userSession: userSession
         )
 
-        settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+        self.settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options
         options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
         if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
             options.insert(.allowEditingProfilePicture)
         }
-        profileHeaderViewController = ProfileHeaderViewController(
+        self.profileHeaderViewController = ProfileHeaderViewController(
             user: selfUser,
             viewer: selfUser,
             conversation: .none,

@@ -89,7 +89,7 @@ extension ConversationContentViewController: UIViewControllerPreviewingDelegate 
         if let url = lastPreviewURL {
             url.open()
         } else {
-            self.messagePresenter.modalTargetController?.present(
+            messagePresenter.modalTargetController?.present(
                 viewControllerToCommit,
                 animated: true,
                 completion: .none

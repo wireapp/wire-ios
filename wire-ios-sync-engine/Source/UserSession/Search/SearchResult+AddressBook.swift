@@ -34,8 +34,9 @@ extension SearchResult {
         let addressBook = AddressBookSearch(addressBook: debug_searchResultAddressBookOverride)
 
         // I don't need to find the address book contacts of users that I already found
-        let identifiersOfAlreadyFoundUsers = contacts.compactMap { $0.user?.addressBookEntry?.localIdentifier } + self
-            .directory.compactMap { $0.user?.addressBookEntry?.localIdentifier }
+        let identifiersOfAlreadyFoundUsers = contacts
+            .compactMap { $0.user?.addressBookEntry?.localIdentifier } + directory
+            .compactMap { $0.user?.addressBookEntry?.localIdentifier }
         let allMatchingAddressBookContacts = addressBook.contactsMatchingQuery(
             query,
             identifiersToExclude: identifiersOfAlreadyFoundUsers

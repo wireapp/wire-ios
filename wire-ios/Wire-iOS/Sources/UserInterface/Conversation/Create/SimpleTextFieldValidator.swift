@@ -70,7 +70,7 @@ extension SimpleTextFieldValidator: UITextFieldDelegate {
     ) -> Bool {
         let oldValue = textField.text as NSString?
         let result = oldValue?.replacingCharacters(in: range, with: string) ?? ""
-        if !result.isEmpty, self.validate(text: result) != nil {
+        if !result.isEmpty, validate(text: result) != nil {
             return false
         }
         delegate?.textFieldValueChanged(result)

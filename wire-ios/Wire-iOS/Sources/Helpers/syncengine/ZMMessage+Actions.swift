@@ -113,7 +113,7 @@ extension ZMConversationMessage {
 
     /// Whether it is possible to download the message content.
     var canBeDownloaded: Bool {
-        guard let fileMessageData = self.fileMessageData,
+        guard let fileMessageData,
               canBeShared,
               mediaShareRestrictionManager.canDownloadMedia else {
             return false
@@ -122,7 +122,7 @@ extension ZMConversationMessage {
     }
 
     var canCancelDownload: Bool {
-        guard let fileMessageData = self.fileMessageData else {
+        guard let fileMessageData else {
             return false
         }
         return isFile && fileMessageData.downloadState == .downloading
@@ -142,7 +142,7 @@ extension ZMConversationMessage {
             return videoCanBeSavedToCameraRoll()
         } else if isAudio {
             return audioCanBeSaved()
-        } else if isFile, let fileMessageData = self.fileMessageData {
+        } else if isFile, let fileMessageData {
             return fileMessageData.hasLocalFileData
         } else {
             return false

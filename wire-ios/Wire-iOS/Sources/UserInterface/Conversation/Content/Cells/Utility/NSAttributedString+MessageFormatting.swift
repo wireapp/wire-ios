@@ -168,7 +168,7 @@ extension NSAttributedString {
     }
 
     func links() -> [URLWithRange] {
-        NSDataDetector.linkDetector?.detectLinksAndRanges(in: self.string, excluding: []) ?? []
+        NSDataDetector.linkDetector?.detectLinksAndRanges(in: string, excluding: []) ?? []
     }
 }
 
@@ -204,7 +204,7 @@ extension NSMutableAttributedString {
     }
 
     func removeTrailingLink(for linkPreview: LinkMetadata) {
-        let text = self.string
+        let text = string
 
         guard
             let linkPreviewRange = text.range(

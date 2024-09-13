@@ -86,7 +86,7 @@ extension SessionManager: UNUserNotificationCenterDelegate {
             let account = accountManager.account(with: selfID)
         else { return }
 
-        self.withSession(for: account, perform: block)
+        withSession(for: account, perform: block)
     }
 
     fileprivate func activateAccount(for session: ZMUserSession, completion: @escaping () -> Void) {
@@ -96,9 +96,9 @@ extension SessionManager: UNUserNotificationCenterDelegate {
         }
 
         var foundSession = false
-        for (accountId, backgroundSession) in self.backgroundUserSessions {
-            if session == backgroundSession, let account = self.accountManager.account(with: accountId) {
-                self.select(account, completion: { _ in
+        for (accountId, backgroundSession) in backgroundUserSessions {
+            if session == backgroundSession, let account = accountManager.account(with: accountId) {
+                select(account, completion: { _ in
                     completion()
                 })
                 foundSession = true
@@ -134,7 +134,7 @@ extension SessionManager {
     }
 
     public func showUserProfile(user: UserType) {
-        self.presentationDelegate?.showUserProfile(user: user)
+        presentationDelegate?.showUserProfile(user: user)
     }
 }
 

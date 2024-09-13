@@ -139,7 +139,7 @@ extension Team {
 
     public func requestImage() {
         guard
-            let context = self.managedObjectContext,
+            let context = managedObjectContext,
             context.zm_isUserInterfaceContext,
             let cache = context.zm_fileAssetCache,
             !cache.hasImageData(for: self)

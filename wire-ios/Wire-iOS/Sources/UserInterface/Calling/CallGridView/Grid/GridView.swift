@@ -153,7 +153,7 @@ extension GridView {
     }
 
     private func numberOfItemsIn(_ segmentType: SegmentType, for indexPath: IndexPath) -> Int {
-        let numberOfItemsInPage = self.numberOfItemsInPage(indexPath: indexPath)
+        let numberOfItemsInPage = numberOfItemsInPage(indexPath: indexPath)
 
         let participantAmount = ParticipantAmount(numberOfItemsInPage)
         let splitType = SplitType(layoutDirection, segmentType)
@@ -163,7 +163,7 @@ extension GridView {
             return (numberOfItemsInPage + 1) / 2
 
         case (.moreThanTwo, .middleSplit):
-            let isOddLastRow = self.isOddLastRow(indexPath)
+            let isOddLastRow = isOddLastRow(indexPath)
             let isLayoutDirectionVertical = layoutDirection == .vertical
             return isOddLastRow && isLayoutDirectionVertical ? 1 : 2
 

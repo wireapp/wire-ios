@@ -71,8 +71,8 @@ final class ConversationMessageTimerSystemMessageCellDescription: ConversationMe
         }
 
         let icon = StyleKitIcon.hourglass.makeImage(size: 16, color: IconColors.backgroundDefault)
-        configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
-        accessibilityLabel = updateText?.string
-        actionController = nil
+        self.configuration = View.Configuration(icon: icon, attributedText: updateText, showLine: false)
+        self.accessibilityLabel = updateText?.string
+        self.actionController = nil
     }
 }

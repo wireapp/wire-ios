@@ -61,7 +61,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
     func testThatItGeneratesCorrectSetAccessModeRequestForApiVersionV3() {
         // given
         selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(
+        let conversation = conversation(options: ConversationOptions(
             hasRemoteId: true,
             team: .teamA,
             isGroup: true
@@ -100,7 +100,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
     func internaltestThatItGeneratesCorrectSetAccessModeRequestForPreviousApiVersions(apiVersion: APIVersion) {
         // given
         selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(
+        let conversation = conversation(options: ConversationOptions(
             hasRemoteId: true,
             team: .teamA,
             isGroup: true
@@ -139,7 +139,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
     func testThatItGeneratesCorrectFetchLinkRequest() {
         // given
         selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(
+        let conversation = conversation(options: ConversationOptions(
             hasRemoteId: true,
             team: .teamA,
             isGroup: true
@@ -155,7 +155,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
     func testThatItGeneratesGuestLinkStatusRequest() {
         // GIVEN
         selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(
+        let conversation = conversation(options: ConversationOptions(
             hasRemoteId: true,
             team: .teamA,
             isGroup: true
@@ -179,7 +179,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
     func testThatItGeneratesCorrectDeleteLinkRequest() {
         // given
         selfUser(options: SelfUserOptions(team: .teamA))
-        let conversation = self.conversation(options: ConversationOptions(
+        let conversation = conversation(options: ConversationOptions(
             hasRemoteId: true,
             team: .teamA,
             isGroup: true
@@ -273,7 +273,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
 
     @discardableResult
     func createMembership(user: ZMUser, team: Team) -> Member {
-        let member = Member.insertNewObject(in: self.uiMOC)
+        let member = Member.insertNewObject(in: uiMOC)
         member.user = user
         member.team = team
         member.permissions = .member
@@ -282,7 +282,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
 
     func conversation(options: ConversationOptions) -> ZMConversation {
         let conversation = ZMConversation.insertGroupConversation(
-            moc: self.uiMOC,
+            moc: uiMOC,
             participants: [],
             name: "Test Conversation"
         )!
@@ -316,7 +316,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
 
     @discardableResult
     func selfUser(options: SelfUserOptions) -> ZMUser {
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         switch options.team {
         case .none:
             selfUser.membership?.team = nil

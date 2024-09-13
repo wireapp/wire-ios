@@ -20,7 +20,7 @@
 public class PersonName: NSObject {
     override public func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? PersonName else { return false }
-        return self.components == other.components
+        return components == other.components
     }
 
     enum NameOrder {

@@ -42,7 +42,7 @@ public struct ConversationAccessMode: OptionSet {
 
 extension ConversationAccessMode: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.rawValue)
+        hasher.combine(rawValue)
     }
 }
 
@@ -232,7 +232,7 @@ extension ZMConversation: SwiftConversationLike {
     /// Defines how users can join a conversation.
     public var accessMode: ConversationAccessMode? {
         get {
-            guard let strings = self.accessModeStrings else {
+            guard let strings = accessModeStrings else {
                 return nil
             }
 
@@ -250,7 +250,7 @@ extension ZMConversation: SwiftConversationLike {
     /// Defines who can join the conversation.
     public var accessRole: ConversationAccessRole? {
         get {
-            guard let strings = self.accessRoleString else {
+            guard let strings = accessRoleString else {
                 return nil
             }
 

@@ -63,14 +63,14 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     ) {
         self.configuration = configuration
 
-        contentController = .init(
+        self.contentController = .init(
             configuration: configuration,
             selfUser: selfUser,
             userSession: userSession
         )
 
-        contentNavigationController = contentController.wrapInNavigationController()
-        callDegradationController = CallDegradationController()
+        self.contentNavigationController = contentController.wrapInNavigationController()
+        self.callDegradationController = CallDegradationController()
 
         super.init(nibName: nil, bundle: nil)
 

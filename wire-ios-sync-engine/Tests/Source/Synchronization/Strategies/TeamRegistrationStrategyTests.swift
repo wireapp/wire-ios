@@ -31,7 +31,7 @@ final class RegistrationStrategyTests: MessagingTest {
         super.setUp()
         registrationStatus = TestRegistrationStatus()
         userInfoParser = MockUserInfoParser()
-        sut = RegistrationStrategy(groupQueue: self.syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
+        sut = RegistrationStrategy(groupQueue: syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
         team = UnregisteredTeam(
             teamName: "Dream Team",
             email: "some@email.com",

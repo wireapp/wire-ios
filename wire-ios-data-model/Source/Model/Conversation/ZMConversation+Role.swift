@@ -33,9 +33,9 @@ public class UpdateRoleAction: EntityAction {
     public let roleID: NSManagedObjectID
 
     public required init(user: ZMUser, conversation: ZMConversation, role: Role) {
-        userID = user.objectID
-        conversationID = conversation.objectID
-        roleID = role.objectID
+        self.userID = user.objectID
+        self.conversationID = conversation.objectID
+        self.roleID = role.objectID
     }
 }
 

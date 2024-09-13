@@ -55,7 +55,7 @@ final class OtherUserClientsListViewController: UIViewController,
 
         tokens.append(userSession.addUserObserver(self, for: user))
 
-        self.headerView.delegate = self
+        headerView.delegate = self
         title = L10n.Localizable.Profile.Devices.title
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize

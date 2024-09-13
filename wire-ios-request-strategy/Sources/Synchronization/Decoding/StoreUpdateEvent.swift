@@ -124,7 +124,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         eventHash: Int,
         in context: NSManagedObjectContext
     ) -> Bool {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         let eventIdPredicate = NSPredicate(format: "%K = %@", #keyPath(StoredUpdateEvent.uuidString), eventId)
 
         let eventHash = NSPredicate(format: "%K = %lld", #keyPath(StoredUpdateEvent.eventHash), Int64(eventHash))
@@ -168,7 +168,7 @@ public final class StoredUpdateEvent: NSManagedObject {
 
     static func insertNewObject(_ context: NSManagedObjectContext) -> StoredUpdateEvent? {
         NSEntityDescription.insertNewObject(
-            forEntityName: self.entityName,
+            forEntityName: entityName,
             into: context
         ) as? StoredUpdateEvent
     }
@@ -183,7 +183,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         batchSize: Int,
         callEventsOnly: Bool
     ) -> [StoredUpdateEvent] {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: true)]
         fetchRequest.fetchLimit = batchSize
         fetchRequest.returnsObjectsAsFaults = false
@@ -199,7 +199,7 @@ public final class StoredUpdateEvent: NSManagedObject {
     /// Returns the highest index of all stored events
 
     public static func highestIndex(_ context: NSManagedObjectContext) -> Int64 {
-        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: self.entityName)
+        let fetchRequest = NSFetchRequest<StoredUpdateEvent>(entityName: entityName)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: StoredUpdateEvent.SortIndexKey, ascending: false)]
         fetchRequest.fetchBatchSize = 1
         let result = context.fetchOrAssert(request: fetchRequest)

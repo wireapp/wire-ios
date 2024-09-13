@@ -79,7 +79,7 @@ class ZMSnapshotTestCase: XCTestCase {
             XCTAssertNil(error)
         })
         self.coreDataStack = coreDataStack
-        self.uiMOC = coreDataStack.viewContext
+        uiMOC = coreDataStack.viewContext
     }
 
     override open func tearDown() {

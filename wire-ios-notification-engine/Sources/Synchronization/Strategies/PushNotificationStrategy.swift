@@ -50,7 +50,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
             applicationStatus: applicationStatus
         )
 
-        sync = NotificationStreamSync(
+        self.sync = NotificationStreamSync(
             moc: syncContext,
             notificationsTracker: notificationsTracker,
             eventIDRespository: lastEventIDRepository,
@@ -78,7 +78,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy {
     }
 
     public var isFetchingStreamForAPNS: Bool {
-        self.pushNotificationStatus.hasEventsToFetch
+        pushNotificationStatus.hasEventsToFetch
     }
 }
 

@@ -42,16 +42,16 @@ extension Payload {
                 let reference = conversation.silencedChangedTimestamp ?? Date()
                 conversation.silencedChangedTimestamp = reference
 
-                mutedStatus = Int(conversation.mutedMessageTypes.rawValue)
-                mutedReference = reference
+                self.mutedStatus = Int(conversation.mutedMessageTypes.rawValue)
+                self.mutedReference = reference
             }
 
             if conversation.hasLocalModifications(forKey: ZMConversationArchivedChangedTimeStampKey) {
                 let reference = conversation.archivedChangedTimestamp ?? Date()
                 conversation.archivedChangedTimestamp = reference
 
-                archived = conversation.isArchived
-                archivedReference = reference
+                self.archived = conversation.isArchived
+                self.archivedReference = reference
             }
         }
     }

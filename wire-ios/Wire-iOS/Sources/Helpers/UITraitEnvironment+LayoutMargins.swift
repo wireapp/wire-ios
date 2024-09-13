@@ -30,11 +30,11 @@ struct HorizontalMargins {
     init(userInterfaceSizeClass: UIUserInterfaceSizeClass) {
         switch userInterfaceSizeClass {
         case .regular:
-            left = 96
-            right = 96
+            self.left = 96
+            self.right = 96
         default:
-            left = 56
-            right = 16
+            self.left = 56
+            self.right = 16
         }
     }
 }

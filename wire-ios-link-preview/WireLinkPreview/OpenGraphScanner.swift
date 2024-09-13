@@ -31,7 +31,7 @@ final class OpenGraphScanner: NSObject {
     init(_ xmlString: String, url: URL, completion: @escaping ParserCompletion) {
         self.xmlString = xmlString
         self.completion = completion
-        originalURL = url
+        self.originalURL = url
         super.init()
     }
 

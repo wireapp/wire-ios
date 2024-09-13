@@ -27,23 +27,23 @@ class UserProfileUpdateRequestStrategyTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
-        self.userProfileUpdateStatus = TestUserProfileUpdateStatus(
-            managedObjectContext: self.uiMOC,
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
+        userProfileUpdateStatus = TestUserProfileUpdateStatus(
+            managedObjectContext: uiMOC,
             analytics: MockAnalytics()
         )
-        self.sut = UserProfileUpdateRequestStrategy(
-            managedObjectContext: self.uiMOC,
-            applicationStatus: self.mockApplicationStatus,
-            userProfileUpdateStatus: self.userProfileUpdateStatus
+        sut = UserProfileUpdateRequestStrategy(
+            managedObjectContext: uiMOC,
+            applicationStatus: mockApplicationStatus,
+            userProfileUpdateStatus: userProfileUpdateStatus
         )
     }
 
     override func tearDown() {
-        self.sut = nil
-        self.userProfileUpdateStatus = nil
-        self.mockApplicationStatus = nil
+        sut = nil
+        userProfileUpdateStatus = nil
+        mockApplicationStatus = nil
         super.tearDown()
     }
 }
@@ -56,17 +56,17 @@ extension UserProfileUpdateRequestStrategyTests {
         // already authenticated in setup
 
         // THEN
-        XCTAssertNil(self.sut.nextRequest(for: .v0))
+        XCTAssertNil(sut.nextRequest(for: .v0))
     }
 
     func testThatItCreatesARequestToUpdatePassword() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/self/password", method: .put, payload: [
@@ -77,15 +77,15 @@ extension UserProfileUpdateRequestStrategyTests {
 
     func testThatItCreatesARequestToChangeEmail() {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
 
         let newEmail = "mario@example.com"
-        try! self.userProfileUpdateStatus.requestEmailChange(email: newEmail)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        try! userProfileUpdateStatus.requestEmailChange(email: newEmail)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
 
         // THEN
         XCTAssertEqual(request?.path, "/access/self/email")
@@ -98,12 +98,12 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCreatesARequestToUpdateEmailAfterUpdatingPassword() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(path: "/access/self/email", method: .put, payload: [
@@ -115,11 +115,11 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCreatesARequestToCheckHandleAvailability() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
 
         // THEN
         let expected = ZMTransportRequest(
@@ -134,11 +134,11 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCreatesARequestToSetHandle() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestSettingHandle(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
 
         // THEN
         let payload: NSDictionary = ["handle": handle]
@@ -153,15 +153,15 @@ extension UserProfileUpdateRequestStrategyTests {
 
     func testThatItCreatesARequestToFindHandleSuggestion() {
         // GIVEN
-        self.userProfileUpdateStatus.suggestHandles()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        guard let handles = self.userProfileUpdateStatus.suggestedHandlesToCheck else {
+        userProfileUpdateStatus.suggestHandles()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        guard let handles = userProfileUpdateStatus.suggestedHandlesToCheck else {
             XCTFail()
             return
         }
 
         // WHEN
-        let possibleRequest = self.sut.nextRequest(for: .v0)
+        let possibleRequest = sut.nextRequest(for: .v0)
 
         // THEN
         guard let request = possibleRequest else {
@@ -190,115 +190,115 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatCallsDidUpdatePasswordSuccessfully() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.successResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: successResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdatePasswordSuccessfully, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidUpdatePasswordSuccessfully, 1)
     }
 
     func testThatCallsDidUpdatePasswordSuccessfullyOn403() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.invalidCredentialsResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: invalidCredentialsResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdatePasswordSuccessfully, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidUpdatePasswordSuccessfully, 1)
     }
 
     func testThatCallsDidFailPasswordUpdateOn400() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.errorResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: errorResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailPasswordUpdate, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailPasswordUpdate, 1)
     }
 
     func testThatItCallsDidUpdateEmailSuccessfullyWhenSettingEmailAndPassword() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.successResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: successResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdateEmailSuccessfully, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidUpdateEmailSuccessfully, 1)
     }
 
     func testThatItCallsDidFailEmailUpdateWithInvalidEmail() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.invalidEmailResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: invalidEmailResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
-        guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
+        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.invalidEmail.rawValue)
     }
 
     func testThatItCallsDidFailEmailUpdateWithDuplicatedEmail() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.keyExistsResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: keyExistsResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
-        guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
+        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.emailIsAlreadyRegistered.rawValue)
     }
 
     func testThatItCallsDidFailEmailUpdateWithUnknownError() {
         // GIVEN
         let credentials = UserEmailCredentials(email: "mario@example.com", password: "princess")
-        try! self.userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+        try! userProfileUpdateStatus.requestSettingEmailAndPassword(credentials: credentials)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.didUpdatePasswordSuccessfully()
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.errorResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: errorResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
-        guard let error = self.userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailEmailUpdate.count, 1)
+        guard let error = userProfileUpdateStatus.recordedDidFailEmailUpdate.first else { return }
         XCTAssertEqual((error as NSError).code, UserSessionErrorCode.unknownError.rawValue)
     }
 
@@ -306,18 +306,18 @@ extension UserProfileUpdateRequestStrategyTests {
 
     func testThatItCallsDidUpdateEmailSuccessfullyWhenChangingEmail() {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
-        try! self.userProfileUpdateStatus.requestEmailChange(email: "mario@example.com")
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        try! userProfileUpdateStatus.requestEmailChange(email: "mario@example.com")
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.successResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: successResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidUpdateEmailSuccessfully, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidUpdateEmailSuccessfully, 1)
     }
 
     // MARK: - Check handle availability
@@ -325,46 +325,46 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCallsDidFetchHandle() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.successResponse(path: request?.path))
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: successResponse(path: request?.path))
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFetchHandle, [handle])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFetchHandle, [handle])
     }
 
     func testThatItCallsDidNotFindHandle() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.notFoundResponse(path: request!.path))
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: notFoundResponse(path: request!.path))
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidNotFindHandle, [handle])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidNotFindHandle, [handle])
     }
 
     func testThatItCallsFailedToCheckHandleAvailability() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestCheckHandleAvailability(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.errorResponse(path: request?.path))
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: errorResponse(path: request?.path))
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailRequestToFetchHandle, [handle])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailRequestToFetchHandle, [handle])
     }
 
     // MARK: - Setting handle
@@ -372,62 +372,62 @@ extension UserProfileUpdateRequestStrategyTests {
     func testThatItCallsSuccessSetHandle() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestSettingHandle(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.successResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: successResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidSetHandle, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidSetHandle, 1)
     }
 
     func testThatItCallsFailedToSetHandle() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestSettingHandle(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.errorResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: errorResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailToSetHandle, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailToSetHandle, 1)
     }
 
     func testThatItCallsFailedToSetHandleBecauseExisting() {
         // GIVEN
         let handle = "martha"
-        self.userProfileUpdateStatus.requestSettingHandle(handle: handle)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.requestSettingHandle(handle: handle)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
-        request?.complete(with: self.handleExistsResponse())
+        let request = sut.nextRequest(for: .v0)
+        request?.complete(with: handleExistsResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailToSetAlreadyExistingHandle, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailToSetAlreadyExistingHandle, 1)
     }
 
     // MARK: - Suggesting handles
 
     func testThatItCallsDidFinddHandleSuggestion() {
         // GIVEN
-        self.userProfileUpdateStatus.suggestHandles()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        guard let handles = self.userProfileUpdateStatus.suggestedHandlesToCheck, handles.count > 10 else {
+        userProfileUpdateStatus.suggestHandles()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        guard let handles = userProfileUpdateStatus.suggestedHandlesToCheck, handles.count > 10 else {
             XCTFail()
             return
         }
         let expectedHandle = handles[5]
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
         let handlesInResponse = [handles[5], handles[9], handles[10]]
         request?.complete(with: ZMTransportResponse(
             payload: handlesInResponse as NSArray,
@@ -437,17 +437,17 @@ extension UserProfileUpdateRequestStrategyTests {
         ))
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFindHandleSuggestion, [expectedHandle])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFindHandleSuggestion, [expectedHandle])
     }
 
     func testThatItCallsFailedToFindHandleSuggestionIfNoHandlesAreReturned() {
         // GIVEN
-        self.userProfileUpdateStatus.suggestHandles()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.suggestHandles()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        let request = self.sut.nextRequest(for: .v0)
+        let request = sut.nextRequest(for: .v0)
         request?.complete(with: ZMTransportResponse(
             payload: [] as NSArray,
             httpStatus: 200,
@@ -456,26 +456,26 @@ extension UserProfileUpdateRequestStrategyTests {
         ))
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidNotFindAvailableHandleSuggestion, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidNotFindAvailableHandleSuggestion, 1)
     }
 
     func testThatItCallsFailedToFindHandleSuggestionInCaseOfError() {
         // GIVEN
-        self.userProfileUpdateStatus.suggestHandles()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        userProfileUpdateStatus.suggestHandles()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // WHEN
-        guard let request = self.sut.nextRequest(for: .v0) else {
+        guard let request = sut.nextRequest(for: .v0) else {
             XCTFail()
             return
         }
-        request.complete(with: self.errorResponse())
+        request.complete(with: errorResponse())
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileUpdateStatus.recordedDidFailToFindHandleSuggestion, 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileUpdateStatus.recordedDidFailToFindHandleSuggestion, 1)
     }
 }
 

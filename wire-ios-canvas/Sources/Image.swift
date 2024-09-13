@@ -60,9 +60,9 @@ final class Image: Editable {
         self.rotation = 0
         self.position = position
         self.selected = false
-        self.imageView.image = image
-        self.imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
-        self.imageView.sizeToFit()
+        imageView.image = image
+        imageView.layer.anchorPoint = CGPoint(x: 0.0, y: 0.0)
+        imageView.sizeToFit()
 
         updateImageTransform()
     }

@@ -25,14 +25,14 @@ class ConversationTests_Reactions: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         let nonce = message?.nonce
@@ -44,11 +44,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 .createReaction(emojis: [reactionEmoji], messageID: nonce!) as MessageCapable,
             nonce: UUID.create()
         )
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -67,22 +67,22 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
     func testThatAppendingAReactionNotifiesObserverOfChangesInReactionsWhenExternalUserReact() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let reactionEmoji = "❤️"
-        self.userSession?.perform {
+        userSession?.perform {
             ZMMessage.addReaction(reactionEmoji, to: message!)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -93,11 +93,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
             nonce: UUID.create()
         )
 
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -114,16 +114,16 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
     func testThatReceivingAReactionThatIsNotHandledDoesntSaveIt() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         let nonce = message?.nonce
@@ -135,11 +135,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 .createReaction(emojis: [reactionEmoji], messageID: nonce!) as MessageCapable,
             nonce: UUID.create()
         )
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -155,16 +155,16 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
     func testThatReceivingALikeInAClearedConversationDoesNotUnarchiveTheConversation() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         let nonce = message?.nonce
@@ -176,17 +176,17 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 .createReaction(emojis: [reactionEmoji], messageID: nonce!) as MessageCapable,
             nonce: UUID.create()
         )
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.userSession?.perform {
+        userSession?.perform {
             conversation?.clearMessageHistory()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(conversation!.isArchived)
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -201,16 +201,16 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
     func testThatReceivingALikeInAnArchivedConversationDoesNotUnarchiveTheConversation() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         let nonce = message?.nonce
@@ -222,17 +222,17 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 .createReaction(emojis: [reactionEmoji], messageID: nonce!) as MessageCapable,
             nonce: UUID.create()
         )
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.userSession?.perform {
+        userSession?.perform {
             conversation?.isArchived = true
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(conversation!.isArchived)
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -247,27 +247,27 @@ class ConversationTests_Reactions: ConversationTestsBase {
 
     func testThatMessageDeletedForMyselfDoesNotAppearWhenLikedBySomeoneElse() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         let nonce = message?.nonce
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.userSession?.perform {
+        userSession?.perform {
             ZMMessage.hideMessage(message!)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        XCTAssertNil(ZMMessage.fetch(withNonce: nonce, for: conversation!, in: self.userSession!.managedObjectContext))
+        XCTAssertNil(ZMMessage.fetch(withNonce: nonce, for: conversation!, in: userSession!.managedObjectContext))
 
         let reactionEmoji = "❤️"
         let reactionMessage = GenericMessage(
@@ -275,11 +275,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 .createReaction(emojis: [reactionEmoji], messageID: nonce!) as MessageCapable,
             nonce: UUID.create()
         )
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -289,20 +289,20 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertNil(ZMMessage.fetch(withNonce: nonce, for: conversation!, in: self.userSession!.managedObjectContext))
+        XCTAssertNil(ZMMessage.fetch(withNonce: nonce, for: conversation!, in: userSession!.managedObjectContext))
     }
 
     func testThatWeCanLikeAMessageAfterItWasEditedByItsUser() {
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         let nonce = UUID.create()
         var message =
@@ -316,7 +316,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 nonce: nonce
             )
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -335,7 +335,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 nonce: UUID.create()
             )
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,
@@ -347,11 +347,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let editedMessage = ZMMessage.fetch(
             withNonce: nonce,
             for: conversation!,
-            in: self.userSession!.managedObjectContext
+            in: userSession!.managedObjectContext
         )
 
         // when
-        self.userSession?.perform {
+        userSession?.perform {
             ZMMessage.addReaction("🥰", to: editedMessage!)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -361,20 +361,20 @@ class ConversationTests_Reactions: ConversationTestsBase {
     }
 
     func testThatWeSeeLikeFromBlockedUserInGroupConversation() {
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.prefetchClientByInsertingMessage(in: self.selfToUser1Conversation)
+        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let mockConversation = self.selfToUser1Conversation
-        let conversation = self.conversation(for: mockConversation!)
+        let mockConversation = selfToUser1Conversation
+        let conversation = conversation(for: mockConversation!)
 
-        let blockedUser = self.user(for: self.user1)
+        let blockedUser = user(for: user1)
         blockedUser?.block(completion: { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         var message: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Je t'aime JCVD") as? ZMMessage
         }
         let nonce = message?.nonce
@@ -386,11 +386,11 @@ class ConversationTests_Reactions: ConversationTestsBase {
                 .createReaction(emojis: [reactionEmoji], messageID: nonce!) as MessageCapable,
             nonce: UUID.create()
         )
-        let fromClient = self.user1.clients.anyObject() as! MockUserClient
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: fromClient,
                 to: toClient,

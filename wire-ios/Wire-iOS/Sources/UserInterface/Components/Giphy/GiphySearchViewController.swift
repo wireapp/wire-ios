@@ -60,7 +60,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     private var ziphs: [Ziph] = [] {
         didSet {
             collectionView?.reloadData()
-            noResultsLabel.isHidden = self.ziphs.count > 0
+            noResultsLabel.isHidden = ziphs.count > 0
         }
     }
 
@@ -202,7 +202,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     // MARK: - Collection View
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        self.ziphs.count
+        ziphs.count
     }
 
     override func collectionView(
@@ -243,7 +243,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, sizeOfItemAt indexPath: IndexPath) -> CGSize {
-        let ziph = self.ziphs[indexPath.item]
+        let ziph = ziphs[indexPath.item]
 
         guard let representation = ziph.previewImage else {
             return .zero
@@ -253,7 +253,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let ziph = self.ziphs[indexPath.item]
+        let ziph = ziphs[indexPath.item]
         var previewImage: FLAnimatedImage?
 
         if let cell = collectionView.cellForItem(at: indexPath) as? GiphyCollectionViewCell {

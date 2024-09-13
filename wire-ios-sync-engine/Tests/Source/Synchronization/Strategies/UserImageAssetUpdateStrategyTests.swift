@@ -65,11 +65,11 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
-        self.updateStatus = MockImageUpdateStatus()
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
+        updateStatus = MockImageUpdateStatus()
 
-        sut = self.syncMOC.performAndWait {
+        sut = syncMOC.performAndWait {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: self.syncMOC,
                 applicationStatus: mockApplicationStatus,
@@ -87,9 +87,9 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
     }
 
     override func tearDown() {
-        self.mockApplicationStatus = nil
-        self.updateStatus = nil
-        self.sut = nil
+        mockApplicationStatus = nil
+        updateStatus = nil
+        sut = nil
         syncMOC.performAndWait {
             self.syncMOC.zm_userImageCache = nil
         }
@@ -269,7 +269,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             return user
         }
 
-        let sync = self.sut.downstreamRequestSyncs[.preview]!
+        let sync = sut.downstreamRequestSyncs[.preview]!
         XCTAssertFalse(sync.hasOutstandingItems)
 
         syncMOC.performAndWait {
@@ -294,7 +294,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             return user
         }
 
-        let sync = self.sut.downstreamRequestSyncs[.complete]!
+        let sync = sut.downstreamRequestSyncs[.complete]!
         XCTAssertFalse(sync.hasOutstandingItems)
 
         syncMOC.performAndWait {
@@ -353,7 +353,7 @@ class UserImageAssetUpdateStrategyTests: MessagingTest {
             "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetId)"
         }
 
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let request = self.sut.downstreamRequestSyncs[size]?.nextRequest(for: apiVersion)
             XCTAssertNotNil(request)
             XCTAssertEqual(request?.path, expectedPath)

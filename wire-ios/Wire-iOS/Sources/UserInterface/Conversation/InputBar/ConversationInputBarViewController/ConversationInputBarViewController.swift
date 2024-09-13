@@ -352,8 +352,8 @@ final class ConversationInputBarViewController: UIViewController,
 
         if !ProcessInfo.processInfo.isRunningTests,
            let conversation = conversation as? ZMConversation {
-            conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
-            typingObserverToken = conversation.addTypingObserver(self)
+            self.conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
         setupNotificationCenter()
@@ -462,7 +462,7 @@ final class ConversationInputBarViewController: UIViewController,
         guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
-        self.inRotation = true
+        inRotation = true
 
         coordinator.animate(alongsideTransition: nil) { _ in
             self.inRotation = false
@@ -652,7 +652,7 @@ final class ConversationInputBarViewController: UIViewController,
         )
 
         controller.addAction(sendAction)
-        self.present(controller, animated: true)
+        present(controller, animated: true)
     }
 
     @objc
@@ -670,7 +670,7 @@ final class ConversationInputBarViewController: UIViewController,
                     }
                 }
             } else {
-                self.appendKnock()
+                appendKnock()
             }
         }
     }

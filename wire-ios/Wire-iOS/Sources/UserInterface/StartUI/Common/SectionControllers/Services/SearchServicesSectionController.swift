@@ -84,7 +84,7 @@ final class SearchServicesSectionController: SearchSectionController {
                 for: indexPath
             )
         } else {
-            let service = self.service(for: indexPath)
+            let service = service(for: indexPath)
 
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: UserCell.zm_reuseIdentifier,
@@ -109,7 +109,7 @@ final class SearchServicesSectionController: SearchSectionController {
         if canSelfUserManageTeam, indexPath.row == 0 {
             delegate?.addServicesSectionDidRequestOpenServicesAdmin()
         } else {
-            let service = self.service(for: indexPath)
+            let service = service(for: indexPath)
             delegate?.searchSectionController(self, didSelectUser: service, at: indexPath)
         }
     }

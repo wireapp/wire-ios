@@ -166,7 +166,7 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
             key: key
         )
 
-        self.data = ciphertext
+        data = ciphertext
         self.nonce = nonce
     }
 
@@ -184,7 +184,7 @@ extension ZMGenericMessageData: EncryptionAtRestMigratable {
             key: key
         )
 
-        self.data = plaintext
+        data = plaintext
         self.nonce = nil
     }
 }

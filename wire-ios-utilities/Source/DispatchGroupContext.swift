@@ -48,7 +48,7 @@ public final class DispatchGroupContext: NSObject {
 
     @objc(enterAllExcept:)
     func enterAll(except group: ZMSDispatchGroup? = nil) -> [ZMSDispatchGroup] {
-        let groups = self.groups.filter { $0 != group }
+        let groups = groups.filter { $0 != group }
 
         for group in groups {
             group.enter()

@@ -33,11 +33,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Properties
 
     private(set) var state: State = .ready {
-        didSet { if oldValue != state { updateRecordingState(self.state) }}
+        didSet { if oldValue != state { updateRecordingState(state) }}
     }
 
     var isRecording: Bool {
-        switch self.recorder.state {
+        switch recorder.state {
         case .recording:
             true
         default:
@@ -97,7 +97,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         createConstraints()
 
         if Bundle.developerModeEnabled, Settings.shared.maxRecordingDurationDebug != 0 {
-            self.recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
+            recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
         }
     }
 
@@ -123,43 +123,43 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         let textColor = SemanticColors.Label.textDefault
         let separatorColor = SemanticColors.View.backgroundSeparatorCell
 
-        self.view.backgroundColor = backgroundColor
+        view.backgroundColor = backgroundColor
 
-        self.recordTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(recordButtonPressed))
-        self.view.addGestureRecognizer(self.recordTapGestureRecognizer)
+        recordTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(recordButtonPressed))
+        view.addGestureRecognizer(recordTapGestureRecognizer)
 
-        self.audioPreviewView.gradientWidth = 20
-        self.audioPreviewView.gradientColor = backgroundColor
+        audioPreviewView.gradientWidth = 20
+        audioPreviewView.gradientColor = backgroundColor
 
-        self.accentColorChangeHandler = AccentColorChangeHandler
+        accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(self, userSession: userSession) { [unowned self] color, _ in
                 if let color {
-                    self.audioPreviewView.color = color
+                    audioPreviewView.color = color
                 }
             }
 
-        self.timeLabel.font = FontSpec(.small, .light).font!
-        self.timeLabel.textColor = textColor
-        self.timeLabel.accessibilityLabel = "recordingTime"
+        timeLabel.font = FontSpec(.small, .light).font!
+        timeLabel.textColor = textColor
+        timeLabel.accessibilityLabel = "recordingTime"
 
-        self.createTipLabel()
+        createTipLabel()
 
-        [self.audioPreviewView, self.timeLabel, self.tipLabel].forEach(self.topContainer.addSubview)
+        [audioPreviewView, timeLabel, tipLabel].forEach(topContainer.addSubview)
 
         createButtons()
 
         [
-            self.recordButton,
-            self.stopRecordButton,
-            self.confirmButton,
-            self.redoButton,
-            self.cancelButton,
-        ].forEach(self.bottomToolbar.addSubview)
+            recordButton,
+            stopRecordButton,
+            confirmButton,
+            redoButton,
+            cancelButton,
+        ].forEach(bottomToolbar.addSubview)
 
-        self.topSeparator.backgroundColor = separatorColor
+        topSeparator.backgroundColor = separatorColor
 
-        [self.bottomToolbar, self.topContainer, self.topSeparator].forEach(self.view.addSubview)
-        updateRecordingState(self.state)
+        [bottomToolbar, topContainer, topSeparator].forEach(view.addSubview)
+        updateRecordingState(state)
     }
 
     private func createTipLabel() {
@@ -192,43 +192,43 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             range: NSRange(location: 0, length: attrText.length)
         )
 
-        self.tipLabel.attributedText = attrText
-        self.tipLabel.numberOfLines = 2
-        self.tipLabel.font = FontSpec(.small, .light).font!
-        self.tipLabel.textColor = color
-        self.tipLabel.textAlignment = .center
-        self.tipLabel.isAccessibilityElement = false
+        tipLabel.attributedText = attrText
+        tipLabel.numberOfLines = 2
+        tipLabel.font = FontSpec(.small, .light).font!
+        tipLabel.textColor = color
+        tipLabel.textAlignment = .center
+        tipLabel.isAccessibilityElement = false
     }
 
     private func createButtons() {
-        self.recordButton.setIcon(.recordDot, size: .tiny, for: [])
-        self.recordButton.setIconColor(.white, for: [])
-        self.recordButton.addTarget(self, action: #selector(recordButtonPressed), for: .touchUpInside)
-        self.recordButton.setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
-        self.recordButton.layer.masksToBounds = true
+        recordButton.setIcon(.recordDot, size: .tiny, for: [])
+        recordButton.setIconColor(.white, for: [])
+        recordButton.addTarget(self, action: #selector(recordButtonPressed), for: .touchUpInside)
+        recordButton.setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
+        recordButton.layer.masksToBounds = true
 
-        self.stopRecordButton.setIcon(.stopRecording, size: .tiny, for: [])
-        self.stopRecordButton.setIconColor(.white, for: [])
-        self.stopRecordButton.addTarget(self, action: #selector(stopRecordButtonPressed), for: .touchUpInside)
-        self.stopRecordButton.setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
-        self.stopRecordButton.layer.masksToBounds = true
+        stopRecordButton.setIcon(.stopRecording, size: .tiny, for: [])
+        stopRecordButton.setIconColor(.white, for: [])
+        stopRecordButton.addTarget(self, action: #selector(stopRecordButtonPressed), for: .touchUpInside)
+        stopRecordButton.setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
+        stopRecordButton.layer.masksToBounds = true
 
-        self.confirmButton.setIcon(.checkmark, size: .tiny, for: [])
-        self.confirmButton.setIconColor(.white, for: [])
-        self.confirmButton.addTarget(self, action: #selector(confirmButtonPressed), for: .touchUpInside)
-        self.confirmButton.setBackgroundImageColor(
+        confirmButton.setIcon(.checkmark, size: .tiny, for: [])
+        confirmButton.setIconColor(.white, for: [])
+        confirmButton.addTarget(self, action: #selector(confirmButtonPressed), for: .touchUpInside)
+        confirmButton.setBackgroundImageColor(
             SemanticColors.Button.backgroundconfirmSendingAudioMessage,
             for: .normal
         )
-        self.confirmButton.layer.masksToBounds = true
+        confirmButton.layer.masksToBounds = true
 
-        self.redoButton.setIcon(.undo, size: .tiny, for: [])
-        self.redoButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: [])
-        self.redoButton.addTarget(self, action: #selector(redoButtonPressed), for: .touchUpInside)
+        redoButton.setIcon(.undo, size: .tiny, for: [])
+        redoButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: [])
+        redoButton.addTarget(self, action: #selector(redoButtonPressed), for: .touchUpInside)
 
-        self.cancelButton.setIcon(.cross, size: .tiny, for: [])
-        self.cancelButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: [])
-        self.cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
+        cancelButton.setIcon(.cross, size: .tiny, for: [])
+        cancelButton.setIconColor(SemanticColors.Icon.foregroundDefaultBlack, for: [])
+        cancelButton.addTarget(self, action: #selector(cancelButtonPressed), for: .touchUpInside)
 
         setupAccessibility()
     }
@@ -236,11 +236,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private func setupAccessibility() {
         typealias AudioRecord = L10n.Accessibility.AudioRecord
 
-        self.recordButton.accessibilityLabel = AudioRecord.StartButton.description
-        self.stopRecordButton.accessibilityLabel = AudioRecord.StopButton.description
-        self.confirmButton.accessibilityLabel = AudioRecord.SendButton.description
-        self.redoButton.accessibilityLabel = AudioRecord.RedoButton.description
-        self.cancelButton.accessibilityLabel = AudioRecord.CancelButton.description
+        recordButton.accessibilityLabel = AudioRecord.StartButton.description
+        stopRecordButton.accessibilityLabel = AudioRecord.StopButton.description
+        confirmButton.accessibilityLabel = AudioRecord.SendButton.description
+        redoButton.accessibilityLabel = AudioRecord.RedoButton.description
+        cancelButton.accessibilityLabel = AudioRecord.CancelButton.description
     }
 
     private func createConstraints() {
@@ -315,9 +315,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        self.confirmButton.layer.cornerRadius = self.confirmButton.bounds.size.width / 2
-        self.recordButton.layer.cornerRadius = self.recordButton.bounds.size.width / 2
-        self.stopRecordButton.layer.cornerRadius = self.stopRecordButton.bounds.size.width / 2
+        confirmButton.layer.cornerRadius = confirmButton.bounds.size.width / 2
+        recordButton.layer.cornerRadius = recordButton.bounds.size.width / 2
+        stopRecordButton.layer.cornerRadius = stopRecordButton.bounds.size.width / 2
     }
 
     func updateTimeLabel(_ durationInSeconds: TimeInterval) {
@@ -328,14 +328,14 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func visibleViews(forState: State) -> [UIView] {
-        var result = [self.topSeparator, self.topContainer, self.bottomToolbar]
+        var result = [topSeparator, topContainer, bottomToolbar]
         switch state {
         case .ready:
-            result.append(contentsOf: [self.tipLabel, self.recordButton])
+            result.append(contentsOf: [tipLabel, recordButton])
         case .recording:
-            result.append(contentsOf: [self.audioPreviewView, self.timeLabel, self.stopRecordButton])
+            result.append(contentsOf: [audioPreviewView, timeLabel, stopRecordButton])
         case .effects:
-            result.append(contentsOf: [self.redoButton, self.confirmButton, self.cancelButton])
+            result.append(contentsOf: [redoButton, confirmButton, cancelButton])
         }
 
         return result
@@ -346,7 +346,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     func configureAudioRecorder() {
         recorder.recordTimerCallback = { [weak self] time in
             guard let self else { return }
-            self.updateTimeLabel(time)
+            updateTimeLabel(time)
         }
 
         recorder.recordEndedCallback = { [weak self] result in
@@ -362,13 +362,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
         recorder.recordLevelCallBack = { [weak self] level in
             guard let self else { return }
-            self.audioPreviewView.updateWithLevel(level)
+            audioPreviewView.updateWithLevel(level)
         }
     }
 
     private func updateRecordingState(_ state: State) {
         let allViews = Set(view.subviews.flatMap(\.subviews))
-        let visibleViews = self.visibleViews(forState: state)
+        let visibleViews = visibleViews(forState: state)
         let hiddenViews = allViews.subtracting(visibleViews)
 
         visibleViews.forEach { $0.isHidden = false }
@@ -376,15 +376,15 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
         switch state {
         case .ready:
-            self.closeEffectsPicker(animated: false)
-            self.recordTapGestureRecognizer.isEnabled = true
+            closeEffectsPicker(animated: false)
+            recordTapGestureRecognizer.isEnabled = true
             updateTimeLabel(0)
         case .recording:
-            self.closeEffectsPicker(animated: false)
-            self.recordTapGestureRecognizer.isEnabled = false
+            closeEffectsPicker(animated: false)
+            recordTapGestureRecognizer.isEnabled = false
         case .effects:
-            self.openEffectsPicker()
-            self.recordTapGestureRecognizer.isEnabled = false
+            openEffectsPicker()
+            recordTapGestureRecognizer.isEnabled = false
         }
     }
 
@@ -431,10 +431,10 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func closeEffectsPicker(animated: Bool) {
-        if let picker = self.effectPickerViewController {
+        if let picker = effectPickerViewController {
             picker.willMove(toParent: nil)
             picker.removeFromParent()
-            self.effectPickerViewController = .none
+            effectPickerViewController = .none
         }
     }
 
@@ -442,7 +442,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     @objc
     func recordButtonPressed(_: AnyObject!) {
-        self.recorder.startRecording { _ in
+        recorder.startRecording { _ in
             self.state = .recording
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
             AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
@@ -451,12 +451,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     @objc
     func stopRecordButtonPressed(_: UIButton?) {
-        self.recorder.stopRecording()
+        recorder.stopRecording()
     }
 
     @objc
     func confirmButtonPressed(_ button: UIButton?) {
-        guard let audioPath = self.currentEffectFilePath else {
+        guard let audioPath = currentEffectFilePath else {
             zmLog.error("No file to send")
             return
         }
@@ -467,7 +467,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
         button?.isEnabled = false
 
-        let effectName = self.currentEffect == .none ? "Original" : self.currentEffect.description
+        let effectName = currentEffect == .none ? "Original" : currentEffect.description
 
         let filename = String.filename(for: selfUser, suffix: "-" + effectName).appendingPathExtension("m4a")!
         let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
@@ -489,12 +489,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     @objc
     func redoButtonPressed(_: UIButton?) {
         recorder.deleteRecording()
-        self.state = .ready
+        state = .ready
     }
 
     @objc
     func cancelButtonPressed(_: UIButton?) {
-        self.delegate?.audioRecordViewControllerDidCancel(self)
+        delegate?.audioRecordViewControllerDidCancel(self)
     }
 }
 
@@ -506,7 +506,7 @@ extension AudioRecordKeyboardViewController: AudioEffectsPickerDelegate {
         effect: AVSAudioEffectType,
         resultFilePath: String
     ) {
-        self.currentEffectFilePath = resultFilePath
-        self.currentEffect = effect
+        currentEffectFilePath = resultFilePath
+        currentEffect = effect
     }
 }

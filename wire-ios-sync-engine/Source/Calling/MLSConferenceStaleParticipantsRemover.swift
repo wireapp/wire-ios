@@ -178,6 +178,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                     guard let self else { return }
 
                     WaitingGroupTask(context: syncContext) { [self] in
+                        // swiftformat:disable:next redundantSelf
                         await self.remove(
                             client: clientID,
                             from: groupID

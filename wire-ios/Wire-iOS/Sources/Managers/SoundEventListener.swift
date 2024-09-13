@@ -26,7 +26,7 @@ extension ZMConversationMessage {
     }
 
     var isRecentMessage: Bool {
-        (self.serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
+        (serverTimestamp?.timeIntervalSinceNow ?? -Double.infinity) >= -1.0
     }
 
     var isSystemMessageWithSoundNotification: Bool {
@@ -62,13 +62,13 @@ final class SoundEventListener: NSObject {
         self.userSession = userSession
         super.init()
 
-        networkAvailabilityObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
+        self.networkAvailabilityObserverToken = ZMNetworkAvailabilityChangeNotification.addNetworkAvailabilityObserver(
             self,
             notificationContext: userSession.managedObjectContext.notificationContext
         )
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
-        unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
-        unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.unreadMessageObserverToken = NewUnreadMessagesChangeInfo.add(observer: self, for: userSession)
+        self.unreadKnockMessageObserverToken = NewUnreadKnockMessagesChangeInfo.add(observer: self, for: userSession)
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(applicationWillEnterForeground),

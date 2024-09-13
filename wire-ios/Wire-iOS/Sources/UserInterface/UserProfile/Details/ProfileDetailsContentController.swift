@@ -98,7 +98,7 @@ final class ProfileDetailsContentController: NSObject,
         self.viewer = viewer
         self.conversation = conversation
 
-        isAdminState = conversation.map(user.isGroupAdmin) ?? false
+        self.isAdminState = conversation.map(user.isGroupAdmin) ?? false
 
         super.init()
         configureObservers()
@@ -331,7 +331,7 @@ final class ProfileDetailsContentController: NSObject,
     }
 
     private func updateConversationRole() {
-        let groupRoles = self.conversation?.getRoles()
+        let groupRoles = conversation?.getRoles()
         let newParticipantRole = groupRoles?.first {
             $0.name == (self.isAdminState ? ZMConversation.defaultAdminRoleName : ZMConversation.defaultMemberRoleName)
         }
@@ -352,7 +352,7 @@ final class ProfileDetailsContentController: NSObject,
     }
 
     private func updateUI() {
-        self.delegate?.profileGroupRoleDidChange(isAdminRole: self.isAdminState)
-        self.delegate?.profileDetailsContentDidChange()
+        delegate?.profileGroupRoleDidChange(isAdminRole: isAdminState)
+        delegate?.profileDetailsContentDidChange()
     }
 }

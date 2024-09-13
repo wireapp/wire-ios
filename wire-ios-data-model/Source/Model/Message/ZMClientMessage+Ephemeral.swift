@@ -37,7 +37,7 @@ extension ZMClientMessage {
     }
 
     @objc override public var deletionTimeout: TimeInterval {
-        guard let ephemeral = self.ephemeral else {
+        guard let ephemeral else {
             return -1
         }
         return TimeInterval(ephemeral.expireAfterMillis / 1000)

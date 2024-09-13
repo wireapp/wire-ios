@@ -48,7 +48,7 @@ final class LegalHoldDetailsViewController: UIViewController {
     ) {
         self.conversation = conversation
         self.collectionViewController = SectionCollectionViewController()
-        self.collectionViewController.collectionView = collectionView
+        collectionViewController.collectionView = collectionView
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
 

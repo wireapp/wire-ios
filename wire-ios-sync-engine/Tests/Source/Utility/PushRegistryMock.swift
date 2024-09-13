@@ -25,7 +25,7 @@ final class PushPayloadMock: PKPushPayload {
     let mockDictionaryPayload: [AnyHashable: Any]
 
     init(dictionaryPayload: [AnyHashable: Any]) {
-        mockDictionaryPayload = dictionaryPayload
+        self.mockDictionaryPayload = dictionaryPayload
 
         super.init()
     }
@@ -40,8 +40,8 @@ final class PushCredentialsMock: PKPushCredentials {
     let mockType: PKPushType
 
     init(token: Data, type: PKPushType) {
-        mockToken = token
-        mockType = type
+        self.mockToken = token
+        self.mockType = type
 
         super.init()
     }

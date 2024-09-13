@@ -50,7 +50,7 @@ extension TopPeopleLineCollectionViewController: UICollectionViewDataSource {
 
 extension TopPeopleLineCollectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let conversation = self.conversation(at: indexPath)
+        let conversation = conversation(at: indexPath)
         delegate?.topPeopleLineCollectionViewControllerDidSelect(conversation)
     }
 }

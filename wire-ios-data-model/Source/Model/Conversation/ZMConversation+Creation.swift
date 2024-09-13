@@ -79,7 +79,7 @@ extension ZMConversation {
         moc: NSManagedObjectContext,
         participants: [ZMUser]
     ) -> ZMConversation? {
-        self.insertGroupConversation(moc: moc, participants: participants, name: nil)
+        insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
 
     /// FOR TESTS ONLY.
@@ -96,7 +96,7 @@ extension ZMConversation {
         readReceipts: Bool = false,
         participantsRole: Role? = nil
     ) -> ZMConversation? {
-        self.insertGroupConversation(
+        insertGroupConversation(
             moc: session.viewContext,
             participants: participants.materialize(in: session.viewContext),
             name: name,

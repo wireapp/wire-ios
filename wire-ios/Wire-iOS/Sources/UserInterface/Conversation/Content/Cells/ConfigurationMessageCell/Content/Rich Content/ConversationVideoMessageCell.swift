@@ -116,7 +116,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
 
     override var tintColor: UIColor! {
         didSet {
-            self.transferView.tintColor = self.tintColor
+            transferView.tintColor = tintColor
         }
     }
 
@@ -156,6 +156,6 @@ final class ConversationVideoMessageCellDescription: ConversationMessageCellDesc
 
     init(message: ZMConversationMessage) {
         self.configuration = View.Configuration(message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.VideoMessage.description
     }
 }

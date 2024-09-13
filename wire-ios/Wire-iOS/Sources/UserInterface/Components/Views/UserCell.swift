@@ -386,7 +386,7 @@ extension UserCell {
         self.userStatus = userStatus
         self.userIsSelfUser = userIsSelfUser
         self.isSelfUserPartOfATeam = isSelfUserPartOfATeam
-        self.userIsServiceUser = user.isServiceUser
+        userIsServiceUser = user.isServiceUser
 
         let subtitle: NSAttributedString? = if overrideSubtitle == nil {
             self.subtitle(for: user)

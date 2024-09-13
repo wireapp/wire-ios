@@ -29,15 +29,15 @@ final class SetFullNameStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        mainView = TextFieldDescription(
+        self.backButton = BackButtonDescription()
+        self.mainView = TextFieldDescription(
             placeholder: TeamFullName.Textfield.placeholder.capitalized,
             actionDescription: L10n.Localizable.General.next,
             kind: .name(isTeam: false)
         )
-        headline = TeamFullName.headline
-        subtext = nil
-        secondaryView = nil
-        footerView = nil
+        self.headline = TeamFullName.headline
+        self.subtext = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 }

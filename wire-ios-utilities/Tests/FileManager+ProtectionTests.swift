@@ -23,13 +23,13 @@ class FileManagerProtectionTests: XCTestCase {
     var fileManager: FileManagerThatRecordsFileProtectionAttributes!
 
     override func setUp() {
-        self.fileManager = FileManagerThatRecordsFileProtectionAttributes()
-        self.wipeTestFolder()
+        fileManager = FileManagerThatRecordsFileProtectionAttributes()
+        wipeTestFolder()
     }
 
     override func tearDown() {
-        self.fileManager = nil
-        self.wipeTestFolder()
+        fileManager = nil
+        wipeTestFolder()
     }
 }
 
@@ -38,27 +38,27 @@ class FileManagerProtectionTests: XCTestCase {
 extension FileManagerProtectionTests {
     func testThatItCreatesAndProtectedFolder() throws {
         // GIVEN
-        XCTAssertFalse(FileManager.default.fileExists(atPath: self.testFolder.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: testFolder.path))
 
         // WHEN
-        try self.fileManager.createAndProtectDirectory(at: self.testFolder)
+        try fileManager.createAndProtectDirectory(at: testFolder)
 
         // THEN
-        XCTAssertTrue(FileManager.default.fileExists(atPath: self.testFolder.path))
-        XCTAssertTrue(try self.existingLocalURLIsExcludedFromBackup(self.testFolder))
-        XCTAssertTrue(self.fileManager.isFileProtectedUntilFirstUnlock(self.testFolder))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: testFolder.path))
+        XCTAssertTrue(try existingLocalURLIsExcludedFromBackup(testFolder))
+        XCTAssertTrue(fileManager.isFileProtectedUntilFirstUnlock(testFolder))
     }
 
     func testThatItCreatesAndProtectsAnAlreadyExistingFolder() throws {
         // GIVEN
-        try self.createTestFolder()
+        try createTestFolder()
 
         // WHEN
-        try self.fileManager.createAndProtectDirectory(at: self.testFolder)
+        try fileManager.createAndProtectDirectory(at: testFolder)
 
         // THEN
-        XCTAssertTrue(try self.existingLocalURLIsExcludedFromBackup(self.testFolder))
-        XCTAssertTrue(self.fileManager.isFileProtectedUntilFirstUnlock(self.testFolder))
+        XCTAssertTrue(try existingLocalURLIsExcludedFromBackup(testFolder))
+        XCTAssertTrue(fileManager.isFileProtectedUntilFirstUnlock(testFolder))
     }
 }
 
@@ -67,33 +67,33 @@ extension FileManagerProtectionTests {
 extension FileManagerProtectionTests {
     func testThatItCreatesAndExcludesAFolderFromBackup() throws {
         // GIVEN
-        try self.createTestFolder()
+        try createTestFolder()
 
         // WHEN
-        try! self.testFolder.excludeFromBackup()
+        try! testFolder.excludeFromBackup()
 
         // THEN
-        XCTAssertTrue(try self.existingLocalURLIsExcludedFromBackup(self.testFolder))
+        XCTAssertTrue(try existingLocalURLIsExcludedFromBackup(testFolder))
     }
 
     func testThatItDetectsExcludedFromBackup() throws {
         // GIVEN
-        try self.fileManager.createAndProtectDirectory(at: self.testFolder)
+        try fileManager.createAndProtectDirectory(at: testFolder)
 
         // THEN
-        XCTAssertTrue(self.testFolder.isExcludedFromBackup)
+        XCTAssertTrue(testFolder.isExcludedFromBackup)
     }
 
     func testThatEmptyFolderIsNotExcludedFromBackup() {
-        XCTAssertFalse(self.testFolder.isExcludedFromBackup)
+        XCTAssertFalse(testFolder.isExcludedFromBackup)
     }
 
     func testThatNonExcludedFolderIsNotExcludedFromBackup() throws {
         // GIVEN
-        try self.createTestFolder()
+        try createTestFolder()
 
         // THEN
-        XCTAssertFalse(self.testFolder.isExcludedFromBackup)
+        XCTAssertFalse(testFolder.isExcludedFromBackup)
     }
 }
 
@@ -102,13 +102,13 @@ extension FileManagerProtectionTests {
 extension FileManagerProtectionTests {
     func testThatItProtectsAFolder() throws {
         // GIVEN
-        try self.createTestFolder()
+        try createTestFolder()
 
         // WHEN
-        try self.fileManager.setProtectionUntilFirstUserAuthentication(self.testFolder)
+        try fileManager.setProtectionUntilFirstUserAuthentication(testFolder)
 
         // THEN
-        XCTAssertTrue(self.fileManager.isFileProtectedUntilFirstUnlock(self.testFolder))
+        XCTAssertTrue(fileManager.isFileProtectedUntilFirstUnlock(testFolder))
     }
 }
 
@@ -116,7 +116,7 @@ extension FileManagerProtectionTests {
 
 extension FileManagerProtectionTests {
     func createTestFolder() throws {
-        try self.fileManager.createDirectory(at: self.testFolder, withIntermediateDirectories: true)
+        try fileManager.createDirectory(at: testFolder, withIntermediateDirectories: true)
     }
 
     var testFolder: URL {
@@ -124,7 +124,7 @@ extension FileManagerProtectionTests {
     }
 
     func wipeTestFolder() {
-        try? FileManager.default.removeItem(at: self.testFolder)
+        try? FileManager.default.removeItem(at: testFolder)
     }
 
     func existingLocalURLIsExcludedFromBackup(_ folder: URL) throws -> Bool {
@@ -140,12 +140,12 @@ final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
 
     override func setAttributes(_ attributes: [FileAttributeKey: Any], ofItemAtPath path: String) throws {
         if let protectionType = attributes[FileAttributeKey.protectionKey] as? FileProtectionType {
-            self.recordedAttributes[path] = protectionType
+            recordedAttributes[path] = protectionType
         }
         try super.setAttributes(attributes, ofItemAtPath: path)
     }
 
     func isFileProtectedUntilFirstUnlock(_ url: URL) -> Bool {
-        self.recordedAttributes[url.path] == FileProtectionType.completeUntilFirstUserAuthentication
+        recordedAttributes[url.path] == FileProtectionType.completeUntilFirstUserAuthentication
     }
 }

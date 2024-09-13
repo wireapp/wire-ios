@@ -34,13 +34,13 @@ class ConversationTests_Guests: IntegrationTest {
         }
         XCTAssert(login())
 
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam)!
+        let conversation = conversation(for: groupConversationWithWholeTeam)!
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.canGenerateGuestLink(in: self.userSession!) { result in
+        conversation.canGenerateGuestLink(in: userSession!) { result in
             switch result {
             case .success:
                 XCTAssertEqual(self.groupConversationWithWholeTeam.guestLinkFeatureStatus, "enabled")
@@ -100,7 +100,7 @@ class ConversationTests_Guests: IntegrationTest {
         }
         XCTAssert(login())
 
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam)!
+        let conversation = conversation(for: groupConversationWithWholeTeam)!
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         XCTAssertEqual(conversation.accessMode, [.code, .invite])
@@ -108,7 +108,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.fetchWirelessLink(in: self.userSession!) { result in
+        conversation.fetchWirelessLink(in: userSession!) { result in
             switch result {
             case let .success(link):
                 XCTAssertNil(link.uri)
@@ -136,7 +136,7 @@ class ConversationTests_Guests: IntegrationTest {
         }
         XCTAssert(login())
 
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam)!
+        let conversation = conversation(for: groupConversationWithWholeTeam)!
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         XCTAssertEqual(conversation.accessMode, [.code, .invite])
@@ -144,7 +144,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.fetchWirelessLink(in: self.userSession!) { result in
+        conversation.fetchWirelessLink(in: userSession!) { result in
             switch result {
             case let .success(link):
                 XCTAssertEqual(link.uri, existingLink.uri)
@@ -172,7 +172,7 @@ class ConversationTests_Guests: IntegrationTest {
         }
         XCTAssert(login())
 
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam)!
+        let conversation = conversation(for: groupConversationWithWholeTeam)!
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         XCTAssertEqual(conversation.accessMode, [.code, .invite])
@@ -180,7 +180,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.deleteWirelessLink(in: self.userSession!) { result in
+        conversation.deleteWirelessLink(in: userSession!) { result in
             switch result {
             case .success:
                 break
@@ -206,7 +206,7 @@ class ConversationTests_Guests: IntegrationTest {
         }
         XCTAssert(login())
 
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam)!
+        let conversation = conversation(for: groupConversationWithWholeTeam)!
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversation.accessMode, [.code, .invite])
@@ -214,7 +214,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.deleteWirelessLink(in: self.userSession!) { result in
+        conversation.deleteWirelessLink(in: userSession!) { result in
             switch result {
             case .success:
                 XCTFail()
@@ -235,7 +235,7 @@ class ConversationTests_Guests: IntegrationTest {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam!)!
+        let conversation = conversation(for: groupConversationWithWholeTeam!)!
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         XCTAssertFalse(conversation.accessMode!.contains(.allowGuests))
 

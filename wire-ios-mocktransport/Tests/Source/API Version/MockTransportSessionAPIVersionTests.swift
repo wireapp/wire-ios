@@ -28,7 +28,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         sut.federation = true
 
         // Then
-        let response = self.response(
+        let response = response(
             forPayload: [:] as ZMTransportData,
             path: path,
             method: .get,
@@ -54,7 +54,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         sut.federation = true
 
         // Then
-        let response = self.response(
+        let response = response(
             forPayload: [:] as ZMTransportData,
             path: path,
             method: .get,
@@ -77,7 +77,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         sut.isAPIVersionEndpointAvailable = false
 
         // Then
-        let response = self.response(
+        let response = response(
             forPayload: [:] as ZMTransportData,
             path: path,
             method: .get,
@@ -93,7 +93,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         let path = "/api-version"
 
         // Then
-        let response = self.response(
+        let response = response(
             forPayload: [:] as ZMTransportData,
             path: path,
             method: .get,

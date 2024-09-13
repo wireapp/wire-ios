@@ -169,13 +169,13 @@ final class MessageActionsViewControllerTests: XCTestCase {
 
 extension UIView {
     fileprivate func containsBasicReactionPicker() -> Bool {
-        if self.subviews.contains(
+        if subviews.contains(
             where: { $0.isKind(of: BasicReactionPicker.self) }
         ) {
             return true
         }
 
-        for subview in self.subviews
+        for subview in subviews
             where subview.containsBasicReactionPicker() {
             return true
         }

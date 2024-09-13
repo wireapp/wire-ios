@@ -34,6 +34,6 @@ public final class AccessToken: NSObject {
 
 
     public var httpHeaders: [String: String] {
-        ["Authorization": "\(self.type) \(self.token)"]
+        ["Authorization": "\(type) \(token)"]
     }
 }

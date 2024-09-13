@@ -254,7 +254,7 @@ extension ZMConversation {
 
         let previousLastMessage = lastMessage
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .mlsMigrationPotentialGap,
             sender: sender,
             users: nil,
@@ -273,9 +273,9 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
         user: ZMUser
     ) {
-        guard let context = self.managedObjectContext else { return }
+        guard let context = managedObjectContext else { return }
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .mlsNotSupportedSelfUser,
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
@@ -287,9 +287,9 @@ extension ZMConversation {
     public func appendMLSMigrationMLSNotSupportedForOtherUser(
         user: ZMUser
     ) {
-        guard let context = self.managedObjectContext else { return }
+        guard let context = managedObjectContext else { return }
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .mlsNotSupportedOtherUser,
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),

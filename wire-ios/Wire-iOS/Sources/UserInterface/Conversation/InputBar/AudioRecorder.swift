@@ -305,7 +305,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
     func playRecording() {
         guard
-            let audioRecorder = self.audioRecorder,
+            let audioRecorder,
             ZMUserSession.shared()?.isCallOngoing == false
         else { return }
 
@@ -321,11 +321,11 @@ final class AudioRecorder: NSObject, AudioRecorderType {
 
         audioPlayerDelegate = AudioPlayerDelegate { [weak self] _ in
             guard let self else { return }
-            self.removeDisplayLink()
-            self.playingStateCallback?(.idle)
-            self.recordLevelCallBack?(0)
-            guard let duration = self.audioPlayer?.duration else { return }
-            self.recordTimerCallback?(duration)
+            removeDisplayLink()
+            playingStateCallback?(.idle)
+            recordLevelCallBack?(0)
+            guard let duration = audioPlayer?.duration else { return }
+            recordTimerCallback?(duration)
         }
 
         audioPlayer?.delegate = audioPlayerDelegate
@@ -367,7 +367,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
         var alertMessage: String?
 
         if error == .toMaxDuration {
-            let duration = Int(ceil(self.maxRecordingDuration ?? 0))
+            let duration = Int(ceil(maxRecordingDuration ?? 0))
             let (seconds, minutes) = (duration % 60, duration / 60)
             let durationLimit = String(format: "%d:%02d", minutes, seconds)
 
@@ -404,7 +404,7 @@ extension AudioRecorder: AVAudioRecorderDelegate {
         var recordedToMaxDuration = false
         let recordedToMaxSize = audioSizeIsCritical
 
-        if let maxRecordingDuration = self.maxRecordingDuration {
+        if let maxRecordingDuration {
             let duration = AVURLAsset(url: recorder.url).duration.seconds
             recordedToMaxDuration = duration >= maxRecordingDuration
         }
@@ -414,11 +414,11 @@ extension AudioRecorder: AVAudioRecorderDelegate {
         if recordedToMaxDuration { _ = postRecordingProcessing() }
 
         if recordedToMaxSize {
-            self.recordEndedCallback?(.failure(RecordingError.toMaxSize))
+            recordEndedCallback?(.failure(RecordingError.toMaxSize))
         } else if recordedToMaxDuration {
-            self.recordEndedCallback?(.failure(RecordingError.toMaxDuration))
+            recordEndedCallback?(.failure(RecordingError.toMaxDuration))
         } else {
-            self.recordEndedCallback?(.success(()))
+            recordEndedCallback?(.success(()))
         }
 
         AVSMediaManager.sharedInstance().stopRecording()

@@ -34,7 +34,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
         resolveOneOnOneConversations.invoke_MockMethod = {}
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(
                 forServerName: "myServer",
                 userIdentifier: self.userIdentifier,
@@ -66,9 +66,9 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     override func tearDown() {
-        self.clientRegistrationStatus = nil
-        self.clientUpdateStatus = nil
-        self.sut = nil
+        clientRegistrationStatus = nil
+        clientUpdateStatus = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -129,7 +129,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then
@@ -159,7 +159,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         // when
 
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -204,7 +204,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             return
         }
 
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         // then
         await syncMOC.performGrouped {
@@ -250,7 +250,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         }
 
         // when
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then
@@ -298,7 +298,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
         guard let event else { return XCTFail("missing event") }
         // when
-        await self.sut.processEvents([event])
+        await sut.processEvents([event])
 
         await syncMOC.performGrouped {
             // then

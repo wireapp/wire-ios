@@ -56,31 +56,31 @@ extension URL {
 
     /// Appends the name of the store to the path
     func appendingStoreFile() -> URL {
-        self.appendingPathComponent("store.wiredatabase")
+        appendingPathComponent("store.wiredatabase")
     }
 
     func appendingEventStoreFile() -> URL {
-        self.appendingPathComponent("ZMEventModel.sqlite")
+        appendingPathComponent("ZMEventModel.sqlite")
     }
 
     /// Returns the location of the persistent store file in the given account folder
     func appendingPersistentStoreLocation() -> URL {
-        self.appendingPathComponent("store").appendingStoreFile()
+        appendingPathComponent("store").appendingStoreFile()
     }
 
     /// Returns the location of the persistent store file in the given account folder
     func appendingEventStoreLocation() -> URL {
-        self.appendingPathComponent("events").appendingEventStoreFile()
+        appendingPathComponent("events").appendingEventStoreFile()
     }
 
     func appendingSessionStoreFolder() -> URL {
-        self.appendingPathComponent("otr")
+        appendingPathComponent("otr")
     }
 
     func appendingStoreSupportFolder() -> URL {
-        let storeFile = self.appendingStoreFile()
+        let storeFile = appendingStoreFile()
         let storeName = storeFile.deletingPathExtension().lastPathComponent
-        let storeDirectory = self.deletingLastPathComponent()
+        let storeDirectory = deletingLastPathComponent()
         let supportFile = ".\(storeName)_SUPPORT"
         return storeDirectory.appendingPathComponent(supportFile)
     }

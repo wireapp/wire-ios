@@ -24,9 +24,9 @@ final class MockPinchGestureRecognizer: UIPinchGestureRecognizer {
     var mockView: UIView?
 
     init(location: CGPoint?, view: UIView?, state: UIGestureRecognizer.State, scale: CGFloat) {
-        mockLocation = location
-        mockState = state
-        mockView = view
+        self.mockLocation = location
+        self.mockState = state
+        self.mockView = view
 
         super.init(target: nil, action: nil)
         self.scale = scale

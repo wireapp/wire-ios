@@ -27,23 +27,23 @@ class UserClientKeysStoreTests: OtrBaseTest {
 
     override func setUp() {
         super.setUp()
-        self.accountID = UUID()
-        self.accountFolder = CoreDataStack.accountDataFolder(
+        accountID = UUID()
+        accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: accountID,
             applicationContainer: OtrBaseTest.sharedContainerURL
         )
-        self.cleanOTRFolder()
-        self.sut = UserClientKeysStore(
+        cleanOTRFolder()
+        sut = UserClientKeysStore(
             accountDirectory: accountFolder,
             applicationContainer: OtrBaseTest.sharedContainerURL
         )
     }
 
     override func tearDown() {
-        self.sut = nil
-        self.cleanOTRFolder()
-        self.accountID = nil
-        self.accountFolder = nil
+        sut = nil
+        cleanOTRFolder()
+        accountID = nil
+        accountFolder = nil
         super.tearDown()
     }
 
@@ -58,7 +58,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
 
     func testThatTheOTRFolderHasBackupDisabled() {
         // when
-        guard let values = try? self.sut.cryptoboxDirectory
+        guard let values = try? sut.cryptoboxDirectory
             .resourceValues(forKeys: [URLResourceKey.isExcludedFromBackupKey]) else { return XCTFail() }
 
         // then

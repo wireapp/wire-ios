@@ -49,7 +49,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The width of the collection container.
     private var contentWidth: CGFloat {
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return 0
         }
 
@@ -59,7 +59,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
 
     /// The height of the collection container.
     private var contentHeight: CGFloat {
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return 0
         }
 
@@ -88,11 +88,11 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func prepare() {
-        guard self.positioning == nil, let collectionView, let delegate = self.delegate else {
+        guard self.positioning == nil, let collectionView, let delegate else {
             return
         }
 
-        var positioning = VerticalColumnPositioning(context: self.positioningContext)
+        var positioning = VerticalColumnPositioning(context: positioningContext)
 
         for row in 0 ..< collectionView.numberOfItems(inSection: 0) {
             let indexPath = IndexPath(row: row, section: 0)

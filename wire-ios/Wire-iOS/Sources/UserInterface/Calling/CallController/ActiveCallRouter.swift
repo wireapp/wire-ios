@@ -95,10 +95,10 @@ final class ActiveCallRouter<TopOverlayPresenter>
         self.userSession = userSession
         self.topOverlayPresenter = topOverlayPresenter
 
-        callController = CallController(userSession: userSession)
+        self.callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
-        callQualityController = CallQualityController(mainWindow: mainWindow)
-        transitioningDelegate = CallQualityAnimator()
+        self.callQualityController = CallQualityController(mainWindow: mainWindow)
+        self.transitioningDelegate = CallQualityAnimator()
 
         callController.router = self
         callQualityController.router = self
@@ -194,7 +194,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         for reason: CallDegradationReason,
         completion: @escaping (AlertChoice) -> Void
     ) {
-        guard self.presentedDegradedAlert == nil else {
+        guard presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
         }
@@ -227,7 +227,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         for reason: CallDegradationReason,
         completion: @escaping (AlertChoice) -> Void
     ) {
-        guard self.presentedDegradedAlert == nil else {
+        guard presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
         }
@@ -257,10 +257,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissSecurityDegradedAlertIfNeeded() {
-        guard let alert = self.presentedDegradedAlert else { return }
+        guard let alert = presentedDegradedAlert else { return }
 
         alert.dismissIfNeeded()
-        self.presentedDegradedAlert = nil
+        presentedDegradedAlert = nil
     }
 
     func presentUnsupportedVersionAlert() {

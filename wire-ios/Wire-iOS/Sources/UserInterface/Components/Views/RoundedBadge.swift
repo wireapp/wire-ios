@@ -27,16 +27,16 @@ class RoundedBadge: UIButton {
 
     init(view: UIView, contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4)) {
         self.contentInset = contentInset
-        containedView = view
+        self.containedView = view
         super.init(frame: .zero)
 
-        self.addSubview(containedView)
+        addSubview(containedView)
 
         createConstraints()
 
         updateCollapseConstraints(isCollapsed: true)
 
-        self.layer.masksToBounds = true
+        layer.masksToBounds = true
         updateCornerRadius()
     }
 
@@ -75,7 +75,7 @@ class RoundedBadge: UIButton {
     }
 
     func updateCornerRadius() {
-        self.layer.cornerRadius = ceil(self.bounds.height / 2.0)
+        layer.cornerRadius = ceil(bounds.height / 2.0)
     }
 
     @available(*, unavailable)
@@ -96,7 +96,7 @@ final class RoundedTextBadge: RoundedBadge {
         contentInset: UIEdgeInsets = UIEdgeInsets(top: 2, left: 4, bottom: 2, right: 4),
         font: UIFont = .smallSemiboldFont
     ) {
-        super.init(view: self.textLabel, contentInset: contentInset)
+        super.init(view: textLabel, contentInset: contentInset)
         textLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         textLabel.setContentHuggingPriority(UILayoutPriority.required, for: .horizontal)
         textLabel.textAlignment = .center

@@ -84,7 +84,7 @@ class BackendTrustProviderTests: XCTestCase {
 
         do {
             let certsData = try Data(contentsOf: certificatesURL)
-            self.certificates = try decoder.decode(CertificateData.self, from: certsData)
+            certificates = try decoder.decode(CertificateData.self, from: certsData)
         } catch {
             XCTFail("Error reading certs: \(error)")
         }
@@ -92,7 +92,7 @@ class BackendTrustProviderTests: XCTestCase {
         do {
             let trustData = try Data(contentsOf: trustDataURL)
 
-            self.pinnedKeys = try decoder.decode(PinnedKeysData.self, from: trustData)
+            pinnedKeys = try decoder.decode(PinnedKeysData.self, from: trustData)
         } catch {
             XCTFail("Error reading pinned keys: \(error)")
         }

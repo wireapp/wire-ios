@@ -126,7 +126,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
 
-        self.wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 5)
 
         // THEN
         XCTAssertEqual(mockEventProcessor.processConversationEvents_Invocations.count, 1)

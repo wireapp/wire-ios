@@ -181,12 +181,12 @@ final class TabBar: UIView {
     func itemSelected(_ sender: AnyObject) {
         guard
             let tab = sender as? Tab,
-            let selectedIndex = self.tabs.firstIndex(of: tab)
+            let selectedIndex = tabs.firstIndex(of: tab)
         else {
             return
         }
 
-        self.delegate?.tabBar(self, didSelectItemAt: selectedIndex)
+        delegate?.tabBar(self, didSelectItemAt: selectedIndex)
         setSelectedIndex(selectedIndex, animated: animatesTransition)
     }
 

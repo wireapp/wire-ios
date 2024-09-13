@@ -60,7 +60,7 @@ class BatchDeleteTests: ZMTBaseTest {
     }
 
     func createTestCoreData() throws -> (NSManagedObjectModel, NSManagedObjectContext) {
-        let model = self.model
+        let model = model
         let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         _ = try persistentStoreCoordinator.addPersistentStore(
             type: .sqlite,
@@ -91,8 +91,8 @@ class BatchDeleteTests: ZMTBaseTest {
             try! self.moc.persistentStoreCoordinator!.remove($0)
         }
 
-        self.moc = nil
-        self.mom = nil
+        moc = nil
+        mom = nil
         cleanStorage()
         super.tearDown()
     }
@@ -162,7 +162,7 @@ class BatchDeleteTests: ZMTBaseTest {
         // given
         let entity = mom.entitiesByName["\(TestEntity.self)"]!
 
-        let object = TestEntity(entity: entity, insertInto: self.moc)
+        let object = TestEntity(entity: entity, insertInto: moc)
         object.identifier = "1"
         object.parameter = nil
 

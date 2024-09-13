@@ -179,7 +179,7 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
     // Returns whether the message was deleted
     private func checkThatAMessageIsRemoved(messageCreationBlock: () -> ZMMessage) throws -> Bool {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let testMessage = messageCreationBlock()
@@ -188,19 +188,19 @@ class ZMMessageTests_Removal: BaseZMClientMessageTests {
         // sanity check
         XCTAssertNotNil(conversation)
         XCTAssertNotNil(testMessage)
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             testMessage.removeClearingSender(true)
         }
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let fetchedMessage = try XCTUnwrap(ZMMessage.fetch(
             withNonce: testMessage.nonce,
             for: conversation,
-            in: self.uiMOC
+            in: uiMOC
         ))
         var removed = fetchedMessage.visibleInConversation == nil && fetchedMessage
             .hiddenInConversation == conversation && fetchedMessage.sender == nil

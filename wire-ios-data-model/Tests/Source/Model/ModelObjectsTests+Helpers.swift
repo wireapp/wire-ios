@@ -49,13 +49,13 @@ extension ModelObjectsTests {
 
     @objc(userWithClients:trusted:)
     public func userWithClients(count: Int, trusted: Bool) -> ZMUser {
-        self.createSelfClient()
-        self.uiMOC.refreshAllObjects()
+        createSelfClient()
+        uiMOC.refreshAllObjects()
 
-        let selfClient: UserClient? = ZMUser.selfUser(in: self.uiMOC).selfClient()
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let selfClient: UserClient? = ZMUser.selfUser(in: uiMOC).selfClient()
+        let user = ZMUser.insertNewObject(in: uiMOC)
         for _ in [0 ... count] {
-            let client = UserClient.insertNewObject(in: self.uiMOC)
+            let client = UserClient.insertNewObject(in: uiMOC)
             client.user = user
             if trusted {
                 selfClient?.trustClient(client)

@@ -39,7 +39,7 @@ extension AddressBookSearch {
     /// Returns address book contacts matching the query, excluding the one with the given identifier
     func contactsMatchingQuery(_ query: String, identifiersToExclude: [String]) -> [ZMAddressBookContact] {
         let excluded = Set(identifiersToExclude)
-        let addressBookMatches = self.addressBook?.contacts(matchingQuery: query.lowercased()) ?? []
+        let addressBookMatches = addressBook?.contacts(matchingQuery: query.lowercased()) ?? []
 
         return addressBookMatches.filter { contact in
             guard let identifier = contact.localIdentifier else {

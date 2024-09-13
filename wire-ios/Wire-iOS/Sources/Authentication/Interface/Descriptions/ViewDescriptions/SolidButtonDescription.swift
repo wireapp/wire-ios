@@ -45,7 +45,7 @@ extension SolidButtonDescription: ViewDescriptor {
         button.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(title, for: .normal)
-        button.accessibilityIdentifier = self.accessibilityIdentifier
+        button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(SolidButtonDescription.buttonTapped(_:)), for: .touchUpInside)
 
         let buttonContainer = UIView()

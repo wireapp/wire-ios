@@ -47,7 +47,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = nil
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: [otherUser], conversationDomain: nil)
@@ -66,7 +66,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: [otherUser], conversationDomain: nil)
@@ -89,7 +89,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -114,7 +114,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -138,7 +138,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -174,7 +174,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -210,7 +210,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -240,7 +240,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: nil)
@@ -268,7 +268,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: "not.Classified.Domain")
@@ -297,7 +297,7 @@ final class ZMUserSessionTests_SecurityClassification: ZMUserSessionTestsBase {
             selfUser.domain = UUID().uuidString
             self.syncMOC.saveOrRollback()
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         let classification = sut.classification(users: otherUsers, conversationDomain: otherDomain)

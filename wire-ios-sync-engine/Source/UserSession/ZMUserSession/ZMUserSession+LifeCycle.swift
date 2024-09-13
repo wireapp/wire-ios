@@ -106,7 +106,7 @@ extension ZMUserSession {
             self.syncManagedObjectContext.processPendingChanges()
         }
 
-        self.managedObjectContext.saveOrRollback()
+        managedObjectContext.saveOrRollback()
     }
 
     func recalculateUnreadMessages() {

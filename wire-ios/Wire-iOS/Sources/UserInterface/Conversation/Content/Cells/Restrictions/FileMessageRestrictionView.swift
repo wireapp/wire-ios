@@ -54,7 +54,7 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
     override func setupViews() {
         super.setupViews()
 
-        [topLabel, bottomLabel, iconView, fileBlockView].forEach(self.addSubview)
+        [topLabel, bottomLabel, iconView, fileBlockView].forEach(addSubview)
     }
 
     override func setupIconView() {
@@ -69,9 +69,9 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
 
         NSLayoutConstraint.activate([
             // top label
-            topLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 12),
+            topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
             topLabel.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
-            topLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -12),
+            topLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
 
             // bottom label
             bottomLabel.topAnchor.constraint(equalTo: topLabel.bottomAnchor, constant: 2),
@@ -79,8 +79,8 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
             bottomLabel.trailingAnchor.constraint(equalTo: topLabel.trailingAnchor),
 
             // icon view
-            iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            iconView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12),
+            iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
             iconView.widthAnchor.constraint(equalToConstant: 32),
             iconView.heightAnchor.constraint(equalToConstant: 32),
 
@@ -93,7 +93,7 @@ final class FileMessageRestrictionView: BaseMessageRestrictionView {
 
 extension ZMConversationMessage {
     var filename: String? {
-        guard let fileMessageData = self.fileMessageData,
+        guard let fileMessageData,
               let filepath = fileMessageData.filename as NSString? else {
             return nil
         }

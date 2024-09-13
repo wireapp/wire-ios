@@ -27,7 +27,7 @@ class ConversationTests_Join: ConversationTestsBase {
         XCTAssert(login())
 
         // Convert MockUser -> ZMUser
-        let selfUser_zmUser = user(for: self.selfUser)!
+        let selfUser_zmUser = user(for: selfUser)!
 
         // WHEN
         // Key value doesn't affect the test result

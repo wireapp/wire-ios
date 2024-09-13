@@ -74,7 +74,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
 
         super.init()
 
-        observerToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+        self.observerToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
     }
 
     func startRemoval() {

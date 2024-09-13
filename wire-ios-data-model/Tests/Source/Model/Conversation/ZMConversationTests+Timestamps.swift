@@ -211,7 +211,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatClearedTimestampIsUpdated() {
         let timestamp = Date()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
         conversation.updateCleared(timestamp)
@@ -223,7 +223,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatClearedTimestampIsNotUpdatedToAnOlderTimestamp() {
         let timestamp = Date()
         let olderTimestamp = timestamp.addingTimeInterval(-100)
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.clearedTimeStamp = timestamp
 
         // when
@@ -238,7 +238,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatModifiedDateIsUpdatedWhenMessageInserted() {
         // given
         let timestamp = Date()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.serverTimestamp = timestamp
 
@@ -252,7 +252,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatModifiedDateIsNotUpdatedWhenMessageWhichShouldNotUpdateModifiedDateIsInserted() {
         // given
         let timestamp = Date()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.systemMessageType = .participantsRemoved
         message.serverTimestamp = timestamp
@@ -269,7 +269,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatLastReadDateIsNotUpdatedWhenMessageFromSelfUserInserted() {
         // given
         let timestamp = Date()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.serverTimestamp = timestamp
         message.sender = selfUser
@@ -285,7 +285,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         // given
         let otherUser = createUser()
         let timestamp = Date()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.serverTimestamp = timestamp
         message.sender = otherUser
@@ -299,7 +299,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatItSendsANotificationWhenSettingTheLastRead() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // expect
         customExpectation(forNotification: ZMConversation.lastReadDidChangeNotificationName, object: nil) { _ -> Bool in
@@ -315,7 +315,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatItReturnsTheFirstUnreadMessageIfWeHaveItLocally() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
@@ -327,7 +327,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatItReturnsTheFirstUnreadMessageMentioningSelfIfWeHaveItLocally() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
         let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
@@ -356,7 +356,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatItReturnsNilIfTheLastReadServerTimestampIsMoreRecent() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.visibleInConversation = conversation
 
@@ -369,7 +369,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatItSkipsMessagesWhichDoesntGenerateUnreadDotsDirectlyBeforeFirstUnreadMessage() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         // when
         let messageWhichDoesntGenerateUnreadDot = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
@@ -385,7 +385,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatTheParentMessageIsReturnedIfItHasUnreadChildMessages() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let domain = "example.domain.com"
         BackendInfo.domain = domain
 
@@ -409,7 +409,7 @@ final class ZMConversationTests_Timestamps: ZMConversationTestsBase {
 
     func testThatTheParentMessageIsNotReturnedIfAllChildMessagesAreRead() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         let systemMessage1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage1.systemMessageType = .missedCall

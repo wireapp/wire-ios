@@ -41,9 +41,9 @@ public struct Ziph: Codable {
     }
 
     public var description: String {
-        "identifier: \(self.identifier)\n" +
-            "title: \(self.title ?? "nil")\n" +
-            "images:\n\(self.images)\n"
+        "identifier: \(identifier)\n" +
+            "title: \(title ?? "nil")\n" +
+            "images:\n\(images)\n"
     }
 
     // MARK: - Initialization

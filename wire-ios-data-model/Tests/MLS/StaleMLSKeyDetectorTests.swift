@@ -29,7 +29,7 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
         super.setUp()
         sut = StaleMLSKeyDetector(
             refreshIntervalInDays: 5,
-            context: self.syncMOC
+            context: syncMOC
         )
     }
 

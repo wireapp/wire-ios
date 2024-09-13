@@ -27,7 +27,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
     override var stream: Stream {
         didSet {
-            guard stream.callParticipantState.videoState != self.videoState else { return }
+            guard stream.callParticipantState.videoState != videoState else { return }
             updateCaptureState(with: stream.callParticipantState.videoState)
         }
     }
@@ -84,14 +84,14 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     }
 
     func updateCaptureState(with newVideoState: VideoState?) {
-        guard newVideoState != self.videoState else { return }
+        guard newVideoState != videoState else { return }
 
         if newVideoState == .some(.started) {
             startCapture()
         } else {
             stopCapture()
         }
-        self.videoState = newVideoState
+        videoState = newVideoState
     }
 
     func startCapture() {

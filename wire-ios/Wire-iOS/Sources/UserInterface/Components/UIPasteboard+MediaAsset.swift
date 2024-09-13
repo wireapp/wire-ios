@@ -36,10 +36,10 @@ extension UIPasteboard {
     // TODO: get/set
     func mediaAsset() -> MediaAsset? {
         if contains(pasteboardTypes: [UTType.gif.identifier]) {
-            let data: Data? = self.data(forPasteboardType: UTType.gif.identifier)
+            let data: Data? = data(forPasteboardType: UTType.gif.identifier)
             return FLAnimatedImage(animatedGIFData: data)
         } else if contains(pasteboardTypes: [UTType.png.identifier]) {
-            let data: Data? = self.data(forPasteboardType: UTType.png.identifier)
+            let data: Data? = data(forPasteboardType: UTType.png.identifier)
             if let aData = data {
                 return UIImage(data: aData)
             }

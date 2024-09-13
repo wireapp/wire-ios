@@ -47,12 +47,12 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         systemMessageData: ZMSystemMessageData,
         conversation: ZMConversation
     ) {
-        configuration = ConversationNewDeviceSystemMessageCellDescription.configuration(
+        self.configuration = ConversationNewDeviceSystemMessageCellDescription.configuration(
             for: systemMessageData,
             in: conversation
         )
-        accessibilityLabel = configuration.attributedText?.string
-        actionController = nil
+        self.accessibilityLabel = configuration.attributedText?.string
+        self.actionController = nil
     }
 
     struct TextAttributes {
@@ -61,9 +61,9 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         let linkAttributes: [NSAttributedString.Key: AnyObject]
 
         init(boldFont: UIFont, normalFont: UIFont, textColor: UIColor, link: URL) {
-            senderAttributes = [.font: boldFont, .foregroundColor: textColor]
-            startedUsingAttributes = [.font: normalFont, .foregroundColor: textColor]
-            linkAttributes = [.font: normalFont, .link: link as AnyObject]
+            self.senderAttributes = [.font: boldFont, .foregroundColor: textColor]
+            self.startedUsingAttributes = [.font: normalFont, .foregroundColor: textColor]
+            self.linkAttributes = [.font: normalFont, .link: link as AnyObject]
         }
     }
 

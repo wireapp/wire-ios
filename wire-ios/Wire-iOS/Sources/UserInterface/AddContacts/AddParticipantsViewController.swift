@@ -180,21 +180,21 @@ final class AddParticipantsViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        viewModel = AddParticipantsViewModel(with: context)
+        self.viewModel = AddParticipantsViewModel(with: context)
 
-        collectionViewLayout = UICollectionViewFlowLayout()
+        self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12
         collectionViewLayout.minimumLineSpacing = 0
 
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = UIColor.clear
         collectionView.allowsMultipleSelection = true
         collectionView.keyboardDismissMode = .onDrag
         collectionView.bounces = true
         collectionView.alwaysBounceVertical = true
 
-        confirmButton = IconButton(fontSpec: .normalSemiboldFont)
+        self.confirmButton = IconButton(fontSpec: .normalSemiboldFont)
         confirmButton.applyStyle(.addParticipantsDisabledButtonStyle)
         confirmButton.setBackgroundImageColor(SemanticColors.Button.backgroundPrimaryDisabled, for: .disabled)
         confirmButton.contentHorizontalAlignment = .center
@@ -202,11 +202,11 @@ final class AddParticipantsViewController: UIViewController {
         confirmButton.layer.cornerRadius = 16
         confirmButton.layer.masksToBounds = true
 
-        searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
+        self.searchHeaderViewController = SearchHeaderViewController(userSelection: userSelection)
 
-        searchGroupSelector = SearchGroupSelector()
+        self.searchGroupSelector = SearchGroupSelector()
 
-        searchResultsViewController = SearchResultsViewController(
+        self.searchResultsViewController = SearchResultsViewController(
             userSelection: userSelection,
             userSession: userSession,
             isAddingParticipants: true,
@@ -215,7 +215,7 @@ final class AddParticipantsViewController: UIViewController {
         )
 
         let user = SelfUser.provider?.providedSelfUser
-        emptyResultView = EmptySearchResultsView(
+        self.emptyResultView = EmptySearchResultsView(
             isSelfUserAdmin: user?.canManageTeam == true,
             isFederationEnabled: isFederationEnabled
         )
@@ -249,14 +249,14 @@ final class AddParticipantsViewController: UIViewController {
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
             // not going to be added to the new conversation with the bot.
             if group == .services {
-                self.searchHeaderViewController.clearInput()
-                self.confirmButton.isHidden = true
+                searchHeaderViewController.clearInput()
+                confirmButton.isHidden = true
             } else {
-                self.confirmButton.isHidden = false
+                confirmButton.isHidden = false
             }
 
-            self.searchResultsViewController.searchGroup = group
-            self.performSearch()
+            searchResultsViewController.searchGroup = group
+            performSearch()
         }
 
         viewModel.selectedUsers.forEach(userSelection.add)
@@ -400,11 +400,11 @@ final class AddParticipantsViewController: UIViewController {
         UIAction { [weak self] _ in
             guard let self else { return }
 
-            switch self.viewModel.context {
+            switch viewModel.context {
             case .add:
-                self.navigationController?.dismiss(animated: true, completion: nil)
+                navigationController?.dismiss(animated: true, completion: nil)
             case .create:
-                self.conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
+                conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .create)
             }
         }
     }
@@ -426,7 +426,7 @@ final class AddParticipantsViewController: UIViewController {
 
         UIView.animate(
             withKeyboardNotification: notification,
-            in: self.view,
+            in: view,
             animations: { [weak self] keyboardFrameInView in
                 guard let self else { return }
 
@@ -458,7 +458,7 @@ final class AddParticipantsViewController: UIViewController {
     }
 
     private func addSelectedParticipants(to conversation: GroupDetailsConversationType) {
-        let selectedUsers = self.userSelection.users
+        let selectedUsers = userSelection.users
 
         (conversation as? ZMConversation)?.addOrShowError(participants: Array(selectedUsers))
     }
@@ -482,7 +482,7 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
     @objc
     func searchHeaderViewControllerDidConfirmAction(_: SearchHeaderViewController) {
         if case let .add(conversation) = viewModel.context {
-            self.dismiss(animated: true) {
+            dismiss(animated: true) {
                 self.addSelectedParticipants(to: conversation)
             }
         }
@@ -492,7 +492,7 @@ extension AddParticipantsViewController: SearchHeaderViewControllerDelegate {
         _ searchHeaderViewController: SearchHeaderViewController,
         updatedSearchQuery query: String
     ) {
-        self.performSearch()
+        performSearch()
     }
 }
 
@@ -555,9 +555,9 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
             guard let self, let result else { return }
             switch result {
             case .success:
-                self.dismiss(animated: true)
+                dismiss(animated: true)
             case let .failure(error):
-                guard let controller = self.navigationController?.topViewController else { return }
+                guard let controller = navigationController?.topViewController else { return }
                 error.displayAddBotError(in: controller)
             }
         }

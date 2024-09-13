@@ -57,7 +57,7 @@ extension URL {
     }
 
     var mentionLocation: Int {
-        guard self.isMention, let indexString = pathComponents.last, let index = Int(indexString) else {
+        guard isMention, let indexString = pathComponents.last, let index = Int(indexString) else {
             return NSNotFound
         }
 
@@ -129,7 +129,7 @@ extension NSMutableAttributedString {
                 continue
             }
 
-            var attributes = self.attributes(at: mentionRange.location, effectiveRange: nil)
+            var attributes = attributes(at: mentionRange.location, effectiveRange: nil)
             attributes[.paragraphStyle] = paragraphStyle
             let replacementString = NSMutableAttributedString.mention(
                 for: textObject.value.user,
@@ -138,7 +138,7 @@ extension NSMutableAttributedString {
                 suggestedAttributes: attributes
             )
 
-            self.replaceCharacters(in: mentionRange, with: replacementString)
+            replaceCharacters(in: mentionRange, with: replacementString)
         }
     }
 }

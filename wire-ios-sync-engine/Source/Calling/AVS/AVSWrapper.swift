@@ -83,7 +83,7 @@ public final class AVSWrapper: AVSWrapperType {
 
         AVSWrapper.initialize()
 
-        handle = wcall_create(
+        self.handle = wcall_create(
             userId.serialized,
             clientId,
             readyHandler,

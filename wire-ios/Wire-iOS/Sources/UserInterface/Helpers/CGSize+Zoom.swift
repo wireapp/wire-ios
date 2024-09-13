@@ -24,7 +24,7 @@ extension CGSize {
         guard imageSize != .zero else { return 1 }
         guard self != .zero else { return 1 }
 
-        var minZoom = min(self.width / imageSize.width, self.height / imageSize.height)
+        var minZoom = min(width / imageSize.width, height / imageSize.height)
 
         if minZoom > 1 {
             minZoom = 1

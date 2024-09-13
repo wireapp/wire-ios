@@ -32,25 +32,25 @@ protocol ConfirmEmailDelegate: AnyObject {
 extension UITableView {
     var autolayoutTableHeaderView: UIView? {
         get {
-            self.tableHeaderView
+            tableHeaderView
         }
 
         set {
             if let newHeader = newValue {
                 newHeader.translatesAutoresizingMaskIntoConstraints = false
 
-                self.tableHeaderView = newHeader
+                tableHeaderView = newHeader
 
                 NSLayoutConstraint.activate([
-                    newHeader.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-                    newHeader.widthAnchor.constraint(equalTo: self.widthAnchor),
-                    newHeader.topAnchor.constraint(equalTo: self.topAnchor),
+                    newHeader.centerXAnchor.constraint(equalTo: centerXAnchor),
+                    newHeader.widthAnchor.constraint(equalTo: widthAnchor),
+                    newHeader.topAnchor.constraint(equalTo: topAnchor),
                 ])
 
-                self.tableHeaderView?.layoutIfNeeded()
-                self.tableHeaderView = newHeader
+                tableHeaderView?.layoutIfNeeded()
+                tableHeaderView = newHeader
             } else {
-                self.tableHeaderView = nil
+                tableHeaderView = nil
             }
         }
     }

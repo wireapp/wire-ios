@@ -27,7 +27,7 @@ extension EncryptionSessionsDirectory {
         _ encryptedData: Data,
         for sessionID: EncryptionSessionIdentifier
     ) throws -> (didCreateNewSession: Bool, decryptedData: Data) {
-        if self.hasSession(for: sessionID) {
+        if hasSession(for: sessionID) {
             let decryptedData = try decrypt(encryptedData, from: sessionID)
             return (didCreateNewSession: false, decryptedData: decryptedData)
         } else {

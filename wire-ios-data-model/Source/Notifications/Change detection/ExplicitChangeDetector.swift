@@ -32,9 +32,9 @@ final class ExplicitChangeDetector: ChangeDetector {
     // MARK: - Life cycle
 
     init(classIdentifiers: [ClassIdentifier], managedObjectContext: NSManagedObjectContext) {
-        context = managedObjectContext
-        snapshotCenter = SnapshotCenter(managedObjectContext: context)
-        dependencyKeyStore = DependencyKeyStore(classIdentifiers: classIdentifiers)
+        self.context = managedObjectContext
+        self.snapshotCenter = SnapshotCenter(managedObjectContext: context)
+        self.dependencyKeyStore = DependencyKeyStore(classIdentifiers: classIdentifiers)
     }
 
     // MARK: - Methods

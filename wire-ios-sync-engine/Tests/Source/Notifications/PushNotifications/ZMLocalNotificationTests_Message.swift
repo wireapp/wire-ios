@@ -201,7 +201,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
         // then
         XCTAssertEqual(note!.messageNonce, event.messageNonce)
-        XCTAssertEqual(note!.selfUserID, self.selfUser.remoteIdentifier)
+        XCTAssertEqual(note!.selfUserID, selfUser.remoteIdentifier)
     }
 
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilenced() {
@@ -449,19 +449,19 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         team.name = "Wire Amazing Team"
         team.remoteIdentifier = UUID.create()
-        let user = ZMUser.selfUser(in: self.uiMOC)
-        self.performPretendingUiMocIsSyncMoc {
+        let user = ZMUser.selfUser(in: uiMOC)
+        performPretendingUiMocIsSyncMoc {
             _ = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
         }
         user.teamIdentifier = team.remoteIdentifier
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)
+        let note = textNotification(oneOnOneConversation, sender: sender)
 
         // then
         XCTAssertNotNil(note)
@@ -470,7 +470,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
         // when
-        let note = self.textNotification(self.oneOnOneConversation, sender: self.sender)
+        let note = textNotification(oneOnOneConversation, sender: sender)
 
         // then
         XCTAssertNotNil(note)
@@ -809,16 +809,16 @@ extension ZMLocalNotificationTests_Message {
 extension ZMLocalNotificationTests_Message {
     func testThatItGeneratesTheNotificationWithoutMuteInTheTeam() {
         // GIVEN
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         team.name = "Wire Amazing Team"
-        let user = ZMUser.selfUser(in: self.uiMOC)
-        self.performPretendingUiMocIsSyncMoc {
+        let user = ZMUser.selfUser(in: uiMOC)
+        performPretendingUiMocIsSyncMoc {
             _ = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
         }
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // WHEN
-        let note = textNotification(self.oneOnOneConversation, sender: sender, text: "Hello", isEphemeral: false)!
+        let note = textNotification(oneOnOneConversation, sender: sender, text: "Hello", isEphemeral: false)!
 
         // THEN
         XCTAssertEqual(note.category, .conversationWithLike)
@@ -875,7 +875,7 @@ extension ZMLocalNotificationTests_Message {
         team.name = "Wire Amazing Team"
 
         let user = ZMUser.selfUser(in: uiMOC)
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             _ = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
         }
 

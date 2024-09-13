@@ -27,7 +27,7 @@ class ZMTTestBaseTests: ZMTBaseTest {
         )!)
 
         // when
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
 
         // then
         XCTAssertNotNil(data)
@@ -42,7 +42,7 @@ class ZMTTestBaseTests: ZMTBaseTest {
         )!)
 
         // when
-        let data = self.mediumJPEGData()
+        let data = mediumJPEGData()
 
         // then
         XCTAssertNotNil(data)

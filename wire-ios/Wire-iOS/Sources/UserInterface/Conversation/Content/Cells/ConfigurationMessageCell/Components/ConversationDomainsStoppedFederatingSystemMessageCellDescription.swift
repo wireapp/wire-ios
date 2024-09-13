@@ -44,9 +44,9 @@ final class ConversationDomainsStoppedFederatingSystemMessageCellDescription: Co
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = ConversationDomainsStoppedFederatingSystemMessageCellDescription
             .makeAttributedString(for: systemMessageData)
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
 
-        accessibilityLabel = content?.string
+        self.accessibilityLabel = content?.string
     }
 
     private static func makeAttributedString(for systemMessageData: ZMSystemMessageData) -> NSAttributedString? {

@@ -71,10 +71,10 @@ public final class SignatureStatus: NSObject {
         self.asset = asset
         self.managedObjectContext = managedObjectContext
 
-        documentID = asset?.uploaded.assetID
-        fileName = asset?.original.name.removingExtremeCombiningCharacters
+        self.documentID = asset?.uploaded.assetID
+        self.fileName = asset?.original.name.removingExtremeCombiningCharacters
 
-        encodedHash = data?
+        self.encodedHash = data?
             .zmSHA256Digest()
             .base64String()
     }
@@ -248,11 +248,11 @@ extension NSManagedObjectContext {
     @objc public var signatureStatus: SignatureStatus? {
         get {
             precondition(zm_isSyncContext, "signatureStatus can only be accessed on the sync context")
-            return self.userInfo[NSManagedObjectContext.signatureStatusKey] as? SignatureStatus
+            return userInfo[NSManagedObjectContext.signatureStatusKey] as? SignatureStatus
         }
         set {
             precondition(zm_isSyncContext, "signatureStatus can only be accessed on the sync context")
-            self.userInfo[NSManagedObjectContext.signatureStatusKey] = newValue
+            userInfo[NSManagedObjectContext.signatureStatusKey] = newValue
         }
     }
 }

@@ -40,7 +40,7 @@ final class CompleteReactionPickerViewController: UIViewController {
         self.selectedReactions = selectedReactions
         super.init(nibName: nil, bundle: nil)
 
-        emojiDataSource = EmojiDataSource(provider: cellForEmoji, emojiRepository: emojiRepository)
+        self.emojiDataSource = EmojiDataSource(provider: cellForEmoji, emojiRepository: emojiRepository)
         collectionView.dataSource = emojiDataSource
         collectionView.delegate = self
         searchBar.delegate = self
@@ -134,7 +134,7 @@ final class CompleteReactionPickerViewController: UIViewController {
     // MARK: - Collection View
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(
+        let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
             for: indexPath
         ) as! EmojiCollectionViewCell
@@ -145,9 +145,9 @@ final class CompleteReactionPickerViewController: UIViewController {
     }
 
     func updateSectionSelection() {
-        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map(\.section)).min()
+        let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
         guard let section = minSection  else { return }
-        self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
+        sectionViewController.didSelectSection(emojiDataSource[section].id)
     }
 
     // MARK: - Accessibility

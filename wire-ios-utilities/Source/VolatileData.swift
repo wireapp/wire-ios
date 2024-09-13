@@ -45,7 +45,7 @@ public final class VolatileData {
     /// Initialize the container with the given data.
 
     public init(from data: Data) {
-        _storage = data
+        self._storage = data
     }
 
     deinit {

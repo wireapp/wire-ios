@@ -165,11 +165,11 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     @discardableResult
     private func prepareForSnapshot(_ size: CGSize = CGSize(width: 320, height: 216)) -> UIView {
-        self.sut.beginAppearanceTransition(true, animated: false)
-        self.sut.endAppearanceTransition()
+        sut.beginAppearanceTransition(true, animated: false)
+        sut.endAppearanceTransition()
 
         let container = UIView()
-        container.addSubview(self.sut.view)
+        container.addSubview(sut.view)
         container.backgroundColor = SemanticColors.View.backgroundConversationView
         container.translatesAutoresizingMaskIntoConstraints = false
         sut.view.translatesAutoresizingMaskIntoConstraints = false
@@ -211,32 +211,32 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
         setupSut(permissions: permissions)
 
-        self.sut.delegate = self.delegateMock
-        self.prepareForSnapshot()
+        sut.delegate = delegateMock
+        prepareForSnapshot()
 
         // WHEN
-        let cameraCell = self.sut.collectionView.cellForItem(at: IndexPath(item: 0, section: 0))
+        let cameraCell = sut.collectionView.cellForItem(at: IndexPath(item: 0, section: 0))
 
         // THEN
         XCTAssertTrue(cameraCell is CameraCell)
-        XCTAssertEqual(self.sut.collectionView.numberOfSections, 2)
-        XCTAssertEqual(self.sut.collectionView.numberOfItems(inSection: 0), 1)
+        XCTAssertEqual(sut.collectionView.numberOfSections, 2)
+        XCTAssertEqual(sut.collectionView.numberOfItems(inSection: 0), 1)
     }
 
     func testThatTableViewContainsPermissionsCellOnly_CameraAndLibraryAccessNotGranted() {
         // GIVEN
         let permissions = MockPhotoPermissionsController(camera: false, library: false)
         setupSut(permissions: permissions)
-        self.sut.delegate = self.delegateMock
-        self.prepareForSnapshot()
+        sut.delegate = delegateMock
+        prepareForSnapshot()
 
         // WHEN
-        let cameraCell = self.sut.collectionView.cellForItem(at: IndexPath(item: 0, section: 0))
+        let cameraCell = sut.collectionView.cellForItem(at: IndexPath(item: 0, section: 0))
 
         // THEN
         XCTAssertTrue(cameraCell is CameraKeyboardPermissionsCell)
-        XCTAssertEqual(self.sut.collectionView.numberOfSections, 1)
-        XCTAssertEqual(self.sut.collectionView.numberOfItems(inSection: 0), 1)
+        XCTAssertEqual(sut.collectionView.numberOfSections, 1)
+        XCTAssertEqual(sut.collectionView.numberOfItems(inSection: 0), 1)
     }
 
     // MARK: - Tests for InitialStateLayoutSizeCompact
@@ -409,11 +409,11 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         line: UInt = #line
     ) {
         // GIVEN
-        self.splitView?.layoutSize = .compact
+        splitView?.layoutSize = .compact
         setupSut(permissions: permissions)
-        self.prepareForSnapshot()
+        prepareForSnapshot()
         // WHEN
-        self.sut.collectionView.scrollRectToVisible(CGRect(x: 300, y: 0, width: 160, height: 10), animated: false)
+        sut.collectionView.scrollRectToVisible(CGRect(x: 300, y: 0, width: 160, height: 10), animated: false)
         // THEN
         snapshotHelper.verify(
             matching: prepareForSnapshot(),
@@ -513,34 +513,34 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
         // GIVEN
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
         setupSut(permissions: permissions)
-        self.sut.delegate = self.delegateMock
-        self.prepareForSnapshot()
+        sut.delegate = delegateMock
+        prepareForSnapshot()
 
         // WHEN
-        self.sut.cameraRollButton.sendActions(for: .touchUpInside)
+        sut.cameraRollButton.sendActions(for: .touchUpInside)
 
         // THEN
-        XCTAssertEqual(self.delegateMock.cameraKeyboardWantsToOpenCameraRollHitCount, 1)
-        XCTAssertEqual(self.delegateMock.cameraKeyboardWantsToOpenFullScreenCameraHitCount, 0)
-        XCTAssertEqual(self.delegateMock.cameraKeyboardDidSelectVideoHitCount, 0)
-        XCTAssertEqual(self.delegateMock.cameraKeyboardViewControllerDidSelectImageDataHitCount, 0)
+        XCTAssertEqual(delegateMock.cameraKeyboardWantsToOpenCameraRollHitCount, 1)
+        XCTAssertEqual(delegateMock.cameraKeyboardWantsToOpenFullScreenCameraHitCount, 0)
+        XCTAssertEqual(delegateMock.cameraKeyboardDidSelectVideoHitCount, 0)
+        XCTAssertEqual(delegateMock.cameraKeyboardViewControllerDidSelectImageDataHitCount, 0)
     }
 
     func testThatItCallsDelegateWhenWantsToOpenFullScreenCamera() {
         // GIVEN
         let permissions = MockPhotoPermissionsController(camera: true, library: true)
         setupSut(permissions: permissions)
-        self.sut.delegate = self.delegateMock
-        self.prepareForSnapshot()
+        sut.delegate = delegateMock
+        prepareForSnapshot()
 
         // WHEN
-        let cameraCell = self.sut.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as! CameraCell
+        let cameraCell = sut.collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as! CameraCell
         cameraCell.expandButton.sendActions(for: .touchUpInside)
 
         // THEN
-        XCTAssertEqual(self.delegateMock.cameraKeyboardWantsToOpenCameraRollHitCount, 0)
-        XCTAssertEqual(self.delegateMock.cameraKeyboardWantsToOpenFullScreenCameraHitCount, 1)
-        XCTAssertEqual(self.delegateMock.cameraKeyboardDidSelectVideoHitCount, 0)
-        XCTAssertEqual(self.delegateMock.cameraKeyboardViewControllerDidSelectImageDataHitCount, 0)
+        XCTAssertEqual(delegateMock.cameraKeyboardWantsToOpenCameraRollHitCount, 0)
+        XCTAssertEqual(delegateMock.cameraKeyboardWantsToOpenFullScreenCameraHitCount, 1)
+        XCTAssertEqual(delegateMock.cameraKeyboardDidSelectVideoHitCount, 0)
+        XCTAssertEqual(delegateMock.cameraKeyboardViewControllerDidSelectImageDataHitCount, 0)
     }
 }

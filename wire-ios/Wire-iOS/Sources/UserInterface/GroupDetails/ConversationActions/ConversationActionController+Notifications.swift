@@ -57,14 +57,14 @@ enum NotificationResult: CaseIterable {
     }
 
     func action(for conversation: ZMConversation, handler: @escaping (NotificationResult) -> Void) -> UIAlertAction {
-        let checkmarkText = if let mutedMessageTypes = self.mutedMessageTypes,
+        let checkmarkText = if let mutedMessageTypes,
                                conversation.mutedMessageTypes == mutedMessageTypes {
             " ✓"
         } else {
             ""
         }
 
-        let title = self.title + checkmarkText
+        let title = title + checkmarkText
         return .init(title: title, style: style, handler: { _ in handler(self) })
     }
 }

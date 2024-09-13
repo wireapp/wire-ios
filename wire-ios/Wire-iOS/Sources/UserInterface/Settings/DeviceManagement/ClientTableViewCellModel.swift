@@ -50,21 +50,21 @@ struct ClientTableViewCellModel {
         shouldSetType: Bool = true
     ) {
         if shouldSetType {
-            title = userClient.deviceClass == .legalHold ?
+            self.title = userClient.deviceClass == .legalHold ?
                 L10n.Localizable.Device.Class.legalhold :
                 (
                     userClient.deviceClass?.localizedDescription.capitalized ?? userClient.type.localizedDescription
                         .capitalized
                 )
         } else {
-            title = userClient.model ?? ""
+            self.title = userClient.model ?? ""
         }
         let proteusId = userClient.displayIdentifier.fingerprintStringWithSpaces.uppercased()
-        proteusLabelText = DeviceDetailsSection.Proteus.value(proteusId)
-        isProteusVerified = userClient.verified
+        self.proteusLabelText = DeviceDetailsSection.Proteus.value(proteusId)
+        self.isProteusVerified = userClient.verified
         let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
-        mlsThumbprintLabelText = !mlsThumbPrint.isEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
-        e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
-        activationDate = userClient.activationDate
+        self.mlsThumbprintLabelText = !mlsThumbPrint.isEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
+        self.e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
+        self.activationDate = userClient.activationDate
     }
 }

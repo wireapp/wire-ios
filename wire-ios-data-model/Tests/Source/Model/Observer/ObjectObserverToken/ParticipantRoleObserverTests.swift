@@ -61,16 +61,16 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         // given
         uiMOC.saveOrRollback()
 
-        self.token = ParticipantRoleChangeInfo.add(
+        token = ParticipantRoleChangeInfo.add(
             observer: observer,
             for: participantRole,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         )
 
         // when
         modifier(participantRole)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let changeCount = observer.notifications.count
@@ -93,7 +93,7 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         }
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(observer.notifications.count, changeCount, "Should not have changed further once")

@@ -135,9 +135,9 @@ final class ConversationGuestOptionsViewModel {
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
             guard let self else { return }
             if allowGuests, self.configuration.isCodeEnabled {
-                self.fetchLink()
+                fetchLink()
             } else {
-                self.updateRows()
+                updateRows()
             }
         }
 
@@ -158,8 +158,8 @@ final class ConversationGuestOptionsViewModel {
     // TODO: copy?
     private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
-            get: { [unowned self] in self.configuration.allowGuests },
-            set: { [unowned self] in self.setAllowGuests($0, view: $1) },
+            get: { [unowned self] in configuration.allowGuests },
+            set: { [unowned self] in setAllowGuests($0, view: $1) },
             isEnabled: configuration.isConversationFromSelfTeam
         )]
         guard configuration.allowGuests else {
@@ -227,13 +227,13 @@ final class ConversationGuestOptionsViewModel {
     private func revokeLink(view: UIView) {
         delegate?.conversationGuestOptionsViewModel(self, sourceView: view, confirmRevokingLink: { [weak self] revoke in
             guard let self else { return }
-            guard revoke else { return self.updateRows() }
+            guard revoke else { return updateRows() }
 
             let item = CancelableItem(delay: 0.4) { [weak self] in
                 self?.state.isLoading = true
             }
 
-            self.configuration.deleteLink { result in
+            configuration.deleteLink { result in
                 switch result {
                 case .success:
                     self.link = nil
@@ -280,19 +280,19 @@ final class ConversationGuestOptionsViewModel {
             switch result {
             case let .success(linkData):
                 if linkData.secured {
-                    self.securedLink = linkData.uri
-                    self.link = nil
+                    securedLink = linkData.uri
+                    link = nil
                 } else {
-                    self.link = linkData.uri
-                    self.securedLink = nil
+                    link = linkData.uri
+                    securedLink = nil
                 }
 
             case let .failure(error):
-                self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
             }
 
             item.cancel()
-            self.showLoadingCell = false
+            showLoadingCell = false
         }
     }
 
@@ -307,11 +307,11 @@ final class ConversationGuestOptionsViewModel {
             case let .success(link):
                 self.link = link
             case let .failure(error):
-                self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
             }
 
             item.cancel()
-            self.showLoadingCell = false
+            showLoadingCell = false
         }
     }
 
@@ -362,15 +362,15 @@ final class ConversationGuestOptionsViewModel {
             configuration.setAllowGuests(allowGuests) { [weak self] result in
                 guard let self else { return }
                 item.cancel()
-                self.state.isLoading = false
+                state.isLoading = false
 
                 switch result {
                 case .success:
-                    self.updateRows()
-                    if self.link == nil, self.securedLink == nil, allowGuests {
-                        self.fetchLink()
+                    updateRows()
+                    if link == nil, securedLink == nil, allowGuests {
+                        fetchLink()
                     }
-                case let .failure(error): self.delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
+                case let .failure(error): delegate?.conversationGuestOptionsViewModel(self, didReceiveError: error)
                 }
             }
         }
@@ -386,9 +386,9 @@ final class ConversationGuestOptionsViewModel {
                 sourceView: view,
                 confirmRemovingGuests: { [weak self] remove in
                     guard let self else { return }
-                    guard remove else { return self.updateRows() }
-                    self.link = nil
-                    self.securedLink = nil
+                    guard remove else { return updateRows() }
+                    link = nil
+                    securedLink = nil
                     _setAllowGuests()
                 }
             )

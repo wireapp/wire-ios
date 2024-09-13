@@ -88,7 +88,7 @@ extension ConversationInputBarViewController {
         }
 
         guard let controller = ephemeralKeyboardViewController else { return }
-        self.parent?.present(controller, animated: true)
+        parent?.present(controller, animated: true)
     }
 
     func updateEphemeralIndicatorButtonTitle(_ button: ButtonWithLargerHitArea) {
@@ -158,7 +158,7 @@ extension ConversationInputBarViewController {
 
         if !sendButtonState.ephemeral {
             state = .none
-        } else if self.conversation.hasSyncedMessageDestructionTimeout {
+        } else if conversation.hasSyncedMessageDestructionTimeout {
             state = .conversation
         } else {
             state = .message

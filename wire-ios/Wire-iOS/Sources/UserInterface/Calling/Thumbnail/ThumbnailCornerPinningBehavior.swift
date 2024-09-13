@@ -41,15 +41,15 @@ final class ThumbnailCornerPinningBehavior: UIDynamicBehavior {
         // Detect collisions
 
         self.collisionBehavior = UICollisionBehavior(items: [item])
-        self.collisionBehavior.translatesReferenceBoundsIntoBoundary = true
+        collisionBehavior.translatesReferenceBoundsIntoBoundary = true
 
         // Alter the properties of the item
 
         self.itemTransformBehavior = UIDynamicItemBehavior(items: [item])
-        self.itemTransformBehavior.density = 0.01
-        self.itemTransformBehavior.resistance = 7
-        self.itemTransformBehavior.friction = 0.1
-        self.itemTransformBehavior.allowsRotation = false
+        itemTransformBehavior.density = 0.01
+        itemTransformBehavior.resistance = 7
+        itemTransformBehavior.friction = 0.1
+        itemTransformBehavior.allowsRotation = false
         super.init()
 
         // Add child behaviors

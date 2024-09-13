@@ -59,6 +59,6 @@ final class TestUserProfileUpdateObserver: NSObject, UserProfileUpdateObserver {
     }
 
     func clearReceivedCallbacks() {
-        self.invokedCallbacks = []
+        invokedCallbacks = []
     }
 }

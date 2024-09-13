@@ -65,7 +65,7 @@ final class AnalyticsCallingTracker: NSObject {
             }
         }
 
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
     }
 
     static func userToggledVideo(in voiceChannel: VoiceChannel) {

@@ -264,7 +264,7 @@ private class MLSParticipant {
     }
 
     func updateState(_ state: CallParticipantState) {
-        self.callParticipant = CallParticipant(
+        callParticipant = CallParticipant(
             user: callParticipant.user as! ZMUser,
             clientId: callParticipant.clientId,
             state: state,

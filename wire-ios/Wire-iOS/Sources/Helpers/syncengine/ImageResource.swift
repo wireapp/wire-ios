@@ -24,7 +24,7 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
     var linkAttachmentImage: WireImageResource? {
-        guard let attachment = self.linkAttachments?.first, let textMessage = self.textMessageData else {
+        guard let attachment = linkAttachments?.first, let textMessage = textMessageData else {
             return nil
         }
 
@@ -218,11 +218,11 @@ extension WireImageResource {
         sizeLimit: ImageSizeLimit = .deviceOptimized,
         completion: @escaping (_ image: MediaAsset?, _ cacheHit: Bool) -> Void
     ) {
-        guard let cacheIdentifier = self.cacheIdentifier else {
+        guard let cacheIdentifier else {
             return completion(nil, false)
         }
 
-        let isAnimatedGIF = self.isAnimatedGIF
+        let isAnimatedGIF = isAnimatedGIF
         var sizeLimit = sizeLimit
 
         if isAnimatedGIF {

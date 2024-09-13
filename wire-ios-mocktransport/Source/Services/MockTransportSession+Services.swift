@@ -58,9 +58,9 @@ extension MockTransportSession {
         }
 
         if let serviceId = request.RESTComponents(index: 3) {
-            return self.processServiceByIdRequest(provider: providerId, service: serviceId, apiVersion: apiVersion)
+            return processServiceByIdRequest(provider: providerId, service: serviceId, apiVersion: apiVersion)
         } else {
-            return self.processProviderByIdRequest(provider: providerId, apiVersion: apiVersion)
+            return processProviderByIdRequest(provider: providerId, apiVersion: apiVersion)
         }
     }
 
@@ -170,7 +170,7 @@ extension MockTransportSession {
 
         var newServiceUser: MockUser!
 
-        self.performRemoteChanges { change in
+        performRemoteChanges { change in
             newServiceUser = change.insertUser(withName: service.name)
             change.addV3ProfilePicture(to: newServiceUser)
             newServiceUser.accentID = Int16(service.accentID)
@@ -244,7 +244,7 @@ extension MockTransportSession {
             )
         }
 
-        self.performRemoteChanges { _ in
+        performRemoteChanges { _ in
             conversation.removeUsers(by: self.selfUser, removedUser: botUser)
         }
 
@@ -258,7 +258,8 @@ extension MockTransportSession {
 
     @objc(insertServiceWithName:identifier:provider:)
     public func insertService(name: String, identifier: String, provider: String) -> MockService {
-        let mockService = MockService.insert(in: managedObjectContext)
+        // swiftformat:disable:next redundantType
+        let mockService: MockService = MockService.insert(in: managedObjectContext)
         mockService.name = name
         mockService.handle = ""
         mockService.accentID = 5

@@ -32,9 +32,9 @@ final class AnyAuthenticationEventHandler<Context> {
     /// - parameter handler: The typed handler to wrap in this object.
 
     init<Handler: AuthenticationEventHandler>(_ handler: Handler) where Handler.Context == Context {
-        _statusProvider = AnyMutableProperty(handler, keyPath: \.statusProvider)
+        self._statusProvider = AnyMutableProperty(handler, keyPath: \.statusProvider)
         self.name = String(describing: Handler.self)
-        handlerBlock = handler.handleEvent
+        self.handlerBlock = handler.handleEvent
     }
 
     /// The current status provider.

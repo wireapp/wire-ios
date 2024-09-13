@@ -52,9 +52,9 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
         if let valueCell = cell as? SettingsValueCell {
-            valueCell.accessoryType = self.settingsProperty.value() == self.value ? .checkmark : .none
+            valueCell.accessoryType = settingsProperty.value() == value ? .checkmark : .none
         }
     }
 

@@ -30,11 +30,11 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
         super.setUp()
         patchCountByVersion = [:]
         sut = PatchApplicator<TestPatch>(name: "TestPatch")
-        self.setCurrentVersion(.none)
+        setCurrentVersion(.none)
     }
 
     override func tearDown() {
-        self.setCurrentVersion(.none)
+        setCurrentVersion(.none)
         sut = nil
         super.tearDown()
     }
@@ -49,7 +49,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     var previousVersion: Int? {
-        syncMOC.persistentStoreMetadata(forKey: self.sut.lastRunVersionKey) as? Int
+        syncMOC.persistentStoreMetadata(forKey: sut.lastRunVersionKey) as? Int
     }
 
     func createTestPatches(forVersions versions: ClosedRange<Int>) -> [TestPatch] {
@@ -82,7 +82,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     func testThatItAppliesOnlyNecessaryPatches() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // Given a previous version as 2
             self.setCurrentVersion(2)
 
@@ -105,7 +105,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     func testItAppliesFirstPatchSuccessfully() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // Given no patches were run previously (previous version is 0)
             self.setCurrentVersion(0)
 
@@ -124,7 +124,7 @@ class PatchApplicatorTests: ZMBaseManagedObjectTest {
     }
 
     func testItOnlyAppliesPatchesOnce() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // Given no patches were run previously (previous version is 0)
             self.setCurrentVersion(0)
 

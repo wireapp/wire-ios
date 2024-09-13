@@ -41,7 +41,7 @@ public class AddParticipantAction: EntityAction {
     public let conversationID: NSManagedObjectID
 
     public required init(users: [ZMUser], conversation: ZMConversation) {
-        userIDs = users.map(\.objectID)
-        conversationID = conversation.objectID
+        self.userIDs = users.map(\.objectID)
+        self.conversationID = conversation.objectID
     }
 }

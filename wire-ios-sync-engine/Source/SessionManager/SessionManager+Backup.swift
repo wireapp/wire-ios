@@ -154,8 +154,8 @@ extension SessionManager {
             CoreDataStack.importLocalStorage(
                 accountIdentifier: userId,
                 from: url,
-                applicationContainer: self.sharedContainerURL,
-                dispatchGroup: self.dispatchGroup
+                applicationContainer: sharedContainerURL,
+                dispatchGroup: dispatchGroup
             ) { result in
                 completion(result.map { _ in })
             }

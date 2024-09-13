@@ -22,7 +22,7 @@ extension ZMConversation {
     public var visibleMessagesPredicate: NSPredicate? {
         var allPredicates: [NSPredicate] = []
 
-        if let clearedTimeStamp = self.clearedTimeStamp {
+        if let clearedTimeStamp {
             // This must filter out:
             // 1. Messages that are older than clearedTimeStamp.
             // 2. But NOT the messages that are pending, i.e. still can be uploaded.
@@ -80,6 +80,6 @@ extension ZMConversation {
         )
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
 
-        return self.managedObjectContext?.fetchOrAssert(request: fetchRequest).first
+        return managedObjectContext?.fetchOrAssert(request: fetchRequest).first
     }
 }

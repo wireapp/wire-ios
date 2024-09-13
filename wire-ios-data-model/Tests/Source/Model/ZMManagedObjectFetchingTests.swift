@@ -24,13 +24,13 @@ class ZMManagedObjectFetchingTests: DatabaseBaseTest {
 
     override public func setUp() {
         super.setUp()
-        self.mocs = self.createStorageStackAndWaitForCompletion()
+        mocs = createStorageStackAndWaitForCompletion()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
         BackendInfo.isFederationEnabled = true
     }
 
     override public func tearDown() {
-        self.mocs = nil
+        mocs = nil
         BackendInfo.isFederationEnabled = false
         super.tearDown()
     }

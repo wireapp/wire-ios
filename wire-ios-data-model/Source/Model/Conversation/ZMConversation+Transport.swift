@@ -99,7 +99,7 @@ extension ZMConversation {
     @objc
     public func update(updateEvent: ZMUpdateEvent) {
         if let timeStamp = updateEvent.timestamp {
-            self.updateServerModified(timeStamp)
+            updateServerModified(timeStamp)
         }
     }
 
@@ -116,23 +116,23 @@ extension ZMConversation {
     public func updateReceiptMode(_ receiptMode: Int?) {
         if let receiptMode {
             let enabled = receiptMode > 0
-            let receiptModeChanged = !self.hasReadReceiptsEnabled && enabled
-            self.hasReadReceiptsEnabled = enabled
+            let receiptModeChanged = !hasReadReceiptsEnabled && enabled
+            hasReadReceiptsEnabled = enabled
 
             // We only want insert a system message if this is an existing conversation (non empty)
-            if receiptModeChanged, self.lastMessage != nil {
-                self.appendMessageReceiptModeIsOnMessage(timestamp: Date())
+            if receiptModeChanged, lastMessage != nil {
+                appendMessageReceiptModeIsOnMessage(timestamp: Date())
             }
         }
     }
 
     public func updateMembers(_ usersAndRoles: [(ZMUser, Role?)], selfUserRole: Role?) {
-        guard let context = self.managedObjectContext else {
+        guard let context = managedObjectContext else {
             return
         }
 
         let allParticipants = Set(usersAndRoles.map(\.0))
-        let removedParticipants = self.localParticipantsExcludingSelf.subtracting(allParticipants)
+        let removedParticipants = localParticipantsExcludingSelf.subtracting(allParticipants)
         addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
         removeParticipantsAndUpdateConversationState(
             users: removedParticipants,
@@ -151,9 +151,9 @@ extension ZMConversation {
 
     public func updateTeam(identifier: UUID?) {
         guard let teamId = identifier,
-              let moc = self.managedObjectContext else { return }
-        self.teamRemoteIdentifier = teamId
-        self.team = Team.fetch(with: teamId, in: moc)
+              let moc = managedObjectContext else { return }
+        teamRemoteIdentifier = teamId
+        team = Team.fetch(with: teamId, in: moc)
     }
 
     @objc
@@ -179,8 +179,8 @@ extension ZMConversation {
 
     private func updateIsArchived(payload: [String: Any]) -> Bool {
         if let silencedRef = (payload as NSDictionary).optionalDate(forKey: PayloadKeys.OTRArchivedReferenceKey),
-           self.updateArchived(silencedRef, synchronize: false) {
-            self.internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
+           updateArchived(silencedRef, synchronize: false) {
+            internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
             return true
         }
         return false
@@ -197,10 +197,10 @@ extension ZMConversation {
 
     @objc(shouldAddEvent:)
     public func shouldAdd(event: ZMUpdateEvent) -> Bool {
-        if let clearedTime = self.clearedTimeStamp, let time = event.timestamp,
+        if let clearedTime = clearedTimeStamp, let time = event.timestamp,
            clearedTime.compare(time) != .orderedAscending {
             return false
         }
-        return self.conversationType != .self
+        return conversationType != .self
     }
 }

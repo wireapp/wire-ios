@@ -56,8 +56,8 @@ class AssetsPreprocessorTests: MessagingTestBase {
     func testThatItPreprocessAssetMessageWithMultipleAssets() {
         // given
         let message = try! conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         )) as! ZMAssetClientMessage
         let messageSet: Set<NSManagedObject> = [message]
         let assets = message.assets

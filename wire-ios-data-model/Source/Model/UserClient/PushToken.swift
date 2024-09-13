@@ -66,13 +66,13 @@ public struct PushToken: Equatable {
 extension PushToken: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        deviceToken = try container.decode(Data.self, forKey: .deviceToken)
-        appIdentifier = try container.decode(String.self, forKey: .appIdentifier)
-        transportType = try container.decode(String.self, forKey: .transportType)
+        self.deviceToken = try container.decode(Data.self, forKey: .deviceToken)
+        self.appIdentifier = try container.decode(String.self, forKey: .appIdentifier)
+        self.transportType = try container.decode(String.self, forKey: .transportType)
 
         // Property 'tokenType' was added to use two token types: voip (old) and apns (new). All old clients with voip
         // token did not have this property, so we need to set it by default as .voip.
-        tokenType = try container.decodeIfPresent(TokenType.self, forKey: .tokenType) ?? .voip
+        self.tokenType = try container.decodeIfPresent(TokenType.self, forKey: .tokenType) ?? .voip
     }
 
     enum CodingKeys: String, CodingKey {

@@ -188,6 +188,6 @@ final class ConversationImageMessageCellDescription: ConversationMessageCellDesc
     init(message: ZMConversationMessage, image: ZMImageMessageData) {
         self.message = message
         self.configuration = View.Configuration(image: image, message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.ImageMessage.description
     }
 }

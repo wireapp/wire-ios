@@ -161,10 +161,10 @@ final class EmptySearchResultsView: UIView {
         actionButton.accessibilityIdentifier = "button.searchui.open-services-no-results"
 
         actionButton.addCallback(for: .touchUpInside) { [unowned self] _ in
-            guard let action = self.buttonAction else {
+            guard let action = buttonAction else {
                 return
             }
-            self.delegate?.execute(action: action, from: self)
+            delegate?.execute(action: action, from: self)
         }
 
         updateUIForCurrentEmptySearchResultState()
@@ -180,13 +180,13 @@ final class EmptySearchResultsView: UIView {
     func updateStatus(searchingForServices: Bool, hasFilter: Bool) {
         switch (searchingForServices, hasFilter) {
         case (true, false):
-            self.state = .noServicesEnabled
+            state = .noServicesEnabled
         case (true, true):
-            self.state = .noServices
+            state = .noServices
         case (false, true):
-            self.state = .noUsers
+            state = .noUsers
         case (false, false):
-            self.state = .initialSearch
+            state = .initialSearch
         }
     }
 
@@ -229,9 +229,9 @@ final class EmptySearchResultsView: UIView {
     private func updateUIForCurrentEmptySearchResultState() {
         iconView.image = icon
         iconView.tintColor = iconColor
-        statusLabel.text = self.text
+        statusLabel.text = text
 
-        if let action = self.buttonAction {
+        if let action = buttonAction {
             actionButton.isHidden = false
             actionButton.setup(title: action.title)
         } else {

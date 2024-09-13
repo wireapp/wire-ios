@@ -33,7 +33,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         super.setUp()
         mockMessageSender = MockMessageSenderInterface()
         sut = ResetSessionRequestStrategy(
-            managedObjectContext: self.syncMOC,
+            managedObjectContext: syncMOC,
             messageSender: mockMessageSender
         )
     }
@@ -63,7 +63,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     // MARK: Response handling

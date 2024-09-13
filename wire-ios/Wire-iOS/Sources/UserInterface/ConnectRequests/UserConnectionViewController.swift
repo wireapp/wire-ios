@@ -80,7 +80,7 @@ final class UserConnectionViewController: UIViewController {
     }
 
     override func loadView() {
-        self.userConnectionView = UserConnectionView(user: self.user)
-        self.view = self.userConnectionView
+        userConnectionView = UserConnectionView(user: user)
+        view = userConnectionView
     }
 }

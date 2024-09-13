@@ -96,7 +96,7 @@ final class SendController {
             )
 
         self.sharingSession = sharingSession
-        unsentSendables = sendables
+        self.unsentSendables = sendables
 
         NotificationCenter.default.addObserver(
             self,
@@ -109,7 +109,7 @@ final class SendController {
     @objc
     private func networkStatusDidChange(_ notification: Notification) {
         if let status = notification.object as? NetworkStatus, status.reachability == .ok {
-            self.tryToTimeout()
+            tryToTimeout()
         }
     }
 
@@ -117,7 +117,7 @@ final class SendController {
     /// The passed in `SendingStateCallback` closure will be called multiple times with the current state of the
     /// operation.
     func send(progress: @escaping SendingStateCallback) {
-        self.timedOut = false
+        timedOut = false
         self.progress = progress
 
         let completion: SendableCompletion = { [weak self] sendableResult in
@@ -145,11 +145,11 @@ final class SendController {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
                 guard let self else { return }
-                guard !self.isCancelled else {
+                guard !isCancelled else {
                     return progress(.done)
                 }
                 progress(.startingSending)
-                self.append(unsentSendables: self.unsentSendables, completion: completion)
+                append(unsentSendables: unsentSendables, completion: completion)
             }
         } else {
             progress(.startingSending)
@@ -176,7 +176,7 @@ final class SendController {
     }
 
     private func timeout() {
-        self.cancel { [weak self] in
+        cancel { [weak self] in
             self?.cancelTimeout()
             self?.timedOut = true
             self?.progress?(.timedOut)
@@ -188,7 +188,7 @@ final class SendController {
     func cancel(completion: @escaping () -> Void) {
         isCancelled = true
 
-        let sendablesToCancel = self.observer?.sendables.lazy.filter { !$0.isSent }
+        let sendablesToCancel = observer?.sendables.lazy.filter { !$0.isSent }
 
         sharingSession?.enqueue(changes: {
             sendablesToCancel?.forEach {

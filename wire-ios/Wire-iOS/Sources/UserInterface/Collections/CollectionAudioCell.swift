@@ -42,7 +42,7 @@ final class CollectionAudioCell: CollectionCell {
         typealias ConversationSearch = L10n.Accessibility.ConversationSearch
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let message = self.message else { return }
+        guard let message else { return }
         headerView.message = message
 
         if message.canBeShared {
@@ -114,6 +114,6 @@ final class CollectionAudioCell: CollectionCell {
 
 extension CollectionAudioCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        self.delegate?.collectionCell(self, performAction: action)
+        delegate?.collectionCell(self, performAction: action)
     }
 }

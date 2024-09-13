@@ -53,7 +53,7 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation else { return nil }
 
-        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
 
     public var shouldIgnoreTheSecurityLevelCheck = false
@@ -79,7 +79,7 @@ public class GenericMessageEntity: NSObject, ProteusMessage {
     }
 
     override public var hash: Int {
-        self.message.hashValue
+        message.hashValue
     }
 }
 

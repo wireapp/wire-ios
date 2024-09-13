@@ -110,7 +110,7 @@ extension UIViewController {
         private var current: UIViewController
 
         init(controller: UIViewController) {
-            current = controller
+            self.current = controller
         }
 
         func next() -> UIViewController? {
@@ -227,10 +227,14 @@ final class SearchResultsViewController: UIViewController {
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
         teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
-        servicesSection = SearchServicesSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
+        self
+            .servicesSection = SearchServicesSectionController(
+                canSelfUserManageTeam: userSession.selfUser
+                    .canManageTeam
+            )
         conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header
             .teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
-        inviteTeamMemberSection = InviteTeamMemberSection(team: team)
+        self.inviteTeamMemberSection = InviteTeamMemberSection(team: team)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -336,7 +340,7 @@ final class SearchResultsViewController: UIViewController {
     }
 
     func handleSearchResult(result: SearchResult, isCompleted: Bool) {
-        self.updateSections(withSearchResult: result)
+        updateSections(withSearchResult: result)
 
         if isCompleted {
             isResultEmpty = sectionController.visibleSections.isEmpty
@@ -347,7 +351,7 @@ final class SearchResultsViewController: UIViewController {
         var sections: [CollectionViewSectionController]
         let team = userSession.selfUser.membership?.team
 
-        switch (self.searchGroup, isAddingParticipants) {
+        switch (searchGroup, isAddingParticipants) {
         case (.services, _):
             sections = [servicesSection]
         case (.people, true):

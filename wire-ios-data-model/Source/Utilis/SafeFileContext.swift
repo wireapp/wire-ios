@@ -29,7 +29,7 @@ public final class SafeFileContext: NSObject {
         super.init()
 
         self.fileDescriptor = open(self.fileURL.path, 0)
-        if self.fileDescriptor <= 0 {
+        if fileDescriptor <= 0 {
             fatal("Can't obtain FileDescriptor for \(self.fileURL)")
         }
     }
@@ -44,14 +44,14 @@ public final class SafeFileContext: NSObject {
 
 extension SafeFileContext {
     public func acquireDirectoryLock() {
-        if flock(self.fileDescriptor, LOCK_EX) != 0 {
-            fatal("Failed to lock \(self.fileURL)")
+        if flock(fileDescriptor, LOCK_EX) != 0 {
+            fatal("Failed to lock \(fileURL)")
         }
     }
 
     public func releaseDirectoryLock() {
-        if flock(self.fileDescriptor, LOCK_UN) != 0 {
-            fatal("Failed to unlock \(self.fileURL)")
+        if flock(fileDescriptor, LOCK_UN) != 0 {
+            fatal("Failed to unlock \(fileURL)")
         }
     }
 }

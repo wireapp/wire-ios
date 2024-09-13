@@ -125,7 +125,7 @@ extension ConversationTests {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let sender = ZMUser.insertNewObject(in: self.uiMOC)
+        let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
 
         // when
@@ -155,7 +155,7 @@ extension ConversationTests {
         let updateEvent = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID.create())
 
         var newMessage: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -206,7 +206,7 @@ extension ConversationTests {
             // when
             ZMClientMessage.createOrUpdate(from: event!, in: syncMOC, prefetchResult: nil)
         }
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(
                 updatedConversation!.lastReadServerTimeStamp!.timeIntervalSince1970,

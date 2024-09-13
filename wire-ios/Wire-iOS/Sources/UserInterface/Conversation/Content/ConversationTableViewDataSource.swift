@@ -146,7 +146,7 @@ final class ConversationTableViewDataSource: NSObject {
             }
         }
 
-        let context = self.context(
+        let context = context(
             for: sectionController.message,
             at: section,
             firstUnreadMessage: firstUnreadMessage,
@@ -207,11 +207,11 @@ final class ConversationTableViewDataSource: NSObject {
             return cachedEntry
         }
 
-        let context = self.context(
+        let context = context(
             for: message,
             at: index,
             firstUnreadMessage: firstUnreadMessage,
-            searchQueries: self.searchQueries
+            searchQueries: searchQueries
         )
         let sectionController = ConversationMessageSectionController(
             message: message,
@@ -265,7 +265,7 @@ final class ConversationTableViewDataSource: NSObject {
 
         loadMessages(offset: offset, limit: limit, forceRecalculate: forceRecalculate)
 
-        let indexPath = self.topIndexPath(for: message)
+        let indexPath = topIndexPath(for: message)
         completion?(indexPath)
     }
 
@@ -274,7 +274,7 @@ final class ConversationTableViewDataSource: NSObject {
         limit: Int = ConversationTableViewDataSource.defaultBatchSize,
         forceRecalculate: Bool = false
     ) {
-        let fetchRequest = self.fetchRequest()
+        let fetchRequest = fetchRequest()
         fetchRequest
             .fetchLimit = limit +
             5 // We need to fetch a bit more than requested so that there is overlap between messages in different
@@ -371,7 +371,7 @@ final class ConversationTableViewDataSource: NSObject {
 
         // 3. Get the index path of the message that should stay displayed
         if let newestMessageBeforeReload,
-           let sectionIndex = self.index(of: newestMessageBeforeReload) {
+           let sectionIndex = index(of: newestMessageBeforeReload) {
             // 4. Get the frame of that message
             let indexPathRect = tableView.rect(forSection: sectionIndex)
 
@@ -437,13 +437,13 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func select(indexPath: IndexPath) {
-        let sectionController = self.sectionController(at: indexPath.section, in: tableView)
+        let sectionController = sectionController(at: indexPath.section, in: tableView)
         sectionController.didSelect()
         reloadSections(newSections: calculateSections(updating: sectionController))
     }
 
     func deselect(indexPath: IndexPath) {
-        let sectionController = self.sectionController(at: indexPath.section, in: tableView)
+        let sectionController = sectionController(at: indexPath.section, in: tableView)
         sectionController.didDeselect()
         reloadSections(newSections: calculateSections(updating: sectionController))
     }
@@ -453,7 +453,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
             return
         }
 
-        let sectionController = self.sectionController(at: section, in: tableView)
+        let sectionController = sectionController(at: section, in: tableView)
         sectionController.highlight(in: tableView, sectionIndex: section)
     }
 

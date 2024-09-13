@@ -365,13 +365,13 @@ extension ZMAssetClientMessage {
             updateTransferState(.uploadingCancelled, synchronize: false)
             progress = 0
         case .uploaded:
-            self.progress = 0
-            self.obtainPermanentObjectID()
-            self.managedObjectContext?.saveOrRollback()
+            progress = 0
+            obtainPermanentObjectID()
+            managedObjectContext?.saveOrRollback()
             NotificationInContext(
                 name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-                context: self.managedObjectContext!.notificationContext,
-                object: self.objectID,
+                context: managedObjectContext!.notificationContext,
+                object: objectID,
                 userInfo: [:]
             ).post()
         default:
@@ -381,8 +381,8 @@ extension ZMAssetClientMessage {
 
     /// Turn temporary object ID into permanet
     private func obtainPermanentObjectID() {
-        if self.objectID.isTemporaryID {
-            try! self.managedObjectContext!.obtainPermanentIDs(for: [self])
+        if objectID.isTemporaryID {
+            try! managedObjectContext!.obtainPermanentIDs(for: [self])
         }
     }
 }

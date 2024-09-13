@@ -232,7 +232,7 @@ open class ZMUpdateEvent: NSObject {
 
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
-        switch self.type {
+        switch type {
         case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd,
              .conversationMLSMessageAdd:
             true
@@ -265,11 +265,11 @@ open class ZMUpdateEvent: NSObject {
         guard eventType != .unknown else { return nil }
         self.type = eventType
         self.source = source
-        wasDecrypted = false
+        self.wasDecrypted = false
     }
 
     open class func eventsArray(fromPushChannelData transportData: ZMTransportData) -> [ZMUpdateEvent]? {
-        self.eventsArray(from: transportData, source: .webSocket)
+        eventsArray(from: transportData, source: .webSocket)
     }
 
     /// Returns an array of @c ZMUpdateEvent from the given push channel data, the source will be set to @c
@@ -279,7 +279,7 @@ open class ZMUpdateEvent: NSObject {
         fromPushChannelData transportData: ZMTransportData,
         pushStartingAt threshold: UUID?
     ) -> [Any]? {
-        self.eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
+        eventsArray(from: transportData, source: .webSocket, pushStartingAt: threshold)
     }
 
     class func eventsArray(
@@ -348,7 +348,7 @@ open class ZMUpdateEvent: NSObject {
 
     @objc(eventsArrayFromTransportData:source:)
     open class func eventsArray(from transportData: ZMTransportData, source: ZMUpdateEventSource) -> [ZMUpdateEvent]? {
-        self.eventsArray(from: transportData, source: source, pushStartingAt: nil)
+        eventsArray(from: transportData, source: source, pushStartingAt: nil)
     }
 
     open class func eventsArray(
@@ -389,8 +389,8 @@ extension ZMUpdateEvent {
             return false
         }
 
-        return (self.uuid == other.uuid)
-            && (self.type == other.type)
-            && (self.payload as NSDictionary).isEqual(to: other.payload)
+        return (uuid == other.uuid)
+            && (type == other.type)
+            && (payload as NSDictionary).isEqual(to: other.payload)
     }
 }

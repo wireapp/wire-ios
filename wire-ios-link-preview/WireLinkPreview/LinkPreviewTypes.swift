@@ -31,9 +31,9 @@ open class LinkMetadata: NSObject {
 
     public init(originalURLString: String, permanentURLString: String, resolvedURLString: String, offset: Int) {
         self.originalURLString = originalURLString
-        permanentURL = URL(string: permanentURLString)
-        resolvedURL = URL(string: resolvedURLString)
-        characterOffsetInText = offset
+        self.permanentURL = URL(string: permanentURLString)
+        self.resolvedURL = URL(string: resolvedURLString)
+        self.characterOffsetInText = offset
         super.init()
     }
 

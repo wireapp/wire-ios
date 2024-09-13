@@ -243,7 +243,7 @@ extension ZMConversation {
     }
 
     public func joinNewMLSGroup(id mlsGroupID: MLSGroupID, completion: ((Error?) -> Void)?) {
-        guard let syncContext = self.managedObjectContext?.zm_sync else {
+        guard let syncContext = managedObjectContext?.zm_sync else {
             completion?(JoinNewMLSGroupError.couldNotFindSyncContext)
             return
         }

@@ -140,7 +140,7 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
 
         // When
         let path = "/teams/\(team.identifier)"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -168,7 +168,7 @@ class MockTransportSessionTeamTests: MockTransportSessionTests {
 
         // When
         let path = "/teams"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // Then
         checkThat(response: response, contains: [team2, team1], hasMore: false)
@@ -188,7 +188,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/1234"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // Then
         XCTAssertNotNil(response)
@@ -209,7 +209,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/\(team.identifier)"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // Then
         XCTAssertNotNil(response)
@@ -230,7 +230,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/\(team.identifier)/members"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // Then
         XCTAssertNotNil(response)
@@ -253,7 +253,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/\(team.identifier)/members"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
 
         // Then
         XCTAssertNotNil(response)
@@ -283,7 +283,7 @@ extension MockTransportSessionTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // When
-        let response = self.response(
+        let response = response(
             forPayload: nil,
             path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)",
             method: .delete,
@@ -312,7 +312,7 @@ extension MockTransportSessionTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // When
-        let response = self.response(
+        let response = response(
             forPayload: nil,
             path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)",
             method: .delete,
@@ -405,7 +405,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/\(team.identifier)/members"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -441,7 +441,7 @@ extension MockTransportSessionTeamTests {
         // When
         let requestPayload = ["user_ids": [user1.identifier, user2.identifier]]
         let path = "/teams/\(team.identifier)/get-members-by-ids-using-post"
-        let response = self.response(
+        let response = response(
             forPayload: requestPayload as ZMTransportData,
             path: path,
             method: .post,
@@ -481,7 +481,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/\(team.identifier)/members/\(user1.identifier)"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -509,7 +509,7 @@ extension MockTransportSessionTeamTests {
 
         // Then
         let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
-        let response = self.response(
+        let response = response(
             forPayload: ["password": "Ex@mple!"] as NSDictionary,
             path: path,
             method: .put,
@@ -539,7 +539,7 @@ extension MockTransportSessionTeamTests {
 
         // Then
         let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
-        let response = self.response(
+        let response = response(
             forPayload: ["password": "Ex@mple!"] as NSDictionary,
             path: path,
             method: .put,
@@ -567,7 +567,7 @@ extension MockTransportSessionTeamTests {
 
         // When
         let path = "/teams/\(team.identifier)/conversations/roles"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)

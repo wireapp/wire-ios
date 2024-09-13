@@ -48,18 +48,18 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
         mockCookieStorage.isAuthenticated = true
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockClientRegistationDelegate = MockClientRegistrationStatusDelegate()
-        self.sut = ZMClientRegistrationStatus(
-            context: self.syncMOC,
+        sut = ZMClientRegistrationStatus(
+            context: syncMOC,
             cookieProvider: mockCookieStorage,
             coreCryptoProvider: mockCoreCryptoProvider
         )
-        self.sut.registrationStatusDelegate = self.mockClientRegistationDelegate
+        sut.registrationStatusDelegate = mockClientRegistationDelegate
     }
 
     override func tearDown() {
-        self.mockClientRegistationDelegate = nil
-        self.mockCookieStorage = nil
-        self.sut = nil
+        mockClientRegistationDelegate = nil
+        mockCookieStorage = nil
+        sut = nil
 
         super.tearDown()
     }
@@ -179,7 +179,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
 
     func testThatItReturns_WaitingForDeletion_AfterUserSelectedClientToDelete() {
         // given
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID()
             selfUser.emailAddress = "email@domain.com"
@@ -419,7 +419,7 @@ final class ZMClientRegistrationStatusTests: MessagingTest {
     }
 
     func testThatItNotifiesTheUIIfTheRegistrationFailsWithNeedToToEnrollE2EI() {
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = UUID()

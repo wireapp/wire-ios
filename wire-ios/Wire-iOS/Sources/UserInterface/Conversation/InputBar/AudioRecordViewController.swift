@@ -96,7 +96,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         updateRecordingState(recordingState)
 
         if Bundle.developerModeEnabled, Settings.shared.maxRecordingDurationDebug != 0 {
-            self.recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
+            recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
         }
     }
 
@@ -106,7 +106,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     func beginRecording() {
-        self.recorder.startRecording { _ in
+        recorder.startRecording { _ in
             let feedbackGenerator = UINotificationFeedbackGenerator()
             feedbackGenerator.prepare()
             feedbackGenerator.notificationOccurred(.success)
@@ -119,7 +119,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     func finishRecordingIfNeeded(_ sender: UIGestureRecognizer) {
         guard recorder.state != .initializing else {
             recorder.stopRecording()
-            self.delegate?.audioRecordViewControllerDidCancel(self)
+            delegate?.audioRecordViewControllerDidCancel(self)
             return
         }
 
@@ -152,7 +152,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         accentColorChangeHandler = AccentColorChangeHandler
             .addObserver(self, userSession: userSession) { [unowned self] color, _ in
                 if let color {
-                    self.audioPreviewView.color = color
+                    audioPreviewView.color = color
                 }
             }
 
@@ -189,11 +189,11 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
                 return
             }
             switch buttonType {
-            case .send: self.sendAudio()
+            case .send: sendAudio()
             case .play:
 
-                self.recorder.playRecording()
-            case .stop: self.recorder.stopPlaying()
+                recorder.playRecording()
+            case .stop: recorder.stopPlaying()
             }
         }
     }
@@ -368,7 +368,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         buttonOverlay.recordingState = state
         let finished = state == .finishedRecording
 
-        self.recordingDotView.animating = !finished
+        recordingDotView.animating = !finished
 
         let textForTopToolTip = finished ? ConversationInputBarAudio.Tooltip.tapSend : ConversationInputBarAudio.Tooltip
             .pullSend

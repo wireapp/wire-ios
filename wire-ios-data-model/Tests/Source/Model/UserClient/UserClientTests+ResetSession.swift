@@ -24,9 +24,9 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
     func testThatDecryptionFailedSystemMessageIsUpdated_WhenSessionIsReset() throws {
         // given
         let selfUser = ZMUser.selfUser(in: moc)
-        let otherUser = self.createUser()
-        _ = self.createClient(user: selfUser)
-        let otherClient = self.createClient(user: otherUser)
+        let otherUser = createUser()
+        _ = createClient(user: selfUser)
+        let otherClient = createClient(user: otherUser)
 
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
@@ -51,9 +51,9 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
     func testThatDecryptionFailedSystemMessageIsNotUpdated_WhenOfTypeIdentityChanged() throws {
         // given
         let selfUser = ZMUser.selfUser(in: moc)
-        let otherUser = self.createUser()
-        _ = self.createClient(user: selfUser)
-        let otherClient = self.createClient(user: otherUser)
+        let otherUser = createUser()
+        _ = createClient(user: selfUser)
+        let otherClient = createClient(user: otherUser)
 
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted
@@ -78,11 +78,11 @@ class UserClientTests_ResetSession: DiskDatabaseTest {
     func testThatDecryptionFailedSystemMessageIsNotUpdated_WhenUnrelatedSessionIsReset() throws {
         // given
         let selfUser = ZMUser.selfUser(in: moc)
-        let otherUser = self.createUser()
+        let otherUser = createUser()
 
-        _ = self.createClient(user: selfUser)
-        let otherUserClient1 = self.createClient(user: otherUser)
-        let otherUserClient2 = self.createClient(user: otherUser)
+        _ = createClient(user: selfUser)
+        let otherUserClient1 = createClient(user: otherUser)
+        let otherUserClient2 = createClient(user: otherUser)
 
         let connection = ZMConnection.insertNewSentConnection(to: otherUser)
         connection.status = .accepted

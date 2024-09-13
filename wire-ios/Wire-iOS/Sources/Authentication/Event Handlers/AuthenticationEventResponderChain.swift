@@ -93,7 +93,7 @@ final class AuthenticationEventResponderChain {
 
     func configure(delegate: AuthenticationEventResponderChainDelegate) {
         self.delegate = delegate
-        self.registerDefaultEventHandlers()
+        registerDefaultEventHandlers()
     }
 
     /// Creates and registers the default error handlers.
@@ -207,7 +207,7 @@ final class AuthenticationEventResponderChain {
 
     /// Start handling the event with the specified context, using the given handlers and delegate.
     private func handleEvent<Context>(with handlers: [AnyAuthenticationEventHandler<Context>], context: Context) {
-        guard let delegate = self.delegate else {
+        guard let delegate else {
             log.error("The event will not be handled because the responder chain does not have a delegate.")
             return
         }

@@ -65,7 +65,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .clear
-        self.addSubview(collectionView)
+        addSubview(collectionView)
 
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: self)
@@ -75,8 +75,8 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
             options: .new,
             changeHandler: { [weak self] cell, _ in
                 guard let self else { return }
-                self.collectionViewHeightConstraint.constant = cell.contentSize.height
-                self.collectionViewHeightConstraint.isActive = true
+                collectionViewHeightConstraint.constant = cell.contentSize.height
+                collectionViewHeightConstraint.isActive = true
             }
         )
     }

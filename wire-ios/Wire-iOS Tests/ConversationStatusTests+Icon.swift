@@ -36,16 +36,16 @@ final class ConversationStatusTests_Icon: CoreDataSnapshotTestCase {
     }
 
     func conversationWithUnread(_ messageType: UnreadMessageType, muted: MutedMessageTypes) -> ZMConversation {
-        let conversation = self.otherUserConversation!
+        let conversation = otherUserConversation!
         conversation.mutedMessageTypes = muted
 
         switch messageType {
         case .text:
-            (try! conversation.appendText(content: "test") as! ZMMessage).sender = self.otherUser
+            (try! conversation.appendText(content: "test") as! ZMMessage).sender = otherUser
         case .mention:
-            let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-            (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self
-                .otherUser
+            let selfMention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+            (try! conversation.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage)
+                .sender = otherUser
             conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
         }
 

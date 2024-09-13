@@ -205,9 +205,9 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         guard let session else {
             return nil
         }
-        let account = self.accountManager.account(with: session.accountIdentifier)
+        let account = accountManager.account(with: session.accountIdentifier)
         account?.unreadConversationCount = unreadConversationCount
-        let totalUnreadCount = self.accountManager.totalUnreadCount
+        let totalUnreadCount = accountManager.totalUnreadCount
 
         return NSNumber(value: totalUnreadCount)
     }

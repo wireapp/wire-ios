@@ -41,7 +41,7 @@ final class MockPaginatedRequester: ZiphyURLRequester {
     )
         -> ZiphyRequestIdentifier {
         self.completionHandler = completionHandler
-        self.url = request.url
+        url = request.url
 
         if let urlComponents = URLComponents(url: request.url!, resolvingAgainstBaseURL: false) {
             if let offsetItem = urlComponents.queryItems?.first(where: { $0.name == "offset" }) {
@@ -64,7 +64,7 @@ final class MockPaginatedRequester: ZiphyURLRequester {
 
     /// Sends the response for the given request.
     func respond() {
-        guard let response = self.response else {
+        guard let response else {
             self.response = .error(MockZiphyRequesterError.noResponseFound)
             respond()
             return
@@ -74,7 +74,7 @@ final class MockPaginatedRequester: ZiphyURLRequester {
             return
         }
 
-        guard let completionHandler = self.completionHandler else {
+        guard let completionHandler else {
             return
         }
 

@@ -25,7 +25,7 @@ final class MockReadReceipt: ReadReceipt {
 
     init(user: ZMUser) {
         self.user = user
-        userType = user
+        self.userType = user
         self.serverTimestamp = Date(timeIntervalSince1970: 0)
     }
 }

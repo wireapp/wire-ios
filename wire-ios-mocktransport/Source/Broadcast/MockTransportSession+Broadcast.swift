@@ -39,12 +39,12 @@ extension MockTransportSession {
         }
 
         let onlyForUser = query["report_missing"] as? String
-        let missedClients = self.missedClients(
+        let missedClients = missedClients(
             fromRecipients: otrMetaData.recipients,
             sender: senderClient,
             onlyForUserId: onlyForUser
         )
-        let deletedClients = self.deletedClients(fromRecipients: otrMetaData.recipients)
+        let deletedClients = deletedClients(fromRecipients: otrMetaData.recipients)
 
         let payload: [String: Any] = [
             "missing": missedClients,

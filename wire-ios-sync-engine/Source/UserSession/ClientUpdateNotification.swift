@@ -40,7 +40,7 @@ public class ZMClientUpdateNotification: NSObject {
         block: @escaping (ZMClientUpdateNotificationType, [NSManagedObjectID], NSError?) -> Void
     ) -> NSObjectProtocol {
         NotificationInContext.addObserver(
-            name: self.name,
+            name: name,
             context: context.notificationContext
         ) { note in
             guard let type = note.userInfo[self.typeKey] as? ZMClientUpdateNotificationType else { return }
@@ -56,7 +56,7 @@ public class ZMClientUpdateNotification: NSObject {
         clients: [UserClient] = [],
         error: NSError? = nil
     ) {
-        NotificationInContext(name: self.name, context: context.notificationContext, userInfo: [
+        NotificationInContext(name: name, context: context.notificationContext, userInfo: [
             errorKey: error as Any,
             clientObjectIDsKey: clients.map(\.objectID).filter { !$0.isTemporaryID },
             typeKey: type,
@@ -65,21 +65,21 @@ public class ZMClientUpdateNotification: NSObject {
 
     @objc
     public static func notifyFetchingClientsCompleted(userClients: [UserClient], context: NSManagedObjectContext) {
-        self.notify(type: .fetchCompleted, context: context, clients: userClients)
+        notify(type: .fetchCompleted, context: context, clients: userClients)
     }
 
     @objc
     public static func notifyFetchingClientsDidFail(error: NSError, context: NSManagedObjectContext) {
-        self.notify(type: .fetchFailed, context: context, error: error)
+        notify(type: .fetchFailed, context: context, error: error)
     }
 
     @objc
     public static func notifyDeletionCompleted(remainingClients: [UserClient], context: NSManagedObjectContext) {
-        self.notify(type: .deletionCompleted, context: context, clients: remainingClients)
+        notify(type: .deletionCompleted, context: context, clients: remainingClients)
     }
 
     @objc
     public static func notifyDeletionFailed(error: NSError, context: NSManagedObjectContext) {
-        self.notify(type: .deletionFailed, context: context, error: error)
+        notify(type: .deletionFailed, context: context, error: error)
     }
 }

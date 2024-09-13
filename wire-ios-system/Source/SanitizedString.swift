@@ -34,7 +34,7 @@ extension SanitizedString: ExpressibleByStringInterpolation {
 
 extension SanitizedString: StringInterpolationProtocol {
     public init(literalCapacity: Int, interpolationCount: Int) {
-        value = ""
+        self.value = ""
     }
 
     public mutating func appendLiteral(_ literal: StringLiteralType) {

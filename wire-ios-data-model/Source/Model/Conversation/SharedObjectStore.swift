@@ -38,7 +38,7 @@ public class ContextDidSaveNotificationPersistence: NSObject {
     private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 
     public required init(accountContainer url: URL) {
-        objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
+        self.objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
     }
 
     @discardableResult
@@ -88,7 +88,7 @@ public class ShareExtensionAnalyticsPersistence: NSObject {
     private let objectStore: SharedObjectStore<[String: Any]>
 
     public required init(accountContainer url: URL) {
-        objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
+        self.objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
     }
 
     @discardableResult
@@ -111,9 +111,9 @@ private let zmLog = ZMSLog(tag: "shared object store")
 // It has to be added to WireDataModel module because it won't be resolved otherwise
 class SharedObjectTestClass: NSObject, NSCoding {
     var flag: Bool
-    override init() { flag = false }
+    override init() { self.flag = false }
     public func encode(with aCoder: NSCoder) { aCoder.encode(flag, forKey: "flag") }
-    public required init?(coder aDecoder: NSCoder) { flag = aDecoder.decodeBool(forKey: "flag") }
+    public required init?(coder aDecoder: NSCoder) { self.flag = aDecoder.decodeBool(forKey: "flag") }
 }
 
 /// This class is used to persist objects in a shared directory

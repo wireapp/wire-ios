@@ -39,16 +39,16 @@ extension ZMConversationMessage {
 
 extension ZMAssetClientMessage: AudioTrack {
     var title: String? {
-        guard let fileMessageData = self.fileMessageData else { return "" }
+        guard let fileMessageData else { return "" }
         return fileMessageData.filename
     }
 
     var author: String? {
-        self.sender?.name
+        sender?.name
     }
 
     var duration: TimeInterval {
-        guard let fileMessageData = self.fileMessageData else { return 0 }
+        guard let fileMessageData else { return 0 }
         return TimeInterval(Float(fileMessageData.durationMilliseconds) / 1000.0)
     }
 

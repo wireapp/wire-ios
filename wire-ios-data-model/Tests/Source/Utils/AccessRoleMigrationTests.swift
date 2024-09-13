@@ -51,7 +51,7 @@ class AccessRoleMigrationTests: DiskDatabaseTest {
         oneToOneConvo.userDefinedName = "OneToOne"
         oneToOneConvo.needsToBeUpdatedFromBackend = false
 
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
 
         // WHEN
         WireDataModel.ZMConversation.forceToFetchConversationAccessRoles(in: moc)

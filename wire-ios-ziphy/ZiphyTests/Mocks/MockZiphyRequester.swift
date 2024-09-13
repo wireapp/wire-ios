@@ -57,7 +57,7 @@ final class MockZiphyRequester: ZiphyURLRequester {
 
     /// Sends the response for the given request.
     func respond() {
-        guard let response = self.response else {
+        guard let response else {
             self.response = .error(MockZiphyRequesterError.noResponseFound)
             respond()
             return
@@ -67,7 +67,7 @@ final class MockZiphyRequester: ZiphyURLRequester {
             return
         }
 
-        guard let completionHandler = self.completionHandler else {
+        guard let completionHandler else {
             return
         }
 

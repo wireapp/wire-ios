@@ -30,7 +30,7 @@ extension String {
     private var URLMatchesInString: [NSTextCheckingResult] {
         do {
             let urlDetector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-            let matches = urlDetector.matches(in: self, options: [], range: NSRange(location: 0, length: self.count))
+            let matches = urlDetector.matches(in: self, options: [], range: NSRange(location: 0, length: count))
             return matches
         } catch _ as NSError {
             return []

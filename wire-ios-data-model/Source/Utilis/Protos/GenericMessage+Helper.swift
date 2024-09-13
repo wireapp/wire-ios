@@ -796,7 +796,7 @@ extension Tweet {
 
 extension ImageAsset {
     public func imageFormat() -> ZMImageFormat {
-        ZMImageFormat(self.tag)
+        ZMImageFormat(tag)
     }
 }
 

@@ -35,7 +35,7 @@ public struct AnyConstantProperty<Value> {
     /// - note: The `base` object will be retained by the box.
 
     public init<Base>(_ base: Base, keyPath: Swift.KeyPath<Base, Value>) {
-        getter = {
+        self.getter = {
             base[keyPath: keyPath]
         }
     }
@@ -62,11 +62,11 @@ public struct AnyMutableProperty<Value> {
     /// - note: The `base` object will be retained by the box.
 
     public init<Base>(_ base: Base, keyPath: ReferenceWritableKeyPath<Base, Value>) {
-        getter = {
+        self.getter = {
             base[keyPath: keyPath]
         }
 
-        setter = { newValue in
+        self.setter = { newValue in
             base[keyPath: keyPath] = newValue
         }
     }

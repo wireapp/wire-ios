@@ -116,12 +116,12 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sortedAscendingPrependingNil(by: \.name)
+        self.participants = users.sortedAscendingPrependingNil(by: \.name)
         self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
-        rows = clipSection
+        self.rows = clipSection
             ? ParticipantsSectionViewModel.computeRows(
                 participants,
                 totalParticipantsCount: totalParticipantsCount,
@@ -197,7 +197,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        viewModel = .init(
+        self.viewModel = .init(
             users: participants,
             userStatuses: userStatuses,
             conversationRole: conversationRole,
@@ -212,7 +212,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         self.delegate = delegate
         super.init()
 
-        token = userSession.addUserObserver(self)
+        self.token = userSession.addUserObserver(self)
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {

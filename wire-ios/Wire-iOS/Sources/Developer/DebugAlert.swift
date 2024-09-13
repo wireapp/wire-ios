@@ -56,7 +56,7 @@ enum DebugAlert {
             )
         }
 
-        self.show(
+        show(
             message: message,
             actions: [action1, action2],
             title: "Send debug logs"
@@ -159,7 +159,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         presentingViewController: UIViewController,
         fallbackActivityPopoverConfiguration: PopoverPresentationControllerConfiguration
     ) {
-        guard self.senderInstance == nil else { return }
+        guard senderInstance == nil else { return }
 
         // Prepare subject & body
         let user = SelfUser.provider?.providedSelfUser as? ZMUser
@@ -188,7 +188,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 
-        self.senderInstance = alert
+        senderInstance = alert
 
         Task {
             await mailVC.attachLogs()
@@ -202,7 +202,7 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         didFinishWith result: MFMailComposeResult,
         error: Error?
     ) {
-        self.mailViewController = nil
+        mailViewController = nil
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil
     }

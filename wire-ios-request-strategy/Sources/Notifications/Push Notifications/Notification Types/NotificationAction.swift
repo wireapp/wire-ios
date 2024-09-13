@@ -59,7 +59,7 @@ extension NotificationAction where Self: RawRepresentable, Self.RawValue == Stri
 extension NotificationAction {
     /// The representation of the action that can be used with `UserNotifications` API.
     var userAction: UNNotificationAction {
-        if let textInputMode = self.textInputMode {
+        if let textInputMode {
             UNTextInputNotificationAction(
                 identifier: identifier,
                 title: titleFormat.pushActionString,

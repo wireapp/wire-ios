@@ -86,7 +86,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
             XCTAssertNil(error)
         }
 
-        self.moc.performGroupedAndWait {
+        moc.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.moc)
             selfUser.remoteIdentifier = self.accountId
         }
@@ -105,40 +105,40 @@ public class DiskDatabaseTest: ZMTBaseTest {
 
 extension DiskDatabaseTest {
     func createClient(user: ZMUser) -> UserClient {
-        let client = UserClient.insertNewObject(in: self.moc)
+        let client = UserClient.insertNewObject(in: moc)
         client.user = user
         client.remoteIdentifier = UUID().transportString()
         return client
     }
 
     func createUser() -> ZMUser {
-        let user = ZMUser.insertNewObject(in: self.moc)
+        let user = ZMUser.insertNewObject(in: moc)
         user.remoteIdentifier = UUID()
         return user
     }
 
     func createConversation() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.moc)
+        let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
         return conversation
     }
 
     func createTeam() -> Team {
-        let team = Team.insertNewObject(in: self.moc)
+        let team = Team.insertNewObject(in: moc)
         team.remoteIdentifier = UUID()
         return team
     }
 
     func createMembership(user: ZMUser, team: Team) -> Member {
-        let member = Member.insertNewObject(in: self.moc)
+        let member = Member.insertNewObject(in: moc)
         member.user = user
         member.team = team
         return member
     }
 
     func createConnection(to: ZMUser, conversation: ZMConversation) -> ZMConnection {
-        let connection = ZMConnection.insertNewObject(in: self.moc)
+        let connection = ZMConnection.insertNewObject(in: moc)
         connection.to = to
         to.oneOnOneConversation = conversation
         connection.status = .accepted

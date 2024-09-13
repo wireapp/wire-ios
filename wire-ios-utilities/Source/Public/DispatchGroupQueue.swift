@@ -25,7 +25,7 @@ public final class DispatchGroupQueue: NSObject, GroupQueue {
 
     public init(queue: DispatchQueue) {
         self.queue = queue
-        dispatchGroupContext = DispatchGroupContext(groups: [])
+        self.dispatchGroupContext = DispatchGroupContext(groups: [])
     }
 
     public var dispatchGroup: ZMSDispatchGroup? {

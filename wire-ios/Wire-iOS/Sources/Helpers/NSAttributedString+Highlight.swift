@@ -24,7 +24,7 @@ extension String {
     }
 
     func containsCharacters(from characterSet: CharacterSet) -> Bool {
-        self.rangeOfCharacter(from: characterSet) != .none
+        rangeOfCharacter(from: characterSet) != .none
     }
 
     func range(
@@ -51,7 +51,7 @@ extension NSString {
         options: NSString.CompareOptions = [],
         range: NSRange? = .none
     ) -> [String: [NSRange]] {
-        let initialQueryRange = range ?? NSRange(location: 0, length: self.length)
+        let initialQueryRange = range ?? NSRange(location: 0, length: length)
         var result = [String: [NSRange]]()
 
         for query in strings {
@@ -68,7 +68,7 @@ extension NSString {
                 )
                 if currentRange.location != NSNotFound {
                     queryRange.location = currentRange.location + currentRange.length
-                    queryRange.length = self.length - queryRange.location
+                    queryRange.length = length - queryRange.location
 
                     queryResult.append(currentRange)
                 }
@@ -88,7 +88,7 @@ extension NSAttributedString {
         let targetSize = CGSize(width: 10000, height: CGFloat.greatestFiniteMagnitude)
         let labelSize = CTFramesetterSuggestFrameSizeWithConstraints(
             framesetter,
-            CFRangeMake(0, self.length),
+            CFRangeMake(0, length),
             nil,
             targetSize,
             nil
@@ -100,7 +100,7 @@ extension NSAttributedString {
     // This method cuts the prefix from `self` up to the beginning of the word prior to the word on position @c from.
     // The result is then prefixed with ellipsis of the same style as the beginning of the string.
     func cutAndPrefixedWithEllipsis(from: Int, fittingIntoWidth: CGFloat) -> NSAttributedString {
-        let text = self.string as NSString
+        let text = string as NSString
 
         let rangeUntilFrom = NSRange(location: 0, length: from)
         let previousSpace = text.rangeOfCharacter(
@@ -111,7 +111,7 @@ extension NSAttributedString {
 
         // There is no prior whitespace
         if previousSpace.location == NSNotFound {
-            return self.attributedSubstring(from: NSRange(location: from, length: self.length - from))
+            return attributedSubstring(from: NSRange(location: from, length: length - from))
                 .prefixedWithEllipsis()
         } else {
             // Check if we accidentally jumped to the previous line
@@ -122,7 +122,7 @@ extension NSAttributedString {
             let skippedNewline = textSkipped.containsCharacters(from: .newlines)
 
             if skippedNewline {
-                return self.attributedSubstring(from: NSRange(location: from, length: self.length - from))
+                return attributedSubstring(from: NSRange(location: from, length: length - from))
                     .prefixedWithEllipsis()
             }
         }
@@ -157,31 +157,30 @@ extension NSAttributedString {
                 (prePreviousSpace.location + prePreviousSpace.length)
         )
 
-        let textFromNextSpace = self.attributedSubstring(from: rangeFromPrePreviousSpaceToFrom)
+        let textFromNextSpace = attributedSubstring(from: rangeFromPrePreviousSpaceToFrom)
 
         let textSize = textFromNextSpace.layoutSize()
 
         if textSize.width > fittingIntoWidth {
-            return self.attributedSubstring(from: NSRange(location: from, length: self.length - from))
+            return attributedSubstring(from: NSRange(location: from, length: length - from))
                 .prefixedWithEllipsis()
         } else {
             let rangeFromPrePreviousSpaceToEnd = NSRange(
                 location: prePreviousSpace.location + prePreviousSpace.length,
-                length: self
-                    .length -
+                length: length -
                     (prePreviousSpace.location + prePreviousSpace.length)
             )
 
-            return self.attributedSubstring(from: rangeFromPrePreviousSpaceToEnd).prefixedWithEllipsis()
+            return attributedSubstring(from: rangeFromPrePreviousSpaceToEnd).prefixedWithEllipsis()
         }
     }
 
     private func prefixedWithEllipsis() -> NSAttributedString {
-        guard !self.string.isEmpty else {
+        guard !string.isEmpty else {
             return self
         }
 
-        var attributes = self.attributes(at: 0, effectiveRange: .none)
+        var attributes = attributes(at: 0, effectiveRange: .none)
         attributes[.backgroundColor] = .none
 
         let ellipsisString = NSAttributedString(string: String.ellipsis, attributes: attributes)
@@ -194,9 +193,9 @@ extension NSAttributedString {
         upToWidth: CGFloat,
         totalMatches: UnsafeMutablePointer<Int>?
     ) -> NSAttributedString {
-        let attributedText = self.mutableCopy() as! NSMutableAttributedString
+        let attributedText = mutableCopy() as! NSMutableAttributedString
 
-        let allRanges = (self.string as NSString).allRanges(
+        let allRanges = (string as NSString).allRanges(
             of: query,
             options: [.caseInsensitive, .diacriticInsensitive]
         )
@@ -207,7 +206,7 @@ extension NSAttributedString {
 
         for (_, results) in allRanges {
             for currentRange in results {
-                let substring = self.attributedSubstring(from: NSRange(
+                let substring = attributedSubstring(from: NSRange(
                     location: 0,
                     length: currentRange.location + currentRange
                         .length

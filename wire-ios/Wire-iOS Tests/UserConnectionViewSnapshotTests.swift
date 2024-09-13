@@ -25,8 +25,8 @@ import XCTest
 
 extension UIView {
     func layoutForTest(in size: CGSize = CGSize(width: 320, height: 480)) {
-        let fittingSize = self.systemLayoutSizeFitting(size)
-        self.frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
+        let fittingSize = systemLayoutSizeFitting(size)
+        frame = CGRect(x: 0, y: 0, width: fittingSize.width, height: fittingSize.height)
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: size.width),
             heightAnchor.constraint(equalToConstant: size.height),

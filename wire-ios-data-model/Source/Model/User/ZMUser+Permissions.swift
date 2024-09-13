@@ -92,13 +92,13 @@ extension ZMUser {
     @objc(canDeleteConversation:)
     public func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext!)
 
         return hasRoleWithAction(
             actionName: ConversationAction.deleteConvesation.name,
             conversation: conversation
         ) && conversation.creator == self
-            && selfUser.hasTeam && selfUser.teamIdentifier == self.teamIdentifier
+            && selfUser.hasTeam && selfUser.teamIdentifier == teamIdentifier
     }
 
     @objc(canModifyOtherMemberInConversation:)
@@ -192,7 +192,7 @@ extension ZMUser {
             let context = managedObjectContext,
             let otherUser = user.unbox(in: context),
             let otherUserTeamID = otherUser.team?.remoteIdentifier,
-            let selfUserTeamID = self.team?.remoteIdentifier
+            let selfUserTeamID = team?.remoteIdentifier
         else {
             return false
         }
@@ -239,7 +239,7 @@ extension ZMUser {
 
     private func hasRoleWithAction(actionName: String, conversation: ConversationLike) -> Bool {
         guard conversation.isSelfAnActiveMember,
-              let role = self.role(in: conversation)
+              let role = role(in: conversation)
         else { return false }
         return role.actions.contains(where: { $0.name == actionName })
     }

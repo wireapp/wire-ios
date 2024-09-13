@@ -43,8 +43,8 @@ final class SimpleImageMessageRestrictionView: BaseMessageRestrictionView {
 
         NSLayoutConstraint.activate([
             // icon view
-            iconView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            iconView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            iconView.centerYAnchor.constraint(equalTo: centerYAnchor),
             iconView.widthAnchor.constraint(equalToConstant: 32),
             iconView.heightAnchor.constraint(equalToConstant: 32),
         ])

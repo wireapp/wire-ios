@@ -60,7 +60,7 @@ extension ZMClientMessage: TextMessageData {
             content: text,
             mentions: mentions,
             linkPreviews: [],
-            replyingTo: self.quote as? ZMOTRMessage
+            replyingTo: quote as? ZMOTRMessage
         )
         let editNonce = UUID()
         let content = MessageEdit(replacingMessageID: nonce, text: editedText)
@@ -76,10 +76,10 @@ extension ZMClientMessage: TextMessageData {
         updateNormalizedText()
 
         self.nonce = editNonce
-        self.updatedTimestamp = Date()
-        self.reactions.removeAll()
-        self.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
-        self.linkAttachments = nil
-        self.delivered = false
+        updatedTimestamp = Date()
+        reactions.removeAll()
+        linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        linkAttachments = nil
+        delivered = false
     }
 }

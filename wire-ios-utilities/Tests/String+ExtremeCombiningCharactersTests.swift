@@ -185,7 +185,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
     func test16kbText() {
         // GIVEN
         let string = try! String(
-            contentsOf: self.fileURL(forResource: "excessive_diacritics", extension: "txt"),
+            contentsOf: fileURL(forResource: "excessive_diacritics", extension: "txt"),
             encoding: .utf8
         )
 
@@ -196,7 +196,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
     func test1MBText() {
         // GIVEN
         let string = try! String(
-            contentsOf: self.fileURL(forResource: "excessive_diacritics", extension: "txt"),
+            contentsOf: fileURL(forResource: "excessive_diacritics", extension: "txt"),
             encoding: .utf8
         )
         var result = ""

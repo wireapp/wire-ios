@@ -29,9 +29,9 @@ final class RecordingDotView: UIView {
             }
 
             if animating {
-                self.startAnimation()
+                startAnimation()
             } else {
-                self.stopAnimation()
+                stopAnimation()
             }
         }
     }
@@ -53,13 +53,13 @@ final class RecordingDotView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.layer.cornerRadius = self.bounds.width / 2
+        layer.cornerRadius = bounds.width / 2
     }
 
     // MARK: - Methods
 
     private func startAnimation() {
-        self.alpha = 0
+        alpha = 0
         delay(0.15) {
             UIView.animate(withDuration: 0.55, delay: 0, options: [.autoreverse, .repeat], animations: {
                 self.alpha = 1
@@ -68,7 +68,7 @@ final class RecordingDotView: UIView {
     }
 
     fileprivate func stopAnimation() {
-        self.layer.removeAllAnimations()
-        self.alpha = 1
+        layer.removeAllAnimations()
+        alpha = 1
     }
 }

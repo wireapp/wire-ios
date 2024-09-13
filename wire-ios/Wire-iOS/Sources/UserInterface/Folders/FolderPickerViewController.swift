@@ -127,7 +127,7 @@ final class FolderPickerViewController: UIViewController {
     private func createNewFolder() {
         let folderCreation = FolderCreationController(conversation: conversation, directory: conversationDirectory)
         folderCreation.delegate = self
-        self.navigationController?.pushViewController(folderCreation, animated: true)
+        navigationController?.pushViewController(folderCreation, animated: true)
     }
 }
 
@@ -160,8 +160,8 @@ extension FolderPickerViewController: UICollectionViewDelegateFlowLayout, UIColl
     }
 
     private func pickFolder(_ folder: LabelType) {
-        self.delegate?.didPickFolder(folder, for: conversation)
-        self.dismissIfNeeded()
+        delegate?.didPickFolder(folder, for: conversation)
+        dismissIfNeeded()
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

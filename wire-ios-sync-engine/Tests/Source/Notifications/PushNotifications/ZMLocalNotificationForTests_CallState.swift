@@ -203,7 +203,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     }
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"

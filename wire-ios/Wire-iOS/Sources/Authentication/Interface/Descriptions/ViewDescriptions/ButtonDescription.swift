@@ -42,7 +42,7 @@ extension ButtonDescription: ViewDescriptor {
         button.setContentCompressionResistancePriority(UILayoutPriority.required, for: .horizontal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(title.localizedUppercase, for: .normal)
-        button.accessibilityIdentifier = self.accessibilityIdentifier
+        button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(ButtonDescription.buttonTapped(_:)), for: .touchUpInside)
         return button
     }

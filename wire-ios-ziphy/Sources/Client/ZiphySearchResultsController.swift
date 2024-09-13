@@ -44,8 +44,8 @@ public final class ZiphySearchResultsController {
     /// Asks the pagination controller to fetch more results if possible.
     /// The result block returns only the inserted images, not the current ones.
     public func fetchMoreResults(_ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
-        self.paginationController?.updateBlock = completion
-        return self.paginationController?.fetchNewPage()
+        paginationController?.updateBlock = completion
+        return paginationController?.fetchNewPage()
     }
 
     // MARK: - Getting Search Results
@@ -55,16 +55,16 @@ public final class ZiphySearchResultsController {
         withTerm searchTerm: String,
         _ completion: @escaping ZiphyListRequestCallback
     ) -> CancelableTask? {
-        self.paginationController = ZiphyPaginationController()
+        paginationController = ZiphyPaginationController()
 
-        self.paginationController?.fetchBlock = { [weak self] offset in
+        paginationController?.fetchBlock = { [weak self] offset in
 
             guard let self else {
                 return nil
             }
 
-            return self.client
-                .search(term: searchTerm, resultsLimit: self.pageSize, offset: offset) { [weak self] result in
+            return client
+                .search(term: searchTerm, resultsLimit: pageSize, offset: offset) { [weak self] result in
                     self?.updatePagination(result)
                 }
         }
@@ -76,12 +76,12 @@ public final class ZiphySearchResultsController {
     public func trending(_ completion: @escaping ZiphyListRequestCallback) -> CancelableTask? {
         paginationController = ZiphyPaginationController()
 
-        self.paginationController?.fetchBlock = { [weak self] offset in
+        paginationController?.fetchBlock = { [weak self] offset in
             guard let self else {
                 return nil
             }
 
-            return self.client.fetchTrending(resultsLimit: self.pageSize, offset: offset) { [weak self] result in
+            return client.fetchTrending(resultsLimit: pageSize, offset: offset) { [weak self] result in
                 self?.updatePagination(result)
             }
         }
@@ -98,7 +98,7 @@ public final class ZiphySearchResultsController {
         completion: @escaping ZiphyImageDataCallback
     ) {
         guard let representation = ziph.images[imageType] else {
-            self.client.callbackQueue.async { completion(.failure(.noSuchResource)) }
+            client.callbackQueue.async { completion(.failure(.noSuchResource)) }
             return
         }
 

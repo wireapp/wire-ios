@@ -44,8 +44,8 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil) {
             note = ZMLocalNotification(
                 event: event,
-                conversation: self.oneOnOneConversation,
-                managedObjectContext: self.uiMOC
+                conversation: oneOnOneConversation,
+                managedObjectContext: uiMOC
             )
         }
         return note
@@ -184,8 +184,8 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         if let event {
             note = ZMLocalNotification(
                 event: event,
-                conversation: self.oneOnOneConversation,
-                managedObjectContext: self.uiMOC
+                conversation: oneOnOneConversation,
+                managedObjectContext: uiMOC
             )
         }
 
@@ -417,7 +417,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         )
 
         // when
-        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: self.uiMOC)
+        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: uiMOC)
 
         // then
         XCTAssertNotNil(note)
@@ -436,7 +436,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         )
 
         // when
-        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: self.uiMOC)
+        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: uiMOC)
 
         // then
         XCTAssertNotNil(note)
@@ -457,7 +457,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         let note = ZMLocalNotification(
             event: event,
             conversation: groupConversationWithoutName,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         )
 
         // then
@@ -480,7 +480,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         let note = ZMLocalNotification(
             event: event,
             conversation: groupConversationWithoutName,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         )
 
         // then
@@ -499,7 +499,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         )
 
         // when
-        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: self.uiMOC)
+        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: uiMOC)
 
         // then
         XCTAssertNotNil(note)
@@ -518,7 +518,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         )
 
         // when
-        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: self.uiMOC)
+        let note = ZMLocalNotification(event: event, conversation: groupConversation, managedObjectContext: uiMOC)
 
         // then
         XCTAssertNotNil(note)
@@ -539,7 +539,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         let note = ZMLocalNotification(
             event: event,
             conversation: groupConversationWithoutName,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         )
 
         // then
@@ -562,7 +562,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         let note = ZMLocalNotification(
             event: event,
             conversation: groupConversationWithoutName,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         )
 
         // then
@@ -574,17 +574,17 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItAddsATitleIfTheUserIsPartOfATeam() {
         // given
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         team.name = "Wire Amazing Team"
-        let user = ZMUser.selfUser(in: self.uiMOC)
-        self.performPretendingUiMocIsSyncMoc {
+        let user = ZMUser.selfUser(in: uiMOC)
+        performPretendingUiMocIsSyncMoc {
             _ = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
         }
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         XCTAssertNotNil(user.team)
 
         // when
-        let note = self.note(self.oneOnOneConversation, aSender: self.sender)
+        let note = note(oneOnOneConversation, aSender: sender)
 
         // then
         XCTAssertNotNil(note)
@@ -593,7 +593,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func testThatItDoesNotAddATitleIfTheUserIsNotPartOfATeam() {
         // when
-        let note = self.note(oneOnOneConversation, aSender: sender)
+        let note = note(oneOnOneConversation, aSender: sender)
 
         // then
         XCTAssertNotNil(note)
@@ -614,8 +614,8 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // when
         note = ZMLocalNotification(
             event: event,
-            conversation: self.oneOnOneConversation,
-            managedObjectContext: self.uiMOC
+            conversation: oneOnOneConversation,
+            managedObjectContext: uiMOC
         )
 
         // then
@@ -646,7 +646,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         let event = createMemberLeaveUpdateEvent(
             UUID.create(),
-            conversationID: self.oneOnOneConversation.remoteIdentifier!,
+            conversationID: oneOnOneConversation.remoteIdentifier!,
             users: [selfUser]
         )
         var note: ZMLocalNotification?
@@ -654,8 +654,8 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // when
         note = ZMLocalNotification(
             event: event,
-            conversation: self.oneOnOneConversation,
-            managedObjectContext: self.syncMOC
+            conversation: oneOnOneConversation,
+            managedObjectContext: syncMOC
         )
 
         // then
@@ -668,7 +668,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         let event = createMemberJoinUpdateEvent(
             UUID.create(),
-            conversationID: self.oneOnOneConversation.remoteIdentifier!,
+            conversationID: oneOnOneConversation.remoteIdentifier!,
             users: [selfUser]
         )
         var note: ZMLocalNotification?
@@ -676,8 +676,8 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // when
         note = ZMLocalNotification(
             event: event,
-            conversation: self.oneOnOneConversation,
-            managedObjectContext: self.syncMOC
+            conversation: oneOnOneConversation,
+            managedObjectContext: syncMOC
         )
 
         // then
@@ -690,15 +690,15 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         // given
         let event = createMessageTimerUpdateEvent(
             UUID.create(),
-            conversationID: self.oneOnOneConversation.remoteIdentifier!
+            conversationID: oneOnOneConversation.remoteIdentifier!
         )
         var note: ZMLocalNotification?
 
         // when
         note = ZMLocalNotification(
             event: event,
-            conversation: self.oneOnOneConversation,
-            managedObjectContext: self.syncMOC
+            conversation: oneOnOneConversation,
+            managedObjectContext: syncMOC
         )
 
         // then

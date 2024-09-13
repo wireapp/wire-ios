@@ -24,7 +24,7 @@ import XCTest
 extension ZMUserSessionTestsBase {
     @objc
     public func createCallCenter() -> WireCallCenterV3Mock {
-        let selfUser = ZMUser.selfUser(in: self.syncMOC)
+        let selfUser = ZMUser.selfUser(in: syncMOC)
         return WireCallCenterV3Factory.callCenter(
             withUserId: selfUser.avsIdentifier,
             clientId: selfUser.selfClient()!.remoteIdentifier!,

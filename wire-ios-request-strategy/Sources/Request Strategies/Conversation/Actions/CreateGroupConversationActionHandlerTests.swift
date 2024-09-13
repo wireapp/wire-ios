@@ -382,7 +382,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
             )
             handler = sut
 
-            let isDone = self.customExpectation(description: "isDone")
+            let isDone = customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -406,7 +406,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
             )
 
             // When
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -437,7 +437,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
             )
             handler = sut
 
-            let isDone = self.customExpectation(description: "isDone")
+            let isDone = customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -461,7 +461,7 @@ final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<
             )
 
             // When
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

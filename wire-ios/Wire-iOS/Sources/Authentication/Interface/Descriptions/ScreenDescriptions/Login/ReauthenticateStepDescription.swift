@@ -28,17 +28,17 @@ final class ReauthenticateStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init(prefilledCredentials: AuthenticationPrefilledCredentials?) {
-        backButton = BackButtonDescription()
-        mainView = EmptyViewDescription()
-        headline = L10n.Localizable.Registration.Signin.title
+        self.backButton = BackButtonDescription()
+        self.mainView = EmptyViewDescription()
+        self.headline = L10n.Localizable.Registration.Signin.title
 
         if prefilledCredentials?.isExpired == true {
-            subtext = .markdown(from: L10n.Localizable.SigninLogout.Email.subheadline, style: .login)
+            self.subtext = .markdown(from: L10n.Localizable.SigninLogout.Email.subheadline, style: .login)
         } else {
-            subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
+            self.subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
         }
 
-        secondaryView = nil
-        footerView = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 }

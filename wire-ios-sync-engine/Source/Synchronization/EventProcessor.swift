@@ -135,7 +135,7 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func requestToCalculateBadgeCount() async {
-        await self.syncContext.perform {
+        await syncContext.perform {
             self.syncContext.saveOrRollback()
             NotificationInContext(name: .calculateBadgeCount, context: self.syncContext.notificationContext).post()
         }
@@ -201,7 +201,7 @@ actor EventProcessor: UpdateEventProcessor {
                 // and processed, then before it could be deleted, a second pass refetched
                 // the same event and processed it again. It's not known why this happens,
                 // but in the meantime we will avoid processing an event more than once.
-                guard await !self.processedEventList.containsEvent(event) else {
+                guard await !processedEventList.containsEvent(event) else {
                     WireLogger.updateEvent.warn(
                         "event already processed, skipping...",
                         attributes: event.logAttributes
@@ -215,11 +215,11 @@ actor EventProcessor: UpdateEventProcessor {
                     }
                 }
 
-                for eventConsumer in self.eventAsyncConsumers {
+                for eventConsumer in eventAsyncConsumers {
                     await eventConsumer.processEvents([event])
                 }
 
-                await self.processedEventList.addEvent(event)
+                await processedEventList.addEvent(event)
             }
 
             await syncContext.perform {
@@ -230,7 +230,7 @@ actor EventProcessor: UpdateEventProcessor {
 
             WireLogger.updateEvent
                 .debug(
-                    "Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker.debugDescription)"
+                    "Events processed in \(-date.timeIntervalSinceNow): \(eventProcessingTracker.debugDescription)"
                 )
         }
     }

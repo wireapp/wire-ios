@@ -33,13 +33,13 @@ class UserHandleTests: IntegrationTest {
 
         XCTAssertTrue(login())
 
-        self.userProfileStatusObserver = TestUserProfileUpdateObserver()
-        self.observerToken = self.userSession?.userProfile.add(observer: self.userProfileStatusObserver)
+        userProfileStatusObserver = TestUserProfileUpdateObserver()
+        observerToken = userSession?.userProfile.add(observer: userProfileStatusObserver)
     }
 
     override func tearDown() {
-        self.observerToken = nil
-        self.userProfileStatusObserver = nil
+        observerToken = nil
+        userProfileStatusObserver = nil
         super.tearDown()
     }
 
@@ -48,12 +48,12 @@ class UserHandleTests: IntegrationTest {
         let handle = "Oscar"
 
         // WHEN
-        self.userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
+        userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
         case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
@@ -67,17 +67,17 @@ class UserHandleTests: IntegrationTest {
         // GIVEN
         let handle = "Oscar"
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             self.user1.handle = handle
         }
 
         // WHEN
-        self.userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
+        userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
         case let .didCheckAvailabilityOfHandle(_handle, available):
             XCTAssertEqual(handle, _handle)
@@ -92,12 +92,12 @@ class UserHandleTests: IntegrationTest {
         let handle = "Evelyn"
 
         // WHEN
-        self.userSession?.userProfile.requestSettingHandle(handle: handle)
+        userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
         case .didSetHandle:
             break
@@ -106,10 +106,10 @@ class UserHandleTests: IntegrationTest {
             return
         }
 
-        let selfUser = ZMUser.selfUser(inUserSession: self.userSession!)
+        let selfUser = ZMUser.selfUser(inUserSession: userSession!)
         XCTAssertEqual(selfUser.handle, handle)
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             XCTAssertEqual(self.selfUser.handle, handle)
         }
     }
@@ -119,17 +119,17 @@ class UserHandleTests: IntegrationTest {
         // GIVEN
         let handle = "Evelyn"
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             self.user1.handle = handle
         }
 
         // WHEN
-        self.userSession?.userProfile.requestSettingHandle(handle: handle)
+        userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
         case .didFailToSetHandleBecauseExisting:
             break
@@ -143,7 +143,7 @@ class UserHandleTests: IntegrationTest {
         // GIVEN
         let handle = "Evelyn"
 
-        self.mockTransportSession.responseGeneratorBlock = { req in
+        mockTransportSession.responseGeneratorBlock = { req in
             if req.path == "/self/handle" {
                 return ZMTransportResponse(
                     payload: nil,
@@ -156,12 +156,12 @@ class UserHandleTests: IntegrationTest {
         }
 
         // WHEN
-        self.userSession?.userProfile.requestSettingHandle(handle: handle)
+        userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(self.userProfileStatusObserver.invokedCallbacks.count, 1)
-        guard let first = self.userProfileStatusObserver.invokedCallbacks.first else { return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(userProfileStatusObserver.invokedCallbacks.count, 1)
+        guard let first = userProfileStatusObserver.invokedCallbacks.first else { return }
         switch first {
         case .didFailToSetHandle:
             break

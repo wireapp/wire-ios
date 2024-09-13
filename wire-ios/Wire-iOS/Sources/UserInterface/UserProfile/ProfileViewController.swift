@@ -493,7 +493,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     private func duplicateUser() {
         guard DeveloperFlag.debugDuplicateObjects.isOn else { return }
         guard let user = viewModel.user as? ZMUser,
-              let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext else {
+              let context = (viewModel.userSession as? ZMUserSession)?.syncContext else {
             assertionFailure("couldn't get context to duplicateUser")
             return
         }
@@ -518,7 +518,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
     private func duplicateTeam() {
         guard let user = viewModel.user as? ZMUser,
-              let context = (self.viewModel.userSession as? ZMUserSession)?.syncContext,
+              let context = (viewModel.userSession as? ZMUserSession)?.syncContext,
               let team = user.team else {
             assertionFailure("couldn't get context or has no team to duplicateTeam")
             WireLogger.conversation.debug("can't duplicate team")
@@ -591,10 +591,10 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
     }
 
     func returnToPreviousScreen() {
-        if let navigationController = self.navigationController, navigationController.viewControllers.first != self {
+        if let navigationController, navigationController.viewControllers.first != self {
             navigationController.popViewController(animated: true)
         } else {
-            self.dismiss(animated: true, completion: nil)
+            dismiss(animated: true, completion: nil)
         }
     }
 

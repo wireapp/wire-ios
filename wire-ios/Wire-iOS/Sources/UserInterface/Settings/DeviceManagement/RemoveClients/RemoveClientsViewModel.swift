@@ -28,11 +28,11 @@ extension RemoveClientsViewController {
             self.removeUserClientUseCase = ZMUserSession.shared()?.removeUserClient
 
             super.init()
-            self.initalizeProperties(clientsList)
+            initalizeProperties(clientsList)
         }
 
         private func initalizeProperties(_ clientsList: [UserClient]) {
-            self.clients = clientsList
+            clients = clientsList
                 .filter { !$0.isSelfClient() }
                 .sorted(by: {
                     guard

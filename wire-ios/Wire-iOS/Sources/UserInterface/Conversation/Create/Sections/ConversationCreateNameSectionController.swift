@@ -42,7 +42,7 @@ final class ConversationCreateNameSectionController: NSObject, CollectionViewSec
         selfUser: UserType,
         delegate: SimpleTextFieldDelegate? = nil
     ) {
-        textFieldDelegate = delegate
+        self.textFieldDelegate = delegate
         self.selfUser = selfUser
     }
 

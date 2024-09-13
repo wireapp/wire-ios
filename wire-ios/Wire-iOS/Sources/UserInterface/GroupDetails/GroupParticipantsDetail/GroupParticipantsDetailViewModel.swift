@@ -67,15 +67,15 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         conversation: GroupParticipantsDetailConversation,
         userSession: UserSession
     ) {
-        internalParticipants = conversation.sortedOtherParticipants
+        self.internalParticipants = conversation.sortedOtherParticipants
         self.conversation = conversation
         self.selectedParticipants = selectedParticipants.sortedAscendingPrependingNil(by: \.name)
         self.userSession = userSession
-        isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
+        self.isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
         super.init()
 
         if let conversation = conversation as? ZMConversation {
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
         }
 
         computeVisibleParticipants()

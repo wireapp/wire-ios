@@ -79,9 +79,9 @@ extension ProfileImageFetchable where Self: UserType {
 
         switch size {
         case .preview:
-            self.requestPreviewProfileImage()
+            requestPreviewProfileImage()
         default:
-            self.requestCompleteProfileImage()
+            requestCompleteProfileImage()
         }
 
         imageData(for: size, queue: cache.processingQueue) { imageData in

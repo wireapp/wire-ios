@@ -59,7 +59,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         }
         message.expire()
         message.managedObjectContext?.enqueueDelayedSave()
-        self.localNotificationsDispatcher.didFailToSend(message)
+        localNotificationsDispatcher.didFailToSend(message)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
@@ -68,11 +68,11 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        self.startTimerIfNeeded(for: objects)
+        startTimerIfNeeded(for: objects)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        self.startTimerIfNeeded(for: object)
+        startTimerIfNeeded(for: object)
     }
 
     private func startTimerIfNeeded(for objects: Set<AnyHashable>) {

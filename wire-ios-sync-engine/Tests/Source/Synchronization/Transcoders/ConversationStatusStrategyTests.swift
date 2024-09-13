@@ -39,7 +39,7 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItProcessesConversationsWithLocalModifications_LastRead() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let lastReadServerTimeStamp: Set<AnyHashable> = ["lastReadServerTimeStamp"]
@@ -64,7 +64,7 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItProcessesConversationsWithLocalModifications_Cleared() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let clearedTimeStamp: Set<AnyHashable> = ["clearedTimeStamp"]
@@ -89,7 +89,7 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItDeletesOlderMessages_Cleared() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let clearedTimeStamp: Set<AnyHashable> = ["clearedTimeStamp"]
@@ -113,7 +113,7 @@ class ConversationStatusStrategyTests: MessagingTest {
     }
 
     func testThatItAddsUnsyncedConversationsToTrackedObjects() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let lastReadServerTimeStamp: Set<AnyHashable> = ["lastReadServerTimeStamp"]

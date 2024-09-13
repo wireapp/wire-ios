@@ -54,7 +54,7 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         self.requiredPushTokenType = requiredPushTokenType
         self.pushTokenService = pushTokenService
 
-        callKitManager = CallKitManager(
+        self.callKitManager = CallKitManager(
             application: application,
             requiredPushTokenType: requiredPushTokenType,
             mediaManager: AVSMediaManager.sharedInstance()

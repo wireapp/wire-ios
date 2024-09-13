@@ -77,7 +77,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         upstreamRequestSyncs[.preview] = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
         upstreamRequestSyncs[.complete] = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
-        deleteRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
+        self.deleteRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
 
         observers.append(NotificationInContext.addObserver(
             name: .userDidRequestCompleteAsset,

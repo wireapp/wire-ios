@@ -61,9 +61,9 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             .allowsRequestsWhileOnline,
             .allowsRequestsDuringSlowSync,
         ]
-        self.userProfileByID.delegate = self
-        self.userProfileByQualifiedID.delegate = self
-        self.userProfileByQualifiedIDTranscoder.contextChangedTracker = self
+        userProfileByID.delegate = self
+        userProfileByQualifiedID.delegate = self
+        userProfileByQualifiedIDTranscoder.contextChangedTracker = self
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -80,7 +80,7 @@ public class UserProfileRequestStrategy: AbstractRequestStrategy, IdentifierObje
             return
         }
 
-        let allConnectedUsers = self.allConnectedUsers()
+        let allConnectedUsers = allConnectedUsers()
 
         if allConnectedUsers.isEmpty {
             syncProgress.finishCurrentSyncPhase(phase: .fetchingUsers)

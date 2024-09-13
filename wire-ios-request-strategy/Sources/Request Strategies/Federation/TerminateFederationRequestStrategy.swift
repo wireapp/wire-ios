@@ -32,7 +32,7 @@ public final class TerminateFederationRequestStrategy: AbstractRequestStrategy {
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        federationTerminationManager = FederationTerminationManager(with: managedObjectContext)
+        self.federationTerminationManager = FederationTerminationManager(with: managedObjectContext)
 
         super.init(
             withManagedObjectContext: managedObjectContext,

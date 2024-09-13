@@ -59,7 +59,7 @@ extension FileManager {
     public func setProtectionUntilFirstUserAuthentication(_ url: URL) throws {
         do {
             let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
-            try self.setAttributes(attributes, ofItemAtPath: url.path)
+            try setAttributes(attributes, ofItemAtPath: url.path)
         } catch {
             throw FileManagerError.failedToSetProtection(error)
         }

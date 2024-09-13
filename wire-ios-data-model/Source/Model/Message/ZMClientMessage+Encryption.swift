@@ -414,7 +414,7 @@ extension GenericMessage {
             // encrypted.
             // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk
             // of TooDistantFuture.
-            messageData = await self.encryptForTransportWithExternalDataBlob(
+            messageData = await encryptForTransportWithExternalDataBlob(
                 for: recipients,
                 with: missingClientsStrategy,
                 useQualifiedIdentifiers: useQualifiedIdentifiers,
@@ -945,7 +945,7 @@ extension GenericMessage {
                 return nil
             }
 
-            let nonce = UUID(uuidString: self.deleted.messageID)
+            let nonce = UUID(uuidString: deleted.messageID)
 
             guard
                 let managedObjectContext = conversation.managedObjectContext,
@@ -958,11 +958,11 @@ extension GenericMessage {
             guard let sender = message.sender else {
                 zmLog
                     .error(
-                        "sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
+                        "sender of deleted ephemeral message \(String(describing: deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
                     )
                 WireLogger.proteus
                     .error(
-                        "sender of deleted ephemeral message \(String(describing: self.deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
+                        "sender of deleted ephemeral message \(String(describing: deleted.messageID)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)"
                     )
                 return [selfUser]
             }
@@ -994,7 +994,7 @@ extension GenericMessage {
         switch content {
         case .confirmation?:
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
-                let confirmationInfo = ", original message: \(String(describing: self.confirmation.firstMessageID))"
+                let confirmationInfo = ", original message: \(String(describing: confirmation.firstMessageID))"
                 fatal(
                     "confirmation need a recipient\n ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)"
                 )

@@ -57,12 +57,12 @@ extension UserProperty {
     }
 
     func upstreamRequest(newValue: ZMTransportData, apiVersion: APIVersion) -> ZMTransportRequest {
-        let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
+        let path = [UserProperty.propertiesPath, serverName].joined(separator: "/")
         return ZMTransportRequest(path: path, method: .put, payload: newValue, apiVersion: apiVersion.rawValue)
     }
 
     func downstreamRequest(apiVersion: APIVersion) -> ZMTransportRequest {
-        let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
+        let path = [UserProperty.propertiesPath, serverName].joined(separator: "/")
         return ZMTransportRequest(getFromPath: path, apiVersion: apiVersion.rawValue)
     }
 
@@ -272,8 +272,8 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
     }
 
     fileprivate func nextProperty() -> UserProperty? {
-        self.fetchedProperty = propertiesToFetch.removeFirst()
-        return self.fetchedProperty
+        fetchedProperty = propertiesToFetch.removeFirst()
+        return fetchedProperty
     }
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -281,7 +281,7 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
             initializePropertiesToFetch()
         }
 
-        guard let property = self.nextProperty() else {
+        guard let property = nextProperty() else {
             return nil
         }
 

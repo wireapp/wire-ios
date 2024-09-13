@@ -87,14 +87,14 @@ public final class EncryptionContext: NSObject {
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
     public init(path: URL) {
-        let result = cbox_file_open((path.path as NSString).utf8String, &self.implementation.ptr)
+        let result = cbox_file_open((path.path as NSString).utf8String, &implementation.ptr)
         self.path = path
         super.init()
         if result != CBOX_SUCCESS {
             fatal("Failed to open cryptobox: ERROR \(result.rawValue)")
         }
         self.fileDescriptor = open(self.path.path, 0)
-        if self.fileDescriptor <= 0 {
+        if fileDescriptor <= 0 {
             fatal("Can't obtain FD for folder \(self.path)")
         }
         zmLog.debug("Opened cryptobox at path: \(path)")
@@ -121,9 +121,9 @@ extension EncryptionContext {
     /// thread are allowed.
     /// - warning: this method is not thread safe
     public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> Void) {
-        self.acquireDirectoryLock()
-        if self.currentSessionsDirectory == nil {
-            self.currentSessionsDirectory =
+        acquireDirectoryLock()
+        if currentSessionsDirectory == nil {
+            currentSessionsDirectory =
                 EncryptionSessionsDirectory(
                     generatingContext: self,
                     encryptionPayloadCache: cache,
@@ -131,20 +131,20 @@ extension EncryptionContext {
                 )
         }
         performCount += 1
-        block(self.currentSessionsDirectory!)
+        block(currentSessionsDirectory!)
         performCount -= 1
         if performCount == 0 {
-            self.currentSessionsDirectory = nil
+            currentSessionsDirectory = nil
         }
-        self.releaseDirectoryLock()
+        releaseDirectoryLock()
     }
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: can this be removed?
     public func performAsync(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) async -> Void) async {
-        self.acquireDirectoryLock()
-        if self.currentSessionsDirectory == nil {
-            self.currentSessionsDirectory =
+        acquireDirectoryLock()
+        if currentSessionsDirectory == nil {
+            currentSessionsDirectory =
                 EncryptionSessionsDirectory(
                     generatingContext: self,
                     encryptionPayloadCache: cache,
@@ -152,23 +152,23 @@ extension EncryptionContext {
                 )
         }
         performCount += 1
-        await block(self.currentSessionsDirectory!)
+        await block(currentSessionsDirectory!)
         performCount -= 1
         if performCount == 0 {
-            self.currentSessionsDirectory = nil
+            currentSessionsDirectory = nil
         }
-        self.releaseDirectoryLock()
+        releaseDirectoryLock()
     }
 
     private func acquireDirectoryLock() {
-        if flock(self.fileDescriptor, LOCK_EX) != 0 {
-            fatal("Failed to lock \(self.path)")
+        if flock(fileDescriptor, LOCK_EX) != 0 {
+            fatal("Failed to lock \(path)")
         }
     }
 
     private func releaseDirectoryLock() {
-        if flock(self.fileDescriptor, LOCK_UN) != 0 {
-            fatal("Failed to unlock \(self.path)")
+        if flock(fileDescriptor, LOCK_UN) != 0 {
+            fatal("Failed to unlock \(path)")
         }
     }
 }
@@ -180,14 +180,14 @@ extension EncryptionContext {
     /// next time the session is reloaded
     public func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
         if enabled {
-            self.extensiveLoggingSessions.insert(identifier)
+            extensiveLoggingSessions.insert(identifier)
         } else {
-            self.extensiveLoggingSessions.remove(identifier)
+            extensiveLoggingSessions.remove(identifier)
         }
     }
 
     /// Disable extensive logging on all sessions
     public func disableExtendedLoggingOnAllSessions() {
-        self.extensiveLoggingSessions.removeAll()
+        extensiveLoggingSessions.removeAll()
     }
 }

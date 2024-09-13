@@ -27,7 +27,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         let user1 = try XCTUnwrap(user1)
         let user2 = try XCTUnwrap(user2)
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             mockExtraConversation = session.insertGroupConversation(
                 withSelfUser: self.selfUser,
                 otherUsers: [user1, user2]
@@ -38,7 +38,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         // when
         let extraConversation = conversation(for: mockExtraConversation!)
-        let groupConversation = conversation(for: self.groupConversation)
+        let groupConversation = conversation(for: groupConversation)
 
         // then
         let conversations: ConversationList = .conversations(inUserSession: userSession!)
@@ -47,7 +47,7 @@ class ConversationTests_List: ConversationTestsBase {
         let observer = ConversationListChangeObserver(conversationList: conversations)
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: "Bla bla bla", mentions: [], linkPreviews: [], replyingTo: nil),
@@ -87,12 +87,12 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertTrue(login())
 
         let conversationList: ConversationList = .conversations(inUserSession: userSession!)
-        let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
+        let conversation1 = try XCTUnwrap(conversation(for: selfToUser1Conversation))
         _ = conversation1.allMessages // Make sure we've faulted in the messages
-        let conversation2 = try XCTUnwrap(conversation(for: self.selfToUser2Conversation))
+        let conversation2 = try XCTUnwrap(conversation(for: selfToUser2Conversation))
         _ = conversation2.allMessages // Make sure we've faulted in the messages
 
-        let toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let toClient = selfUser.clients.anyObject() as! MockUserClient
 
         let messageText1 = "some message"
         let messageText2 = "some other message"
@@ -107,7 +107,7 @@ class ConversationTests_List: ConversationTestsBase {
         observer?.clearNotifications()
         let previousIndex1 = try XCTUnwrap(conversationList.items.firstIndex(of: conversation1))
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: messageText1, mentions: [], linkPreviews: [], replyingTo: nil),
@@ -132,7 +132,7 @@ class ConversationTests_List: ConversationTestsBase {
         let previousIndex2 = try XCTUnwrap(conversationList.items.firstIndex(of: conversation2))
 
         // send second message
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: messageText2, mentions: [], linkPreviews: [], replyingTo: nil),
@@ -158,7 +158,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         // send first message again
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: messageText3, mentions: [], linkPreviews: [], replyingTo: nil),
@@ -189,10 +189,10 @@ class ConversationTests_List: ConversationTestsBase {
         let conversationList: ConversationList = .conversations(inUserSession: userSession!)
         let conversationListChangeObserver = ConversationListChangeObserver(conversationList: conversationList)
 
-        let oneToOneConversation = conversation(for: self.selfToUser1Conversation)
+        let oneToOneConversation = conversation(for: selfToUser1Conversation)
 
         // make sure oneToOneConversation is not on top
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser2Conversation.encryptAndInsertData(
                 from: self.user2.clients.anyObject() as! MockUserClient,
@@ -208,7 +208,7 @@ class ConversationTests_List: ConversationTestsBase {
         let oneToOneIndex = try XCTUnwrap(conversationList.items.firstIndex(of: oneToOneConversation!))
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(
                 from: self.user1.clients.anyObject() as! MockUserClient,
@@ -237,7 +237,7 @@ class ConversationTests_List: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
 
-        let oneToOneConversation = conversation(for: self.selfToUser1Conversation)
+        let oneToOneConversation = conversation(for: selfToUser1Conversation)
         let mockUser = createSentConnection(fromUserWithName: "Hans", uuid: UUID.create())
         let newConnectionConversation = user(for: mockUser)?.oneToOneConversation
 
@@ -245,7 +245,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         let conversationList: ConversationList = .conversations(inUserSession: userSession!)
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil),
@@ -264,7 +264,7 @@ class ConversationTests_List: ConversationTestsBase {
         let conversationListChangeObserver = ConversationListChangeObserver(conversationList: conversationList)
 
         // when
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             session.remotelyAcceptConnection(to: mockUser)
         }
 

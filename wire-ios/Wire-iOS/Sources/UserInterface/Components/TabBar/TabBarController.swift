@@ -100,7 +100,7 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
     }
 
     fileprivate func createViews() {
-        self.view.addSubview(self.contentView)
+        view.addSubview(contentView)
         contentView.backgroundColor = viewControllers.first?.view?.backgroundColor
         add(pageViewController, to: contentView)
         pageViewController.scrollView?.delegate = self
@@ -110,13 +110,13 @@ final class TabBarController: UIViewController, UIPageViewControllerDelegate, UI
             pageViewController.delegate = self
         }
 
-        let items = self.viewControllers.map { $0.tabBarItem! }
-        self.tabBar = TabBar(items: items, selectedIndex: selectedIndex)
+        let items = viewControllers.map { $0.tabBarItem! }
+        tabBar = TabBar(items: items, selectedIndex: selectedIndex)
         tabBar?.animatesTransition = isInteractive
         tabBar?.isHidden = isTabBarHidden
-        self.tabBar?.delegate = self
-        self.tabBar?.isUserInteractionEnabled = self.isEnabled && items.count > 1
-        self.view.addSubview(self.tabBar!)
+        tabBar?.delegate = self
+        tabBar?.isUserInteractionEnabled = isEnabled && items.count > 1
+        view.addSubview(tabBar!)
     }
 
     fileprivate func createConstraints() {

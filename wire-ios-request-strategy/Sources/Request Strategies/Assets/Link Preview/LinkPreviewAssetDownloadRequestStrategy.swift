@@ -48,7 +48,7 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
             return preview.image.uploaded.hasAssetID
         }
 
-        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
+        self.assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,
             entityName: ZMClientMessage.entityName(),
             predicateForObjectsToDownload: downloadFilter,
@@ -59,9 +59,9 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
     }
 
     func registerForWhitelistingNotification() {
-        self.notificationToken = NotificationInContext.addObserver(
+        notificationToken = NotificationInContext.addObserver(
             name: ZMClientMessage.linkPreviewImageDownloadNotification,
-            context: self.managedObjectContext.notificationContext,
+            context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
@@ -72,9 +72,9 @@ public final class LinkPreviewAssetDownloadRequestStrategy: AbstractRequestStrat
     func didWhitelistAssetDownload(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let message = try? self.managedObjectContext.existingObject(with: objectID) as? ZMClientMessage
+            guard let message = try? managedObjectContext.existingObject(with: objectID) as? ZMClientMessage
             else { return }
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }

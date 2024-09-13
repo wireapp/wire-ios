@@ -43,7 +43,7 @@ public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentit
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )

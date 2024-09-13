@@ -59,7 +59,7 @@ public struct KeySet: Sequence {
     fileprivate let backing: Set<StringKeyPath>
 
     public init() {
-        backing = Set()
+        self.backing = Set()
     }
 
     public init(_ set: NSSet) {
@@ -71,11 +71,11 @@ public struct KeySet: Sequence {
                 fatal("\(type(of: s)) is not a string")
             }
         }
-        backing = Set(a)
+        self.backing = Set(a)
     }
 
     public init(_ set: Set<Key>) {
-        backing = set
+        self.backing = set
     }
 
     public init(_ keys: Set<String>) {
@@ -87,7 +87,7 @@ public struct KeySet: Sequence {
         for s in a {
             aa.append(StringKeyPath.keyPathForString(s))
         }
-        backing = Set<StringKeyPath>(aa)
+        self.backing = Set<StringKeyPath>(aa)
     }
 
     public init(key: StringKeyPath) {
@@ -107,7 +107,7 @@ public struct KeySet: Sequence {
     }
 
     init<S: Sequence>(_ seq: S) where S.Iterator.Element == Key {
-        backing = Set<Key>(seq)
+        self.backing = Set<Key>(seq)
     }
 
     public func contains(_ i: StringKeyPath) -> Bool {

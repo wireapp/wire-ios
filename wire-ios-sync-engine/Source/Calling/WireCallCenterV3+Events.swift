@@ -117,7 +117,7 @@ extension WireCallCenterV3 {
         Self.logger.info("handle avs event: \(description)")
         zmLog.debug("Handle AVS event: \(description)")
 
-        guard let context = self.uiMOC else {
+        guard let context = uiMOC else {
             zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }
@@ -131,7 +131,7 @@ extension WireCallCenterV3 {
         _ description: String,
         _ handlerBlock: @escaping (NSManagedObjectContext) -> Void
     ) {
-        guard let context = self.uiMOC else {
+        guard let context = uiMOC else {
             zmLog.error("Cannot handle event '\(description)' because the UI context is not available.")
             return
         }

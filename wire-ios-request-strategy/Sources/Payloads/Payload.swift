@@ -322,7 +322,7 @@ public enum Payload {
 
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
-                try container.encode(self.rawValue)
+                try container.encode(rawValue)
             }
         }
 

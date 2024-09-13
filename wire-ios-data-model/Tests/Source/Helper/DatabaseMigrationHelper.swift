@@ -284,7 +284,7 @@ extension XCTestCase {
             inMemoryStore: false
         )
 
-        let exp = self.expectation(description: "should wait for loadStores to finish")
+        let exp = expectation(description: "should wait for loadStores to finish")
         var setupError: Error?
         stack.setup(onStartMigration: {
             // do nothing

@@ -102,18 +102,24 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
-        blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
-        blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
-        wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
-        messageRetentionInterval = try container.decodeIfPresent(TimeInterval.self, forKey: .messageRetentionInterval)
-        authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
-        failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
+        self.wipeOnCookieInvalid = try container.decode(Bool.self, forKey: .wipeOnCookieInvalid)
+        self.blacklistDownloadInterval = try container.decode(TimeInterval.self, forKey: .blacklistDownloadInterval)
+        self.blockOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .blockOnJailbreakOrRoot)
+        self.wipeOnJailbreakOrRoot = try container.decode(Bool.self, forKey: .wipeOnJailbreakOrRoot)
+        self.messageRetentionInterval = try container.decodeIfPresent(
+            TimeInterval.self,
+            forKey: .messageRetentionInterval
+        )
+        self.authenticateAfterReboot = try container.decode(Bool.self, forKey: .authenticateAfterReboot)
+        self.failedPasswordThresholdBeforeWipe = try container.decodeIfPresent(
             Int.self,
             forKey: .failedPasswordThresholdBeforeWipe
         )
-        encryptionAtRestEnabledByDefault = try container.decode(Bool.self, forKey: .encryptionAtRestEnabledByDefault)
-        legacyAppLockConfig = try container.decodeIfPresent(
+        self.encryptionAtRestEnabledByDefault = try container.decode(
+            Bool.self,
+            forKey: .encryptionAtRestEnabledByDefault
+        )
+        self.legacyAppLockConfig = try container.decodeIfPresent(
             AppLockController.LegacyConfig.self,
             forKey: .legacyAppLockConfig
         )

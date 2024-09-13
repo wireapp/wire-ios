@@ -188,7 +188,7 @@ public final class MessageChangeInfo: ObjectChangeInfo {
     }
 
     public var senderChanged: Bool {
-        if self.usersChanged, self.userChangeInfo?.user as? ZMUser == self.message.sender {
+        if usersChanged, userChangeInfo?.user as? ZMUser == message.sender {
             return true
         }
         return false

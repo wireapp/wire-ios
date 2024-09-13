@@ -30,7 +30,7 @@ extension ZMMessage: Sendable {
         guard let message = self as? ZMOTRMessage else {
             return false
         }
-        return self.deliveryState == .failedToSend && message.causedSecurityLevelDegradation
+        return deliveryState == .failedToSend && message.causedSecurityLevelDegradation
     }
 
     public var isSent: Bool {
@@ -52,7 +52,7 @@ extension ZMMessage: Sendable {
     }
 
     public func cancel() {
-        if let asset = self.fileMessageData {
+        if let asset = fileMessageData {
             asset.cancelTransfer()
             return
         }
@@ -61,6 +61,6 @@ extension ZMMessage: Sendable {
             .merging(.safePublic, uniquingKeysWith: { _, new in new })
 
         WireLogger.messaging.warn("expiring message because of cancel", attributes: attributes)
-        self.expire()
+        expire()
     }
 }

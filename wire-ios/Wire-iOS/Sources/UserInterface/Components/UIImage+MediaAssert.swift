@@ -32,7 +32,7 @@ extension UIImage: MediaAsset {
     }
 
     var isTransparent: Bool {
-        guard let alpha: CGImageAlphaInfo = self.cgImage?.alphaInfo else { return false }
+        guard let alpha: CGImageAlphaInfo = cgImage?.alphaInfo else { return false }
 
         switch alpha {
         case .first, .last, .premultipliedFirst, .premultipliedLast, .alphaOnly:

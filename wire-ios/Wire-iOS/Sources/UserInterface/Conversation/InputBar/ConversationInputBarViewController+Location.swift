@@ -29,7 +29,7 @@ extension ConversationInputBarViewController {
     }
 
     private func showLocationSelection(from sender: IconButton) {
-        guard let parentViewController = self.parent else { return }
+        guard let parentViewController = parent else { return }
 
         let locationSelectionViewController = LocationSelectionViewController()
         locationSelectionViewController.modalPresentationStyle = .popover

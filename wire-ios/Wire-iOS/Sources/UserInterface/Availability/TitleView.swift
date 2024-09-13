@@ -39,8 +39,8 @@ class TitleView: UIView, DynamicTypeCapable {
         accessibilityIdentifier = "Name"
 
         if let color, let font = fontSpec {
-            titleColor = color
-            titleFont = font
+            self.titleColor = color
+            self.titleFont = font
         }
 
         createViews()

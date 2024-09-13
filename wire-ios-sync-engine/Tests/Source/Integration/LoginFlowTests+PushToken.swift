@@ -23,7 +23,7 @@ import Foundation
 class LoginFlowTests_PushToken: IntegrationTest {
     override func setUp() {
         super.setUp()
-        self.createSelfUserAndConversation()
+        createSelfUserAndConversation()
     }
 
     override func tearDown() {
@@ -35,7 +35,7 @@ class LoginFlowTests_PushToken: IntegrationTest {
         // given
         let deviceToken = Data("asdfasdf".utf8)
         let deviceTokenAsHex = "6173646661736466"
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let pushService = try XCTUnwrap(sessionManager?.pushTokenService)
         let registrationComplete = customExpectation(description: "registrtation complete")
@@ -47,7 +47,7 @@ class LoginFlowTests_PushToken: IntegrationTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let registeredTokens = self.mockTransportSession.pushTokens
+        let registeredTokens = mockTransportSession.pushTokens
         XCTAssertEqual(registeredTokens.count, 1)
         let registeredToken = registeredTokens[deviceTokenAsHex]
         XCTAssertEqual(registeredToken!["token"] as! String, deviceTokenAsHex)

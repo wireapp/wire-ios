@@ -145,8 +145,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             return nil
         }
 
-        guard let clientRegistrationStatus = self.clientRegistrationStatus,
-              let clientUpdateStatus = self.clientUpdateStatus else {
+        guard let clientRegistrationStatus,
+              let clientUpdateStatus else {
             return nil
         }
 
@@ -206,7 +206,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [self.insertSync, self.modifiedSync, self.deleteSync]
+        [insertSync, modifiedSync, deleteSync]
     }
 
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
@@ -226,7 +226,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             fatal("Called requestForUpdatingObject() on \(managedObject) to sync keys: \(keys)")
         }
 
-        guard let clientUpdateStatus = self.clientUpdateStatus else {
+        guard let clientUpdateStatus else {
             fatal("clientUpdateStatus is not set")
         }
 
@@ -395,10 +395,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             (managedObject as? UserClient)?.needsToUpdateCapabilities = false
             return false
         } else if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
-            let error = self.errorFromFailedDeleteResponse(response)
+            let error = errorFromFailedDeleteResponse(response)
             if error.code == ClientUpdateError.clientToDeleteNotFound.rawValue {
-                self.managedObjectContext?.delete(managedObject)
-                self.managedObjectContext?.saveOrRollback()
+                managedObjectContext?.delete(managedObject)
+                managedObjectContext?.saveOrRollback()
             }
             clientUpdateStatus?.failedToDeleteClient(managedObject as! UserClient, error: error)
             return false
@@ -433,7 +433,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
             client.remoteIdentifier = remoteIdentifier
             client.numberOfKeysRemaining = Int32(prekeyGenerator.keyCount)
-            guard let moc = self.managedObjectContext else { return }
+            guard let moc = managedObjectContext else { return }
             _ = UserClient.createOrUpdateSelfUserClient(payload, context: moc)
             clientRegistrationStatus?.didRegisterProteusClient(client)
         } else {
@@ -463,7 +463,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func errorFromFailedInsertResponse(_ response: ZMTransportResponse!) -> NSError {
         var errorCode: UserSessionErrorCode = .unknownError
-        if let moc = self.managedObjectContext, let response, response.result == .permanentError {
+        if let moc = managedObjectContext, let response, response.result == .permanentError {
             if let errorLabel = response.payload?.asDictionary()?["label"] as? String {
                 switch errorLabel {
                 case "missing-auth":
@@ -490,7 +490,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         switch response.result {
         case .success:
             if let payload = response.payload?.asArray() as? [[String: AnyObject]] {
-                self.received(clients: payload)
+                received(clients: payload)
             }
         case .expired:
             clientUpdateStatus?.failedToFetchClients()
@@ -556,7 +556,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             didRetryUpdatingCapabilities = false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
             userClient.needsToUploadMLSPublicKeys = false
-            self.clientRegistrationStatus?.didRegisterMLSClient(userClient)
+            clientRegistrationStatus?.didRegisterMLSClient(userClient)
         }
 
         return false

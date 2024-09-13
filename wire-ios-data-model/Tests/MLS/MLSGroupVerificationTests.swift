@@ -54,7 +54,7 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     func testStartObserving_givenEpochChange_thenInvokeUseCase() async {
         // given
-        let expectation = self.expectation(description: "")
+        let expectation = expectation(description: "")
 
         let mlsGroupID: MLSGroupID = .random()
         await syncContext.perform { [self] in
@@ -84,7 +84,7 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     func testStartObserving_givenDealloc_thenDoNotInvokeUseCase() async {
         // given
-        let expectation = self.expectation(description: "")
+        let expectation = expectation(description: "")
         expectation.isInverted = true
 
         let mlsGroupID: MLSGroupID = .random()

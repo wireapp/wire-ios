@@ -63,7 +63,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             thirdUser.identifier: [redunduntClientId],
         ] as ZMTransportData
 
-        let response: ZMTransportResponse = self.response(
+        let response: ZMTransportResponse = response(
             forPayload: payload,
             path: "/users/prekeys",
             method: .post,
@@ -106,7 +106,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let userId = "1234"
 
         // when
-        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .get, apiVersion: .v0)
 
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -121,7 +121,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(
+        guard let response = response(
             forPayload: nil,
             path: "/users/\(userId)/rich-info",
             method: .get,
@@ -149,7 +149,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(
+        guard let response = response(
             forPayload: nil,
             path: "/users/\(userId)/rich-info",
             method: .get,
@@ -186,7 +186,7 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
 
         // when
-        guard let response = self.response(
+        guard let response = response(
             forPayload: nil,
             path: "/users/\(userId)/rich-info",
             method: .get,

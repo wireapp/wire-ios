@@ -39,7 +39,7 @@ final class ContactsDataSource: NSObject {
 
     override init() {
         super.init()
-        searchDirectory = ZMUserSession.shared().map(SearchDirectory.init)
+        self.searchDirectory = ZMUserSession.shared().map(SearchDirectory.init)
         performSearch()
     }
 
@@ -75,8 +75,8 @@ final class ContactsDataSource: NSObject {
 
         task.addResultHandler { [weak self] searchResult, _ in
             guard let self else { return }
-            self.ungroupedSearchResults = searchResult.addressBook
-            self.delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
+            ungroupedSearchResults = searchResult.addressBook
+            delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
         }
 
         task.start()

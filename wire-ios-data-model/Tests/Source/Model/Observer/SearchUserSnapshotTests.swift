@@ -22,7 +22,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
     var token: Any?
 
     override func tearDown() {
-        self.token = nil
+        token = nil
         super.tearDown()
     }
 
@@ -31,7 +31,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let searchUser = makeSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // then
         XCTAssertEqual(
@@ -59,7 +59,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
 
         // when
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // then
         XCTAssertEqual(
@@ -85,13 +85,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.remoteIdentifier = UUID()
 
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
@@ -120,13 +120,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.remoteIdentifier = UUID()
 
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
@@ -155,13 +155,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         connection.status = .pending
 
         let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }
@@ -189,13 +189,13 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.remoteIdentifier = UUID()
 
         let searchUser = makeSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .amber, remoteIdentifier: UUID())
-        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
+        let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: uiMOC)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
-        self.token = NotificationInContext.addObserver(
+        let expectation = customExpectation(description: "notified")
+        token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { _ in
             expectation.fulfill()

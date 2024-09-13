@@ -76,13 +76,17 @@ class BaseAccountView: UIView {
     init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         self.account = account
 
-        dotView = DotView(user: user)
+        self.dotView = DotView(user: user)
         dotView.hasUnreadMessages = account.unreadConversationCount > 0
 
         super.init(frame: .zero)
 
         if let userSession = SessionManager.shared?.activeUserSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
+            self.selfUserObserver = UserChangeInfo.add(
+                observer: self,
+                for: userSession.providedSelfUser,
+                in: userSession
+            )
         }
 
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
@@ -126,7 +130,7 @@ class BaseAccountView: UIView {
         )
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
-        self.addGestureRecognizer(tapGesture)
+        addGestureRecognizer(tapGesture)
 
         self.unreadCountToken = NotificationCenter.default.addObserver(
             forName: .AccountUnreadCountDidChangeNotification,
@@ -157,8 +161,8 @@ class BaseAccountView: UIView {
     }
 
     func update() {
-        if self.autoUpdateSelection {
-            self.selected = SessionManager.shared?.accountManager.selectedAccount == self.account
+        if autoUpdateSelection {
+            selected = SessionManager.shared?.accountManager.selectedAccount == account
         }
     }
 

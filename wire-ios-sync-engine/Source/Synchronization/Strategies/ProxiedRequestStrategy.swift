@@ -63,7 +63,7 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let status = self.requestsStatus else { return nil }
+        guard let status = requestsStatus else { return nil }
 
         if let proxyRequest = status.pendingRequests.popFirst() {
             let fullPath = ProxiedRequestStrategy.BasePath + proxyRequest.type.basePath + proxyRequest.path
@@ -77,14 +77,14 @@ public final class ProxiedRequestStrategy: AbstractRequestStrategy {
                 request.doesNotFollowRedirects = true
             }
             request.expire(afterInterval: ProxiedRequestStrategy.RequestExpirationTime)
-            request.add(ZMCompletionHandler(on: self.managedObjectContext.zm_userInterface, block: { response in
+            request.add(ZMCompletionHandler(on: managedObjectContext.zm_userInterface, block: { response in
                 proxyRequest.callback?(
                     response.rawData,
                     response.rawResponse,
                     response.transportSessionError as NSError?
                 )
             }))
-            request.add(ZMTaskCreatedHandler(on: self.managedObjectContext, block: { taskIdentifier in
+            request.add(ZMTaskCreatedHandler(on: managedObjectContext, block: { taskIdentifier in
                 self.requestsStatus?.executedRequests[proxyRequest] = taskIdentifier
             }))
 

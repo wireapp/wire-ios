@@ -32,12 +32,12 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
+        self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = .allowsRequestsWhileOnline
 
-        upstreamSync = ZMUpstreamModifiedObjectSync(
+        self.upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
             update: AssetV3UploadRequestStrategy.updatePredicate,
@@ -169,7 +169,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             message.associatedTaskIdentifier = identifier
         })
 
-        request.add(ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+        request.add(ZMTaskProgressHandler(on: managedObjectContext) { progress in
             message.progress = progress
             self.managedObjectContext.enqueueDelayedSave()
         })

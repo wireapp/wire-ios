@@ -49,8 +49,8 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
         let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(messageType: messageType)
 
-        configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
-        accessibilityLabel = content?.string
+        self.configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)
+        self.accessibilityLabel = content?.string
     }
 
     // MARK: Attributed Strings

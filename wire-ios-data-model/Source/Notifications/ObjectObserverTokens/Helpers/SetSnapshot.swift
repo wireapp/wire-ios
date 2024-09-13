@@ -72,10 +72,10 @@ open class SetChangeInfo<T: Hashable>: NSObject {
     }
 
     open func enumerateMovedIndexes(_ block: @escaping (_ from: Int, _ to: Int) -> Void) {
-        self.changeSet.enumerateMovedIndexes(block: block)
+        changeSet.enumerateMovedIndexes(block: block)
     }
 
-    override open var description: String { self.debugDescription }
+    override open var description: String { debugDescription }
     override open var debugDescription: String {
         "deleted: \(deletedIndexes), inserted: \(insertedIndexes), " +
             "updated: \(updatedIndexes), moved: \(movedIndexPairs)"
@@ -97,11 +97,11 @@ public struct SetSnapshot<T: Hashable> {
         observedObject: NSObject,
         newSet: OrderedSetState<T>
     ) -> SetStateUpdate<T>? {
-        if self.set == newSet, updatedObjects.isEmpty {
+        if set == newSet, updatedObjects.isEmpty {
             return nil
         }
 
-        let changeSet = ChangedIndexes(start: self.set, end: newSet, updated: updatedObjects, moveType: self.moveType)
+        let changeSet = ChangedIndexes(start: set, end: newSet, updated: updatedObjects, moveType: moveType)
         let changeInfo = SetChangeInfo(observedObject: observedObject, changeSet: changeSet, orderedSetState: newSet)
 
         if changeInfo.insertedIndexes.isEmpty, changeInfo.deletedIndexes.isEmpty,
@@ -109,7 +109,7 @@ public struct SetSnapshot<T: Hashable> {
             return nil
         }
         return SetStateUpdate(
-            newSnapshot: SetSnapshot(set: newSet, moveType: self.moveType),
+            newSnapshot: SetSnapshot(set: newSet, moveType: moveType),
             changeInfo: changeInfo,
             removedObjects: changeSet.deletedObjects,
             insertedObjects: changeSet.insertedObjects

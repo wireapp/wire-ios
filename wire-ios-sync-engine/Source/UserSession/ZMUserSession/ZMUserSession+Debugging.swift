@@ -38,7 +38,7 @@ extension ZMUserSession {
             return
         }
 
-        let state = self.savedDebugState[keyword] ?? [:]
+        let state = savedDebugState[keyword] ?? [:]
         command.execute(
             arguments: arguments,
             userSession: self,
@@ -60,15 +60,15 @@ extension ZMUserSession {
     }
 
     func restoreDebugCommandsState() {
-        for value in self.debugCommands.values {
-            let state = self.savedDebugState[value.keyword] ?? [:]
+        for value in debugCommands.values {
+            let state = savedDebugState[value.keyword] ?? [:]
             value.restoreFromState(userSession: self, state: state)
         }
     }
 
     private var debugStateUserDefaultsKey: String? {
         guard
-            let identifier = (self.providedSelfUser as! ZMUser).remoteIdentifier
+            let identifier = (providedSelfUser as! ZMUser).remoteIdentifier
         else { return nil }
         return "Wire-debugCommandsState-\(identifier)"
     }
@@ -184,7 +184,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
             return onComplete(.success(
                 info:
                 "Enabled:\n" +
-                    self.currentlyEnabledLogs
+                    currentlyEnabledLogs
                     .map(\.rawValue)
                     .joined(separator: "\n")
             ))
@@ -193,7 +193,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         guard arguments.count == 2,
               arguments[0] == "add" || arguments[0] == "remove"
         else {
-            return onComplete(.failure(error: "usage: \(self.usage)"))
+            return onComplete(.failure(error: "usage: \(usage)"))
         }
 
         let isAdding = arguments[0] == "add"
@@ -230,8 +230,8 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
     private let logsKey = "enabledLogs"
 
     private func saveEnabledLogs(userSession: ZMUserSession) {
-        let idsToSave = self.currentlyEnabledLogs.map(\.rawValue)
-        self.saveState(userSession: userSession, state: [logsKey: idsToSave])
+        let idsToSave = currentlyEnabledLogs.map(\.rawValue)
+        saveState(userSession: userSession, state: [logsKey: idsToSave])
     }
 
     override func restoreFromState(
@@ -239,7 +239,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         state: [String: Any]
     ) {
         guard let logs = state[logsKey] as? [String] else { return }
-        self.currentlyEnabledLogs = Set(logs.compactMap {
+        currentlyEnabledLogs = Set(logs.compactMap {
             EncryptionSessionIdentifier(string: $0)
         })
         userSession.syncManagedObjectContext.performGroupedBlock {
@@ -329,7 +329,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             } else {
                 newState.removeValue(forKey: key)
             }
-            self.saveState(userSession: userSession, state: state)
+            saveState(userSession: userSession, state: state)
             return onComplete(.success(info: nil))
         case "get":
             guard arguments.count == 2 else {

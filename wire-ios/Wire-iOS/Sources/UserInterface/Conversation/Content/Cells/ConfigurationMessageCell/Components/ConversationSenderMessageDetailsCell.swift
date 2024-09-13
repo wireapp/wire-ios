@@ -123,7 +123,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         // We need to call that method here to restraint the authorLabel moving
         // outside of the view and then back to its position. For more information
         // check the ticket: https://wearezeta.atlassian.net/browse/WPB-1955
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 
     // MARK: - Configure subviews and setup constraints
@@ -138,7 +138,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         [avatar, authorLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let trailingDateLabelConstraint = dateLabel.trailingAnchor.constraint(
-            equalTo: self.trailingAnchor,
+            equalTo: trailingAnchor,
             constant: -conversationHorizontalMargins.right
         )
 
@@ -146,7 +146,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
         NSLayoutConstraint.activate([
             avatar.trailingAnchor.constraint(equalTo: authorLabel.leadingAnchor, constant: -12),
             authorLabel.leadingAnchor.constraint(
-                equalTo: self.leadingAnchor,
+                equalTo: leadingAnchor,
                 constant: conversationHorizontalMargins.left
             ),
 
@@ -154,14 +154,14 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             trailingDateLabelConstraint,
 
             dateLabel.centerYAnchor.constraint(equalTo: avatar.centerYAnchor),
-            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor),
-            self.bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
-            self.bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
+            authorLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: authorLabel.bottomAnchor),
+            bottomAnchor.constraint(greaterThanOrEqualTo: avatar.bottomAnchor),
 
             avatar.heightAnchor.constraint(equalTo: avatar.widthAnchor),
             avatar.heightAnchor.constraint(equalToConstant: CGFloat(avatar.size.rawValue)),
 
-            avatar.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor),
+            avatar.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             dateLabel.firstBaselineAnchor.constraint(equalTo: authorLabel.firstBaselineAnchor),
         ])
     }
@@ -318,7 +318,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
         )
 
         setupAccessibility(sender)
-        actionController = nil
+        self.actionController = nil
     }
 
     // MARK: - Accessibility
@@ -348,16 +348,16 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
 
 extension UserType {
     fileprivate func teamRoleIndicator(with provider: SelfUserProvider? = SelfUser.provider) -> TeamRoleIndicator? {
-        if self.isServiceUser {
+        if isServiceUser {
             .service
 
-        } else if self.isExternalPartner {
+        } else if isExternalPartner {
             .externalPartner
 
-        } else if self.isFederated {
+        } else if isFederated {
             .federated
 
-        } else if !self.isTeamMember,
+        } else if !isTeamMember,
                   let selfUser = provider?.providedSelfUser,
                   selfUser.isTeamMember {
             .guest

@@ -45,15 +45,15 @@ extension ShareViewController {
         view.backgroundColor = SemanticColors.View.backgroundDefault
         containerView.backgroundColor = SemanticColors.View.backgroundDefault
         createShareablePreview()
-        self.tokenField.tokenTitleVerticalAdjustment = 1
-        self.tokenField.textView.placeholderTextAlignment = .natural
-        self.tokenField.textView.accessibilityIdentifier = "textViewSearch"
-        self.tokenField.textView.placeholder = L10n.Localizable.Content.Message.Forward.to
-        self.tokenField.textView.keyboardAppearance = .default
-        self.tokenField.textView.returnKeyType = .done
-        self.tokenField.textView.autocorrectionType = .no
-        self.tokenField.textView.textContainerInset = UIEdgeInsets(top: 9, left: 40, bottom: 11, right: 40)
-        self.tokenField.delegate = self
+        tokenField.tokenTitleVerticalAdjustment = 1
+        tokenField.textView.placeholderTextAlignment = .natural
+        tokenField.textView.accessibilityIdentifier = "textViewSearch"
+        tokenField.textView.placeholder = L10n.Localizable.Content.Message.Forward.to
+        tokenField.textView.keyboardAppearance = .default
+        tokenField.textView.returnKeyType = .done
+        tokenField.textView.autocorrectionType = .no
+        tokenField.textView.textContainerInset = UIEdgeInsets(top: 9, left: 40, bottom: 11, right: 40)
+        tokenField.delegate = self
 
         clearButton.accessibilityLabel = L10n.Accessibility.SearchView.ClearButton.description
         clearButton.setIcon(.clearInput, size: .tiny, for: .normal)
@@ -61,22 +61,22 @@ extension ShareViewController {
         clearButton.setIconColor(SemanticColors.SearchBar.backgroundButton, for: .normal)
         clearButton.isHidden = true
 
-        self.destinationsTableView.backgroundColor = .clear
-        self.destinationsTableView.register(
+        destinationsTableView.backgroundColor = .clear
+        destinationsTableView.register(
             ShareDestinationCell<D>.self,
             forCellReuseIdentifier: ShareDestinationCell<D>.reuseIdentifier
         )
-        self.destinationsTableView.separatorStyle = .none
-        self.destinationsTableView.allowsSelection = true
-        self.destinationsTableView.allowsMultipleSelection = self.allowsMultipleSelection
-        self.destinationsTableView.keyboardDismissMode = .interactive
-        self.destinationsTableView.delegate = self
-        self.destinationsTableView.dataSource = self
+        destinationsTableView.separatorStyle = .none
+        destinationsTableView.allowsSelection = true
+        destinationsTableView.allowsMultipleSelection = allowsMultipleSelection
+        destinationsTableView.keyboardDismissMode = .interactive
+        destinationsTableView.delegate = self
+        destinationsTableView.dataSource = self
 
-        self.closeButton.accessibilityLabel = "close"
-        self.closeButton.setIcon(.cross, size: .tiny, for: .normal)
-        self.closeButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
-        self.closeButton.addTarget(
+        closeButton.accessibilityLabel = "close"
+        closeButton.setIcon(.cross, size: .tiny, for: .normal)
+        closeButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
+        closeButton.addTarget(
             self,
             action: #selector(ShareViewController.onCloseButtonPressed(sender:)),
             for: .touchUpInside
@@ -84,51 +84,51 @@ extension ShareViewController {
 
         let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
 
-        self.sendButton.accessibilityLabel = "send"
-        self.sendButton.isEnabled = false
-        self.sendButton.setIcon(.send, size: .tiny, for: .normal)
-        self.sendButton.setBackgroundImageColor(UIColor.accent(), for: .normal)
-        self.sendButton.setBackgroundImageColor(UIColor.accentDarken, for: .highlighted)
-        self.sendButton.setBackgroundImageColor(SemanticColors.Button.backgroundSendDisabled, for: .disabled)
+        sendButton.accessibilityLabel = "send"
+        sendButton.isEnabled = false
+        sendButton.setIcon(.send, size: .tiny, for: .normal)
+        sendButton.setBackgroundImageColor(UIColor.accent(), for: .normal)
+        sendButton.setBackgroundImageColor(UIColor.accentDarken, for: .highlighted)
+        sendButton.setBackgroundImageColor(SemanticColors.Button.backgroundSendDisabled, for: .disabled)
 
-        self.sendButton.setIconColor(sendButtonIconColor, for: .normal)
-        self.sendButton.setIconColor(sendButtonIconColor, for: .highlighted)
-        self.sendButton.setIconColor(sendButtonIconColor, for: .disabled)
+        sendButton.setIconColor(sendButtonIconColor, for: .normal)
+        sendButton.setIconColor(sendButtonIconColor, for: .highlighted)
+        sendButton.setIconColor(sendButtonIconColor, for: .disabled)
 
-        self.sendButton.circular = true
-        self.sendButton.addTarget(
+        sendButton.circular = true
+        sendButton.addTarget(
             self,
             action: #selector(ShareViewController.onSendButtonPressed(sender:)),
             for: .touchUpInside
         )
 
-        if self.allowsMultipleSelection {
+        if allowsMultipleSelection {
             searchIcon.setTemplateIcon(.search, size: .tiny)
             searchIcon.tintColor = SemanticColors.SearchBar.backgroundButton
         } else {
-            self.clearButton.isHidden = true
-            self.tokenField.isHidden = true
-            self.searchIcon.isHidden = true
-            self.sendButton.isHidden = true
-            self.closeButton.isHidden = true
-            self.bottomSeparatorLine.isHidden = true
+            clearButton.isHidden = true
+            tokenField.isHidden = true
+            searchIcon.isHidden = true
+            sendButton.isHidden = true
+            closeButton.isHidden = true
+            bottomSeparatorLine.isHidden = true
         }
 
-        [self.containerView].forEach(self.view.addSubview)
+        [containerView].forEach(view.addSubview)
 
         [
-            self.tokenField,
-            self.destinationsTableView,
-            self.closeButton,
-            self.sendButton,
-            self.bottomSeparatorLine,
-            self.topSeparatorView,
-            self.searchIcon,
-            self.clearButton,
-        ].forEach(self.containerView.addSubview)
+            tokenField,
+            destinationsTableView,
+            closeButton,
+            sendButton,
+            bottomSeparatorLine,
+            topSeparatorView,
+            searchIcon,
+            clearButton,
+        ].forEach(containerView.addSubview)
 
-        if let shareablePreviewWrapper = self.shareablePreviewWrapper {
-            self.containerView.addSubview(shareablePreviewWrapper)
+        if let shareablePreviewWrapper {
+            containerView.addSubview(shareablePreviewWrapper)
         }
     }
 

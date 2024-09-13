@@ -87,7 +87,7 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         // Compute the title and display mode
         let showLikesTab = message.canAddReaction
         let showReceiptsTab = message.areReadReceiptsDetailsAvailable
-        supportsReadReceipts = message.needsReadConfirmation
+        self.supportsReadReceipts = message.needsReadConfirmation
 
         switch (showLikesTab, showReceiptsTab) {
         case (true, true):
@@ -130,8 +130,8 @@ final class MessageDetailsDataSource: NSObject, ZMMessageObserver, UserObserving
         }
 
         self.subtitle = subtitle
-        self.accessibilitySubtitle = message.formattedAccessibleMessageDetails()
-        self.observer?.detailsFooterDidChange(self)
+        accessibilitySubtitle = message.formattedAccessibleMessageDetails()
+        observer?.detailsFooterDidChange(self)
     }
 
     // MARK: - Changes

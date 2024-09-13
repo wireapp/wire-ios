@@ -398,7 +398,7 @@ final class SyncStatusTests: MessagingTest {
         sut.determineInitialSyncPhase()
         sut.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         XCTAssertEqual(sut.currentSyncPhase, .done)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
         NotificationInContext(name: .resyncResources, context: uiMOC.notificationContext).post()

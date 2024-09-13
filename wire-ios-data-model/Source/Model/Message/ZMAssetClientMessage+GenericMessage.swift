@@ -20,13 +20,13 @@ import Foundation
 
 extension ZMAssetClientMessage {
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
-        self.dataSet.lazy
+        dataSet.lazy
             .compactMap { $0 as? ZMGenericMessageData }
             .first(where: { $0.underlyingMessage?.imageAssetData?.imageFormat() == format })
     }
 
     public var mediumGenericMessage: GenericMessage? {
-        self.genericMessageDataFromDataSet(for: .medium)?.underlyingMessage
+        genericMessageDataFromDataSet(for: .medium)?.underlyingMessage
     }
 
     static func keyPathsForValuesAffectingMediumGenericMessage() -> Set<String> {
@@ -34,7 +34,7 @@ extension ZMAssetClientMessage {
     }
 
     public var previewGenericMessage: GenericMessage? {
-        self.genericMessageDataFromDataSet(for: .preview)?.underlyingMessage
+        genericMessageDataFromDataSet(for: .preview)?.underlyingMessage
     }
 
     static func keyPathsForValuesAffectingPreviewGenericMessage() -> Set<String> {
@@ -99,7 +99,7 @@ extension ZMAssetClientMessage {
     }
 
     func underlyingMessageMergedFromDataSet(filter: (GenericMessage) -> Bool) -> GenericMessage? {
-        let filteredData = self.dataSet
+        let filteredData = dataSet
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
             .filter(filter)
             .compactMap { try? $0.serializedData() }
@@ -117,16 +117,16 @@ extension ZMAssetClientMessage {
 
     /// Returns the generic message for the given representation
     func genericMessage(dataType: AssetClientMessageDataType) -> GenericMessage? {
-        if self.fileMessageData != nil {
+        if fileMessageData != nil {
             switch dataType {
             case .fullAsset:
-                guard let genericMessage = self.underlyingMessage,
+                guard let genericMessage = underlyingMessage,
                       let assetData = genericMessage.assetData,
                       case .uploaded? = assetData.status
                 else { return nil }
                 return genericMessage
             case .placeholder:
-                return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in
+                return underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
                     guard case .notUploaded? = assetData.status else {
                         return assetData.hasOriginal
@@ -134,7 +134,7 @@ extension ZMAssetClientMessage {
                     return true
                 })
             case .thumbnail:
-                return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in
+                return underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
                     if let status = assetData.status {
                         guard case .notUploaded = status else { return false }
@@ -145,12 +145,12 @@ extension ZMAssetClientMessage {
             }
         }
 
-        if self.imageMessageData != nil {
+        if imageMessageData != nil {
             switch dataType {
             case .fullAsset:
-                return self.mediumGenericMessage
+                return mediumGenericMessage
             case .placeholder:
-                return self.previewGenericMessage
+                return previewGenericMessage
             default:
                 return nil
             }
@@ -160,7 +160,7 @@ extension ZMAssetClientMessage {
     }
 
     override public var imageMessageData: ZMImageMessageData? {
-        self.asset?.imageMessageData
+        asset?.imageMessageData
     }
 
     override public var fileMessageData: ZMFileMessageData? {

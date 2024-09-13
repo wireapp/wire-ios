@@ -58,12 +58,12 @@ final class BreathLoadingBar: UIView {
     }
 
     init(animationDuration duration: TimeInterval) {
-        animating = false
+        self.animating = false
 
         super.init(frame: .zero)
         layer.cornerRadius = CGFloat.SyncBar.cornerRadius
 
-        animationDuration = duration
+        self.animationDuration = duration
 
         createConstraints()
         updateView()
@@ -72,13 +72,13 @@ final class BreathLoadingBar: UIView {
 
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(self.applicationDidBecomeActive),
+            selector: #selector(applicationDidBecomeActive),
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(self.applicationDidEnterBackground),
+            selector: #selector(applicationDidEnterBackground),
             name: UIApplication.didEnterBackgroundNotification,
             object: nil
         )
@@ -107,7 +107,7 @@ final class BreathLoadingBar: UIView {
             layer.cornerRadius = CGFloat.OfflineBar.cornerRadius
         }
 
-        self.layoutIfNeeded()
+        layoutIfNeeded()
     }
 
     private func createConstraints() {
@@ -151,13 +151,13 @@ final class BreathLoadingBar: UIView {
         anim.repeatCount = .infinity
         anim.duration = animationDuration
         anim.timingFunction = EasingFunction.easeInOutSine.timingFunction
-        self.layer.add(anim, forKey: BreathLoadingAnimationKey)
+        layer.add(anim, forKey: BreathLoadingAnimationKey)
     }
 
     func stopAnimation() {
         delegate?.animationDidStopped()
 
-        self.layer.removeAnimation(forKey: BreathLoadingAnimationKey)
+        layer.removeAnimation(forKey: BreathLoadingAnimationKey)
     }
 
     static func withDefaultAnimationDuration() -> BreathLoadingBar {

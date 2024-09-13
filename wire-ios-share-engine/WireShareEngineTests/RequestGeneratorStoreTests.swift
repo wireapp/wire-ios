@@ -92,7 +92,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
     }
 
     func testThatItCallsTheGivenGenerator() {
-        let expectation = self.customExpectation(description: "calledGenerator")
+        let expectation = customExpectation(description: "calledGenerator")
         let generator = DummyGenerator(requestBlock: {
             expectation.fulfill()
             return nil
@@ -103,7 +103,7 @@ final class RequestGeneratorStoreTests: ZMTBaseTest {
         sut = RequestGeneratorStore(strategies: [mockStrategy])
 
         XCTAssertNil(sut.nextRequest())
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItReturnAProperRequest() {

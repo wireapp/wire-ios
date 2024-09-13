@@ -35,11 +35,11 @@ final class TopPeopleSectionController: SearchSectionController {
 
         if let topConversationsDirectory {
             self.token = topConversationsDirectory.add(observer: self)
-            self.innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
+            innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
             topConversationsDirectory.refreshTopConversations()
         }
-        self.innerCollectionViewController.delegate = self
-        self.innerCollectionView.reloadData()
+        innerCollectionViewController.delegate = self
+        innerCollectionView.reloadData()
     }
 
     func createInnerCollectionView() {

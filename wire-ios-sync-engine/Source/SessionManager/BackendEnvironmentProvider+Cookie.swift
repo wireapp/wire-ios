@@ -20,7 +20,7 @@ import WireTransport
 
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
-        let backendURL = self.backendURL.host!
+        let backendURL = backendURL.host!
         return ZMPersistentCookieStorage(
             forServerName: backendURL,
             userIdentifier: account.userIdentifier,

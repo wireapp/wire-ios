@@ -119,7 +119,7 @@ extension ZMConversation {
 extension String {
     var words: [String] {
         var words: [String] = []
-        enumerateSubstrings(in: self.startIndex..., options: .byWords) { substring, _, _, _ in
+        enumerateSubstrings(in: startIndex..., options: .byWords) { substring, _, _, _ in
             words.append(String(substring!))
         }
 

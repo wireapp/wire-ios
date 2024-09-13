@@ -28,7 +28,7 @@ final class PerformanceDebugger {
     private var displayLink: CADisplayLink!
 
     init() {
-        displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
+        self.displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
     }
 
     deinit {

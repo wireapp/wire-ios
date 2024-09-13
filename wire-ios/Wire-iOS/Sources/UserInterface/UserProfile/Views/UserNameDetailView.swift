@@ -92,9 +92,12 @@ final class UserNameDetailViewModel: NSObject {
     )
 
     init(user: UserType?, fallbackName fallback: String, addressBookName: String?) {
-        title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)
-        handleText = UserNameDetailViewModel.attributedSubtitle(for: user)
-        correlationText = UserNameDetailViewModel.attributedCorrelationText(for: user, addressBookName: addressBookName)
+        self.title = UserNameDetailViewModel.attributedTitle(for: user, fallback: fallback)
+        self.handleText = UserNameDetailViewModel.attributedSubtitle(for: user)
+        self.correlationText = UserNameDetailViewModel.attributedCorrelationText(
+            for: user,
+            addressBookName: addressBookName
+        )
     }
 
     static func attributedTitle(for user: UserType?, fallback: String) -> NSAttributedString {

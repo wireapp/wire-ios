@@ -37,7 +37,7 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         )
 
         configuration = [.allowsRequestsDuringSlowSync]
-        sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.sync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {

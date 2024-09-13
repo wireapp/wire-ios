@@ -111,26 +111,26 @@ extension Payload {
         init(from decoder: Decoder, apiVersion: APIVersion) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
 
-            qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
-            id = try container.decodeIfPresent(UUID.self, forKey: .id)
-            type = try container.decodeIfPresent(Int.self, forKey: .type)
-            creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
-            access = try container.decodeIfPresent([String].self, forKey: .access)
-            name = try container.decodeIfPresent(String.self, forKey: .name)
-            members = try container.decodeIfPresent(ConversationMembers.self, forKey: .members)
-            lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
-            lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
-            teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
-            messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
-            readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
-            messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
-            mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
-            epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
+            self.qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
+            self.id = try container.decodeIfPresent(UUID.self, forKey: .id)
+            self.type = try container.decodeIfPresent(Int.self, forKey: .type)
+            self.creator = try container.decodeIfPresent(UUID.self, forKey: .creator)
+            self.access = try container.decodeIfPresent([String].self, forKey: .access)
+            self.name = try container.decodeIfPresent(String.self, forKey: .name)
+            self.members = try container.decodeIfPresent(ConversationMembers.self, forKey: .members)
+            self.lastEvent = try container.decodeIfPresent(String.self, forKey: .lastEvent)
+            self.lastEventTime = try container.decodeIfPresent(String.self, forKey: .lastEventTime)
+            self.teamID = try container.decodeIfPresent(UUID.self, forKey: .teamID)
+            self.messageTimer = try container.decodeIfPresent(TimeInterval.self, forKey: .messageTimer)
+            self.readReceiptMode = try container.decodeIfPresent(Int.self, forKey: .readReceiptMode)
+            self.messageProtocol = try container.decodeIfPresent(String.self, forKey: .messageProtocol)
+            self.mlsGroupID = try container.decodeIfPresent(String.self, forKey: .mlsGroupID)
+            self.epoch = try container.decodeIfPresent(UInt.self, forKey: .epoch)
 
             switch apiVersion {
             case .v0, .v1, .v2:
-                legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-                accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+                self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
             case .v3, .v4, .v5, .v6:
 
                 // v3 replaces the field "access_role_v2" with "access_role".
@@ -139,21 +139,21 @@ extension Payload {
                 // which still have both "access_role_v2" and "access_role" fields
 
                 if !container.contains(CodingKeys.accessRoleV2) {
-                    legacyAccessRole = nil
-                    accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
+                    self.legacyAccessRole = nil
+                    self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRole)
                 } else {
-                    legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
-                    accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
+                    self.legacyAccessRole = try container.decodeIfPresent(String.self, forKey: .accessRole)
+                    self.accessRoles = try container.decodeIfPresent([String].self, forKey: .accessRoleV2)
                 }
             }
 
             switch apiVersion {
             case .v0, .v1, .v2, .v3, .v4:
-                cipherSuite = nil
-                epochTimestamp = nil
+                self.cipherSuite = nil
+                self.epochTimestamp = nil
             case .v5, .v6:
-                cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
-                epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
+                self.cipherSuite = try container.decodeIfPresent(UInt16.self, forKey: .cipherSuite)
+                self.epochTimestamp = try container.decodeIfPresent(Date.self, forKey: .epochTimestamp)
             }
         }
 

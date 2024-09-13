@@ -126,7 +126,7 @@ final class ConversationViewController: UIViewController {
         self.visibleMessage = visibleMessage
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
-        contentViewController = ConversationContentViewController(
+        self.contentViewController = ConversationContentViewController(
             conversation: conversation,
             message: visibleMessage,
             mediaPlaybackManager: mediaPlaybackManager,
@@ -134,16 +134,16 @@ final class ConversationViewController: UIViewController {
             mainCoordinator: mainCoordinator
         )
 
-        inputBarController = ConversationInputBarViewController(
+        self.inputBarController = ConversationInputBarViewController(
             conversation: conversation,
             userSession: userSession,
             classificationProvider: classificationProvider,
             networkStatusObservable: networkStatusObservable
         )
 
-        mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
+        self.mediaBarViewController = MediaBarViewController(mediaPlaybackManager: mediaPlaybackManager)
 
-        titleView = ConversationTitleView(conversation: conversation, interactive: true)
+        self.titleView = ConversationTitleView(conversation: conversation, interactive: true)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -304,7 +304,7 @@ final class ConversationViewController: UIViewController {
         with coordinator: UIViewControllerTransitionCoordinator
     ) {
         super.willTransition(to: newCollection, with: coordinator)
-        self.updateLeftNavigationBarItems()
+        updateLeftNavigationBarItems()
     }
 
     override func didReceiveMemoryWarning() {
@@ -652,7 +652,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     }
 
     var searchBarButtonItem: UIBarButtonItem {
-        let showingSearchResults = (self.collectionController?.isShowingSearchResults ?? false)
+        let showingSearchResults = (collectionController?.isShowingSearchResults ?? false)
         let action = #selector(ConversationViewController.onCollectionButtonPressed(_:))
 
         let button = IconButton()

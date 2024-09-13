@@ -45,13 +45,13 @@ extension AssetCollectionMulticastDelegate: AssetCollectionDelegate {
         messages: [CategoryMatch: [ZMConversationMessage]],
         hasMore: Bool
     ) {
-        self.call {
+        call {
             $0.assetCollectionDidFetch(collection: collection, messages: messages, hasMore: hasMore)
         }
     }
 
     func assetCollectionDidFinishFetching(collection: ZMCollection, result: AssetFetchResult) {
-        self.call {
+        call {
             $0.assetCollectionDidFinishFetching(collection: collection, result: result)
         }
     }

@@ -138,7 +138,7 @@ extension Date {
             dateString =
                 "\(WRDateFormatter.thisWeekFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
         } else {
-            let dateFormatter = self.olderThanOneWeekdateFormatter
+            let dateFormatter = olderThanOneWeekdateFormatter
             dateString = "\(dateFormatter.string(from: self)) \(WRDateFormatter.clockTimeFormatter.string(from: self))"
         }
 

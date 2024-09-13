@@ -22,13 +22,13 @@ extension ZMAuthenticationStatus: NotificationContext {}
 
 extension ZMAuthenticationStatus: ZMCredentialProvider {
     public func credentialsMayBeCleared() {
-        if self.currentPhase == ZMAuthenticationPhase.authenticated {
-            self.resetLoginAndRegistrationStatus()
+        if currentPhase == ZMAuthenticationPhase.authenticated {
+            resetLoginAndRegistrationStatus()
         }
     }
 
     public func emailCredentials() -> UserEmailCredentials? {
-        guard let loginCredentials = self.loginCredentials, loginCredentials.credentialWithEmail else {
+        guard let loginCredentials, loginCredentials.credentialWithEmail else {
             return nil
         }
         return UserEmailCredentials.credentials(

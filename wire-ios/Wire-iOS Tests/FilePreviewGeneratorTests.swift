@@ -31,13 +31,13 @@ final class FilePreviewGeneratorTests: XCTestCase {
             thumbnailSize: CGSize(width: 100, height: 100)
         )
         // when
-        let expectation = self.expectation(description: "Finished generating the preview")
+        let expectation = expectation(description: "Finished generating the preview")
         sut.generatePreview(URL(fileURLWithPath: pdfPath), UTI: kUTTypePDF as String) { image in
             XCTAssertNil(image)
             expectation.fulfill()
         }
         // then
-        self.waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 
     func testThatItDoesNotBreakOnHugePDF() {
@@ -48,12 +48,12 @@ final class FilePreviewGeneratorTests: XCTestCase {
             thumbnailSize: CGSize(width: 100, height: 100)
         )
         // when
-        let expectation = self.expectation(description: "Finished generating the preview")
+        let expectation = expectation(description: "Finished generating the preview")
         sut.generatePreview(URL(fileURLWithPath: pdfPath), UTI: kUTTypePDF as String) { image in
             XCTAssertNil(image)
             expectation.fulfill()
         }
         // then
-        self.waitForExpectations(timeout: 2, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
     }
 }

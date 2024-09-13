@@ -89,7 +89,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatNeedsProcessingIsNeededForGIFs() {
         // given
-        let gifAsset = self.gifAsset()
+        let gifAsset = gifAsset()
 
         // then
         XCTAssert(gifAsset.needsPreprocessing)
@@ -97,9 +97,9 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatNeedsProcessingIsOnlyNeededForImageTypes() {
         // given
-        let fileAsset = self.fileAsset()
-        let imageAsset = self.imageAsset()
-        let thumbnailAsset = self.thumbnailAsset()
+        let fileAsset = fileAsset()
+        let imageAsset = imageAsset()
+        let thumbnailAsset = thumbnailAsset()
 
         // then
         XCTAssertFalse(fileAsset.needsPreprocessing)
@@ -109,7 +109,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatUpdateWithPreprocessedDataStoresThePreprocessedData() {
         // given
-        let sut = self.imageAsset()
+        let sut = imageAsset()
 
         // when
         sut.updateWithPreprocessedData(
@@ -130,7 +130,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatEncryptStoresTheEncryptedFile() {
         // given
-        let sut = self.fileAsset()
+        let sut = fileAsset()
 
         // when
         sut.encrypt()
@@ -142,7 +142,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatEncryptStoresTheEncryptedImage() {
         // given
-        let sut = self.imageAsset()
+        let sut = imageAsset()
         sut.updateWithPreprocessedData(
             verySmallJPEGData(),
             imageProperties: ZMIImageProperties(
@@ -183,7 +183,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatEncryptFailsWhenTheImageHasNotBeenPreprocessed() {
         // given
-        let sut = self.imageAsset()
+        let sut = imageAsset()
 
         // when
         sut.encrypt()
@@ -195,7 +195,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
     func testThatEncryptStoresTheEncryptedThumbnail() {
         // given
-        let sut = self.thumbnailAsset()
+        let sut = thumbnailAsset()
         sut.updateWithPreprocessedData(
             verySmallJPEGData(),
             imageProperties: ZMIImageProperties(

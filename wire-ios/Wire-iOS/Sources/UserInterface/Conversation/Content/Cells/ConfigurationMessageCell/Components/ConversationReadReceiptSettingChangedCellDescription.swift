@@ -108,12 +108,12 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
             sender: sender
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: viewModel.image(),
             attributedText: viewModel.attributedTitle(),
             showLine: true
         )
-        accessibilityLabel = viewModel.attributedTitle()?.string
-        actionController = nil
+        self.accessibilityLabel = viewModel.attributedTitle()?.string
+        self.actionController = nil
     }
 }

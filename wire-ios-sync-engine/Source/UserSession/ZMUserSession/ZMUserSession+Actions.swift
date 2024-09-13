@@ -119,8 +119,8 @@ extension ZMUserSession {
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let self else { return }
 
-            self.messageReplyObserver = nil
-            self.syncManagedObjectContext.performGroupedBlock {
+            messageReplyObserver = nil
+            syncManagedObjectContext.performGroupedBlock {
                 let conversationOnSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 if result == .failed {
                     Logging.push.safePublic("failed to reply via push notification action")
@@ -157,7 +157,7 @@ extension ZMUserSession {
         guard
             let originalMessage = userInfo.message(
                 in: conversation,
-                managedObjectContext: self.managedObjectContext
+                managedObjectContext: managedObjectContext
             ) as? ZMClientMessage,
             originalMessage.needsReadConfirmation
         else {
@@ -179,20 +179,20 @@ extension ZMUserSession {
             let conversationId = conversation.avsIdentifier,
             let callState = conversation.voiceChannel?.state,
             case .incoming = callState,
-            let callCenter = self.callCenter,
+            let callCenter,
             callCenter.activeCallConversations(in: self).isEmpty
         else { return }
 
         let type: ConversationMediaAction = callCenter
             .isVideoCall(conversationId: conversationId) ? .videoCall : .audioCall
 
-        self.syncManagedObjectContext.performGroupedBlock { [weak self] in
+        syncManagedObjectContext.performGroupedBlock { [weak self] in
             guard
                 let self,
-                let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
+                let conversationInSyncContext = userInfo.conversation(in: syncManagedObjectContext)
             else { return }
 
-            self.syncManagedObjectContext.analytics?.tagActionOnPushNotification(
+            syncManagedObjectContext.analytics?.tagActionOnPushNotification(
                 conversation: conversationInSyncContext,
                 action: type
             )
@@ -213,7 +213,7 @@ extension ZMUserSession {
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let self else { return }
 
-            self.likeMesssageObserver = nil
+            likeMesssageObserver = nil
             if result == .failed {
                 Logging.push.safePublic("failed to like message via push notification action")
             }

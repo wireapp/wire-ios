@@ -82,7 +82,7 @@ protocol SettingsProperty {
 
 extension SettingsProperty {
     func rawValue() -> Any? {
-        self.value().value()
+        value().value()
     }
 }
 
@@ -119,16 +119,16 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
     var enabled = true
 
     func set(newValue: SettingsPropertyValue) throws {
-        self.userDefaults.set(newValue.value(), forKey: self.userDefaultsKey)
+        userDefaults.set(newValue.value(), forKey: userDefaultsKey)
         NotificationCenter.default.post(
-            name: Notification.Name(rawValue: self.propertyName.changeNotificationName),
+            name: Notification.Name(rawValue: propertyName.changeNotificationName),
             object: self
         )
-        self.trackNewValue()
+        trackNewValue()
     }
 
     func value() -> SettingsPropertyValue {
-        switch self.userDefaults.object(forKey: self.userDefaultsKey) as AnyObject? {
+        switch userDefaults.object(forKey: userDefaultsKey) as AnyObject? {
         case let numberValue as NSNumber:
             SettingsPropertyValue.propertyValue(numberValue.intValue as AnyObject?)
         case let stringValue as String:
@@ -139,7 +139,7 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
     }
 
     func trackNewValue() {
-        Analytics.shared.tagSettingsChanged(for: self.propertyName, to: self.value())
+        Analytics.shared.tagSettingsChanged(for: propertyName, to: value())
     }
 
     let propertyName: SettingsPropertyName
@@ -163,7 +163,7 @@ final class SettingsBlockProperty: SettingsProperty {
 
     let propertyName: SettingsPropertyName
     func value() -> SettingsPropertyValue {
-        self.getAction(self)
+        getAction(self)
     }
 
     func set(newValue: SettingsPropertyValue) throws {
@@ -176,7 +176,7 @@ final class SettingsBlockProperty: SettingsProperty {
     }
 
     func trackNewValue() {
-        Analytics.shared.tagSettingsChanged(for: self.propertyName, to: self.value())
+        Analytics.shared.tagSettingsChanged(for: propertyName, to: value())
     }
 
     private let getAction: GetAction

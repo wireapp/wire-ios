@@ -74,7 +74,7 @@ public enum URLAction: Equatable {
 
 extension URLComponents {
     func query(for key: String) -> String? {
-        self.queryItems?.first(where: { $0.name == key })?.value
+        queryItems?.first(where: { $0.name == key })?.value
     }
 }
 

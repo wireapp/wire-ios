@@ -33,8 +33,8 @@ public struct ServiceUserData: Equatable {
 
 extension ServiceUser {
     var serviceUserData: ServiceUserData? {
-        guard let providerIdentifier = self.providerIdentifier,
-              let serviceIdentifier = self.serviceIdentifier,
+        guard let providerIdentifier,
+              let serviceIdentifier,
               let provider = UUID(uuidString: providerIdentifier),
               let service = UUID(uuidString: serviceIdentifier)
         else {
@@ -119,8 +119,8 @@ extension ServiceUserData {
         let path = "/conversations/\(remoteIdentifier.transportString())/bots"
 
         let payload: NSDictionary = [
-            "provider": self.provider.transportString(),
-            "service": self.service.transportString(),
+            "provider": provider.transportString(),
+            "service": service.transportString(),
             "locale": NSLocale.formattedLocaleIdentifier()!,
         ]
 
@@ -145,7 +145,7 @@ extension ServiceUserData {
 
 extension ServiceUser {
     public func fetchProvider(in userSession: ZMUserSession, completion: @escaping (ServiceProvider?) -> Void) {
-        guard let serviceUserData = self.serviceUserData else {
+        guard let serviceUserData else {
             fatal("Not a service user")
         }
 
@@ -172,7 +172,7 @@ extension ServiceUser {
     }
 
     public func fetchDetails(in userSession: ZMUserSession, completion: @escaping (ServiceDetails?) -> Void) {
-        guard let serviceUserData = self.serviceUserData else {
+        guard let serviceUserData else {
             fatal("Not a service user")
         }
 

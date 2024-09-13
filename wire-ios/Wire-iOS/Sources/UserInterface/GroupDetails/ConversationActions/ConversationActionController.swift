@@ -88,19 +88,19 @@ final class ConversationActionController {
             requestDeleteGroupResult { result in
                 self.handleDeleteGroupResult(result, conversation: conversation, in: userSession)
             }
-        case let .archive(isArchived: isArchived): self.transitionToListAndEnqueue {
+        case let .archive(isArchived: isArchived): transitionToListAndEnqueue {
                 conversation.isArchived = !isArchived
             }
-        case .markRead: self.enqueue {
+        case .markRead: enqueue {
                 conversation.markAsRead()
             }
-        case .markUnread: self.enqueue {
+        case .markUnread: enqueue {
                 conversation.markAsUnread()
             }
-        case .configureNotifications: self.requestNotificationResult(for: conversation) { result in
+        case .configureNotifications: requestNotificationResult(for: conversation) { result in
                 self.handleNotificationResult(result, for: conversation)
             }
-        case let .silence(isSilenced: isSilenced): self.enqueue {
+        case let .silence(isSilenced: isSilenced): enqueue {
                 conversation.mutedMessageTypes = isSilenced ? .none : .all
             }
         case .leave:
@@ -113,14 +113,14 @@ final class ConversationActionController {
             }
         case .cancelRequest:
             guard let user = conversation.connectedUser else { return }
-            self.requestCancelConnectionRequestResult(for: user) { result in
+            requestCancelConnectionRequestResult(for: user) { result in
                 self.handleConnectionRequestResult(result, for: conversation)
             }
-        case .block: self.requestBlockResult(for: conversation) { result in
+        case .block: requestBlockResult(for: conversation) { result in
                 self.handleBlockResult(result, for: conversation)
             }
         case .moveToFolder:
-            self.openMoveToFolder(for: conversation)
+            openMoveToFolder(for: conversation)
         case .removeFromFolder:
             enqueue {
                 conversation.removeFromFolder()
@@ -138,7 +138,7 @@ final class ConversationActionController {
     private func alertAction(for action: ZMConversation.Action) -> UIAlertAction {
         action.alertAction { [weak self] in
             guard let self else { return }
-            self.handleAction(action)
+            handleAction(action)
         }
     }
 

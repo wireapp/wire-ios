@@ -73,11 +73,11 @@ final class TypingStrategyTests: MessagingTest {
         originalTimeout = MockTyping.defaultTimeout
         MockTyping.defaultTimeout = 3.0
 
-        self.typing = MockTyping(uiContext: uiMOC, syncContext: syncMOC)
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
+        typing = MockTyping(uiContext: uiMOC, syncContext: syncMOC)
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
 
-        self.sut = TypingStrategy(
+        sut = TypingStrategy(
             applicationStatus: mockApplicationStatus,
             syncContext: syncMOC,
             uiContext: uiMOC,
@@ -94,13 +94,13 @@ final class TypingStrategyTests: MessagingTest {
     }
 
     override func tearDown() {
-        self.conversationA = nil
-        self.userA = nil
+        conversationA = nil
+        userA = nil
 
-        self.sut.tearDown()
+        sut.tearDown()
         XCTAssertTrue(typing.didTearDown)
-        self.typing = nil
-        self.sut = nil
+        typing = nil
+        sut = nil
 
         MockTyping.defaultTimeout = originalTimeout
         super.tearDown()
@@ -311,7 +311,7 @@ final class TypingStrategyTests: MessagingTest {
     }
 
     func tryToForwardOTRMessageWithoutReply(with message: GenericMessage) {
-        let payload = self.payloadForOTRMessageAdd(with: message) as ZMTransportData
+        let payload = payloadForOTRMessageAdd(with: message) as ZMTransportData
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
         syncMOC.performAndWait {
             simulateTyping()
@@ -601,10 +601,10 @@ final class TypingStrategyTests: MessagingTest {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
+        let expectation = customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(
             name: ZMConversation.clearTypingNotificationName,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             using: { note in
                 XCTAssertEqual(note.object as? ZMConversation, conversation)
                 expectation.fulfill()
@@ -742,17 +742,17 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
+        let expectation = customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(
             name: ZMConversation.typingChangeNotificationName,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             using: { _ in
                 expectation.fulfill()
             }
         )
         _ = NotificationInContext.addObserver(
             name: ZMConversation.typingNotificationName,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             using: { _ in
                 assertionFailure()
             }
@@ -772,17 +772,17 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
+        let expectation = customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(
             name: ZMConversation.typingNotificationName,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             using: { _ in
                 expectation.fulfill()
             }
         )
         _ = NotificationInContext.addObserver(
             name: ZMConversation.typingChangeNotificationName,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             using: { _ in
                 assertionFailure()
             }
@@ -803,10 +803,10 @@ extension TypingStrategyTests {
         let conversation = insertUIConversation()
 
         // expect
-        let expectation = self.customExpectation(description: "Notified")
+        let expectation = customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(
             name: ZMConversation.clearTypingNotificationName,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             using: { _ in
                 expectation.fulfill()
             }
@@ -832,7 +832,7 @@ class TypingEventTests: MessagingTest {
     }
 
     override func tearDown() {
-        MockTyping.defaultTimeout = self.originalTimeout
+        MockTyping.defaultTimeout = originalTimeout
         super.tearDown()
     }
 

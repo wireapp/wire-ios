@@ -35,7 +35,7 @@ class ZMLocalNotificationTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID.create()
         sender = insertUser(with: UUID.create(), name: "Super User")
         otherUser1 = insertUser(with: UUID.create(), name: "Other User1")
@@ -101,7 +101,7 @@ class ZMLocalNotificationTests: MessagingTest {
 
     func insertUser(with remoteID: UUID, name: String?) -> ZMUser {
         var user: ZMUser!
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             user = ZMUser.insertNewObject(in: self.uiMOC)
             user.name = name
             user.remoteIdentifier = remoteID
@@ -118,7 +118,7 @@ class ZMLocalNotificationTests: MessagingTest {
         otherParticipants: [ZMUser]
     ) -> ZMConversation {
         var conversation: ZMConversation!
-        conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = remoteID
         conversation.userDefinedName = name
         conversation.conversationType = type
@@ -129,7 +129,7 @@ class ZMLocalNotificationTests: MessagingTest {
             users: Set(otherParticipants + [selfUser]),
             role: nil
         )
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         return conversation
     }
 

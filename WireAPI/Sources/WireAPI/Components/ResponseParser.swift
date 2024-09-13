@@ -36,7 +36,7 @@ struct ResponseParser<Success> {
 
     init(decoder: JSONDecoder = .init()) {
         self.decoder = decoder
-        parseBlocks = []
+        self.parseBlocks = []
     }
 
     /// Success with output data

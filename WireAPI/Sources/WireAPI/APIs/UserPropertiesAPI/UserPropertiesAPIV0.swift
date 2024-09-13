@@ -138,7 +138,7 @@ struct LabelsResponseV0: UserPropertiesResponseAPIV0 {
             )
         }
 
-        value = .conversationLabels(conversationLabels)
+        self.value = .conversationLabels(conversationLabels)
     }
 }
 

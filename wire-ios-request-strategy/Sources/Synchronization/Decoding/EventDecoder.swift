@@ -219,21 +219,20 @@ extension EventDecoder {
     ) async -> [ZMUpdateEvent] {
         switch event.type {
         case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-            let proteusEvent = await self
-                .decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                    try await proteusService.decrypt(
-                        data: encryptedData,
-                        forSession: sessionID
-                    )
-                }
+            let proteusEvent = await decryptProteusEventAndAddClient(event, in: syncMOC) { sessionID, encryptedData in
+                try await proteusService.decrypt(
+                    data: encryptedData,
+                    forSession: sessionID
+                )
+            }
             return proteusEvent.map { [$0] } ?? []
 
         case .conversationMLSWelcome:
-            await self.processWelcomeMessage(from: event, context: self.syncMOC)
+            await processWelcomeMessage(from: event, context: syncMOC)
             return [event]
 
         case .conversationMLSMessageAdd:
-            return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+            return await decryptMlsMessage(from: event, context: syncMOC)
 
         default:
             return [event]
@@ -254,23 +253,25 @@ extension EventDecoder {
             for event in events {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                    let proteusEvent = await self
-                        .decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
-                            try sessionsDirectory.decryptData(
-                                encryptedData,
-                                for: sessionID.mapToEncryptionSessionID()
-                            )
-                        }
+                    let proteusEvent = await decryptProteusEventAndAddClient(
+                        event,
+                        in: syncMOC
+                    ) { sessionID, encryptedData in
+                        try sessionsDirectory.decryptData(
+                            encryptedData,
+                            for: sessionID.mapToEncryptionSessionID()
+                        )
+                    }
                     if let proteusEvent {
                         decryptedEvents.append(proteusEvent)
                     }
 
                 case .conversationMLSWelcome:
-                    await self.processWelcomeMessage(from: event, context: self.syncMOC)
+                    await processWelcomeMessage(from: event, context: syncMOC)
                     decryptedEvents.append(event)
 
                 case .conversationMLSMessageAdd:
-                    let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    let events = await decryptMlsMessage(from: event, context: syncMOC)
                     decryptedEvents.append(contentsOf: events)
 
                 default:
@@ -313,7 +314,7 @@ extension EventDecoder {
         }
 
         do {
-            try self.eventMOC.save()
+            try eventMOC.save()
         } catch {
             WireLogger.updateEvent.critical("Failed to save stored update events: \(error.localizedDescription)")
         }

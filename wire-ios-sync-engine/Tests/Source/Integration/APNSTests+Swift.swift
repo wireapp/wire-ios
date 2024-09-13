@@ -47,7 +47,7 @@ class APNSTests_Swift: APNSTestsBase {
         application?.setBackground()
         application?.simulateApplicationDidEnterBackground()
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-        XCTAssertEqual(self.application?.applicationIconBadgeNumber, 0)
+        XCTAssertEqual(application?.applicationIconBadgeNumber, 0)
 
         // WHEN
         guard let userSession else {
@@ -62,7 +62,7 @@ class APNSTests_Swift: APNSTestsBase {
         wait(for: [exp], timeout: 5)
 
         // THEN
-        XCTAssertEqual(self.application?.applicationIconBadgeNumber, 1)
+        XCTAssertEqual(application?.applicationIconBadgeNumber, 1)
 
         // CLEANUP
         application?.setActive()

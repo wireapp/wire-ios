@@ -22,7 +22,7 @@ import XCTest
 
 class ZMConversationAccessModeTests: ZMConversationTestsBase {
     func conversation() -> ZMConversation {
-        ZMConversation.insertNewObject(in: self.uiMOC)
+        ZMConversation.insertNewObject(in: uiMOC)
     }
 
     var sut: ZMConversation!
@@ -30,7 +30,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
 
     override func setUp() {
         super.setUp()
-        team = Team.insertNewObject(in: self.uiMOC)
+        team = Team.insertNewObject(in: uiMOC)
         sut = conversation()
     }
 
@@ -139,7 +139,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         // given
         sut.accessModeStrings = ["invite"]
         // when
-        XCTAssertTrue(self.uiMOC.saveOrRollback())
+        XCTAssertTrue(uiMOC.saveOrRollback())
         // then
         XCTAssertFalse(sut.keysThatHaveLocalModifications.contains("accessModeStrings"))
     }
@@ -148,7 +148,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         // given
         sut.accessRoleStringsV2 = ["guest"]
         // when
-        XCTAssertTrue(self.uiMOC.saveOrRollback())
+        XCTAssertTrue(uiMOC.saveOrRollback())
         // then
         XCTAssertFalse(sut.keysThatHaveLocalModifications.contains("accessRoleStringsV2"))
     }
@@ -229,7 +229,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     func testThatTheConversationIsInsertedWithCorrectAccessModeAccessRole_Default_WithTeam() {
         // when
         let conversation = ZMConversation.insertGroupConversation(
-            moc: self.uiMOC,
+            moc: uiMOC,
             participants: [],
             name: "Test Conversation",
             team: team
@@ -242,7 +242,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     func testThatTheConversationIsInsertedWithCorrectAccessModeAccessRole_Default_NoTeam() {
         // when
         let conversation = ZMConversation.insertGroupConversation(
-            moc: self.uiMOC,
+            moc: uiMOC,
             participants: [],
             name: "Test Conversation",
             team: nil
@@ -293,7 +293,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     ) {
         // WHEN
         let conversation = ZMConversation.insertGroupConversation(
-            moc: self.uiMOC,
+            moc: uiMOC,
             participants: [],
             name: "Test Conversation",
             team: team,

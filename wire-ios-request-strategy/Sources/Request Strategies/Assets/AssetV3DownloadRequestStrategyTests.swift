@@ -61,7 +61,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             applicationStatus: mockApplicationStatus
         )
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.user = self.createUser(alsoCreateClient: true)
             self.conversation = self.createGroupConversation(with: self.user)
         }
@@ -313,7 +313,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesNoRequestsIfMessageIsUploading_V3() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else {
                 return XCTFail("Failed to create message")
@@ -324,7 +324,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -340,7 +340,7 @@ extension AssetV3DownloadRequestStrategyTests {
         let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
 
         var message: ZMMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let sha = encryptedData.zmSHA256Digest()
             let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!
             msg.requestFileDownload()
@@ -348,7 +348,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             let response = ZMTransportResponse(
                 imageData: encryptedData,
@@ -363,7 +363,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(message.fileMessageData?.downloadState, .downloaded)
         }
@@ -463,12 +463,12 @@ extension AssetV3DownloadRequestStrategyTests {
     func testThatItMarksDownloadAsFailedIfCannotDownload_CannotDecrypt_V3() {
         // GIVEN
         var message: ZMMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             message = msg
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
         performIgnoringZMLogError {
@@ -496,7 +496,7 @@ extension AssetV3DownloadRequestStrategyTests {
         let expectedProgress: Float = 0.5
 
         // GIVEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             message = msg
@@ -504,7 +504,7 @@ extension AssetV3DownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             XCTAssertEqual(message.fileMessageData?.progress, 0)
             request?.updateProgress(expectedProgress)
@@ -512,7 +512,7 @@ extension AssetV3DownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(message.fileMessageData?.progress, expectedProgress)
         }
     }
@@ -525,7 +525,7 @@ extension AssetV3DownloadRequestStrategyTests {
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             message = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!.message
             message.requestFileDownload()
         }
@@ -533,10 +533,10 @@ extension AssetV3DownloadRequestStrategyTests {
 
         // EXPECT
         var token: Any?
-        let expectation = self.customExpectation(description: "Notification fired")
+        let expectation = customExpectation(description: "Notification fired")
         token = NotificationInContext.addObserver(
             name: .NonCoreDataChangeInManagedObject,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: nil
         ) { note in
 
@@ -545,7 +545,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
             else { return XCTFail("Did not create expected request") }
             request.markStartOfUploadTimestamp()
@@ -567,14 +567,14 @@ extension AssetV3DownloadRequestStrategyTests {
     }
 
     func testThatItRecategorizeMessageAfterDownloadingAssetContent() throws {
-        let plainTextData = self.verySmallJPEGData()
+        let plainTextData = verySmallJPEGData()
         let key = Data.randomEncryptionKey()
         let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let messageId = UUID.create()
 
         var message: ZMAssetClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             var asset = WireProtos.Asset()
             var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
@@ -623,7 +623,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             for tracker in self.sut.contextChangeTrackers {
                 tracker.objectsDidChange([message])
             }
@@ -643,7 +643,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(message.category, [.image])
         }
@@ -665,7 +665,7 @@ extension AssetV3DownloadRequestStrategyTests {
         let messageId = UUID.create()
 
         var message: ZMAssetClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             var asset = WireProtos.Asset()
             var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
@@ -714,7 +714,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let request = self.sut.nextRequest(for: self.apiVersion)
             request?.markStartOfUploadTimestamp()
             let response = ZMTransportResponse(
@@ -730,7 +730,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN
             XCTAssertEqual(message.category, [.file])
         }
@@ -746,14 +746,14 @@ extension AssetV3DownloadRequestStrategyTests {
         var identifier: ZMTaskIdentifier?
 
         // GIVEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let (msg, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
             msg.requestFileDownload()
             message = msg
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             //  task has been created
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request created") }
 
@@ -762,18 +762,18 @@ extension AssetV3DownloadRequestStrategyTests {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             identifier = message.associatedTaskIdentifier
         }
         XCTAssertNotNil(identifier)
 
         // WHEN the transfer is cancelled
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             message.fileMessageData?.cancelTransfer()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // THEN the cancellation provider should be informed to cancel the request
             XCTAssertEqual(self.mockApplicationStatus.cancelledIdentifiers.count, 1)
             let cancelledIdentifier = self.mockApplicationStatus.cancelledIdentifiers.first

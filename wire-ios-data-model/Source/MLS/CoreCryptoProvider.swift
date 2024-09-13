@@ -287,7 +287,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         WireLogger.proteus.info("preparing for cryptobox migration...")
 
         do {
-            try await self.cryptoboxMigrationManager.performMigration(
+            try await cryptoboxMigrationManager.performMigration(
                 accountDirectory: accountDirectory,
                 coreCrypto: coreCrypto
             )

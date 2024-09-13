@@ -187,7 +187,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -218,7 +218,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {
@@ -249,7 +249,7 @@ final class FeatureConfigRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {

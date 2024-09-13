@@ -424,37 +424,37 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
         syncManagedObjectContext.performGroupedAndWait { [self] in
-            self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
-            self.configureTransportSession()
+            localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
+            configureTransportSession()
 
             // need to be before we create strategies since it is passed
-            self.proteusProvider = ProteusProvider(
-                proteusService: self.proteusService,
-                keyStore: self.syncManagedObjectContext.zm_cryptKeyStore
+            proteusProvider = ProteusProvider(
+                proteusService: proteusService,
+                keyStore: syncManagedObjectContext.zm_cryptKeyStore
             )
 
-            self.strategyDirectory = strategyDirectory ?? self
-                .createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
-            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
-            self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
-            self.operationLoop = operationLoop ?? self
-                .createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
-            self.urlActionProcessors = self.createURLActionProcessors()
-            self.callStateObserver = CallStateObserver(
-                localNotificationDispatcher: self.localNotificationDispatcher!,
+            self
+                .strategyDirectory = strategyDirectory ??
+                createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            updateEventProcessor = eventProcessor ?? createUpdateEventProcessor()
+            self.syncStrategy = syncStrategy ?? createSyncStrategy()
+            self.operationLoop = operationLoop ?? createOperationLoop(isDeveloperModeEnabled: isDeveloperModeEnabled)
+            urlActionProcessors = createURLActionProcessors()
+            callStateObserver = CallStateObserver(
+                localNotificationDispatcher: localNotificationDispatcher!,
                 contextProvider: self,
                 callNotificationStyleProvider: self
             )
 
             // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
-            self.syncManagedObjectContext.proteusService = self.proteusService
-            self.syncManagedObjectContext.mlsService = self.mlsService
+            syncManagedObjectContext.proteusService = proteusService
+            syncManagedObjectContext.mlsService = mlsService
 
             applicationStatusDirectory.clientRegistrationStatus.prepareForClientRegistration()
-            self.applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
-            self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
-            self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
-            self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
+            applicationStatusDirectory.syncStatus.determineInitialSyncPhase()
+            applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
+            applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
+            hasCompletedInitialSync = applicationStatusDirectory.syncStatus.isSlowSyncing == false
         }
 
         setupMLSGroupVerification()
@@ -532,7 +532,7 @@ public final class ZMUserSession: NSObject {
             useLegacyPushNotifications: useLegacyPushNotifications,
             lastEventIDRepository: lastEventIDRepository,
             transportSession: transportSession,
-            proteusProvider: self.proteusProvider,
+            proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
             searchUsersCache: dependencies.caches.searchUsers
@@ -627,12 +627,12 @@ public final class ZMUserSession: NSObject {
     /// Count number of conversations with unread messages and update the application icon badge count.
     private func calculateBadgeCount() {
         let accountID = coreDataStack.account.userIdentifier
-        let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
+        let unreadCount = Int(ZMConversation.unreadConversationCount(in: syncManagedObjectContext))
         Logging.push
             .safePublic(
                 "Updating badge count for \(accountID) to \(SanitizedString(stringLiteral: String(unreadCount)))"
             )
-        self.sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
+        sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
     }
 
     private func registerForBackgroundNotifications() {
@@ -660,7 +660,7 @@ public final class ZMUserSession: NSObject {
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
     public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
+        WaitingGroupTask(context: syncContext) {
             try? await self.updateEventProcessor?.processEvents(events)
         }
     }
@@ -668,12 +668,12 @@ public final class ZMUserSession: NSObject {
     // temporary function to simplify call to ConversationEventProcessor
     // might be replaced by something more elegant
     public func processConversationEvents(_ events: [ZMUpdateEvent], completion: (() -> Void)?) {
-        WaitingGroupTask(context: self.syncContext) { [weak self] in
+        WaitingGroupTask(context: syncContext) { [weak self] in
             guard let self else {
                 completion?()
                 return
             }
-            await self.conversationEventProcessor.processAndSaveConversationEvents(events)
+            await conversationEventProcessor.processAndSaveConversationEvents(events)
             completion?()
         }
     }
@@ -826,8 +826,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
 
-            self.hasCompletedInitialSync = true
-            self.notificationDispatcher.isEnabled = true
+            hasCompletedInitialSync = true
+            notificationDispatcher.isEnabled = true
             delegate?.clientCompletedInitialSync(accountId: account.userIdentifier)
 
             NotificationInContext(
@@ -939,7 +939,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.updateNetworkState()
         }
 
-        let groups = self.syncContext.enterAllGroupsExceptSecondary()
+        let groups = syncContext.enterAllGroupsExceptSecondary()
         Task {
             var processingInterrupted = false
             do {

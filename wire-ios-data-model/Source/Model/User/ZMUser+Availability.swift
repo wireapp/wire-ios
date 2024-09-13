@@ -109,9 +109,9 @@ extension ZMUser {
 
     @objc public var availability: Availability {
         get {
-            self.willAccessValue(forKey: AvailabilityKey)
-            let value = (self.primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
-            self.didAccessValue(forKey: AvailabilityKey)
+            willAccessValue(forKey: AvailabilityKey)
+            let value = (primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
+            didAccessValue(forKey: AvailabilityKey)
 
             return .init(rawValue: value.intValue) ?? .none
         }
@@ -124,9 +124,9 @@ extension ZMUser {
     }
 
     public func updateAvailability(_ newValue: Availability) {
-        self.willChangeValue(forKey: AvailabilityKey)
-        self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
-        self.didChangeValue(forKey: AvailabilityKey)
+        willChangeValue(forKey: AvailabilityKey)
+        setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
+        didChangeValue(forKey: AvailabilityKey)
     }
 
     public func updateAvailability(from genericMessage: GenericMessage) {

@@ -36,8 +36,8 @@ public final class StringKeyPath: Hashable {
     }
 
     private init(_ s: String) {
-        rawValue = s
-        count = rawValue.filter {
+        self.rawValue = s
+        self.count = rawValue.filter {
             $0 == "."
         }.count + 1
     }

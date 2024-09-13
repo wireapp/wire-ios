@@ -46,9 +46,9 @@ public final class WireDatadog {
         self.buildNumber = buildNumber
 
         if let identifierForVendor {
-            userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
+            self.userIdentifier = Self.hashedDatadogUserIdentifier(identifierForVendor)
         } else {
-            userIdentifier = "none"
+            self.userIdentifier = "none"
         }
 
         // set up datadog
@@ -73,7 +73,7 @@ public final class WireDatadog {
             networkInfoEnabled: true,
             remoteLogThreshold: logLevel
         )
-        logger = Logger.create(with: loggerConfiguration)
+        self.logger = Logger.create(with: loggerConfiguration)
     }
 
     public func enable() {

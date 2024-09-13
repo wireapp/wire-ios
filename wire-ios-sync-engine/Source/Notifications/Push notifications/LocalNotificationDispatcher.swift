@@ -91,7 +91,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
 
     public func processEventsWhileInBackground(_ events: [ZMUpdateEvent]) {
         let eventsToForward = events.filter { $0.source.isOne(of: .pushNotification, .webSocket) }
-        self.didReceive(events: eventsToForward, conversationMap: [:])
+        didReceive(events: eventsToForward, conversationMap: [:])
     }
 
     func didReceive(events: [ZMUpdateEvent], conversationMap: [UUID: ZMConversation]) {
@@ -102,7 +102,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
                 conversation = conversationMap[conversationID] ?? ZMConversation.fetch(
                     with: conversationID,
                     domain: event.conversationDomain,
-                    in: self.syncMOC
+                    in: syncMOC
                 )
             }
 
@@ -127,7 +127,7 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
                 }
             }
 
-            let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: self.syncMOC)
+            let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: syncMOC)
 
             note?.increaseEstimatedUnreadCount(on: conversation)
             note.map(eventNotifications.addObject)
@@ -179,15 +179,15 @@ extension LocalNotificationDispatcher: PushMessageHandler {
 extension LocalNotificationDispatcher {
     private var allNotificationSets: [ZMLocalNotificationSet] {
         [
-            self.eventNotifications,
-            self.failedMessageNotifications,
-            self.callingNotifications,
+            eventNotifications,
+            failedMessageNotifications,
+            callingNotifications,
         ]
     }
 
     /// Can be used for cancelling all conversations if need
     public func cancelAllNotifications() {
-        self.allNotificationSets.forEach { $0.cancelAllNotifications() }
+        allNotificationSets.forEach { $0.cancelAllNotifications() }
     }
 
     /// Cancels all notifications for a specific conversation
@@ -195,7 +195,7 @@ extension LocalNotificationDispatcher {
     /// changes and
     /// ZMConversationDidChangeVisibleWindowNotification is called
     public func cancelNotification(for conversation: ZMConversation) {
-        self.allNotificationSets.forEach { $0.cancelNotifications(conversation) }
+        allNotificationSets.forEach { $0.cancelNotifications(conversation) }
     }
 
     func cancelMessageForDeletedMessage(_ genericMessage: GenericMessage) {
@@ -219,7 +219,7 @@ extension LocalNotificationDispatcher {
         guard let conversation = notification.object as? ZMConversation else { return }
         let isUIObject = conversation.managedObjectContext?.zm_isUserInterfaceContext ?? false
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             if isUIObject {
                 // clear all notifications for this conversation
                 if let syncConversation = (

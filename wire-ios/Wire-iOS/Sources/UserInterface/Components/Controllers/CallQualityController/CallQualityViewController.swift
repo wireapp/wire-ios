@@ -85,7 +85,7 @@ final class CallQualityViewController: UIViewController, UIGestureRecognizerDele
     func createViews() {
         typealias QualitySurvey = L10n.Localizable.Calling.QualitySurvey
 
-        self.scoreSelectorView = QualityScoreSelectorView(onScoreSet: { [weak self] score in
+        scoreSelectorView = QualityScoreSelectorView(onScoreSet: { [weak self] score in
             self?.delegate?.callQualityController(self!, didSelect: score)
         })
 

@@ -38,7 +38,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
     // MARK: - Life cycle
 
     init() {
-        allEmojiData = Self.loadAllFromDisk()
+        self.allEmojiData = Self.loadAllFromDisk()
             .filter { Self.isEmojiAvailable($0) }
             .sorted { $0.sortOrder < $1.sortOrder }
     }

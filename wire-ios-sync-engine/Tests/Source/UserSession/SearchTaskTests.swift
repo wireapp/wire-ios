@@ -31,19 +31,19 @@ final class SearchTaskTests: DatabaseTest {
     override func setUp() {
         super.setUp()
 
-        mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
+        mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         mockCache = SearchUsersCache()
         teamIdentifier = UUID()
 
         performPretendingUIMocIsSyncMoc { [unowned self] in
-            let selfUser = ZMUser.selfUser(in: self.uiMOC)
+            let selfUser = ZMUser.selfUser(in: uiMOC)
             selfUser.remoteIdentifier = UUID()
-            selfUser.teamIdentifier = self.teamIdentifier
+            selfUser.teamIdentifier = teamIdentifier
             let team = Team.fetchOrCreate(
-                with: self.teamIdentifier,
-                in: self.uiMOC
+                with: teamIdentifier,
+                in: uiMOC
             )
-            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.uiMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: uiMOC)
             uiMOC.saveOrRollback()
         }
         BackendInfo.apiVersion = .v0
@@ -446,7 +446,7 @@ final class SearchTaskTests: DatabaseTest {
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID()
         conversation.addParticipantsAndUpdateConversationState(
-            users: Set([userA, userB, ZMUser.selfUser(in: self.uiMOC)]),
+            users: Set([userA, userB, ZMUser.selfUser(in: uiMOC)]),
             role: nil
         )
 
@@ -1061,7 +1061,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatItTrimsThePrefixQuery() throws {
         // when
         let task = SearchTask.servicesSearchRequest(
-            teamIdentifier: self.teamIdentifier,
+            teamIdentifier: teamIdentifier,
             query: "Search query ",
             apiVersion: .v0
         )
@@ -1076,7 +1076,7 @@ final class SearchTaskTests: DatabaseTest {
 
     func testThatItDoesNotAddPrefixQueryIfItIsEmpty() {
         // when
-        let task = SearchTask.servicesSearchRequest(teamIdentifier: self.teamIdentifier, query: "", apiVersion: .v0)
+        let task = SearchTask.servicesSearchRequest(teamIdentifier: teamIdentifier, query: "", apiVersion: .v0)
         // then
         let components = URLComponents(url: task.URL, resolvingAgainstBaseURL: false)
 

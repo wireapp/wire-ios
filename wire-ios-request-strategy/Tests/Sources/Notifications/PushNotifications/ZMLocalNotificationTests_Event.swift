@@ -49,8 +49,8 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         if let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil) {
             note = ZMLocalNotification(
                 event: event,
-                conversation: self.oneOnOneConversation,
-                managedObjectContext: self.syncMOC
+                conversation: oneOnOneConversation,
+                managedObjectContext: syncMOC
             )
         }
         return note

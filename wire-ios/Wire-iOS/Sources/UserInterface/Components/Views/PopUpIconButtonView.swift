@@ -38,9 +38,9 @@ class PopUpIconButtonView: UIView {
     init(withButton button: PopUpIconButton) {
         self.button = button
         // button rect in window coordinates
-        lowerRect = button.convert(button.bounds, to: nil).insetBy(dx: -8.0, dy: -8.0)
+        self.lowerRect = button.convert(button.bounds, to: nil).insetBy(dx: -8.0, dy: -8.0)
 
-        itemWidth = lowerRect.width + 2 * largeRadius
+        self.itemWidth = lowerRect.width + 2 * largeRadius
 
         var rect = lowerRect
         rect.size.height = lowerRect.height * 1.5
@@ -49,9 +49,9 @@ class PopUpIconButtonView: UIView {
         // first we test to see if the popup fits onscreen when expanding right,
         // if not we expand left
         if rect.minX - largeRadius + rect.width < UIScreen.main.bounds.maxX {
-            expandDirection = .right
+            self.expandDirection = .right
         } else {
-            expandDirection = .left
+            self.expandDirection = .left
         }
 
         // determine origin
@@ -64,7 +64,7 @@ class PopUpIconButtonView: UIView {
             rect.origin.y -= largeRadius + lowerRect.height * 1.5
         }
 
-        upperRect = rect
+        self.upperRect = rect
 
         super.init(frame: UIScreen.main.bounds)
         setupView()

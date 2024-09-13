@@ -175,7 +175,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItUpdatesSyncStepDuringSync() {
-        self.mockSyncStatus.mockPhase = .fetchingTeamRoles
+        mockSyncStatus.mockPhase = .fetchingTeamRoles
 
         syncMOC.performGroupedAndWait {
             // given
@@ -199,7 +199,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        XCTAssertTrue(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
+        XCTAssertTrue(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 
     func testThatItDoesNotUpdatesSyncStepOutsideOfSync() {
@@ -225,7 +225,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        XCTAssertFalse(self.mockSyncStatus.didCallFinishCurrentSyncPhase)
+        XCTAssertFalse(mockSyncStatus.didCallFinishCurrentSyncPhase)
     }
 
     func testThatItFinishedSyncStepIfNoTeam() {

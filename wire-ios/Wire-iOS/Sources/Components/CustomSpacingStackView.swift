@@ -23,7 +23,7 @@ final class CustomSpacingStackView: UIView {
 
     /// This initializer must be used if you intend to call wr_addCustomSpacing.
     init(customSpacedArrangedSubviews subviews: [UIView]) {
-        stackView = UIStackView(arrangedSubviews: subviews)
+        self.stackView = UIStackView(arrangedSubviews: subviews)
 
         super.init(frame: .zero)
 

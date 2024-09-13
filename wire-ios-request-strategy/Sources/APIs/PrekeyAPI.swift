@@ -141,7 +141,7 @@ extension Collection<QualifiedClientID> {
     var clientListByUserID: Payload.ClientListByUserID {
         let initial: Payload.ClientListByUserID = [:]
 
-        return self.reduce(into: initial) { result, client in
+        return reduce(into: initial) { result, client in
             result[client.userID.transportString(), default: []].append(client.clientID)
         }
     }
@@ -149,7 +149,7 @@ extension Collection<QualifiedClientID> {
     var clientListByDomain: Payload.ClientListByQualifiedUserID {
         let initial: Payload.ClientListByQualifiedUserID = [:]
 
-        return self.reduce(into: initial) { result, client in
+        return reduce(into: initial) { result, client in
             result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []]
                 .append(client.clientID)
         }

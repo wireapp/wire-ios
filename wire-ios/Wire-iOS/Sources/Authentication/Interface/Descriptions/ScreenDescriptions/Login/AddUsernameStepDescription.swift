@@ -38,10 +38,10 @@ final class AddUsernameStepDescription: DefaultValidatingStepDescription {
         )
         textField.acceptInvalidInput = false
 
-        mainView = textField
-        backButton = BackButtonDescription()
-        headline = Username.title
-        subtext = .markdown(from: Username.message, style: .login)
-        initialValidation = .info(HandleChange.footer)
+        self.mainView = textField
+        self.backButton = BackButtonDescription()
+        self.headline = Username.title
+        self.subtext = .markdown(from: Username.message, style: .login)
+        self.initialValidation = .info(HandleChange.footer)
     }
 }

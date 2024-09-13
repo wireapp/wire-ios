@@ -40,7 +40,7 @@ final class LocationPreviewController: UIViewController {
     init(message: ZMConversationMessage, actionResponder: MessageActionResponder) {
         self.message = message
         super.init(nibName: nil, bundle: nil)
-        actionController = ConversationMessageActionController(
+        self.actionController = ConversationMessageActionController(
             responder: actionResponder,
             message: message,
             context: .content,

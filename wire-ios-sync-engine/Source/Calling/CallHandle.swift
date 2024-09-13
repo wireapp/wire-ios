@@ -47,8 +47,8 @@ struct CallHandle: Hashable {
             return nil
         }
 
-        accountID = identifiers[0]
-        conversationID = identifiers[1]
+        self.accountID = identifiers[0]
+        self.conversationID = identifiers[1]
     }
 
     // MARK: - Methods

@@ -22,9 +22,9 @@ import WireDataModel
 extension ZMUser {
     @objc public var loginCredentials: LoginCredentials {
         LoginCredentials(
-            emailAddress: self.emailAddress,
-            hasPassword: self.emailAddress != nil,
-            usesCompanyLogin: self.usesCompanyLogin
+            emailAddress: emailAddress,
+            hasPassword: emailAddress != nil,
+            usesCompanyLogin: usesCompanyLogin
         )
     }
 }

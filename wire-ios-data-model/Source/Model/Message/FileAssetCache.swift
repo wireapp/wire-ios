@@ -23,11 +23,11 @@ private let NSManagedObjectContextFileAssetCacheKey = "zm_fileAssetCache"
 extension NSManagedObjectContext {
     @objc public var zm_fileAssetCache: FileAssetCache! {
         get {
-            self.userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
+            userInfo[NSManagedObjectContextFileAssetCacheKey] as? FileAssetCache
         }
 
         set {
-            self.userInfo[NSManagedObjectContextFileAssetCacheKey] = newValue
+            userInfo[NSManagedObjectContextFileAssetCacheKey] = newValue
         }
     }
 }
@@ -54,8 +54,8 @@ public final class FileAssetCache: NSObject {
 
     public init(location: URL) {
         let tempLocation = location.appendingPathComponent("temp")
-        fileCache = FileCache(location: location)
-        tempCache = FileCache(location: tempLocation)
+        self.fileCache = FileCache(location: location)
+        self.tempCache = FileCache(location: tempLocation)
         super.init()
     }
 
@@ -870,7 +870,7 @@ private struct FileCache: Cache {
     /// - parameter location: where cache is persisted on disk.
 
     init(location: URL) {
-        cacheFolderURL = location
+        self.cacheFolderURL = location
         try! FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
     }
 

@@ -200,7 +200,7 @@ extension ZMLogTests {
         let level = ZMLogLevel.error
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -212,7 +212,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -246,7 +246,7 @@ extension ZMLogTests {
         let level = ZMLogLevel.warn
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -258,7 +258,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).warn(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -293,7 +293,7 @@ extension ZMLogTests {
         let level = ZMLogLevel.debug
         let message = "PANIC!"
 
-        let expectation = self.expectation(description: "Log received")
+        let expectation = expectation(description: "Log received")
         let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
@@ -306,7 +306,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).debug(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token)
@@ -348,8 +348,8 @@ extension ZMLogTests {
         let level = ZMLogLevel.error
         let message = "PANIC!"
 
-        let expectation1 = self.expectation(description: "Log received")
-        let expectation2 = self.expectation(description: "Log received")
+        let expectation1 = expectation(description: "Log received")
+        let expectation2 = expectation(description: "Log received")
 
         let token1 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
@@ -368,7 +368,7 @@ extension ZMLogTests {
         ZMSLog(tag: tag).error(message)
 
         // THEN
-        self.waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 0.5)
 
         // AFTER
         ZMSLog.removeLogHook(token: token1)

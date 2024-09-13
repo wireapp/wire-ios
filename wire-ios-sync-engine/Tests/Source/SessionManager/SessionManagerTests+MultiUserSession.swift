@@ -43,8 +43,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         manager.addOrUpdate(account2)
         // WHEN
         weak var sessionForAccount1Reference: ZMUserSession?
-        let session1LoadedExpectation = self.customExpectation(description: "Session for account 1 loaded")
-        self.sessionManager!.withSession(for: account1, perform: { sessionForAccount1 in
+        let session1LoadedExpectation = customExpectation(description: "Session for account 1 loaded")
+        sessionManager!.withSession(for: account1, perform: { sessionForAccount1 in
             // THEN
             session1LoadedExpectation.fulfill()
             XCTAssertNotNil(sessionForAccount1.managedObjectContext)
@@ -52,8 +52,8 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         })
         // WHEN
         weak var sessionForAccount2Reference: ZMUserSession?
-        let session2LoadedExpectation = self.customExpectation(description: "Session for account 2 loaded")
-        self.sessionManager!.withSession(for: account1, perform: { sessionForAccount2 in
+        let session2LoadedExpectation = customExpectation(description: "Session for account 2 loaded")
+        sessionManager!.withSession(for: account1, perform: { sessionForAccount2 in
             // THEN
             session2LoadedExpectation.fulfill()
             XCTAssertNotNil(sessionForAccount2.managedObjectContext)
@@ -61,7 +61,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         })
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5) { error in
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5) { error in
             XCTAssertNil(error)
             XCTAssertNotNil(sessionForAccount1Reference)
             XCTAssertNotNil(sessionForAccount2Reference)
@@ -72,37 +72,37 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
     func testThatItUnloadsUserSession() {
         // GIVEN
-        let account = self.createAccount()
+        let account = createAccount()
 
         // WHEN
-        let sessionLoadedExpectation = self.customExpectation(description: "Session loaded")
-        self.sessionManager!.withSession(for: account, perform: { session in
+        let sessionLoadedExpectation = customExpectation(description: "Session loaded")
+        sessionManager!.withSession(for: account, perform: { session in
             XCTAssertNotNil(session.managedObjectContext)
             sessionLoadedExpectation.fulfill()
         })
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // THEN
-        XCTAssertNotNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
+        XCTAssertNotNil(sessionManager!.backgroundUserSessions[account.userIdentifier])
 
         // AND WHEN
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
+        XCTAssertNil(sessionManager!.backgroundUserSessions[account.userIdentifier])
     }
 
     func testThatItDoesNotUnloadActiveUserSessionFromMemoryWarning() throws {
         // GIVEN
-        let account = self.createAccount()
-        let sessionManager = try XCTUnwrap(self.sessionManager)
+        let account = createAccount()
+        let sessionManager = try XCTUnwrap(sessionManager)
         sessionManager.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
 
-        let application = try XCTUnwrap(self.application)
+        let application = try XCTUnwrap(application)
 
-        let sessionManagerExpectation = self.expectation(description: "Session manager and session is loaded")
+        let sessionManagerExpectation = expectation(description: "Session manager and session is loaded")
 
         // WHEN
         let testSessionManager = SessionManager(
@@ -127,7 +127,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             application: application,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
-            transportSession: self.mockTransportSession,
+            transportSession: mockTransportSession,
             environment: environment,
             reachability: reachability
         )
@@ -157,12 +157,12 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
     func testThatItUnloadBackgroundUserSessionFromMemoryWarning() {
         // GIVEN
-        let account = self.createAccount()
+        let account = createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 
-        let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
+        let sessionManagerExpectation = customExpectation(description: "Session manager and session is loaded")
 
         // WHEN
         let testSessionManager = SessionManager(
@@ -186,7 +186,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             application: application,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
-            transportSession: self.mockTransportSession,
+            transportSession: mockTransportSession,
             environment: environment,
             reachability: reachability
         )
@@ -200,7 +200,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         }
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
 
@@ -234,16 +234,16 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             session = nil
             XCTAssertNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
         }
-        self.userSession = nil
+        userSession = nil
         XCTAssertNil(weakSession)
     }
 
     func testThatItLoadsAccountForPush() {
         // GIVEN
         let account = Account(userName: "Test Account", userIdentifier: currentUserIdentifier)
-        self.sessionManager?.accountManager.addOrUpdate(account)
+        sessionManager?.accountManager.addOrUpdate(account)
 
-        self.prepareSession(for: account)
+        prepareSession(for: account)
 
         let payload: [AnyHashable: Any] = [
             "data": [
@@ -252,7 +252,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         ]
 
         // WHEN
-        let pushCompleted = self.customExpectation(description: "Push completed")
+        let pushCompleted = customExpectation(description: "Push completed")
         sessionManager?.processIncomingRealVoIPPush(payload: payload, completion: {
             DispatchQueue.main.async {
                 // THEN
@@ -264,15 +264,15 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             }
         })
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItLoadsOnlyOneAccountForPush() {
         // GIVEN
         let account = Account(userName: "Test Account", userIdentifier: currentUserIdentifier)
-        self.sessionManager?.accountManager.addOrUpdate(account)
+        sessionManager?.accountManager.addOrUpdate(account)
 
-        self.prepareSession(for: account)
+        prepareSession(for: account)
 
         let payload: [AnyHashable: Any] = [
             "data": [
@@ -281,9 +281,9 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         ]
 
         // WHEN
-        let pushCompleted1 = self.customExpectation(description: "Push completed 1")
+        let pushCompleted1 = customExpectation(description: "Push completed 1")
         var userSession1: ZMUserSession!
-        let pushCompleted2 = self.customExpectation(description: "Push completed 2")
+        let pushCompleted2 = customExpectation(description: "Push completed 2")
         var userSession2: ZMUserSession!
         sessionManager?.processIncomingRealVoIPPush(payload: payload, completion: {
             pushCompleted1.fulfill()
@@ -294,17 +294,17 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             userSession2 = self.sessionManager!.backgroundUserSessions[account.userIdentifier]
         })
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(userSession1)
         XCTAssertNotNil(userSession2)
         XCTAssertEqual(userSession1, userSession2)
 
         // CLEANUP
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     func setupSession() -> ZMUserSession {
-        let manager = self.sessionManager!.accountManager
+        let manager = sessionManager!.accountManager
         let account = Account(userName: "Test Account", userIdentifier: currentUserIdentifier)
         manager.addOrUpdate(account)
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
@@ -312,19 +312,19 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         var session: ZMUserSession! = nil
 
-        let sessionLoadExpectation = self.customExpectation(description: "Session loaded")
-        self.sessionManager?.withSession(for: account, perform: { createdSession in
+        let sessionLoadExpectation = customExpectation(description: "Session loaded")
+        sessionManager?.withSession(for: account, perform: { createdSession in
             session = createdSession
             sessionLoadExpectation.fulfill()
         })
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         let selfUser = ZMUser.selfUser(in: session.managedObjectContext)
         selfUser.remoteIdentifier = currentUserIdentifier
         session.managedObjectContext.saveOrRollback()
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         _ = createSelfClient(session.managedObjectContext)
 
         session.syncManagedObjectContext.performGroupedBlock {
@@ -336,19 +336,19 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             session.syncManagedObjectContext.saveOrRollback()
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         return session
     }
 
     func testThatItConfiguresNotificationSettingsWhenAccountIsActivated() {
         // GIVEN
-        _ = self.setupSession()
-        let expectation = self.customExpectation(description: "Session loaded")
+        _ = setupSession()
+        let expectation = customExpectation(description: "Session loaded")
         sessionManager?.notificationCenter = notificationCenter!
 
         guard
-            let sessionManager = self.sessionManager,
+            let sessionManager,
             let account = sessionManager.accountManager.account(with: currentUserIdentifier)
         else { return XCTFail() }
 
@@ -359,15 +359,15 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         })
 
         wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 5)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(
-            self.notificationCenter?.registeredNotificationCategories,
+            notificationCenter?.registeredNotificationCategories,
             WireSyncEngine.PushNotificationCategory.allCategories
         )
-        XCTAssertEqual(self.notificationCenter?.requestedAuthorizationOptions, [.alert, .badge, .sound])
-        XCTAssertNotNil(self.notificationCenter?.delegate)
+        XCTAssertEqual(notificationCenter?.requestedAuthorizationOptions, [.alert, .badge, .sound])
+        XCTAssertNotNil(notificationCenter?.delegate)
 
         // CLEANUP
         self.sessionManager!.tearDownAllBackgroundSessions()
@@ -377,7 +377,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         // GIVEN
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: crash at RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
-        let session = self.setupSession()
+        let session = setupSession()
         //        "Must call be called on the main queue.");
         session.isPerformingSync = false
         application?.applicationState = .background
@@ -394,10 +394,10 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         let category = WireSyncEngine.PushNotificationCategory.conversation.rawValue
 
-        XCTAssertNil(self.sessionManager!.activeUserSession)
+        XCTAssertNil(sessionManager!.activeUserSession)
 
         // WHEN
-        self.sessionManager?.handleNotification(with: userInfo) { userSession in
+        sessionManager?.handleNotification(with: userInfo) { userSession in
             userSession.handleNotificationResponse(
                 actionIdentifier: "",
                 categoryIdentifier: category,
@@ -407,18 +407,18 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         }
 
         wait(forConditionToBeTrue: self.sessionManager!.activeUserSession != nil, timeout: 5)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(self.sessionManager!.activeUserSession, session)
+        XCTAssertEqual(sessionManager!.activeUserSession, session)
 
         // CLEANUP
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     func testThatItActivatesTheAccountForPushAction() {
         // GIVEN
-        let session = self.setupSession()
+        let session = setupSession()
         session.isPerformingSync = false
         application?.applicationState = .inactive
 
@@ -434,11 +434,11 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         let category = WireSyncEngine.PushNotificationCategory.conversation.rawValue
 
-        XCTAssertNil(self.sessionManager!.activeUserSession)
+        XCTAssertNil(sessionManager!.activeUserSession)
 
         // WHEN
-        let completionExpectation = self.customExpectation(description: "Completed action")
-        self.sessionManager?.handleNotification(with: userInfo) { userSession in
+        let completionExpectation = customExpectation(description: "Completed action")
+        sessionManager?.handleNotification(with: userInfo) { userSession in
             userSession.handleNotificationResponse(
                 actionIdentifier: "",
                 categoryIdentifier: category,
@@ -447,23 +447,23 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             )
         }
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertEqual(self.sessionManager!.activeUserSession, session)
+        XCTAssertEqual(sessionManager!.activeUserSession, session)
 
         // CLEANUP
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     func testThatItCallsForegroundNotificationResponderMethod() {
         // GIVEN
-        let session = self.setupSession()
+        let session = setupSession()
         session.isPerformingSync = false
 
         let responder = MockForegroundNotificationResponder()
-        self.sessionManager?.foregroundNotificationResponder = responder
+        sessionManager?.foregroundNotificationResponder = responder
 
         let selfConversation = ZMConversation.fetch(
             with: currentUserIdentifier,
@@ -480,22 +480,22 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         XCTAssertTrue(responder.notificationPermissionRequests.isEmpty)
 
         // WHEN
-        let completionExpectation = self.customExpectation(description: "Completed action")
-        self.sessionManager?.handleNotification(with: userInfo) { userSession in
+        let completionExpectation = customExpectation(description: "Completed action")
+        sessionManager?.handleNotification(with: userInfo) { userSession in
             userSession.handleInAppNotification(with: userInfo, categoryIdentifier: category) { _ in
                 completionExpectation.fulfill()
             }
         }
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(responder.notificationPermissionRequests.count, 1)
         XCTAssertEqual(responder.notificationPermissionRequests.first!, selfConversation?.remoteIdentifier)
 
         // CLEANUP
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     func testThatItActivatesAccountWhichReceivesACallInTheBackground() {
@@ -514,19 +514,19 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         sessionManager?.loadSession(for: account1, completion: { session in
             session1 = session
         })
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(sessionManager!.activeUserSession, session1)
 
         // Load session for account 2 in the background
         weak var session2: ZMUserSession?
         weak var conversation: ZMConversation?
         weak var caller: ZMUser?
-        self.sessionManager!.withSession(for: account2, perform: { session in
+        sessionManager!.withSession(for: account2, perform: { session in
             session2 = session
             conversation = ZMConversation.insertNewObject(in: session.managedObjectContext)
             caller = ZMUser.insertNewObject(in: session.managedObjectContext)
         })
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
         sessionManager?.callCenterDidChange(
@@ -536,13 +536,13 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             timestamp: nil,
             previousCallState: nil
         )
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(sessionManager!.activeUserSession, session2)
 
         // CLEANUP
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     // the purpose of this test is to ensure push payloads can be processed in

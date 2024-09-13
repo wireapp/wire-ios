@@ -24,7 +24,7 @@ extension BackendEnvironmentProvider {
     public var reachability: ZMReachability {
         let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
 
-        let serverNames: [String] = if let proxy = self.proxy {
+        let serverNames: [String] = if let proxy {
             [proxy.host]
         } else {
             [backendURL, backendWSURL].compactMap(\.host)

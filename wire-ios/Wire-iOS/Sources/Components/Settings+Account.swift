@@ -21,7 +21,7 @@ import WireSyncEngine
 
 extension Account {
     func userDefaultsKey() -> String {
-        "account_\(self.userIdentifier.transportString())"
+        "account_\(userIdentifier.transportString())"
     }
 }
 
@@ -57,13 +57,13 @@ extension Settings {
     ///   - account: account to set value
     func setValue(_ value: (some Any)?, settingKey: SettingKey, in account: Account) {
         let key = settingKey.rawValue
-        var accountPayload = self.payload(for: account)
+        var accountPayload = payload(for: account)
         accountPayload[key] = value
         defaults.setValue(accountPayload, forKey: account.userDefaultsKey())
     }
 
     func lastViewedConversation(for account: Account) -> ZMConversation? {
-        guard let conversationID: String = self.value(for: .lastViewedConversation, in: account) else {
+        guard let conversationID: String = value(for: .lastViewedConversation, in: account) else {
             return nil
         }
 

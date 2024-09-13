@@ -40,7 +40,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     }
 
     public required init(object: NSObject) {
-        participantRole = object as! ParticipantRole
+        self.participantRole = object as! ParticipantRole
         super.init(object: object)
     }
 

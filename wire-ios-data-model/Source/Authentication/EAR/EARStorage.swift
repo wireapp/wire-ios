@@ -35,7 +35,7 @@ struct EARStorage {
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )

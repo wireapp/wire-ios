@@ -24,7 +24,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         // GIVEN
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(), compositeItemText()))
         guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
-        let conversation = self.conversation(withMessage: message)
+        let conversation = conversation(withMessage: message)
 
         // WHEN
         button.touchAction()
@@ -40,7 +40,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let buttonItem = compositeItemButton()
         let message = compositeMessage(with: compositeProto(items: buttonItem))
         guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
-        let conversation = self.conversation(withMessage: message)
+        let conversation = conversation(withMessage: message)
 
         uiMOC.performAndWait {
             let buttonState = WireDataModel.ButtonState.insert(
@@ -84,7 +84,7 @@ class CompositeMessageItemContentTests: BaseCompositeMessageTests {
         let buttonItem = compositeItemButton(buttonID: id)
         let message = compositeMessage(with: compositeProto(items: buttonItem))
         guard case let .some(.button(button)) = message.items.first else { return XCTFail() }
-        let conversation = self.conversation(withMessage: message, addSender: false)
+        let conversation = conversation(withMessage: message, addSender: false)
 
         // WHEN
         button.touchAction()

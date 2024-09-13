@@ -43,7 +43,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         applicationStatus: ApplicationStatus,
         messageSender: MessageSenderInterface
     ) {
-        insertedObjectSync = InsertedObjectSync(
+        self.insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(context: context)
         )
 
@@ -51,13 +51,13 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         self.messageSender = messageSender
         self.localNotificationDispatcher = localNotificationDispatcher
 
-        messageExpirationTimer = MessageExpirationTimer(
+        self.messageExpirationTimer = MessageExpirationTimer(
             moc: context,
             entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()],
             localNotificationDispatcher: localNotificationDispatcher
         )
 
-        linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(
+        self.linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(
             linkAttachmentDetector: LinkAttachmentDetectorHelper.defaultDetector(),
             managedObjectContext: context
         )
@@ -161,7 +161,7 @@ extension ClientMessageRequestStrategy: ZMEventConsumer {
         prefetchResult: ZMFetchRequestBatchResult?
     ) {
         for event in events {
-            self.insertMessage(from: event, prefetchResult: prefetchResult)
+            insertMessage(from: event, prefetchResult: prefetchResult)
         }
     }
 

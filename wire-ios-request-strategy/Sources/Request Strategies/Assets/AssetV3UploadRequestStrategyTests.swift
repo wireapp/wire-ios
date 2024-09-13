@@ -203,7 +203,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
             request.callTaskCreationHandlers(withIdentifier: expectedIdentifier, sessionIdentifier: self.name)
         }
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             // when
             message.fileMessageData?.cancelTransfer()
             let messageSet: Set<NSManagedObject> = [message]
@@ -211,7 +211,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // then - the cancellation provider should be informed to cancel the request
             let cancelledIdentifier = self.mockApplicationStatus.cancelledIdentifiers.first
             XCTAssertEqual(self.mockApplicationStatus.cancelledIdentifiers.count, 1)

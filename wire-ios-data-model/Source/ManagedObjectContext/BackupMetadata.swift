@@ -34,7 +34,7 @@ public struct BackupMetadata: Codable {
         userIdentifier: UUID,
         clientIdentifier: String
     ) {
-        platform = .iOS
+        self.platform = .iOS
         self.appVersion = appVersion
         self.modelVersion = modelVersion
         self.creationTime = creationTime

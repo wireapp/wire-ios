@@ -57,9 +57,9 @@ final class ConversationImagesViewController: UIViewController {
 
     var currentMessage: ZMConversationMessage {
         didSet {
-            self.updateButtonsForMessage()
-            self.createNavigationTitle()
-            self.updateActionControllerForMessage()
+            updateButtonsForMessage()
+            createNavigationTitle()
+            updateActionControllerForMessage()
         }
     }
 
@@ -71,8 +71,8 @@ final class ConversationImagesViewController: UIViewController {
 
     var swipeToDismiss = false {
         didSet {
-            if let currentController = self.currentController {
-                currentController.swipeToDismiss = self.swipeToDismiss
+            if let currentController {
+                currentController.swipeToDismiss = swipeToDismiss
             }
         }
     }
@@ -82,8 +82,8 @@ final class ConversationImagesViewController: UIViewController {
 
     var dismissAction: DismissAction? = .none {
         didSet {
-            if let currentController = self.currentController {
-                currentController.dismissAction = self.dismissAction
+            if let currentController {
+                currentController.dismissAction = dismissAction
             }
         }
     }
@@ -109,7 +109,7 @@ final class ConversationImagesViewController: UIViewController {
         self.imageMessages = self.collection.assetCollection.assets(for: imagesMatch)
         self.collection.assetCollectionDelegate.add(self)
 
-        self.createNavigationTitle()
+        createNavigationTitle()
     }
 
     deinit {
@@ -142,7 +142,7 @@ final class ConversationImagesViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-        self.buttonsBar.buttons = createControlsBarButtons()
+        buttonsBar.buttons = createControlsBarButtons()
         setupExpandRowButton()
     }
 
@@ -190,7 +190,7 @@ final class ConversationImagesViewController: UIViewController {
         pageViewController.delegate = self
         pageViewController.dataSource = self
         pageViewController.setViewControllers(
-            [self.imageController(for: self.currentMessage)],
+            [imageController(for: currentMessage)],
             direction: .forward,
             animated: false,
             completion: .none
@@ -200,10 +200,10 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func logicalPreviousIndex(for index: Int) -> Int? {
-        if self.inverse {
-            self.nextIndex(for: index)
+        if inverse {
+            nextIndex(for: index)
         } else {
-            self.previousIndex(for: index)
+            previousIndex(for: index)
         }
     }
 
@@ -218,16 +218,16 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func logicalNextIndex(for index: Int) -> Int? {
-        if self.inverse {
-            self.previousIndex(for: index)
+        if inverse {
+            previousIndex(for: index)
         } else {
-            self.nextIndex(for: index)
+            nextIndex(for: index)
         }
     }
 
     private func nextIndex(for index: Int) -> Int? {
         let nextIndex = index + 1
-        guard self.imageMessages.count > nextIndex else {
+        guard imageMessages.count > nextIndex else {
             return .none
         }
 
@@ -339,12 +339,12 @@ final class ConversationImagesViewController: UIViewController {
         let buttons = createControlsBarButtons()
 
         buttonsBar = InputBarButtonsView(buttons: buttons)
-        self.buttonsBar.clipsToBounds = true
+        buttonsBar.clipsToBounds = true
         setupExpandRowButton()
-        self.buttonsBar.backgroundColor = SemanticColors.View.backgroundDefaultWhite
-        self.view.addSubview(self.buttonsBar)
+        buttonsBar.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        view.addSubview(buttonsBar)
 
-        self.updateButtonsForMessage()
+        updateButtonsForMessage()
     }
 
     private func updateBarsForPreview() {
@@ -359,15 +359,15 @@ final class ConversationImagesViewController: UIViewController {
             mainCoordinator: mainCoordinator
         )
         imageViewController.delegate = self
-        imageViewController.swipeToDismiss = self.swipeToDismiss
+        imageViewController.swipeToDismiss = swipeToDismiss
         imageViewController.showCloseButton = false
-        imageViewController.dismissAction = self.dismissAction
+        imageViewController.dismissAction = dismissAction
 
         return imageViewController
     }
 
     private func indexOf(message messageToFind: ZMConversationMessage) -> Int? {
-        self.imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
+        imageMessages.firstIndex(where: { (message: ZMConversationMessage) -> (Bool) in
             message == messageToFind
         })
     }
@@ -385,7 +385,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     private func updateButtonsForMessage() {
-        self.deleteButton.isHidden = !currentMessage.canBeDeleted
+        deleteButton.isHidden = !currentMessage.canBeDeleted
     }
 
     private func updateActionControllerForMessage() {
@@ -398,7 +398,7 @@ final class ConversationImagesViewController: UIViewController {
     }
 
     var currentController: FullscreenImageViewController? {
-        guard let imageController = self.pageViewController.viewControllers?.first as? FullscreenImageViewController
+        guard let imageController = pageViewController.viewControllers?.first as? FullscreenImageViewController
         else {
             return .none
         }
@@ -459,7 +459,7 @@ final class ConversationImagesViewController: UIViewController {
 
 extension ConversationImagesViewController: ScreenshotProvider {
     func backgroundScreenshot(for fullscreenController: FullscreenImageViewController) -> UIView? {
-        self.snapshotBackgroundView
+        snapshotBackgroundView
     }
 }
 
@@ -473,7 +473,7 @@ extension ConversationImagesViewController: AssetCollectionDelegate {
             let conversationMessages = messageCategory.value as [ZMConversationMessage]
 
             if messageCategory.key.including.contains(.image) {
-                self.imageMessages.append(contentsOf: conversationMessages)
+                imageMessages.append(contentsOf: conversationMessages)
             }
         }
     }
@@ -490,11 +490,11 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
     }
 
     func pageViewControllerSupportedInterfaceOrientations(_: UIPageViewController) -> UIInterfaceOrientationMask {
-        self.traitCollection.horizontalSizeClass == .compact ? .portrait : .all
+        traitCollection.horizontalSizeClass == .compact ? .portrait : .all
     }
 
     func presentationCount(for pageViewController: UIPageViewController) -> Int {
-        self.imageMessages.count
+        imageMessages.count
     }
 
     func pageViewController(
@@ -505,12 +505,12 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
             fatal("Unknown controller \(viewController)")
         }
 
-        guard let messageIndex = self.indexOf(message: imageController.message),
-              let nextIndex = self.logicalNextIndex(for: messageIndex) else {
+        guard let messageIndex = indexOf(message: imageController.message),
+              let nextIndex = logicalNextIndex(for: messageIndex) else {
             return .none
         }
 
-        return self.imageController(for: self.imageMessages[nextIndex])
+        return self.imageController(for: imageMessages[nextIndex])
     }
 
     func pageViewController(
@@ -521,12 +521,12 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
             fatal("Unknown controller \(viewController)")
         }
 
-        guard let messageIndex = self.indexOf(message: imageController.message),
-              let previousIndex = self.logicalPreviousIndex(for: messageIndex) else {
+        guard let messageIndex = indexOf(message: imageController.message),
+              let previousIndex = logicalPreviousIndex(for: messageIndex) else {
             return .none
         }
 
-        return self.imageController(for: self.imageMessages[previousIndex])
+        return self.imageController(for: imageMessages[previousIndex])
     }
 
     func pageViewController(
@@ -535,11 +535,11 @@ extension ConversationImagesViewController: UIPageViewControllerDelegate, UIPage
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool
     ) {
-        if let currentController = self.currentController,
+        if let currentController,
            finished,
            completed {
-            self.currentMessage = currentController.message
-            self.buttonsBar.buttons = createControlsBarButtons()
+            currentMessage = currentController.message
+            buttonsBar.buttons = createControlsBarButtons()
         }
     }
 }

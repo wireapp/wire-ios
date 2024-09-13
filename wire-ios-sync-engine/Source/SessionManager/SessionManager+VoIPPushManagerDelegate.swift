@@ -34,7 +34,7 @@ extension SessionManager: VoIPPushManagerDelegate {
 
         guard
             let accountId = accountId(from: payload),
-            let account = self.accountManager.account(with: accountId),
+            let account = accountManager.account(with: accountId),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 name: "\(payload.stringIdentifier)",
                 expirationHandler: { [weak self] in

@@ -81,7 +81,7 @@ final class RequestPasswordController {
             okActionStyle = .destructive
         }
 
-        alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        self.alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alertController.addTextField { textField in
             textField.placeholder = placeholder
 

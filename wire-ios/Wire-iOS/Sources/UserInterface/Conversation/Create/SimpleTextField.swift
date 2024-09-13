@@ -67,7 +67,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         let leftInset: CGFloat = 8
 
         let topInset: CGFloat = 0
-        placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
+        self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
 
         super.init(frame: .zero)
 
@@ -110,7 +110,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     override func textRect(forBounds bounds: CGRect) -> CGRect {
         let textRect = super.textRect(forBounds: bounds)
 
-        return textRect.inset(by: self.textInsets)
+        return textRect.inset(by: textInsets)
     }
 
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
@@ -125,7 +125,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
     }
 
     func updatePlaceholderAttributedText(attributes: [NSAttributedString.Key: Any]) {
-        attributedPlaceholder = NSAttributedString(string: self.placeholder ?? "", attributes: attributes)
+        attributedPlaceholder = NSAttributedString(string: placeholder ?? "", attributes: attributes)
     }
 
     override var placeholder: String? {

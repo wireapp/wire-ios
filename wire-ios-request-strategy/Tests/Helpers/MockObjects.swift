@@ -22,11 +22,11 @@ import WireRequestStrategy
 
 public class MockApplicationStatus: NSObject, ApplicationStatus {
     public var requestCancellation: ZMRequestCancellation {
-        self.mockTaskCancellationDelegate
+        mockTaskCancellationDelegate
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        self.mockClientRegistrationStatus
+        mockClientRegistrationStatus
     }
 
     public var mockSynchronizationState: SynchronizationState = .unauthenticated

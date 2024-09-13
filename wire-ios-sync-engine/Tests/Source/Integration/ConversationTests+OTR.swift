@@ -22,7 +22,7 @@ import WireTesting
 final class ConversationTestsOTR_Swift: ConversationTestsBase {
     func testThatItSendsFailedOTRMessageAfterMisingClientsAreFetchedButSessionIsNotCreated() {
         // GIVEN
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let conv = conversation(for: selfToUser1Conversation)
 
@@ -32,8 +32,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                   path.pathComponents.contains("prekeys") else { return nil }
 
             let payload: NSDictionary = [
-                self.user1.identifier: [
-                    (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
+                user1.identifier: [
+                    (user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
                         "key": Data("invalid key".utf8).base64String(),
                     ],
@@ -80,7 +80,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
     func testThatItSendsFailedSessionOTRMessageAfterMissingClientsAreFetchedButSessionIsNotCreated() {
         // GIVEN
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let conv = conversation(for: selfToUser1Conversation)
 
@@ -91,8 +91,8 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
                   let path = request.path as NSString?,
                   path.pathComponents.contains("prekeys") else { return nil }
             let payload: NSDictionary = [
-                self.user1.identifier: [
-                    (self.user1.clients.anyObject() as? MockUserClient)?.identifier: [
+                user1.identifier: [
+                    (user1.clients.anyObject() as? MockUserClient)?.identifier: [
                         "id": 0,
                         "key": Data("invalid key".utf8).base64String(),
                     ],
@@ -206,7 +206,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         let messageText = "Hey!"
         var message: ZMClientMessage?
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         userSession?.perform {
             message = try! conversation?.appendText(
@@ -248,7 +248,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // WHEN
         userSession?.perform {
@@ -282,7 +282,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         mockTransportSession.doNotRespondToRequests = true
 
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         var message: ZMClientMessage?
 
@@ -339,7 +339,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         let expectedText = "The sky above the port was the color of "
         let message = GenericMessage(content: Text(content: expectedText), nonce: .create())
-        let conversation = self.conversation(for: groupConversation)
+        let conversation = conversation(for: groupConversation)
 
         // WHEN
         let observer = ConversationChangeObserver(conversation: conversation)
@@ -374,7 +374,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         // GIVEN
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)
+        let conversation = conversation(for: groupConversation)
 
         // WHEN
         let observer = ConversationChangeObserver(conversation: conversation)
@@ -401,7 +401,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         // GIVEN
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)
+        let conversation = conversation(for: groupConversation)
         userSession?.perform {
             conversation?.isArchived = true
         }
@@ -438,7 +438,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertTrue(login())
 
         // register other users clients
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         var message: ZMClientMessage?
 
         // WHEN
@@ -502,7 +502,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         }
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        let conversation = self.conversation(for: groupConversation)
+        let conversation = conversation(for: groupConversation)
         guard let assetMessage = conversation?.lastMessage as? ZMAssetClientMessage else {
             return XCTFail()
         }
@@ -542,7 +542,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // make conversation secure
-        let conversation = self.conversation(for: groupConversationWithOnlyConnected)
+        let conversation = conversation(for: groupConversationWithOnlyConnected)
         makeConversationSecured(conversation)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -600,7 +600,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         // GIVEN
         XCTAssertTrue(login())
         establishSession(with: user1)
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         makeConversationSecured(conversation)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
@@ -642,7 +642,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         establishSession(with: user1)
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         setupInitialSecurityLevel(initialSecurityLevel, in: conversation)
 
@@ -722,7 +722,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
     func testThatItDoesNotInsertASystemMessageWhenItDecryptsADuplicatedMessage() {
         // GIVEN
         XCTAssertTrue(login())
-        var conversation = self.conversation(for: selfToUser1Conversation)
+        var conversation = conversation(for: selfToUser1Conversation)
         var firstMessageData = Data()
         let firstMessageText = "Testing duplication"
 
@@ -834,7 +834,7 @@ final class ConversationTestsOTR_Swift: ConversationTestsBase {
         imageFormat format: ZMImageFormat
     ) throws -> GenericMessage {
         var encryptedImageData = Data()
-        let imageData = self.verySmallJPEGData()
+        let imageData = verySmallJPEGData()
         let message = try otrAssetGenericMessage(
             format: format,
             imageData: imageData,

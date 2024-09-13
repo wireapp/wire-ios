@@ -52,8 +52,8 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
             message: message
         )
 
-        actionController = nil
-        configuration = View.Configuration(
+        self.actionController = nil
+        self.configuration = View.Configuration(
             title: model.attributedHeading(),
             message: model.attributedTitle() ?? NSAttributedString(string: ""),
             selectedUsers: model.selectedUsers,

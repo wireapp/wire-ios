@@ -62,12 +62,12 @@ extension UserClient {
 
     // Migration method for merging two duplicated @c UserClient entities
     func merge(with client: UserClient) {
-        precondition(!(self.user?.isSelfUser ?? false), "Cannot merge self user's clients")
+        precondition(!(user?.isSelfUser ?? false), "Cannot merge self user's clients")
         precondition(
-            client.remoteIdentifier == self.remoteIdentifier,
+            client.remoteIdentifier == remoteIdentifier,
             "UserClient's remoteIdentifier should be equal to merge"
         )
-        precondition(client.user == self.user, "UserClient's Users should be equal to merge")
+        precondition(client.user == user, "UserClient's Users should be equal to merge")
 
         let addedOrRemovedInSystemMessages = client.addedOrRemovedInSystemMessages
         let ignoredByClients = client.ignoredByClients

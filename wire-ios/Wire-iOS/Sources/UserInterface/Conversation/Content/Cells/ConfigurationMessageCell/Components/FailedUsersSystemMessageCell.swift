@@ -74,7 +74,7 @@ final class FailedUsersSystemMessageCell: UIView, ConversationMessageCell {
     // MARK: - Setup UI
 
     func configure(with object: Configuration, animated: Bool) {
-        self.config = object
+        config = object
     }
 
     private func updateUI() {

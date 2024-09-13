@@ -169,11 +169,11 @@ extension ProxyCredentialsViewController: UITextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.activeFieldChange(textField)
+        activeFieldChange(textField)
     }
 
     func textFieldDidEndEditing(_: UITextField) {
-        self.activeFieldChange(nil)
+        activeFieldChange(nil)
     }
 }
 

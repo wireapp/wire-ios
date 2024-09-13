@@ -71,7 +71,7 @@ final class SavableImage: NSObject {
 
     init(data: Data, isGIF: Bool) {
         self.isGIF = isGIF
-        imageData = data
+        self.imageData = data
         super.init()
     }
 

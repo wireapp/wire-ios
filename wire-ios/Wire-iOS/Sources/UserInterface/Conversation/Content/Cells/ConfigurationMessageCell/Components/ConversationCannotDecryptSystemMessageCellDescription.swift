@@ -62,14 +62,14 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
             sender: sender
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: icon,
             attributedText: title,
             showLine: false
         )
 
-        accessibilityLabel = title.string
-        actionController = nil
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 
     func isConfigurationEqual(with other: Any) -> Bool {
@@ -88,9 +88,9 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         systemMessage: ZMSystemMessageData,
         sender: UserType
     ) -> NSAttributedString {
-        let messageString = self.messageString(systemMessage.systemMessageType, sender: sender)
-        let resetSessionString = self.resetSessionString()
-        let errorDetailsString = self.errorDetailsString(
+        let messageString = messageString(systemMessage.systemMessageType, sender: sender)
+        let resetSessionString = resetSessionString()
+        let errorDetailsString = errorDetailsString(
             errorCode: systemMessage.decryptionErrorCode?.intValue ?? 0,
             clientIdentifier: systemMessage.senderClientID ?? "N/A"
         )
@@ -141,7 +141,7 @@ final class ConversationCannotDecryptSystemMessageCellDescription: ConversationM
         sender: UserType
     ) -> NSAttributedString {
         let name = sender.name ?? ""
-        var localizationKey = self.localizationKey(systemMessageType)
+        var localizationKey = localizationKey(systemMessageType)
 
         if sender.isSelfUser {
             localizationKey += ".self"

@@ -54,7 +54,7 @@ final class ContactsSectionHeaderView: UITableViewHeaderFooterView {
     }
 
     func setupStyle() {
-        self.textLabel?.isHidden = true
+        textLabel?.isHidden = true
     }
 
     private func setupConstraints() {

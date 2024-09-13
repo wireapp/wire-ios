@@ -34,8 +34,8 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
 
-        self.sut = LinkPreviewAssetUploadRequestStrategy(
-            managedObjectContext: self.syncMOC,
+        sut = LinkPreviewAssetUploadRequestStrategy(
+            managedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             linkPreviewPreprocessor: nil,
             previewImagePreprocessor: nil
@@ -55,7 +55,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         linkPreview: LinkMetadata,
         isEphemeral: Bool = false
     ) -> ZMClientMessage {
-        let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
             conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
@@ -85,7 +85,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
                 XCTFail("Error in adding data: \(error)")
             }
         }
-        self.syncMOC.saveOrRollback()
+        syncMOC.saveOrRollback()
 
         return message
     }

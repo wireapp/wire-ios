@@ -23,8 +23,8 @@ final class MockTapGestureRecognizer: UITapGestureRecognizer {
     var mockLocation: CGPoint?
 
     init(location: CGPoint?, state: UIGestureRecognizer.State) {
-        mockLocation = location
-        mockState = state
+        self.mockLocation = location
+        self.mockState = state
 
         super.init(target: nil, action: nil)
     }

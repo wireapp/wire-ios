@@ -70,7 +70,7 @@ public final class Action: ZMManagedObject {
         name: String,
         in context: NSManagedObjectContext
     ) -> Action? {
-        let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
+        let fetchRequest = NSFetchRequest<Action>(entityName: entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
         let actions = context.fetchOrAssert(request: fetchRequest)
         return actions.first

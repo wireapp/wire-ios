@@ -40,7 +40,7 @@ class SettingsBaseTableViewController: UIViewController {
     }
 
     init(style: UITableView.Style) {
-        tableView = IntrinsicSizeTableView(frame: .zero, style: style)
+        self.tableView = IntrinsicSizeTableView(frame: .zero, style: style)
         super.init(nibName: nil, bundle: nil)
         self.edgesForExtendedLayout = UIRectEdge()
     }
@@ -55,16 +55,16 @@ class SettingsBaseTableViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        self.createTableView()
-        self.view.addSubview(self.topSeparator)
-        self.createConstraints()
-        self.view.backgroundColor = UIColor.clear
+        createTableView()
+        view.addSubview(topSeparator)
+        createConstraints()
+        view.backgroundColor = UIColor.clear
         super.viewDidLoad()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.tableView.reloadData()
+        tableView.reloadData()
     }
 
     private func createTableView() {
@@ -114,8 +114,8 @@ class SettingsBaseTableViewController: UIViewController {
 
 extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.topSeparator.scrollViewDidScroll(scrollView: scrollView)
-        self.footerSeparator.scrollViewDidScroll(scrollView: scrollView)
+        topSeparator.scrollViewDidScroll(scrollView: scrollView)
+        footerSeparator.scrollViewDidScroll(scrollView: scrollView)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {

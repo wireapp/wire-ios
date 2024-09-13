@@ -94,7 +94,7 @@ private class EventNotificationBuilder: NotificationBuilder {
 
     func shouldCreateNotification() -> Bool {
         // if there is a sender, it's not the selfUser
-        if let sender = self.sender, sender.isSelfUser { return false }
+        if let sender, sender.isSelfUser { return false }
 
         if let conversation {
             if conversation.mutedMessageTypesIncludingAvailability != .none {
@@ -144,7 +144,7 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
     private let message: GenericMessage
 
     override var notificationType: LocalNotificationType {
-        if ZMLocalNotification.shouldHideNotificationContent(moc: self.moc) {
+        if ZMLocalNotification.shouldHideNotificationContent(moc: moc) {
             LocalNotificationType.message(.hidden)
         } else {
             LocalNotificationType.message(.reaction(emoji: emoji))
@@ -223,7 +223,7 @@ private class UserConnectionEventNotificationBuilder: EventNotificationBuilder {
 
         super.init(event: event, conversation: conversation, managedObjectContext: managedObjectContext)
 
-        senderName = sender?.name ?? (event.payload["user"] as? [String: Any])?["name"] as? String
+        self.senderName = sender?.name ?? (event.payload["user"] as? [String: Any])?["name"] as? String
     }
 
     override func titleText() -> String? {

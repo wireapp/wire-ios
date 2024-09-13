@@ -299,7 +299,7 @@ public final class NotificationSession {
         self.accountIdentifier = accountIdentifier
         self.earService = earService
 
-        eventDecoder = EventDecoder(
+        self.eventDecoder = EventDecoder(
             eventMOC: coreDataStack.eventContext,
             syncMOC: coreDataStack.syncContext,
             lastEventIDRepository: lastEventIDRepository
@@ -354,7 +354,7 @@ public final class NotificationSession {
     }
 
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any]) {
-        guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
+        guard let nonce = messageNonce(fromPushChannelData: payload) else {
             delegate?.notificationSessionDidFailWithError(error: .noEventID)
             return
         }
@@ -400,12 +400,12 @@ extension NotificationSession: PushNotificationStrategyDelegate {
         _ strategy: PushNotificationStrategy,
         didFetchEvents events: [ZMUpdateEvent]
     ) async throws {
-        let decodedEvents = try await self.eventDecoder.decryptAndStoreEvents(
+        let decodedEvents = try await eventDecoder.decryptAndStoreEvents(
             events,
-            publicKeys: try? self.earService.fetchPublicKeys()
+            publicKeys: try? earService.fetchPublicKeys()
         )
 
-        await self.context.perform { [self] in
+        await context.perform { [self] in
             processDecodedEvents(decodedEvents)
         }
     }

@@ -28,11 +28,11 @@ final class RandomGeneratorFromData: RandomGenerator {
     private var step = 0
 
     init(data: Data) {
-        source = data
+        self.source = data
     }
 
     public func rand<ContentType>() -> ContentType {
-        let currentStep = self.step
+        let currentStep = step
         let result = source.withUnsafeBytes { (pointer: UnsafePointer<ContentType>) -> ContentType in
             pointer.advanced(by: currentStep % source.count).pointee
         }
@@ -69,8 +69,8 @@ extension ZMConversation {
     /// Stable random list of the participants in the conversation. The list would be consistent between platforms
     /// because the conversation UUID is used as the random indexes source.
     var stableRandomParticipants: [ZMUser] {
-        let allUsers = self.activeParticipants.array as! [ZMUser]
-        guard let remoteIdentifier = self.remoteIdentifier else {
+        let allUsers = activeParticipants.array as! [ZMUser]
+        guard let remoteIdentifier else {
             return allUsers
         }
 
@@ -111,37 +111,37 @@ extension Mode {
 public final class ConversationListAvatarView: UIView {
     public var conversation: ZMConversation? = .none {
         didSet {
-            guard let conversation = self.conversation else {
-                self.clippingView.subviews.forEach { $0.removeFromSuperview() }
+            guard let conversation else {
+                clippingView.subviews.forEach { $0.removeFromSuperview() }
                 return
             }
 
             let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
             guard !stableRandomParticipants.isEmpty else {
-                self.clippingView.subviews.forEach { $0.removeFromSuperview() }
+                clippingView.subviews.forEach { $0.removeFromSuperview() }
                 return
             }
 
-            self.accessibilityLabel = "Avatar for \(self.conversation?.displayName)"
-            self.mode = Mode(conversation: conversation)
+            accessibilityLabel = "Avatar for \(self.conversation?.displayName)"
+            mode = Mode(conversation: conversation)
 
             var index = 0
-            for userImage in self.userImages() {
+            for userImage in userImages() {
                 userImage.userSession = ZMUserSession.shared()
                 userImage.size = .tiny
-                userImage.showInitials = (self.mode == .one)
+                userImage.showInitials = (mode == .one)
                 userImage.isCircular = false
                 userImage.user = stableRandomParticipants[index]
                 index += 1
             }
-            self.setNeedsLayout()
+            setNeedsLayout()
         }
     }
 
     private var mode: Mode = .two {
         didSet {
-            self.clippingView.subviews.forEach { $0.removeFromSuperview() }
-            self.userImages().forEach(self.clippingView.addSubview)
+            clippingView.subviews.forEach { $0.removeFromSuperview() }
+            userImages().forEach(clippingView.addSubview)
 
             if mode == .one {
                 layer.borderWidth = 0
@@ -179,7 +179,7 @@ public final class ConversationListAvatarView: UIView {
         backgroundColor = UIColor(white: 0, alpha: 0.16)
         layer.masksToBounds = true
         clippingView.clipsToBounds = true
-        self.addSubview(clippingView)
+        addSubview(clippingView)
     }
 
     @available(*, unavailable)
@@ -189,15 +189,15 @@ public final class ConversationListAvatarView: UIView {
 
     override public func layoutSubviews() {
         super.layoutSubviews()
-        guard self.bounds != .zero else {
+        guard bounds != .zero else {
             return
         }
 
-        clippingView.frame = self.mode == .one ? self.bounds : self.bounds.insetBy(dx: 2, dy: 2)
+        clippingView.frame = mode == .one ? bounds : bounds.insetBy(dx: 2, dy: 2)
 
         let size: CGSize
         let inset: CGFloat = 2
-        let containerSize = self.clippingView.bounds.size
+        let containerSize = clippingView.bounds.size
 
         switch mode {
         case .one:
@@ -213,7 +213,7 @@ public final class ConversationListAvatarView: UIView {
         var xPosition: CGFloat = 0
         var yPosition: CGFloat = 0
 
-        for userImage in self.userImages() {
+        for userImage in userImages() {
             userImage.frame = CGRect(x: xPosition, y: yPosition, width: size.width, height: size.height)
             if xPosition + size.width >= containerSize.width {
                 xPosition = 0
@@ -227,8 +227,8 @@ public final class ConversationListAvatarView: UIView {
     }
 
     private func updateCornerRadius() {
-        layer.cornerRadius = self.conversation?.conversationType == .group ? 6 : layer.bounds.width / 2.0
-        clippingView.layer.cornerRadius = self.conversation?.conversationType == .group ? 4 : clippingView.layer.bounds
+        layer.cornerRadius = conversation?.conversationType == .group ? 6 : layer.bounds.width / 2.0
+        clippingView.layer.cornerRadius = conversation?.conversationType == .group ? 4 : clippingView.layer.bounds
             .width / 2.0
     }
 }

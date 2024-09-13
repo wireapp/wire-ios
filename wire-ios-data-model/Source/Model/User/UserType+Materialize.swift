@@ -28,10 +28,10 @@ extension Sequence where Element: UserType {
     public func materialize(in context: NSManagedObjectContext) -> [ZMUser] {
         precondition(context.zm_isUserInterfaceContext, "You can only materialize users on the UI context")
 
-        let nonExistingUsers = self.compactMap { $0 as? ZMSearchUser }.filter { $0.user == nil }
+        let nonExistingUsers = compactMap { $0 as? ZMSearchUser }.filter { $0.user == nil }
         nonExistingUsers.createLocalUsers(in: context.zm_sync)
 
-        return self.compactMap { $0.unbox(in: context) }
+        return compactMap { $0.unbox(in: context) }
     }
 }
 

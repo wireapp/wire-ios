@@ -37,7 +37,7 @@ public enum ClientUpdateError: NSInteger {
     case clientToDeleteNotFound
 
     func errorForType() -> NSError {
-        NSError(domain: ClientUpdateErrorDomain, code: self.rawValue, userInfo: nil)
+        NSError(domain: ClientUpdateErrorDomain, code: rawValue, userInfo: nil)
     }
 }
 
@@ -63,7 +63,7 @@ open class ClientUpdateStatus: NSObject {
     }
 
     func determineInitialClientStatus() {
-        let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncManagedObjectContext)
+        let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: syncManagedObjectContext)
 
         needsToFetchClients(andVerifySelfClient: hasSelfClient)
 
@@ -134,7 +134,7 @@ open class ClientUpdateStatus: NSObject {
     }
 
     func filterSelfClientIfValid(_ clients: [UserClient]) throws -> [UserClient] {
-        guard let selfClient = ZMUser.selfUser(in: self.syncManagedObjectContext).selfClient()
+        guard let selfClient = ZMUser.selfUser(in: syncManagedObjectContext).selfClient()
         else {
             throw ClientUpdateError.errorForType(.selfClientIsInvalid)()
         }
@@ -212,7 +212,7 @@ open class ClientUpdateStatus: NSObject {
     }
 
     var selfUserClientsExcludingSelfClient: [UserClient] {
-        let selfUser = ZMUser.selfUser(in: self.syncManagedObjectContext)
+        let selfUser = ZMUser.selfUser(in: syncManagedObjectContext)
         let selfClient = selfUser.selfClient()
         let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
         return Array(remainingClients)
@@ -224,11 +224,11 @@ open class ClientUpdateStatus: NSObject {
 
     public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple]) {
         self.prekeys = prekeys
-        self.isGeneratingPrekeys = false
+        isGeneratingPrekeys = false
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 
     public func didUploadPrekeys() {
-        self.prekeys = nil
+        prekeys = nil
     }
 }

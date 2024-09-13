@@ -33,7 +33,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        self.configuration = object
+        configuration = object
         attributedText = object.pingText
         imageView.setTemplateIcon(.ping, size: 20)
         imageView.tintColor = object.pingColor
@@ -42,13 +42,13 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
     @objc
     func startAnimation() {
-        self.animationBlock = createAnimationBlock()
+        animationBlock = createAnimationBlock()
         animate()
     }
 
     func stopAnimation() {
-        self.isAnimationRunning = false
-        self.imageView.alpha = 1.0
+        isAnimationRunning = false
+        imageView.alpha = 1.0
     }
 
     func animate() {
@@ -66,7 +66,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
     func createAnimationBlock() -> AnimationBlock {
         let animationBlock: AnimationBlock = { [weak self] otherBlock, reps in
             guard let self else { return }
-            self.imageView.alpha = 1.0
+            imageView.alpha = 1.0
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 if !self.canAnimationContinue(for: self.configuration?.message) {
@@ -153,7 +153,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
 
         let pingColor: UIColor = message.isObfuscated ? .accentDimmedFlat : sender.accentColor
         self.configuration = View.Configuration(pingColor: pingColor, pingText: text, message: message)
-        accessibilityLabel = text.string
-        actionController = nil
+        self.accessibilityLabel = text.string
+        self.actionController = nil
     }
 }

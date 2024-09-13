@@ -25,7 +25,7 @@ public final class UnownedObject<T: AnyObject> {
         self.unbox = o
     }
 
-    public var isValid: Bool { self.unbox != nil }
+    public var isValid: Bool { unbox != nil }
 }
 
 @objcMembers
@@ -36,5 +36,5 @@ public final class UnownedNSObject: NSObject {
         self.unbox = unbox
     }
 
-    public var isValid: Bool { self.unbox != nil }
+    public var isValid: Bool { unbox != nil }
 }

@@ -42,14 +42,14 @@ private final class WaveformBarsView: UIView {
     }
 
     fileprivate func setup() {
-        self.contentMode = .redraw
+        contentMode = .redraw
     }
 
     override fileprivate func draw(_ rect: CGRect) {
         guard let c = UIGraphicsGetCurrentContext()  else { return }
 
-        c.clear(self.bounds)
-        self.backgroundColor?.setFill()
+        c.clear(bounds)
+        backgroundColor?.setFill()
         c.fill(rect)
 
         if samples.isEmpty {
@@ -125,8 +125,8 @@ final class WaveformProgressView: UIView {
         let path = UIBezierPath(rect: CGRect(
             x: 0,
             y: 0,
-            width: self.bounds.width * CGFloat(progress),
-            height: self.bounds.height
+            width: bounds.width * CGFloat(progress),
+            height: bounds.height
         )).cgPath
 
         if animated {
@@ -147,8 +147,8 @@ final class WaveformProgressView: UIView {
             maskShape.path = UIBezierPath(rect: CGRect(
                 x: 0,
                 y: 0,
-                width: self.bounds.width * CGFloat(progress),
-                height: self.bounds.height
+                width: bounds.width * CGFloat(progress),
+                height: bounds.height
             )).cgPath
         }
     }

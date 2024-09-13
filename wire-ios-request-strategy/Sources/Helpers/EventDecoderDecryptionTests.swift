@@ -30,15 +30,15 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(
-            eventMOC: self.eventMOC,
-            syncMOC: self.syncMOC,
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
         let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
         let generic = GenericMessage(content: Text(content: text))
 
         // WHEN
-        let decryptedEvent = try await self.decryptedUpdateEventFromOtherClient(
+        let decryptedEvent = try await decryptedUpdateEventFromOtherClient(
             message: generic,
             eventDecoder: sut
         )
@@ -64,11 +64,11 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(
-            eventMOC: self.eventMOC,
-            syncMOC: self.syncMOC,
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
-        let image = self.verySmallJPEGData()
+        let image = verySmallJPEGData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), sha256: image.zmSHA256Digest())
@@ -80,12 +80,12 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         ))
 
         // WHEN
-        let decryptedEvent = try await self.decryptedAssetUpdateEventFromOtherClient(
+        let decryptedEvent = try await decryptedAssetUpdateEventFromOtherClient(
             message: generic,
             eventDecoder: sut
         )
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // THEN
             guard let decryptedMessage = ZMAssetClientMessage.createOrUpdate(
                 from: decryptedEvent,
@@ -103,13 +103,13 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(
-            eventMOC: self.eventMOC,
-            syncMOC: self.syncMOC,
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
         var event: ZMUpdateEvent!
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             let innerPayload = [
                 "recipient": self.selfClient.remoteIdentifier!,
                 "sender": self.otherClient.remoteIdentifier!,
@@ -133,17 +133,17 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         }
 
         // WHEN
-        self.disableZMLogError(true)
-        let keystore = await self.syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
+        disableZMLogError(true)
+        let keystore = await syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
         let unwrappedKeyStore = try XCTUnwrap(keystore)
         await unwrappedKeyStore.encryptionContext.performAsync { session in
             _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                 try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
             }
         }
-        self.disableZMLogError(false)
+        disableZMLogError(false)
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // THEN
             guard let lastMessage = self.groupConversation.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
@@ -156,8 +156,8 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         // Given
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(
-            eventMOC: self.eventMOC,
-            syncMOC: self.syncMOC,
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
         let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
@@ -165,7 +165,7 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         XCTAssertGreaterThan(text.count, 18000)
         let message = GenericMessage(content: Text(content: text))
 
-        let wrapper = await self.syncMOC.perform {
+        let wrapper = await syncMOC.perform {
             NSDictionary(dictionary: [
                 "id": UUID.create().transportString(),
                 "payload": [
@@ -188,15 +188,15 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         let event = try XCTUnwrap(ZMUpdateEvent.eventsArray(from: wrapper, source: .download)?.first)
 
         // When
-        self.disableZMLogError(true)
-        let keystore = await self.syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
+        disableZMLogError(true)
+        let keystore = await syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
         let unwrappedKeyStore = try XCTUnwrap(keystore)
         await unwrappedKeyStore.encryptionContext.performAsync { session in
             _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                 try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
             }
         }
-        self.disableZMLogError(false)
+        disableZMLogError(false)
 
         // Then
         await syncMOC.perform {
@@ -212,15 +212,15 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         // Given
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let sut = EventDecoder(
-            eventMOC: self.eventMOC,
-            syncMOC: self.syncMOC,
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
         let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
         let text = "https://wir\("".padding(toLength: crlf.count * 20000, withPad: crlf, startingAt: 0))e.com/"
         XCTAssertGreaterThan(text.count, 18000)
 
-        let wrapper = await self.syncMOC.perform {
+        let wrapper = await syncMOC.perform {
             NSDictionary(dictionary: [
                 "id": UUID.create().transportString(),
                 "payload": [
@@ -243,18 +243,18 @@ final class EventDecoderDecryptionTests: MessagingTestBase {
         let event = try XCTUnwrap(ZMUpdateEvent.eventsArray(from: wrapper, source: .download)?.first)
 
         // When
-        self.disableZMLogError(true)
-        let keystore = await self.syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
+        disableZMLogError(true)
+        let keystore = await syncMOC.perform { self.syncMOC.zm_cryptKeyStore }
         let unwrappedKeyStore = try XCTUnwrap(keystore)
         await unwrappedKeyStore.encryptionContext.performAsync { session in
             _ = await sut.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
                 try session.decryptData(encryptedData, for: sessionID.mapToEncryptionSessionID())
             }
         }
-        self.disableZMLogError(false)
+        disableZMLogError(false)
 
         // Then
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             guard let lastMessage = self.groupConversation.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }

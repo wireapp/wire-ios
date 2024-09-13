@@ -34,7 +34,7 @@ final class ConversationListAccessoryViewTests: XCTestCase {
         super.setUp()
         snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
-        self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(
+        sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(
             name: "test",
             userSession: userSession
         ))

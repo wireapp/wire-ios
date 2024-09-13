@@ -67,7 +67,7 @@ final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 extension ZMMessageTests_GenericMessage {
     func testThatItCreatesOtrKnockMessageFromAnUpdateEvent() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let senderClientID = String.randomClientIdentifier()
@@ -89,7 +89,7 @@ extension ZMMessageTests_GenericMessage {
 
         // when
         var message: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             message = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -105,7 +105,7 @@ extension ZMMessageTests_GenericMessage {
     func testThatAClientMessageHasKnockMessageData() throws {
         // given
         let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
-        let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         try message.setUnderlyingMessage(knock)
 
         // then
@@ -121,7 +121,7 @@ extension ZMMessageTests_GenericMessage {
 extension ZMMessageTests_GenericMessage {
     func testThatATextMessageGenericDataIsRemoved() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         // when
@@ -143,11 +143,11 @@ extension ZMMessageTests_GenericMessage {
 
     func testThatATextMessageGenericDataIsRemoved_Asset() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         // when
-        let message = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMOTRMessage
         let dataSet = message.dataSet
 
         XCTAssertNotNil(message.managedObjectContext)

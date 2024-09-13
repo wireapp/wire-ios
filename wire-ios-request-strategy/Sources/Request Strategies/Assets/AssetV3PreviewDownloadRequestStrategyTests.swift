@@ -44,7 +44,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.sut = AssetV3PreviewDownloadRequestStrategy(
                 withManagedObjectContext: self.syncMOC,
                 applicationStatus: self.mockApplicationStatus
@@ -126,13 +126,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesNoRequestsIfTheStatusIsEmpty() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
 
     func testThatItGeneratesNoRequestsIfNotAuthenticated() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
             _ = self.createMessage(in: self.conversation)
@@ -143,7 +143,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesNoRequestForAV3FileMessageWithPreviewThatHasNotBeenDownloadedYet_WhenNotWhitelisted() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let (message, _, _, _) = self.createMessage(in: self.conversation)!
             let (previewGenericMessage, _) = self.createPreview(with: message.nonce!)
@@ -165,7 +165,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var previewMeta: AssetV3PreviewDownloadRequestStrategyTests.PreviewMeta!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let (message, _, _, _) = self.createMessage(in: self.conversation)!
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
@@ -183,7 +183,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
             else { return XCTFail("No request generated") }
 
@@ -198,7 +198,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         var previewMeta: AssetV3PreviewDownloadRequestStrategyTests.PreviewMeta!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             message = self.createMessage(in: self.conversation)!.message
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
@@ -215,7 +215,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
             else { return XCTFail("No request generated") }
             XCTAssertEqual(request.path, "/assets/v3/\(previewMeta.assetId)")
@@ -227,7 +227,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
@@ -237,7 +237,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         apiVersion = .v1
         var previewMeta: AssetV3PreviewDownloadRequestStrategyTests.PreviewMeta!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let (message, _, _, _) = self.createMessage(in: self.conversation)!
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
@@ -255,7 +255,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
             else { return XCTFail("No request generated") }
 
@@ -271,7 +271,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         var previewMeta: AssetV3PreviewDownloadRequestStrategyTests.PreviewMeta!
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             message = self.createMessage(in: self.conversation)!.message
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
@@ -288,7 +288,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
             else { return XCTFail("No request generated") }
             XCTAssertEqual(request.path, "/v1/assets/v4/\(previewMeta.domain)/\(previewMeta.assetId)")
@@ -300,7 +300,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
     }
@@ -309,13 +309,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var message: ZMAssetClientMessage!
         var previewGenericMessage: GenericMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             message = self.createMessage(in: self.conversation)!.message
             previewGenericMessage = self.createPreview(with: message.nonce!).genericMessage
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 42), for: message)
 
             do {
@@ -329,7 +329,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(message.hasDownloadedFile)
             XCTAssertNil(self.sut.nextRequest(for: self.apiVersion))
         }
@@ -342,7 +342,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         var message: ZMAssetClientMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             message = self.createMessage(in: self.conversation)!.message
             let (previewGenericMessage, _) = self.createPreview(with: message.nonce!, otr: key, sha: sha)
 
@@ -354,11 +354,11 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequest(for: self.apiVersion)
             else { return XCTFail("No request generated") }
             let response = ZMTransportResponse(
@@ -374,7 +374,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let data = self.syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message)
             XCTAssertEqual(data, encryptedData)
         }

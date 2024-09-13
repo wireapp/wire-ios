@@ -35,7 +35,7 @@ final class PickerView: UIPickerView, UIGestureRecognizerDelegate {
 
     init() {
         super.init(frame: .zero)
-        tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
+        self.tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapView))
         tapRecognizer.delegate = self
         addGestureRecognizer(tapRecognizer)
     }

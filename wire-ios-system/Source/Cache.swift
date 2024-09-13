@@ -42,7 +42,7 @@ public final class Cache<Key: Hashable, Value> {
         assert(maxElementsCount > 0, "maxElementsCount must be greather than 0")
         self.maxCost = maxCost
         self.maxElementsCount = maxElementsCount
-        cacheBuffer = CircularArray<Key>(size: maxElementsCount)
+        self.cacheBuffer = CircularArray<Key>(size: maxElementsCount)
     }
 
     /// Add a value to the cache

@@ -48,7 +48,7 @@ final class CollectionImageCell: CollectionCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.loadView()
+        loadView()
     }
 
     var isHeightCalculated = false
@@ -86,7 +86,7 @@ final class CollectionImageCell: CollectionCell {
     }
 
     private func updateViews() {
-        guard let message = self.message else { return }
+        guard let message else { return }
 
         if message.canBeShared {
             imageView.contentMode = .scaleAspectFill

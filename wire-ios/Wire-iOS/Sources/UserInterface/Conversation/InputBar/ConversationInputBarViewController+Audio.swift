@@ -50,12 +50,12 @@ extension ConversationInputBarViewController {
             return
         }
 
-        switch self.mode {
+        switch mode {
         case .audioRecord:
-            if self.inputBar.textView.isFirstResponder {
+            if inputBar.textView.isFirstResponder {
                 hideInKeyboardAudioRecordViewController()
             } else {
-                self.inputBar.textView.becomeFirstResponder()
+                inputBar.textView.becomeFirstResponder()
             }
         default:
             UIApplication.wr_requestOrWarnAboutMicrophoneAccess { accepted in
@@ -73,7 +73,7 @@ extension ConversationInputBarViewController {
 
     @objc
     func audioButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
-        guard self.mode != .audioRecord, !displayAudioMessageAlertIfNeeded() else {
+        guard mode != .audioRecord, !displayAudioMessageAlertIfNeeded() else {
             return
         }
 
@@ -151,8 +151,8 @@ extension ConversationInputBarViewController {
     }
 
     func showAudioRecordViewController(animated: Bool = true) {
-        guard let audioRecordViewContainer = self.audioRecordViewContainer,
-              let audioRecordViewController = self.audioRecordViewController else {
+        guard let audioRecordViewContainer,
+              let audioRecordViewController else {
             return
         }
 
@@ -178,7 +178,7 @@ extension ConversationInputBarViewController {
     }
 
     func hideAudioRecordViewController() {
-        if self.mode == .audioRecord {
+        if mode == .audioRecord {
             hideInKeyboardAudioRecordViewController()
         } else {
             hideInlineAudioRecordViewController()
@@ -186,7 +186,7 @@ extension ConversationInputBarViewController {
     }
 
     private func hideInKeyboardAudioRecordViewController() {
-        self.inputBar.textView.resignFirstResponder()
+        inputBar.textView.resignFirstResponder()
         delay(0.3) {
             self.mode = .textInput
         }
@@ -194,8 +194,8 @@ extension ConversationInputBarViewController {
 
     @objc
     private func hideInlineAudioRecordViewController() {
-        self.inputBar.buttonContainer.isHidden = false
-        guard let audioRecordViewContainer = self.audioRecordViewContainer else {
+        inputBar.buttonContainer.isHidden = false
+        guard let audioRecordViewContainer else {
             return
         }
 
@@ -205,7 +205,7 @@ extension ConversationInputBarViewController {
     }
 
     func hideCameraKeyboardViewController(_ completion: @escaping () -> Void) {
-        self.inputBar.textView.resignFirstResponder()
+        inputBar.textView.resignFirstResponder()
         delay(0.3) {
             self.mode = .textInput
             completion()
@@ -215,12 +215,12 @@ extension ConversationInputBarViewController {
 
 extension ConversationInputBarViewController: AudioRecordViewControllerDelegate {
     func audioRecordViewControllerDidCancel(_: AudioRecordBaseViewController) {
-        self.hideAudioRecordViewController()
+        hideAudioRecordViewController()
     }
 
     func audioRecordViewControllerDidStartRecording(_: AudioRecordBaseViewController) {
         if mode != .audioRecord {
-            self.showAudioRecordViewController()
+            showAudioRecordViewController()
         }
     }
 
@@ -230,7 +230,7 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
         duration: TimeInterval,
         filter: AVSAudioEffectType
     ) {
-        let checker = PrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+        let checker = PrivacyWarningChecker(conversation: conversation) { [weak self] in
             self?.uploadFile(at: recordingURL as URL)
 
             self?.hideAudioRecordViewController()
@@ -267,15 +267,15 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
 
     private func displayRecordKeyboard() {
         // do not show keyboard if conversation list is shown,
-        guard let splitViewController = self.wr_splitViewController,
+        guard let splitViewController = wr_splitViewController,
               let rightViewController = splitViewController.rightViewController,
               splitViewController.isRightViewControllerRevealed,
               rightViewController.isVisible,
               AppDelegate.shared.mainWindow.isKeyWindow
         else { return }
 
-        self.wasRecordingBeforeCall = false
-        self.mode = .audioRecord
-        self.inputBar.textView.becomeFirstResponder()
+        wasRecordingBeforeCall = false
+        mode = .audioRecord
+        inputBar.textView.becomeFirstResponder()
     }
 }

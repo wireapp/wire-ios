@@ -75,14 +75,17 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
             .allowsRequestsWhileWaitingForWebsocket,
         ]
 
-        callConfigRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
-        clientDiscoverySync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.callConfigRequestSync = ZMSingleRequestSync(
+            singleRequestTranscoder: self,
+            groupQueue: managedObjectContext
+        )
+        self.clientDiscoverySync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
 
         if let clientId = selfUser.selfClient()?.remoteIdentifier {
             zmLog.debug("Creating callCenter from init")
-            callCenter = WireCallCenterV3Factory.callCenter(
+            self.callCenter = WireCallCenterV3Factory.callCenter(
                 withUserId: selfUser.avsIdentifier,
                 clientId: clientId,
                 uiMOC: managedObjectContext.zm_userInterface,
@@ -171,9 +174,9 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 ) {
                     payloadAsString = String(decoding: data, as: UTF8.self)
                 }
-                zmLog.debug("Callback: \(String(describing: self.callConfigCompletion))")
-                self.callConfigCompletion?(payloadAsString, response.httpStatus)
-                self.callConfigCompletion = nil
+                zmLog.debug("Callback: \(String(describing: callConfigCompletion))")
+                callConfigCompletion?(payloadAsString, response.httpStatus)
+                callConfigCompletion = nil
             }
 
         case clientDiscoverySync:
@@ -267,7 +270,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
                 return
             }
 
-            self.zmLog
+            zmLog
                 .debug("received calling message, timestamp \(eventTimestamp), serverTimeDelta \(serverTimeDelta)")
 
             guard !callEventContent.isRemoteMute else {
@@ -432,26 +435,26 @@ extension CallingRequestStrategy: WireCallCenterTransport {
     }
 
     public func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
-        self.zmLog.debug("requestCallConfig() called, moc = \(managedObjectContext)")
+        zmLog.debug("requestCallConfig() called, moc = \(managedObjectContext)")
         managedObjectContext.performGroupedBlock { [unowned self] in
-            self.zmLog.debug("requestCallConfig() on the moc queue")
-            self.callConfigCompletion = completionHandler
+            zmLog.debug("requestCallConfig() on the moc queue")
+            callConfigCompletion = completionHandler
 
-            self.callConfigRequestSync.readyForNextRequestIfNotBusy()
+            callConfigRequestSync.readyForNextRequestIfNotBusy()
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         }
     }
 
     public func requestClientsList(conversationId: AVSIdentifier, completionHandler: @escaping ([AVSClient]) -> Void) {
-        self.zmLog.debug("requestClientList() called, moc = \(managedObjectContext)")
+        zmLog.debug("requestClientList() called, moc = \(managedObjectContext)")
 
         managedObjectContext.performGroupedBlock { [unowned self] in
             guard let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
                 domain: conversationId.domain,
-                in: self.managedObjectContext
+                in: managedObjectContext
             ) else {
-                self.zmLog.error("Can't request client list since conversation doesn't exist")
+                zmLog.error("Can't request client list since conversation doesn't exist")
                 completionHandler([])
                 return
             }
@@ -460,12 +463,12 @@ extension CallingRequestStrategy: WireCallCenterTransport {
             case .proteus, .mixed:
                 // With proteus, we discover clients by posting an otr message to no-one,
                 // then parse the error response that contains the list of all clients.
-                self.clientDiscoveryRequest = ClientDiscoveryRequest(
+                clientDiscoveryRequest = ClientDiscoveryRequest(
                     conversationId: conversationId.identifier,
                     domain: conversationId.domain,
                     completion: completionHandler
                 )
-                self.clientDiscoverySync.readyForNextRequestIfNotBusy()
+                clientDiscoverySync.readyForNextRequestIfNotBusy()
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
 
             case .mls:

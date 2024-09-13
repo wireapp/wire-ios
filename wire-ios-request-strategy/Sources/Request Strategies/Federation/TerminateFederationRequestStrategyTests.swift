@@ -64,7 +64,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertTrue(manager.didCallHandleFederationTerminationWith)
@@ -84,7 +84,7 @@ class TerminateFederationRequestStrategyTests: MessagingTestBase {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertTrue(manager.didCallhandleFederationTerminationBetween)

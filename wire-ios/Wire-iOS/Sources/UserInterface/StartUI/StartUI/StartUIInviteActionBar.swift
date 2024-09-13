@@ -35,7 +35,7 @@ final class StartUIInviteActionBar: UIView {
 
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(self.keyboardFrameWillChange(_:)),
+            selector: #selector(keyboardFrameWillChange(_:)),
             name: UIResponder.keyboardWillChangeFrameNotification,
             object: nil
         )

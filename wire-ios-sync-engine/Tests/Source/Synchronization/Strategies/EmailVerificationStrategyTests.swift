@@ -27,7 +27,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         super.setUp()
         registrationStatus = TestRegistrationStatus()
         sut = WireSyncEngine.RegistationCredentialVerificationStrategy(
-            groupQueue: self.syncMOC,
+            groupQueue: syncMOC,
             status: registrationStatus
         )
     }

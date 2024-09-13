@@ -107,9 +107,9 @@ final class ConversationTextMessageCell: UIView,
     func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
         // Open mention link
         if url.isMention {
-            if let message = self.message,
+            if let message,
                let mention = message.textMessageData?.mentions.first(where: { $0.location == url.mentionLocation }) {
-                return self.openMention(mention)
+                return openMention(mention)
             } else {
                 return false
             }
@@ -167,14 +167,14 @@ final class ConversationTextMessageCellDescription: ConversationMessageCellDescr
     let accessibilityLabel: String? = nil
 
     init(attributedString: NSAttributedString, isObfuscated: Bool) {
-        configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
+        self.configuration = View.Configuration(attributedText: attributedString, isObfuscated: isObfuscated)
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
-        cell.cellView.delegate = self.delegate
-        cell.cellView.message = self.message
+        cell.cellView.delegate = delegate
+        cell.cellView.message = message
         cell.cellView.menuPresenter = cell
         return cell
     }

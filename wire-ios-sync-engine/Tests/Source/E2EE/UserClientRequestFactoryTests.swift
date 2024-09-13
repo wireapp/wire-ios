@@ -38,7 +38,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
         mockAuthenticationStatusDelegate = MockAuthenticationStatusDelegate()
         authenticationStatus = MockAuthenticationStatus(
             delegate: mockAuthenticationStatusDelegate,
-            userInfoParser: self.userInfoParser
+            userInfoParser: userInfoParser
         )
 
         sut = UserClientRequestFactory()

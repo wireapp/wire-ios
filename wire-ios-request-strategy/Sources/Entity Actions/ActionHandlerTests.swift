@@ -49,11 +49,11 @@ class ActionHandlerTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        self.sut = TestActionHandler(context: uiMOC)
+        sut = TestActionHandler(context: uiMOC)
     }
 
     override func tearDown() {
-        self.sut = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -64,7 +64,7 @@ class ActionHandlerTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        _ = self.sut.nextRequest(for: .v0)
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertTrue(sut.calledRequestForAction)
@@ -76,12 +76,12 @@ class ActionHandlerTests: MessagingTestBase {
         action.send(in: uiMOC.notificationContext)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        _ = self.sut.nextRequest(for: .v0)
+        _ = sut.nextRequest(for: .v0)
         XCTAssertTrue(sut.pendingActions.isEmpty)
         sut.calledRequestForAction = false
 
         // when
-        _ = self.sut.nextRequest(for: .v0)
+        _ = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertFalse(sut.calledRequestForAction)
@@ -93,7 +93,7 @@ class ActionHandlerTests: MessagingTestBase {
         action.send(in: uiMOC.notificationContext)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
+        let request = try XCTUnwrap(sut.nextRequest(for: .v0))
 
         // when
         request.complete(with: response(httpStatus: 200, apiVersion: .v0))
@@ -109,7 +109,7 @@ class ActionHandlerTests: MessagingTestBase {
         action.send(in: uiMOC.notificationContext)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
+        let request = try XCTUnwrap(sut.nextRequest(for: .v0))
         XCTAssertTrue(sut.pendingActions.isEmpty)
 
         // when
@@ -127,7 +127,7 @@ class ActionHandlerTests: MessagingTestBase {
         action.send(in: uiMOC.notificationContext)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let request = try XCTUnwrap(self.sut.nextRequest(for: .v0))
+        let request = try XCTUnwrap(sut.nextRequest(for: .v0))
         XCTAssertTrue(sut.pendingActions.isEmpty)
 
         // when

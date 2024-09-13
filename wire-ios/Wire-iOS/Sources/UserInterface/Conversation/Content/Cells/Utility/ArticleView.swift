@@ -35,7 +35,7 @@ final class ArticleView: UIView {
 
     var imageHeight: CGFloat = 144 {
         didSet {
-            self.imageHeightConstraint.constant = self.imageHeight
+            imageHeightConstraint.constant = imageHeight
         }
     }
 
@@ -70,9 +70,9 @@ final class ArticleView: UIView {
 
     private func setupViews() {
         accessibilityElements = [imageView, messageLabel, authorLabel]
-        self.backgroundColor = self.containerColor
-        self.layer.cornerRadius = 4
-        self.clipsToBounds = true
+        backgroundColor = containerColor
+        layer.cornerRadius = 4
+        clipsToBounds = true
         accessibilityIdentifier = "linkPreview"
 
         imageView.clipsToBounds = true
@@ -100,7 +100,7 @@ final class ArticleView: UIView {
     }
 
     private func setupConstraints(_ imagePlaceholder: Bool) {
-        let imageHeight: CGFloat = imagePlaceholder ? self.imageHeight : 0
+        let imageHeight: CGFloat = imagePlaceholder ? imageHeight : 0
 
         for item in [messageLabel, authorLabel, imageView, obfuscationView] {
             item.translatesAutoresizingMaskIntoConstraints = false
@@ -177,14 +177,14 @@ final class ArticleView: UIView {
     }
 
     func updateContentMode() {
-        guard let image = self.imageView.image else { return }
+        guard let image = imageView.image else { return }
         let width = image.size.width * image.scale
         let height = image.size.height * image.scale
 
         if width < 480.0 || height < 160.0 {
-            self.imageView.contentMode = .center
+            imageView.contentMode = .center
         } else {
-            self.imageView.contentMode = .scaleAspectFill
+            imageView.contentMode = .scaleAspectFill
         }
     }
 

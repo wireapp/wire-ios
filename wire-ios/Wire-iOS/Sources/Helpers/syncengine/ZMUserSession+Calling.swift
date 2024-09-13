@@ -29,7 +29,7 @@ extension ZMUserSession: CallConversationProvider {}
 extension ZMUserSession {
     var priorityCallConversation: ZMConversation? {
         guard let callNotificationStyle = SessionManager.shared?.callNotificationStyle else { return nil }
-        guard let callCenter = self.callCenter else { return nil }
+        guard let callCenter else { return nil }
 
         let conversationsWithIncomingCall = callCenter.nonIdleCallConversations(in: self)
             .filter { conversation -> Bool in
@@ -52,7 +52,7 @@ extension ZMUserSession {
     }
 
     var ongoingCallConversation: ZMConversation? {
-        guard let callCenter = self.callCenter else { return nil }
+        guard let callCenter else { return nil }
 
         return callCenter.nonIdleCallConversations(in: self).first { conversation -> Bool in
             guard let callState = conversation.voiceChannel?.state else { return false }

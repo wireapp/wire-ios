@@ -83,8 +83,8 @@ final class ConversationCreationController: UIViewController {
         section.isHidden = true
 
         section.toggleAction = { [unowned self] allowGuests in
-            self.values.allowGuests = allowGuests
-            self.updateOptions()
+            values.allowGuests = allowGuests
+            updateOptions()
         }
 
         return section
@@ -95,8 +95,8 @@ final class ConversationCreationController: UIViewController {
         section.isHidden = true
 
         section.toggleAction = { [unowned self] allowServices in
-            self.values.allowServices = allowServices
-            self.updateOptions()
+            values.allowServices = allowServices
+            updateOptions()
         }
         return section
     }()
@@ -106,8 +106,8 @@ final class ConversationCreationController: UIViewController {
         section.isHidden = true
 
         section.toggleAction = { [unowned self] enableReceipts in
-            self.values.enableReceipts = enableReceipts
-            self.updateOptions()
+            values.enableReceipts = enableReceipts
+            updateOptions()
         }
 
         return section
@@ -270,10 +270,10 @@ final class ConversationCreationController: UIViewController {
     }
 
     private func updateOptions() {
-        self.optionsToggle.configure(with: values)
-        self.guestsSection.configure(with: values)
-        self.servicesSection.configure(with: values)
-        self.encryptionProtocolSection.configure(with: values)
+        optionsToggle.configure(with: values)
+        guestsSection.configure(with: values)
+        servicesSection.configure(with: values)
+        encryptionProtocolSection.configure(with: values)
     }
 }
 

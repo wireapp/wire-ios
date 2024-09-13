@@ -88,7 +88,7 @@ extension CoreDataStack {
 
         guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.missingLocalStore) }
 
-        let migrationDirectory = self.migrationDirectory.appendingPathComponent(UUID().uuidString)
+        let migrationDirectory = migrationDirectory.appendingPathComponent(UUID().uuidString)
         let databaseDirectory = migrationDirectory.appendingPathComponent(databaseDirectoryName)
 
         workQueue.async(group: dispatchGroup) {

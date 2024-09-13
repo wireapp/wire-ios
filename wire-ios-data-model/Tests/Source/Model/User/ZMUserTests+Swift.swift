@@ -275,7 +275,7 @@ extension ZMUserTests_Swift {
 
         let token = ManagedObjectObserverToken(
             name: .userDidRequestPreviewAsset,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         ) { note in
             let objectId = note.object as? NSManagedObjectID
             XCTAssertNotNil(objectId)
@@ -300,7 +300,7 @@ extension ZMUserTests_Swift {
 
         let token = ManagedObjectObserverToken(
             name: .userDidRequestCompleteAsset,
-            managedObjectContext: self.uiMOC
+            managedObjectContext: uiMOC
         ) { note in
             let objectId = note.object as? NSManagedObjectID
             XCTAssertNotNil(objectId)
@@ -345,8 +345,8 @@ extension ZMUser {
 extension ZMUserTests_Swift {
     func testPredicateFilteringConnectedUsersByHandle() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "yyy", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Some body", handle: "yyy", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
 
         let all = NSArray(array: [user1, user2])
 
@@ -360,8 +360,8 @@ extension ZMUserTests_Swift {
 
     func testPredicateFilteringConnectedUsersByHandleWithAtSymbol() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
 
         let all = NSArray(array: [user1, user2])
 
@@ -375,8 +375,8 @@ extension ZMUserTests_Swift {
 
     func testPredicateFilteringConnectedUsersByHandlePrefix() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "alonghandle", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Some body", handle: "alonghandle", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
 
         let all = NSArray(array: [user1, user2])
 
@@ -390,8 +390,8 @@ extension ZMUserTests_Swift {
 
     func testPredicateFilteringConnectedUsersStripsDiactricMarks() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Šőmė body", handle: "hand", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Šőmė body", handle: "hand", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
 
         let all = NSArray(array: [user1, user2])
 
@@ -405,9 +405,9 @@ extension ZMUserTests_Swift {
 
     func testPredicateFilteringForAllUsers() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "no-b", connectionStatus: .accepted)
-        let user3 = ZMUser.insert(in: self.uiMOC, name: "Yes body", handle: "yes-b", connectionStatus: .pending)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "No body", handle: "no-b", connectionStatus: .accepted)
+        let user3 = ZMUser.insert(in: uiMOC, name: "Yes body", handle: "yes-b", connectionStatus: .pending)
 
         let all = NSArray(array: [user1, user2, user3])
 
@@ -446,7 +446,7 @@ extension ZMUserTests_Swift {
     func testFilenameForUser() throws {
         // Given
         let user = ZMUser.insert(
-            in: self.uiMOC,
+            in: uiMOC,
             name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge"
         )
 
@@ -462,7 +462,7 @@ extension ZMUserTests_Swift {
     func testFilenameWithSuffixForUser() throws {
         // Given
         let user = ZMUser.insert(
-            in: self.uiMOC,
+            in: uiMOC,
             name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge"
         )
 
@@ -480,7 +480,7 @@ extension ZMUserTests_Swift {
 
     func testThatWeCanUpdateAvailabilityFromGenericMessage() {
         // given
-        let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
+        let user = ZMUser.insert(in: uiMOC, name: "Foo")
         XCTAssertEqual(user.availability, .none)
         let availability = WireProtos.Availability(.away)
         // when
@@ -503,7 +503,7 @@ extension ZMUserTests_Swift {
 
     func testThatWeDontAllowModifyingAvailabilityOnOtherUsers() {
         // given
-        let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
+        let user = ZMUser.insert(in: uiMOC, name: "Foo")
         XCTAssertEqual(user.availability, .none)
 
         // when
@@ -803,7 +803,7 @@ extension ZMUserTests_Swift {
 extension ZMUserTests_Swift {
     func testThatServiceIdentifierAndProviderIdentifierAreNilByDefault() {
         // GIVEN
-        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        let sut = ZMUser.insertNewObject(in: uiMOC)
 
         // WHEN & THEN
         XCTAssertNil(sut.providerIdentifier)
@@ -816,7 +816,7 @@ extension ZMUserTests_Swift {
 extension ZMUserTests_Swift {
     func testIsWirelessUserCalculation_false() {
         // given
-        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        let sut = ZMUser.insertNewObject(in: uiMOC)
         // when & then
         XCTAssertFalse(sut.isWirelessUser)
         XCTAssertFalse(sut.isExpired)
@@ -825,7 +825,7 @@ extension ZMUserTests_Swift {
 
     func testIsWirelessUserCalculation_true_not_expired() {
         // given
-        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        let sut = ZMUser.insertNewObject(in: uiMOC)
         sut.expiresAt = Date(timeIntervalSinceNow: 1)
         // when & then
         XCTAssertTrue(sut.isWirelessUser)
@@ -835,7 +835,7 @@ extension ZMUserTests_Swift {
 
     func testIsWirelessUserCalculation_true_expired() {
         // given
-        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        let sut = ZMUser.insertNewObject(in: uiMOC)
         sut.expiresAt = Date(timeIntervalSinceNow: -1)
         // when & then
         XCTAssertTrue(sut.isWirelessUser)
@@ -897,7 +897,7 @@ extension ZMUserTests_Swift {
         let sut = ZMUser.selfUser(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
-        let selfConversation = ZMConversation.fetch(with: self.selfUser.remoteIdentifier, in: uiMOC)
+        let selfConversation = ZMConversation.fetch(with: selfUser.remoteIdentifier, in: uiMOC)
 
         // then
         XCTAssertEqual(sut.activeConversations, [conversation, selfConversation])
@@ -944,17 +944,17 @@ extension ZMUserTests_Swift {
         let sut = ZMUser.selfUser(in: uiMOC)
         // WHEN
         sut.readReceiptsEnabled = true
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // THEN
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             let syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
 
             XCTAssertEqual(syncSelfUser.readReceiptsEnabled, true)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testThatItSetsModifiedKeysForEnableReadReceipts() {
@@ -972,7 +972,7 @@ extension ZMUserTests_Swift {
     }
 
     func testThatItDoesNotSetModifiedKeysForEnableReadReceipts() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let sut = ZMUser.selfUser(in: self.syncMOC)
             sut.resetLocallyModifiedKeys(Set())
@@ -1014,7 +1014,7 @@ extension ZMUserTests_Swift {
 extension ZMUserTests_Swift {
     func testThatUserIsVerified_WhenSelfUserAndUserIsTrusted() {
         // GIVEN
-        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let user: ZMUser = userWithClients(count: 2, trusted: true)
         let selfUser = ZMUser.selfUser(in: uiMOC)
 
         // WHEN
@@ -1027,12 +1027,12 @@ extension ZMUserTests_Swift {
 
     func testThatUserIsNotVerified_WhenSelfUserIsNotTrustedButUserIsTrusted() {
         // GIVEN
-        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let user: ZMUser = userWithClients(count: 2, trusted: true)
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let selfClient: UserClient? = selfUser.selfClient()
 
         // WHEN
-        let newClient = UserClient.insertNewObject(in: self.uiMOC)
+        let newClient = UserClient.insertNewObject(in: uiMOC)
         newClient.user = selfUser
         selfClient?.ignoreClient(newClient)
 

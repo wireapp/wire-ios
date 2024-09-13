@@ -40,7 +40,7 @@ class TransferStateMigrationTests: DiskDatabaseTest {
         moc.willChangeValue(forKey: #keyPath(ZMAssetClientMessage.transferState))
         assetMessage.setPrimitiveValue(rawLegacyTranferState, forKey: #keyPath(ZMAssetClientMessage.transferState))
         moc.didChangeValue(forKey: #keyPath(ZMAssetClientMessage.transferState))
-        try self.moc.save()
+        try moc.save()
 
         // When
         WireDataModel.TransferStateMigration.migrateLegacyTransferState(in: moc)

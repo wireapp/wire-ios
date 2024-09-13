@@ -65,7 +65,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     func testNextRequest_givenSyncPhaseEvaluate1on1ConversationsForMLS_thenCallFinishSync() async {
         // given
-        let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
+        let expectation = expectation(description: "EvaluateOneOnOneConversationsStrategy")
 
         mockSyncStatus.currentSyncPhase = .evaluate1on1ConversationsForMLS
         mockSyncStatus.finishCurrentSyncPhasePhase_MockMethod = { _ in
@@ -87,7 +87,7 @@ final class EvaluateOneOnOneConversationsStrategyTests: XCTestCase {
 
     func testNextRequest_givenOtherSyncPhase_thenDoNotCallFinishSync() async {
         // given
-        let expectation = self.expectation(description: "EvaluateOneOnOneConversationsStrategy")
+        let expectation = expectation(description: "EvaluateOneOnOneConversationsStrategy")
         expectation.isInverted = true
 
         mockSyncStatus.currentSyncPhase = .fetchingLastUpdateEventID

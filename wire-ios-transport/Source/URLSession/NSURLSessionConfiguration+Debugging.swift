@@ -21,20 +21,20 @@ import Foundation
 extension URLSessionConfiguration {
     @objc public var configurationDump: String {
         var dump = [
-            "identifier: \(self.identifier ?? "nil")",
-            "allowsCellularAccess: \(self.allowsCellularAccess)",
-            "httpMaximumConnectionsPerHost: \(self.httpMaximumConnectionsPerHost)",
-            "httpShouldUsePipelining: \(self.httpShouldUsePipelining)",
-            "httpShouldSetCookies: \(self.httpShouldSetCookies)",
-            "isDiscretionary: \(self.isDiscretionary)",
-            "sessionSendsLaunchEvents: \(self.sessionSendsLaunchEvents)",
-            "timeoutIntervalForRequest: \(self.timeoutIntervalForRequest)",
-            "timeoutIntervalForResource: \(self.timeoutIntervalForResource)",
-            "tlsMaximumSupportedProtocol: \(self.tlsMaximumSupportedProtocol)",
-            "tlsMinimumSupportedProtocol: \(self.tlsMinimumSupportedProtocol)",
-            "networkServiceType: \(self.networkServiceType.rawValue)",
+            "identifier: \(identifier ?? "nil")",
+            "allowsCellularAccess: \(allowsCellularAccess)",
+            "httpMaximumConnectionsPerHost: \(httpMaximumConnectionsPerHost)",
+            "httpShouldUsePipelining: \(httpShouldUsePipelining)",
+            "httpShouldSetCookies: \(httpShouldSetCookies)",
+            "isDiscretionary: \(isDiscretionary)",
+            "sessionSendsLaunchEvents: \(sessionSendsLaunchEvents)",
+            "timeoutIntervalForRequest: \(timeoutIntervalForRequest)",
+            "timeoutIntervalForResource: \(timeoutIntervalForResource)",
+            "tlsMaximumSupportedProtocol: \(tlsMaximumSupportedProtocol)",
+            "tlsMinimumSupportedProtocol: \(tlsMinimumSupportedProtocol)",
+            "networkServiceType: \(networkServiceType.rawValue)",
         ]
-        dump.append("shouldUseExtendedBackgroundIdleMode: \(self.shouldUseExtendedBackgroundIdleMode)")
+        dump.append("shouldUseExtendedBackgroundIdleMode: \(shouldUseExtendedBackgroundIdleMode)")
 
         return dump.joined(separator: "\n\t")
     }

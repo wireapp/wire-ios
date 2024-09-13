@@ -34,13 +34,13 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
     var numberOfAdditionalContacts: UInt = 0
 
     var numberOfContacts: UInt {
-        UInt(self.contacts.count) + numberOfAdditionalContacts
+        UInt(contacts.count) + numberOfAdditionalContacts
     }
 
     /// Enumerates the contacts, invoking the block for each contact.
     /// If the block returns false, it will stop enumerating them.
     func enumerateRawContacts(block: @escaping (WireSyncEngine.ContactRecord) -> (Bool)) {
-        for contact in self.contacts where !block(contact) {
+        for contact in contacts where !block(contact) {
             return
         }
         let infiniteContact = MockAddressBookContact(
@@ -68,7 +68,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 
     /// Replace the content with a given number of random hashes
     func fillWithContacts(_ number: UInt) {
-        self.contacts = (0 ..< number).map {
+        contacts = (0 ..< number).map {
             self.createContact(card: $0)
         }
     }
@@ -110,6 +110,6 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
     }
 
     var expectedHashes: [String] {
-        self.rawEmails.map(\.base64EncodedSHADigest) + self.rawPhoneNumbers.map(\.base64EncodedSHADigest)
+        rawEmails.map(\.base64EncodedSHADigest) + rawPhoneNumbers.map(\.base64EncodedSHADigest)
     }
 }

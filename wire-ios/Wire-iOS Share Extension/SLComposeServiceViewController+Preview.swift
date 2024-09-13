@@ -92,8 +92,8 @@ extension SLComposeServiceViewController {
     }
 
     func appendLinkFromTextIfNeeded() -> [AttachmentType: [NSItemProvider]]? {
-        guard let text = self.contentText,
-              var attachments = self.extensionContext?.attachments else {
+        guard let text = contentText,
+              var attachments = extensionContext?.attachments else {
             return nil
         }
 

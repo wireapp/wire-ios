@@ -82,20 +82,20 @@ final class CallingV3Tests: IntegrationTest {
     }
 
     func selfJoinCall(isStart: Bool) {
-        _ = self.conversationUnderTest.voiceChannel?.join(video: false)
+        _ = conversationUnderTest.voiceChannel?.join(video: false)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func selfLeaveCall() {
-        let convIdRef = self.conversationIdRef
-        let userIdRef = self.selfUser.identifier.cString(using: .utf8)
-        self.conversationUnderTest.voiceChannel?.leave()
+        let convIdRef = conversationIdRef
+        let userIdRef = selfUser.identifier.cString(using: .utf8)
+        conversationUnderTest.voiceChannel?.leave()
         WireSyncEngine.closedCallHandler(
             reason: WCALL_REASON_STILL_ONGOING,
             conversationId: convIdRef,
             messageTime: 0,
             userId: userIdRef,
-            contextRef: self.wireCallCenterRef
+            contextRef: wireCallCenterRef
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -205,7 +205,7 @@ final class CallingV3Tests: IntegrationTest {
 
         // when
         selfLeaveCall()
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 3)
@@ -246,7 +246,7 @@ final class CallingV3Tests: IntegrationTest {
         stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
 
         // and when
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         XCTAssertEqual(stateObserver.changes.count, 2)
         stateObserver.checkLastNotificationHasCallState(.terminating(reason: .canceled))
@@ -274,7 +274,7 @@ final class CallingV3Tests: IntegrationTest {
         stateObserver.checkLastNotificationHasCallState(.incoming(video: false, shouldRing: false, degraded: false))
 
         // and when
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         XCTAssertEqual(stateObserver.changes.count, 2)
         stateObserver.checkLastNotificationHasCallState(.terminating(reason: .canceled))
@@ -317,7 +317,7 @@ final class CallingV3Tests: IntegrationTest {
         //
         // when
         selfLeaveCall()
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         // then
         XCTAssertEqual(stateObserver.changes.count, 5)
@@ -365,7 +365,7 @@ final class CallingV3Tests: IntegrationTest {
         //
         // when
         selfLeaveCall()
-        closeCall(user: self.localSelfUser, reason: .canceled)
+        closeCall(user: localSelfUser, reason: .canceled)
 
         // then
         stateObserver.checkLastNotificationHasCallState(.terminating(reason: .canceled))
@@ -735,7 +735,7 @@ extension CallingV3Tests {
         XCTAssertTrue(login())
         fetchAllClients()
 
-        self.userSession?.perform {
+        userSession?.perform {
             self.conversationUnderTest.isArchived = true
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -785,7 +785,7 @@ extension CallingV3Tests {
         fetchAllClients()
         let user = conversationUnderTest.connectedUser!
 
-        self.userSession?.perform {
+        userSession?.perform {
             self.conversationUnderTest.isArchived = true
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

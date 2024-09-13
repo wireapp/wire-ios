@@ -329,7 +329,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysPortraitImage_52() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
+        let image = image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
@@ -344,7 +344,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysSquareImage_52() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_square.jpg")
+        let image = image(inTestBundleNamed: "unsplash_square.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
@@ -359,7 +359,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysPanoImage_52() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_pano.jpg")
+        let image = image(inTestBundleNamed: "unsplash_pano.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
         message.senderUser = MockUserType.createUser(name: "Bruno")
         message.conversation = otherUserConversation
@@ -374,7 +374,7 @@ final class ConversationReplyCellTests: CoreDataSnapshotTestCase {
 
     func testThatItDisplaysVideoMessage_53() {
         // GIVEN
-        let image = self.image(inTestBundleNamed: "unsplash_square.jpg")
+        let image = image(inTestBundleNamed: "unsplash_square.jpg")
         let message = MockMessageFactory.fileTransferMessage()
         message.backingFileMessageData!.filename = "Video.mp4"
         message.backingFileMessageData!.mimeType = "video/mp4"

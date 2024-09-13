@@ -127,7 +127,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 userSession: userSession,
                 mainCoordinator: mainCoordinator
             )
-            viewControllers = .combinedView(
+            self.viewControllers = .combinedView(
                 readReceipts: readReceiptsViewController,
                 reactions: reactionsViewController
             )
@@ -139,7 +139,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 userSession: userSession,
                 mainCoordinator: mainCoordinator
             )
-            viewControllers = .singleView(reactionsViewController)
+            self.viewControllers = .singleView(reactionsViewController)
 
         case .receipts:
             let readReceiptsViewController = MessageDetailsContentViewController(
@@ -148,10 +148,10 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
                 userSession: userSession,
                 mainCoordinator: mainCoordinator
             )
-            viewControllers = .singleView(readReceiptsViewController)
+            self.viewControllers = .singleView(readReceiptsViewController)
         }
 
-        container = TabBarController(viewControllers: viewControllers.all)
+        self.container = TabBarController(viewControllers: viewControllers.all)
 
         if case .combined = dataSource.displayMode {
             let tabIndex = preferredDisplayMode == .reactions ? 1 : 0

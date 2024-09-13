@@ -39,7 +39,7 @@ final class MediaPlayerController: NSObject {
 
         super.init()
 
-        playerRateObserver = self.player.observe(\AVPlayer.rate) { [weak self] _, _ in
+        self.playerRateObserver = self.player.observe(\AVPlayer.rate) { [weak self] _, _ in
             self?.playerRateChanged()
         }
     }
@@ -49,7 +49,7 @@ final class MediaPlayerController: NSObject {
     }
 
     func tearDown() {
-        self.delegate?.mediaPlayer(self, didChangeTo: .completed)
+        delegate?.mediaPlayer(self, didChangeTo: .completed)
     }
 
     private func playerRateChanged() {

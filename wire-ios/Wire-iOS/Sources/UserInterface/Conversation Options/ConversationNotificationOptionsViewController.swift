@@ -40,7 +40,7 @@ final class ConversationNotificationOptionsViewController: UIViewController {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     @available(*, unavailable)

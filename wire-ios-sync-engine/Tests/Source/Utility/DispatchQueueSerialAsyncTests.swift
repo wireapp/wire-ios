@@ -23,7 +23,7 @@ final class DispatchQueueSerialAsyncTests: XCTestCase {
     func testThatItWaitsForOneTaskBeforeAnother() {
         let sut = DispatchQueue(label: "test")
 
-        let doneExpectation = self.expectation(description: "Done with jobs")
+        let doneExpectation = expectation(description: "Done with jobs")
 
         var done1 = false
         var done2 = false
@@ -49,7 +49,7 @@ final class DispatchQueueSerialAsyncTests: XCTestCase {
 
         // I've since this taking up to 4 seconds to complete on my mac so setting a high timeout. There is a ticket
         // to address this better [WPB-10556].
-        self.wait(for: [doneExpectation], timeout: 10)
+        wait(for: [doneExpectation], timeout: 10)
         XCTAssertTrue(done1)
         XCTAssertTrue(done2)
     }

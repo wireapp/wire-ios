@@ -120,7 +120,7 @@ final class MessageToolboxView: UIView {
         setupViews()
         createConstraints()
 
-        tapGestureRecogniser = UITapGestureRecognizer(
+        self.tapGestureRecogniser = UITapGestureRecognizer(
             target: self,
             action: #selector(MessageToolboxView.onTapContent(_:))
         )
@@ -185,13 +185,13 @@ final class MessageToolboxView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard let message = self.dataSource?.message else { return }
-        guard !self.bounds.equalTo(self.previousLayoutBounds) else {
+        guard let message = dataSource?.message else { return }
+        guard !bounds.equalTo(previousLayoutBounds) else {
             return
         }
 
-        self.previousLayoutBounds = self.bounds
-        self.configureForMessage(message)
+        previousLayoutBounds = bounds
+        configureForMessage(message)
     }
 
     override func willMove(toWindow newWindow: UIWindow?) {
@@ -227,7 +227,7 @@ final class MessageToolboxView: UIView {
     }
 
     private func reloadContent(animated: Bool) {
-        guard let dataSource = self.dataSource else { return }
+        guard let dataSource else { return }
 
         // Do not reload the content if it didn't change.
         guard dataSource.shouldUpdateContent(
@@ -238,38 +238,38 @@ final class MessageToolboxView: UIView {
 
         switch dataSource.content {
         case let .callList(callListString):
-            self.detailsLabel.attributedText = callListString
-            self.detailsLabel.isHidden = false
-            self.detailsLabel.numberOfLines = 0
-            self.hideAndCleanStatusLabel()
-            self.timestampSeparatorLabel.isHidden = true
-            self.statusSeparatorLabel.isHidden = true
-            self.countdownLabel.isHidden = true
-            self.messageFailureView.isHidden = true
+            detailsLabel.attributedText = callListString
+            detailsLabel.isHidden = false
+            detailsLabel.numberOfLines = 0
+            hideAndCleanStatusLabel()
+            timestampSeparatorLabel.isHidden = true
+            statusSeparatorLabel.isHidden = true
+            countdownLabel.isHidden = true
+            messageFailureView.isHidden = true
 
         case let .sendFailure(detailsString):
-            self.hideAndCleanStatusLabel()
-            self.statusSeparatorLabel.isHidden = true
-            self.countdownLabel.isHidden = true
-            self.timestampSeparatorLabel.isHidden = false
-            self.messageFailureView.isHidden = false
-            self.messageFailureView.setTitle(detailsString.string)
+            hideAndCleanStatusLabel()
+            statusSeparatorLabel.isHidden = true
+            countdownLabel.isHidden = true
+            timestampSeparatorLabel.isHidden = false
+            messageFailureView.isHidden = false
+            messageFailureView.setTitle(detailsString.string)
 
         case let .details(timestamp, status, countdown):
-            self.detailsLabel.attributedText = timestamp
-            self.detailsLabel.isHidden = timestamp == nil
-            self.detailsLabel.numberOfLines = 1
-            self.statusLabel.attributedText = status
+            detailsLabel.attributedText = timestamp
+            detailsLabel.isHidden = timestamp == nil
+            detailsLabel.numberOfLines = 1
+            statusLabel.attributedText = status
             // override accessibilityLabel if the attributed string has customized accessibilityLabel
             if let accessibilityLabel = status?.accessibilityLabel {
-                self.statusLabel.accessibilityLabel = accessibilityLabel
+                statusLabel.accessibilityLabel = accessibilityLabel
             }
-            self.statusLabel.isHidden = status == nil
-            self.timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
-            self.statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
-            self.countdownLabel.attributedText = countdown
-            self.countdownLabel.isHidden = countdown == nil
-            self.messageFailureView.isHidden = true
+            statusLabel.isHidden = status == nil
+            timestampSeparatorLabel.isHidden = timestamp == nil || status == nil
+            statusSeparatorLabel.isHidden = (timestamp == nil && status == nil) || countdown == nil
+            countdownLabel.attributedText = countdown
+            countdownLabel.isHidden = countdown == nil
+            messageFailureView.isHidden = true
         }
 
         layoutIfNeeded()
@@ -281,7 +281,7 @@ final class MessageToolboxView: UIView {
     func startCountdownTimer() {
         stopCountdownTimer()
 
-        guard let message = self.dataSource?.message else { return }
+        guard let message = dataSource?.message else { return }
         guard message.isEphemeral, !message.hasBeenDeleted, !message.isObfuscated else { return }
 
         timestampTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
@@ -319,7 +319,7 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
     }
 
     func preferredDetailsDisplayMode() -> MessageDetailsDisplayMode? {
-        guard let dataSource = self.dataSource else { return nil }
+        guard let dataSource else { return nil }
 
         switch dataSource.content {
         case .sendFailure:
@@ -337,6 +337,6 @@ extension MessageToolboxView: UIGestureRecognizerDelegate {
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
-        gestureRecognizer.isEqual(self.tapGestureRecogniser)
+        gestureRecognizer.isEqual(tapGestureRecogniser)
     }
 }

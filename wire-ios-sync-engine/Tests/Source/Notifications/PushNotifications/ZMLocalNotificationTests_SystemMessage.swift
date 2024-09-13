@@ -119,7 +119,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
         // given
         let event = createMemberLeaveUpdateEvent(
             UUID.create(),
-            conversationID: self.groupConversation.remoteIdentifier!,
+            conversationID: groupConversation.remoteIdentifier!,
             users: [otherUser1],
             senderID: otherUser1.remoteIdentifier
         )

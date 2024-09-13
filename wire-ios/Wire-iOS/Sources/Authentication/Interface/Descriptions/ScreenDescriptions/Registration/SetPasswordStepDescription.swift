@@ -29,18 +29,18 @@ final class SetPasswordStepDescription: DefaultValidatingStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
+        self.backButton = BackButtonDescription()
         let textField = TextFieldDescription(
             placeholder: L10n.Localizable.Password.placeholder.capitalized,
             actionDescription: L10n.Localizable.General.next,
             kind: .password(.accountRegistration, isNew: true)
         )
         textField.useDeferredValidation = true
-        mainView = textField
-        headline = L10n.Localizable.Team.Password.headline
-        subtext = nil
-        secondaryView = nil
-        initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
-        footerView = nil
+        self.mainView = textField
+        self.headline = L10n.Localizable.Team.Password.headline
+        self.subtext = nil
+        self.secondaryView = nil
+        self.initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
+        self.footerView = nil
     }
 }

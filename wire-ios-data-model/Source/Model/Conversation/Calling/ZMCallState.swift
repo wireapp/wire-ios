@@ -27,7 +27,7 @@ private let UserInfoHasChangesKey = "zm_userInfoHasChanges"
 
 extension NSManagedObjectContext {
     @objc public var zm_callState: ZMCallState {
-        let oldState = self.userInfo[UserInfoCallStateKey] as? ZMCallState
+        let oldState = userInfo[UserInfoCallStateKey] as? ZMCallState
         return oldState ?? { () -> ZMCallState in
             let state = ZMCallState()
             self.userInfo[UserInfoCallStateKey] = state
@@ -37,18 +37,18 @@ extension NSManagedObjectContext {
 
     @objc
     public func zm_tearDownCallState() {
-        if (self.userInfo[UserInfoCallStateKey] as? ZMCallState) != nil {
-            self.userInfo.removeObject(forKey: UserInfoCallStateKey)
+        if (userInfo[UserInfoCallStateKey] as? ZMCallState) != nil {
+            userInfo.removeObject(forKey: UserInfoCallStateKey)
         }
     }
 
     /// True if the context has some changes in the user info that should cause a save
     @objc public var zm_hasUserInfoChanges: Bool {
         get {
-            (self.userInfo[UserInfoHasChangesKey] as? Bool) ?? false
+            (userInfo[UserInfoHasChangesKey] as? Bool) ?? false
         }
         set {
-            self.userInfo[UserInfoHasChangesKey] = newValue
+            userInfo[UserInfoHasChangesKey] = newValue
         }
     }
 
@@ -56,12 +56,12 @@ extension NSManagedObjectContext {
     ///
     /// The call state changes do not dirty the context's objects, hence need to be tracked / checked seperately.
     @objc public var zm_hasChanges: Bool {
-        hasChanges || self.zm_hasUserInfoChanges
+        hasChanges || zm_hasUserInfoChanges
     }
 
     @objc
     public func mergeCallStateChanges(fromUserInfo userInfo: [String: Any]) {
-        guard self.zm_isSyncContext else { return } // we don't merge anything to UI, UI is autoritative
+        guard zm_isSyncContext else { return } // we don't merge anything to UI, UI is autoritative
 
         if let callState = self.userInfo[UserInfoCallStateKey] as? ZMCallState {
             _ = callState.mergeChangesFromState(userInfo[UserInfoCallStateKey] as? ZMCallState)
@@ -183,7 +183,7 @@ extension ZMCallState {
     public func mergeChangesFromState(_ other: ZMCallState?) -> Set<NSManagedObjectID> {
         if let other {
             for (moid, conversationState) in other {
-                self.stateForConversationID(moid).mergeChangesFromState(conversationState)
+                stateForConversationID(moid).mergeChangesFromState(conversationState)
             }
             return other.allObjectIDs
         }

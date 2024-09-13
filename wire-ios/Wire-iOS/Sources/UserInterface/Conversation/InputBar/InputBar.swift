@@ -210,8 +210,11 @@ final class InputBar: UIView {
     }
 
     required init(buttons: [UIButton]) {
-        buttonsView = InputBarButtonsView(buttons: buttons)
-        secondaryButtonsView = InputBarSecondaryButtonsView(editBarView: editingView, markdownBarView: markdownView)
+        self.buttonsView = InputBarButtonsView(buttons: buttons)
+        self.secondaryButtonsView = InputBarSecondaryButtonsView(
+            editBarView: editingView,
+            markdownBarView: markdownView
+        )
 
         super.init(frame: CGRect.zero)
 
@@ -294,7 +297,7 @@ final class InputBar: UIView {
         textView.backgroundColor = .clear
 
         markdownView.delegate = textView
-        self.addBorder(for: .top)
+        addBorder(for: .top)
         updateReturnKey()
 
         updateInputBar(withState: inputBarState, animated: false)
@@ -418,7 +421,7 @@ final class InputBar: UIView {
     // MARK: - Disable interactions on the lower part to not to interfere with the keyboard
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
-        if self.textView.isFirstResponder {
+        if textView.isFirstResponder {
             if super.point(inside: point, with: event) {
                 let locationInButtonRow = buttonInnerContainer.convert(point, from: self)
                 return locationInButtonRow.y < buttonInnerContainer.bounds.height / 1.3
@@ -469,9 +472,9 @@ final class InputBar: UIView {
             }
         }
 
-        if animated, self.superview != nil {
+        if animated, superview != nil {
             UIView.animate(easing: .easeInOutExpo, duration: 0.3, animations: layoutIfNeeded)
-            UIView.transition(with: self.textView, duration: 0.1, options: [], animations: textViewChanges) { _ in
+            UIView.transition(with: textView, duration: 0.1, options: [], animations: textViewChanges) { _ in
                 self.updateColors()
                 completion()
             }
@@ -510,9 +513,9 @@ final class InputBar: UIView {
         textView.tintColor = .accent()
         textView.updateTextColor(base: isEditing ? SemanticColors.Label.textDefault : textColor)
 
-        var buttons = self.buttonsView.buttons
+        var buttons = buttonsView.buttons
 
-        buttons.append(self.buttonsView.expandRowButton)
+        buttons.append(buttonsView.expandRowButton)
 
         buttons.forEach { button in
             guard let button = button as? IconButton else { return }

@@ -49,7 +49,7 @@
     redundantParens, \
     redundantRawValues, \
     redundantReturn, \
-    # redundantSelf, \ TODO
+    redundantSelf, \ # False positives in all cases using @autoclosure. `selfrequired` option below creates a `whitetlist` of methods
     redundantStaticSelf, \
     redundantType, \
     redundantTypedThrows, \
@@ -87,7 +87,7 @@
     # OPTIONAL
     blockComments, \
     # docComments - Cannot enable due to our floating doc comment style
-    isEmpty # Rare false positives in situations where a type provides a `count` but not a `isEmpty` property.
+    isEmpty, \ # Rare false positives in situations where a type provides a `count` but not a `isEmpty` property.
 
 # Options
 
@@ -103,7 +103,8 @@
 --patternlet hoist # hoistPatternLet
 --indent 4 # indent
 --anonymousforeach ignore # preferForLoop
-# --self init-only # redundantSelf TODO
+--self init-only # redundantSelf
+--selfrequired "wait,trace,info,presentIfNotDisplayed" # redundentSelf
 --redundanttype inferred # redundantType
 --importgrouping testable-last # sortImports
 --stripunusedargs unnamed-only # unusedArguments

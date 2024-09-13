@@ -239,7 +239,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
             let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!

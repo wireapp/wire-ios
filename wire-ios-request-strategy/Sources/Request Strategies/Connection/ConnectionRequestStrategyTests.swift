@@ -152,7 +152,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenFetchIsCompleted() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
 
         // when
@@ -164,7 +164,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConnectionsSyncPhaseIsFinished_WhenThereIsNoConnectionsToFetch() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
 
         // when
@@ -176,7 +176,7 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatFetchingConnectionsSyncPhaseIsFailed_WhenReceivingAPermanentError() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         startSlowSync()
 
         // when
@@ -190,16 +190,16 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
 
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_Federated() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
 
         // when
         fetchConnection(
-            self.oneToOneConnection,
-            response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion)
+            oneToOneConnection,
+            response: responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
         )
 
         // then
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.oneToOneConnection.needsToBeUpdatedFromBackend)
         }
     }
@@ -207,29 +207,29 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionResetsNeedsToBeUpdatedFromBackend_OnPermanentErrors_NonFederated() {
         // when
         fetchConnection(
-            self.oneToOneConnection,
-            response: responseFailure(code: 403, label: .unknown, apiVersion: self.apiVersion)
+            oneToOneConnection,
+            response: responseFailure(code: 403, label: .unknown, apiVersion: apiVersion)
         )
 
         // then
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(self.oneToOneConnection.needsToBeUpdatedFromBackend)
         }
     }
 
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_Federated() {
         // given
-        self.apiVersion = .v1
+        apiVersion = .v1
         var payload: Payload.Connection!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             payload = self.createConnectionPayload(self.oneToOneConnection, status: .cancelled)
         }
 
         // when
-        fetchConnection(self.oneToOneConnection, response: successfulResponse(connection: payload))
+        fetchConnection(oneToOneConnection, response: successfulResponse(connection: payload))
 
         // then
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.oneToOneConnection.status, .cancelled)
         }
     }
@@ -237,15 +237,15 @@ final class ConnectionRequestStrategyTests: MessagingTestBase {
     func testThatConnectionPayloadIsProcessed_OnSuccessfulResponse_NonFederated() {
         // given
         var payload: Payload.Connection!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             payload = self.createConnectionPayload(self.oneToOneConnection, status: .cancelled)
         }
 
         // when
-        fetchConnection(self.oneToOneConnection, response: successfulResponse(connection: payload))
+        fetchConnection(oneToOneConnection, response: successfulResponse(connection: payload))
 
         // then
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(self.oneToOneConnection.status, .cancelled)
         }
     }

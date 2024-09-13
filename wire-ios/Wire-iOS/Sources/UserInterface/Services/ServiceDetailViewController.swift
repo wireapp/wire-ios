@@ -51,7 +51,7 @@ final class ServiceDetailViewController: UIViewController {
 
     var service: Service {
         didSet {
-            self.detailView.service = service
+            detailView.service = service
         }
     }
 
@@ -85,19 +85,19 @@ final class ServiceDetailViewController: UIViewController {
         self.completion = completion
         self.userSession = userSession
 
-        detailView = ServiceDetailView(service: service)
+        self.detailView = ServiceDetailView(service: service)
 
         let selfUser = userSession.selfUser
 
         switch actionType {
         case let .addService(conversation):
-            actionButton = .createAddServiceButton()
+            self.actionButton = .createAddServiceButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
         case let .removeService(conversation):
-            actionButton = .createDestructiveServiceButton()
+            self.actionButton = .createDestructiveServiceButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
         case .openConversation:
-            actionButton = .openServiceConversationButton()
+            self.actionButton = .openServiceConversationButton()
             actionButton.isHidden = !selfUser.canCreateService
         }
 
@@ -116,7 +116,7 @@ final class ServiceDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let title = self.service.serviceUser.name {
+        if let title = service.serviceUser.name {
             setupNavigationBarTitle(title)
         }
 
@@ -150,11 +150,11 @@ final class ServiceDetailViewController: UIViewController {
             return
         }
 
-        self.service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
+        service.serviceUser.fetchProvider(in: userSession) { [weak self] provider in
             self?.detailView.service.provider = provider
         }
 
-        self.service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
+        service.serviceUser.fetchDetails(in: userSession) { [weak self] details in
             self?.detailView.service.serviceUserDetails = details
         }
     }
@@ -179,12 +179,12 @@ final class ServiceDetailViewController: UIViewController {
 
     @objc
     func backButtonTapped(_: AnyObject!) {
-        self.navigationController?.popViewController(animated: true)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc
     func dismissButtonTapped(_: AnyObject!) {
-        self.navigationController?.dismiss(animated: true) { [weak self] in
+        navigationController?.dismiss(animated: true) { [weak self] in
             self?.completion?(nil)
         }
     }
@@ -198,7 +198,7 @@ final class ServiceDetailViewController: UIViewController {
             guard let `self`, let userSession = userSession as? ZMUserSession else {
                 return
             }
-            let serviceUser = self.service.serviceUser
+            let serviceUser = service.serviceUser
             switch type {
             case let .addService(conversation):
                 conversation.add(serviceUser: serviceUser, in: userSession) { result in
@@ -217,11 +217,11 @@ final class ServiceDetailViewController: UIViewController {
                 }
 
             case let .removeService(conversation):
-                self.presentRemoveDialogue(
+                presentRemoveDialogue(
                     for: serviceUser,
                     from: conversation,
                     sender: sender,
-                    dismisser: self.viewControllerDismisser
+                    dismisser: viewControllerDismisser
                 )
 
             case .openConversation:
@@ -280,6 +280,6 @@ extension ZMButton {
 
     private convenience init(style: ButtonStyle, title: String) {
         self.init(style: style, cornerRadius: 16, fontSpec: .normalSemiboldFont)
-        self.setTitle(title, for: .normal)
+        setTitle(title, for: .normal)
     }
 }

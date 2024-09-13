@@ -64,11 +64,11 @@ extension UserSet: Collection {
 
 extension UserSet: SetAlgebra {
     init() {
-        storage = Storage()
+        self.storage = Storage()
     }
 
     init(arrayLiteral elements: UserType...) {
-        storage = Storage(elements.map(HashBox.init))
+        self.storage = Storage(elements.map(HashBox.init))
     }
 
     func contains(_ member: UserType) -> Bool {

@@ -88,7 +88,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         BackendInfo.apiVersion = nil
         let domain = "example com"
 
-        let expectation = self.customExpectation(description: "should get an error")
+        let expectation = customExpectation(description: "should get an error")
         var gettingExpectedError = false
         // when
         sut.lookup(domain: domain) { result in

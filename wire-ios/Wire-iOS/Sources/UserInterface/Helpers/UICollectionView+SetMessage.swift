@@ -25,8 +25,8 @@ extension UICollectionView {
         let messageLabel = UILabel(frame: CGRect(
             x: 0,
             y: 0,
-            width: self.bounds.size.width,
-            height: self.bounds.size.height
+            width: bounds.size.width,
+            height: bounds.size.height
         ))
         messageLabel.text = message
         messageLabel.textColor = SemanticColors.Label.textSettingsPasswordPlaceholder
@@ -34,6 +34,6 @@ extension UICollectionView {
         messageLabel.textAlignment = .center
         messageLabel.font = FontSpec.mediumSemiboldFont.font!
 
-        self.backgroundView = messageLabel
+        backgroundView = messageLabel
     }
 }

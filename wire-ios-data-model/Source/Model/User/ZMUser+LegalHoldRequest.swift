@@ -149,7 +149,7 @@ extension ZMUser: SelfLegalHoldSubject {
     public var legalHoldStatus: UserLegalHoldStatus {
         if clients.any(\.isLegalHoldDevice) {
             .enabled
-        } else if let legalHoldRequest = self.legalHoldRequest {
+        } else if let legalHoldRequest {
             .pending(legalHoldRequest)
         } else {
             .disabled
@@ -187,7 +187,7 @@ extension ZMUser: SelfLegalHoldSubject {
     public func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
         guard
             // The request must match the current request to avoid nil-ing it out by mistake.
-            request == self.legalHoldRequest,
+            request == legalHoldRequest,
             isSelfUser,
             let context = managedObjectContext
         else {
@@ -253,7 +253,7 @@ extension ZMUser: SelfLegalHoldSubject {
     /// - parameter request: The request that the user received.
 
     public func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
-        guard request.target == nil || request.target == self.remoteIdentifier else {
+        guard request.target == nil || request.target == remoteIdentifier else {
             // Do not handle requests if the user ID doesn't match the self user ID
             return
         }

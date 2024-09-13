@@ -32,7 +32,7 @@ final class CallStatusViewController: UIViewController {
 
     init(configuration: CallStatusViewInputType) {
         self.configuration = configuration
-        statusView = CallStatusView(configuration: configuration)
+        self.statusView = CallStatusView(configuration: configuration)
         super.init(nibName: nil, bundle: nil)
     }
 

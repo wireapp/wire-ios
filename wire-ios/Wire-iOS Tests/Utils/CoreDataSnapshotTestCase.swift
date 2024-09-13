@@ -61,7 +61,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
     // MARK: – Setup
 
     private func setupMember() {
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()

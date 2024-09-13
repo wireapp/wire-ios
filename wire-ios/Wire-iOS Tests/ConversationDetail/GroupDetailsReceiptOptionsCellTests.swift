@@ -26,7 +26,7 @@ final class GroupDetailsReceiptOptionsCellTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         sut = GroupDetailsReceiptOptionsCell()
-        conversation = self.createGroupConversation()
+        conversation = createGroupConversation()
     }
 
     override func tearDown() {

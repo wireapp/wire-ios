@@ -46,13 +46,13 @@ extension String {
         assetIDAllowedCharacters.insert(charactersIn: "a" ... "z") // a-z
         assetIDAllowedCharacters.insert("-") // hyphen
 
-        return self.trimmingCharacters(in: assetIDAllowedCharacters).isEmpty
+        return trimmingCharacters(in: assetIDAllowedCharacters).isEmpty
     }
 
     public var isValidBearerToken: Bool {
         // Format: https://github.com/wireapp/wire-webapp/blob/dev/app/script/util/ValidationUtil.js
 
-        let decodedAssetToken = self.removingPercentEncoding ?? self
+        let decodedAssetToken = removingPercentEncoding ?? self
 
         var assetTokenAllowedCharacters = CharacterSet()
         assetTokenAllowedCharacters.formUnion(.decimalDigits) // numbers
@@ -80,7 +80,7 @@ extension String {
 
 extension GenericMessage {
     public func validatingFields() -> GenericMessage? {
-        guard UUID.isValid(object: messageID), let content = self.content else { return nil }
+        guard UUID.isValid(object: messageID), let content else { return nil }
 
         switch content {
         case .text:

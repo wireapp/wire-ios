@@ -103,7 +103,7 @@ extension BackupViewController {
             guard let self, let password = result else { return }
             activityIndicator.start()
 
-            self.backupSource.backupActiveAccount(password: password) { backupResult in
+            backupSource.backupActiveAccount(password: password) { backupResult in
                 self.activityIndicator.stop()
 
                 switch backupResult {
@@ -153,6 +153,6 @@ extension BackupViewController {
             $0.sourceView = tableView
             $0.sourceRect = tableView.rectForRow(at: indexPath)
         }
-        self.present(activityController, animated: true)
+        present(activityController, animated: true)
     }
 }

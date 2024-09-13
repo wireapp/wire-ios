@@ -97,11 +97,11 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             // given
             let newStatus: ZMConnectionStatus = .blocked
             let action = UpdateConnectionAction(
-                connection: self.oneToOneConnection,
+                connection: oneToOneConnection,
                 newStatus: newStatus
             )
             let connection = createConnectionPayload(
-                self.oneToOneConnection,
+                oneToOneConnection,
                 status: .blocked
             )
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
@@ -113,10 +113,10 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
-            XCTAssertEqual(self.oneToOneConnection.status, newStatus)
+            XCTAssertEqual(oneToOneConnection.status, newStatus)
         }
     }
 
@@ -124,11 +124,11 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateConnectionAction(
-                connection: self.oneToOneConnection,
+                connection: oneToOneConnection,
                 newStatus: .blocked
             )
             let connection = createConnectionPayload(
-                self.oneToOneConnection,
+                oneToOneConnection,
                 status: .blocked
             )
             let payloadAsString = String(bytes: connection.payloadData()!, encoding: .utf8)!
@@ -139,7 +139,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                 apiVersion: APIVersion.v0.rawValue
             )
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -147,7 +147,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             }
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -158,11 +158,11 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateConnectionAction(
-                connection: self.oneToOneConnection,
+                connection: oneToOneConnection,
                 newStatus: .blocked
             )
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
@@ -177,7 +177,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

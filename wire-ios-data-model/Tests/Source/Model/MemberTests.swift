@@ -110,7 +110,7 @@ class MemberTests: ZMConversationTestsBase {
         let (team, existingMember) = createTeamAndMember(for: user)
         var member: Member!
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
@@ -125,7 +125,7 @@ class MemberTests: ZMConversationTestsBase {
         let team = Team.insertNewObject(in: uiMOC)
         var member: Member!
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
@@ -143,7 +143,7 @@ class MemberTests: ZMConversationTestsBase {
         let team = Team.insertNewObject(in: uiMOC)
         var member: Member!
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             // when
             member = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }

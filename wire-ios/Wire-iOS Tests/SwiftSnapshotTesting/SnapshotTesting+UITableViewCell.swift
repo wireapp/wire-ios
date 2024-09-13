@@ -20,34 +20,34 @@ import UIKit
 
 extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
     func wrapInTableView() -> UITableView {
-        let tableView = UITableView(frame: self.bounds, style: .plain)
+        let tableView = UITableView(frame: bounds, style: .plain)
 
         tableView.delegate = self
         tableView.dataSource = self
         tableView.backgroundColor = .clear
         tableView.separatorStyle = .none
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.layoutMargins = self.layoutMargins
+        tableView.layoutMargins = layoutMargins
 
-        let size = self.systemLayoutSizeFitting(
+        let size = systemLayoutSizeFitting(
             CGSize(width: bounds.width, height: 0.0),
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
-        self.layoutSubviews()
+        layoutSubviews()
 
-        self.bounds = CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height)
-        self.contentView.bounds = self.bounds
+        bounds = CGRect(x: 0.0, y: 0.0, width: size.width, height: size.height)
+        contentView.bounds = bounds
 
         tableView.reloadData()
-        tableView.bounds = self.bounds
+        tableView.bounds = bounds
         tableView.layoutIfNeeded()
 
         NSLayoutConstraint.activate([
             tableView.heightAnchor.constraint(equalToConstant: size.height),
         ])
 
-        self.layoutSubviews()
+        layoutSubviews()
         return tableView
     }
 
@@ -60,7 +60,7 @@ extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        self.bounds.size.height
+        bounds.size.height
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

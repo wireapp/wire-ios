@@ -44,8 +44,8 @@ final class GuestsAllowedCellDescription: ConversationMessageCellDescription {
     // MARK: initialization
 
     init() {
-        configuration = View.Configuration()
-        actionController = nil
+        self.configuration = View.Configuration()
+        self.actionController = nil
     }
 
     init(configuration: View.Configuration) {

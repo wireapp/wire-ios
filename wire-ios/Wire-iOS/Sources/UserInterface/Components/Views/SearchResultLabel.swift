@@ -36,19 +36,19 @@ final class SearchResultLabel: UILabel, Copyable {
 
     var isObfuscated = false {
         didSet {
-            self.updateText()
+            updateText()
         }
     }
 
     override var font: UIFont! {
         didSet {
-            self.updateText()
+            updateText()
         }
     }
 
     override var textColor: UIColor! {
         didSet {
-            self.updateText()
+            updateText()
         }
     }
 
@@ -59,7 +59,7 @@ final class SearchResultLabel: UILabel, Copyable {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.lineBreakMode = .byTruncatingTail
-        textColor = SemanticColors.Label.textDefault
+        self.textColor = SemanticColors.Label.textDefault
     }
 
     @available(*, unavailable)
@@ -69,23 +69,23 @@ final class SearchResultLabel: UILabel, Copyable {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard !self.bounds.equalTo(self.previousLayoutBounds) else {
+        guard !bounds.equalTo(previousLayoutBounds) else {
             return
         }
 
-        self.previousLayoutBounds = self.bounds
+        previousLayoutBounds = bounds
 
-        self.updateText()
+        updateText()
     }
 
     func configure(with text: String, queries: [String]) {
-        guard let font = self.font,
-              let color = self.textColor else {
+        guard let font,
+              let color = textColor else {
             self.attributedText = .none
             return
         }
 
-        self.resultText = text
+        resultText = text
         self.queries = queries
 
         let currentFont = isObfuscated ? redactedFont.withSize(font.pointSize) : font
@@ -107,22 +107,22 @@ final class SearchResultLabel: UILabel, Copyable {
                 .backgroundColor: UIColor.accentDarken,
             ]
 
-            if self.fits(attributedText: attributedText, fromRange: nsRange) {
+            if fits(attributedText: attributedText, fromRange: nsRange) {
                 self.attributedText = attributedText.highlightingAppearances(
                     of: queries,
                     with: highlightedAttributes,
-                    upToWidth: self.bounds.width,
+                    upToWidth: bounds.width,
                     totalMatches: &estimatedMatchesCount
                 )
             } else {
                 self.attributedText = attributedText.cutAndPrefixedWithEllipsis(
                     from: nsRange.location,
-                    fittingIntoWidth: self.bounds.width
+                    fittingIntoWidth: bounds.width
                 )
                 .highlightingAppearances(
                     of: queries,
                     with: highlightedAttributes,
-                    upToWidth: self.bounds.width,
+                    upToWidth: bounds.width,
                     totalMatches: &estimatedMatchesCount
                 )
             }
@@ -132,11 +132,11 @@ final class SearchResultLabel: UILabel, Copyable {
     }
 
     private func updateText() {
-        guard let text = self.resultText else {
-            self.attributedText = .none
+        guard let text = resultText else {
+            attributedText = .none
             return
         }
-        self.configure(with: text, queries: self.queries)
+        configure(with: text, queries: queries)
     }
 
     fileprivate func fits(attributedText: NSAttributedString, fromRange: NSRange) -> Bool {
@@ -148,6 +148,6 @@ final class SearchResultLabel: UILabel, Copyable {
 
         let labelSize = textCutToRange.layoutSize()
 
-        return labelSize.height <= self.bounds.height && labelSize.width <= self.bounds.width
+        return labelSize.height <= bounds.height && labelSize.width <= bounds.width
     }
 }

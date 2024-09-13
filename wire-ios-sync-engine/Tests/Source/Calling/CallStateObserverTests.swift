@@ -148,7 +148,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // then
             if let message = self.conversationUI.lastMessage as? ZMSystemMessage {
                 XCTAssertEqual(message.systemMessageType, .missedCall)
@@ -422,7 +422,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     }
 
     func testThatMissedCallMessageAndNotificationIsAppendedForGroupCallNotJoined() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.conversation.conversationType = .group
             self.syncMOC.saveOrRollback()
@@ -430,17 +430,17 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: false, degraded: false),
-            conversation: self.conversationUI,
-            caller: self.senderUI,
+            conversation: conversationUI,
+            caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .terminating(reason: .normal),
-            conversation: self.conversationUI,
-            caller: self.senderUI,
+            conversation: conversationUI,
+            caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
@@ -453,23 +453,23 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
     func testThatMissedCallNotificationIsNotForwardedForGroupCallAnsweredElsewhere() {
         // given
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.conversation.conversationType = .group
             self.syncMOC.saveOrRollback()
         }
 
         // when
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: false, degraded: false),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .terminating(reason: .answeredElsewhere),
             conversation: conversationUI,
-            caller: self.senderUI,
+            caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
@@ -492,10 +492,10 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: true, degraded: false),
-            conversation: self.conversationUI,
-            caller: self.senderUI,
+            conversation: conversationUI,
+            caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
@@ -518,10 +518,10 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: true, degraded: false),
-            conversation: self.conversationUI,
-            caller: self.senderUI,
+            conversation: conversationUI,
+            caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
@@ -543,17 +543,17 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             XCTAssertNil(self.conversation.clearedTimeStamp)
             self.syncMOC.saveOrRollback()
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: true, degraded: false),
-            conversation: self.conversationUI,
-            caller: self.senderUI,
+            conversation: conversationUI,
+            caller: senderUI,
             timestamp: nil,
             previousCallState: nil
         )
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
         XCTAssert(conversationUI.isArchived)
@@ -604,7 +604,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             self.syncMOC.saveOrRollback()
         }
 
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Current situation:
         // > "Other"
@@ -618,16 +618,16 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         if let first = list.items.first, let last = list.items.last {
             XCTAssertEqual(first, otherConvo!)
-            XCTAssertEqual(last, self.conversation)
+            XCTAssertEqual(last, conversation)
         } else {
             XCTFail()
         }
 
         // when
-        self.sut.callCenterDidChange(
+        sut.callCenterDidChange(
             callState: .incoming(video: false, shouldRing: true, degraded: false),
-            conversation: self.conversationUI,
-            caller: self.senderUI,
+            conversation: conversationUI,
+            caller: senderUI,
             timestamp: Date(),
             previousCallState: nil
         )
@@ -644,7 +644,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         // > "Other"
 
         if let first = list.items.first, let last = list.items.last {
-            XCTAssertEqual(first, self.conversation)
+            XCTAssertEqual(first, conversation)
             XCTAssertEqual(last, otherConvo!)
         } else {
             XCTFail()

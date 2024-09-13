@@ -32,9 +32,9 @@ final class SketchToolbar: UIView {
 
         var unassignedButtons = buttons
 
-        leftButton = unassignedButtons.removeFirst()
-        rightButton = unassignedButtons.removeLast()
-        centerButtons = unassignedButtons
+        self.leftButton = unassignedButtons.removeFirst()
+        self.rightButton = unassignedButtons.removeLast()
+        self.centerButtons = unassignedButtons
         separatorLine.backgroundColor = SemanticColors.View.backgroundSeparatorCell
 
         super.init(frame: CGRect.zero)

@@ -48,19 +48,19 @@ final class PersonalAccountView: BaseAccountView {
         }
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(
+            self.conversationListObserver = ConversationListChangeInfo.add(
                 observer: self,
                 for: ConversationList.conversations(inUserSession: userSession),
                 userSession: userSession
             )
-            connectionRequestObserver = ConversationListChangeInfo.add(
+            self.connectionRequestObserver = ConversationListChangeInfo.add(
                 observer: self,
                 for: ConversationList.pendingConnectionConversations(inUserSession: userSession),
                 userSession: userSession
             )
         }
 
-        self.imageViewContainer.addSubview(userImageView)
+        imageViewContainer.addSubview(userImageView)
         userImageView.translatesAutoresizingMaskIntoConstraints = false
         userImageView.fitIn(view: imageViewContainer, inset: 2)
 

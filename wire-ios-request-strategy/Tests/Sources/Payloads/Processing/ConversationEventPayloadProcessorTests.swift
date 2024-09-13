@@ -148,7 +148,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // When
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // Then
@@ -173,7 +173,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -197,7 +197,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -219,7 +219,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -301,7 +301,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await sut.updateOrCreateConversation(
             from: payload,
             serverTimestamp: serverTimestamp,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -324,7 +324,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         // when
         await sut.updateOrCreateConversation(
             from: payload,
-            in: self.syncMOC
+            in: syncMOC
         )
 
         // then
@@ -976,7 +976,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_CreatesConversation() async throws {
         // given
         BackendInfo.isFederationEnabled = true
-        let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: owningDomain)
         let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
         // when
@@ -999,7 +999,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_DoesntAssignDomain_WhenFederationIsDisabled() async throws {
         // given
         BackendInfo.isFederationEnabled = false
-        let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: owningDomain)
         let payload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
         // when
@@ -1301,7 +1301,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = self.conversationEventPayload(
+            let payload = conversationEventPayload(
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: selfUser.qualifiedID,
@@ -1344,7 +1344,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = self.conversationEventPayload(
+            let payload = conversationEventPayload(
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: user.qualifiedID,
@@ -1384,7 +1384,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
                 reason: .userDeleted
             )
 
-            let payload = self.conversationEventPayload(
+            let payload = conversationEventPayload(
                 from: memberLeaveEvent,
                 conversationID: groupConversation.qualifiedID,
                 senderID: selfUser.qualifiedID,

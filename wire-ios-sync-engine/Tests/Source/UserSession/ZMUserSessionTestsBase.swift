@@ -91,18 +91,18 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3.self
 
-        self.baseURL = nil
-        self.cookieStorage = nil
-        self.validCookie = nil
-        self.mockSessionManager = nil
-        self.mockMLSService = nil
-        self.transportSession = nil
-        self.mediaManager = nil
-        self.flowManagerMock = nil
-        self.mockRecurringActionService = nil
-        self.mockEARService.delegate = nil
-        self.mockEARService = nil
-        let sut = self.sut
+        baseURL = nil
+        cookieStorage = nil
+        validCookie = nil
+        mockSessionManager = nil
+        mockMLSService = nil
+        transportSession = nil
+        mediaManager = nil
+        flowManagerMock = nil
+        mockRecurringActionService = nil
+        mockEARService.delegate = nil
+        mockEARService = nil
+        let sut = sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
         sut?.tearDown()

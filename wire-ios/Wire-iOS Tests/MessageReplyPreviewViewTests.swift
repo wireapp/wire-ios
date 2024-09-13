@@ -256,7 +256,7 @@ final class MessageReplyPreviewViewTests: XCTestCase {
     }
 
     func testThatItRendersImageMessagePreview() throws {
-        let image = self.image(inTestBundleNamed: "unsplash_matterhorn.jpg")
+        let image = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         let message = MockMessageFactory.imageMessage(with: image)
 
         let previewView = try XCTUnwrap(message.replyPreview())

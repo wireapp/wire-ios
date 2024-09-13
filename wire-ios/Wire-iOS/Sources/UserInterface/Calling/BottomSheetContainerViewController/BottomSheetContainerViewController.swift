@@ -93,15 +93,15 @@ class BottomSheetContainerViewController: UIViewController {
     }
 
     private func addBottomSheetViewController(bottomSheetViewController: UIViewController) {
-        self.addChild(bottomSheetViewController)
-        self.view.addSubview(bottomSheetViewController.view)
+        addChild(bottomSheetViewController)
+        view.addSubview(bottomSheetViewController.view)
 
         bottomSheetViewController.view.addGestureRecognizer(panGesture)
         bottomSheetViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         topConstraint = bottomSheetViewController.view.topAnchor
             .constraint(
-                equalTo: self.view.bottomAnchor,
+                equalTo: view.bottomAnchor,
                 constant: -configuration.initialOffset
             )
 
@@ -110,9 +110,9 @@ class BottomSheetContainerViewController: UIViewController {
         NSLayoutConstraint.activate([
             bottomViewHeightConstraint,
             bottomSheetViewController.view.leftAnchor
-                .constraint(equalTo: self.view.leftAnchor),
+                .constraint(equalTo: view.leftAnchor),
             bottomSheetViewController.view.rightAnchor
-                .constraint(equalTo: self.view.rightAnchor),
+                .constraint(equalTo: view.rightAnchor),
             topConstraint,
         ])
         bottomSheetViewController.didMove(toParent: self)
@@ -120,8 +120,8 @@ class BottomSheetContainerViewController: UIViewController {
 
     func addContentViewController(contentViewController: UIViewController) {
         self.contentViewController = contentViewController
-        self.addChild(contentViewController)
-        self.view.addSubview(contentViewController.view)
+        addChild(contentViewController)
+        view.addSubview(contentViewController.view)
         contentViewController.view.translatesAutoresizingMaskIntoConstraints = false
         visibleControllerBottomConstraint = contentViewController.view.bottomAnchor
             .constraint(
@@ -132,11 +132,11 @@ class BottomSheetContainerViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             contentViewController.view.leftAnchor
-                .constraint(equalTo: self.view.leftAnchor),
+                .constraint(equalTo: view.leftAnchor),
             contentViewController.view.rightAnchor
-                .constraint(equalTo: self.view.rightAnchor),
+                .constraint(equalTo: view.rightAnchor),
             contentViewController.view.topAnchor
-                .constraint(equalTo: self.view.topAnchor).withPriority(.defaultLow),
+                .constraint(equalTo: view.topAnchor).withPriority(.defaultLow),
             visibleControllerBottomConstraint,
         ])
         contentViewController.didMove(toParent: self)
@@ -147,7 +147,7 @@ class BottomSheetContainerViewController: UIViewController {
     // MARK: - Bottom Sheet Actions
 
     func showBottomSheet(animated: Bool = true) {
-        self.topConstraint.constant = -configuration.height
+        topConstraint.constant = -configuration.height
 
         if animated {
             UIView.animate(withDuration: 0.2, animations: {
@@ -157,14 +157,14 @@ class BottomSheetContainerViewController: UIViewController {
                 self.state = .full
             })
         } else {
-            self.view.layoutIfNeeded()
-            self.state = .full
-            self.bottomSheetChangedOffset(fullHeightPercentage: 1.0)
+            view.layoutIfNeeded()
+            state = .full
+            bottomSheetChangedOffset(fullHeightPercentage: 1.0)
         }
     }
 
     func hideBottomSheet(animated: Bool = true) {
-        self.topConstraint.constant = -configuration.initialOffset
+        topConstraint.constant = -configuration.initialOffset
 
         if animated {
             UIView.animate(
@@ -182,9 +182,9 @@ class BottomSheetContainerViewController: UIViewController {
                 }
             )
         } else {
-            self.view.layoutIfNeeded()
-            self.state = .initial
-            self.bottomSheetChangedOffset(fullHeightPercentage: 0.0)
+            view.layoutIfNeeded()
+            state = .initial
+            bottomSheetChangedOffset(fullHeightPercentage: 0.0)
         }
     }
 
@@ -197,44 +197,44 @@ class BottomSheetContainerViewController: UIViewController {
 
         switch sender.state {
         case .began, .changed:
-            if self.state == .full {
+            if state == .full {
                 guard translation.y > 0 else { return }
                 topConstraint.constant = -(configuration.height - yTranslationMagnitude)
-                self.view.layoutIfNeeded()
+                view.layoutIfNeeded()
             } else {
                 let newConstant = -(configuration.initialOffset + yTranslationMagnitude)
                 guard translation.y < 0 else { return }
                 guard newConstant.magnitude < configuration.height else {
-                    self.showBottomSheet()
+                    showBottomSheet()
                     return
                 }
                 topConstraint.constant = newConstant
-                self.view.layoutIfNeeded()
+                view.layoutIfNeeded()
             }
             let percent = (-topConstraint.constant - configuration.initialOffset) /
                 (configuration.height - configuration.initialOffset)
             bottomSheetChangedOffset(fullHeightPercentage: percent)
         case .ended:
-            if self.state == .full {
+            if state == .full {
                 if velocity.y < 0 {
-                    self.showBottomSheet()
+                    showBottomSheet()
                 } else if yTranslationMagnitude >= configuration.height / 2 || velocity.y > 1000 {
-                    self.hideBottomSheet()
+                    hideBottomSheet()
                 } else {
-                    self.showBottomSheet()
+                    showBottomSheet()
                 }
             } else {
                 if yTranslationMagnitude >= configuration.height / 2 || velocity.y < -1000 {
-                    self.showBottomSheet()
+                    showBottomSheet()
                 } else {
-                    self.hideBottomSheet()
+                    hideBottomSheet()
                 }
             }
         case .failed:
-            if self.state == .full {
-                self.showBottomSheet()
+            if state == .full {
+                showBottomSheet()
             } else {
-                self.hideBottomSheet()
+                hideBottomSheet()
             }
         default: break
         }

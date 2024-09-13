@@ -144,7 +144,7 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
 
     func testThatItReturnsCorrectValueWhenForcedOff() {
         // Given
-        let featureRepository = FeatureRepository(context: self.syncMOC)
+        let featureRepository = FeatureRepository(context: syncMOC)
 
         syncMOC.performGroupedAndWait {
             featureRepository.storeSelfDeletingMessages(.init(status: .disabled, config: .init()))
@@ -167,7 +167,7 @@ class ZMConversationTests_Ephemeral: BaseZMMessageTests {
 
     func testThatItReturnsCorrectValueWhenForcedOn() {
         // Given
-        let featureRepository = FeatureRepository(context: self.syncMOC)
+        let featureRepository = FeatureRepository(context: syncMOC)
 
         syncMOC.performGroupedAndWait {
             featureRepository.storeSelfDeletingMessages(.init(

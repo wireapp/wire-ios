@@ -83,7 +83,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
                 let effectPath = (NSTemporaryDirectory() as NSString).appendingPathComponent("effect.wav")
                 effectPath.deleteFileAtPath()
-                self.selectedAudioEffect.apply(self.recordingPath, outPath: effectPath) {
+                selectedAudioEffect.apply(recordingPath, outPath: effectPath) {
                     self.delegate?.audioEffectsPickerDidPickEffect(
                         self,
                         effect: self.selectedAudioEffect,
@@ -375,7 +375,7 @@ private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerD
     weak var mediaManager: MediaPlayerDelegate? = AppDelegate.shared.mediaPlaybackManager
 
     init(contentOf URL: URL) throws {
-        player = try AVAudioPlayer(contentsOf: URL)
+        self.player = try AVAudioPlayer(contentsOf: URL)
 
         super.init()
 

@@ -27,7 +27,7 @@ final class DirectorySectionController: SearchSectionController {
     weak var collectionView: UICollectionView?
 
     override var isHidden: Bool {
-        self.suggestions.isEmpty
+        suggestions.isEmpty
     }
 
     override var sectionTitle: String {
@@ -39,7 +39,7 @@ final class DirectorySectionController: SearchSectionController {
 
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
         guard let userSession = ZMUserSession.shared() else { return }
-        self.token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
+        token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
 
         self.collectionView = collectionView
     }

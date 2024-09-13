@@ -24,7 +24,7 @@ public enum TeamOrConversation {
 
     /// Creates a team if the conversation belongs to a team, or a conversation otherwise
     public static func matching(_ conversation: ZMConversation) -> TeamOrConversation {
-        self.fromTeamOrConversation(team: conversation.team, conversation: conversation)
+        fromTeamOrConversation(team: conversation.team, conversation: conversation)
     }
 
     /// Creates a team or a conversation
@@ -134,7 +134,7 @@ public final class Role: ZMManagedObject {
         teamOrConversation: TeamOrConversation,
         in context: NSManagedObjectContext
     ) -> Role {
-        let existingRole = self.fetchExistingRole(
+        let existingRole = fetchExistingRole(
             with: name,
             teamOrConversation: teamOrConversation,
             in: context

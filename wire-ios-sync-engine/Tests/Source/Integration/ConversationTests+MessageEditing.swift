@@ -25,7 +25,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         // GIVEN
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         let messageCount = conversation?.allMessages.count ?? 0
 
         let textMessage = GenericMessage(content: Text(content: "Foo"), nonce: .create())
@@ -74,7 +74,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         // GIVEN
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         let textMessage = GenericMessage(content: Text(content: "Foo"), nonce: .create())
 
         guard

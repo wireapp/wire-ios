@@ -44,7 +44,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesARequestWhenSettingIsModified() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
@@ -61,7 +61,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItParsesAResponse() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
@@ -93,7 +93,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItResetsTheFlagOnError() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let userID = UUID()
             let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)

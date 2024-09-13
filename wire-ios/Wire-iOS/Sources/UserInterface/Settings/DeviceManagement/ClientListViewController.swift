@@ -98,18 +98,18 @@ final class ClientListViewController: UIViewController,
         self.credentials = credentials
         self.contextProvider = contextProvider
 
-        clientFilter = {
+        self.clientFilter = {
             $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
         }
 
-        clientSorter = {
+        self.clientSorter = {
             guard let leftDate = $0.activationDate, let rightDate = $1.activationDate else { return false }
             return leftDate.compare(rightDate) == .orderedDescending
         }
 
         super.init(nibName: nil, bundle: nil)
 
-        self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
+        initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
         if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
@@ -134,8 +134,8 @@ final class ClientListViewController: UIViewController,
     }
 
     private func initalizeProperties(_ clientsList: [UserClient]) {
-        self.clients = clientsList.filter { !$0.isSelfClient() }
-        self.editingList = false
+        clients = clientsList.filter { !$0.isSelfClient() }
+        editingList = false
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -145,19 +145,19 @@ final class ClientListViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.createTableView()
-        self.view.addSubview(self.topSeparator)
-        self.createConstraints()
+        createTableView()
+        view.addSubview(topSeparator)
+        createConstraints()
 
-        self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton
+        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton
             .description
         setColor()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.clientsTableView?.reloadData()
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        clientsTableView?.reloadData()
+        navigationController?.setNavigationBarHidden(false, animated: false)
         setupNavigationBarTitle(L10n.Localizable.Registration.Devices.title)
         updateAllClients()
     }
@@ -177,7 +177,7 @@ final class ClientListViewController: UIViewController,
     func openDetailsOfClient(_ client: UserClient) {
         guard let userSession,
               let contextProvider,
-              let navigationController = self.navigationController
+              let navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
             return
@@ -192,7 +192,7 @@ final class ClientListViewController: UIViewController,
             guard let self else {
                 return
             }
-            self.updateAllClients {
+            updateAllClients {
                 self.updateE2EIdentityCertificateInDetailsView()
             }
 
@@ -246,11 +246,11 @@ final class ClientListViewController: UIViewController,
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80
         tableView.register(ClientTableViewCell.self, forCellReuseIdentifier: ClientTableViewCell.zm_reuseIdentifier)
-        tableView.isEditing = self.editingList
+        tableView.isEditing = editingList
         tableView.backgroundColor = SemanticColors.View.backgroundDefault
         tableView.separatorStyle = .none
-        self.view.addSubview(tableView)
-        self.clientsTableView = tableView
+        view.addSubview(tableView)
+        clientsTableView = tableView
     }
 
     private func createConstraints() {
@@ -269,7 +269,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func convertSection(_ section: Int) -> Int {
-        if self.selfClient != nil {
+        if selfClient != nil {
             section
         } else {
             section + 1
@@ -278,7 +278,7 @@ final class ClientListViewController: UIViewController,
 
     @objc
     func backPressed(_: AnyObject!) {
-        self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
+        navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
     func deleteUserClient(
@@ -337,7 +337,7 @@ final class ClientListViewController: UIViewController,
     // MARK: - UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        if self.selfClient != nil, !self.sortedClients.isEmpty {
+        if selfClient != nil, !sortedClients.isEmpty {
             2
         } else {
             1
@@ -345,24 +345,24 @@ final class ClientListViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch self.convertSection(section) {
+        switch convertSection(section) {
         case 0:
-            if self.selfClient != nil {
+            if selfClient != nil {
                 1
             } else {
                 0
             }
         case 1:
-            self.sortedClients.count
+            sortedClients.count
         default:
             0
         }
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch self.convertSection(section) {
+        switch convertSection(section) {
         case 0:
-            if self.selfClient != nil {
+            if selfClient != nil {
                 L10n.Localizable.Registration.Devices.currentListHeader
             } else {
                 nil
@@ -375,7 +375,7 @@ final class ClientListViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        switch self.convertSection(section) {
+        switch convertSection(section) {
         case 0:
             nil
         case 1:
@@ -405,7 +405,7 @@ final class ClientListViewController: UIViewController,
             cell.selectionStyle = .none
             cell.showDisclosureIndicator()
 
-            switch self.convertSection((indexPath as NSIndexPath).section) {
+            switch convertSection((indexPath as NSIndexPath).section) {
             case 0:
                 if let selfClient {
                     cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
@@ -432,19 +432,19 @@ final class ClientListViewController: UIViewController,
         commit editingStyle: UITableViewCell.EditingStyle,
         forRowAt indexPath: IndexPath
     ) {
-        switch self.convertSection((indexPath as NSIndexPath).section) {
+        switch convertSection((indexPath as NSIndexPath).section) {
         case 1:
 
-            let userClient = self.sortedClients[indexPath.row]
+            let userClient = sortedClients[indexPath.row]
 
-            self.deleteUserClient(userClient, credentials: credentials)
+            deleteUserClient(userClient, credentials: credentials)
         default: break
         }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell
         .EditingStyle {
-        switch self.convertSection((indexPath as NSIndexPath).section) {
+        switch convertSection((indexPath as NSIndexPath).section) {
         case 0:
             .none
         case 1:
@@ -461,18 +461,18 @@ final class ClientListViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if !self.detailedView {
+        if !detailedView {
             return
         }
 
-        switch self.convertSection((indexPath as NSIndexPath).section) {
+        switch convertSection((indexPath as NSIndexPath).section) {
         case 0:
-            if let selfClient = self.selfClient {
-                self.openDetailsOfClient(selfClient)
+            if let selfClient {
+                openDetailsOfClient(selfClient)
             }
 
         case 1:
-            self.openDetailsOfClient(self.sortedClients[indexPath.row])
+            openDetailsOfClient(sortedClients[indexPath.row])
 
         default:
             break
@@ -480,18 +480,18 @@ final class ClientListViewController: UIViewController,
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.topSeparator.scrollViewDidScroll(scrollView: scrollView)
+        topSeparator.scrollViewDidScroll(scrollView: scrollView)
     }
 
     func createRightBarButtonItem() {
-        if self.editingList {
+        if editingList {
             let doneButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.done,
                 action: UIAction { [weak self] _ in
                     self?.editingList = false
                 }
             )
-            self.navigationItem.rightBarButtonItem = doneButtonItem
+            navigationItem.rightBarButtonItem = doneButtonItem
         } else {
             let editButtonItem = UIBarButtonItem.createNavigationRightBarButtonItem(
                 title: L10n.Localizable.General.edit,
@@ -500,7 +500,7 @@ final class ClientListViewController: UIViewController,
                 }
             )
 
-            self.navigationItem.rightBarButtonItem = editButtonItem
+            navigationItem.rightBarButtonItem = editButtonItem
         }
     }
 

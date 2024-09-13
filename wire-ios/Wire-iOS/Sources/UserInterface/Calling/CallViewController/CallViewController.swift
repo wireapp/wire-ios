@@ -84,15 +84,15 @@ final class CallViewController: UIViewController {
         self.voiceChannel = voiceChannel
         self.mediaManager = mediaManager
         self.proximityMonitorManager = proximityMonitorManager
-        callGridConfiguration = CallGridConfiguration(voiceChannel: voiceChannel)
+        self.callGridConfiguration = CallGridConfiguration(voiceChannel: voiceChannel)
         self.isOverlayEnabled = isOverlayEnabled
         self.userSession = userSession
 
         if let participants = voiceChannel.conversation?.participants {
-            classification = userSession.classification(users: participants, conversationDomain: nil)
+            self.classification = userSession.classification(users: participants, conversationDomain: nil)
         }
 
-        callInfoConfiguration = CallInfoConfiguration(
+        self.callInfoConfiguration = CallInfoConfiguration(
             voiceChannel: voiceChannel,
             preferedVideoPlaceholderState: preferedVideoPlaceholderState,
             permissions: permissionsConfiguration,
@@ -103,13 +103,13 @@ final class CallViewController: UIViewController {
             selfUser: selfUser
         )
 
-        callInfoRootViewController = CallInfoRootViewController(
+        self.callInfoRootViewController = CallInfoRootViewController(
             configuration: callInfoConfiguration,
             selfUser: userSession.selfUser,
             userSession: userSession
         )
 
-        callGridViewController = CallGridViewController(
+        self.callGridViewController = CallGridViewController(
             voiceChannel: voiceChannel,
             configuration: callGridConfiguration
         )
@@ -130,17 +130,17 @@ final class CallViewController: UIViewController {
 
         updateConfiguration()
 
-        singleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap(_:)))
+        self.singleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap(_:)))
         singleTapRecognizer.numberOfTapsRequired = 1
         if isOverlayEnabled {
-            self.view.addGestureRecognizer(singleTapRecognizer)
+            view.addGestureRecognizer(singleTapRecognizer)
         } else {
             callInfoRootViewController.view.alpha = 0
         }
 
-        doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
+        self.doubleTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTapRecognizer.numberOfTapsRequired = 2
-        self.view.addGestureRecognizer(doubleTapRecognizer)
+        view.addGestureRecognizer(doubleTapRecognizer)
 
         singleTapRecognizer.require(toFail: doubleTapRecognizer)
     }
@@ -486,7 +486,7 @@ extension CallViewController: MuteStateObserver {
 
 extension CallViewController {
     private func acceptCallIfPossible() {
-        guard let conversation = self.conversation else {
+        guard let conversation else {
             fatalError("Trying to accept a call for a voice channel without conversation.")
         }
 

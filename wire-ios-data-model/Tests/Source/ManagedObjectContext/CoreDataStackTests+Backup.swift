@@ -58,7 +58,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
             accountIdentifier: accountIdentifier,
             clientIdentifier: name,
             applicationContainer: DatabaseBaseTest.applicationContainer,
-            dispatchGroup: self.dispatchGroup,
+            dispatchGroup: dispatchGroup,
             databaseKey: databaseKey
         ) {
             result = $0.map(\.url)

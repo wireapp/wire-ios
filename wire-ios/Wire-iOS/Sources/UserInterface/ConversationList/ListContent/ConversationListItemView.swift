@@ -250,9 +250,9 @@ final class ConversationListItemView: UIView {
     ///   - subtitle: subtitle of the cell
     ///   - users: the pending user(s) waiting for self user to accept connection request
     func configure(with title: NSAttributedString?, subtitle: NSAttributedString?, users: [UserType]) {
-        self.titleText = title
-        self.subtitleAttributedText = subtitle
-        self.rightAccessory.icon = .pendingConnection
+        titleText = title
+        subtitleAttributedText = subtitle
+        rightAccessory.icon = .pendingConnection
         avatarView.configure(context: .connect(users: users))
         labelsStack.accessibilityLabel = title?.string
     }
@@ -261,7 +261,7 @@ final class ConversationListItemView: UIView {
         self.conversation = conversation
 
         guard let conversation else {
-            self.configure(with: nil, subtitle: nil)
+            configure(with: nil, subtitle: nil)
             return
         }
 

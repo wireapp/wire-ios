@@ -49,8 +49,8 @@ extension String {
     func splitStringIntoLines(
         charactersPerLine: Int
     ) -> String {
-        if self.count < charactersPerLine {
-            return self.isEmpty ? self : self.fingerprintStringWithSpaces
+        if count < charactersPerLine {
+            return isEmpty ? self : fingerprintStringWithSpaces
         }
         var result = ""
         var temp = ""

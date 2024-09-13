@@ -163,7 +163,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             guard let self else {
                 return nil
             }
-            return ZMConversation.fetchSelfMLSConversation(in: self.contextProvider.syncContext)?.mlsGroupID
+            return ZMConversation.fetchSelfMLSConversation(in: contextProvider.syncContext)?.mlsGroupID
         }
     }
 }

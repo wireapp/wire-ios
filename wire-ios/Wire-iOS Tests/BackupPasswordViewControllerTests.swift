@@ -45,7 +45,7 @@ final class BackupPasswordViewControllerTests: XCTestCase {
     func testThatItCallsTheCallback() {
         // GIVEN
         let validPassword = "Password123!"
-        let expectation = self.expectation(description: "Callback called")
+        let expectation = expectation(description: "Callback called")
         let sut = makeViewController()
         sut.onCompletion = { password in
             XCTAssertEqual(password, validPassword)

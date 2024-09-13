@@ -31,12 +31,12 @@ public enum VoiceChannelV3Error: LocalizedError {
 
 public class VoiceChannelV3: NSObject, VoiceChannel {
     public var callCenter: WireCallCenterV3? {
-        self.conversation?.managedObjectContext?.zm_callCenter
+        conversation?.managedObjectContext?.zm_callCenter
     }
 
     /// The date and time of current call start
     public var callStartDate: Date? {
-        self.callCenter?.establishedDate
+        callCenter?.establishedDate
     }
 
     public weak var conversation: ZMConversation?
@@ -92,7 +92,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var networkQuality: NetworkQuality {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = self.callCenter
+            let callCenter
         else { return .normal }
 
         return callCenter.networkQuality(conversationId: conversationId)
@@ -129,7 +129,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
             throw VoiceChannelV3Error.switchToVideoNotAllowed
         }
 
-        self.callCenter?.setVideoCaptureDevice(device, for: conversationId)
+        callCenter?.setVideoCaptureDevice(device, for: conversationId)
     }
 
     public var muted: Bool {
@@ -140,7 +140,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var isConferenceCall: Bool {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = self.callCenter
+            let callCenter
         else { return false }
 
         return callCenter.isConferenceCall(conversationId: conversationId)

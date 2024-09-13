@@ -21,17 +21,17 @@ import XCTest
 
 class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
     private func uniqueText() -> String {
-        "This is a test for \(self.name): \(UUID.create())"
+        "This is a test for \(name): \(UUID.create())"
     }
 
     func testThatWeReceiveAMessageSentRemotely() {
         // given
-        let messageText = self.uniqueText()
-        XCTAssertTrue(self.login())
-        let conversation = self.conversation(for: self.groupConversation)
+        let messageText = uniqueText()
+        XCTAssertTrue(login())
+        let conversation = conversation(for: groupConversation)
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(content: messageText, mentions: [], linkPreviews: [], replyingTo: nil),
@@ -52,7 +52,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
     func testThatItDoesNotSyncTheLastReadOfMessagesThatHaveNotBeenDeliveredYet() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let count = 0
         let insertMessage = {
@@ -68,7 +68,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
             )
         }
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             for _ in 0 ..< 4 {
                 insertMessage()
             }
@@ -76,10 +76,10 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
-        let conversation = self.conversation(for: self.groupConversation)
+        let conversation = conversation(for: groupConversation)
         let convIDString = conversation?.remoteIdentifier?.transportString()
 
-        self.mockTransportSession.responseGeneratorBlock = { request in
+        mockTransportSession.responseGeneratorBlock = { request in
             if request.path.contains("messages"), request.method == ZMTransportRequestMethod.post {
                 if request.path.contains(convIDString!) {
                     return ZMTransportResponse(
@@ -95,7 +95,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let previousMessage = conversation?.lastMessage!
 
         var failedToSendMessage: ZMMessage?
-        self.userSession?.perform {
+        userSession?.perform {
             failedToSendMessage = try! conversation?.appendText(content: "test") as? ZMMessage
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -137,7 +137,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
                 nonce: nonce2
             )
 
-        self.testThatItAppendsMessage(to: self.groupConversation, with: { _ -> [UUID]? in
+        testThatItAppendsMessage(to: groupConversation, with: { _ -> [UUID]? in
             self.groupConversation.insertClientMessage(from: self.user2, data: try! genericMessage1.serializedData())
             self.spinMainQueue(withTimeout: 0.2)
             self.groupConversation.insertClientMessage(from: self.user3, data: try! genericMessage2.serializedData())
@@ -166,36 +166,35 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let expectedText = "The sky above the port was the color of "
         let nonce = UUID.create()
 
-        self
-            .testThatItSendsANotification(
-                in: self.groupConversation,
-                ignoreLastRead: false,
-                onRemoteMessageCreatedWith: {
-                    let message =
-                        GenericMessage(
-                            content: Text(
-                                content: expectedText,
-                                mentions: [],
-                                linkPreviews: [],
-                                replyingTo: nil
-                            ),
-                            nonce: nonce
-                        )
-                    self.groupConversation
-                        .encryptAndInsertData(
-                            from: self.user2.clients
-                                .anyObject() as! MockUserClient,
-                            to: self.selfUser.clients
-                                .anyObject() as! MockUserClient,
-                            data: try! message
-                                .serializedData()
-                        )
-                },
-                verify: { conversation in
-                    let msg = conversation?.lastMessage
-                    XCTAssertEqual(msg?.textMessageData?.messageText, expectedText)
-                }
-            )
+        testThatItSendsANotification(
+            in: groupConversation,
+            ignoreLastRead: false,
+            onRemoteMessageCreatedWith: {
+                let message =
+                    GenericMessage(
+                        content: Text(
+                            content: expectedText,
+                            mentions: [],
+                            linkPreviews: [],
+                            replyingTo: nil
+                        ),
+                        nonce: nonce
+                    )
+                self.groupConversation
+                    .encryptAndInsertData(
+                        from: self.user2.clients
+                            .anyObject() as! MockUserClient,
+                        to: self.selfUser.clients
+                            .anyObject() as! MockUserClient,
+                        data: try! message
+                            .serializedData()
+                    )
+            },
+            verify: { conversation in
+                let msg = conversation?.lastMessage
+                XCTAssertEqual(msg?.textMessageData?.messageText, expectedText)
+            }
+        )
     }
 
     func testThatItSendsANotificationWhenRecievingAClientMessageThroughThePushChannel() {
@@ -206,28 +205,27 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
                 nonce: UUID.create()
             )
 
-        self
-            .testThatItSendsANotification(
-                in: self.groupConversation,
-                ignoreLastRead: false,
-                onRemoteMessageCreatedWith: {
-                    self.groupConversation.insertClientMessage(
-                        from: self.user2,
-                        data: try! message
-                            .serializedData()
-                    )
-                },
-                verify: { conversation in
-                    let msg = conversation?.lastMessage as! ZMClientMessage
-                    XCTAssertEqual(msg.underlyingMessage?.text.content, expectedText)
-                }
-            )
+        testThatItSendsANotification(
+            in: groupConversation,
+            ignoreLastRead: false,
+            onRemoteMessageCreatedWith: {
+                self.groupConversation.insertClientMessage(
+                    from: self.user2,
+                    data: try! message
+                        .serializedData()
+                )
+            },
+            verify: { conversation in
+                let msg = conversation?.lastMessage as! ZMClientMessage
+                XCTAssertEqual(msg.underlyingMessage?.text.content, expectedText)
+            }
+        )
     }
 
     func testThatSystemMessageIsAddedIfClientWasInactiveAndCantFetchAnyNotifications() {
         // given
-        XCTAssertTrue(self.login())
-        let groupConversation = self.conversation(for: self.groupConversation)
+        XCTAssertTrue(login())
+        let groupConversation = conversation(for: groupConversation)
 
         // when
         simulateNotificationStreamInterruption()
@@ -238,11 +236,11 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
     func testThatSystemMessageIsAddedIfClientWasInactiveAndCantFetchAllNotifications() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        let groupConversation = self.conversation(for: self.groupConversation)
+        let groupConversation = conversation(for: groupConversation)
         let messageText = UUID().uuidString
-        let fromClient = self.user2.clients.anyObject() as! MockUserClient
+        let fromClient = user2.clients.anyObject() as! MockUserClient
 
         // when
         simulateNotificationStreamInterruption(changesAfterInterruption: { _ in
@@ -257,7 +255,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
     func testThatPotentialGapSystemMessageContainsAddedAndRemovedUsers() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         // when
         simulateNotificationStreamInterruption(changesBeforeInterruption: { _ in
@@ -266,11 +264,11 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         })
 
         // then
-        let conversation = self.conversation(for: self.groupConversation)
+        let conversation = conversation(for: groupConversation)
         let systemMessage = conversation?.lastMessage as! ZMSystemMessage
 
-        let addedUser = self.user(for: self.user4)
-        let removedUser = self.user(for: self.user1)
+        let addedUser = user(for: user4)
+        let removedUser = user(for: user1)
 
         XCTAssertEqual(conversation!.localParticipants.count, 4)
         XCTAssertEqual(systemMessage.users.count, 4)
@@ -284,8 +282,8 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
     func testThatPreviousPotentialGapSystemMessageGetsDeletedAndNewOneUpdatesWithOldUsers() {
         // given
-        XCTAssertTrue(self.login())
-        let conversation = self.conversation(for: self.groupConversation)
+        XCTAssertTrue(login())
+        let conversation = conversation(for: groupConversation)
         XCTAssertNotNil(conversation)
 
         // when
@@ -309,14 +307,14 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let secondSystemMessage = conversation?.lastMessage as! ZMSystemMessage
         XCTAssertNotEqual(systemMessage, secondSystemMessage)
 
-        let addedUsers = [self.user(for: self.user4), self.user(for: self.user5)]
+        let addedUsers = [user(for: user4), user(for: user5)]
         let initialUsers = [
-            self.user(for: self.selfUser),
-            self.user(for: self.user3),
-            self.user(for: self.user2),
-            self.user(for: self.user1),
+            user(for: selfUser),
+            user(for: user3),
+            user(for: user2),
+            user(for: user1),
         ]
-        let removedUser = self.user(for: self.user3)
+        let removedUser = user(for: user3)
 
         XCTAssertEqual(conversation!.localParticipants.count, 5)
         XCTAssertEqual(secondSystemMessage.users, Set(initialUsers))
@@ -330,8 +328,8 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
     func testThatPotentialGapSystemMessageGetsUpdatedWithAddedUserWhenUserNameIsFetched() {
         // given
-        XCTAssertTrue(self.login())
-        var conversation = self.conversation(for: self.groupConversation)
+        XCTAssertTrue(login())
+        var conversation = conversation(for: groupConversation)
 
         // when
         // adding new user to conversation
@@ -341,7 +339,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
             self.groupConversation.addUsers(by: self.user2, addedUsers: [newMockUser!])
         })
 
-        conversation = self.conversation(for: self.groupConversation)
+        conversation = self.conversation(for: groupConversation)
         let systemMessage = conversation?.lastMessage as! ZMSystemMessage
 
         let addedUser = systemMessage.addedUsers.first
@@ -362,14 +360,14 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 extension SendAndReceiveMessagesTests_Swift {
     func testThatItSyncsWhenAMessageHideIsRemotelyAppended() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        let groupConversation = self.conversation(for: self.groupConversation)
+        let groupConversation = conversation(for: groupConversation)
         XCTAssertNotNil(groupConversation)
 
         var message: ZMMessage?
         var messageNonce: UUID?
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! groupConversation?.appendText(content: "lalala") as! ZMMessage
             messageNonce = message!.nonce
         }
@@ -388,7 +386,7 @@ extension SendAndReceiveMessagesTests_Swift {
             )
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             self.selfConversation.insertClientMessage(from: self.selfUser, data: try! genericMessage.serializedData())
         }
 
@@ -397,7 +395,7 @@ extension SendAndReceiveMessagesTests_Swift {
         message = ZMMessage.fetch(
             withNonce: messageNonce,
             for: groupConversation!,
-            in: self.userSession!.managedObjectContext
+            in: userSession!.managedObjectContext
         )
         XCTAssertNil(message)
     }

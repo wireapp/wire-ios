@@ -101,7 +101,7 @@ final class AppRootRouter {
     // MARK: - Public implementation
 
     func start(launchOptions: LaunchOptions) {
-        self.lastLaunchOptions = launchOptions
+        lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
@@ -184,7 +184,7 @@ final class AppRootRouter {
         appStateTransitionQueue.async { [weak self] in
             guard let self else { return }
 
-            self.appStateTransitionGroup.wait()
+            appStateTransitionGroup.wait()
 
             DispatchQueue.main.async {
                 self.transition(to: appState, completion: completion)

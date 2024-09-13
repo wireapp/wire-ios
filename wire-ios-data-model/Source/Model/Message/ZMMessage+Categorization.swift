@@ -21,38 +21,38 @@ import Foundation
 extension ZMMessage {
     /// Type of content present in the message
     public var category: MessageCategory {
-        let category = self.categoryFromContent
+        let category = categoryFromContent
         guard category != .none else {
             return .undefined
         }
 
-        return category.union(self.reactedCategory)
+        return category.union(reactedCategory)
     }
 
     /// Obj-c compatible function
     @objc
     public func updateCategoryCache() {
-        _ = self.storeCategoryCache()
+        _ = storeCategoryCache()
     }
 
     /// A cached version of the cateogry. The getter will recalculate the category if not set already
     public var cachedCategory: MessageCategory {
         get {
-            self.willAccessValue(forKey: ZMMessageCachedCategoryKey)
-            let value = (self.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber) ?? NSNumber(value: 0)
-            self.didAccessValue(forKey: ZMMessageCachedCategoryKey)
+            willAccessValue(forKey: ZMMessageCachedCategoryKey)
+            let value = (primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber) ?? NSNumber(value: 0)
+            didAccessValue(forKey: ZMMessageCachedCategoryKey)
 
             var category = MessageCategory(rawValue: value.int32Value)
             if category == .none {
-                category = self.storeCategoryCache()
+                category = storeCategoryCache()
             }
             return category
         }
 
         set {
-            self.willChangeValue(forKey: ZMMessageCachedCategoryKey)
-            self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: ZMMessageCachedCategoryKey)
-            self.didChangeValue(forKey: ZMMessageCachedCategoryKey)
+            willChangeValue(forKey: ZMMessageCachedCategoryKey)
+            setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: ZMMessageCachedCategoryKey)
+            didChangeValue(forKey: ZMMessageCachedCategoryKey)
         }
     }
 
@@ -61,7 +61,7 @@ extension ZMMessage {
     /// - returns: the category that was stored
     public func storeCategoryCache(category: MessageCategory? = nil) -> MessageCategory {
         let categoryToStore = category ?? self.category
-        self.cachedCategory = categoryToStore
+        cachedCategory = categoryToStore
         return categoryToStore
     }
 
@@ -92,7 +92,7 @@ extension ZMMessage {
             excludingPredicate,
             conversationPredicate,
         ].compactMap { $0 })
-        return self.sortedFetchRequest(with: finalPredicate)
+        return sortedFetchRequest(with: finalPredicate)
     }
 
     public static func fetchRequestMatching(
@@ -126,7 +126,7 @@ extension ZMMessage {
             categoryPredicate,
             conversationPredicate,
         ].compactMap { $0 })
-        return self.sortedFetchRequest(with: finalPredicate)
+        return sortedFetchRequest(with: finalPredicate)
     }
 }
 
@@ -137,17 +137,17 @@ let linkParser = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.li
 extension ZMMessage {
     /// Category according only to content (excluding likes)
     private var categoryFromContent: MessageCategory {
-        guard !self.isObfuscated, !self.isZombieObject else {
+        guard !isObfuscated, !isZombieObject else {
             return .none
         }
 
         let category = [
-            self.textCategory,
-            self.imageCategory,
-            self.fileCategory,
-            self.locationCategory,
-            self.knockCategory,
-            self.systemMessageCategory,
+            textCategory,
+            imageCategory,
+            fileCategory,
+            locationCategory,
+            knockCategory,
+            systemMessageCategory,
         ]
         .reduce(MessageCategory.none) { (current: MessageCategory, other: MessageCategory) in
             current.union(other)
@@ -156,7 +156,7 @@ extension ZMMessage {
     }
 
     private var imageCategory: MessageCategory {
-        guard let imageMessageData = self.imageMessageData else {
+        guard let imageMessageData else {
             return .none
         }
         var category = MessageCategory.image
@@ -171,7 +171,7 @@ extension ZMMessage {
     }
 
     private var textCategory: MessageCategory {
-        guard let textData = self.textMessageData,
+        guard let textData = textMessageData,
               let text = textData.messageText, !text.isEmpty else {
             return .none
         }
@@ -190,8 +190,8 @@ extension ZMMessage {
     }
 
     private var fileCategory: MessageCategory {
-        guard let fileData = self.fileMessageData,
-              self.imageCategory == .none else {
+        guard let fileData = fileMessageData,
+              imageCategory == .none else {
             return .none
         }
         var category = MessageCategory.file
@@ -210,32 +210,32 @@ extension ZMMessage {
     }
 
     private var locationCategory: MessageCategory {
-        if self.locationMessageData != nil {
+        if locationMessageData != nil {
             return .location
         }
         return .none
     }
 
     private var reactedCategory: MessageCategory {
-        guard !self.reactions.isEmpty else {
+        guard !reactions.isEmpty else {
             return .none
         }
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        for reaction in self.reactions where reaction.users.contains(selfUser) {
+        let selfUser = ZMUser.selfUser(in: managedObjectContext!)
+        for reaction in reactions where reaction.users.contains(selfUser) {
             return .reacted
         }
         return .none
     }
 
     private var knockCategory: MessageCategory {
-        guard self.knockMessageData != nil else {
+        guard knockMessageData != nil else {
             return .none
         }
         return .knock
     }
 
     private var systemMessageCategory: MessageCategory {
-        guard self.systemMessageData != nil else {
+        guard systemMessageData != nil else {
             return .none
         }
         return .systemMessage
@@ -301,6 +301,6 @@ extension MessageCategory: CustomDebugStringConvertible {
 
 extension MessageCategory: Hashable {
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.rawValue)
+        hasher.combine(rawValue)
     }
 }

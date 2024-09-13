@@ -129,13 +129,13 @@ extension AVSMediaManager {
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: nil, selfUser: nil)
 
         let messageSoundProperty = settingsPropertyFactory.property(.messageSoundName)
-        self.updateCustomSoundForProperty(messageSoundProperty)
+        updateCustomSoundForProperty(messageSoundProperty)
 
         let callSoundProperty = settingsPropertyFactory.property(.callSoundName)
-        self.updateCustomSoundForProperty(callSoundProperty)
+        updateCustomSoundForProperty(callSoundProperty)
 
         let pingSoundProperty = settingsPropertyFactory.property(.pingSoundName)
-        self.updateCustomSoundForProperty(pingSoundProperty)
+        updateCustomSoundForProperty(pingSoundProperty)
     }
 
     func updateCustomSoundForProperty(_ property: SettingsProperty) {
@@ -153,16 +153,16 @@ extension AVSMediaManager {
 
         switch propertyName {
         case SettingsPropertyName.messageSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.firstMessageReceivedSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.messageReceivedSound.rawValue)
 
         case SettingsPropertyName.callSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemInCallSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemInCallSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.ringingFromThemSound.rawValue)
 
         case SettingsPropertyName.pingSoundName.rawValue:
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.outgoingKnockSound.rawValue)
-            self.register(soundValue?.fileURL(), forMedia: MediaManagerSound.incomingKnockSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.outgoingKnockSound.rawValue)
+            register(soundValue?.fileURL(), forMedia: MediaManagerSound.incomingKnockSound.rawValue)
 
         default:
             fatalError("\(propertyName) is not a sound property")
@@ -173,7 +173,7 @@ extension AVSMediaManager {
 
     @objc
     func didUpdateSound(_ notification: NSNotification?) {
-        self.configureSounds()
+        configureSounds()
 
         if notification?.name.rawValue == SettingsPropertyName.callSoundName.changeNotificationName {
             SessionManager.shared?.updateCallKitConfiguration()

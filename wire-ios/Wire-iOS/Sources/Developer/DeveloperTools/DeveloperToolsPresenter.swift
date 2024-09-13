@@ -49,6 +49,6 @@ final class DeveloperToolsPresenter: NSObject {
 extension DeveloperToolsPresenter: UIAdaptivePresentationControllerDelegate {
     func presentationControllerDidDismiss(_: UIPresentationController) {
         // called when dismissed by swipe for example
-        self.displayedDeveloperTools = false
+        displayedDeveloperTools = false
     }
 }

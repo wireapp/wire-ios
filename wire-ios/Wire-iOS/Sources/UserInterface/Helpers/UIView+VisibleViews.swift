@@ -25,7 +25,7 @@ extension UIView {
                 self.updateVisibleViews(views, visibleViews: visibleViews)
             }, completion: nil)
         } else {
-            self.updateVisibleViews(views, visibleViews: visibleViews)
+            updateVisibleViews(views, visibleViews: visibleViews)
         }
     }
 

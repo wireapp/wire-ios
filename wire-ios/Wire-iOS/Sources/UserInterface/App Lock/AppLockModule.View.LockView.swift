@@ -40,8 +40,8 @@ extension AppLockModule.View {
 
         var showReauth = false {
             didSet {
-                self.messageLabel.isHidden = !showReauth
-                self.actionButton.isHidden = !showReauth
+                messageLabel.isHidden = !showReauth
+                actionButton.isHidden = !showReauth
             }
         }
 
@@ -101,7 +101,7 @@ extension AppLockModule.View {
         // MARK: - Helpers
 
         private func createConstraints(shieldView: UIView) {
-            self.translatesAutoresizingMaskIntoConstraints = false
+            translatesAutoresizingMaskIntoConstraints = false
             shieldView.translatesAutoresizingMaskIntoConstraints = false
             shieldViewContainer.translatesAutoresizingMaskIntoConstraints = false
             blurView.translatesAutoresizingMaskIntoConstraints = false

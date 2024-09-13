@@ -47,7 +47,7 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
         super.init()
         let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
         let configuration = factory.makeWebSocketSessionConfiguration()
-        urlSession = URLSession(
+        self.urlSession = URLSession(
             configuration: configuration,
             delegate: self,
             delegateQueue: nil

@@ -57,11 +57,11 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     }
 
     override func tearDown() {
-        self.localNotificationDispatcher = nil
-        self.mockApplicationStatus = nil
-        self.mockAttachmentsDetector = nil
+        localNotificationDispatcher = nil
+        mockApplicationStatus = nil
+        mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
-        self.sut = nil
+        sut = nil
 
         super.tearDown()
     }
@@ -79,7 +79,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let text = "Lorem ipsum"
@@ -96,7 +96,7 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItNotifiesAttachmentPrepocessorOfChanges() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let text = String(repeating: "Hi", count: 100_000)
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
@@ -114,7 +114,7 @@ extension ClientMessageRequestStrategyTests {
     func testThatItDeletesTheConfirmationMessageWhenSentSuccessfully() {
         // GIVEN
         var confirmationMessage: ZMMessage!
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             confirmationMessage = try! self.oneToOneConversation
                 .appendClientMessage(with: GenericMessage(content: Confirmation(
                     messageId: UUID(),
@@ -126,10 +126,10 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(confirmationMessage.isZombieObject)
         }
     }
@@ -142,7 +142,7 @@ extension ClientMessageRequestStrategyTests {
             payload: nil,
             httpStatus: 403,
             transportSessionError: nil,
-            apiVersion: self.apiVersion.rawValue
+            apiVersion: apiVersion.rawValue
         )
         let missingLegalholdConsentFailure = Payload.ResponseFailure(
             code: 403,
@@ -151,7 +151,7 @@ extension ClientMessageRequestStrategyTests {
             data: nil
         )
         let failure = NetworkError.invalidRequestError(missingLegalholdConsentFailure, response)
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             confirmationMessage = try! self.oneToOneConversation
                 .appendClientMessage(with: GenericMessage(content: Confirmation(
                     messageId: UUID(),
@@ -172,7 +172,7 @@ extension ClientMessageRequestStrategyTests {
                 expectation.fulfill()
             }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         withExtendedLifetime(token) {
@@ -185,7 +185,7 @@ extension ClientMessageRequestStrategyTests {
 
 extension ClientMessageRequestStrategyTests {
     func testThatANewOtrMessageIsCreatedFromAnEvent() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let text = "Everything"
             let base64Text = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
@@ -223,12 +223,12 @@ extension ClientMessageRequestStrategyTests {
         // GIVEN
         let lastEventIDRepository = MockLastEventIDRepositoryInterface()
         let eventDecoder = EventDecoder(
-            eventMOC: self.eventMOC,
-            syncMOC: self.syncMOC,
+            eventMOC: eventMOC,
+            syncMOC: syncMOC,
             lastEventIDRepository: lastEventIDRepository
         )
         let text = "Everything"
-        let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
+        let event = try await decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 
         await syncMOC.perform {
             // WHEN

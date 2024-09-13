@@ -90,8 +90,8 @@ open class AccessoryTextField: UITextField, DynamicTypeCapable {
         textFieldAttributes: Attributes
     ) {
         let topInset: CGFloat = 0
-        placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: horizonalInset)
-        textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
+        self.placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: horizonalInset)
+        self.textInsets = UIEdgeInsets(top: 0, left: horizonalInset, bottom: 0, right: horizonalInset)
         self.accessoryTrailingInset = accessoryTrailingInset
         self.textFieldAttributes = textFieldAttributes
         super.init(frame: .zero)

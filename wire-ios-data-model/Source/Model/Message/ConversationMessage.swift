@@ -218,7 +218,7 @@ extension ZMMessage {
     @NSManaged public var hiddenInConversation: ZMConversation?
 
     public var conversation: ZMConversation? {
-        self.visibleInConversation ?? self.hiddenInConversation
+        visibleInConversation ?? hiddenInConversation
     }
 }
 
@@ -252,10 +252,10 @@ extension ZMMessage: ZMConversationMessage {
     }
 
     public var canBeMarkedUnread: Bool {
-        guard self.isNormal,
-              self.serverTimestamp != nil,
-              self.conversation != nil,
-              let sender = self.sender,
+        guard isNormal,
+              serverTimestamp != nil,
+              conversation != nil,
+              let sender,
               !sender.isSelfUser else {
             return false
         }
@@ -265,9 +265,9 @@ extension ZMMessage: ZMConversationMessage {
 
     public func markAsUnread() {
         guard canBeMarkedUnread,
-              let serverTimestamp = self.serverTimestamp,
-              let conversation = self.conversation,
-              let managedObjectContext = self.managedObjectContext,
+              let serverTimestamp,
+              let conversation,
+              let managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
             zmLog.error("Cannot mark as unread message outside of the conversation.")
             return
@@ -298,8 +298,8 @@ extension ZMMessage: ZMConversationMessage {
 
     public var isRestricted: Bool {
         guard
-            self.isFile || self.isImage,
-            let managedObjectContext = self.managedObjectContext
+            isFile || isImage,
+            let managedObjectContext
         else { return false }
 
         let featureRepository = FeatureRepository(context: managedObjectContext)
@@ -367,7 +367,7 @@ extension ZMMessage {
 
     @objc
     public func reactionsSortedByCreationDate() -> [ReactionData] {
-        self.reactionData.sorted {
+        reactionData.sorted {
             $0.creationDate < $1.creationDate
         }
     }

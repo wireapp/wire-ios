@@ -33,7 +33,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         // GIVEN
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)!
+        let conversation = conversation(for: groupConversation)!
 
         performRemoteChangesExludedFromNotificationStream { session in
             session.delete(self.groupConversation)
@@ -42,7 +42,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         XCTAssertFalse(conversation.isDeletedRemotely)
 
         // WHEN
-        self.performSlowSync()
+        performSlowSync()
 
         // THEN
         XCTAssertTrue(conversation.isDeletedRemotely)
@@ -52,7 +52,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         // GIVEN
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)!
+        let conversation = conversation(for: groupConversation)!
 
         performRemoteChangesExludedFromNotificationStream { _ in
             self.groupConversation.removeUsers(by: self.user2, removedUser: self.selfUser)

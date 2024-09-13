@@ -120,16 +120,16 @@ final class ProfileHeaderViewController: UIViewController {
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        userStatus = .init(user: user, isE2EICertified: false)
+        self.userStatus = .init(user: user, isE2EICertified: false)
         self.user = user
         self.userSession = userSession
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-        isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
+        self.isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        userStatusViewController = .init(
+        self.userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )

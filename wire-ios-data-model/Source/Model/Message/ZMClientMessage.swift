@@ -97,7 +97,7 @@ public class ZMClientMessage: ZMOTRMessage {
             .warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
-            let genericMessage = self.underlyingMessage,
+            let genericMessage = underlyingMessage,
             let content = genericMessage.content else {
             super.expire()
             return
@@ -132,8 +132,8 @@ public class ZMClientMessage: ZMOTRMessage {
            case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
             editText(
-                self.textMessageData?.messageText ?? "",
-                mentions: self.textMessageData?.mentions ?? [],
+                textMessageData?.messageText ?? "",
+                mentions: textMessageData?.mentions ?? [],
                 fetchLinkPreview: true
             )
         }
@@ -162,7 +162,7 @@ public class ZMClientMessage: ZMOTRMessage {
             original?.sender = nil
             original?.senderClientID = nil
         case .edited:
-            if let nonce = self.nonce(fromPostPayload: payload),
+            if let nonce = nonce(fromPostPayload: payload),
                self.nonce != nonce {
                 WireLogger.messaging.error(
                     "sent message response nonce does not match \(nonce)",
@@ -181,9 +181,9 @@ public class ZMClientMessage: ZMOTRMessage {
 
     private var logInformation: LogAttributes {
         [
-            .nonce: self.nonce?.safeForLoggingDescription ?? "<nil>",
-            .messageType: self.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: self.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+            .nonce: nonce?.safeForLoggingDescription ?? "<nil>",
+            .messageType: underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
+            .conversationId: conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ].merging(.safePublic, uniquingKeysWith: { _, new in new })
     }
 
@@ -206,7 +206,7 @@ public class ZMClientMessage: ZMOTRMessage {
         guard isEphemeral else {
             return
         }
-        if let genericMessage = self.underlyingMessage,
+        if let genericMessage = underlyingMessage,
            genericMessage.textData != nil,
            !genericMessage.linkPreviews.isEmpty,
            linkPreviewState != ZMLinkPreviewState.done {
@@ -218,7 +218,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     func hasDownloadedImage() -> Bool {
         guard
-            let textMessageData = self.textMessageData,
+            let textMessageData,
             textMessageData.linkPreview != nil,
             let cache = managedObjectContext?.zm_fileAssetCache
         else {

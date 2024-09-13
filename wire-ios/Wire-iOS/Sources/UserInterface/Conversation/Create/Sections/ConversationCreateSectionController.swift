@@ -53,7 +53,7 @@ class ConversationCreateSectionController: NSObject, CollectionViewSectionContro
 
 extension ConversationCreateSectionController: ConversationCreationValuesConfigurable {
     func configure(with values: ConversationCreationValues) {
-        self.cell?.configure(with: values)
+        cell?.configure(with: values)
     }
 }
 

@@ -110,21 +110,21 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
-        guard let controllerToShow = self.generateViewController() else {
+        guard let controllerToShow = generateViewController() else {
             return
         }
 
-        switch self.presentationStyle {
+        switch presentationStyle {
         case .modal:
             if controllerToShow.modalPresentationStyle == .popover,
-               let sourceView = self.viewController?.view,
+               let sourceView = viewController?.view,
                let popoverPresentation = controllerToShow.popoverPresentationController {
                 popoverPresentation.sourceView = sourceView
                 popoverPresentation.sourceRect = sourceView.bounds
             }
 
             controllerToShow.modalPresentationCapturesStatusBarAppearance = true
-            self.viewController?.present(controllerToShow, animated: true, completion: .none)
+            viewController?.present(controllerToShow, animated: true, completion: .none)
         case .navigation:
             viewController?.navigationController?.pushViewController(controllerToShow, animated: true)
         case .alert:
@@ -133,22 +133,22 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
 
         if let tableCell = cell as? SettingsTableCell {
             tableCell.valueLabel.accessibilityIdentifier = title + "Field"
             tableCell.valueLabel.isAccessibilityElement = true
         }
 
-        if let previewGenerator = self.previewGenerator {
+        if let previewGenerator {
             let preview = previewGenerator(self)
             cell.preview = preview
         }
-        cell.icon = self.icon
+        cell.icon = icon
         if let groupCell = cell as? SettingsTableCell {
             switch accessoryViewMode {
             case .default:
-                if self.presentationStyle == .modal {
+                if presentationStyle == .modal {
                     groupCell.hideDisclosureIndicator()
                 } else {
                     groupCell.showDisclosureIndicator()
@@ -162,6 +162,6 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
     }
 
     func generateViewController() -> UIViewController? {
-        self.presentationAction()
+        presentationAction()
     }
 }

@@ -127,7 +127,7 @@ final class ReplyComposingView: UIView {
             self?.delegate?.composingViewDidCancel(composingView: self!)
         }
 
-        [leftSideView, messagePreviewContainer].forEach(self.addSubview)
+        [leftSideView, messagePreviewContainer].forEach(addSubview)
 
         leftSideView.addSubview(closeButton)
     }
@@ -161,7 +161,7 @@ final class ReplyComposingView: UIView {
 
     @objc
     func onTap() {
-        self.delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
+        delegate?.composingViewWantsToShowMessage(composingView: self, message: message)
     }
 }
 
@@ -170,7 +170,7 @@ final class ReplyComposingView: UIView {
 extension ReplyComposingView: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
         if changeInfo.message.hasBeenDeleted {
-            self.delegate?.composingViewDidCancel(composingView: self)
+            delegate?.composingViewDidCancel(composingView: self)
         }
     }
 }

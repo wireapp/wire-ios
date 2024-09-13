@@ -83,20 +83,20 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged private var primitivePushToken: Data?
     private var pushToken: PushToken? {
         get {
-            self.willAccessValue(forKey: Keys.PushToken)
+            willAccessValue(forKey: Keys.PushToken)
             let token: PushToken? = if let data = primitivePushToken {
                 try? JSONDecoder().decode(PushToken.self, from: data)
             } else {
                 nil
             }
-            self.didAccessValue(forKey: Keys.PushToken)
+            didAccessValue(forKey: Keys.PushToken)
             return token
         }
         set {
             if newValue != pushToken {
-                self.willChangeValue(forKey: Keys.PushToken)
+                willChangeValue(forKey: Keys.PushToken)
                 primitivePushToken = try? JSONEncoder().encode(newValue)
-                self.didChangeValue(forKey: Keys.PushToken)
+                didChangeValue(forKey: Keys.PushToken)
             }
         }
     }
@@ -140,7 +140,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             let managedObjectContext,
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
-        return selfClient.remoteIdentifier == self.remoteIdentifier || selfClient.trustedClients.contains(self)
+        return selfClient.remoteIdentifier == remoteIdentifier || selfClient.trustedClients.contains(self)
     }
 
     override public static func entityName() -> String {
@@ -231,7 +231,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             return client
         }
 
-        if let client = self.fetchExistingUserClient(with: remoteIdentifier, in: context) {
+        if let client = fetchExistingUserClient(with: remoteIdentifier, in: context) {
             // We already checked the user's client list but didn't find the client.
             // But we did find the client in the database, so the user is out of date
             // and needs to be refreshed.
@@ -261,7 +261,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// If called on a client belonging to the self user this method does nothing.
 
     public func update(with payload: [String: Any]) {
-        self.needsToBeUpdatedFromBackend = false
+        needsToBeUpdatedFromBackend = false
 
         guard user?.isSelfUser == false, let deviceClass = payload["class"] as? String else { return }
 
@@ -284,9 +284,9 @@ public class UserClient: ZMManagedObject, UserClientType {
         assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
         let conversations = activeConversationsForUserOfClients([self])
-        let user = self.user
+        let user = user
 
-        self.failedToEstablishSession = false
+        failedToEstablishSession = false
 
         // reset the relationship
         self.user = nil
@@ -525,12 +525,12 @@ extension UserClient {
     /// Use this method only for selfUser clients (selfClient + remote clients)
     @objc
     public func markForDeletion() {
-        guard let context = self.managedObjectContext else {
+        guard let context = managedObjectContext else {
             zmLog.error("Object already deleted?")
             return
         }
         let selfUser = ZMUser.selfUser(in: context)
-        guard self.user == selfUser else {
+        guard user == selfUser else {
             fatal(
                 "The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.safeForLoggingDescription))"
             )
@@ -538,8 +538,8 @@ extension UserClient {
         guard selfUser.selfClient() != self else {
             fatal("Attempt to delete the self client. This should never happen!")
         }
-        self.markedToDelete = true
-        self.setLocallyModifiedKeys([ZMUserClientMarkedToDeleteKey])
+        markedToDelete = true
+        setLocallyModifiedKeys([ZMUserClientMarkedToDeleteKey])
     }
 }
 
@@ -580,7 +580,7 @@ extension UserClient {
     public func missesClients(_ clients: Set<UserClient>) {
         zmLog.debug("Adding clients(\(clients.count)) to list of missing clients")
 
-        self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
+        mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
         if !hasLocalModifications(forKey: ZMUserClientMissingKey) {
             setLocallyModifiedKeys([ZMUserClientMissingKey])
         }
@@ -591,7 +591,7 @@ extension UserClient {
     public func removeMissingClient(_ client: UserClient) {
         zmLog.debug("Removing client from list of missing clients")
 
-        self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
+        mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
     }
 
     /// Deletes the session between the selfClient and the given userClient
@@ -729,7 +729,7 @@ extension UserClient {
         }
 
         if numberOfKeysRemaining == 0 {
-            self.setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
+            setLocallyModifiedKeys([ZMUserClientNumberOfKeysRemainingKey])
         }
     }
 }
@@ -764,14 +764,14 @@ extension UserClient {
     @objc
     public func trustClients(_ clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
-        self.mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
-        self.mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
+        mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
+        mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
 
         clients.forEach { client in client.needsToNotifyUser = false }
 
         zmLog.debug("Marking client as trusted")
 
-        self.changeSecurityLevel(.clientTrusted, clients: clients, causedBy: nil)
+        changeSecurityLevel(.clientTrusted, clients: clients, causedBy: nil)
     }
 
     /// Ignore a know client
@@ -788,8 +788,8 @@ extension UserClient {
 
         zmLog.debug("Marking client as ignored")
 
-        self.mutableSetValue(forKey: ZMUserClientTrustedKey).minus(notSelfClients)
-        self.mutableSetValue(forKey: ZMUserClientIgnoredKey).union(notSelfClients)
+        mutableSetValue(forKey: ZMUserClientTrustedKey).minus(notSelfClients)
+        mutableSetValue(forKey: ZMUserClientIgnoredKey).union(notSelfClients)
 
         return notSelfClients
     }
@@ -797,9 +797,9 @@ extension UserClient {
     /// Ignore known clients
     @objc
     public func ignoreClients(_ clients: Set<UserClient>) {
-        let notSelfClients = self.addIgnoredClients(clients)
+        let notSelfClients = addIgnoredClients(clients)
         guard !notSelfClients.isEmpty else { return }
-        self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
+        changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 
     /// Adds a new client that was just discovered to the ignored ones
@@ -811,7 +811,7 @@ extension UserClient {
     /// Add new clients that were just discovered to the ignored ones
     @objc
     public func addNewClientsToIgnored(_ clients: Set<UserClient>) {
-        _ = self.addIgnoredClients(clients)
+        _ = addIgnoredClients(clients)
     }
 
     public func updateSecurityLevelAfterDiscovering(_ clients: Set<UserClient>) {
@@ -907,13 +907,13 @@ extension UserClient {
     /// Previous session identifiers.
 
     private var sessionIdentifier_V1: String? {
-        self.remoteIdentifier
+        remoteIdentifier
     }
 
     private var sessionIdentifier_V2: EncryptionSessionIdentifier? {
         guard
-            let userIdentifier = self.user?.remoteIdentifier,
-            let clientIdentifier = self.remoteIdentifier
+            let userIdentifier = user?.remoteIdentifier,
+            let clientIdentifier = remoteIdentifier
         else {
             return nil
         }

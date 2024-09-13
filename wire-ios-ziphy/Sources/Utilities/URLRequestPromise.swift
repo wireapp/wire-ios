@@ -55,7 +55,7 @@ final class URLRequestPromise: CancelableTask {
     /// in the order they were added with the `then` function.
     var successHandler: URLRequestSuccessHandler? {
         didSet {
-            if let result = self.result, isResolved == true, isCancelled == false {
+            if let result, isResolved == true, isCancelled == false {
                 notifyResult(result.0, result.1, result.2).map(handleErrorIfNeeded)
             }
         }
@@ -64,7 +64,7 @@ final class URLRequestPromise: CancelableTask {
     /// The block that will be executed in case the operation fails.
     var failureHandler: URLRequestSuccessFailureHandler? {
         didSet {
-            if let error = self.failureError, isResolved == true, isCancelled == false {
+            if let error = failureError, isResolved == true, isCancelled == false {
                 failureHandler?(error)
             }
         }
@@ -148,7 +148,7 @@ final class URLRequestPromise: CancelableTask {
             return
         }
 
-        self.failureError = error
+        failureError = error
         failureHandler?(error)
     }
 }

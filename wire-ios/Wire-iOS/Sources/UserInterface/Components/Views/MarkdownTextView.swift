@@ -165,7 +165,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     override var selectedTextRange: UITextRange? {
-        didSet { activeMarkdown = self.markdownAtSelection() }
+        didSet { activeMarkdown = markdownAtSelection() }
     }
 
     // MARK: - Range Helpers
@@ -195,12 +195,12 @@ final class MarkdownTextView: NextResponderTextView {
         // create the storage stack
         self.markdownTextStorage = MarkdownTextStorage()
         let layoutManager = NSLayoutManager()
-        self.markdownTextStorage.addLayoutManager(layoutManager)
+        markdownTextStorage.addLayoutManager(layoutManager)
         let textContainer = NSTextContainer()
         layoutManager.addTextContainer(textContainer)
         super.init(frame: .zero, textContainer: textContainer)
 
-        currentAttributes = attributes(for: activeMarkdown)
+        self.currentAttributes = attributes(for: activeMarkdown)
         typingAttributes = currentAttributes
 
         NotificationCenter.default.addObserver(
@@ -222,8 +222,8 @@ final class MarkdownTextView: NextResponderTextView {
     /// Updates the color of the text.
     func updateTextColor(base: UIColor?) {
         let baseColor = base ?? SemanticColors.Label.textDefault
-        self.textColor = baseColor
-        self.style.baseFontColor = baseColor
+        textColor = baseColor
+        style.baseFontColor = baseColor
     }
 
     /// Clears active markdown & updates typing attributes.

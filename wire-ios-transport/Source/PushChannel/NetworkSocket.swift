@@ -123,7 +123,7 @@ public final class NetworkSocket: NSObject {
         inputStream = inStream
         outputStream = outStream
 
-        guard let inputStream = self.inputStream, let outputStream = self.outputStream else {
+        guard let inputStream, let outputStream else {
             fatal("Missing streams")
         }
 
@@ -155,13 +155,13 @@ public final class NetworkSocket: NSObject {
     }
 
     public func close() {
-        self.close(syncDelegate: false)
+        close(syncDelegate: false)
     }
 
     private func close(syncDelegate: Bool) {
         preconditionQueue()
 
-        guard self.state != .stopped else {
+        guard state != .stopped else {
             return
         }
 
@@ -173,7 +173,7 @@ public final class NetworkSocket: NSObject {
         outputStream?.delegate = nil
         outputStream?.close()
 
-        self.withDelegate({ delegate in
+        withDelegate({ delegate in
             delegate.didClose(socket: self)
         }, sync: syncDelegate)
 
@@ -181,14 +181,14 @@ public final class NetworkSocket: NSObject {
     }
 
     fileprivate func withDelegate(_ perform: @escaping (NetworkSocketDelegate) -> Void, sync: Bool = false) {
-        guard let delegate = self.delegate else {
+        guard let delegate else {
             return
         }
 
         if sync {
             perform(delegate)
         } else {
-            self.group.async(on: callbackQueue) {
+            group.async(on: callbackQueue) {
                 perform(delegate)
             }
         }
@@ -208,8 +208,8 @@ public final class NetworkSocket: NSObject {
             return
         }
 
-        guard let outputStream = self.outputStream, outputStream.streamStatus != .error else {
-            self.close()
+        guard let outputStream, outputStream.streamStatus != .error else {
+            close()
             return
         }
 
@@ -247,23 +247,23 @@ public final class NetworkSocket: NSObject {
     }
 
     fileprivate func checkTrust(for stream: Stream) -> Bool {
-        if self.didCheckTrust {
-            return self.trusted
+        if didCheckTrust {
+            return trusted
         }
-        self.didCheckTrust = true
+        didCheckTrust = true
 
         guard let peerTrustValue = stream.property(forKey: kCFStreamPropertySSLPeerTrust as Stream.PropertyKey) else {
-            self.trusted = false
+            trusted = false
             return false
         }
 
         let peerTrust = peerTrustValue as! SecTrust
 
-        self.trusted = self.trustProvider.verifyServerTrust(trust: peerTrust, host: url.host)
-        if !self.trusted {
-            self.close()
+        trusted = trustProvider.verifyServerTrust(trust: peerTrust, host: url.host)
+        if !trusted {
+            close()
         }
-        return self.trusted
+        return trusted
     }
 
     fileprivate func onBytesAvailable() {
@@ -273,7 +273,7 @@ public final class NetworkSocket: NSObject {
         }
 
         // Check if we have the output stream
-        guard let inputStream = self.inputStream else {
+        guard let inputStream else {
             fatal("Input stream is missing")
         }
 
@@ -290,7 +290,7 @@ public final class NetworkSocket: NSObject {
         }
 
         inputBuffer.removeLast(inputBufferCount - bytesRead)
-        self.withDelegate({ delegate in
+        withDelegate({ delegate in
             delegate.didReceive(data: inputBuffer, on: self)
         }, sync: false)
     }
@@ -302,7 +302,7 @@ public final class NetworkSocket: NSObject {
         }
 
         // Check if we have the output stream
-        guard let outputStream = self.outputStream else {
+        guard let outputStream else {
             fatal("Output stream is missing")
         }
 
@@ -314,7 +314,7 @@ public final class NetworkSocket: NSObject {
 
         // Check if the stream is errored
         guard outputStream.streamStatus != .error else {
-            self.close()
+            close()
             return
         }
 
@@ -328,7 +328,7 @@ public final class NetworkSocket: NSObject {
 
     fileprivate func writeDataIfPossible() {
         // Check if we have the output stream
-        guard let outputStream = self.outputStream else {
+        guard let outputStream else {
             fatal("Output stream is missing")
         }
 
@@ -352,11 +352,11 @@ extension NetworkSocket: StreamDelegate {
     public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         preconditionQueue()
 
-        switch (self.state, eventCode) {
+        switch (state, eventCode) {
         case (.connecting, .openCompleted):
             if aStream == outputStream {
-                self.state = .connected
-                self.withDelegate({ delegate in
+                state = .connected
+                withDelegate({ delegate in
                     delegate.didOpen(socket: self)
                 }, sync: false)
             }
@@ -364,16 +364,16 @@ extension NetworkSocket: StreamDelegate {
             guard aStream == inputStream, checkTrust(for: aStream) else {
                 return
             }
-            self.onBytesAvailable()
+            onBytesAvailable()
         case (.connected, .hasSpaceAvailable):
             guard aStream == outputStream, checkTrust(for: aStream) else {
                 return
             }
-            self.onHasSpaceAvailable()
+            onHasSpaceAvailable()
         case (_, .errorOccurred):
             fallthrough
         case (_, .endEncountered):
-            self.close()
+            close()
         default:
             return
         }

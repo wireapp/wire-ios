@@ -403,7 +403,7 @@ extension ZMConversation {
         let logAttributes: LogAttributes = [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
-            .conversationId: self.qualifiedID?.safeForLoggingDescription ?? "<nil>",
+            .conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>",
         ]
 
         WireLogger.messaging.debug(

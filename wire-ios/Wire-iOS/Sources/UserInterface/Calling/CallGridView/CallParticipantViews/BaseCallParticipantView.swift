@@ -316,9 +316,9 @@ private struct UserDetailsConstraints {
     private let margin: CGFloat = 8
 
     init(view: UIView, superview: UIView, safeAreaInsets insets: UIEdgeInsets) {
-        bottom = view.bottomAnchor.constraint(equalTo: superview.bottomAnchor)
-        leading = view.leadingAnchor.constraint(equalTo: superview.leadingAnchor)
-        trailing = view.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor)
+        self.bottom = view.bottomAnchor.constraint(equalTo: superview.bottomAnchor)
+        self.leading = view.leadingAnchor.constraint(equalTo: superview.leadingAnchor)
+        self.trailing = view.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor)
         updateEdges(with: insets)
         NSLayoutConstraint.activate([bottom, leading, trailing])
     }

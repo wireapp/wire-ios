@@ -32,13 +32,13 @@ extension AuthenticationActioner {
     /// - parameter action: The action to execute.
 
     func executeAction(_ action: AuthenticationCoordinatorAction) {
-        self.executeActions([action])
+        executeActions([action])
     }
 
     /// Repeats the last action if possible.
 
     func repeatAction() {
-        self.executeAction(.repeatAction)
+        executeAction(.repeatAction)
     }
 }
 

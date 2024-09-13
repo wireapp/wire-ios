@@ -29,7 +29,7 @@ extension UIView {
         animations: @escaping (_ keyboardFrameInView: CGRect) -> Void,
         completion: ResultHandler? = nil
     ) {
-        let keyboardFrame = self.keyboardFrame(in: view, forKeyboardNotification: notification)
+        let keyboardFrame = keyboardFrame(in: view, forKeyboardNotification: notification)
 
         if let currentFirstResponder = UIResponder.currentFirst {
             let keyboardSize = CGSize(

@@ -62,7 +62,7 @@ class CameraKeyboardViewController: UIViewController {
                     self.goBackButton.alpha = self.goBackButtonRevealed ? 1 : 0
                 })
             } else {
-                self.goBackButton.alpha = 0
+                goBackButton.alpha = 0
             }
         }
     }
@@ -99,7 +99,7 @@ class CameraKeyboardViewController: UIViewController {
         self.assetLibrary = SecurityFlags.cameraRoll.isEnabled ? AssetLibrary() : nil
         self.permissions = permissions
         super.init(nibName: nil, bundle: nil)
-        self.assetLibrary?.delegate = self
+        assetLibrary?.delegate = self
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(splitLayoutChanged(_:)),
@@ -136,19 +136,19 @@ class CameraKeyboardViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if !self.lastLayoutSize.equalTo(self.view.bounds.size) {
-            self.lastLayoutSize = self.view.bounds.size
-            self.collectionViewLayout.invalidateLayout()
-            self.collectionView.reloadData()
+        if !lastLayoutSize.equalTo(view.bounds.size) {
+            lastLayoutSize = view.bounds.size
+            collectionViewLayout.invalidateLayout()
+            collectionView.reloadData()
         }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.collectionViewLayout.invalidateLayout()
-        self.collectionView.reloadData()
-        if self.viewWasHidden {
-            self.assetLibrary?.refetchAssets()
+        collectionViewLayout.invalidateLayout()
+        collectionView.reloadData()
+        if viewWasHidden {
+            assetLibrary?.refetchAssets()
         }
     }
 
@@ -163,45 +163,45 @@ class CameraKeyboardViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.viewWasHidden = true
+        viewWasHidden = true
     }
 
     // MARK: - Notifications
 
     @objc
     private func applicationDidBecomeActive(_: Notification!) {
-        self.assetLibrary?.refetchAssets()
+        assetLibrary?.refetchAssets()
     }
 
     @objc
     func splitLayoutChanged(_: Notification!) {
-        self.collectionViewLayout.invalidateLayout()
-        self.collectionView.reloadData()
+        collectionViewLayout.invalidateLayout()
+        collectionView.reloadData()
     }
 
     // MARK: - Setup UI
 
     private func setupViews() {
-        self.createCollectionView()
+        createCollectionView()
 
-        self.goBackButton.translatesAutoresizingMaskIntoConstraints = false
-        self.goBackButton.backgroundColor = .black
-        self.goBackButton.circular = true
-        self.goBackButton.setIcon(.backArrow, size: .tiny, for: [])
-        self.goBackButton.setIconColor(.white, for: [])
-        self.goBackButton.accessibilityIdentifier = "goBackButton"
-        self.goBackButton.addTarget(self, action: #selector(goBackPressed(_:)), for: .touchUpInside)
-        self.goBackButton.applyRTLTransformIfNeeded()
+        goBackButton.translatesAutoresizingMaskIntoConstraints = false
+        goBackButton.backgroundColor = .black
+        goBackButton.circular = true
+        goBackButton.setIcon(.backArrow, size: .tiny, for: [])
+        goBackButton.setIconColor(.white, for: [])
+        goBackButton.accessibilityIdentifier = "goBackButton"
+        goBackButton.addTarget(self, action: #selector(goBackPressed(_:)), for: .touchUpInside)
+        goBackButton.applyRTLTransformIfNeeded()
 
-        self.cameraRollButton.translatesAutoresizingMaskIntoConstraints = false
-        self.cameraRollButton.backgroundColor = .black
-        self.cameraRollButton.circular = true
-        self.cameraRollButton.setIcon(.photo, size: .tiny, for: [])
-        self.cameraRollButton.setIconColor(.white, for: [])
-        self.cameraRollButton.accessibilityIdentifier = "cameraRollButton"
-        self.cameraRollButton.addTarget(self, action: #selector(openCameraRollPressed(_:)), for: .touchUpInside)
+        cameraRollButton.translatesAutoresizingMaskIntoConstraints = false
+        cameraRollButton.backgroundColor = .black
+        cameraRollButton.circular = true
+        cameraRollButton.setIcon(.photo, size: .tiny, for: [])
+        cameraRollButton.setIconColor(.white, for: [])
+        cameraRollButton.accessibilityIdentifier = "cameraRollButton"
+        cameraRollButton.addTarget(self, action: #selector(openCameraRollPressed(_:)), for: .touchUpInside)
 
-        [self.collectionView, self.goBackButton, self.cameraRollButton].forEach(self.view.addSubview)
+        [collectionView, goBackButton, cameraRollButton].forEach(view.addSubview)
     }
 
     private func createConstraints() {
@@ -234,50 +234,50 @@ class CameraKeyboardViewController: UIViewController {
     }
 
     private func createCollectionView() {
-        self.collectionViewLayout.scrollDirection = .horizontal
-        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
-        self.setupPhotoKeyboardAppearance()
-        self.collectionView.register(CameraCell.self, forCellWithReuseIdentifier: CameraCell.reuseIdentifier)
-        self.collectionView.register(AssetCell.self, forCellWithReuseIdentifier: AssetCell.reuseIdentifier)
-        self.collectionView.register(
+        collectionViewLayout.scrollDirection = .horizontal
+        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        setupPhotoKeyboardAppearance()
+        collectionView.register(CameraCell.self, forCellWithReuseIdentifier: CameraCell.reuseIdentifier)
+        collectionView.register(AssetCell.self, forCellWithReuseIdentifier: AssetCell.reuseIdentifier)
+        collectionView.register(
             CameraKeyboardPermissionsCell.self,
             forCellWithReuseIdentifier: CameraKeyboardPermissionsCell.reuseIdentifier
         )
-        self.collectionView.delegate = self
-        self.collectionView.dataSource = self
-        self.collectionView.translatesAutoresizingMaskIntoConstraints = false
-        self.collectionView.allowsMultipleSelection = false
-        self.collectionView.allowsSelection = true
-        self.collectionView.backgroundColor = UIColor.clear
-        self.collectionView.bounces = false
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.allowsMultipleSelection = false
+        collectionView.allowsSelection = true
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.bounces = false
     }
 
     private func setupPhotoKeyboardAppearance() {
-        self.view.backgroundColor = SemanticColors.View.backgroundConversationView
+        view.backgroundColor = SemanticColors.View.backgroundConversationView
 
         if permissions.areCameraAndPhotoLibraryAuthorized {
-            self.collectionView.delaysContentTouches = true
+            collectionView.delaysContentTouches = true
         } else {
-            self.collectionView.delaysContentTouches = false
+            collectionView.delaysContentTouches = false
         }
 
         if permissions.isPhotoLibraryAuthorized,
            mediaSharingRestrictionsMananger.hasAccessToCameraRoll {
-            self.collectionViewLayout.minimumLineSpacing = 1
-            self.collectionViewLayout.minimumInteritemSpacing = 0.5
-            self.collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 1)
-            self.cameraRollButton.isHidden = false
+            collectionViewLayout.minimumLineSpacing = 1
+            collectionViewLayout.minimumInteritemSpacing = 0.5
+            collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 1)
+            cameraRollButton.isHidden = false
         } else {
-            self.collectionViewLayout.minimumLineSpacing = 0
-            self.collectionViewLayout.minimumInteritemSpacing = 0
-            self.collectionViewLayout.sectionInset = .zero
-            self.cameraRollButton.isHidden = true
+            collectionViewLayout.minimumLineSpacing = 0
+            collectionViewLayout.minimumInteritemSpacing = 0
+            collectionViewLayout.sectionInset = .zero
+            cameraRollButton.isHidden = true
         }
     }
 
     func scrollToCamera(animated: Bool) {
-        let endOfListX = UIApplication.isLeftToRightLayout ? 0 : self.collectionView.contentSize.width - 10
-        self.collectionView.scrollRectToVisible(
+        let endOfListX = UIApplication.isLeftToRightLayout ? 0 : collectionView.contentSize.width - 10
+        collectionView.scrollRectToVisible(
             CGRect(
                 x: endOfListX,
                 y: 0,
@@ -297,7 +297,7 @@ class CameraKeyboardViewController: UIViewController {
 
     @objc
     func openCameraRollPressed(_: AnyObject) {
-        self.delegate?.cameraKeyboardViewControllerWantsToOpenCameraRoll(self)
+        delegate?.cameraKeyboardViewControllerWantsToOpenCameraRoll(self)
     }
 
     // MARK: - Methods
@@ -332,7 +332,7 @@ class CameraKeyboardViewController: UIViewController {
             options.resizeMode = .exact
             options.isSynchronous = false
 
-            self.imageManagerType.defaultInstance.requestImage(
+            imageManagerType.defaultInstance.requestImage(
                 for: asset,
                 targetSize: CGSize(width: limit, height: limit),
                 contentMode: .aspectFit,
@@ -374,7 +374,7 @@ class CameraKeyboardViewController: UIViewController {
             options.isNetworkAccessAllowed = false
             options.isSynchronous = false
 
-            self.imageManagerType.defaultInstance.requestImageData(for: asset, options: options) { data, uti, _, _ in
+            imageManagerType.defaultInstance.requestImageData(for: asset, options: options) { data, uti, _, _ in
 
                 guard let data else {
                     options.isNetworkAccessAllowed = true
@@ -508,7 +508,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
                 for: indexPath
             ) as! AssetCell
 
-            cell.manager = self.imageManagerType.defaultInstance
+            cell.manager = imageManagerType.defaultInstance
 
             if let asset = try? assetLibrary?.asset(atIndex: UInt((indexPath as NSIndexPath).row)) {
                 cell.asset = asset
@@ -550,22 +550,22 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         case .photos:
             guard permissions.isPhotoLibraryAuthorized else {
                 return CGSize(
-                    width: self.view.bounds.size.width - cameraCellSize.width,
-                    height: self.view.bounds.size.height
+                    width: view.bounds.size.width - cameraCellSize.width,
+                    height: view.bounds.size.height
                 )
             }
 
-            let photoSize = self.view.bounds.size.height / 2 - 0.5
+            let photoSize = view.bounds.size.height / 2 - 0.5
             return CGSize(width: photoSize, height: photoSize)
         }
     }
 
     private var cameraCellSize: CGSize {
-        switch self.splitLayoutObservable.layoutSize {
+        switch splitLayoutObservable.layoutSize {
         case .compact:
-            CGSize(width: self.view.bounds.size.width / 2, height: self.view.bounds.size.height)
+            CGSize(width: view.bounds.size.width / 2, height: view.bounds.size.height)
         case .regularPortrait, .regularLandscape:
-            CGSize(width: self.splitLayoutObservable.leftViewControllerWidth, height: self.view.bounds.size.height)
+            CGSize(width: splitLayoutObservable.leftViewControllerWidth, height: view.bounds.size.height)
         }
     }
 
@@ -585,10 +585,10 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
 
             switch asset.mediaType {
             case .video:
-                self.forwardSelectedVideoAsset(asset)
+                forwardSelectedVideoAsset(asset)
 
             case .image:
-                self.forwardSelectedPhotoAsset(asset)
+                forwardSelectedPhotoAsset(asset)
 
             default:
                 // not supported
@@ -603,7 +603,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         forItemAt indexPath: IndexPath
     ) {
         if cell is CameraCell || cell is CameraKeyboardPermissionsCell {
-            self.goBackButtonRevealed = true
+            goBackButtonRevealed = true
         }
     }
 
@@ -613,7 +613,7 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
         forItemAt indexPath: IndexPath
     ) {
         if cell is CameraCell || cell is CameraKeyboardPermissionsCell {
-            self.goBackButtonRevealed = false
+            goBackButtonRevealed = false
 
             (cell as? CameraCell)?.updateVideoOrientation()
         }
@@ -624,11 +624,11 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
 
 extension CameraKeyboardViewController: CameraCellDelegate {
     func cameraCellWantsToOpenFullCamera(_: CameraCell) {
-        self.delegate?.cameraKeyboardViewControllerWantsToOpenFullScreenCamera(self)
+        delegate?.cameraKeyboardViewControllerWantsToOpenFullScreenCamera(self)
     }
 
     func cameraCell(_ cameraCell: CameraCell, didPickImageData imageData: Data) {
-        self.delegate?.cameraKeyboardViewController(self, didSelectImageData: imageData, isFromCamera: true, uti: nil)
+        delegate?.cameraKeyboardViewController(self, didSelectImageData: imageData, isFromCamera: true, uti: nil)
     }
 }
 
@@ -636,7 +636,7 @@ extension CameraKeyboardViewController: CameraCellDelegate {
 
 extension CameraKeyboardViewController: AssetLibraryDelegate {
     func assetLibraryDidChange(_: AssetLibrary) {
-        self.collectionView.reloadData()
+        collectionView.reloadData()
     }
 }
 
@@ -652,7 +652,7 @@ extension CameraKeyboardViewController: WireCallCenterCallStateObserver {
     ) {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: fix undesired camera keyboard openings here
-        self.collectionView.reloadItems(at: [IndexPath(item: 0, section: 0)])
+        collectionView.reloadItems(at: [IndexPath(item: 0, section: 0)])
     }
 }
 

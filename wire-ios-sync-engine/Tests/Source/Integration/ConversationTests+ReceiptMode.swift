@@ -93,7 +93,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         XCTAssert(login())
         let sut = conversation(for: selfToUser1Conversation)!
         XCTAssertFalse(sut.hasReadReceiptsEnabled)
-        let expectation = self.customExpectation(description: "Invalid Operation")
+        let expectation = customExpectation(description: "Invalid Operation")
 
         // when
         sut.setEnableReadReceipts(true, in: userSession!) { result in

@@ -32,7 +32,7 @@ final class SessionManagerTeamsTests: IntegrationTest {
             in: mockTransportSession.managedObjectContext,
             forID: selfUser.previewProfileAssetIdentifier!
         )
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             let team = session.insertTeam(withName: teamName, isBound: true, users: [self.selfUser])
             team.creator = self.selfUser
         }
@@ -50,7 +50,7 @@ final class SessionManagerTeamsTests: IntegrationTest {
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
               manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
-        XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
+        XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertEqual(account.teamName, teamName)
         XCTAssertEqual(account.imageData, image?.data)
         XCTAssertNil(account.teamImageData)
@@ -68,9 +68,9 @@ final class SessionManagerTeamsTests: IntegrationTest {
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
               manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
-        XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
+        XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertNil(account.teamName)
-        XCTAssertEqual(account.userName, self.selfUser.name)
+        XCTAssertEqual(account.userName, selfUser.name)
         let image = MockAsset(
             in: mockTransportSession.managedObjectContext,
             forID: selfUser.previewProfileAssetIdentifier!
@@ -96,9 +96,9 @@ final class SessionManagerTeamsTests: IntegrationTest {
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
               manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
-        XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
+        XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertNil(account.teamName)
-        XCTAssertEqual(account.userName, self.selfUser.name)
+        XCTAssertEqual(account.userName, selfUser.name)
         let image = MockAsset(
             in: mockTransportSession.managedObjectContext,
             forID: selfUser.previewProfileAssetIdentifier!
@@ -112,7 +112,7 @@ final class SessionManagerTeamsTests: IntegrationTest {
         XCTAssert(login())
 
         let newName = "BOB"
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             self.selfUser.name = newName
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -123,7 +123,7 @@ final class SessionManagerTeamsTests: IntegrationTest {
         let manager = AccountManager(sharedDirectory: sharedContainer)
         guard let account = manager.accounts.first,
               manager.accounts.count == 1 else { XCTFail("Should have one account"); return }
-        XCTAssertEqual(account.userIdentifier.transportString(), self.selfUser.identifier)
+        XCTAssertEqual(account.userIdentifier.transportString(), selfUser.identifier)
         XCTAssertNil(account.teamName)
         XCTAssertEqual(account.userName, selfUser.name)
     }
@@ -161,7 +161,7 @@ final class SessionManagerTeamsTests: IntegrationTest {
         sessionManager?.accountManager.addOrUpdate(account1)
 
         // then
-        XCTAssertTrue(sessionManager!.session(session: self.unauthenticatedSession!, isExistingAccount: account1))
-        XCTAssertFalse(sessionManager!.session(session: self.unauthenticatedSession!, isExistingAccount: account2))
+        XCTAssertTrue(sessionManager!.session(session: unauthenticatedSession!, isExistingAccount: account1))
+        XCTAssertFalse(sessionManager!.session(session: unauthenticatedSession!, isExistingAccount: account2))
     }
 }

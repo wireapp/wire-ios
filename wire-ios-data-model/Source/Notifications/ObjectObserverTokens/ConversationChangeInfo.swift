@@ -257,13 +257,13 @@ extension ConversationChangeInfo {
 extension ConversationChangeInfo {
     @objc public var causedByConversationPrivacyChange: Bool {
         if mlsVerificationStatusChanged {
-            return conversation.mlsVerificationStatus == .degraded && !self.conversation
+            return conversation.mlsVerificationStatus == .degraded && !conversation
                 .messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if securityLevelChanged {
-            return conversation.securityLevel == .secureWithIgnored && !self.conversation
+            return conversation.securityLevel == .secureWithIgnored && !conversation
                 .messagesThatCausedSecurityLevelDegradation.isEmpty
         } else if legalHoldStatusChanged {
-            return conversation.legalHoldStatus == .pendingApproval && !self.conversation
+            return conversation.legalHoldStatus == .pendingApproval && !conversation
                 .messagesThatCausedSecurityLevelDegradation.isEmpty
         }
 
@@ -272,7 +272,7 @@ extension ConversationChangeInfo {
 
     /// Users that caused the conversation to degrade
     @objc public var usersThatCausedConversationToDegrade: Set<ZMUser> {
-        let untrustedParticipants = self.conversation.localParticipants.filter { user -> Bool in
+        let untrustedParticipants = conversation.localParticipants.filter { user -> Bool in
             !user.isTrusted
         }
         return Set(untrustedParticipants)

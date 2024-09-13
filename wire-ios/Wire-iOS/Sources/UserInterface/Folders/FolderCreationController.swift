@@ -112,8 +112,8 @@ final class FolderCreationController: UIViewController {
 
     private func setupNavigationBar() {
         typealias FolderCreationName = L10n.Localizable.Folder.Creation.Name
-        self.navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        navigationController?.navigationBar.tintColor = SemanticColors.Label.textDefault
+        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         if navigationController?.viewControllers.count ?? 0 <= 1 {
             navigationItem.leftBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
@@ -146,7 +146,7 @@ final class FolderCreationController: UIViewController {
             folderName = trimmed
 
             if let folder = ZMUserSession.shared()?.conversationDirectory.createFolder(folderName) {
-                self.delegate?.folderController(self, didCreateFolder: folder)
+                delegate?.folderController(self, didCreateFolder: folder)
             }
         }
     }

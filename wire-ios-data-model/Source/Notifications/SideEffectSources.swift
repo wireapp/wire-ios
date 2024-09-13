@@ -94,7 +94,7 @@ extension ZMManagedObject {
 
 extension ZMUser: SideEffectSource {
     var allConversations: [ZMConversation] {
-        var conversations = self.participantRoles.compactMap(\.conversation)
+        var conversations = participantRoles.compactMap(\.conversation)
         if let oneOnOneConversation {
             conversations.append(oneOnOneConversation)
         }

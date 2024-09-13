@@ -45,7 +45,7 @@ extension AuthenticationCoordinator: UINavigationControllerDelegate {
         // Detect if we are popping the durrent view controller
 
         guard
-            let currentViewController = self.currentViewController,
+            let currentViewController,
             let authenticationViewController = viewController as? AuthenticationStepViewController else {
             return
         }

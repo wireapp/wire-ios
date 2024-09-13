@@ -25,10 +25,10 @@ final class MockPanGestureRecognizer: UIPanGestureRecognizer {
     var mockView: UIView?
 
     init(location: CGPoint?, translation: CGPoint?, view: UIView?, state: UIGestureRecognizer.State) {
-        mockLocation = location
-        mockTranslation = translation
-        mockState = state
-        mockView = view
+        self.mockLocation = location
+        self.mockTranslation = translation
+        self.mockState = state
+        self.mockView = view
 
         super.init(target: nil, action: nil)
     }

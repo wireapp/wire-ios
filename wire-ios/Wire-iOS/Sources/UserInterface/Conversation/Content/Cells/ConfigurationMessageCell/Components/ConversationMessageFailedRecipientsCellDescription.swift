@@ -41,7 +41,7 @@ final class ConversationMessageFailedRecipientsCellDescription: ConversationMess
     var accessibilityLabel: String?
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View
+        self.configuration = View
             .Configuration(
                 title: ConversationMessageFailedRecipientsCellDescription.configureTitle(for: failedUsers),
                 content: ConversationMessageFailedRecipientsCellDescription

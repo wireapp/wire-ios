@@ -23,7 +23,7 @@ public class FolderList: NSObject { // TODO: jacob turn into struct and make gen
     var backingList: [Label]
 
     public init(labels: [Label]) {
-        backingList = labels.sorted(by: FolderList.comparator)
+        self.backingList = labels.sorted(by: FolderList.comparator)
     }
 
     private static var comparator: (Label, Label) -> Bool {

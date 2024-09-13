@@ -68,7 +68,7 @@ final class FileTransferView: UIView, TransferView {
 
         loadingView.isHidden = true
 
-        allViews = [topLabel, bottomLabel, fileTypeIconView, actionButton, progressView, loadingView]
+        self.allViews = [topLabel, bottomLabel, fileTypeIconView, actionButton, progressView, loadingView]
         allViews.forEach(addSubview)
 
         createConstraints()

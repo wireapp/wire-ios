@@ -34,7 +34,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
     // MARK: - Initialization
 
     init(clients: [UserClient]) {
-        clientListController = RemoveClientsViewController(clientsList: clients)
+        self.clientListController = RemoveClientsViewController(clientsList: clients)
 
         super.init(nibName: nil, bundle: nil)
     }

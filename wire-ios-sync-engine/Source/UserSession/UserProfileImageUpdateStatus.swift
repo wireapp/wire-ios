@@ -154,14 +154,14 @@ public final class UserProfileImageUpdateStatus: NSObject {
 
 extension UserProfileImageUpdateStatus {
     func setState(state newState: ProfileUpdateState) {
-        let currentState = self.state
+        let currentState = state
         guard currentState.canTransition(to: newState) else {
             log.debug("Invalid transition: [\(currentState)] -> [\(newState)], ignoring")
             // Trying to transition to invalid state - ignore
             return
         }
-        self.state = newState
-        self.didTransition(from: currentState, to: newState)
+        state = newState
+        didTransition(from: currentState, to: newState)
     }
 
     private func didTransition(from oldState: ProfileUpdateState, to currentState: ProfileUpdateState) {
@@ -181,7 +181,7 @@ extension UserProfileImageUpdateStatus {
     }
 
     private func updateUserProfile(with previewAssetId: String, completeAssetId: String) {
-        let selfUser = ZMUser.selfUser(in: self.syncMOC)
+        let selfUser = ZMUser.selfUser(in: syncMOC)
         assetsToDelete
             .formUnion(
                 [selfUser.previewProfileAssetIdentifier, selfUser.completeProfileAssetIdentifier]
@@ -193,9 +193,9 @@ extension UserProfileImageUpdateStatus {
         )
         selfUser.setImage(data: resizedImages[.preview], size: .preview)
         selfUser.setImage(data: resizedImages[.complete], size: .complete)
-        self.resetImageState()
-        self.syncMOC.saveOrRollback()
-        self.setState(state: .ready)
+        resetImageState()
+        syncMOC.saveOrRollback()
+        setState(state: .ready)
     }
 
     private func startPreprocessing(imageData: Data) {
@@ -223,14 +223,14 @@ extension UserProfileImageUpdateStatus {
     }
 
     func setState(state newState: ImageState, for imageSize: ProfileImageSize) {
-        let currentState = self.imageState(for: imageSize)
+        let currentState = imageState(for: imageSize)
         guard currentState.canTransition(to: newState) else {
             // Trying to transition to invalid state - ignore
             return
         }
 
-        self.imageState[imageSize] = newState
-        self.didTransition(from: currentState, to: newState, for: imageSize)
+        imageState[imageSize] = newState
+        didTransition(from: currentState, to: newState, for: imageSize)
     }
 
     func resetImageState() {

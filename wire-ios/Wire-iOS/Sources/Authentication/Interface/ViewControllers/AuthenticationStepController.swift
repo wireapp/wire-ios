@@ -297,7 +297,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     @objc
     private func rightItemTapped() {
-        guard let rightItemAction = self.rightItemAction else {
+        guard let rightItemAction else {
             return
         }
 
@@ -470,16 +470,16 @@ extension AuthenticationStepController {
     }
 
     func showSecondaryView(for error: Error?) {
-        if let view = self.secondaryErrorView {
+        if let view = secondaryErrorView {
             secondaryViewsStackView.removeArrangedSubview(view)
             view.removeFromSuperview()
             secondaryViewsStackView.arrangedSubviews.forEach { $0.isHidden = false }
-            self.secondaryErrorView = nil
+            secondaryErrorView = nil
         }
 
         if let error, let errorDescription = stepDescription.secondaryView?.display(on: error) {
             let view = errorDescription.create()
-            self.secondaryErrorView = view
+            secondaryErrorView = view
             secondaryViewsStackView.arrangedSubviews.forEach { $0.isHidden = true }
             secondaryViewsStackView.addArrangedSubview(view)
         }

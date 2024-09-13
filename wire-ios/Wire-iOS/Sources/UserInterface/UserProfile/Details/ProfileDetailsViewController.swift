@@ -73,11 +73,11 @@ final class ProfileDetailsViewController: UIViewController {
         profileHeaderOptions.insert(.hideAvailability)
 
         self.user = user
-        isAdminRole = conversation.map(user.isGroupAdmin) ?? false
+        self.isAdminRole = conversation.map(user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
-        profileHeaderViewController = .init(
+        self.profileHeaderViewController = .init(
             user: user,
             viewer: viewer,
             conversation: conversation,
@@ -86,7 +86,7 @@ final class ProfileDetailsViewController: UIViewController {
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-        contentController = .init(
+        self.contentController = .init(
             user: user,
             viewer: viewer,
             conversation: conversation

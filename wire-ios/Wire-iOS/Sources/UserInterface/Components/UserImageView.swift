@@ -205,7 +205,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Called when the user or user session changes.
     func updateUser() {
-        guard let user = self.user, let initials = user.initials else {
+        guard let user, let initials = user.initials else {
             return
         }
 

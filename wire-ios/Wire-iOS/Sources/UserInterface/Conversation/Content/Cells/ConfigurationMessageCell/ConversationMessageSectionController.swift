@@ -179,8 +179,8 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     private func buttonAction() {
-        self.isCollapsed = !self.isCollapsed
-        self.cellDelegate?.conversationMessageShouldUpdate()
+        isCollapsed = !isCollapsed
+        cellDelegate?.conversationMessageShouldUpdate()
     }
 
     // MARK: - Content Cells
@@ -262,7 +262,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     private func createCellDescriptions(in context: ConversationMessageContext) {
         cellDescriptions.removeAll()
 
-        let isSenderVisible = self.shouldShowSenderDetails(in: context)
+        let isSenderVisible = shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible(in: context) {
             add(description: BurstTimestampSenderMessageCellDescription(
@@ -443,12 +443,12 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             return // Deletions are handled by the window observer
         }
 
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
+        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }
 
 extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_: UserChangeInfo) {
-        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
+        sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: message)
     }
 }

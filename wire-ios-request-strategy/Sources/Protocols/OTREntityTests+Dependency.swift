@@ -32,7 +32,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItReturnsNewClientAsDependentObjectForMessageIfItHasNotBeenFetched() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
 
@@ -46,7 +46,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItReturnsConversationIfNeedsToBeUpdatedFromBackendBeforeMissingClients() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
 
@@ -61,7 +61,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItReturnsConnectionIfNeedsToBeUpdatedFromBackendBeforeMissingClients() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.oneToOneConversation.appendText(content: "foo") as! ZMClientMessage
 
@@ -76,7 +76,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItDoesNotReturnSelfClientAsDependentObjectForMessageIfConversationIsNotAffectedByMissingClients() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let user2 = self.createUser()
             let conversation2 = self.createGroupConversation(with: user2)
@@ -92,7 +92,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItReturnsNilAsDependentObjectForMessageIfItHasNoMissingClients() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
 
@@ -103,7 +103,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItReturnsAPreviousPendingMessageAsDependency() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let timeZero = Date(timeIntervalSince1970: 10000)
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
@@ -124,7 +124,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItDoesNotReturnAPreviousSentMessageAsDependency() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let timeZero = Date(timeIntervalSince1970: 10000)
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
@@ -141,7 +141,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItDoesNotReturnConversationAsDependencyIfSecurityLevelIsNotSecure() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
 
@@ -154,7 +154,7 @@ class OTREntityTests_Dependency: MessagingTestBase {
     }
 
     func testThatItDoesNotReturnConversationAsDependencyIfSecurityLevelIsSecure() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
 

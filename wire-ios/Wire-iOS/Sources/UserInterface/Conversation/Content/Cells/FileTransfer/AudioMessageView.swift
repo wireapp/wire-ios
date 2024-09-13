@@ -84,7 +84,7 @@ final class AudioMessageView: UIView, TransferView {
     private var isPausedForIncomingCall: Bool
 
     init(mediaPlaybackManager: MediaPlaybackManager? = nil) {
-        isPausedForIncomingCall = false
+        self.isPausedForIncomingCall = false
         self.mediaPlaybackManager = mediaPlaybackManager
 
         super.init(frame: .zero)
@@ -102,7 +102,14 @@ final class AudioMessageView: UIView, TransferView {
 
         loadingView.isHidden = true
 
-        allViews = [playButton, timeLabel, downloadProgressView, playerProgressView, waveformProgressView, loadingView]
+        self.allViews = [
+            playButton,
+            timeLabel,
+            downloadProgressView,
+            playerProgressView,
+            waveformProgressView,
+            loadingView,
+        ]
         allViews.forEach(addSubview)
 
         createConstraints()
@@ -111,7 +118,7 @@ final class AudioMessageView: UIView, TransferView {
         layoutIfNeeded()
 
         if let session = ZMUserSession.shared() {
-            callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: session)
+            self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: session)
         }
     }
 

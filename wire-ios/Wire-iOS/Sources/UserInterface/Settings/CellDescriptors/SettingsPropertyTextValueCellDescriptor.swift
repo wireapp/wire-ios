@@ -60,7 +60,7 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
     func select(_ value: SettingsPropertyValue, sender: UIView) {
         if let stringValue = value.value() as? String {
             do {
-                try self.settingsProperty << SettingsPropertyValue.string(value: stringValue)
+                try settingsProperty << SettingsPropertyValue.string(value: stringValue)
             } catch let error as NSError {
                 // specific error message for name string is too short
                 if error.domain == ZMObjectValidationErrorDomain,

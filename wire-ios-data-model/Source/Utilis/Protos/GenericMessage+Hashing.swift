@@ -93,7 +93,7 @@ extension String: BigEndianDataConvertible {
 
 extension Int: BigEndianDataConvertible {
     public var asBigEndianData: Data {
-        withUnsafePointer(to: self.bigEndian) {
+        withUnsafePointer(to: bigEndian) {
             Data(bytes: $0, count: MemoryLayout.size(ofValue: self))
         }
     }
@@ -110,7 +110,7 @@ extension TimeInterval: BigEndianDataConvertible {
 
 extension BigEndianDataConvertible {
     public func dataWithTimestamp(timestamp: TimeInterval) -> Data {
-        var data = self.asBigEndianData
+        var data = asBigEndianData
         data.append(timestamp.asBigEndianData)
         return data
     }

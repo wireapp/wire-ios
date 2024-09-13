@@ -71,6 +71,6 @@ final class UserSelection: NSObject {
 
     func setLimit(_ limit: Int, handler: @escaping () -> Void) {
         self.limit = limit
-        self.limitReachedHandler = handler
+        limitReachedHandler = handler
     }
 }

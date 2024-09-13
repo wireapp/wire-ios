@@ -82,9 +82,9 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     ) {
         self.configuration = configuration
 
-        statusViewController = CallStatusViewController(configuration: configuration)
+        self.statusViewController = CallStatusViewController(configuration: configuration)
 
-        accessoryViewController = CallAccessoryViewController(
+        self.accessoryViewController = CallAccessoryViewController(
             configuration: configuration,
             selfUser: selfUser,
             userSession: userSession

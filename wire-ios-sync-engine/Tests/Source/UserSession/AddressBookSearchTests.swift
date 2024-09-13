@@ -26,13 +26,13 @@ class AddressBookSearchTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.addressBook = MockAddressBook()
-        self.sut = WireSyncEngine.AddressBookSearch(addressBook: self.addressBook)
+        addressBook = MockAddressBook()
+        sut = WireSyncEngine.AddressBookSearch(addressBook: addressBook)
     }
 
     override func tearDown() {
-        self.sut = nil
-        self.addressBook = nil
+        sut = nil
+        addressBook = nil
         super.tearDown()
     }
 }

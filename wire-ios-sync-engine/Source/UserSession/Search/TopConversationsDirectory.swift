@@ -32,10 +32,10 @@ public class TopConversationsDirectory: NSObject {
     fileprivate var topConversationsCache: [ZMConversation] = []
 
     public init(managedObjectContext: NSManagedObjectContext) {
-        uiMOC = managedObjectContext
-        syncMOC = managedObjectContext.zm_sync
+        self.uiMOC = managedObjectContext
+        self.syncMOC = managedObjectContext.zm_sync
         super.init()
-        self.loadList()
+        loadList()
     }
 }
 
@@ -78,24 +78,24 @@ extension TopConversationsDirectory {
 
     /// Top conversations
     public var topConversations: [ZMConversation] {
-        self.topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
+        topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
     }
 
     /// Persist list of conversations to persistent store
     private func persistList() {
-        let valueToSave = self.topConversations.map { $0.objectID.uriRepresentation().absoluteString }
-        self.uiMOC.setPersistentStoreMetadata(array: valueToSave, key: topConversationsObjectIDKey)
+        let valueToSave = topConversations.map { $0.objectID.uriRepresentation().absoluteString }
+        uiMOC.setPersistentStoreMetadata(array: valueToSave, key: topConversationsObjectIDKey)
         TopConversationsDirectoryNotification().post(in: uiMOC.notificationContext)
     }
 
     /// Load list from persistent store
     private func loadList() {
-        guard let ids = self.uiMOC.persistentStoreMetadata(forKey: topConversationsObjectIDKey) as? [String] else {
+        guard let ids = uiMOC.persistentStoreMetadata(forKey: topConversationsObjectIDKey) as? [String] else {
             return
         }
         let managedObjectIDs = ids.compactMap(URL.init)
             .compactMap { self.uiMOC.persistentStoreCoordinator?.managedObjectID(forURIRepresentation: $0) }
-        self.topConversationsCache = managedObjectIDs.compactMap { self.uiMOC.object(with: $0) as? ZMConversation }
+        topConversationsCache = managedObjectIDs.compactMap { self.uiMOC.object(with: $0) as? ZMConversation }
     }
 }
 

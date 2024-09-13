@@ -23,7 +23,7 @@ extension UserClient {
     var hexRemoteIdentifier: UInt64 {
         let pointer = UnsafeMutablePointer<UInt64>.allocate(capacity: 1)
         defer { pointer.deallocate() }
-        Scanner(string: self.remoteIdentifier!).scanHexInt64(pointer)
+        Scanner(string: remoteIdentifier!).scanHexInt64(pointer)
         return UInt64(pointer.pointee)
     }
 

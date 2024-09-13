@@ -126,7 +126,8 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         self.backupRestoreController = BackupRestoreController(target: presenter)
         super.init()
         updateLoginObservers()
-        unauthenticatedSessionObserver = sessionManager.addUnauthenticatedSessionManagerCreatedSessionObserver(self)
+        self.unauthenticatedSessionObserver = sessionManager
+            .addUnauthenticatedSessionManagerCreatedSessionObserver(self)
         companyLoginController?.delegate = self
         backupRestoreController.delegate = self
         presenter.delegate = self
@@ -501,7 +502,7 @@ extension AuthenticationCoordinator {
             }
         }
 
-        self.presenter?.present(browser, animated: true, completion: nil)
+        presenter?.present(browser, animated: true, completion: nil)
     }
 
     /// Presents an error alert.
@@ -541,7 +542,7 @@ extension AuthenticationCoordinator {
 
     private func startRegistration(_ unverifiedEmail: String) {
         guard case let .createCredentials(unregisteredUser) = stateController.currentStep,
-              let presenter = self.presenter else {
+              let presenter else {
             log.error("Cannot start phone registration outside of registration flow.")
             return
         }

@@ -22,7 +22,7 @@ import WireDataModel
 
 extension ZMConversationMessage {
     func copy(in pasteboard: UIPasteboard) {
-        if self.isText {
+        if isText {
             if let text = textMessageData?.messageText, !text.isEmpty {
                 pasteboard.string = text
             }
@@ -35,7 +35,7 @@ extension ZMConversationMessage {
             }
 
             UIPasteboard.general.setMediaAsset(mediaAsset)
-        } else if self.isLocation {
+        } else if isLocation {
             if let locationName = locationMessageData?.name {
                 pasteboard.string = locationName
             }

@@ -235,7 +235,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         insertAssetMessages(count: 1000)
         uiMOC.registeredObjects.forEach { uiMOC.refresh($0, mergeChanges: false) }
 
-        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
+        measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             // when
             self.startMeasuring()
             self.sut = AssetCollectionBatched(
@@ -297,7 +297,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItExcludesDefinedCategories_PreCategorized() {
         // given
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
@@ -319,7 +319,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItExcludesDefinedCategories_NotPreCategorized() {
         // given
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
@@ -367,7 +367,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
     func testThatItSortsExcludingCategories() {
         // given
         insertAssetMessages(count: 1)
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         _ = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
 
@@ -420,13 +420,13 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItDoesNotReturnFailedToUploadAssets_Uncategorized() {
         // given
-        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+        let includedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         )) as! ZMAssetClientMessage
-        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+        let excludedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         )) as! ZMAssetClientMessage
         excludedMessage.transferState = .uploadingFailed
         excludedMessage.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
@@ -447,13 +447,13 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
 
     func testThatItDoesNotReturnFailedToUploadAssets_PreCategorized() {
         // given
-        let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+        let includedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         )) as! ZMAssetClientMessage
-        let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+        let excludedMessage = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         )) as! ZMAssetClientMessage
         excludedMessage.transferState = .uploadingFailed
         excludedMessage.updateCategoryCache()

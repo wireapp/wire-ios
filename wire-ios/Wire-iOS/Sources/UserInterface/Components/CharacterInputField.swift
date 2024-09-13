@@ -40,8 +40,8 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
                 storage = String(storage.prefix(maxLength))
             }
 
-            self.updateCharacterViews(isFirstResponder: self.isFirstResponder)
-            self.accessibilityValue = storage
+            updateCharacterViews(isFirstResponder: isFirstResponder)
+            accessibilityValue = storage
         }
     }
 
@@ -80,17 +80,17 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     }
 
     fileprivate func notifyingDelegate(_ action: () -> Void) {
-        let wasFilled = self.isFilled
-        let previousText = self.storage
+        let wasFilled = isFilled
+        let previousText = storage
 
         action()
 
         if previousText != storage {
-            self.delegate?.didChangeText(self, to: storage)
+            delegate?.didChangeText(self, to: storage)
         }
 
-        if let text = self.text, !wasFilled, self.isFilled {
-            self.delegate?.didFillInput(inputField: self, text: text)
+        if let text, !wasFilled, isFilled {
+            delegate?.didFillInput(inputField: self, text: text)
         }
     }
 
@@ -105,7 +105,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
 
         var character: Character? = .none {
             didSet {
-                if let character = self.character {
+                if let character {
                     label.text = String(character)
                     label.isHidden = false
                 } else {
@@ -160,7 +160,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
     init(maxLength: Int, characterSet: CharacterSet, size: CGSize) {
         self.maxLength = maxLength
         self.characterSet = characterSet
-        characterViews = (0 ..< maxLength).map { _ in CharacterView(parentSize: size) }
+        self.characterViews = (0 ..< maxLength).map { _ in CharacterView(parentSize: size) }
 
         super.init(frame: .zero)
 
@@ -181,7 +181,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
 
-        characterViews.forEach(self.stackView.addArrangedSubview)
+        characterViews.forEach(stackView.addArrangedSubview)
 
         addSubview(stackView)
 
@@ -193,7 +193,7 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
         )
         addGestureRecognizer(longPressGestureRecognizer)
 
-        storage = String()
+        self.storage = String()
     }
 
     private func createConstraints() {
@@ -236,19 +236,19 @@ final class CharacterInputField: UIControl, UITextInputTraits, TextContainer {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        self.becomeFirstResponder()
-        self.layer.borderColor = ViewColors.borderCharacterInputFieldEnabled.cgColor
+        becomeFirstResponder()
+        layer.borderColor = ViewColors.borderCharacterInputFieldEnabled.cgColor
     }
 
     override func accessibilityActivate() -> Bool {
-        self.becomeFirstResponder()
+        becomeFirstResponder()
     }
 
     // MARK: - Paste support
 
     @objc
     fileprivate func onLongPress(_: Any?) {
-        self.showMenu()
+        showMenu()
     }
 
     override func paste(_: Any?) {
@@ -298,7 +298,7 @@ extension CharacterInputField: UIKeyInput {
         guard shouldInsert else { return }
 
         if text.rangeOfCharacter(from: CharacterSet.newlines) != nil {
-            self.resignFirstResponder()
+            resignFirstResponder()
             return
         }
 
@@ -315,7 +315,7 @@ extension CharacterInputField: UIKeyInput {
     }
 
     func deleteBackward() {
-        guard !self.storage.isEmpty else {
+        guard !storage.isEmpty else {
             return
         }
 

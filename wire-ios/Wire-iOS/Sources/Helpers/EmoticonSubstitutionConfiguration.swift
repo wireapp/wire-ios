@@ -49,7 +49,7 @@ final class EmoticonSubstitutionConfiguration {
             fatal("\(error)")
         }
 
-        substitutionRules = jsonResult?.mapValues { value -> String in
+        self.substitutionRules = jsonResult?.mapValues { value -> String in
             if let hexInt = Int(value, radix: 16),
                let scalar = UnicodeScalar(hexInt) {
                 return String(Character(scalar))

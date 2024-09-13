@@ -118,7 +118,7 @@ protocol SettingsControllerGeneratorType {
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let cellDescriptors: [SettingsCellDescriptorType]
     var visibleCellDescriptors: [SettingsCellDescriptorType] {
-        self.cellDescriptors.filter(\.visible)
+        cellDescriptors.filter(\.visible)
     }
 
     var visible: Bool {
@@ -180,7 +180,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     weak var group: SettingsGroupCellDescriptorType?
 
     var visibleItems: [SettingsSectionDescriptorType] {
-        self.items.filter(\.visible)
+        items.filter(\.visible)
     }
 
     weak var viewController: UIViewController?
@@ -204,12 +204,12 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
-        if let previewGenerator = self.previewGenerator {
+        cell.titleText = title
+        if let previewGenerator {
             let preview = previewGenerator(self)
             cell.preview = preview
         }
-        cell.icon = self.icon
+        cell.icon = icon
         if let cell = cell as? SettingsTableCell {
             cell.showDisclosureIndicator()
         }

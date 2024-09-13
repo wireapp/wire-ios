@@ -81,7 +81,7 @@ public enum SettingsPropertyName: String, CustomStringConvertible {
     case encryptMessagesAtRest
 
     public var changeNotificationName: String {
-        self.description + "ChangeNotification"
+        description + "ChangeNotification"
     }
 
     public var notificationName: Notification.Name {

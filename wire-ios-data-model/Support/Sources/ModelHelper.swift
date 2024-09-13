@@ -125,7 +125,7 @@ public struct ModelHelper {
 
         let users = (0 ..< numberOfUsers)
             .map { _ in
-                let user = self.createUser(in: context)
+                let user = createUser(in: context)
                 addUser(user, to: team, in: context)
                 return user
             }

@@ -38,11 +38,11 @@ final class LogInStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
-        backButton = BackButtonDescription()
-        mainView = EmptyViewDescription()
-        headline = L10n.Localizable.Registration.Signin.title
-        subtext = nil
-        secondaryView = nil
-        footerView = nil
+        self.backButton = BackButtonDescription()
+        self.mainView = EmptyViewDescription()
+        self.headline = L10n.Localizable.Registration.Signin.title
+        self.subtext = nil
+        self.secondaryView = nil
+        self.footerView = nil
     }
 }

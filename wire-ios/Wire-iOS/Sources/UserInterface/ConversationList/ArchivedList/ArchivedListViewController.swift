@@ -36,7 +36,7 @@ final class ArchivedListViewController: UIViewController {
 
     init(userSession: UserSession) {
         self.userSession = userSession
-        viewModel = ArchivedListViewModel(userSession: userSession)
+        self.viewModel = ArchivedListViewModel(userSession: userSession)
         super.init(nibName: nil, bundle: nil)
         viewModel.delegate = self
     }
@@ -157,7 +157,7 @@ final class ArchivedListViewController: UIViewController {
     // MARK: - Accessibility
 
     override func accessibilityPerformEscape() -> Bool {
-        self.delegate?.archivedListViewControllerWantsToDismiss(self)
+        delegate?.archivedListViewControllerWantsToDismiss(self)
         return true
     }
 }

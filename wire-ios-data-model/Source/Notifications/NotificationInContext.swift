@@ -39,7 +39,7 @@ public class NotificationInContext: NSObject {
 
     /// The object of the notification
     public var object: AnyObject? {
-        self.userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
+        userInfo[NotificationInContext.objectInNotificationKey] as AnyObject?
     }
 
     /// The context in which the notification is valid
@@ -77,7 +77,7 @@ public class NotificationInContext: NSObject {
 
     /// Post notification in default notification center
     public func post() {
-        NotificationCenter.default.post(self.notification)
+        NotificationCenter.default.post(notification)
     }
 
     /// Register for observer
@@ -153,10 +153,10 @@ extension NotificationInContext {
     }
 
     public var changeInfo: ObjectChangeInfo? {
-        self.userInfo[UserInfoKeys.changeInfo.rawValue] as? ObjectChangeInfo
+        userInfo[UserInfoKeys.changeInfo.rawValue] as? ObjectChangeInfo
     }
 
     public var changedKeys: [String]? {
-        self.userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
+        userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
     }
 }

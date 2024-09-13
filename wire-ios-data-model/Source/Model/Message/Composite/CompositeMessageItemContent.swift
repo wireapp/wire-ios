@@ -116,17 +116,17 @@ extension CompositeMessageItemContent: ButtonMessageData {
 
         moc.performGroupedBlock { [weak self] in
             guard let self else { return }
-            let buttonState = self.buttonState ??
-                ButtonState.insert(with: buttonId, message: self.parentMessage, inContext: moc)
-            self.parentMessage.buttonStates?.resetExpired()
-            guard self.parentMessage.isSenderInConversation else {
+            let buttonState = buttonState ??
+                ButtonState.insert(with: buttonId, message: parentMessage, inContext: moc)
+            parentMessage.buttonStates?.resetExpired()
+            guard parentMessage.isSenderInConversation else {
                 buttonState.isExpired = true
                 moc.saveOrRollback()
                 return
             }
 
             do {
-                try self.parentMessage.conversation?.appendButtonAction(
+                try parentMessage.conversation?.appendButtonAction(
                     havingId: buttonId,
                     referenceMessageId: messageId
                 )

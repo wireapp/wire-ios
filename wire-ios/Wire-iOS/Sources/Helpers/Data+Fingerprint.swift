@@ -31,7 +31,7 @@ extension Data {
         boldAttributes: [NSAttributedString.Key: AnyObject],
         uppercase: Bool = false
     ) -> NSAttributedString? {
-        var fingerprintString = self.fingerprintString
+        var fingerprintString = fingerprintString
 
         if uppercase {
             fingerprintString = fingerprintString.uppercased()

@@ -19,7 +19,7 @@
 import Foundation
 
 extension ChaCha20Poly1305 {
-    public final class StreamEncryption {
+    public enum StreamEncryption {
         private static let bufferSize = 1024 * 1024
 
         public enum EncryptionError: Error {
@@ -140,7 +140,7 @@ extension ChaCha20Poly1305 {
             }
 
             func deriveKey(from passphrase: Passphrase) throws -> Key {
-                let salt = Array(self.salt)
+                let salt = Array(salt)
 
                 guard try Header.hash(uuid: passphrase.uuid, salt: salt) == Array(uuidHash) else {
                     throw EncryptionError.mismatchingUUID

@@ -39,7 +39,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         proteusService: any ProteusServiceInterface,
         context: NSManagedObjectContext
     ) {
-        proteusMessageDecryptor = ProteusMessageDecryptor(
+        self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
             managedObjectContext: context
         )

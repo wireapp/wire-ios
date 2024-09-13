@@ -27,8 +27,8 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        self.messageSender = MockMessageSenderInterface()
-        self.sut = AvailabilityRequestStrategy(context: syncMOC, messageSender: messageSender)
+        messageSender = MockMessageSenderInterface()
+        sut = AvailabilityRequestStrategy(context: syncMOC, messageSender: messageSender)
     }
 
     override func tearDown() {
@@ -39,7 +39,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItBroadcastWhenAvailabilityIsModified() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let availabilityKeySet: Set<AnyHashable> = [AvailabilityKey]
@@ -51,7 +51,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers
                 .forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertEqual(messageSender.broadcastMessageMessage_Invocations.count, 1)
@@ -76,14 +76,14 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers
                 .forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertEqual(messageSender.broadcastMessageMessage_Invocations.count, 1)
     }
 
     func testThatItDoesntBroadcastWhenAvailabilityIsModifiedForOtherUsers() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 
@@ -93,7 +93,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             self.sut.contextChangeTrackers
                 .forEach { $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: self.otherUser)) }
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertEqual(messageSender.broadcastMessageMessage_Invocations.count, 0)

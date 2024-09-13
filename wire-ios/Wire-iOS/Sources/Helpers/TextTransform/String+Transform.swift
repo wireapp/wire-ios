@@ -37,16 +37,16 @@ extension NSAttributedString {
     /// Creates a new string by applying the given transform.
 
     func applying(transform: TextTransform) -> NSAttributedString {
-        let newString = self.string.applying(transform: transform)
+        let newString = string.applying(transform: transform)
 
-        let mutableCopy = self.mutableCopy() as! NSMutableAttributedString
-        mutableCopy.replaceCharacters(in: NSRange(location: 0, length: self.length), with: newString)
+        let mutableCopy = mutableCopy() as! NSMutableAttributedString
+        mutableCopy.replaceCharacters(in: NSRange(location: 0, length: length), with: newString)
         return mutableCopy
     }
 }
 
 extension String {
     func trim() -> String {
-        self.trimmingCharacters(in: .whitespaces)
+        trimmingCharacters(in: .whitespaces)
     }
 }

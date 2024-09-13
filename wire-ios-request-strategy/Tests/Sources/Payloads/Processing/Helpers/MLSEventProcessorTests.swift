@@ -278,9 +278,9 @@ final class MLSEventProcessorTests: MessagingTestBase {
 
         // When
         await sut.updateConversationIfNeeded(
-            conversation: self.conversation,
+            conversation: conversation,
             fallbackGroupID: .init(base64Encoded: groupIdString),
-            context: self.syncMOC
+            context: syncMOC
         )
 
         await syncMOC.perform {

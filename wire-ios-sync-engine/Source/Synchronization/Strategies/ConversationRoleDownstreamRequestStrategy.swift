@@ -60,7 +60,7 @@ public final class ConversationRoleDownstreamRequestStrategy: AbstractRequestStr
 
         configuration = [.allowsRequestsWhileOnline]
 
-        downstreamSync = ZMDownstreamObjectSync(
+        self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: ZMConversation.entityName(),
             predicateForObjectsToDownload: ZMConversation.predicateForObjectsNeedingToDownloadRoles,

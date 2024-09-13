@@ -31,7 +31,7 @@ extension ZMUser: UserType {
     public var isTrusted: Bool {
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
         let selfClient = selfUser?.selfClient()
-        let hasUntrustedClients = self.clients
+        let hasUntrustedClients = clients
             .contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
 
         return !hasUntrustedClients
@@ -70,7 +70,7 @@ extension ZMUser: UserType {
     }
 
     public var activeConversations: Set<ZMConversation> {
-        Set(self.participantRoles.compactMap(\.conversation))
+        Set(participantRoles.compactMap(\.conversation))
     }
 
     public var isVerified: Bool {
@@ -165,7 +165,7 @@ public struct AssetKey {
 
     public init?(_ string: String) {
         if AssetKey.validate(string: string) {
-            stringValue = string
+            self.stringValue = string
         } else {
             return nil
         }
@@ -292,14 +292,14 @@ extension ZMUser {
     public var remoteIdentifier: UUID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
-            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            let value = transientUUID(forKey: Self.remoteIdentifierKey)
             didAccessValue(forKey: "remoteIdentifier")
             return value
         }
 
         set {
             willChangeValue(forKey: Self.remoteIdentifierKey)
-            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
             didChangeValue(forKey: Self.remoteIdentifierKey)
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }
@@ -411,7 +411,7 @@ extension ZMUser {
 
     @objc
     public func requestPreviewProfileImage() {
-        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
+        guard let moc = managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
             self,
             size: .preview
         ) else { return }
@@ -419,13 +419,13 @@ extension ZMUser {
         NotificationInContext(
             name: .userDidRequestPreviewAsset,
             context: moc.notificationContext,
-            object: self.objectID
+            object: objectID
         ).post()
     }
 
     @objc
     public func requestCompleteProfileImage() {
-        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
+        guard let moc = managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(
             self,
             size: .complete
         ) else { return }
@@ -433,7 +433,7 @@ extension ZMUser {
         NotificationInContext(
             name: .userDidRequestCompleteAsset,
             context: moc.notificationContext,
-            object: self.objectID
+            object: objectID
         ).post()
     }
 
@@ -475,16 +475,16 @@ extension ZMUser {
 
 extension NSManagedObject: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        let moc: String = self.managedObjectContext?.description ?? "nil"
+        let moc: String = managedObjectContext?.description ?? "nil"
 
-        return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(self.objectID)"
+        return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(objectID)"
     }
 }
 
 extension ZMUser {
     /// The initials e.g. "JS" for "John Smith"
     @objc public var initials: String? {
-        PersonName.person(withName: self.name ?? "", schemeTagger: nil).initials
+        PersonName.person(withName: name ?? "", schemeTagger: nil).initials
     }
 }
 

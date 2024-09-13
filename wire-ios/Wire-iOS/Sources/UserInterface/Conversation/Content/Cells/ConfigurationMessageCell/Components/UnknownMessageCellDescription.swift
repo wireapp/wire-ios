@@ -50,7 +50,7 @@ final class UnknownMessageCellDescription: ConversationMessageCellDescription {
     let containsHighlightableContent = false
 
     init() {
-        configuration = L10n.Localizable.Content.System.UnknownMessage.body
-        accessibilityLabel = configuration
+        self.configuration = L10n.Localizable.Content.System.UnknownMessage.body
+        self.accessibilityLabel = configuration
     }
 }

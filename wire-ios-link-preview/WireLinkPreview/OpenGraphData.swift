@@ -96,7 +96,7 @@ extension OpenGraphData {
             userGeneratedImage: mapping[.userGeneratedImage] == "true"
         )
 
-        foursquareMetaData = FoursquareMetaData(propertyMapping: mapping)
+        self.foursquareMetaData = FoursquareMetaData(propertyMapping: mapping)
     }
 }
 

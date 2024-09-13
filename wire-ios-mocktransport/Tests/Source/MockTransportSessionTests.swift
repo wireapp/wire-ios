@@ -25,7 +25,7 @@ extension MockTransportSessionTests {
         path: String,
         apiVersion: APIVersion
     ) -> ZMTransportResponse? {
-        let expectation = self.customExpectation(description: "Got an asset response")
+        let expectation = customExpectation(description: "Got an asset response")
 
         var response: ZMTransportResponse?
         let result = sut.mockedTransportSession().attemptToEnqueueSyncRequest {

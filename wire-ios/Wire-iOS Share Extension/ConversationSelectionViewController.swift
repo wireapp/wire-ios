@@ -31,8 +31,8 @@ final class ConversationSelectionViewController: UITableViewController {
     private let searchController = UISearchController(searchResultsController: nil)
 
     init(conversations: [Conversation]) {
-        allConversations = conversations
-        visibleConversations = conversations
+        self.allConversations = conversations
+        self.visibleConversations = conversations
 
         super.init(style: .plain)
 

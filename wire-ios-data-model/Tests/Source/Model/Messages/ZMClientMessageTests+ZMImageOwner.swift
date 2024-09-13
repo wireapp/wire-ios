@@ -92,8 +92,8 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         clientMessage.setImageData(imageData, for: .medium, properties: properties)
 
         // then
-        XCTAssertNil(self.uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
-        XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
+        XCTAssertNil(uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
+        XCTAssertNotNil(uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
 
         guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first
         else { return XCTFail("did not contain linkpreview") }
@@ -122,8 +122,8 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         clientMessage.setImageData(imageData, for: .medium, properties: properties)
 
         // then
-        XCTAssertNil(self.uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
-        XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
+        XCTAssertNil(uiMOC.zm_fileAssetCache.mediumImageData(for: clientMessage))
+        XCTAssertNotNil(uiMOC.zm_fileAssetCache.encryptedMediumImageData(for: clientMessage))
 
         guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first
         else { return XCTFail("did not contain linkpreview") }
@@ -144,14 +144,14 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         clientMessage.sender = selfUser
         clientMessage.visibleInConversation = conversation
-        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
+        uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
 
         // when
         clientMessage.processingDidFinish()
 
         // then
         XCTAssertEqual(clientMessage.linkPreviewState, ZMLinkPreviewState.processed)
-        XCTAssertNil(self.uiMOC.zm_fileAssetCache.originalImageData(for: clientMessage))
+        XCTAssertNil(uiMOC.zm_fileAssetCache.originalImageData(for: clientMessage))
     }
 
     func testThatItReturnsCorrectOriginalImageSize() {
@@ -160,7 +160,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         clientMessage.sender = selfUser
         clientMessage.visibleInConversation = conversation
-        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
+        uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
 
         // when
         let imageSize = clientMessage.originalImageSize()

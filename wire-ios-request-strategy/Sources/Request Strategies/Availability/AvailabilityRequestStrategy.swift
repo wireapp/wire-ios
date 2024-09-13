@@ -31,7 +31,7 @@ public class AvailabilityRequestStrategy: NSObject, ZMContextChangeTrackerSource
 
         super.init()
 
-        self.modifiedKeysSync.transcoder = self
+        modifiedKeysSync.transcoder = self
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {

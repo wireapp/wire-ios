@@ -54,12 +54,12 @@ public final class ConversationList: NSObject {
     ) {
         self.filteringPredicate = filteringPredicate
         self.managedObjectContext = managedObjectContext
-        identifier = description
+        self.identifier = description
         self.label = label
-        sortDescriptors = ZMConversation.defaultSortDescriptors()!
+        self.sortDescriptors = ZMConversation.defaultSortDescriptors()!
 
-        conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
-        items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
+        self.conversationKeysAffectingSorting = Self.calculateKeysAffectingPredicateAndSort(sortDescriptors)
+        self.items = Self.createItems(allConversations, filteringPredicate, sortDescriptors)
 
         super.init()
 

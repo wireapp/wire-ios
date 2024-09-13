@@ -109,7 +109,7 @@ final class ModalTopBar: UIView {
     }
 
     func configure(title: String, subtitle: String?, topAnchor: NSLayoutYAxisAnchor) {
-        if let topConstraint = self.contentTopConstraint {
+        if let topConstraint = contentTopConstraint {
             contentStackView.removeConstraint(topConstraint)
         }
 

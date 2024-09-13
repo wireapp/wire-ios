@@ -30,11 +30,11 @@ final class RandomGeneratorFromData: RandomGenerator {
     private var step = 0
 
     init(data: Data) {
-        source = data
+        self.source = data
     }
 
     func rand<ContentType>() -> ContentType {
-        let currentStep = self.step
+        let currentStep = step
         let result = source.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> ContentType in
             pointer.baseAddress!.assumingMemoryBound(to: ContentType.self)
                 .advanced(by: currentStep % (source.count - MemoryLayout<ContentType>.size)).pointee
@@ -72,7 +72,7 @@ extension ZMConversation: StableRandomParticipantsProvider {
     /// because the conversation UUID is used as the random indexes source.
     var stableRandomParticipants: [UserType] {
         let allUsers = sortedActiveParticipants
-        guard let remoteIdentifier = self.remoteIdentifier else {
+        guard let remoteIdentifier else {
             return allUsers
         }
 
@@ -159,7 +159,7 @@ final class ConversationAvatarView: UIView {
     private var conversation: ConversationAvatarViewConversation? = .none {
         didSet {
             guard let conversation else {
-                self.clippingView.subviews.forEach { $0.isHidden = true }
+                clippingView.subviews.forEach { $0.isHidden = true }
                 return
             }
 
@@ -181,8 +181,8 @@ final class ConversationAvatarView: UIView {
 
     private(set) var mode: Mode = .one(serviceUser: false) {
         didSet {
-            self.clippingView.subviews.forEach { $0.isHidden = true }
-            self.userImages().forEach { $0.isHidden = false }
+            clippingView.subviews.forEach { $0.isHidden = true }
+            userImages().forEach { $0.isHidden = false }
 
             if case .one = mode {
                 layer.borderWidth = 0
@@ -194,7 +194,7 @@ final class ConversationAvatarView: UIView {
             }
 
             var index = 0
-            for userImage in self.userImages() {
+            for userImage in userImages() {
                 userImage.userSession = ZMUserSession.shared()
                 userImage.shouldDesaturate = false
                 userImage.size = mode == .four ? .tiny : .small
@@ -253,12 +253,12 @@ final class ConversationAvatarView: UIView {
 
     init() {
         super.init(frame: .zero)
-        userImageViews.forEach(self.clippingView.addSubview)
+        userImageViews.forEach(clippingView.addSubview)
         updateCornerRadius()
         autoresizesSubviews = false
         layer.masksToBounds = true
         clippingView.clipsToBounds = true
-        self.addSubview(clippingView)
+        addSubview(clippingView)
     }
 
     @available(*, unavailable)
@@ -268,16 +268,16 @@ final class ConversationAvatarView: UIView {
 
     let interAvatarInset: CGFloat = 2
     var containerSize: CGSize {
-        self.clippingView.bounds.size
+        clippingView.bounds.size
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard self.bounds != .zero else {
+        guard bounds != .zero else {
             return
         }
 
-        clippingView.frame = self.bounds.insetBy(dx: 2, dy: 2)
+        clippingView.frame = bounds.insetBy(dx: 2, dy: 2)
 
         switch mode {
         case .none:

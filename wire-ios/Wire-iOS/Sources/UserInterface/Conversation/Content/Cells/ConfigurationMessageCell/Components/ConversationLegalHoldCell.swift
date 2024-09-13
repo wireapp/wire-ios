@@ -71,8 +71,11 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     let accessibilityLabel: String?
 
     init(systemMessageType: ZMSystemMessageType, conversation: ZMConversation) {
-        configuration = ConversationLegalHoldCellDescription.configuration(for: systemMessageType, in: conversation)
-        accessibilityLabel = configuration.attributedText?.string
+        self.configuration = ConversationLegalHoldCellDescription.configuration(
+            for: systemMessageType,
+            in: conversation
+        )
+        self.accessibilityLabel = configuration.attributedText?.string
     }
 
     private static func configuration(

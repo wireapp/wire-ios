@@ -75,8 +75,8 @@ enum RandomHandleGenerator {
 extension RandomHandleGenerator {
     /// Generates some random combinations of words
     fileprivate static func randomWordsCombinations(count: Int) -> [String] {
-        let list1 = self.loadWords(file: "random1", ext: "txt")
-        let list2 = self.loadWords(file: "random2", ext: "txt")
+        let list1 = loadWords(file: "random1", ext: "txt")
+        let list2 = loadWords(file: "random2", ext: "txt")
 
         guard (list1.count * list2.count) > count * 20 else {
             fatal(
@@ -136,11 +136,11 @@ extension RandomHandleGenerator {
 extension Array {
     /// Pick a random element from the array
     fileprivate var random: Element? {
-        guard self.count > 1 else {
-            return self.first
+        guard count > 1 else {
+            return first
         }
 
-        let index = Int.random(in: 0 ..< self.count)
+        let index = Int.random(in: 0 ..< count)
         return self[index]
     }
 }
@@ -150,7 +150,7 @@ extension Array {
 extension String {
     /// Normalized user handle form
     public var normalizedForUserHandle: String {
-        self.translitteratedToLatin
+        translitteratedToLatin
             .spacesAndPuctationToUnderscore
             .onlyAlphanumericWithUnderscore
             .lowercased()
@@ -164,7 +164,7 @@ extension String {
             .union(CharacterSet.whitespacesAndNewlines)
             .union(CharacterSet.controlCharacters)
 
-        return self.components(separatedBy: charactersToRemove)
+        return components(separatedBy: charactersToRemove)
             .joined(separator: "")
     }
 
@@ -185,7 +185,7 @@ extension String {
     private var onlyAlphanumericWithUnderscore: String {
         let allowedCharacters =
             CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")
-        return self.components(separatedBy: allowedCharacters.inverted).joined(separator: "")
+        return components(separatedBy: allowedCharacters.inverted).joined(separator: "")
     }
 
     /// Returns a truncated version of the string
@@ -195,7 +195,7 @@ extension String {
 
     /// Returns the string if its a valid handle, or nil
     fileprivate var validHandle: String? {
-        let normalized = self.normalizedForUserHandle
+        let normalized = normalizedForUserHandle
         guard normalized.count >= minimumUserHandleLength else {
             return nil
         }

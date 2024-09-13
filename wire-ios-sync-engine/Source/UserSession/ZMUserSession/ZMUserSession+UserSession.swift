@@ -213,7 +213,7 @@ extension ZMUserSession: UserSession {
     }
 
     public var ringingCallConversation: ZMConversation? {
-        guard let callCenter = self.callCenter else {
+        guard let callCenter else {
             return nil
         }
 

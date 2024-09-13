@@ -46,27 +46,27 @@ public struct Logger {
 
             self.logger = logger
 
-            onDebug = { message in
+            self.onDebug = { message in
                 logger.debug("\(message, privacy: .public)")
             }
 
-            onInfo = { message in
+            self.onInfo = { message in
                 logger.info("\(message, privacy: .public)")
             }
 
-            onTrace = { message in
+            self.onTrace = { message in
                 logger.trace("\(message, privacy: .public)")
             }
 
-            onWarning = { message in
+            self.onWarning = { message in
                 logger.warning("\(message, privacy: .public)")
             }
 
-            onError = { message in
+            self.onError = { message in
                 logger.error("\(message, privacy: .public)")
             }
 
-            onCritical = { message in
+            self.onCritical = { message in
                 logger.critical("\(message, privacy: .public)")
             }
         }

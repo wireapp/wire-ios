@@ -63,8 +63,8 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
         self.conversation = conversation
         self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        self.updateItems()
-        observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        updateItems()
+        self.observerToken = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     @available(*, unavailable)
@@ -169,7 +169,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
     }
 
     private func updateItems() {
-        self.items = conversation.timeoutItems
+        items = conversation.timeoutItems
     }
 
     private func updateTimeout(_ timeout: MessageDestructionTimeoutValue) {
@@ -178,7 +178,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             activityIndicator.start()
         }
 
-        self.conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
+        conversation.setMessageDestructionTimeout(timeout, in: userSession) { [weak self] result in
             guard let self else {
                 return
             }
@@ -187,7 +187,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
             activityIndicator.stop()
 
             if case let .failure(error) = result {
-                self.handle(error: error)
+                handle(error: error)
             }
         }
     }
@@ -206,7 +206,7 @@ extension ConversationTimeoutOptionsViewController: UICollectionViewDelegateFlow
 
             switch result {
             case let .success(value):
-                self.updateTimeout(MessageDestructionTimeoutValue(rawValue: value))
+                updateTimeout(MessageDestructionTimeoutValue(rawValue: value))
             default:
                 break
             }

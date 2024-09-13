@@ -230,7 +230,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         await syncMOC.perform {
             self.simulateLoggedInUser()
         }
-        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
 
@@ -256,7 +256,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         }
 
         // when
-        self.handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
         await uiMOC.perform {
             // then
             self.assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
@@ -268,10 +268,10 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             self.simulateLoggedInUser()
         }
-        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
-        let conversation = userInfo.conversation(in: self.uiMOC)!
+        let conversation = userInfo.conversation(in: uiMOC)!
 
         let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
         let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)

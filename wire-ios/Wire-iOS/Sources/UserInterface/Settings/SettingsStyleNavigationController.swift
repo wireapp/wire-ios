@@ -23,14 +23,14 @@ final class SettingsStyleNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.navigationBar.setBackgroundImage(
+        navigationBar.setBackgroundImage(
             UIImage(color: .black, andSize: CGSize(width: 1, height: 1)),
             for: .default
         )
-        self.navigationBar.isTranslucent = false
-        self.navigationBar.shadowImage = UIImage()
-        self.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-        self.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationBar.isTranslucent = false
+        navigationBar.shadowImage = UIImage()
+        navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         let navButtonAppearance = UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self])
         let attributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 11, weight: .semibold)]

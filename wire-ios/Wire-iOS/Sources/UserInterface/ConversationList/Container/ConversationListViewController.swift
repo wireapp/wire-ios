@@ -109,7 +109,7 @@ final class ConversationListViewController: UIViewController {
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(
+        self.listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator,
             isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,

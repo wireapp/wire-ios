@@ -46,7 +46,7 @@ public final class AutomationHelper: NSObject {
 
     /// Whether to skip the first login alert
     public var skipFirstLoginAlerts: Bool {
-        self.automationEmailCredentials != nil
+        automationEmailCredentials != nil
     }
 
     /// The login credentials provides by command line
@@ -83,15 +83,15 @@ public final class AutomationHelper: NSObject {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)
         let arguments: ArgumentsType = url.flatMap(FileArguments.init) ?? CommandLineArguments()
 
-        disablePushNotificationAlert = arguments.hasFlag(AutomationKey.disablePushNotificationAlert)
-        disableAutocorrection = arguments.hasFlag(AutomationKey.disableAutocorrection)
-        uploadAddressbookOnSimulator = arguments.hasFlag(AutomationKey.enableAddressBookOnSimulator)
-        disableCallQualitySurvey = arguments.hasFlag(AutomationKey.disableCallQualitySurvey)
-        shouldPersistBackendType = arguments.hasFlag(AutomationKey.persistBackendType)
-        disableInteractiveKeyboardDismissal = arguments.hasFlag(AutomationKey.disableInteractiveKeyboardDismissal)
-        keepCallingOverlayVisible = arguments.hasFlag(AutomationKey.keepCallingOverlayVisible)
+        self.disablePushNotificationAlert = arguments.hasFlag(AutomationKey.disablePushNotificationAlert)
+        self.disableAutocorrection = arguments.hasFlag(AutomationKey.disableAutocorrection)
+        self.uploadAddressbookOnSimulator = arguments.hasFlag(AutomationKey.enableAddressBookOnSimulator)
+        self.disableCallQualitySurvey = arguments.hasFlag(AutomationKey.disableCallQualitySurvey)
+        self.shouldPersistBackendType = arguments.hasFlag(AutomationKey.persistBackendType)
+        self.disableInteractiveKeyboardDismissal = arguments.hasFlag(AutomationKey.disableInteractiveKeyboardDismissal)
+        self.keepCallingOverlayVisible = arguments.hasFlag(AutomationKey.keepCallingOverlayVisible)
 
-        automationEmailCredentials = AutomationHelper.credentials(arguments)
+        self.automationEmailCredentials = AutomationHelper.credentials(arguments)
         if arguments.hasFlag(AutomationKey.logNetwork) {
             ZMSLog.set(level: .debug, tag: "Network")
         }
@@ -109,11 +109,11 @@ public final class AutomationHelper: NSObject {
 
         if let value = arguments.flagValueIfPresent(AutomationKey.preferredAPIVersion.rawValue),
            let apiVersion = Int32(value) {
-            preferredAPIVersion = APIVersion(rawValue: apiVersion)
+            self.preferredAPIVersion = APIVersion(rawValue: apiVersion)
         }
 
-        allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
-        enableMLSSupport = arguments.hasFlag(AutomationKey.enableMLSSupport.rawValue)
+        self.allowMLSGroupCreation = arguments.hasFlag(AutomationKey.allowMLSGroupCreation.rawValue)
+        self.enableMLSSupport = arguments.hasFlag(AutomationKey.enableMLSSupport.rawValue)
 
         super.init()
     }
@@ -186,7 +186,7 @@ extension ArgumentsType {
     var flagPrefix: String { "--" }
 
     func hasFlag(_ name: String) -> Bool {
-        self.arguments.contains(flagPrefix + name)
+        arguments.contains(flagPrefix + name)
     }
 
     func hasFlag<Flag: RawRepresentable>(_ flag: Flag) -> Bool where Flag.RawValue == String {
@@ -209,7 +209,7 @@ private struct CommandLineArguments: ArgumentsType {
     let arguments: Set<String>
 
     init() {
-        arguments = Set(ProcessInfo.processInfo.arguments)
+        self.arguments = Set(ProcessInfo.processInfo.arguments)
     }
 }
 
@@ -219,7 +219,7 @@ private struct FileArguments: ArgumentsType {
 
     init?(url: URL) {
         guard let argumentsString = try? String(contentsOfFile: url.path, encoding: .utf8) else { return nil }
-        arguments = Set(argumentsString.components(separatedBy: .whitespaces))
+        self.arguments = Set(argumentsString.components(separatedBy: .whitespaces))
     }
 }
 
@@ -229,7 +229,7 @@ extension AutomationHelper {
     /// Takes all files in the folder pointed at by `debugDataToInstall` and installs them
     /// in the shared folder, erasing any other file in that folder.
     public func installDebugDataIfNeeded() {
-        guard let packageURL = self.debugDataToInstall,
+        guard let packageURL = debugDataToInstall,
               let appGroupIdentifier = Bundle.main.applicationGroupIdentifier else { return }
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
         // DELETE

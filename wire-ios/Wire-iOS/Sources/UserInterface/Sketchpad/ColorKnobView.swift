@@ -63,10 +63,10 @@ final class ColorKnobView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        let frame = self.frame
+        let frame = frame
         let centerPos = CGPoint(x: frame.size.width / 2, y: frame.size.height / 2)
 
-        let knobDiameter: CGFloat = self.knobDiameter + 1
+        let knobDiameter: CGFloat = knobDiameter + 1
         innerCircleLayer.bounds = CGRect(origin: .zero, size: CGSize(width: knobDiameter, height: knobDiameter))
         innerCircleLayer.position = centerPos
         innerCircleLayer.cornerRadius = knobDiameter / 2

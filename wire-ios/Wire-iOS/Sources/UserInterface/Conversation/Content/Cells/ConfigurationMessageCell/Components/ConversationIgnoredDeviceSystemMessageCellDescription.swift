@@ -49,14 +49,14 @@ final class ConversationIgnoredDeviceSystemMessageCellDescription: ConversationM
             user: user
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             attributedText: title,
             icon: WireStyleKit.imageOfShieldnotverified,
             linkTarget: .user(user)
         )
 
-        accessibilityLabel = configuration.attributedText?.string
-        actionController = nil
+        self.accessibilityLabel = configuration.attributedText?.string
+        self.actionController = nil
     }
 
     private static func makeAttributedString(

@@ -36,7 +36,7 @@ final class ClientMessageTests_OTR_Legacy: BaseZMClientMessageTests {
 
 extension ClientMessageTests_OTR_Legacy {
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
-        let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
+        let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await syncMOC.perform {
             // Given
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
@@ -91,7 +91,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     func testThatCorruptedClientsReceiveBogusPayload() async throws {
-        let message = try await self.syncMOC.perform {
+        let message = try await syncMOC.perform {
             // Given
             let message = try self.syncConversation.appendText(
                 content: self.name,
@@ -126,7 +126,7 @@ extension ClientMessageTests_OTR_Legacy {
 
     func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() async throws {
         // Given
-        let message = try await self.syncMOC.perform {
+        let message = try await syncMOC.perform {
             let messageRequiringExternal = try XCTUnwrap(
                 self
                     .textMessageRequiringExternalMessage(withNumberOfClients: 6)
@@ -160,7 +160,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     func testThatItCreatesPayloadDataForTextMessage() async throws {
-        let message = try await self.syncMOC.perform {
+        let message = try await syncMOC.perform {
             // Given
             let message = try self.syncConversation.appendText(
                 content: self.name,
@@ -178,7 +178,7 @@ extension ClientMessageTests_OTR_Legacy {
         }
 
         // Then
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             self.assertMessageMetadata(payloadAndStrategy.data)
             switch payloadAndStrategy.strategy {
             case .doNotIgnoreAnyMissingClient:
@@ -190,7 +190,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     func testThatItCreatesPayloadDataForEphemeralTextMessage_Group() async throws {
-        let message = try await self.syncMOC.perform {
+        let message = try await syncMOC.perform {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let message = try XCTUnwrap(
@@ -218,7 +218,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     func testThatItCreatesPayloadDataForDeletionOfEphemeralTextMessage_Group() async throws {
-        let syncMessage: ZMClientMessage? = try await self.syncMOC.perform {
+        let syncMessage: ZMClientMessage? = try await syncMOC.perform {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let syncMessage = try self.syncConversation.appendText(
@@ -245,7 +245,7 @@ extension ClientMessageTests_OTR_Legacy {
             self.uiMOC.saveOrRollback()
         }
 
-        let sut = await self.syncMOC.perform {
+        let sut = await syncMOC.perform {
             self.syncMOC.refresh(syncMessage, mergeChanges: true)
             XCTAssertNotNil(syncMessage.destructionDate)
 
@@ -269,7 +269,7 @@ extension ClientMessageTests_OTR_Legacy {
     func testThatItCreatesPayloadForDeletionOfEphemeralTextMessage_Group_SenderWasDeleted() async throws {
         // This can happen due to a race condition where we receive a delete for an ephemeral after deleting the same
         // message locally, but before creating the payload
-        let syncMessage = try await self.syncMOC.perform {
+        let syncMessage = try await syncMOC.perform {
             // Given
             self.syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
             let syncMessage = try self.syncConversation.appendText(
@@ -296,7 +296,7 @@ extension ClientMessageTests_OTR_Legacy {
             self.uiMOC.saveOrRollback()
         }
 
-        let sut = await self.syncMOC.perform {
+        let sut = await syncMOC.perform {
             self.syncMOC.refresh(syncMessage, mergeChanges: true)
             XCTAssertNotNil(syncMessage.destructionDate)
 
@@ -307,9 +307,9 @@ extension ClientMessageTests_OTR_Legacy {
             return sut
         }
         var payload: (data: Data, strategy: MissingClientsStrategy)?
-        self.disableZMLogError(true)
+        disableZMLogError(true)
         payload = await sut?.encryptForTransport()
-        self.disableZMLogError(false)
+        disableZMLogError(false)
 
         // Then
         await syncMOC.perform {
@@ -327,7 +327,7 @@ extension ClientMessageTests_OTR_Legacy {
         // Given
         BackendInfo.domain = "example.domain.com"
 
-        let message = try await self.syncMOC.perform {
+        let message = try await syncMOC.perform {
             self.syncConversation.lastReadServerTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
             let message = try ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation)
@@ -354,7 +354,7 @@ extension ClientMessageTests_OTR_Legacy {
     }
 
     func testThatItCreatesPayloadForZMClearedMessages() async throws {
-        let message = try await self.syncMOC.perform {
+        let message = try await syncMOC.perform {
             // Given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
@@ -384,7 +384,7 @@ extension ClientMessageTests_OTR_Legacy {
     // MARK: - Delivery
 
     func testThatItCreatesPayloadDataForConfirmationMessage() async throws {
-        let confirmationMessage = try await self.syncMOC.perform {
+        let confirmationMessage = try await syncMOC.perform {
             // Given
             let senderID = self.syncUser1.clients.first!.remoteIdentifier
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -540,9 +540,9 @@ extension ClientMessageTests_OTR_Legacy {
 extension ClientMessageTests_OTR_Legacy {
     func testThatItUsesTheProperSessionIdentifier() {
         // GIVEN
-        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
-        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let client = UserClient.insertNewObject(in: uiMOC)
         client.user = user
         client.remoteIdentifier = UUID.create().transportString()
 
@@ -574,7 +574,7 @@ extension ClientMessageTests_OTR_Legacy {
         let messageMetadata = Proteus_NewOtrMessage.with {
             try? $0.merge(serializedData: payload)
         }
-        let client = self.uiMOC.performAndWait { self.selfClient1.clientId.client }
+        let client = uiMOC.performAndWait { self.selfClient1.clientId.client }
         XCTAssertEqual(messageMetadata.sender.client, client, file: file, line: line)
         assertRecipients(messageMetadata.recipients, file: file, line: line)
     }

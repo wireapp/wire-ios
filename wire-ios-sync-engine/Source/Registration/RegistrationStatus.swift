@@ -122,7 +122,7 @@ public class RegistrationStatus: RegistrationStatusProtocol {
         case .none:
             break
         }
-        self.phase = .none
+        phase = .none
     }
 
     func success() {
@@ -140,6 +140,6 @@ public class RegistrationStatus: RegistrationStatusProtocol {
         case .none:
             break
         }
-        self.phase = .none
+        phase = .none
     }
 }

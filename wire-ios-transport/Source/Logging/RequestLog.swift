@@ -80,7 +80,7 @@ extension URL {
     var endpointRemoteLogDescription: String {
         let visibleCharactersCount = 3
 
-        var components = URLComponents(string: self.absoluteString)
+        var components = URLComponents(string: absoluteString)
         let path = components?.path ?? ""
         let pathComponents = path.components(separatedBy: "/").map { $0.truncated(visibleCharactersCount) }
 
@@ -110,7 +110,7 @@ extension URL {
 
 extension String {
     public var redacted: String {
-        "*".repeat(self.count)
+        "*".repeat(count)
     }
 
     public func `repeat`(_ count: Int) -> String {
@@ -118,7 +118,7 @@ extension String {
     }
 
     public func redactedAndTruncated(maxVisibleCharacters: Int = 7, length: Int = 10) -> String {
-        if self.count <= maxVisibleCharacters {
+        if count <= maxVisibleCharacters {
             return redacted
         }
         let newString = truncated(maxVisibleCharacters)

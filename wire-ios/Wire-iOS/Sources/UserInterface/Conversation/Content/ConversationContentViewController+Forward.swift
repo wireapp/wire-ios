@@ -28,8 +28,8 @@ extension ZMConversation: ShareDestination {
             return false
         }
         return selfUser.hasTeam &&
-            self.conversationType == .oneOnOne &&
-            self.localParticipants.first { $0.isGuest(in: self) } != nil
+            conversationType == .oneOnOne &&
+            localParticipants.first { $0.isGuest(in: self) } != nil
     }
 }
 
@@ -150,7 +150,7 @@ extension ConversationContentViewController {
 
         guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
 
-        if let keyboardAvoidingViewController = self.presentedViewController as? KeyboardAvoidingViewController,
+        if let keyboardAvoidingViewController = presentedViewController as? KeyboardAvoidingViewController,
            let shareViewController = keyboardAvoidingViewController.viewController as? ShareViewController<
                ZMConversation,
                ZMMessage

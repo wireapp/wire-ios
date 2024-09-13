@@ -62,7 +62,7 @@ final class ConversationRootViewController: UIViewController {
             networkStatusObservable: NetworkStatus.shared
         )
 
-        conversationViewController = conversationController
+        self.conversationViewController = conversationController
 
         let navbar = UINavigationBar()
         navbar.isTranslucent = false
@@ -73,7 +73,7 @@ final class ConversationRootViewController: UIViewController {
         navbar.tintColor = SemanticColors.Label.textDefault
         navbar.barStyle = .default
 
-        navBarContainer = UINavigationBarContainer(navbar)
+        self.navBarContainer = UINavigationBarContainer(navbar)
 
         super.init(nibName: .none, bundle: .none)
 
@@ -122,7 +122,7 @@ final class ConversationRootViewController: UIViewController {
     }
 
     func configure() {
-        guard let conversationViewController = self.conversationViewController else {
+        guard let conversationViewController else {
             return
         }
         navHeight = navBarContainer.view.heightAnchor.constraint(equalToConstant: defaultNavBarHeight)
@@ -132,10 +132,10 @@ final class ConversationRootViewController: UIViewController {
             return
         }
 
-        self.view.backgroundColor = SemanticColors.View.backgroundDefault
+        view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        self.addToSelf(navBarContainer)
-        self.view.addSubview(self.contentView)
+        addToSelf(navBarContainer)
+        view.addSubview(contentView)
 
         // This container view will have the same background color as the inputBar
         // and extend to the bottom of the screen.
@@ -148,11 +148,11 @@ final class ConversationRootViewController: UIViewController {
         NSLayoutConstraint.activate([
             inputBarContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             inputBarContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            inputBarContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            inputBarContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             inputBarContainer.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.bottomAnchor),
         ])
 
-        self.addToSelf(networkStatusViewController)
+        addToSelf(networkStatusViewController)
 
         [
             contentView,
@@ -161,7 +161,7 @@ final class ConversationRootViewController: UIViewController {
         ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
-            networkStatusViewController.view.topAnchor.constraint(equalTo: self.safeTopAnchor),
+            networkStatusViewController.view.topAnchor.constraint(equalTo: safeTopAnchor),
             networkStatusViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
             networkStatusViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
 
@@ -173,7 +173,7 @@ final class ConversationRootViewController: UIViewController {
             contentView.leftAnchor.constraint(equalTo: view.leftAnchor),
             contentView.rightAnchor.constraint(equalTo: view.rightAnchor),
             contentView.topAnchor.constraint(equalTo: navBarContainer.view.bottomAnchor),
-            contentView.bottomAnchor.constraint(equalTo: self.safeBottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: safeBottomAnchor),
 
             conversationViewController.view.topAnchor.constraint(equalTo: contentView.topAnchor),
             conversationViewController.view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

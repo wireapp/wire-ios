@@ -71,30 +71,30 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     @objc
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        if self.userProfileUpdateStatus.currentlySettingEmail ||
-            self.userProfileUpdateStatus.currentlyChangingEmail {
-            self.emailUpdateSync.readyForNextRequestIfNotBusy()
-            return self.emailUpdateSync.nextRequest(for: apiVersion)
+        if userProfileUpdateStatus.currentlySettingEmail ||
+            userProfileUpdateStatus.currentlyChangingEmail {
+            emailUpdateSync.readyForNextRequestIfNotBusy()
+            return emailUpdateSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlySettingPassword {
-            self.passwordUpdateSync.readyForNextRequestIfNotBusy()
-            return self.passwordUpdateSync.nextRequest(for: apiVersion)
+        if userProfileUpdateStatus.currentlySettingPassword {
+            passwordUpdateSync.readyForNextRequestIfNotBusy()
+            return passwordUpdateSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlyCheckingHandleAvailability {
-            self.handleCheckSync.readyForNextRequestIfNotBusy()
-            return self.handleCheckSync.nextRequest(for: apiVersion)
+        if userProfileUpdateStatus.currentlyCheckingHandleAvailability {
+            handleCheckSync.readyForNextRequestIfNotBusy()
+            return handleCheckSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlySettingHandle {
-            self.handleSetSync.readyForNextRequestIfNotBusy()
-            return self.handleSetSync.nextRequest(for: apiVersion)
+        if userProfileUpdateStatus.currentlySettingHandle {
+            handleSetSync.readyForNextRequestIfNotBusy()
+            return handleSetSync.nextRequest(for: apiVersion)
         }
 
-        if self.userProfileUpdateStatus.currentlyGeneratingHandleSuggestion {
-            self.handleSuggestionSearchSync.readyForNextRequestIfNotBusy()
-            return self.handleSuggestionSearchSync.nextRequest(for: apiVersion)
+        if userProfileUpdateStatus.currentlyGeneratingHandleSuggestion {
+            handleSuggestionSearchSync.readyForNextRequestIfNotBusy()
+            return handleSuggestionSearchSync.nextRequest(for: apiVersion)
         }
 
         return nil
@@ -104,9 +104,9 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     public func request(for sync: ZMSingleRequestSync, apiVersion: APIVersion) -> ZMTransportRequest? {
         switch sync {
-        case self.passwordUpdateSync:
+        case passwordUpdateSync:
             let payload: NSDictionary = [
-                "new_password": self.userProfileUpdateStatus.passwordToSet!,
+                "new_password": userProfileUpdateStatus.passwordToSet!,
             ]
             return ZMTransportRequest(
                 path: "/self/password",
@@ -115,9 +115,9 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
                 apiVersion: apiVersion.rawValue
             )
 
-        case self.emailUpdateSync:
+        case emailUpdateSync:
             let payload: NSDictionary = [
-                "email": self.userProfileUpdateStatus.emailToSet!,
+                "email": userProfileUpdateStatus.emailToSet!,
             ]
             return ZMTransportRequest(
                 path: "/access/self/email",
@@ -127,8 +127,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
                 apiVersion: apiVersion.rawValue
             )
 
-        case self.handleCheckSync:
-            let handle = self.userProfileUpdateStatus.handleToCheck!
+        case handleCheckSync:
+            let handle = userProfileUpdateStatus.handleToCheck!
             return ZMTransportRequest(
                 path: "/users/handles/\(handle)",
                 method: .head,
@@ -136,8 +136,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
                 apiVersion: apiVersion.rawValue
             )
 
-        case self.handleSetSync:
-            let payload: NSDictionary = ["handle": self.userProfileUpdateStatus.handleToSet!]
+        case handleSetSync:
+            let payload: NSDictionary = ["handle": userProfileUpdateStatus.handleToSet!]
             return ZMTransportRequest(
                 path: "/self/handle",
                 method: .put,
@@ -145,8 +145,8 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
                 apiVersion: apiVersion.rawValue
             )
 
-        case self.handleSuggestionSearchSync:
-            guard let handlesToCheck = self.userProfileUpdateStatus.suggestedHandlesToCheck else {
+        case handleSuggestionSearchSync:
+            guard let handlesToCheck = userProfileUpdateStatus.suggestedHandlesToCheck else {
                 fatal("Tried to check handles availability, but no handle was available")
             }
             let payload = [
@@ -167,61 +167,61 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
 
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         switch sync {
-        case self.passwordUpdateSync:
+        case passwordUpdateSync:
             if response.result == .success {
-                self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+                userProfileUpdateStatus.didUpdatePasswordSuccessfully()
             } else if response.httpStatus == 403, response.payloadLabel() == "invalid-credentials" {
                 // if the credentials are invalid, we assume that there was a previous password.
                 // We decide to ignore this case because there's nothing we can do
                 // and since we don't allow to change the password on the client (only to set it once),
                 // this will only be fired in some edge cases
-                self.userProfileUpdateStatus.didUpdatePasswordSuccessfully()
+                userProfileUpdateStatus.didUpdatePasswordSuccessfully()
             } else {
-                self.userProfileUpdateStatus.didFailPasswordUpdate()
+                userProfileUpdateStatus.didFailPasswordUpdate()
             }
 
-        case self.emailUpdateSync:
+        case emailUpdateSync:
             if response.result == .success {
-                self.userProfileUpdateStatus.didUpdateEmailSuccessfully()
+                userProfileUpdateStatus.didUpdateEmailSuccessfully()
             } else {
                 let error: Error = NSError.invalidEmail(with: response) ??
                     NSError.keyExistsError(with: response) ??
                     NSError(userSessionErrorCode: .unknownError, userInfo: nil)
-                self.userProfileUpdateStatus.didFailEmailUpdate(error: error)
+                userProfileUpdateStatus.didFailEmailUpdate(error: error)
             }
 
-        case self.handleCheckSync:
+        case handleCheckSync:
             let handle = response.rawResponse?.url?.lastPathComponent ?? ""
             if response.result == .success {
-                self.userProfileUpdateStatus.didFetchHandle(handle: handle)
+                userProfileUpdateStatus.didFetchHandle(handle: handle)
             } else {
                 if response.httpStatus == 404 {
-                    self.userProfileUpdateStatus.didNotFindHandle(handle: handle)
+                    userProfileUpdateStatus.didNotFindHandle(handle: handle)
                 } else {
-                    self.userProfileUpdateStatus.didFailRequestToFetchHandle(handle: handle)
+                    userProfileUpdateStatus.didFailRequestToFetchHandle(handle: handle)
                 }
             }
 
-        case self.handleSetSync:
+        case handleSetSync:
             if response.result == .success {
-                self.userProfileUpdateStatus.didSetHandle()
+                userProfileUpdateStatus.didSetHandle()
             } else {
                 if NSError.handleExistsError(with: response) != nil {
-                    self.userProfileUpdateStatus.didFailToSetAlreadyExistingHandle()
+                    userProfileUpdateStatus.didFailToSetAlreadyExistingHandle()
                 } else {
-                    self.userProfileUpdateStatus.didFailToSetHandle()
+                    userProfileUpdateStatus.didFailToSetHandle()
                 }
             }
 
-        case self.handleSuggestionSearchSync:
+        case handleSuggestionSearchSync:
             if response.result == .success {
                 if let availableHandle = (response.payload as? [String])?.first {
-                    self.userProfileUpdateStatus.didFindHandleSuggestion(handle: availableHandle)
+                    userProfileUpdateStatus.didFindHandleSuggestion(handle: availableHandle)
                 } else {
-                    self.userProfileUpdateStatus.didNotFindAvailableHandleSuggestion()
+                    userProfileUpdateStatus.didNotFindAvailableHandleSuggestion()
                 }
             } else {
-                self.userProfileUpdateStatus.didFailToFindHandleSuggestion()
+                userProfileUpdateStatus.didFailToFindHandleSuggestion()
             }
 
         default:
@@ -234,7 +234,7 @@ public class UserProfileUpdateRequestStrategy: AbstractRequestStrategy, ZMSingle
         guard let usersPayload = response.payload as? [[String: AnyObject]] else {
             return nil
         }
-        guard let possibleHandles = self.userProfileUpdateStatus.suggestedHandlesToCheck else {
+        guard let possibleHandles = userProfileUpdateStatus.suggestedHandlesToCheck else {
             // this should not happen
             return nil
         }

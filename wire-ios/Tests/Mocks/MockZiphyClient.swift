@@ -27,7 +27,7 @@ extension MockURLSession: ZiphyURLRequester {
         completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)
     )
         -> ZiphyRequestIdentifier {
-        self.makeDataTask(with: request.url!, completionHandler: completionHandler) as! MockDataTask
+        makeDataTask(with: request.url!, completionHandler: completionHandler) as! MockDataTask
     }
 
     func cancelZiphyRequest(withRequestIdentifier requestIdentifier: ZiphyRequestIdentifier) {

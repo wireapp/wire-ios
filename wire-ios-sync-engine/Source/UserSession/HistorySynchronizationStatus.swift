@@ -58,30 +58,30 @@ public final class ForegroundOnlyHistorySynchronizationStatus: NSObject, History
 
     @objc
     public func didBecomeActive(_: Notification) {
-        self.moc.performGroupedBlock {
+        moc.performGroupedBlock {
             self.isInBackground = false
         }
     }
 
     @objc
     public func willResignActive(_: Notification) {
-        self.moc.performGroupedBlock {
+        moc.performGroupedBlock {
             self.isInBackground = true
         }
     }
 
     /// Should be called when the initial synchronization is done
     public func didCompleteSync() {
-        self.isSyncing = false
+        isSyncing = false
     }
 
     /// Should be called when some synchronization (slow or quick) is started
     public func didStartSync() {
-        self.isSyncing = true
+        isSyncing = true
     }
 
     /// Returns whether history should be downloaded now
     public var shouldDownloadFullHistory: Bool {
-        !self.isSyncing && !self.isInBackground
+        !isSyncing && !isInBackground
     }
 }

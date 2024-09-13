@@ -60,18 +60,18 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
-        contacts = []
-        addressBook = []
-        directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
-        conversations = []
-        services = []
+        self.contacts = []
+        self.addressBook = []
+        self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
+        self.conversations = []
+        self.services = []
         self.searchUsersCache = searchUsersCache
 
         if searchOptions.contains(.teamMembers),
            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers) {
-            teamMembers = searchUsers.filter(\.isTeamMember)
+            self.teamMembers = searchUsers.filter(\.isTeamMember)
         } else {
-            teamMembers = []
+            self.teamMembers = []
         }
     }
 
@@ -91,12 +91,12 @@ extension SearchResult {
             searchUsersCache: searchUsersCache
         )
 
-        contacts = []
-        teamMembers = []
-        addressBook = []
-        directory = []
-        conversations = []
-        services = searchUsersServices
+        self.contacts = []
+        self.teamMembers = []
+        self.addressBook = []
+        self.directory = []
+        self.conversations = []
+        self.services = searchUsersServices
         self.searchUsersCache = searchUsersCache
     }
 
@@ -118,12 +118,12 @@ extension SearchResult {
             return nil
         }
 
-        contacts = []
-        teamMembers = []
-        addressBook = []
-        directory = [searchUser]
-        conversations = []
-        services = []
+        self.contacts = []
+        self.teamMembers = []
+        self.addressBook = []
+        self.directory = [searchUser]
+        self.conversations = []
+        self.services = []
         self.searchUsersCache = searchUsersCache
     }
 

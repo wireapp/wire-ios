@@ -24,10 +24,10 @@ final class RegistrationStrategy: NSObject {
     var registrationSync: ZMSingleRequestSync!
 
     init(groupQueue: GroupQueue, status: RegistrationStatusProtocol, userInfoParser: UserInfoParser) {
-        registrationStatus = status
+        self.registrationStatus = status
         self.userInfoParser = userInfoParser
         super.init()
-        registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
+        self.registrationSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: groupQueue)
     }
 }
 

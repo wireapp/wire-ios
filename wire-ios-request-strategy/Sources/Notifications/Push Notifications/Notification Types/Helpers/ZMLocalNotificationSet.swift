@@ -62,7 +62,7 @@ public class ZMLocalNotificationSet: NSObject {
             return
         }
 
-        self.oldNotifications = unarchivedNotes
+        oldNotifications = unarchivedNotes
     }
 
     /// Archives all scheduled notifications - this could be optimized
@@ -154,7 +154,7 @@ extension ZMLocalNotificationSet {
 
 extension ZMConversation {
     public func localizedCallerName(with user: ZMUser) -> String {
-        let conversationName = self.userDefinedName
+        let conversationName = userDefinedName
         let callerName: String? = user.name
         var result: String?
 

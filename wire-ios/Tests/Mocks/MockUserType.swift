@@ -29,12 +29,12 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
         self.init()
 
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try? container.decode(String.self, forKey: .name)
-        displayName = try container.decode(String.self, forKey: .displayName)
-        initials = try? container.decode(String.self, forKey: .initials)
-        handle = try? container.decode(String.self, forKey: .handle)
-        domain = try? container.decode(String.self, forKey: .domain)
-        isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
+        self.name = try? container.decode(String.self, forKey: .name)
+        self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.initials = try? container.decode(String.self, forKey: .initials)
+        self.handle = try? container.decode(String.self, forKey: .handle)
+        self.domain = try? container.decode(String.self, forKey: .domain)
+        self.isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
            let zmAccentColor = ZMAccentColor.from(rawValue: rawAccentColorValue) {
             self.zmAccentColor = zmAccentColor

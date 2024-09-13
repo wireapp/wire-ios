@@ -62,13 +62,13 @@ final class AuthenticatedRouter {
         featureChangeActionsHandler: E2EINotificationActionsHandler,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
-        activeCallRouter = ActiveCallRouter(
+        self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
             userSession: userSession,
             topOverlayPresenter: .init(mainWindow: mainWindow)
         )
 
-        builder = AuthenticatedWireFrame(
+        self.builder = AuthenticatedWireFrame(
             account: account,
             userSession: userSession
         )
@@ -77,7 +77,7 @@ final class AuthenticatedRouter {
         self.featureChangeActionsHandler = featureChangeActionsHandler
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
-        featureChangeObserverToken = NotificationCenter.default.addObserver(
+        self.featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
@@ -85,7 +85,7 @@ final class AuthenticatedRouter {
             self?.notifyFeatureChange(notification)
         }
 
-        revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+        self.revokedCertificateObserverToken = NotificationCenter.default.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
             object: nil,
             queue: .main

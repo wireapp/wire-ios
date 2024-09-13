@@ -52,9 +52,9 @@ class FileTransferTests_Swift: ConversationTestsBase {
         isEphemeral: Bool
     ) -> ZMAssetClientMessage? {
         // given
-        let selfClient = self.selfUser.clients.anyObject() as! MockUserClient
-        let senderClient = self.user1.clients.anyObject()  as! MockUserClient
-        let mockConversation = self.selfToUser1Conversation
+        let selfClient = selfUser.clients.anyObject() as! MockUserClient
+        let senderClient = user1.clients.anyObject()  as! MockUserClient
+        let mockConversation = selfToUser1Conversation
 
         XCTAssertNotNil(selfClient)
         XCTAssertNotNil(senderClient)
@@ -67,7 +67,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
         let original = GenericMessage(content: asset, nonce: nonce, expiresAfterTimeInterval: isEphemeral ? 20 : 0)
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(
                 from: senderClient,
                 to: selfClient,
@@ -77,7 +77,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let conversation = self.conversation(for: self.selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         if !conversation!.lastMessage!.isKind(of: ZMAssetClientMessage.self) {
             XCTFail(String(
@@ -94,7 +94,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
 
         // perform update
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let updateMessageData = MockUserClient.encrypted(
                 data: try! updateMessage.serializedData(),
                 from: senderClient,
@@ -114,7 +114,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
 extension FileTransferTests_Swift {
     func testThatItSendsTheRequestToDownloadAFile_WhenItHasTheAssetID() throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let token = UUID.create()
@@ -138,18 +138,17 @@ extension FileTransferTests_Swift {
         let uploaded = GenericMessage(content: asset, nonce: nonce)
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(
-                updateMessage: uploaded,
-                insertBlock: { data, conversation, from, to in
-                    conversation.insertOTRMessage(from: from, to: to, data: data)
-                },
-                nonce: nonce
-            )
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: uploaded,
+            insertBlock: { data, conversation, from, to in
+                conversation.insertOTRMessage(from: from, to: to, data: data)
+            },
+            nonce: nonce
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // creating the asset remotely
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             session.insertAsset(with: assetID, assetToken: token, assetData: encryptedAsset, contentType: "text/plain")
         }
 
@@ -158,8 +157,8 @@ extension FileTransferTests_Swift {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.mockTransportSession.resetReceivedRequests()
-        self.userSession?.perform {
+        mockTransportSession.resetReceivedRequests()
+        userSession?.perform {
             message?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -171,7 +170,7 @@ extension FileTransferTests_Swift {
     func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption(
     ) throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let assetID = UUID.create()
@@ -187,26 +186,25 @@ extension FileTransferTests_Swift {
         )
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(
-                updateMessage: uploaded,
-                insertBlock: { data, conversation, from, to in
-                    conversation.insertOTRAsset(
-                        from: from,
-                        to: to,
-                        metaData: data,
-                        imageData: assetData,
-                        assetId: assetID,
-                        isInline: false
-                    )
-                },
-                nonce: nonce
-            )
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: uploaded,
+            insertBlock: { data, conversation, from, to in
+                conversation.insertOTRAsset(
+                    from: from,
+                    to: to,
+                    metaData: data,
+                    imageData: assetData,
+                    assetId: assetID,
+                    isInline: false
+                )
+            },
+            nonce: nonce
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let conversation = self.conversation(for: self.selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // creating a wrong asset (different hash, will fail to decrypt) remotely
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             session.createAsset(
                 with: Data.secureRandomData(length: 128),
                 identifier: assetID.transportString(),
@@ -217,7 +215,7 @@ extension FileTransferTests_Swift {
 
         // We no longer process incoming V2 assets so we need to manually set some properties to simulate having
         // received the asset
-        self.userSession?.perform {
+        userSession?.perform {
             message!.version = 2
             message!.assetId = assetID
             message!.updateTransferState(AssetTransferState.uploaded, synchronize: false)
@@ -231,7 +229,7 @@ extension FileTransferTests_Swift {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.performIgnoringZMLogError {
+        performIgnoringZMLogError {
             self.userSession?.perform {
                 message?.requestFileDownload()
             }
@@ -239,7 +237,7 @@ extension FileTransferTests_Swift {
         }
 
         // then
-        let lastRequest = self.mockTransportSession.receivedRequests().last! as ZMTransportRequest
+        let lastRequest = mockTransportSession.receivedRequests().last! as ZMTransportRequest
         let expectedPath = String(
             format: "/conversations/%@/otr/assets/%@",
             conversation!.remoteIdentifier!.transportString(),
@@ -252,7 +250,7 @@ extension FileTransferTests_Swift {
     func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_Ephemeral(
     ) throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let assetID = UUID.create()
@@ -269,29 +267,28 @@ extension FileTransferTests_Swift {
         )
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(
-                updateMessage: uploaded,
-                insertBlock: { data, conversation, from, to in
-                    conversation.insertOTRAsset(
-                        from: from,
-                        to: to,
-                        metaData: data,
-                        imageData: assetData,
-                        assetId: assetID,
-                        isInline: false
-                    )
-                },
-                nonce: nonce
-            )
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: uploaded,
+            insertBlock: { data, conversation, from, to in
+                conversation.insertOTRAsset(
+                    from: from,
+                    to: to,
+                    metaData: data,
+                    imageData: assetData,
+                    assetId: assetID,
+                    isInline: false
+                )
+            },
+            nonce: nonce
+        )
 
         XCTAssertTrue(message!.isEphemeral)
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let conversation = self.conversation(for: self.selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // creating a wrong asset (different hash, will fail to decrypt) remotely
-        self.mockTransportSession.performRemoteChanges { session in
+        mockTransportSession.performRemoteChanges { session in
             session.createAsset(
                 with: Data.secureRandomData(length: 128),
                 identifier: assetID.transportString(),
@@ -303,7 +300,7 @@ extension FileTransferTests_Swift {
 
         // We no longer process incoming V2 assets so we need to manually set some properties to simulate having
         // received the asset
-        self.userSession?.perform {
+        userSession?.perform {
             message!.version = 2
             message!.assetId = assetID
             message!.updateTransferState(AssetTransferState.uploaded, synchronize: false)
@@ -316,14 +313,14 @@ extension FileTransferTests_Swift {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.userSession?.perform {
+        userSession?.perform {
             message?.requestFileDownload()
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let lastRequest = self.mockTransportSession.receivedRequests().last! as ZMTransportRequest
+        let lastRequest = mockTransportSession.receivedRequests().last! as ZMTransportRequest
         let expectedPath = String(
             format: "/conversations/%@/otr/assets/%@",
             conversation!.remoteIdentifier!.transportString(),
@@ -340,9 +337,9 @@ extension FileTransferTests_Swift {
 extension FileTransferTests_Swift {
     func testThatAFileUpload_AssetOriginal_MessageIsReceivedWhenSentRemotely_Ephemeral() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
-        self.establishSession(with: self.user1)
+        establishSession(with: user1)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let nonce = UUID.create()
@@ -353,7 +350,7 @@ extension FileTransferTests_Swift {
         )
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             self.selfToUser1Conversation.encryptAndInsertData(
                 from: self.user1.clients.anyObject() as! MockUserClient,
                 to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -364,7 +361,7 @@ extension FileTransferTests_Swift {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let conversation = self.conversation(for: self.selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         if !conversation!.lastMessage!.isKind(of: ZMAssetClientMessage.self) {
             return XCTFail(String(
@@ -385,7 +382,7 @@ extension FileTransferTests_Swift {
 
     func testThatItDeletesAFileMessageWhenTheUploadIsCancelledRemotely_Ephemeral() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let cancelled = GenericMessage(
@@ -395,14 +392,13 @@ extension FileTransferTests_Swift {
         )
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(
-                updateMessage: cancelled,
-                insertBlock: { data, conversation, from, to in
-                    conversation.insertOTRMessage(from: from, to: to, data: data)
-                },
-                nonce: nonce
-            )
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: cancelled,
+            insertBlock: { data, conversation, from, to in
+                conversation.insertOTRMessage(from: from, to: to, data: data)
+            },
+            nonce: nonce
+        )
 
         // then
         XCTAssertTrue(message!.isZombieObject)
@@ -410,7 +406,7 @@ extension FileTransferTests_Swift {
 
     func testThatItUpdatesAFileMessageWhenTheUploadFailesRemotlely_Ephemeral() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let failed = GenericMessage(
@@ -420,10 +416,13 @@ extension FileTransferTests_Swift {
         )
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(updateMessage: failed, insertBlock: { data, conversation, from, to in
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: failed,
+            insertBlock: { data, conversation, from, to in
                 conversation.insertOTRMessage(from: from, to: to, data: data)
-            }, nonce: nonce)
+            },
+            nonce: nonce
+        )
         XCTAssertTrue(message!.isEphemeral)
 
         // then
@@ -434,13 +433,13 @@ extension FileTransferTests_Swift {
 
     func testThatItReceivesAVideoFileMessageThumbnailSentRemotely_V3() throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        let encryptedAsset = try self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remote = WireProtos.Asset.RemoteData(
@@ -473,7 +472,7 @@ extension FileTransferTests_Swift {
             conversation = self.conversation(for: mockConversation)
             observer = MessageChangeObserver(message: conversation?.lastMessage as? ZMMessage)
         }
-        let message = self.remotelyInsertAssetOriginalWithMimeType(
+        let message = remotelyInsertAssetOriginalWithMimeType(
             mimeType: "video/mp4",
             updateMessage: updateMessage,
             insertBlock: insertBlock,
@@ -482,7 +481,7 @@ extension FileTransferTests_Swift {
         )
 
         // Mock the asset/v3 request
-        self.mockTransportSession.responseGeneratorBlock = { request in
+        mockTransportSession.responseGeneratorBlock = { request in
             let expectedPath = "/assets/v3/\(thumbnailIDString)"
             if request.path == expectedPath {
                 return ZMTransportResponse(
@@ -502,7 +501,7 @@ extension FileTransferTests_Swift {
         XCTAssertNotNil(observer)
         XCTAssertNotNil(conversation)
 
-        self.userSession?.perform {
+        userSession?.perform {
             message?.fileMessageData?.requestImagePreviewDownload()
         }
 
@@ -523,13 +522,13 @@ extension FileTransferTests_Swift {
 
     func testThatItReceivesAVideoFileMessageThumbnailSentRemotely_Ephemeral_V3() throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let thumbnailAssetID = UUID.create()
         let thumbnailIDString = thumbnailAssetID.transportString()
         let otrKey = Data.randomEncryptionKey()
-        let encryptedAsset = try self.mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
+        let encryptedAsset = try mediumJPEGData().zmEncryptPrefixingPlainTextIV(key: otrKey)
         let sha256 = encryptedAsset.zmSHA256Digest()
 
         let remote = WireProtos.Asset.RemoteData(
@@ -562,7 +561,7 @@ extension FileTransferTests_Swift {
             conversation = self.conversation(for: mockConversation)
             observer = MessageChangeObserver(message: conversation?.lastMessage as? ZMMessage)
         }
-        let message = self.remotelyInsertAssetOriginalWithMimeType(
+        let message = remotelyInsertAssetOriginalWithMimeType(
             mimeType: "video/mp4",
             updateMessage: updateMessage,
             insertBlock: insertBlock,
@@ -572,7 +571,7 @@ extension FileTransferTests_Swift {
 
         XCTAssertTrue(message!.isEphemeral)
 
-        self.mockTransportSession.responseGeneratorBlock = { request in
+        mockTransportSession.responseGeneratorBlock = { request in
             let expectedPath = "/assets/v3/\(thumbnailIDString)"
             if request.path == expectedPath {
                 return ZMTransportResponse(
@@ -591,7 +590,7 @@ extension FileTransferTests_Swift {
         XCTAssertNotNil(observer)
         XCTAssertNotNil(conversation)
 
-        self.userSession?.perform {
+        userSession?.perform {
             message?.fileMessageData?.requestImagePreviewDownload()
         }
 
@@ -613,7 +612,7 @@ extension FileTransferTests_Swift {
 
     func testThatAFileUpload_AssetUploaded_MessageIsReceivedAndUpdatesTheOriginalMessageWhenSentRemotely_V3() {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let assetID = UUID.create()
@@ -627,14 +626,13 @@ extension FileTransferTests_Swift {
         uploaded.updateUploaded(assetId: assetID.transportString(), token: nil, domain: nil)
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(
-                updateMessage: uploaded,
-                insertBlock: { data, conversation, from, to in
-                    conversation.insertOTRMessage(from: from, to: to, data: data)
-                },
-                nonce: nonce
-            )
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: uploaded,
+            insertBlock: { data, conversation, from, to in
+                conversation.insertOTRMessage(from: from, to: to, data: data)
+            },
+            nonce: nonce
+        )
 
         // then
         XCTAssertNil(message!.assetId) // We do not store the asset ID in the DB for v3 assets
@@ -651,7 +649,7 @@ extension FileTransferTests_Swift {
     func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_Downloaded_AfterSuccesfullDecryption_V3(
     ) throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let assetID = UUID.create()
@@ -691,7 +689,7 @@ extension FileTransferTests_Swift {
 
         // when
         // Mock the asset/v3 request
-        self.mockTransportSession.responseGeneratorBlock = { request in
+        mockTransportSession.responseGeneratorBlock = { request in
             let expectedPath = "/assets/v3/\(assetID.transportString())"
             if request.path == expectedPath {
                 return ZMTransportResponse(
@@ -706,15 +704,15 @@ extension FileTransferTests_Swift {
         }
 
         // when we request the file download
-        self.mockTransportSession.resetReceivedRequests()
-        self.userSession?.perform {
+        mockTransportSession.resetReceivedRequests()
+        userSession?.perform {
             message?.requestFileDownload()
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let lastRequest = self.mockTransportSession.receivedRequests().last! as ZMTransportRequest
+        let lastRequest = mockTransportSession.receivedRequests().last! as ZMTransportRequest
         let expectedPath = "/assets/v3/\(assetID.transportString())"
         XCTAssertEqual(lastRequest.path, expectedPath)
         XCTAssertEqual(message!.transferState, AssetTransferState.uploaded)
@@ -723,7 +721,7 @@ extension FileTransferTests_Swift {
     func testThatItSendsTheRequestToDownloadAFileWhenItHasTheAssetID_AndSetsTheStateTo_FailedDownload_AfterFailedDecryption_V3(
     ) throws {
         // given
-        XCTAssertTrue(self.login())
+        XCTAssertTrue(login())
 
         let nonce = UUID.create()
         let assetID = UUID.create()
@@ -740,14 +738,13 @@ extension FileTransferTests_Swift {
         uploaded.updateUploaded(assetId: assetID.transportString(), token: nil, domain: nil)
 
         // when
-        let message = self
-            .remotelyInsertAssetOriginalAndUpdate(
-                updateMessage: uploaded,
-                insertBlock: { data, conversation, from, to in
-                    conversation.insertOTRMessage(from: from, to: to, data: data)
-                },
-                nonce: nonce
-            )
+        let message = remotelyInsertAssetOriginalAndUpdate(
+            updateMessage: uploaded,
+            insertBlock: { data, conversation, from, to in
+                conversation.insertOTRMessage(from: from, to: to, data: data)
+            },
+            nonce: nonce
+        )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         _ = conversation(for: selfToUser1Conversation)
 
@@ -760,7 +757,7 @@ extension FileTransferTests_Swift {
 
         // when
         // Mock the asset/v3 request
-        self.mockTransportSession.responseGeneratorBlock = { request in
+        mockTransportSession.responseGeneratorBlock = { request in
             let expectedPath = "/assets/v3/\(assetID.transportString())"
             if request.path == expectedPath {
                 let wrongData = Data.secureRandomData(length: 128)
@@ -776,7 +773,7 @@ extension FileTransferTests_Swift {
         }
 
         // We log an error when we fail to decrypt the received data
-        self.performIgnoringZMLogError {
+        performIgnoringZMLogError {
             self.userSession?.perform {
                 message?.requestFileDownload()
             }
@@ -784,7 +781,7 @@ extension FileTransferTests_Swift {
         }
 
         // then
-        let lastRequest = self.mockTransportSession.receivedRequests().last! as ZMTransportRequest
+        let lastRequest = mockTransportSession.receivedRequests().last! as ZMTransportRequest
         let expectedPath = "/assets/v3/\(assetID.transportString())"
         XCTAssertEqual(lastRequest.path, expectedPath)
         XCTAssertEqual(message!.downloadState, AssetDownloadState.remote)

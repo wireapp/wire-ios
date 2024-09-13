@@ -377,7 +377,7 @@ public final class ConversationService: ConversationServiceInterface {
 
         guard let mlsGroupID, let mlsService else { return }
 
-        self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
+        createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
         let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
 
         await syncContext.perform {
@@ -393,7 +393,7 @@ public final class ConversationService: ConversationServiceInterface {
         }
 
         let participantsService = participantsServiceBuilder(syncContext)
-        self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
+        createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
         try await participantsService.addParticipants(syncParticipants, to: syncConversation)
     }
 

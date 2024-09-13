@@ -30,8 +30,8 @@ final class ProximityMonitorManager: NSObject {
 
     fileprivate(set) var raisedToEar = false {
         didSet {
-            if oldValue != self.raisedToEar {
-                self.stateChanged?(self.raisedToEar)
+            if oldValue != raisedToEar {
+                stateChanged?(raisedToEar)
             }
         }
     }
@@ -53,7 +53,7 @@ final class ProximityMonitorManager: NSObject {
             return
         }
 
-        callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
+        self.callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession)
         AVSMediaManagerClientChangeNotification.add(self)
 
         updateProximityMonitorState()
@@ -82,11 +82,11 @@ final class ProximityMonitorManager: NSObject {
     // MARK: - listening mode switching (for AudioMessageView)
 
     func startListening() {
-        guard !self.listening else {
+        guard !listening else {
             return
         }
 
-        self.listening = true
+        listening = true
 
         UIDevice.current.isProximityMonitoringEnabled = true
         NotificationCenter.default.addObserver(
@@ -98,17 +98,17 @@ final class ProximityMonitorManager: NSObject {
     }
 
     func stopListening() {
-        guard self.listening else {
+        guard listening else {
             return
         }
-        self.listening = false
+        listening = false
 
         UIDevice.current.isProximityMonitoringEnabled = false
     }
 
     @objc
     func handleProximityChange(_: Notification) {
-        self.raisedToEar = UIDevice.current.proximityState
+        raisedToEar = UIDevice.current.proximityState
     }
 }
 

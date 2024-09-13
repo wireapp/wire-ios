@@ -30,7 +30,7 @@ struct MockJSONPayloadResource {
         }
 
         do {
-            jsonData = try Data(contentsOf: url)
+            self.jsonData = try Data(contentsOf: url)
         } catch {
             throw "unable to load data from resource: \(error)"
         }

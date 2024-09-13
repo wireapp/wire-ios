@@ -20,10 +20,10 @@ import Foundation
 
 extension ZMConversation {
     fileprivate func unarchive(with message: ZMOTRMessage) {
-        self.internalIsArchived = false
+        internalIsArchived = false
 
-        if self.lastServerTimeStamp != nil, let serverTimestamp = message.serverTimestamp {
-            self.updateArchived(serverTimestamp, synchronize: false)
+        if lastServerTimeStamp != nil, let serverTimestamp = message.serverTimestamp {
+            updateArchived(serverTimestamp, synchronize: false)
         }
     }
 }
@@ -32,7 +32,7 @@ extension ZMOTRMessage {
     @objc(unarchiveIfNeeded:)
     func unarchiveIfNeeded(_ conversation: ZMConversation) {
         if let clearedTimestamp = conversation.clearedTimeStamp,
-           let serverTimestamp = self.serverTimestamp,
+           let serverTimestamp,
            serverTimestamp.compare(clearedTimestamp) == ComparisonResult.orderedAscending {
             return
         }
@@ -44,9 +44,9 @@ extension ZMOTRMessage {
 
     private func unarchiveIfCurrentUserIsMentionedOrQuoted(_ conversation: ZMConversation) {
         if conversation.isArchived,
-           let sender = self.sender,
+           let sender,
            !sender.isSelfUser,
-           let textMessageData = self.textMessageData,
+           let textMessageData,
            !conversation.mutedMessageTypes.contains(.mentionsAndReplies),
            textMessageData.isMentioningSelf || textMessageData.isQuotingSelf {
             conversation.unarchive(with: self)

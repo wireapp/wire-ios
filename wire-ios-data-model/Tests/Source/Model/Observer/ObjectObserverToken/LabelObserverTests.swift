@@ -56,21 +56,21 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
         customAffectedKeys: AffectedKeys? = nil
     ) {
         // given
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
-        self.token = LabelChangeInfo.add(observer: labelObserver, for: team, managedObjectContext: self.uiMOC)
+        token = LabelChangeInfo.add(observer: labelObserver, for: team, managedObjectContext: uiMOC)
 
         // when
         modifier(team)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         let changeCount = labelObserver.notifications.count
         XCTAssertEqual(changeCount, 1)
 
         // and when
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertEqual(labelObserver.notifications.count, changeCount, "Should not have changed further once")
@@ -81,12 +81,12 @@ final class LabelObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfChangedName() {
         // given
-        let label = Label.insertNewObject(in: self.uiMOC)
+        let label = Label.insertNewObject(in: uiMOC)
         label.name = "bar"
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(
+        checkThatItNotifiesTheObserverOfAChange(
             label,
             modifier: { $0.name = "foo" },
             expectedChangedFields: [#keyPath(LabelChangeInfo.nameChanged)]

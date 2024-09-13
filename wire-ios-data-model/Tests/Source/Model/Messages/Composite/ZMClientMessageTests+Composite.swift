@@ -37,7 +37,7 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
         // GIVEN
         let nonce = UUID()
         let message = compositeMessage(with: compositeProto(items: compositeItemButton()), nonce: nonce)
-        let conversation = self.conversation(withMessage: message)
+        let conversation = conversation(withMessage: message)
 
         let confirmation = ButtonActionConfirmation.with {
             $0.referenceMessageID = nonce.transportString()
@@ -74,7 +74,7 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
             nonce: nonce
         )
 
-        let conversation = self.conversation(withMessage: message)
+        let conversation = conversation(withMessage: message)
 
         var buttonStates: [WireDataModel.ButtonState]!
 
@@ -117,7 +117,7 @@ class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
         // GIVEN
         let nonce = UUID()
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(buttonID: "1")), nonce: nonce)
-        let conversation = self.conversation(withMessage: message)
+        let conversation = conversation(withMessage: message)
 
         var buttonState: WireDataModel.ButtonState!
         uiMOC.performAndWait { [uiMOC] in

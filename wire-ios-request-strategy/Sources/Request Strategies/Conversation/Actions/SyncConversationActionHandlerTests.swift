@@ -147,7 +147,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
         let sut = SyncConversationActionHandler(context: syncMOC)
         let id = QualifiedID(uuid: .create(), domain: "example.com")
 
-        let didSucceed = self.customExpectation(description: "did succeed")
+        let didSucceed = customExpectation(description: "did succeed")
         let action = SyncConversationAction(qualifiedID: id) { result in
             // Then
             guard case .success = result else {
@@ -180,7 +180,7 @@ final class SyncConversationActionHandlerTests: MessagingTestBase {
 
         // When
         sut.handleResponse(response, action: action)
-        XCTAssert(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
 
         // Then
         syncMOC.performGroupedAndWait {

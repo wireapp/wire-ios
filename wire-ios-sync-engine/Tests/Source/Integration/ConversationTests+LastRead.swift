@@ -24,10 +24,10 @@ class ConversationTests_LastRead: ConversationTestsBase {
         XCTAssertTrue(login())
 
         // given
-        let fromClient = self.user1.clients.anyObject()  as! MockUserClient
-        var toClient = self.selfUser.clients.anyObject() as! MockUserClient
+        let fromClient = user1.clients.anyObject()  as! MockUserClient
+        var toClient = selfUser.clients.anyObject() as! MockUserClient
 
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(
@@ -47,14 +47,14 @@ class ConversationTests_LastRead: ConversationTestsBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.recreateSessionManagerAndDeleteLocalData()
-        XCTAssertTrue(self.login())
+        recreateSessionManagerAndDeleteLocalData()
+        XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: self.selfToUser1Conversation!)
+        let conversation = conversation(for: selfToUser1Conversation!)
 
         XCTAssertEqual(conversation!.estimatedUnreadCount, 0)
 
-        toClient = self.selfUser.clients.first(where: { client -> Bool in
+        toClient = selfUser.clients.first(where: { client -> Bool in
             guard let client = client as? MockUserClient else {
                 return false
             }
@@ -63,7 +63,7 @@ class ConversationTests_LastRead: ConversationTestsBase {
         }) as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { _ in
+        mockTransportSession.performRemoteChanges { _ in
             let message =
                 GenericMessage(
                     content: Text(

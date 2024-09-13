@@ -63,11 +63,11 @@ final class CallParticipantDetailsView: RoundedBlurView {
     // MARK: - Init
 
     override init() {
-        nameLabel = DynamicFontLabel(
+        self.nameLabel = DynamicFontLabel(
             fontSpec: .mediumRegularFont,
             color: SemanticColors.Label.textWhite
         )
-        connectingLabel = DynamicFontLabel(
+        self.connectingLabel = DynamicFontLabel(
             fontSpec: .smallSemiboldFont,
             color: SemanticColors.Label.textParticipantDisconnected
         )
@@ -150,9 +150,9 @@ final class CallParticipantDetailsView: RoundedBlurView {
     }
 
     private func makeMicrophone(hidden: Bool) {
-        self.microphoneWidth?.constant = hidden ? 0 : 22
-        self.microphoneImageView.isHidden = hidden
-        self.setNeedsDisplay()
+        microphoneWidth?.constant = hidden ? 0 : 22
+        microphoneImageView.isHidden = hidden
+        setNeedsDisplay()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

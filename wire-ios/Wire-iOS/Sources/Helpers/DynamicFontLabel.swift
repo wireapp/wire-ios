@@ -35,7 +35,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
         color: UIColor
     ) {
         // Not needed when we use a font style.
-        onRedrawFont = { nil }
+        self.onRedrawFont = { nil }
         super.init(frame: .zero)
         self.text = text
         self.textColor = color
@@ -67,6 +67,6 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
     func redrawFont() {
         guard let newFont = onRedrawFont() else { return }
-        self.font = newFont
+        font = newFont
     }
 }

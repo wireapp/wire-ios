@@ -154,14 +154,14 @@ extension ZMMessageTests_SystemMessages {
         if reason != nil {
             data["reason"] = reason?.stringValue
         }
-        let payload = self.payloadForMessage(
+        let payload = payloadForMessage(
             in: conversation,
             type: updateEventTypeDict[updateEventType] ?? "",
             data: data
         )
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
         var result: ZMSystemMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             result = ZMSystemMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         return result
@@ -186,7 +186,7 @@ extension ZMMessageTests_SystemMessages {
 
         // when
         var message: ZMSystemMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             message = self.createSystemMessageFrom(
                 updateEventType: updateEventType,
                 in: conversation,

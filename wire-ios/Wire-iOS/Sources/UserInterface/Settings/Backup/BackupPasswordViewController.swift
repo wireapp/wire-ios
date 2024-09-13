@@ -177,7 +177,7 @@ extension BackupPasswordViewController: UITextFieldDelegate {
 
         let newString = ((textField.text ?? "") as NSString).replacingCharacters(in: range, with: string)
 
-        self.updateState(with: newString)
+        updateState(with: newString)
 
         return true
     }

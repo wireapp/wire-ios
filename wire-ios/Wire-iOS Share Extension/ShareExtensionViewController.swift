@@ -152,13 +152,13 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.postContent = PostContent(attachments: extensionContext?.attachments ?? [])
-        self.setupNavigationBar()
-        self.appendTextToEditor()
+        postContent = PostContent(attachments: extensionContext?.attachments ?? [])
+        setupNavigationBar()
+        appendTextToEditor()
         appendFileTextToEditor()
-        self.updatePreview()
+        updatePreview()
 
-        self.placeholder = L10n.ShareExtension.Input.placeholder
+        placeholder = L10n.ShareExtension.Input.placeholder
     }
 
     private func setupNavigationBar() {
@@ -224,18 +224,18 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     override func isContentValid() -> Bool {
         // Do validation of contentText and/or NSExtensionContext attachments here
-        let textLength = self.contentText.trimmingCharacters(in: .whitespaces).count
+        let textLength = contentText.trimmingCharacters(in: .whitespaces).count
         let remaining = maximumMessageLength - textLength
         let remainingCharactersThreshold = 30
 
         if remaining <= remainingCharactersThreshold {
-            self.charactersRemaining = remaining as NSNumber
+            charactersRemaining = remaining as NSNumber
         } else {
-            self.charactersRemaining = nil
+            charactersRemaining = nil
         }
 
-        let conditions = sharingSession != nil && self.postContent?.target != nil
-        return self.charactersRemaining == nil ? conditions : conditions && self.charactersRemaining.intValue >= 0
+        let conditions = sharingSession != nil && postContent?.target != nil
+        return charactersRemaining == nil ? conditions : conditions && charactersRemaining.intValue >= 0
     }
 
     /// If there is a URL attachment, copy the text of the URL attachment into the text field
@@ -292,7 +292,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
         postContent?.send(text: contentText, sharingSession: sharingSession) { [weak self] progress in
-            guard let self, let postContent = self.postContent else { return }
+            guard let self, let postContent else { return }
 
             switch progress {
             case .preparing:
@@ -311,7 +311,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case let .sending(progress):
                 WireLogger.shareExtension.info("progress event: sending with progress: (\(progress))")
-                self.progressViewController?.progress = progress
+                progressViewController?.progress = progress
 
             case .done:
                 WireLogger.shareExtension.info("progress event: done")
@@ -325,7 +325,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             case let .conversationDidDegrade((users, strategyChoice)):
                 WireLogger.shareExtension.warn("progress event: converation did degrade")
                 if let conversation = postContent.target {
-                    self.conversationDidDegrade(
+                    conversationDidDegrade(
                         change: ConversationDegradationInfo(conversation: conversation, users: users),
                         callback: strategyChoice
                     )
@@ -333,7 +333,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
             case .timedOut:
                 WireLogger.shareExtension.error("progress event: timed out")
-                self.popConfigurationViewController()
+                popConfigurationViewController()
 
                 let alert = UIAlertController(
                     title: L10n.ShareExtension.Timeout.title,
@@ -345,7 +345,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     style: .cancel
                 ))
 
-                self.present(alert, animated: true)
+                present(alert, animated: true)
 
             case let .error(error):
                 WireLogger.shareExtension.error("progress event: error: \(error.localizedDescription)")
@@ -364,7 +364,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                         }
                     ))
 
-                    self.present(alert, animated: true) {
+                    present(alert, animated: true) {
                         self.popConfigurationViewController()
                     }
                 }
@@ -382,7 +382,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
                     style: .cancel
                 ))
 
-                self.present(alert, animated: true)
+                present(alert, animated: true)
             }
         }
     }
@@ -524,9 +524,9 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
             guard let self,
-                  self.localAuthenticationStatus == .granted else { return }
+                  localAuthenticationStatus == .granted else { return }
 
-            self.showChooseConversation()
+            showChooseConversation()
         }
     }
 
@@ -571,7 +571,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         let title = titleForMissingClients(causedBy: change)
         let alert = createDegradationAlert(title: title, message: MetaDegradedLocale.dialogMessage, callback: callback)
 
-        self.present(alert, animated: true)
+        present(alert, animated: true)
     }
 
     private func createDegradationAlert(
@@ -693,7 +693,7 @@ extension ShareExtensionViewController {
                     style: .cancel
                 ))
 
-                self.present(alert, animated: true, completion: nil)
+                present(alert, animated: true, completion: nil)
 
                 localAuthenticationStatus = .denied
                 completion()
@@ -701,7 +701,7 @@ extension ShareExtensionViewController {
                 requestCustomPasscode { [weak self] status in
                     guard let self else { return }
 
-                    self.localAuthenticationStatus = status
+                    localAuthenticationStatus = status
                     completion()
                 }
             }
@@ -718,15 +718,15 @@ extension ShareExtensionViewController {
             guard
                 let passcode = customPasscode,
                 !passcode.isEmpty,
-                let appLock = self.sharingSession?.appLockController,
+                let appLock = sharingSession?.appLockController,
                 appLock.evaluateAuthentication(customPasscode: passcode) == .granted
             else {
-                self.unlockViewController.showWrongPasscodeMessage()
+                unlockViewController.showWrongPasscodeMessage()
                 callback(.denied)
                 return
             }
 
-            self.popConfigurationViewController()
+            popConfigurationViewController()
             callback(.granted)
         }
     }

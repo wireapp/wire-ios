@@ -67,7 +67,7 @@ final class ClientTableViewCell: UITableViewCell {
     // MARK: - Initialization
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        wr_editable = true
+        self.wr_editable = true
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         createConstraints()

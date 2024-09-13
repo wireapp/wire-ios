@@ -32,7 +32,7 @@ extension ZMOTRMessage: OTREntity {
     @objc override public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation else { return nil }
 
-        let dependent = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
+        let dependent = dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
 
@@ -45,7 +45,7 @@ extension ZMOTRMessage: OTREntity {
     }
 
     public func addFailedToSendRecipients(_ recipients: [ZMUser]) {
-        self.mutableSetValue(forKey: ZMMessageFailedToSendRecipientsKey).addObjects(from: recipients)
+        mutableSetValue(forKey: ZMMessageFailedToSendRecipientsKey).addObjects(from: recipients)
     }
 
     public func delivered(with response: ZMTransportResponse) {
@@ -68,7 +68,7 @@ extension ZMMessage {
     /// Which object this message depends on when sending
     @objc public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         // conversation not created yet on the BE?
-        guard let conversation = self.conversation else { return nil }
+        guard let conversation else { return nil }
 
         if conversation.remoteIdentifier == nil {
             zmLog.debug("conversation has no remote identifier")
@@ -95,7 +95,7 @@ extension ZMMessage {
         var selfMessageFound = false
 
         for previousMessage in conversation.lastMessages() {
-            if let currentTimestamp = self.serverTimestamp,
+            if let currentTimestamp = serverTimestamp,
                let previousTimestamp = previousMessage.serverTimestamp {
                 // to old?
                 let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
@@ -104,7 +104,7 @@ extension ZMMessage {
                 }
             }
 
-            let sameMessage = previousMessage === self || previousMessage.nonce == self.nonce
+            let sameMessage = previousMessage === self || previousMessage.nonce == nonce
             if sameMessage {
                 selfMessageFound = true
             }
@@ -120,6 +120,6 @@ extension ZMMessage {
 
 extension ZMMessage: BlockingMessage {
     var shouldBlockFurtherMessages: Bool {
-        self.deliveryState == .pending && !self.isExpired
+        deliveryState == .pending && !isExpired
     }
 }

@@ -227,17 +227,17 @@ final class ConversationListAccessoryView: UIView {
     }
 
     func updateForIcon() {
-        self.badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
+        badgeView.containedView.subviews.forEach { $0.removeFromSuperview() }
 
-        self.badgeView.isHidden = false
-        self.transparentIconView.isHidden = true
+        badgeView.isHidden = false
+        transparentIconView.isHidden = true
 
-        self.expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
-        self.expandWidthConstraint.constant = defaultViewWidth
+        expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
+        expandWidthConstraint.constant = defaultViewWidth
 
         guard let icon else {
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = true
+            badgeView.isHidden = true
+            transparentIconView.isHidden = true
 
             updateCollapseConstraints(isCollapsed: true)
             return
@@ -245,40 +245,40 @@ final class ConversationListAccessoryView: UIView {
 
         switch icon {
         case .activeCall(false):
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = false
-            self.transparentIconView.setTemplateIcon(.phone, size: iconSize)
-            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+            badgeView.isHidden = true
+            transparentIconView.isHidden = false
+            transparentIconView.setTemplateIcon(.phone, size: iconSize)
+            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
-            self.expandTransparentIconViewWidthConstraint.constant = activeCallWidth
-            self.expandWidthConstraint.constant = activeCallWidth
+            expandTransparentIconViewWidthConstraint.constant = activeCallWidth
+            expandWidthConstraint.constant = activeCallWidth
 
         case .activeCall(true): // "Join" button
-            self.badgeView.backgroundColor = IconColors.backgroundJoinCall
+            badgeView.backgroundColor = IconColors.backgroundJoinCall
 
         case .typing:
-            self.badgeView.isHidden = true
-            self.transparentIconView.isHidden = false
-            self.transparentIconView.setTemplateIcon(.pencil, size: iconSize)
-            self.transparentIconView.tintColor = IconColors.foregroundDefaultBlack
+            badgeView.isHidden = true
+            transparentIconView.isHidden = false
+            transparentIconView.setTemplateIcon(.pencil, size: iconSize)
+            transparentIconView.tintColor = IconColors.foregroundDefaultBlack
 
         case .unreadMessages, .mention:
-            self.textLabel.textColor = textLabelColor
-            self.badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
+            textLabel.textColor = textLabelColor
+            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
 
         case .unreadPing, .reply, .missedCall:
-            self.badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
+            badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
 
         default:
-            self.transparentIconView.image = .none
+            transparentIconView.image = .none
         }
 
         updateCollapseConstraints(isCollapsed: false)
 
-        if let view = self.viewForState {
-            self.badgeView.containedView.addSubview(view)
+        if let view = viewForState {
+            badgeView.containedView.addSubview(view)
 
-            let parentView = self.badgeView.containedView
+            let parentView = badgeView.containedView
             view.translatesAutoresizingMaskIntoConstraints = false
             parentView.translatesAutoresizingMaskIntoConstraints = false
 

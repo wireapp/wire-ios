@@ -31,8 +31,8 @@ extension NSManagedObjectContext {
 
     /// use to trigger slow sync after some CoreData migrations
     public func setMigrationNeedsSlowSync() throws {
-        self.setPersistentStoreMetadata(1, key: migrationsNeedToSlowSyncKey)
-        if !self.makeMetadataPersistent() {
+        setPersistentStoreMetadata(1, key: migrationsNeedToSlowSyncKey)
+        if !makeMetadataPersistent() {
             throw MigrationNeedsSlowSyncError.couldNotPersistMetadata
         }
     }
@@ -40,8 +40,8 @@ extension NSManagedObjectContext {
     /// checks if we need a slowSync after migrations
     /// - Note: this cleans up after reading the value
     public func readAndResetSlowSyncFlag() -> Bool {
-        let value = (self.persistentStoreMetadata(forKey: migrationsNeedToSlowSyncKey) as? Int) ?? 0
-        self.setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
+        let value = (persistentStoreMetadata(forKey: migrationsNeedToSlowSyncKey) as? Int) ?? 0
+        setPersistentStoreMetadata(Int?.none, key: migrationsNeedToSlowSyncKey)
         return value == 1
     }
 }

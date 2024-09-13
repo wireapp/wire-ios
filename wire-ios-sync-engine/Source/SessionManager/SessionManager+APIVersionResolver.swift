@@ -37,7 +37,7 @@ extension SessionManager: APIVersionResolverDelegate {
             proxyPassword: proxyCredentials?.password,
             reachability: reachability,
             applicationVersion: appVersion,
-            readyForRequests: self.isUnauthenticatedTransportSessionReady
+            readyForRequests: isUnauthenticatedTransportSessionReady
         )
 
         let apiVersionResolver = APIVersionResolver(
@@ -89,8 +89,8 @@ extension SessionManager: APIVersionResolverDelegate {
         dispatchQueue.async { [weak self] in
             guard let self else { return }
 
-            self.activeUserSession = nil
-            for account in self.accountManager.accounts {
+            activeUserSession = nil
+            for account in accountManager.accounts {
                 // 1. Tear down the user sessions
                 DispatchQueue.main.async {
                     dispatchGroup.enter()
@@ -118,23 +118,23 @@ extension SessionManager: APIVersionResolverDelegate {
             dispatchGroup.wait(forInterval: 5)
 
             // 3. Reload sessions
-            for account in self.accountManager.accounts {
+            for account in accountManager.accounts {
                 dispatchGroup.enter()
 
-                if account == self.accountManager.selectedAccount {
+                if account == accountManager.selectedAccount {
                     // When completed, this should trigger an AppState change through the SessionManagerDelegate
-                    self.loadSession(for: account) { _ in
+                    loadSession(for: account) { _ in
                         dispatchGroup.leave()
                     }
                 } else {
-                    self.withSession(for: account) { _ in
+                    withSession(for: account) { _ in
                         dispatchGroup.leave()
                     }
                 }
             }
 
             dispatchGroup.wait(forInterval: 1)
-            self.delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
+            delegate?.sessionManagerDidPerformFederationMigration(activeSession: activeUserSession)
         }
     }
 }

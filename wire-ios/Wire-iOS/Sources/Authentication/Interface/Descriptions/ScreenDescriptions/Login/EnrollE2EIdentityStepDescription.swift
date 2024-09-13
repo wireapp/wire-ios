@@ -32,13 +32,13 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription? = nil
 
     init() {
-        mainView = SolidButtonDescription(
+        self.mainView = SolidButtonDescription(
             title: E2ei.GetCertificateButton.title,
             accessibilityIdentifier: "get_certificate"
         )
-        secondaryView = nil
-        headline = E2ei.title
+        self.secondaryView = nil
+        self.headline = E2ei.title
         let details = [E2ei.subtitle, E2ei.learnMore(WireURLs.shared.endToEndIdentityInfo)].joined(separator: "\n")
-        subtext = .markdown(from: details, style: .login)
+        self.subtext = .markdown(from: details, style: .login)
     }
 }

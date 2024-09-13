@@ -215,8 +215,8 @@ extension NSString {
                 continue
             }
             let prefix = "/v\(version.rawValue)"
-            if self.hasPrefix(prefix) {
-                return self.replacingOccurrences(of: prefix, with: "") as NSString
+            if hasPrefix(prefix) {
+                return replacingOccurrences(of: prefix, with: "") as NSString
             }
         }
         return self

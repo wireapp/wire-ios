@@ -48,14 +48,14 @@ public final class RequestLoopDetection: NSObject {
 
     /// Resets the detector, discarding all recorder requests
     public func reset() {
-        self.recordedRequests = []
+        recordedRequests = []
     }
 
     public func recordRequest(path: String, contentHint: String, date: Date?) {
         purgeOldRequests()
 
-        if self.recordedRequests.count == Self.historyLimit {
-            self.recordedRequests.remove(at: 0) // note, this would be more efficient with linked list
+        if recordedRequests.count == Self.historyLimit {
+            recordedRequests.remove(at: 0) // note, this would be more efficient with linked list
         }
 
         if isPathExcluded(path) {
@@ -63,7 +63,7 @@ public final class RequestLoopDetection: NSObject {
         }
 
         let identifier = IdentifierDate(path: path, contentHint: contentHint, date: date ?? Date())
-        self.insert(identifier: identifier)
+        insert(identifier: identifier)
 
         triggerIfTooMany(identifier: identifier)
     }
@@ -71,10 +71,10 @@ public final class RequestLoopDetection: NSObject {
     /// Removes requests that are too old from the recorded requests
     private func purgeOldRequests() {
         let purgeDate = Date(timeIntervalSinceNow: -Self.decayTimer)
-        if let firstNonTooOldIndex = self.recordedRequests.firstIndex(where: {
+        if let firstNonTooOldIndex = recordedRequests.firstIndex(where: {
             $0.date > purgeDate
         }) {
-            self.recordedRequests
+            recordedRequests
                 .removeFirst(firstNonTooOldIndex) // note, this would be more efficient with linked list
         } else {
             // all requests are old, kill them
@@ -97,7 +97,7 @@ public final class RequestLoopDetection: NSObject {
             insertionIndex = i + 1
             break
         }
-        self.recordedRequests.insert(identifier, at: insertionIndex)
+        recordedRequests.insert(identifier, at: insertionIndex)
     }
 
     /// Check if there are too many occurrences of a given identifier

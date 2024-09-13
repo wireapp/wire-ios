@@ -39,7 +39,7 @@ public final class AccountStore: NSObject {
     /// `Account` objects will be stored in a subdirectory of the passed in url.
     /// - parameter root: The root url in which the storage will use to store its data
     public required init(root: URL) {
-        directory = root.appendingPathComponent(AccountStore.directoryName)
+        self.directory = root.appendingPathComponent(AccountStore.directoryName)
         super.init()
         try! fileManager.createAndProtectDirectory(at: directory)
     }

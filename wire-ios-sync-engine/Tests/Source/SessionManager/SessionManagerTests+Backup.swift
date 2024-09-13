@@ -103,7 +103,7 @@ final class SessionManagerBackupTests: IntegrationTest {
         // Then
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd"
-        let expectedName = "Wire-\(self.selfUser!.handle!)-Backup_\(formatter.string(from: .init())).ios_wbu"
+        let expectedName = "Wire-\(selfUser!.handle!)-Backup_\(formatter.string(from: .init())).ios_wbu"
 
         XCTAssertEqual(url.lastPathComponent, expectedName)
         let dataURL = unzippedURL.appendingPathComponent("data")
@@ -191,7 +191,7 @@ final class SessionManagerBackupTests: IntegrationTest {
 
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd"
-        let fileExtensionWithHyphen = "Wire-\(self.selfUser!.handle!)-Backup_\(formatter.string(from: .init())).ios-wbu"
+        let fileExtensionWithHyphen = "Wire-\(selfUser!.handle!)-Backup_\(formatter.string(from: .init())).ios-wbu"
 
         let fm = FileManager.default
         try fm.createDirectory(atPath: backupURL.path, withIntermediateDirectories: true, attributes: nil)
@@ -247,7 +247,7 @@ final class SessionManagerBackupTests: IntegrationTest {
         let nonce = UUID.create()
 
         do {
-            let conversation = self.conversation(for: selfToUser1Conversation)!
+            let conversation = conversation(for: selfToUser1Conversation)!
             conversation.setMessageDestructionTimeoutValue(.custom(0.5), for: .selfUser)
             let moc = sessionManager!.activeUserSession!.managedObjectContext
 

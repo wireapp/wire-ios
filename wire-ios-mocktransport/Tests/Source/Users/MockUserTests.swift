@@ -35,7 +35,7 @@ class MockUserTests: MockTransportSessionTests {
                 creator: self.selfUser
             )
         }
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func testImageAccessorsReturnsCorrectImages() {

@@ -97,7 +97,7 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         hintLabel.font = FontSpec.normalRegularFont.font
         hintLabel.textAlignment = .center
         hintLabel.textColor = SemanticColors.Label.textSettingsPasswordPlaceholder
-        self.view.backgroundColor = .white
+        view.backgroundColor = .white
 
         [canvas, hintLabel, hintImageView, toolbar].forEach(view.addSubview)
 

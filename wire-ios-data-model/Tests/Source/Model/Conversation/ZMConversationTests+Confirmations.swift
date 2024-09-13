@@ -22,7 +22,7 @@ import XCTest
 class ZMConversationTests_Confirmations: ZMConversationTestsBase {
     func testThatConfirmUnreadMessagesAsRead_DoesntConfirmAlreadyReadMessages() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         let user1 = createUser()
         let user2 = createUser()
@@ -71,7 +71,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
 
     func testThatConfirmUnreadMessagesAsRead_DoesntConfirmMessageAfterTheTimestamp() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let domain = "example.domain.com"
         BackendInfo.domain = domain
 
@@ -113,7 +113,7 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
 
     func testThatConfirmUnreadMessagesAsRead_StillConfirmsMessages_EvenIfLastReadServerTimestampAdvances() throws {
         // Given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
 
         let user1 = createUser()
 

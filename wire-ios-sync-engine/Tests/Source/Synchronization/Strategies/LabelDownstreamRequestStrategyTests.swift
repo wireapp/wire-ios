@@ -61,7 +61,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
 
     func successfullFolderResponse() -> ZMTransportResponse {
         let encoder = JSONEncoder()
-        let data = try! encoder.encode(self.folderResponse(name: "folder", conversations: []))
+        let data = try! encoder.encode(folderResponse(name: "folder", conversations: []))
         let urlResponse = HTTPURLResponse(
             url: URL(string: "properties/labels")!,
             statusCode: 200,
@@ -149,7 +149,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             // WHEN
             request.complete(with: self.successfullFolderResponse())
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -171,7 +171,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 apiVersion: APIVersion.v0.rawValue
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -188,7 +188,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             // WHEN
             request.complete(with: self.successfullFolderResponse())
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -210,7 +210,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 apiVersion: APIVersion.v0.rawValue
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -243,7 +243,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
         }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -270,7 +270,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 favorites: [self.conversation1.remoteIdentifier!]
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -304,7 +304,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 conversations: [self.conversation2.remoteIdentifier!]
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -342,7 +342,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 conversations: [self.conversation1.remoteIdentifier!]
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -380,7 +380,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 conversations: [self.conversation2.remoteIdentifier!]
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {
@@ -419,7 +419,7 @@ class LabelDownstreamRequestStrategyTests: MessagingTest {
                 conversations: [self.conversation1.remoteIdentifier!]
             ))
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedAndWait {

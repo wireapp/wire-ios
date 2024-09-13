@@ -26,7 +26,7 @@ import WireTesting
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.syncManagedObjectContext)
+        XCTAssertNotNil(sut.syncManagedObjectContext)
         // WHEN & THEN
         coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(self.sut.syncManagedObjectContext, self.sut.syncManagedObjectContext.zm_sync)
@@ -35,14 +35,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatUIContextReturnsSelfForLinkedUIContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.managedObjectContext)
+        XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
-        XCTAssertEqual(self.sut.managedObjectContext, self.sut.managedObjectContext.zm_userInterface)
+        XCTAssertEqual(sut.managedObjectContext, sut.managedObjectContext.zm_userInterface)
     }
 
     func testThatSyncContextReturnsLinkedUIContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.syncManagedObjectContext)
+        XCTAssertNotNil(sut.syncManagedObjectContext)
         // WHEN & THEN
         coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(self.sut.syncManagedObjectContext.zm_userInterface, self.sut.managedObjectContext)
@@ -51,9 +51,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func testThatUIContextReturnsLinkedSyncContext() {
         // GIVEN
-        XCTAssertNotNil(self.sut.managedObjectContext)
+        XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
-        XCTAssertEqual(self.sut.managedObjectContext.zm_sync, self.sut.syncManagedObjectContext)
+        XCTAssertEqual(sut.managedObjectContext.zm_sync, sut.syncManagedObjectContext)
     }
 
     func testThatLinkedUIContextIsNotStrongReferenced() {
@@ -444,15 +444,15 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             self.sut.insertConversationWithUnreadMessage()
         }
 
-        try self.uiMOC.save()
+        try uiMOC.save()
 
         // WHEN
-        self.sut.markAllConversationsAsRead()
+        sut.markAllConversationsAsRead()
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        self.uiMOC.refreshAllObjects()
+        uiMOC.refreshAllObjects()
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
     }
 
@@ -473,7 +473,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         )
 
         // MLS client has been registered
-        self.syncMOC.performAndWait {
+        syncMOC.performAndWait {
             let selfUserClient = createSelfClient()
             selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
             selfUserClient.needsToUploadMLSPublicKeys = false

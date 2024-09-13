@@ -41,9 +41,9 @@ public class LoginCredentials: NSObject, Codable {
             return false
         }
 
-        let emailEquals = self.emailAddress == otherCredentials.emailAddress
-        let passwordEquals = self.hasPassword == otherCredentials.hasPassword
-        let companyLoginEquals = self.usesCompanyLogin == otherCredentials.usesCompanyLogin
+        let emailEquals = emailAddress == otherCredentials.emailAddress
+        let passwordEquals = hasPassword == otherCredentials.hasPassword
+        let companyLoginEquals = usesCompanyLogin == otherCredentials.usesCompanyLogin
 
         return emailEquals && passwordEquals && companyLoginEquals
     }

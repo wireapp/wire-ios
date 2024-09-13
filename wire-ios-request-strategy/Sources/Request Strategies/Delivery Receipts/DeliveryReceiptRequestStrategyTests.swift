@@ -69,10 +69,10 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             // when
             self.sut.processEvents([event], liveEvents: Bool.random(), prefetchResult: nil)
         }
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     // MARK: Delivery receipt creation
@@ -227,8 +227,8 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         timestamp: Date = Date()
     ) -> ZMUpdateEvent {
         let dict: NSDictionary = [
-            "recipient": self.selfClient.remoteIdentifier!,
-            "sender": self.selfClient.remoteIdentifier!,
+            "recipient": selfClient.remoteIdentifier!,
+            "sender": selfClient.remoteIdentifier!,
             "text": try! message.serializedData().base64String(),
         ]
 

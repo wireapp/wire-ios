@@ -296,13 +296,13 @@ extension CompanyLoginController {
         delegate?.controller(self, showLoadingView: true)
         SessionManager.shared?.activeUnauthenticatedSession.lookup(domain: domain) { [weak self] result in
             guard let self else { return }
-            self.delegate?.controller(self, showLoadingView: false)
+            delegate?.controller(self, showLoadingView: false)
 
             switch result {
             case let .success(domainInfo):
-                self.delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
+                delegate?.controllerDidStartBackendSwitch(self, toURL: domainInfo.configurationURL)
             case .failure:
-                self.presentCompanyLoginAlert(error: .domainNotRegistered)
+                presentCompanyLoginAlert(error: .domainNotRegistered)
             }
         }
     }
@@ -319,11 +319,11 @@ extension CompanyLoginController {
 
         sessionManager.fetchBackendEnvironment(at: url) { [weak self] result in
             guard let self else { return }
-            self.delegate?.controller(self, showLoadingView: false)
+            delegate?.controller(self, showLoadingView: false)
 
             switch result {
             case let .success(backendEnvironment):
-                self.requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
+                requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
                     guard didConfirm else { return }
                     sessionManager.switchBackend(to: backendEnvironment)
                     BackendEnvironment.shared = backendEnvironment
@@ -331,9 +331,9 @@ extension CompanyLoginController {
                 }
             case let .failure(error):
                 if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
-                    self.presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
+                    presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)
                 } else {
-                    self.presentCompanyLoginAlert(error: .domainNotRegistered)
+                    presentCompanyLoginAlert(error: .domainNotRegistered)
                 }
             }
         }

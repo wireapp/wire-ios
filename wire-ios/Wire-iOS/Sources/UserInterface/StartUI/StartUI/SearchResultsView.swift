@@ -32,12 +32,12 @@ final class SearchResultsView: UIView {
     weak var parentViewController: UIViewController?
 
     init() {
-        collectionViewLayout = UICollectionViewFlowLayout()
+        self.collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .vertical
         collectionViewLayout.minimumInteritemSpacing = 12
         collectionViewLayout.minimumLineSpacing = 0
 
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
         collectionView.backgroundColor = SemanticColors.View.backgroundDefault
         collectionView.allowsMultipleSelection = true
         collectionView.keyboardDismissMode = .onDrag
@@ -173,7 +173,7 @@ final class SearchResultsView: UIView {
     }
 
     private func updateContentInset() {
-        if let accessoryView = self.accessoryView {
+        if let accessoryView {
             accessoryView.layoutIfNeeded()
             let bottomInset = (UIScreen.hasNotch ? accessoryViewMargin : 0) + accessoryView.frame.height - UIScreen
                 .safeArea.bottom

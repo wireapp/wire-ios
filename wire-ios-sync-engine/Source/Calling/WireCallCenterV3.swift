@@ -390,7 +390,7 @@ extension WireCallCenterV3 {
             return []
         }
 
-        let activeSpeakers = self.activeSpeakers(conversationId: conversationId, limitedBy: limit)
+        let activeSpeakers = activeSpeakers(conversationId: conversationId, limitedBy: limit)
 
         return callMembers.compactMap { member in
             var activeSpeakerState: ActiveSpeakerState = .inactive
@@ -553,7 +553,7 @@ extension WireCallCenterV3 {
 
         endAllCalls(exluding: conversationId)
 
-        let callType = self.callType(
+        let callType = callType(
             for: conversation,
             startedWithVideo: video,
             isConferenceCall: isConferenceCall(conversationId: conversationId)
@@ -627,7 +627,7 @@ extension WireCallCenterV3 {
             throw Failure.missingAVSConversationType
         }
 
-        let callType = self.callType(
+        let callType = callType(
             for: conversation,
             startedWithVideo: isVideo,
             isConferenceCall: conversationType.isConference
@@ -988,7 +988,7 @@ extension WireCallCenterV3 {
         transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
             guard let self else { return }
             zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
-            self.avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
+            avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
         })
     }
 
@@ -1031,7 +1031,7 @@ extension WireCallCenterV3 {
 
         guard
             let context = uiMOC,
-            let conversationType = self.conversationType(from: callEvent)
+            let conversationType = conversationType(from: callEvent)
         else {
             Self.logger.warn("can't handle call event: unable to determine conversation type")
             completionHandler()

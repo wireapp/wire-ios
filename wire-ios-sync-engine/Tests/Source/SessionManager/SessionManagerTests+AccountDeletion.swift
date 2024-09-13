@@ -31,7 +31,7 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
             XCTFail()
             return
         }
-        let account = self.createAccount()
+        let account = createAccount()
 
         let accountFolder = CoreDataStack.accountDataFolder(
             accountIdentifier: account.userIdentifier,

@@ -49,7 +49,7 @@ final class MockTextMessageData: NSObject, TextMessageData {
     var hasQuote = false
 
     var linkPreview: LinkMetadata? {
-        guard let linkPreview = self.backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
+        guard let linkPreview = backingLinkPreview, !linkPreview.isBlacklisted else { return nil }
         return linkPreview
     }
 

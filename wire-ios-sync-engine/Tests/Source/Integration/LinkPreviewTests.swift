@@ -76,7 +76,7 @@ class LinkPreviewTests: ConversationTestsBase {
     func testThatItInsertsCorrectLinkPreviewMessage_ArticleWithoutImage() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // when
         userSession?.perform {
@@ -92,7 +92,7 @@ class LinkPreviewTests: ConversationTestsBase {
     func testThatItInsertCorrectLinkPreviewMessage_ArticleWithoutImage_ForEphemeral() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
         conversation?.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
 
         // when
@@ -109,7 +109,7 @@ class LinkPreviewTests: ConversationTestsBase {
     func testThatItInsertsCorrectLinkPreviewMessage_ArticleWithImage() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // when
         userSession?.perform {
@@ -125,7 +125,7 @@ class LinkPreviewTests: ConversationTestsBase {
     func testThatItInsertsCorrectLinkPreviewMessage_TwitterStatus() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // when
         userSession?.perform {
@@ -141,7 +141,7 @@ class LinkPreviewTests: ConversationTestsBase {
     func testThatItInsertsCorrectLinkPreviewMessage_TwitterStatusWithImage() {
         // given
         XCTAssertTrue(login())
-        let conversation = self.conversation(for: selfToUser1Conversation)
+        let conversation = conversation(for: selfToUser1Conversation)
 
         // when
         userSession?.perform {
@@ -159,7 +159,7 @@ class LinkPreviewTests: ConversationTestsBase {
         XCTAssertTrue(login())
 
         let mockConversation = selfToUser1Conversation!
-        let conversation = self.conversation(for: mockConversation)
+        let conversation = conversation(for: mockConversation)
 
         establishSession(with: user1)
         let selfClient = selfUser.clients.anyObject() as! MockUserClient

@@ -117,7 +117,7 @@ class LegacyButton: ButtonWithLargerHitArea {
 
         self.legacyStyle = legacyStyle
         self.variant = variant
-        textTransform = .upper
+        self.textTransform = .upper
         layer.cornerRadius = cornerRadius
         contentEdgeInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
 

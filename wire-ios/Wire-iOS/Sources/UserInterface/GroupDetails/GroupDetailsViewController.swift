@@ -51,7 +51,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
-        collectionViewController = SectionCollectionViewController()
+        self.collectionViewController = SectionCollectionViewController()
         super.init(nibName: nil, bundle: nil)
 
         createSubviews()
@@ -61,13 +61,13 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation.refetchParticipantsIfNeeded()
             }
 
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
 
             if let session = ZMUserSession.shared() {
                 if session.hasCompletedInitialSync {
-                    didCompleteInitialSync = true
+                    self.didCompleteInitialSync = true
                 } else {
-                    initialSyncToken = NotificationInContext.addObserver(
+                    self.initialSyncToken = NotificationInContext.addObserver(
                         name: .initialSync,
                         context: userSession.notificationContext
                     ) { [weak self] _ in
@@ -278,7 +278,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 let receiptOptionsSectionController = ReceiptOptionsSectionController(
                     conversation: conversation,
                     syncCompleted: didCompleteInitialSync,
-                    collectionView: self.collectionViewController.collectionView!,
+                    collectionView: collectionViewController.collectionView!,
                     presentingViewController: self
                 )
                 sections.append(receiptOptionsSectionController)

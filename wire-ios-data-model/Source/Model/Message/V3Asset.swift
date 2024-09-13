@@ -109,8 +109,8 @@ public class V3Asset: NSObject, ZMImageMessageData {
 
     public init?(with message: ZMAssetClientMessage) {
         guard message.version == 3 else { return nil }
-        assetClientMessage = message
-        moc = message.managedObjectContext!
+        self.assetClientMessage = message
+        self.moc = message.managedObjectContext!
     }
 
     public var imageMessageData: ZMImageMessageData? {
@@ -212,7 +212,7 @@ extension V3Asset: AssetProxyType {
         guard !assetClientMessage.objectID.isTemporaryID else { return }
         NotificationInContext(
             name: ZMAssetClientMessage.assetDownloadNotificationName,
-            context: self.moc.notificationContext,
+            context: moc.notificationContext,
             object: assetClientMessage.objectID
         ).post()
     }
@@ -222,7 +222,7 @@ extension V3Asset: AssetProxyType {
             guard !assetClientMessage.objectID.isTemporaryID else { return }
             NotificationInContext(
                 name: ZMAssetClientMessage.imageDownloadNotificationName,
-                context: self.moc.notificationContext,
+                context: moc.notificationContext,
                 object: assetClientMessage.objectID
             ).post()
         } else {

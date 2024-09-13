@@ -36,7 +36,7 @@ final class UserStatusViewSnapshotTests: ZMSnapshotTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser.name = "Giovanni"
         selfUser = ZMUser.selfUser()
         userSession = UserSessionMock()

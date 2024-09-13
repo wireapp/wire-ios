@@ -25,7 +25,7 @@ extension SelfProfileViewController {
     func presentUserSettingChangeControllerIfNeeded() -> Bool {
         if ZMUser.selfUser()?.readReceiptsEnabledChangedRemotely ?? false {
             let currentValue = ZMUser.selfUser()!.readReceiptsEnabled
-            self.presentReadReceiptsChangedAlert(with: currentValue)
+            presentReadReceiptsChangedAlert(with: currentValue)
 
             return true
         } else {
@@ -52,6 +52,6 @@ extension SelfProfileViewController {
 
         settingsChangedAlert.addAction(okAction)
 
-        self.present(settingsChangedAlert, animated: true)
+        present(settingsChangedAlert, animated: true)
     }
 }

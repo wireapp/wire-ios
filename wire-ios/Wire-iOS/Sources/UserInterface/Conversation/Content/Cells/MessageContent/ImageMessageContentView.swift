@@ -28,7 +28,7 @@ final class ImageContentView: UIView {
     }
 
     init() {
-        imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 140)
+        self.imageWidthConstraint = imageView.widthAnchor.constraint(equalToConstant: 140)
 
         super.init(frame: .zero)
 

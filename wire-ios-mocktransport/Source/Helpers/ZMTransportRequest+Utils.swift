@@ -40,11 +40,11 @@ extension ZMTransportRequest {
     }
 
     public var multipartBodyItemsFromRequestOrFile: [ZMMultipartBodyItem] {
-        if let items = self.multipartBodyItems() as? [ZMMultipartBodyItem] {
+        if let items = multipartBodyItems() as? [ZMMultipartBodyItem] {
             return items
         }
 
-        guard let fileURL = self.fileUploadURL,
+        guard let fileURL = fileUploadURL,
               let multipartData = try? Data(contentsOf: fileURL)
         else {
             return []
@@ -58,14 +58,14 @@ extension ZMTransportRequest {
 
     @objc(RESTComponentAtIndex:)
     public func RESTComponents(index: Int) -> String? {
-        guard self.pathComponents.count > index, index > 0 else {
+        guard pathComponents.count > index, index > 0 else {
             return nil
         }
-        return self.pathComponents[index]
+        return pathComponents[index]
     }
 
     private var pathComponents: [String] {
-        var components = self.URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
+        var components = URL.path.components(separatedBy: "/").filter { !$0.isEmpty }
 
         // remove api version from path components
         let versions = APIVersion.allCases.map { "v\($0.rawValue)" }
@@ -83,7 +83,7 @@ extension ZMTransportRequest {
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     public func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
-        self.method == method && self.matches(path: path)
+        self.method == method && matches(path: path)
     }
 }
 
@@ -92,7 +92,7 @@ extension ZMTransportRequest {
     /// Wildcards are allowed using the special symbol "*"
     /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
     public func matches(path: String) -> Bool {
-        let pathComponents = self.pathComponents
+        let pathComponents = pathComponents
         let expectedComponents = path.components(separatedBy: "/").filter { !$0.isEmpty }
 
         guard pathComponents.count == expectedComponents.count else {

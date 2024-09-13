@@ -239,7 +239,7 @@ extension EventDecoder {
         using decryptFunction: ProteusDecryptionFunction
     ) async throws -> (didCreateNewSession: Bool, event: ZMUpdateEvent)? {
         guard
-            let result = try await self.decryptedData(
+            let result = try await decryptedData(
                 event,
                 sessionID: senderSessionId,
                 using: decryptFunction
@@ -277,11 +277,11 @@ extension EventDecoder {
 
 extension ZMUpdateEvent {
     fileprivate var recipientID: String? {
-        self.eventData?["recipient"] as? String
+        eventData?["recipient"] as? String
     }
 
     private var eventData: [String: Any]? {
-        guard let eventData = (self.payload as? [String: Any])?["data"] as? [String: Any] else {
+        guard let eventData = (payload as? [String: Any])?["data"] as? [String: Any] else {
             return nil
         }
 

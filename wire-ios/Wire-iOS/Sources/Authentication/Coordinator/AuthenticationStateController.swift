@@ -79,8 +79,8 @@ final class AuthenticationStateController {
 
     /// Creates a new state controller with the first state.
     init() {
-        currentStep = .start
-        stack = [currentStep]
+        self.currentStep = .start
+        self.stack = [currentStep]
     }
 
     // MARK: - Transitions

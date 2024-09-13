@@ -41,6 +41,6 @@ public struct MLSUserID {
         if userID.isEmpty || domain.isEmpty {
             return nil
         }
-        rawValue = "\(userID.lowercased())@\(domain.lowercased())"
+        self.rawValue = "\(userID.lowercased())@\(domain.lowercased())"
     }
 }

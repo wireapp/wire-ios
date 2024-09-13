@@ -59,7 +59,7 @@ public class SessionEstablisher: SessionEstablisherInterface {
 
         let prekeys = try await apiProvider.prekeyAPI(apiVersion: apiVersion).fetchPrekeys(for: clients)
 
-        _ = await processor.establishSessions(from: prekeys, with: selfClient, context: self.context)
+        _ = await processor.establishSessions(from: prekeys, with: selfClient, context: context)
     }
 }
 

@@ -20,7 +20,7 @@ import Foundation
 
 extension MockUser {
     var canSeeServices: Bool {
-        self.hasTeam
+        hasTeam
     }
 
     // MARK: - clients

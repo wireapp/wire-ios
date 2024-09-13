@@ -122,7 +122,7 @@ extension ConversationListViewController {
             titleLabel.setContentHuggingPriority(.required, for: .horizontal)
             titleLabel.setContentHuggingPriority(.required, for: .vertical)
             navigationItem.titleView = titleLabel
-            self.titleViewLabel = titleLabel
+            titleViewLabel = titleLabel
         }
     }
 

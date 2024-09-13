@@ -30,9 +30,9 @@ final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.mockUserSession = UserSessionMock()
-        self.mockAudioRecorder = MockAudioRecorder()
-        self.sut = AudioRecordKeyboardViewController(
+        mockUserSession = UserSessionMock()
+        mockAudioRecorder = MockAudioRecorder()
+        sut = AudioRecordKeyboardViewController(
             audioRecorder: mockAudioRecorder,
             userSession: mockUserSession
         )

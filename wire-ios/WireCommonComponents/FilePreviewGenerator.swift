@@ -26,7 +26,7 @@ extension URL {
     public func UTI() -> String {
         guard let UTI = UTTypeCreatePreferredIdentifierForTag(
             kUTTagClassFilenameExtension,
-            self.pathExtension as CFString,
+            pathExtension as CFString,
             .none
         ) else {
             return kUTTypeItem as String
@@ -97,13 +97,13 @@ final class AggregateFilePreviewGenerator: NSObject, FilePreviewGenerator {
     }
 
     func canGeneratePreviewForFile(_ fileURL: URL, UTI uti: String) -> Bool {
-        !self.subGenerators.filter {
+        !subGenerators.filter {
             $0.canGeneratePreviewForFile(fileURL, UTI: uti)
         }.isEmpty
     }
 
     func generatePreview(_ fileURL: URL, UTI uti: String, completion: @escaping (UIImage?) -> Void) {
-        guard let generator = self.subGenerators.filter({
+        guard let generator = subGenerators.filter({
             $0.canGeneratePreviewForFile(fileURL, UTI: uti)
         }).first else {
             completion(.none)
@@ -140,8 +140,8 @@ final class ImageFilePreviewGenerator: NSObject, FilePreviewGenerator {
             kCGImageSourceCreateThumbnailWithTransform as AnyHashable: true,
             kCGImageSourceCreateThumbnailFromImageAlways as AnyHashable: true,
             kCGImageSourceThumbnailMaxPixelSize as AnyHashable: max(
-                self.thumbnailSize.width,
-                self.thumbnailSize.height
+                thumbnailSize.width,
+                thumbnailSize.height
             ),
         ]
         guard let thumbnail = CGImageSourceCreateThumbnailAtIndex(src, 0, options as CFDictionary?) else {
@@ -193,8 +193,8 @@ final class MovieFilePreviewGenerator: NSObject, FilePreviewGenerator {
             into: CGRect(
                 x: 0,
                 y: 0,
-                width: self.thumbnailSize.width,
-                height: self.thumbnailSize.height
+                width: thumbnailSize.width,
+                height: thumbnailSize.height
             )
         )
         guard let context = CGContext(
@@ -250,8 +250,8 @@ public final class PDFFilePreviewGenerator: NSObject, FilePreviewGenerator {
         else {
             return
         }
-        let xScale = self.thumbnailSize.width / cropBox.size.width
-        let yScale = self.thumbnailSize.height / cropBox.size.height
+        let xScale = thumbnailSize.width / cropBox.size.width
+        let yScale = thumbnailSize.height / cropBox.size.height
         let scaleToApply = xScale < yScale ? xScale : yScale
         contextRef.concatenate(CGAffineTransform(scaleX: scaleToApply, y: scaleToApply))
         contextRef.drawPDFPage(pageRef)

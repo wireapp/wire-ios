@@ -65,7 +65,7 @@ extension Array where Element: TupleKeyArrayType {
     // (Dictionary from @c Key to array of @c Value)
     fileprivate func merge() -> [Element.Key: [Element.Value]] {
         let initialValue: [Element.Key: [Element.Value]] = [:]
-        return self.reduce(initialValue) {
+        return reduce(initialValue) {
             var objectsForKey = $0[$1.key] ?? []
             objectsForKey.append(contentsOf: $1.value)
             var result = $0
@@ -92,7 +92,7 @@ extension NSManagedObjectContext {
     /// - Returns: dictionary containing the pairs of value and array of objects containing the value for `keyPath`.
 
     func findDuplicated<T: NSManagedObject, ValueForKey>(entityName: String, by keyPath: String) -> [ValueForKey: [T]] {
-        if let storeURL = self.persistentStoreCoordinator?.persistentStores.first?.url,
+        if let storeURL = persistentStoreCoordinator?.persistentStores.first?.url,
            !storeURL.isFileURL {
             zmLog.error("findDuplicated<T> does not support in-memory store")
             return [:]
@@ -118,7 +118,7 @@ extension NSManagedObjectContext {
         request.resultType = .dictionaryResultType
 
         do {
-            let distinctIDAndCount = try self.execute(request) as! NSAsynchronousFetchResult<NSDictionary>
+            let distinctIDAndCount = try execute(request) as! NSAsynchronousFetchResult<NSDictionary>
 
             guard let finalResult = distinctIDAndCount.finalResult else {
                 return [:]
@@ -134,7 +134,7 @@ extension NSManagedObjectContext {
             fetchAllDuplicatesRequest.entity = entity
             fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K IN %@", argumentArray: [keyPath, ids])
 
-            return self.fetchOrAssert(request: fetchAllDuplicatesRequest).group(by: keyPath)
+            return fetchOrAssert(request: fetchAllDuplicatesRequest).group(by: keyPath)
 
         } catch {
             fatal("Cannot perform the fetch: \(error)")
@@ -147,7 +147,7 @@ extension Array where Element: NSObject {
     // @param keyPath the key path in @c Element to group by.
     // @return dictionary containing the pairs of value and array of objects containing the value for @keyPath.
     func group<ValueForKey>(by keyPath: String) -> [ValueForKey: [Element]] {
-        let tuples: [TupleKeyArray<ValueForKey, Element>?] = self.map {
+        let tuples: [TupleKeyArray<ValueForKey, Element>?] = map {
             guard let valueForKey = $0.value(forKey: keyPath) as? ValueForKey else {
                 return nil
             }

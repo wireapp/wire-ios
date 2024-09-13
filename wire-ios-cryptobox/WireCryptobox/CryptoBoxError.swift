@@ -23,7 +23,7 @@ extension CBoxResult: Error {
     /// Throw if self represents an error
     func throwIfError() throws {
         guard self == CBOX_SUCCESS else {
-            self.failIfCritical()
+            failIfCritical()
             throw self
         }
     }

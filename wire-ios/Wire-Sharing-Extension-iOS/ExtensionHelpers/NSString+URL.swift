@@ -25,7 +25,7 @@ extension NSString {
             let matches = urlDetector.matches(
                 in: self as String,
                 options: [],
-                range: NSRange(location: 0, length: self.length)
+                range: NSRange(location: 0, length: length)
             )
             return !matches.isEmpty
         } catch _ as NSError {
@@ -36,7 +36,7 @@ extension NSString {
     // MARK: - URL Formatting
 
     public func removingPrefixWWW() -> String {
-        replacingOccurrences(of: "www.", with: "", options: .anchored, range: NSRange(location: 0, length: self.length))
+        replacingOccurrences(of: "www.", with: "", options: .anchored, range: NSRange(location: 0, length: length))
     }
 
     public func removingTrailingForwardSlash() -> String {
@@ -44,7 +44,7 @@ extension NSString {
             of: "/",
             with: "",
             options: [.anchored, .backwards],
-            range: NSRange(location: 0, length: self.length)
+            range: NSRange(location: 0, length: length)
         )
     }
 
@@ -53,7 +53,7 @@ extension NSString {
             of: scheme + "://",
             with: "",
             options: .anchored,
-            range: NSRange(location: 0, length: self.length)
+            range: NSRange(location: 0, length: length)
         )
     }
 }

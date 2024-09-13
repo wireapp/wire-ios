@@ -33,7 +33,7 @@ final class AVSVideoContainerView: UIView {
             return
         }
 
-        self.videoView = view
+        videoView = view
         view.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(view)

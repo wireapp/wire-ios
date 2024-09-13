@@ -125,12 +125,12 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatItNotifiesObserverWhenCreatingAndTearingDownSession() {
         // GIVEN
-        let account = self.createAccount()
+        let account = createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 
-        let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
+        let sessionManagerExpectation = customExpectation(description: "Session manager and session is loaded")
 
         let observer = MockSessionManagerObserver()
         var createToken: Any?
@@ -159,7 +159,7 @@ final class SessionManagerTests: IntegrationTest {
             application: application,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
-            transportSession: self.mockTransportSession,
+            transportSession: mockTransportSession,
             environment: environment,
             reachability: reachability
         )
@@ -179,7 +179,7 @@ final class SessionManagerTests: IntegrationTest {
         }
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual([testSessionManager.activeUserSession!], observer.createdUserSession)
 
         // AND WHEN
@@ -218,15 +218,15 @@ final class SessionManagerTests: IntegrationTest {
         mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
         mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_MockMethod = { _ in }
 
-        let account1 = self.createAccount()
+        let account1 = createAccount()
         sessionManager!.environment.cookieStorage(for: account1).authenticationCookieData = HTTPCookie.validCookieData()
 
-        let account2 = self.createAccount(with: UUID.create())
+        let account2 = createAccount(with: UUID.create())
         sessionManager!.environment.cookieStorage(for: account2).authenticationCookieData = HTTPCookie.validCookieData()
 
         guard let application else { return XCTFail() }
 
-        let sessionManagerExpectation = self.customExpectation(description: "Session manager and sessions are loaded")
+        let sessionManagerExpectation = customExpectation(description: "Session manager and sessions are loaded")
         let observer = MockSessionManagerObserver()
 
         var destroyToken: Any?
@@ -235,7 +235,7 @@ final class SessionManagerTests: IntegrationTest {
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
             analytics: nil,
-            delegate: self.mockDelegate,
+            delegate: mockDelegate,
             application: application,
             dispatchGroup: dispatchGroup,
             environment: sessionManager!.environment,
@@ -255,7 +255,7 @@ final class SessionManagerTests: IntegrationTest {
             application: application,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
-            transportSession: self.mockTransportSession,
+            transportSession: mockTransportSession,
             environment: environment,
             reachability: reachability
         )
@@ -276,7 +276,7 @@ final class SessionManagerTests: IntegrationTest {
             }
         }
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(testSessionManager.backgroundUserSessions.count, 2)
         XCTAssertEqual(
             testSessionManager.backgroundUserSessions[account2.userIdentifier],
@@ -305,7 +305,7 @@ final class SessionManagerTests: IntegrationTest {
             appVersion: "0.0.0",
             mediaManager: mockMediaManager,
             analytics: nil,
-            delegate: self.mockDelegate,
+            delegate: mockDelegate,
             application: application,
             environment: sessionManager!.environment,
             configuration: configuration,
@@ -354,7 +354,7 @@ final class SessionManagerTests: IntegrationTest {
         let sut = sessionManagerBuilder.build()
         sut.delegate = mockDelegate
 
-        let logoutExpectation = self.expectation(description: "Authentication after reboot")
+        let logoutExpectation = expectation(description: "Authentication after reboot")
 
         mockDelegate.sessionManagerDidFailToLoginError_MockMethod = { _ in }
         mockDelegate
@@ -539,9 +539,9 @@ final class SessionManagerTests: IntegrationTest {
 
         var conversations: [ZMConversation] = []
 
-        let conversation1CreatedExpectation = self.customExpectation(description: "Conversation 1 created")
+        let conversation1CreatedExpectation = customExpectation(description: "Conversation 1 created")
 
-        self.sessionManager?.withSession(for: account1, perform: { createdSession in
+        sessionManager?.withSession(for: account1, perform: { createdSession in
             let syncContext = createdSession.syncContext
             syncContext.performAndWait {
                 self.createSelfUserAndSelfConversation(in: syncContext)
@@ -555,9 +555,9 @@ final class SessionManagerTests: IntegrationTest {
             conversation1CreatedExpectation.fulfill()
         })
 
-        let conversation2CreatedExpectation = self.customExpectation(description: "Conversation 2 created")
+        let conversation2CreatedExpectation = customExpectation(description: "Conversation 2 created")
 
-        self.sessionManager?.withSession(for: account2, perform: { createdSession in
+        sessionManager?.withSession(for: account2, perform: { createdSession in
             let syncContext = createdSession.syncContext
             syncContext.performAndWait {
                 self.createSelfUserAndSelfConversation(in: syncContext)
@@ -571,24 +571,24 @@ final class SessionManagerTests: IntegrationTest {
             conversation2CreatedExpectation.fulfill()
         })
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertEqual(conversations.count, 2)
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 2)
 
         // when
-        let doneExpectation = self.customExpectation(description: "Conversations are marked as read")
+        let doneExpectation = customExpectation(description: "Conversations are marked as read")
 
-        self.sessionManager?.markAllConversationsAsRead(completion: {
+        sessionManager?.markAllConversationsAsRead(completion: {
             doneExpectation.fulfill()
         })
 
         // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversations.filter { $0.firstUnreadMessage != nil }.count, 0)
 
         // cleanup
-        self.sessionManager!.tearDownAllBackgroundSessions()
+        sessionManager!.tearDownAllBackgroundSessions()
     }
 
     func testThatItLogsOutWithCompanyLoginURL() throws {

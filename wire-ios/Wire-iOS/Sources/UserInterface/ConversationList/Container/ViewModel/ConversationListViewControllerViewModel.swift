@@ -111,9 +111,9 @@ extension ConversationListViewController {
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-            selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
-            shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
-            didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
+            self.selfUserStatus = .init(user: selfUserLegalHoldSubject, isE2EICertified: false)
+            self.shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
+            self.didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
             super.init()

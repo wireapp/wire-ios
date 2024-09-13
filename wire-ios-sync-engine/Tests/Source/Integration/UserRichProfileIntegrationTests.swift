@@ -33,7 +33,7 @@ class UserRichProfileIntegrationTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        let user = self.user(for: teamUser1)
+        let user = user(for: teamUser1)
         XCTAssertEqual(user?.richProfile.isEmpty, true)
         userSession?.perform {
             user?.needsRichProfileUpdate = true
@@ -62,7 +62,7 @@ class UserRichProfileIntegrationTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        let user = self.user(for: user1)
+        let user = user(for: user1)
         userSession?.perform {
             user?.needsRichProfileUpdate = true
         }
@@ -83,7 +83,7 @@ class UserRichProfileIntegrationTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        let user = self.user(for: teamUser1)
+        let user = user(for: teamUser1)
         userSession?.perform {
             user?.needsRichProfileUpdate = true
         }

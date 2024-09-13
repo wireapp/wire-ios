@@ -47,7 +47,7 @@ class VerticalColumnCollectionViewController: UICollectionViewController, Vertic
     /// - parameter columnCount: The number of columns to show depending on the current size class.
 
     init(interItemSpacing: CGFloat, interColumnSpacing: CGFloat, columnCount: AdaptiveColumnCount) {
-        layout = VerticalColumnCollectionViewLayout()
+        self.layout = VerticalColumnCollectionViewLayout()
         layout.interItemSpacing = interItemSpacing
         layout.interColumnSpacing = interColumnSpacing
 

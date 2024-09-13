@@ -129,7 +129,7 @@ extension MockConversation {
 
         if changedValues()[accessModeKeyPath] != nil || changedValues()[accessRoleKeyPath] != nil,
            changedValues()[accessRoleV2KeyPath] != nil {
-            return ["access_role": self.accessRole, "access_role_v2": self.accessRoleV2, "access": self.accessMode]
+            return ["access_role": accessRole, "access_role_v2": accessRoleV2, "access": accessMode]
         } else {
             return nil
         }

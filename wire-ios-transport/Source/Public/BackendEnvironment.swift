@@ -105,7 +105,7 @@ extension EnvironmentType {
     }
 
     public func save(in userDefaults: UserDefaults) {
-        userDefaults.setValue(self.stringValue, forKey: EnvironmentType.defaultsKey)
+        userDefaults.setValue(stringValue, forKey: EnvironmentType.defaultsKey)
     }
 }
 

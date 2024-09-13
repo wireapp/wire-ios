@@ -37,7 +37,7 @@ final class CollectionsView: UIView {
         backgroundColor = SemanticColors.View.backgroundConversationList
 
         recreateLayout()
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
+        self.collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: collectionViewLayout)
 
         collectionView.register(
             CollectionImageCell.self,

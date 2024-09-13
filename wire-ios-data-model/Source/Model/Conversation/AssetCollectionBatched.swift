@@ -80,7 +80,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         self.matchingCategories = matchingCategories
         super.init()
 
-        guard let syncMOC = self.syncMOC else {
+        guard let syncMOC else {
             fatal("syncMOC not accessible")
         }
         syncMOC.performGroupedBlock { [weak self] in
@@ -90,8 +90,8 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             else {
                 return
             }
-            let allAssetMessages: [ZMAssetClientMessage] = self.unCategorizedMessages(for: syncConversation)
-            let allClientMessages: [ZMClientMessage] = self.unCategorizedMessages(for: syncConversation)
+            let allAssetMessages: [ZMAssetClientMessage] = unCategorizedMessages(for: syncConversation)
+            let allClientMessages: [ZMClientMessage] = unCategorizedMessages(for: syncConversation)
 
             let categorizedMessages: [ZMMessage] = AssetCollectionBatched.categorizedMessages(
                 for: syncConversation,
@@ -103,11 +103,11 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
                     messages: categorizedMessages,
                     matchingCategories: self.matchingCategories
                 )
-                self.notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
+                notifyDelegate(newAssets: categorized, type: nil, didReachLastMessage: false)
             }
 
-            self.categorizeNextBatch(type: .asset, allMessages: allAssetMessages, managedObjectContext: syncMOC)
-            self.categorizeNextBatch(type: .client, allMessages: allClientMessages, managedObjectContext: syncMOC)
+            categorizeNextBatch(type: .asset, allMessages: allAssetMessages, managedObjectContext: syncMOC)
+            categorizeNextBatch(type: .client, allMessages: allClientMessages, managedObjectContext: syncMOC)
         }
     }
 
@@ -147,22 +147,22 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         guard !tornDown else { return }
 
         // get next offset
-        let offset = (type == .asset) ? self.assetMessageOffset : self.clientMessageOffset
+        let offset = (type == .asset) ? assetMessageOffset : clientMessageOffset
         let numberToAnalyze = min(allMessages.count - offset, AssetCollectionBatched.defaultFetchCount)
         if type == .asset {
-            self.assetMessageOffset += numberToAnalyze
+            assetMessageOffset += numberToAnalyze
         } else {
-            self.clientMessageOffset += numberToAnalyze
+            clientMessageOffset += numberToAnalyze
         }
 
         // check if we reached the last message
         let didReachLastMessage = (numberToAnalyze < AssetCollectionBatched.defaultFetchCount)
         if didReachLastMessage {
-            self.setFetchingCompleteFor(type: type)
+            setFetchingCompleteFor(type: type)
         }
         if numberToAnalyze == 0 {
-            if self.fetchingDone {
-                self.notifyDelegateFetchingIsDone(result: .success)
+            if fetchingDone {
+                notifyDelegateFetchingIsDone(result: .success)
             }
             return
         }
@@ -171,12 +171,12 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         let messagesToAnalyze = Array(allMessages[offset ..< (offset + numberToAnalyze)])
         let newAssets = AssetCollectionBatched.messageMap(
             messages: messagesToAnalyze,
-            matchingCategories: self.matchingCategories
+            matchingCategories: matchingCategories
         )
         managedObjectContext.enqueueDelayedSave()
 
         // Notify delegate
-        self.notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
+        notifyDelegate(newAssets: newAssets, type: type, didReachLastMessage: didReachLastMessage)
 
         // Return if done
         if didReachLastMessage {
@@ -185,7 +185,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
 
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self, !self.tornDown else { return }
-            self.categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext: managedObjectContext)
+            categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext: managedObjectContext)
         }
     }
 
@@ -208,30 +208,30 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             }
 
             // Merge result with existing result
-            if let assets = self.assets {
+            if let assets {
                 self.assets = AssetCollectionBatched.merge(messageMap: assets, with: uiAssets)
             } else {
-                self.assets = uiAssets
+                assets = uiAssets
             }
 
             // Notify delegate
-            self.delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: !didReachLastMessage)
-            if self.fetchingDone {
-                self.delegate.assetCollectionDidFinishFetching(collection: self, result: .success)
+            delegate.assetCollectionDidFetch(collection: self, messages: uiAssets, hasMore: !didReachLastMessage)
+            if fetchingDone {
+                delegate.assetCollectionDidFinishFetching(collection: self, result: .success)
             }
         }
     }
 
     private func notifyDelegateFetchingIsDone(result: AssetFetchResult) {
-        self.uiMOC?.performGroupedBlock { [weak self] in
+        uiMOC?.performGroupedBlock { [weak self] in
             guard let self else { return }
             var result = result
             if result == .success {
                 // Since we are setting the assets in a performGroupedBlock on the uiMOC, we might not know if there are
                 // assets or not when we call notifyDelegateFetchingIsDone. Therefore we check for assets here.
-                result = (self.assets != nil) ? .success : .noAssetsToFetch
+                result = (assets != nil) ? .success : .noAssetsToFetch
             }
-            self.delegate.assetCollectionDidFinishFetching(collection: self, result: result)
+            delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
     }
 

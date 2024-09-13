@@ -114,13 +114,13 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
     override func tearDown() {
         try? FileManager.default.removeItem(at: spyKeyStore.cryptoboxDirectory)
 
-        self.clientRegistrationStatus = nil
-        self.mockClientRegistrationStatusDelegate = nil
-        self.clientUpdateStatus = nil
-        self.spyKeyStore = nil
-        self.sut.tearDown()
-        self.sut = nil
-        self.postLoginAuthenticationObserverToken = nil
+        clientRegistrationStatus = nil
+        mockClientRegistrationStatusDelegate = nil
+        clientUpdateStatus = nil
+        spyKeyStore = nil
+        sut.tearDown()
+        sut = nil
+        postLoginAuthenticationObserverToken = nil
         super.tearDown()
     }
 }
@@ -330,7 +330,7 @@ extension UserClientRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallRegisterSelfUserClient)
+        XCTAssertTrue(mockClientRegistrationStatusDelegate.didCallRegisterSelfUserClient)
     }
 
     func testThatItProcessFailedInsertResponseWithAuthenticationError_NoEmail() {
@@ -362,13 +362,13 @@ extension UserClientRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
+        XCTAssertTrue(mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)
         let expectedError = NSError(
             domain: NSError.userSessionErrorDomain,
             code: UserSessionErrorCode.invalidCredentials.rawValue,
             userInfo: nil
         )
-        XCTAssertEqual(self.mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
+        XCTAssertEqual(mockClientRegistrationStatusDelegate.currentError as NSError?, expectedError)
     }
 
     func testThatItProcessFailedInsertResponseWithAuthenticationError_HasEmail() {
@@ -758,7 +758,7 @@ extension UserClientRequestStrategyTests {
         // given
         var client: UserClient!
 
-        self.syncMOC.performGroupedBlock {
+        syncMOC.performGroupedBlock {
             client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = "\(client.objectID)"
             client.user = ZMUser.selfUser(in: self.syncMOC)
@@ -783,7 +783,7 @@ extension UserClientRequestStrategyTests {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(client.isZombieObject)
         }
     }
@@ -1030,6 +1030,6 @@ extension UserClientRequestStrategyTests {
 
 extension UserClientRequestStrategy {
     func notifyChangeTrackers(_ object: ZMManagedObject) {
-        self.contextChangeTrackers.forEach { $0.objectsDidChange(Set([object])) }
+        contextChangeTrackers.forEach { $0.objectsDidChange(Set([object])) }
     }
 }

@@ -34,14 +34,14 @@ struct CallGridConfiguration: CallGridViewControllerInput, Equatable {
     init(voiceChannel: VoiceChannel) {
         let videoStreamArrangment = voiceChannel.createStreamArrangment()
 
-        floatingStream = videoStreamArrangment.preview
-        streams = videoStreamArrangment.grid
-        videoState = voiceChannel.videoState
-        shouldShowActiveSpeakerFrame = voiceChannel.shouldShowActiveSpeakerFrame
-        presentationMode = voiceChannel.videoGridPresentationMode
-        callHasTwoParticipants = voiceChannel.callHasTwoParticipants
-        isConnected = voiceChannel.state.isConnected
-        isGroupCall = voiceChannel.isGroupCall
+        self.floatingStream = videoStreamArrangment.preview
+        self.streams = videoStreamArrangment.grid
+        self.videoState = voiceChannel.videoState
+        self.shouldShowActiveSpeakerFrame = voiceChannel.shouldShowActiveSpeakerFrame
+        self.presentationMode = voiceChannel.videoGridPresentationMode
+        self.callHasTwoParticipants = voiceChannel.callHasTwoParticipants
+        self.isConnected = voiceChannel.state.isConnected
+        self.isGroupCall = voiceChannel.isGroupCall
     }
 }
 
@@ -59,7 +59,7 @@ extension VoiceChannel {
     fileprivate func createStreamArrangment() -> StreamArrangment {
         guard isEstablished else { return streamArrangementForNonEstablishedCall }
 
-        let participants = self.participants(forPresentationMode: videoGridPresentationMode)
+        let participants = participants(forPresentationMode: videoGridPresentationMode)
 
         var streams = activeStreams(from: participants)
 
@@ -67,7 +67,7 @@ extension VoiceChannel {
             streams = Array(streams.prefix(amount))
         }
 
-        let selfStream = self.selfStream(
+        let selfStream = selfStream(
             from: streams,
             createIfNeeded: videoGridPresentationMode.needsSelfStream
         )
@@ -105,7 +105,7 @@ extension VoiceChannel {
     }
 
     func participants(forPresentationMode mode: VideoGridPresentationMode) -> [CallParticipant] {
-        var participants = self.participants(
+        var participants = participants(
             ofKind: mode.callParticipantsListKind,
             activeSpeakersLimit: CallGridConfiguration.maxActiveSpeakers
         )

@@ -95,7 +95,7 @@ class UserProfileImageV3Tests: IntegrationTest {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        if let userProfileImageUpdateStatus = self.userSession?.userProfileImage as? UserProfileImageUpdateStatus {
+        if let userProfileImageUpdateStatus = userSession?.userProfileImage as? UserProfileImageUpdateStatus {
             // wait until image pre-processing is completed
             userProfileImageUpdateStatus.queue.waitUntilAllOperationsAreFinished()
         }

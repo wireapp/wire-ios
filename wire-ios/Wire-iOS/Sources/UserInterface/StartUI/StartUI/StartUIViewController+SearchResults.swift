@@ -128,15 +128,15 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         let controller = ConversationCreationController(preSelectedParticipants: nil, userSession: userSession)
         controller.delegate = self
 
-        if self.traitCollection.horizontalSizeClass == .compact {
+        if traitCollection.horizontalSizeClass == .compact {
             let avoiding = KeyboardAvoidingViewController(viewController: controller)
             navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.CreateConversation.BackButton
                 .description
-            self.navigationController?.pushViewController(avoiding, animated: true) {}
+            navigationController?.pushViewController(avoiding, animated: true) {}
         } else {
             let embeddedNavigationController = controller.wrapInNavigationController()
             embeddedNavigationController.modalPresentationStyle = .formSheet
-            self.present(embeddedNavigationController, animated: true)
+            present(embeddedNavigationController, animated: true)
         }
     }
 
@@ -161,7 +161,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             switch $0 {
             case let .success(conversation):
                 guard let self else { return }
-                self.delegate?.startUI(
+                delegate?.startUI(
                     self,
                     didSelect: conversation
                 )

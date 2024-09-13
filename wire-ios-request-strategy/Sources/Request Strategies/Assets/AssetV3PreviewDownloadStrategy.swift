@@ -42,7 +42,7 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
             return !message.hasDownloadedPreview
         }
 
-        downstreamSync = ZMDownstreamObjectSyncWithWhitelist(
+        self.downstreamSync = ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
             predicateForObjectsToDownload: filter,
@@ -52,9 +52,9 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
     }
 
     func registerForWhitelistingNotification() {
-        self.token = NotificationInContext.addObserver(
+        token = NotificationInContext.addObserver(
             name: ZMAssetClientMessage.imageDownloadNotificationName,
-            context: self.managedObjectContext.notificationContext,
+            context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
@@ -65,9 +65,9 @@ public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrateg
     func didRequestToDownloadImage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
-            self.downstreamSync.whiteListObject(message)
+            downstreamSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
@@ -142,7 +142,7 @@ extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
                 domain: remote.assetDomain,
                 apiVersion: apiVersion
             ) {
-                request.add(ZMCompletionHandler(on: self.managedObjectContext) { response in
+                request.add(ZMCompletionHandler(on: managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 })
                 return request

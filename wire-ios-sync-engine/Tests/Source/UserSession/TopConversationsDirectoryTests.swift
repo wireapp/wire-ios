@@ -28,19 +28,19 @@ class TopConversationsDirectoryTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.sut = TopConversationsDirectory(managedObjectContext: self.uiMOC)
-        self.topConversationsObserver = FakeTopConversationsDirectoryObserver()
-        self.topConversationsObserverToken = self.sut.add(observer: topConversationsObserver)
+        sut = TopConversationsDirectory(managedObjectContext: uiMOC)
+        topConversationsObserver = FakeTopConversationsDirectoryObserver()
+        topConversationsObserverToken = sut.add(observer: topConversationsObserver)
     }
 
     override func tearDown() {
-        self.topConversationsObserverToken = nil
-        self.sut = nil
+        topConversationsObserverToken = nil
+        sut = nil
         super.tearDown()
     }
 
     func testThatItHasNoResultsWhenCreatedAndNeverFetched() {
-        XCTAssertEqual(self.sut.topConversations, [])
+        XCTAssertEqual(sut.topConversations, [])
     }
 
     func testThatItSetsTheFetchedTopConversations() {
@@ -174,47 +174,47 @@ class TopConversationsDirectoryTests: MessagingTest {
         var expectedConversationsIds: [NSManagedObjectID] = []
 
         // WHEN
-        let conv1 = self.createConversation(in: self.uiMOC, fillWithNew: 2)
+        let conv1 = createConversation(in: uiMOC, fillWithNew: 2)
         expectedConversationsIds.append(conv1.objectID)
-        let conv2 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
+        let conv2 = createConversation(in: uiMOC, fillWithNew: 1)
         expectedConversationsIds.append(conv2.objectID)
 
         sut.refreshTopConversations()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        XCTAssertEqual(self.sut.topConversations.map(\.objectID), expectedConversationsIds)
-        XCTAssertEqual(self.sut.topConversations.compactMap(\.managedObjectContext), [self.uiMOC, self.uiMOC])
+        XCTAssertEqual(sut.topConversations.map(\.objectID), expectedConversationsIds)
+        XCTAssertEqual(sut.topConversations.compactMap(\.managedObjectContext), [uiMOC, uiMOC])
     }
 
     func testThatItDoesNotReturnConversationsIfTheyAreDeleted() {
         // GIVEN
-        let conv1 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
-        let conv2 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
+        let conv1 = createConversation(in: uiMOC, fillWithNew: 1)
+        let conv2 = createConversation(in: uiMOC, fillWithNew: 1)
 
         // WHEN
-        self.sut.refreshTopConversations()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.uiMOC.delete(conv1)
+        sut.refreshTopConversations()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        uiMOC.delete(conv1)
         uiMOC.saveOrRollback()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        XCTAssertEqual(self.sut.topConversations, [conv2])
+        XCTAssertEqual(sut.topConversations, [conv2])
     }
 
     func testThatItDoesNotReturnConversationsIfTheyAreBlocked() {
         // GIVEN
-        let conv1 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
-        let conv2 = self.createConversation(in: self.uiMOC, fillWithNew: 1)
+        let conv1 = createConversation(in: uiMOC, fillWithNew: 1)
+        let conv2 = createConversation(in: uiMOC, fillWithNew: 1)
 
         // WHEN
         conv1.oneOnOneUser?.connection?.status = .blocked
         sut.refreshTopConversations()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
-        XCTAssertEqual(self.sut.topConversations, [conv2])
+        XCTAssertEqual(sut.topConversations, [conv2])
     }
 
     func testThatItDoesPersistsResults() {
@@ -224,13 +224,13 @@ class TopConversationsDirectoryTests: MessagingTest {
         createConversation(in: uiMOC)
 
         // WHEN
-        self.sut.refreshTopConversations()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.uiMOC.saveOrRollback()
+        sut.refreshTopConversations()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        uiMOC.saveOrRollback()
 
         // THEN
-        let sut2 = TopConversationsDirectory(managedObjectContext: self.uiMOC)
-        XCTAssertEqual(sut2.topConversations, self.sut.topConversations)
+        let sut2 = TopConversationsDirectory(managedObjectContext: uiMOC)
+        XCTAssertEqual(sut2.topConversations, sut.topConversations)
     }
 
     func testThatItLimitsTheNumberOfResults() {

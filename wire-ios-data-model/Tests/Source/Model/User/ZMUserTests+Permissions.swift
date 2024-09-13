@@ -39,7 +39,7 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
     }
 
     func makeSelfUserTeamMember(withPermissions permissions: Permissions) {
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             self.conversation.team = self.team
             self.conversation.teamRemoteIdentifier = self.team.remoteIdentifier
             let member = Member.getOrUpdateMember(for: self.selfUser, in: self.team, context: self.uiMOC)
@@ -53,12 +53,12 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         // when
         makeSelfUserTeamMember(withPermissions: .member)
         conversation.creator = selfUser
-        conversation.team = self.team
-        conversation.teamRemoteIdentifier = self.team.remoteIdentifier
+        conversation.team = team
+        conversation.teamRemoteIdentifier = team.remoteIdentifier
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.teamIdentifier = conversation.teamRemoteIdentifier
         selfUser.teamIdentifier = conversation.teamRemoteIdentifier
-        conversation.teamRemoteIdentifier = self.team.remoteIdentifier
+        conversation.teamRemoteIdentifier = team.remoteIdentifier
         createARoleForSelfUserWith("delete_conversation")
 
         // then
@@ -69,8 +69,8 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         // when
         makeSelfUserTeamMember(withPermissions: .member)
         conversation.creator = selfUser
-        conversation.team = self.team
-        conversation.teamRemoteIdentifier = self.team.remoteIdentifier
+        conversation.team = team
+        conversation.teamRemoteIdentifier = team.remoteIdentifier
         createARoleForSelfUserWith("delete_conversation")
 
         // then

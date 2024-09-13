@@ -106,20 +106,20 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
     }
 
     func tearDown() {
-        if let observer = self.observer {
+        if let observer {
             NotificationCenter.default.removeObserver(observer)
             self.observer = nil
         }
     }
 
     private func processSaveNotification() {
-        if !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
-            let untrustedUsers = self.conversation.localParticipants.filter {
+        if !conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
+            let untrustedUsers = conversation.localParticipants.filter {
                 $0.clients.first { !$0.verified } != nil
             }
 
-            self.callback(ConversationDegradationInfo(
-                conversation: self.conversation,
+            callback(ConversationDegradationInfo(
+                conversation: conversation,
                 users: untrustedUsers
             ))
         }
@@ -127,7 +127,7 @@ final class DegradationObserver: NSObject, ZMConversationObserver, TearDownCapab
 
     func conversationDidChange(_ note: ConversationChangeInfo) {
         if note.causedByConversationPrivacyChange {
-            self.callback(ConversationDegradationInfo(
+            callback(ConversationDegradationInfo(
                 conversation: note.conversation,
                 users: Set(note.usersThatCausedConversationToDegrade)
             ))

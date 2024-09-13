@@ -44,7 +44,7 @@ extension ConversationViewController {
             outgoingConnectionViewController?.willMove(toParent: nil)
             outgoingConnectionViewController?.view.removeFromSuperview()
             outgoingConnectionViewController?.removeFromParent()
-            self.outgoingConnectionViewController = nil
+            outgoingConnectionViewController = nil
         }
     }
 

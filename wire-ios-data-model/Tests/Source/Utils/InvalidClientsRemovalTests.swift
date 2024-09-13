@@ -35,13 +35,13 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
 
     func testThatItDoesNotRemoveValidClients() throws {
         // Given
-        let user = ZMUser.insertNewObject(in: self.moc)
-        let client = UserClient.insertNewObject(in: self.moc)
+        let user = ZMUser.insertNewObject(in: moc)
+        let client = UserClient.insertNewObject(in: moc)
         client.user = user
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidClientsRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidClientsRemoval.removeInvalid(in: moc)
 
         // Then
         XCTAssertFalse(client.isDeleted)
@@ -50,14 +50,14 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
 
     func testThatItDoesRemoveInvalidClient() throws {
         // Given
-        let user = ZMUser.insertNewObject(in: self.moc)
-        let client = UserClient.insertNewObject(in: self.moc)
+        let user = ZMUser.insertNewObject(in: moc)
+        let client = UserClient.insertNewObject(in: moc)
         client.user = user
-        let otherClient = UserClient.insertNewObject(in: self.moc)
-        try self.moc.save()
+        let otherClient = UserClient.insertNewObject(in: moc)
+        try moc.save()
 
         // When
-        WireDataModel.InvalidClientsRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidClientsRemoval.removeInvalid(in: moc)
 
         // Then
         XCTAssertFalse(client.isDeleted)

@@ -37,7 +37,7 @@ extension XCTestCase {
         imageFileName: String,
         userSession: UserSessionMock
     ) -> FullscreenImageViewController {
-        let image = self.image(inTestBundleNamed: imageFileName)
+        let image = image(inTestBundleNamed: imageFileName)
 
         let message = MockMessageFactory.imageMessage(with: image)
 

@@ -75,8 +75,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         }
         listSnapshots[conversationList.identifier] = ConversationListSnapshot(
             conversationList: conversationList,
-            managedObjectContext: self
-                .managedObjectContext
+            managedObjectContext: managedObjectContext
         )
     }
 
@@ -90,8 +89,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     // MARK: Forwarding updates
 
     public func objectsDidChange(changes: [ClassIdentifier: [ObjectChangeInfo]]) {
-        let insertedLabels = self.insertedLabels
-        let deletedLabels = self.deletedLabels
+        let insertedLabels = insertedLabels
+        let deletedLabels = deletedLabels
         self.insertedLabels = []
         self.deletedLabels = []
 
@@ -113,8 +112,8 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
             labelChanges.forEach { labelDidChange($0) }
         }
 
-        let insertedConversations = self.insertedConversations
-        let deletedConversations = self.deletedConversations
+        let insertedConversations = insertedConversations
+        let deletedConversations = deletedConversations
         self.insertedConversations = []
         self.deletedConversations = []
 
@@ -320,8 +319,8 @@ class ConversationListSnapshot: NSObject {
     }
 
     func recalculateListAndNotify() {
-        guard let list = self.conversationList, needsToRecalculate || !conversationChanges.isEmpty else {
-            zmLog.debug("List \(String(describing: self.conversationList?.identifier)) has no changes")
+        guard let list = conversationList, needsToRecalculate || !conversationChanges.isEmpty else {
+            zmLog.debug("List \(String(describing: conversationList?.identifier)) has no changes")
             return
         }
 
@@ -333,7 +332,7 @@ class ConversationListSnapshot: NSObject {
         }
 
         let changedSet = Set(conversationChanges.map(\.conversation))
-        guard let newStateUpdate = self.state.updatedState(
+        guard let newStateUpdate = state.updatedState(
             changedSet,
             observedObject: list,
             newSet: list.toOrderedSetState()
@@ -344,7 +343,7 @@ class ConversationListSnapshot: NSObject {
         }
 
         zmLog.debug("Recalculated  list \(list.identifier) and updated snapshot")
-        self.state = newStateUpdate.newSnapshot
+        state = newStateUpdate.newSnapshot
         listChange = ConversationListChangeInfo(setChangeInfo: newStateUpdate.changeInfo)
     }
 
@@ -362,7 +361,7 @@ class ConversationListSnapshot: NSObject {
             userInfo["conversationListChangeInfo"] = changes
         }
         guard !userInfo.isEmpty else {
-            zmLog.debug("No changes for conversationList \(String(describing: self.conversationList))")
+            zmLog.debug("No changes for conversationList \(String(describing: conversationList))")
             return
         }
 

@@ -52,7 +52,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.callEventStatus = CallEventStatus()
         self.analytics = analytics
         self.teamInvitationStatus = TeamInvitationStatus()
-        self.operationStatus.isInBackground = application.applicationState == .background
+        operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
@@ -76,7 +76,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)
         super.init()
 
-        callInProgressObserverToken = NotificationInContext.addObserver(
+        self.callInProgressObserverToken = NotificationInContext.addObserver(
             name: CallStateObserver.CallInProgressNotification,
             context: managedObjectContext.notificationContext
         ) { [weak self] note in

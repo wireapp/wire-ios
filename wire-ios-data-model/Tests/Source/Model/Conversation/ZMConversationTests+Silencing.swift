@@ -70,11 +70,11 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
     }
 
     func archivedConversation(with mutedMessageTypes: MutedMessageTypes) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID()
 
-        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
         otherUser.remoteIdentifier = UUID()
 
         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
@@ -99,7 +99,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
         let dataString = try! message.serializedData().base64EncodedString()
 
-        let payload = self.payloadForMessage(
+        let payload = payloadForMessage(
             in: conversation,
             type: EventConversationAddClientMessage,
             data: dataString
@@ -110,7 +110,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
     func testThatAppendingAMessageMentioningSelfInAnArchived_RegularMuted_ConversationUnarchivesIt() {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.teamIdentifier = UUID()
 
@@ -118,9 +118,9 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
         // WHEN
         let mention = Mention(range: NSRange(location: 0, length: 9), user: selfUser)
-        let event = self.event(for: "@selfUser", in: conversation, mentions: [mention])
+        let event = event(for: "@selfUser", in: conversation, mentions: [mention])
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             XCTAssertNotNil(ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil))
         }
 
@@ -131,7 +131,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
     func testThatAppendingAMessageMentioningSelfInAnArchived_FullyMuted_ConversationDoesNotUnarchiveIt() {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.teamIdentifier = UUID()
 
@@ -139,9 +139,9 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
         // WHEN
         let mention = Mention(range: NSRange(location: 0, length: 9), user: selfUser)
-        let event = self.event(for: "@selfUser", in: conversation, mentions: [mention])
+        let event = event(for: "@selfUser", in: conversation, mentions: [mention])
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             XCTAssertNotNil(ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil))
         }
 
@@ -152,7 +152,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
     func testThatAppendingAMessageQuotingSelfInAnArchived_RegularMuted_ConversationUnarchivesIt() {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.teamIdentifier = UUID()
 
@@ -172,9 +172,9 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         conversation.isArchived = true
         XCTAssertTrue(conversation.isArchived)
 
-        let event = self.event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
+        let event = event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             XCTAssertNotNil(ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil))
         }
 
@@ -185,7 +185,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
 
     func testThatAppendingAMessageQuotingSelfInAnArchived_FullyMuted_ConversationDoesNotUnarchiveIt() {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.teamIdentifier = UUID()
 
@@ -205,9 +205,9 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         conversation.isArchived = true
         XCTAssertTrue(conversation.isArchived)
 
-        let event = self.event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
+        let event = event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
 
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             XCTAssertNotNil(ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil))
         }
 

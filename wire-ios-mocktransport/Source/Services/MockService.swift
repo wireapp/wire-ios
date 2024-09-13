@@ -71,7 +71,7 @@ public final class MockService: NSManagedObject, EntityNamedProtocol {
             "provider": provider,
             "summary": summary ?? "",
             "tag": tag ?? "",
-            "assets": (self.assets ?? Set()).map {
+            "assets": (assets ?? Set()).map {
                 [
                     "type": "image",
                     "size": "preview",

@@ -196,24 +196,24 @@ extension NotificationUserInfo {
 extension NotificationUserInfo {
     func setupUserInfo(for conversation: ZMConversation, sender: ZMUser) {
         addSelfUserInfo(using: conversation)
-        self.conversationID = conversation.remoteIdentifier
-        self.senderID = sender.remoteIdentifier
+        conversationID = conversation.remoteIdentifier
+        senderID = sender.remoteIdentifier
     }
 
     func setupUserInfo(for conversation: ZMConversation, event: ZMUpdateEvent) {
         addSelfUserInfo(using: conversation)
-        self.conversationID = conversation.remoteIdentifier
-        self.senderID = event.senderUUID
-        self.messageNonce = event.messageNonce
-        self.eventTime = event.timestamp
+        conversationID = conversation.remoteIdentifier
+        senderID = event.senderUUID
+        messageNonce = event.messageNonce
+        eventTime = event.timestamp
     }
 
     func setupUserInfo(for message: ZMMessage) {
         addSelfUserInfo(using: message)
-        self.conversationID = message.conversation?.remoteIdentifier
-        self.senderID = message.sender?.remoteIdentifier
-        self.messageNonce = message.nonce
-        self.eventTime = message.serverTimestamp
+        conversationID = message.conversation?.remoteIdentifier
+        senderID = message.sender?.remoteIdentifier
+        messageNonce = message.nonce
+        eventTime = message.serverTimestamp
     }
 
     /// Adds the description of the self user using the given managed object.

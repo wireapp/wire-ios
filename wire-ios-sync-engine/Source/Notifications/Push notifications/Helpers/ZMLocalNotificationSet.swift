@@ -54,7 +54,7 @@ final class ZMLocalNotificationSet: NSObject {
         guard let archive = keyValueStore.storedValue(key: archivingKey) as? Data,
               let unarchivedNotes = NSKeyedUnarchiver.unarchiveObject(with: archive) as? [NotificationUserInfo]
         else { return }
-        self.oldNotifications = unarchivedNotes
+        oldNotifications = unarchivedNotes
     }
 
     /// Archives all scheduled notifications - this could be optimized

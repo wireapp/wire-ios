@@ -93,7 +93,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
                 "core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
             WireLogger.localStorage.info(logMessage, attributes: .safePublic)
 
-            try self.runPreMigrationStep(migrationStep, for: currentURL)
+            try runPreMigrationStep(migrationStep, for: currentURL)
 
             let manager = NSMigrationManager(
                 sourceModel: migrationStep.sourceModel,
@@ -131,7 +131,7 @@ final class CoreDataMigrator<Version: CoreDataMigrationVersion>: CoreDataMigrato
                 attributes: .safePublic
             )
 
-            try self.runPostMigrationStep(migrationStep, for: currentURL)
+            try runPostMigrationStep(migrationStep, for: currentURL)
         }
         WireLogger.localStorage.info("replace store \(storeURL), with \(currentURL)", attributes: .safePublic)
         try replaceStore(at: storeURL, withStoreAt: currentURL)

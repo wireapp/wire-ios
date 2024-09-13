@@ -100,7 +100,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 
         super.init()
 
-        observerToken = userSession.addUserObserver(self, for: user)
+        self.observerToken = userSession.addUserObserver(self, for: user)
     }
 
     // MARK: - Computed Properties
@@ -258,7 +258,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void) {
-        self.conversationTransitionClosure = closure
+        conversationTransitionClosure = closure
     }
 
     // MARK: Connect
@@ -295,7 +295,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     func cancelConnectionRequest(completion: @escaping Completion) {
-        self.user.cancelConnectionRequest { [weak self] error in
+        user.cancelConnectionRequest { [weak self] error in
             if let error = error as? ConnectToUserError {
                 self?.viewModelDelegate?.presentError(error)
             } else {

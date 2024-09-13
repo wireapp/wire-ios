@@ -28,12 +28,12 @@ final class NavigationController: UINavigationController {
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        self.setup()
+        setup()
     }
 
     override init(navigationBarClass: AnyClass?, toolbarClass: AnyClass?) {
         super.init(navigationBarClass: navigationBarClass, toolbarClass: toolbarClass)
-        self.setup()
+        setup()
     }
 
     @available(*, unavailable)
@@ -42,31 +42,31 @@ final class NavigationController: UINavigationController {
     }
 
     private func setup() {
-        self.delegate = self
-        self.transitioningDelegate = self
+        delegate = self
+        transitioningDelegate = self
     }
 
     var useDefaultPopGesture = false {
         didSet {
-            self.interactivePopGestureRecognizer?.isEnabled = useDefaultPopGesture
+            interactivePopGestureRecognizer?.isEnabled = useDefaultPopGesture
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = SemanticColors.View.backgroundDefault
-        self.useDefaultPopGesture = false
-        self.navigationBar.tintColor = SemanticColors.Label.textDefault
-        self.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+        useDefaultPopGesture = false
+        navigationBar.tintColor = SemanticColors.Label.textDefault
+        navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
-        self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(
+        dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(
             target: self,
             action: #selector(NavigationController.onEdgeSwipe(gestureRecognizer:))
         )
-        self.dismissGestureRecognizer.edges = [.left]
-        self.dismissGestureRecognizer.delegate = self
-        self.view.addGestureRecognizer(self.dismissGestureRecognizer)
+        dismissGestureRecognizer.edges = [.left]
+        dismissGestureRecognizer.delegate = self
+        view.addGestureRecognizer(dismissGestureRecognizer)
     }
 
     override func setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
@@ -84,7 +84,7 @@ final class NavigationController: UINavigationController {
     @objc
     func onEdgeSwipe(gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
         if gestureRecognizer.state == .recognized {
-            self.popViewController(animated: true)
+            popViewController(animated: true)
         }
     }
 
@@ -128,7 +128,7 @@ extension NavigationController: UINavigationControllerDelegate {
         from fromVC: UIViewController,
         to toVC: UIViewController
     ) -> UIViewControllerAnimatedTransitioning? {
-        if self.useDefaultPopGesture {
+        if useDefaultPopGesture {
             return nil
         }
 
@@ -159,7 +159,7 @@ extension NavigationController: UIViewControllerTransitioningDelegate {
 
 extension NavigationController: UIGestureRecognizerDelegate {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if self.useDefaultPopGesture, gestureRecognizer == self.dismissGestureRecognizer {
+        if useDefaultPopGesture, gestureRecognizer == dismissGestureRecognizer {
             return false
         }
         return true

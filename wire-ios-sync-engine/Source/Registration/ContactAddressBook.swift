@@ -47,7 +47,7 @@ extension ContactAddressBook: AddressBookAccessor {
         }
 
         guard !query.isEmpty else {
-            return self.firstRawContacts(number: addressBookContactsSearchLimit)
+            return firstRawContacts(number: addressBookContactsSearchLimit)
         }
 
         let predicate: NSPredicate = CNContact.predicateForContacts(matchingName: query.lowercased())
@@ -83,27 +83,27 @@ extension ContactAddressBook: AddressBookAccessor {
 
 extension CNContact: ContactRecord {
     var rawEmails: [String] {
-        self.emailAddresses.map { $0.value as String }
+        emailAddresses.map { $0.value as String }
     }
 
     var rawPhoneNumbers: [String] {
-        self.phoneNumbers.map(\.value.stringValue)
+        phoneNumbers.map(\.value.stringValue)
     }
 
     var firstName: String {
-        self.givenName
+        givenName
     }
 
     var lastName: String {
-        self.familyName
+        familyName
     }
 
     var organization: String {
-        self.organizationName
+        organizationName
     }
 
     var localIdentifier: String {
-        self.identifier
+        identifier
     }
 }
 
@@ -129,10 +129,10 @@ extension ZMAddressBookContact {
         self.rawPhoneNumbers = contact.phoneNumbers.map(\.value.stringValue)
 
         // normalize phone
-        self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
+        self.phoneNumbers = rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
 
         // ignore contacts with no email nor phones
-        guard !self.emailAddresses.isEmpty || !self.phoneNumbers.isEmpty else {
+        guard !emailAddresses.isEmpty || !phoneNumbers.isEmpty else {
             return nil
         }
     }

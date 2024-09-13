@@ -53,14 +53,14 @@ final class ConversationParticipantsChangedSystemMessageCellDescription: Convers
             message: message
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: model.image(),
             attributedText: model.attributedTitle(),
             showLine: true,
             warning: model.warning()
         )
 
-        accessibilityLabel = model.attributedTitle()?.string
-        actionController = nil
+        self.accessibilityLabel = model.attributedTitle()?.string
+        self.actionController = nil
     }
 }

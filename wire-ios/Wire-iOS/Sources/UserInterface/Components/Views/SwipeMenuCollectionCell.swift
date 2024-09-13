@@ -148,7 +148,7 @@ class SwipeMenuCollectionCell: UICollectionViewCell {
         super.init(frame: frame)
         setupSwipeMenuCollectionCell()
 
-        revealDrawerGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(onDrawerScroll(_:)))
+        self.revealDrawerGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(onDrawerScroll(_:)))
         setupRecognizer()
     }
 

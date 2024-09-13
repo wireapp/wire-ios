@@ -28,7 +28,7 @@ public struct MLSClientID: Equatable, Hashable {
     public var domain: String
 
     public var rawValue: String {
-        "\(self.userID):\(self.clientID)@\(self.domain)"
+        "\(userID):\(clientID)@\(domain)"
     }
 
     public var data: Data? {

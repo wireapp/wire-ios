@@ -37,12 +37,12 @@ extension MessagingTest {
     }
 
     public func createClientTextMessage() -> ZMClientMessage? {
-        createClientTextMessageWith(text: self.name)
+        createClientTextMessageWith(text: name)
     }
 
     public func createClientTextMessageWith(text: String) -> ZMClientMessage? {
         let nonce = UUID.create()
-        let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
+        let message = ZMClientMessage(nonce: nonce, managedObjectContext: syncMOC)
         let textMessage = GenericMessage(content: Text(
             content: text,
             mentions: [],

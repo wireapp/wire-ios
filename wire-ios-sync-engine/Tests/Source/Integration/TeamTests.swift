@@ -27,7 +27,11 @@ final class TestTeamObserver: NSObject, TeamObserver {
 
     init(team: Team? = nil, userSession: ZMUserSession) {
         super.init()
-        token = TeamChangeInfo.add(observer: self, for: team, managedObjectContext: userSession.managedObjectContext)
+        self.token = TeamChangeInfo.add(
+            observer: self,
+            for: team,
+            managedObjectContext: userSession.managedObjectContext
+        )
     }
 
     func teamDidChange(_ changeInfo: TeamChangeInfo) {
@@ -60,11 +64,11 @@ class TeamTests: IntegrationTest {
 
     func testThatOtherUserCanBeRemovedRemotely() {
         // given
-        let mockTeam = remotelyInsertTeam(members: [self.selfUser, self.user1])
+        let mockTeam = remotelyInsertTeam(members: [selfUser, user1])
 
         XCTAssert(login())
 
-        let user = self.user(for: user1)!
+        let user = user(for: user1)!
         let localSelfUser = self.user(for: selfUser)!
         XCTAssert(user.hasTeam)
         XCTAssert(localSelfUser.hasTeam)
@@ -82,7 +86,7 @@ class TeamTests: IntegrationTest {
 
     func testThatAccountIsDeletedWhenSelfUserIsRemovedFromTeam() {
         // given
-        let mockTeam = remotelyInsertTeam(members: [self.selfUser, self.user1])
+        let mockTeam = remotelyInsertTeam(members: [selfUser, user1])
 
         XCTAssert(login())
 
@@ -101,7 +105,7 @@ class TeamTests: IntegrationTest {
 
     func testThatItNotifiesAboutOtherUserRemovedRemotely() {
         // given
-        let mockTeam = remotelyInsertTeam(members: [self.selfUser, self.user1])
+        let mockTeam = remotelyInsertTeam(members: [selfUser, user1])
 
         XCTAssert(login())
         let teamObserver = TestTeamObserver(team: nil, userSession: userSession!)

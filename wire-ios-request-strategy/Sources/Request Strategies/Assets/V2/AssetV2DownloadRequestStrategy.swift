@@ -40,7 +40,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading
         }
 
-        assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
+        self.assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
             predicateForObjectsToDownload: downloadPredicate,
@@ -54,7 +54,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     func registerForCancellationNotification() {
         notificationTokens.append(NotificationInContext.addObserver(
             name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
-            context: self.managedObjectContext.notificationContext,
+            context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
@@ -65,7 +65,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     func registerForWhitelistingNotification() {
         notificationTokens.append(NotificationInContext.addObserver(
             name: ZMAssetClientMessage.assetDownloadNotificationName,
-            context: self.managedObjectContext.notificationContext,
+            context: managedObjectContext.notificationContext,
             object: nil
         ) { [weak self] note in
             guard let objectID = note.object as? NSManagedObjectID else { return }
@@ -76,10 +76,10 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
             message.isDownloading = true
-            self.assetDownstreamObjectSync.whiteListObject(message)
+            assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
     }
@@ -87,17 +87,17 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
+            guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
             else { return }
             guard message.version < 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
-            self.applicationStatus?.requestCancellation.cancelTask(with: identifier)
+            applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.associatedTaskIdentifier = nil
         }
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        self.assetDownstreamObjectSync.nextRequest(for: apiVersion)
+        assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
     fileprivate func handleResponse(
@@ -150,7 +150,7 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     // MARK: - ZMContextChangeTrackerSource
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [self.assetDownstreamObjectSync]
+        [assetDownstreamObjectSync]
     }
 
     // MARK: - ZMDownstreamTranscoder
@@ -167,11 +167,11 @@ public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                     assetClientMessage.associatedTaskIdentifier = taskIdentifier
                 }
 
-                let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
+                let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 }
 
-                let progressHandler = ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+                let progressHandler = ZMTaskProgressHandler(on: managedObjectContext) { progress in
                     assetClientMessage.progress = progress
                     self.managedObjectContext.enqueueDelayedSave()
                 }

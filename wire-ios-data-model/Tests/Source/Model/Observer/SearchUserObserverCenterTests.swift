@@ -107,10 +107,10 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
         sut.addSearchUser(searchUser)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
+        let expectation = customExpectation(description: "notified")
         let token: Any? = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { _ in
             expectation.fulfill()
@@ -139,10 +139,10 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
         sut.addSearchUser(searchUser)
 
         // expect
-        let expectation = self.customExpectation(description: "notified")
+        let expectation = customExpectation(description: "notified")
         let token = NotificationInContext.addObserver(
             name: .SearchUserChange,
-            context: self.uiMOC.notificationContext,
+            context: uiMOC.notificationContext,
             object: searchUser
         ) { note in
             guard let changeInfo = note.changeInfo as? UserChangeInfo else { return }

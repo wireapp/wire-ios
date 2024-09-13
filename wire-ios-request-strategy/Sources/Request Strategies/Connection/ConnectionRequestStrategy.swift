@@ -62,13 +62,13 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
                 context: managedObjectContext
             )
 
-        connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
-        connectionByIDSync = IdentifierObjectSync(
+        self.connectionByIDTranscoder = ConnectionByIDTranscoder(context: managedObjectContext)
+        self.connectionByIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByIDTranscoder
         )
-        connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext)
-        connectionByQualifiedIDSync = IdentifierObjectSync(
+        self.connectionByQualifiedIDTranscoder = ConnectionByQualifiedIDTranscoder(context: managedObjectContext)
+        self.connectionByQualifiedIDSync = IdentifierObjectSync(
             managedObjectContext: managedObjectContext,
             transcoder: connectionByQualifiedIDTranscoder
         )
@@ -251,7 +251,7 @@ extension ConnectionRequestStrategy: ZMEventConsumer {
                     try await Task.sleep(nanoseconds: UInt64(oneOnOneResolutionDelay * 1_000_000_000.0))
                 }
 
-                let resolver = self.oneOnOneResolver
+                let resolver = oneOnOneResolver
                 try await resolver.resolveOneOnOneConversation(with: userID, in: context)
 
                 await context.perform {

@@ -34,12 +34,12 @@ class DatabaseBaseTest: ZMTBaseTest {
 
     override public func setUp() {
         super.setUp()
-        self.clearStorageFolder()
+        clearStorageFolder()
         try! FileManager.default.createDirectory(at: Self.applicationContainer, withIntermediateDirectories: true)
     }
 
     override public func tearDown() {
-        self.clearStorageFolder()
+        clearStorageFolder()
         super.tearDown()
     }
 
@@ -71,7 +71,7 @@ class DatabaseBaseTest: ZMTBaseTest {
             dispatchGroup: dispatchGroup
         )
 
-        let exp = self.customExpectation(description: "should wait for loadStores to finish")
+        let exp = customExpectation(description: "should wait for loadStores to finish")
         stack.setup(onStartMigration: {
             // do nothing
         }, onFailure: { error in

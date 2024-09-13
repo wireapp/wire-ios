@@ -57,7 +57,7 @@ final class MessageActionsViewController: UIAlertController {
     }
 
     private func addReactionsView(withDelegate delegate: ReactionPickerDelegate) {
-        guard let customContentPlaceholder = self.view
+        guard let customContentPlaceholder = view
             .findLabel(withText: MessageActionsViewController.MessageLabelMarker),
             let customContainer = customContentPlaceholder.superview else { return }
 
@@ -127,7 +127,7 @@ extension UIView {
         if let label = self as? UILabel, label.text == text {
             return label
         }
-        for subview in self.subviews {
+        for subview in subviews {
             if let found = subview.findLabel(withText: text) {
                 return found
             }

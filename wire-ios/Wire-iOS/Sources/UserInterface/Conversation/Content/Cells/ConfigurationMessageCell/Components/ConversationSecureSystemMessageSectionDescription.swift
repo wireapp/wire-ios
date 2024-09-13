@@ -47,13 +47,13 @@ final class ConversationSecureSystemMessageSectionDescription: ConversationMessa
             attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: WireStyleKit.imageOfShieldverified,
             attributedText: title,
             showLine: true
         )
 
-        accessibilityLabel = title.string
-        actionController = nil
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 }

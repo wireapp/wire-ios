@@ -37,7 +37,7 @@ extension ZMAssetClientMessage {
     }
 
     @objc override public var deletionTimeout: TimeInterval {
-        guard let ephemeral = self.ephemeral else {
+        guard let ephemeral else {
             return -1
         }
         return TimeInterval(ephemeral.expireAfterMillis / 1000)
@@ -94,7 +94,7 @@ extension ZMAssetClientMessage {
 
         guard
             let isSelfUser = sender?.isSelfUser,
-            let destructionDate = self.destructionDate,
+            let destructionDate,
             date > destructionDate,
             timeout > 0 else {
             return

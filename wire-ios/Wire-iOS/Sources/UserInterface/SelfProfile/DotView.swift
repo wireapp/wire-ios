@@ -26,7 +26,7 @@ final class DotView: UIView {
     private var clientsObserverTokens: [NSObjectProtocol] = []
     private let user: ZMUser?
     var hasUnreadMessages = false {
-        didSet { self.updateIndicator() }
+        didSet { updateIndicator() }
     }
 
     var showIndicator: Bool {
@@ -62,7 +62,7 @@ final class DotView: UIView {
 
         if let userSession = ZMUserSession.shared(),
            let user {
-            userObserver = UserChangeInfo.add(observer: self, for: user, in: userSession)
+            self.userObserver = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
         createClientObservers()

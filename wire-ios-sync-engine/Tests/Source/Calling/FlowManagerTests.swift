@@ -23,7 +23,7 @@ import Foundation
 class FlowManagerTests: MessagingTest {
     func testThatItSendsNotificationWhenFlowManagerIsCreated() {
         // GIVEN
-        let expectation = self.customExpectation(description: "Notification is sent")
+        let expectation = customExpectation(description: "Notification is sent")
         let notificationObserver = NotificationCenter.default.addObserver(
             forName: FlowManager.AVSFlowManagerCreatedNotification,
             object: nil,
@@ -36,7 +36,7 @@ class FlowManagerTests: MessagingTest {
         _ = FlowManager(mediaManager: MockMediaManager())
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         NotificationCenter.default.removeObserver(notificationObserver)
     }
 }

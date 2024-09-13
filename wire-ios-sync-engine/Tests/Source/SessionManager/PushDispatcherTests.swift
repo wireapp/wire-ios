@@ -108,7 +108,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.updatePushToken(to: PushToken(data: type(of: self).token))
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         // THEN
         XCTAssertEqual(client.pushTokens.count, 1)
         XCTAssertEqual(client.pushTokens[0]?.data, type(of: self).token)
@@ -135,7 +135,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.didReceiveRemoteNotification(type(of: self).payload, fetchCompletionHandler: { _ in })
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(client.canHandlePayloads.count, 1)
@@ -153,7 +153,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.didReceiveRemoteNotification(type(of: self).payload, fetchCompletionHandler: { _ in })
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(client.canHandlePayloads.count, 1)
@@ -170,7 +170,7 @@ public final class PushDispatcherTests: ZMTBaseTest {
         // WHEN
         sut.didReceiveRemoteNotification(type(of: self).payload, fetchCompletionHandler: { _ in })
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual(fallbackClient.receivedPayloads.count, 1)

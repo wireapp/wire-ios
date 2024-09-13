@@ -50,9 +50,9 @@ final class ConversationMessageActionController {
     }
 
     func allMessageMenuElements() -> [UIAction] {
-        weak var responder = self.responder
-        weak var message = self.message
-        unowned let targetView: UIView = self.view
+        weak var responder = responder
+        weak var message = message
+        unowned let targetView: UIView = view
 
         return allPerformableMessageAction.compactMap { messageAction in
             guard let title = messageAction.title else { return nil }

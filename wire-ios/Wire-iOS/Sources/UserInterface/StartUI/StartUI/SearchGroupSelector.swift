@@ -36,13 +36,13 @@ final class SearchGroupSelector: UIView, TabBarDelegate {
     // MARK: - Initialization
 
     init() {
-        groups = SearchGroup.all
+        self.groups = SearchGroup.all
 
         let groupItems: [UITabBarItem] = groups.enumerated().map { index, group in
             UITabBarItem(title: group.name, image: nil, tag: index)
         }
 
-        tabBar = TabBar(items: groupItems, selectedIndex: 0)
+        self.tabBar = TabBar(items: groupItems, selectedIndex: 0)
         super.init(frame: .zero)
 
         configureViews()

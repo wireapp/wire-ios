@@ -85,8 +85,8 @@ final class MockArticleViewDelegate: ContextMenuLinkViewDelegate {
     let mockConversationMessageCellDelegate = MockConversationMessageCellDelegate()
 
     init() {
-        delegate = mockConversationMessageCellDelegate
-        message = MockMessage()
+        self.delegate = mockConversationMessageCellDelegate
+        self.message = MockMessage()
     }
 }
 

@@ -45,7 +45,7 @@ extension ConversationListViewController.ViewModel {
             conversation: conversation,
             target: viewController,
             sourceView: view,
-            userSession: self.userSession
+            userSession: userSession
         )
         actionsController?.presentMenu(from: view, context: .list)
     }

@@ -32,7 +32,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForNotActiveConversationWithHandle() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
 
         // WHEN
         let status = sut.status.description(for: sut)
@@ -43,7 +43,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForNotActiveConversationGroup() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
 
         // WHEN
         let status = sut.status.description(for: sut)
@@ -54,7 +54,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusFailedToSend() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         let message = try! sut.appendText(content: "text") as! ZMMessage
         message.expire()
 
@@ -67,8 +67,8 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusBlocked() {
         // GIVEN
-        let sut = self.otherUserConversation!
-        self.otherUser.connection?.status = .blocked
+        let sut = otherUserConversation!
+        otherUser.connection?.status = .blocked
 
         // WHEN
         let status = sut.status.description(for: sut)
@@ -79,7 +79,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusMissedCall() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         appendMissedCall(to: sut)
         markAllMessagesAsUnread(in: sut)
 
@@ -104,9 +104,9 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusRejectedCall() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        otherMessage.sender = self.otherUser
+        otherMessage.sender = otherUser
         otherMessage.systemMessageType = .missedCall
         otherMessage.relevantForConversationStatus = false
         sut.append(otherMessage)
@@ -120,10 +120,10 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForMultipleTextMessagesInConversation() throws {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         for index in 1 ... 5 {
             let message = try sut.appendText(content: "test \(index)") as? ZMClientMessage
-            message?.sender = self.otherUser
+            message?.sender = otherUser
             message?.serverTimestamp = Date(timeIntervalSince1970: Double(index))
         }
         markAllMessagesAsUnread(in: sut)
@@ -137,7 +137,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusSecondReplyDoesNotSummarize() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
 
         let selfMessage = appendSelfMessage(to: sut)
 
@@ -161,14 +161,14 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusMissedCallAndUnreadMessagesAndReplies() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
 
         let selfMessage = try! sut.appendText(content: "I am a programmer") as! ZMMessage
         selfMessage.sender = selfUser
 
         for index in 1 ... 3 {
             (try! sut.appendText(content: "Yes, it is true \(index)", replyingTo: selfMessage) as! ZMMessage)
-                .sender = self.otherUser
+                .sender = otherUser
         }
         sut.setPrimitiveValue(3, forKey: ZMConversationInternalEstimatedUnreadSelfReplyCountKey)
 
@@ -176,7 +176,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
         // insert messages from other
         for index in 1 ... 2 {
-            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
+            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = otherUser
         }
 
         markAllMessagesAsUnread(in: sut)
@@ -190,13 +190,13 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForMultipleTextMessagesInConversationIncludingMention() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         for index in 1 ... 5 {
-            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
+            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = otherUser
         }
 
-        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-        (try! sut.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self.otherUser
+        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+        (try! sut.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = otherUser
         sut.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadSelfMentionCountKey)
 
         markAllMessagesAsUnread(in: sut)
@@ -210,12 +210,12 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func disable_testStatusForMultipleTextMessagesInConversation_LastRename() {
         // GIVEN
-        let sut = self.otherUserConversation!
+        let sut = otherUserConversation!
         for index in 1 ... 5 {
-            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = self.otherUser
+            (try! sut.appendText(content: "test \(index)") as! ZMMessage).sender = otherUser
         }
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        otherMessage.sender = self.otherUser
+        otherMessage.sender = otherUser
         otherMessage.systemMessageType = .conversationNameChanged
         sut.append(otherMessage)
 
@@ -230,7 +230,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForSystemMessageILeft() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         sut.removeParticipantsAndUpdateConversationState(users: [selfUser], initiatingUser: selfUser)
 
         // WHEN
@@ -245,9 +245,9 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let sut = createGroupConversation()
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsAdded
-        otherMessage.sender = self.otherUser
-        otherMessage.users = Set([self.selfUser])
-        otherMessage.addedUsers = Set([self.selfUser])
+        otherMessage.sender = otherUser
+        otherMessage.users = Set([selfUser])
+        otherMessage.addedUsers = Set([selfUser])
         sut.append(otherMessage)
 
         markAllMessagesAsUnread(in: sut)
@@ -256,7 +256,7 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let status = sut.status.description(for: sut)
 
         // THEN
-        XCTAssertEqual(status.string, "\(self.otherUser.name ?? "") added you")
+        XCTAssertEqual(status.string, "\(otherUser.name ?? "") added you")
     }
 
     func testNoStatusForSystemMessageIAddedSomeone() {
@@ -264,9 +264,9 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let sut = createGroupConversation()
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsAdded
-        otherMessage.sender = self.selfUser
-        otherMessage.users = Set([self.otherUser])
-        otherMessage.addedUsers = Set([self.otherUser])
+        otherMessage.sender = selfUser
+        otherMessage.users = Set([otherUser])
+        otherMessage.addedUsers = Set([otherUser])
         sut.append(otherMessage)
 
         markAllMessagesAsUnread(in: sut)
@@ -285,9 +285,9 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         sut.addParticipantAndUpdateConversationState(user: user)
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsRemoved
-        otherMessage.sender = self.selfUser
-        otherMessage.users = Set([self.otherUser])
-        otherMessage.removedUsers = Set([self.otherUser])
+        otherMessage.sender = selfUser
+        otherMessage.users = Set([otherUser])
+        otherMessage.removedUsers = Set([otherUser])
         sut.append(otherMessage)
 
         markAllMessagesAsUnread(in: sut)
@@ -304,9 +304,9 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let sut = createGroupConversation()
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsRemoved
-        otherMessage.sender = self.otherUser
-        otherMessage.users = Set([self.selfUser])
-        otherMessage.removedUsers = Set([self.selfUser])
+        otherMessage.sender = otherUser
+        otherMessage.users = Set([selfUser])
+        otherMessage.removedUsers = Set([selfUser])
         sut.append(otherMessage)
 
         markAllMessagesAsUnread(in: sut)
@@ -326,9 +326,9 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsRemoved
-        otherMessage.sender = self.otherUser
-        otherMessage.users = Set([self.otherUser])
-        otherMessage.removedUsers = Set([self.otherUser])
+        otherMessage.sender = otherUser
+        otherMessage.users = Set([otherUser])
+        otherMessage.removedUsers = Set([otherUser])
         sut.append(otherMessage)
 
         markAllMessagesAsUnread(in: sut)
@@ -342,12 +342,12 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForConversationStarted() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .newConversation
-        otherMessage.sender = self.otherUser
-        otherMessage.users = Set([self.otherUser, self.selfUser])
-        otherMessage.addedUsers = Set([self.otherUser, self.selfUser])
+        otherMessage.sender = otherUser
+        otherMessage.users = Set([otherUser, selfUser])
+        otherMessage.addedUsers = Set([otherUser, selfUser])
         sut.lastServerTimeStamp = Date()
         sut.append(otherMessage)
         markAllMessagesAsUnread(in: sut)
@@ -356,17 +356,17 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
         let status = sut.status.description(for: sut)
 
         // THEN
-        XCTAssertEqual(status.string, "\(self.otherUser.name ?? "") started a conversation")
+        XCTAssertEqual(status.string, "\(otherUser.name ?? "") started a conversation")
     }
 
     func testNoStatusForSelfConversationStarted() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .newConversation
-        otherMessage.sender = self.selfUser
-        otherMessage.users = Set([self.otherUser, self.selfUser])
-        otherMessage.addedUsers = Set([self.otherUser, self.selfUser])
+        otherMessage.sender = selfUser
+        otherMessage.users = Set([otherUser, selfUser])
+        otherMessage.addedUsers = Set([otherUser, selfUser])
         sut.append(otherMessage)
 
         // WHEN
@@ -378,12 +378,12 @@ final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testThatTypingHasHigherPrioThanMentions() {
         // GIVEN
-        let sut = self.createGroupConversation()
+        let sut = createGroupConversation()
         sut.managedObjectContext?.saveOrRollback()
         sut.setTypingUsers([otherUser])
 
-        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: self.selfUser)
-        (try! sut.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = self.otherUser
+        let selfMention = Mention(range: NSRange(location: 0, length: 5), user: selfUser)
+        (try! sut.appendText(content: "@self test", mentions: [selfMention]) as! ZMMessage).sender = otherUser
 
         markAllMessagesAsUnread(in: sut)
 

@@ -48,7 +48,7 @@ class MessageObserver: NSObject, ZMMessageObserver {
 
     init(message: ZMMessage) {
         super.init()
-        token = MessageChangeInfo.add(
+        self.token = MessageChangeInfo.add(
             observer: self,
             for: message,
             managedObjectContext: message.managedObjectContext!
@@ -70,7 +70,7 @@ class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
 
     init(context: NSManagedObjectContext) {
         super.init()
-        token = NewUnreadMessagesChangeInfo.add(observer: self, managedObjectContext: context)
+        self.token = NewUnreadMessagesChangeInfo.add(observer: self, managedObjectContext: context)
     }
 
     func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
@@ -89,7 +89,7 @@ final class ConversationObserver: NSObject, ZMConversationObserver {
 
     init(conversation: ZMConversation) {
         super.init()
-        token = ConversationChangeInfo.add(observer: self, for: conversation)
+        self.token = ConversationChangeInfo.add(observer: self, for: conversation)
     }
 
     var notifications = [ConversationChangeInfo]()

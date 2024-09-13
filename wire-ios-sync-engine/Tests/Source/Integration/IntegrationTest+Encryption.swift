@@ -25,7 +25,7 @@ extension IntegrationTest {
     /// Encrypts a message from the given client to the self user.
     /// It will create a session between the two if needed
     public func encryptedMessageToSelf(message: GenericMessage, from sender: UserClient) -> Data {
-        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
+        let selfClient = ZMUser.selfUser(in: userSession!.syncManagedObjectContext).selfClient()!
         if selfClient.user!.remoteIdentifier == nil {
             selfClient.user!.remoteIdentifier = UUID()
         }
@@ -34,7 +34,7 @@ extension IntegrationTest {
         }
 
         var cypherText: Data?
-        self.encryptionContext(for: sender).perform { session in
+        encryptionContext(for: sender).perform { session in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
                 // swiftlint:disable:next todo_requires_jira_link
                 // TODO: [John] use flag here
@@ -97,7 +97,7 @@ extension IntegrationTest {
     /// Creates a session between the self client, and a client matching a remote client.
     /// If no such client exists locally, it creates it (and the user associated with it).
     public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) async {
-        let mockContext = self.mockTransportSession.managedObjectContext
+        let mockContext = mockTransportSession.managedObjectContext
         // .syncManagedObjectContext
         guard let remoteUserIdentifierString = await mockContext.perform({ remoteClient.user?.identifier }),
               let remoteUserIdentifier = UUID(uuidString: remoteUserIdentifierString),
@@ -148,9 +148,9 @@ extension IntegrationTest {
 
     /// Decrypts a message that was sent from self to a given user
     public func decryptMessageFromSelf(cypherText: Data, to client: UserClient) -> Data? {
-        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
+        let selfClient = ZMUser.selfUser(in: userSession!.syncManagedObjectContext).selfClient()!
         var plainText: Data?
-        self.encryptionContext(for: client).perform { session in
+        encryptionContext(for: client).perform { session in
             if session.hasSession(for: selfClient.sessionIdentifier!) {
                 do {
                     plainText = try session.decrypt(cypherText, from: selfClient.sessionIdentifier!)
@@ -175,7 +175,7 @@ extension IntegrationTest {
 extension IntegrationTest {
     /// Delete all other clients encryption contexts
     public func deleteAllOtherEncryptionContexts() {
-        try?  FileManager.default.removeItem(at: self.otherClientsEncryptionContextsURL)
+        try?  FileManager.default.removeItem(at: otherClientsEncryptionContextsURL)
     }
 
     /// Returns the folder where the encryption contexts for other test clients are stored
@@ -191,7 +191,7 @@ extension IntegrationTest {
         if client.remoteIdentifier == nil {
             client.remoteIdentifier = .randomRemoteIdentifier()
         }
-        let url = self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
+        let url = otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         let encryptionContext = EncryptionContext(path: url)
         return encryptionContext

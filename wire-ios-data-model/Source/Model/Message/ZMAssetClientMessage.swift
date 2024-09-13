@@ -32,8 +32,8 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     ) throws {
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
 
-        transferState = .uploading
-        version = 3
+        self.transferState = .uploading
+        self.version = 3
 
         let genericMessage = GenericMessage(content: asset, nonce: nonce, expiresAfterTimeInterval: timeout)
         try mergeWithExistingData(message: genericMessage)
@@ -144,17 +144,17 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     public var associatedTaskIdentifier: ZMTaskIdentifier? {
         get {
             let key = #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)
-            self.willAccessValue(forKey: key)
-            let data = self.primitiveValue(forKey: key) as? Data
-            self.didAccessValue(forKey: key)
+            willAccessValue(forKey: key)
+            let data = primitiveValue(forKey: key) as? Data
+            didAccessValue(forKey: key)
             let value = data.flatMap { ZMTaskIdentifier(from: $0) }
             return value
         }
         set {
             let key = #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data)
-            self.willChangeValue(forKey: key)
-            self.setPrimitiveValue(newValue?.data, forKey: key)
-            self.didChangeValue(forKey: key)
+            willChangeValue(forKey: key)
+            setPrimitiveValue(newValue?.data, forKey: key)
+            didChangeValue(forKey: key)
         }
     }
 
@@ -171,7 +171,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     }
 
     var asset: AssetProxyType? {
-        self.v2Asset ?? self.v3Asset
+        v2Asset ?? v3Asset
     }
 
     override public func expire() {
@@ -201,7 +201,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     }
 
     func setObfuscationTimerIfNeeded() {
-        guard self.isEphemeral else {
+        guard isEphemeral else {
             return
         }
 
@@ -213,7 +213,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
             transferState = .uploading
         }
 
-        self.progress = 0
+        progress = 0
         setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
 
         super.resend()
@@ -222,7 +222,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     override public func update(withPostPayload payload: [AnyHashable: Any], updatedKeys: Set<AnyHashable>?) {
         if let serverTimestamp = (payload as NSDictionary).optionalDate(forKey: "time") {
             self.serverTimestamp = serverTimestamp
-            self.expectsReadConfirmation = self.conversation?.hasReadReceiptsEnabled ?? false
+            expectsReadConfirmation = conversation?.hasReadReceiptsEnabled ?? false
         }
 
         conversation?.updateTimestampsAfterUpdatingMessage(self)
@@ -246,22 +246,22 @@ public class ZMAssetClientMessage: ZMOTRMessage {
 extension ZMAssetClientMessage {
     override public func awakeFromInsert() {
         super.awakeFromInsert()
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
     override public func awakeFromFetch() {
         super.awakeFromFetch()
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
     override public func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
         super.awake(fromSnapshotEvents: flags)
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
     override public func didTurnIntoFault() {
         super.didTurnIntoFault()
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
     }
 
     override public static func entityName() -> String {
@@ -550,7 +550,7 @@ extension ZMAssetClientMessage: AssetMessage {
     }
 
     public var processingState: AssetProcessingState {
-        let assets = self.assets
+        let assets = assets
 
         // There is an asset that still needs encrypting and uploading.
         if assets.contains(where: {

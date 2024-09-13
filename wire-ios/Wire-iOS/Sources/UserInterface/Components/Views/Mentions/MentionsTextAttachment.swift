@@ -68,8 +68,8 @@ final class MentionTextAttachment: NSTextAttachment {
         guard font != self.font || textContainerSize != lastFittingSize else { return }
 
         self.font = font
-        self.lastFittingSize = textContainerSize
-        self.attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
+        lastFittingSize = textContainerSize
+        attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
 
         image = mentionImage(fittingIntoSize: textContainerSize)
     }

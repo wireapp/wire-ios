@@ -81,7 +81,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         self.otherUser = otherUser
         otherUserID = otherUser.avsIdentifier
 
-        let oneOnOneConversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let oneOnOneConversation = ZMConversation.insertNewObject(in: uiMOC)
         oneOnOneConversation.remoteIdentifier = UUID.create()
         oneOnOneConversation.conversationType = .oneOnOne
         oneOnOneConversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
@@ -89,7 +89,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         self.oneOnOneConversation = oneOnOneConversation
         oneOnOneConversationID = oneOnOneConversation.avsIdentifier!
 
-        let groupConversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let groupConversation = ZMConversation.insertNewObject(in: uiMOC)
         groupConversation.remoteIdentifier = UUID.create()
         groupConversation.conversationType = .group
         groupConversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
@@ -1294,7 +1294,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         // given
         let userId = AVSIdentifier.stub
         let clientId = "foo"
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
         let callEvent = CallEvent(
             data: data,
             currentTimestamp: Date(),
@@ -1357,7 +1357,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         // given
         let userId = AVSIdentifier.stub
         let clientId = "foo"
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
         let callEvent = CallEvent(
             data: data,
             currentTimestamp: Date(),
@@ -1384,7 +1384,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         // given
         let userId = AVSIdentifier.stub
         let clientId = "foo"
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
         let callEvent = CallEvent(
             data: data,
             currentTimestamp: Date(),
@@ -1414,7 +1414,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatTheReceivedCallHandlerPostsTheRightNotification_WithErrorUnknownProtocol() {
         let userId = AVSIdentifier.stub
         let clientId = "foo"
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
         let callEvent = CallEvent(
             data: data,
             currentTimestamp: Date(),
@@ -1456,7 +1456,7 @@ final class WireCallCenterV3Tests: MessagingTest {
     func testThatTheReceivedCallHandlerDoesntPostNotifications_WithNoError() {
         let userId = AVSIdentifier.stub
         let clientId = "foo"
-        let data = self.verySmallJPEGData()
+        let data = verySmallJPEGData()
         let callEvent = CallEvent(
             data: data,
             currentTimestamp: Date(),

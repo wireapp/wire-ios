@@ -53,20 +53,20 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
         }
 
         let conversation = await syncMOC.perform { [self] in
-            let user = ZMUser.insertNewObject(in: self.syncMOC)
+            let user = ZMUser.insertNewObject(in: syncMOC)
             user.remoteIdentifier = .create()
 
-            let connection = ZMConnection.insertNewObject(in: self.syncMOC)
+            let connection = ZMConnection.insertNewObject(in: syncMOC)
             connection.to = user
 
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.oneOnOneUser = user
             conversation.conversationType = .oneOnOne
 
             return conversation
         }
         // when
-        let (data, _) = await message.encryptForTransport(for: conversation, in: self.syncMOC)!
+        let (data, _) = await message.encryptForTransport(for: conversation, in: syncMOC)!
         let otrMessage = Proteus_NewOtrMessage.with {
             try? $0.merge(serializedData: data)
         }

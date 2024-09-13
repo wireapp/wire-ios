@@ -39,7 +39,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
             label: label
         )
 
-        baseQuery = [
+        self.baseQuery = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: id,
         ]

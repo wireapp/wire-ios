@@ -75,7 +75,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
 
         // when
         guard let conversation = ZMConversation.insertGroupConversation(
-            session: self.coreDataStack,
+            session: coreDataStack,
             participants: [user]
         ) else { return XCTFail("no conversation") }
 

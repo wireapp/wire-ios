@@ -147,24 +147,24 @@ final class StoreUpdateEventTests: MessagingTestBase {
     }
 
     private func createStoredEvents(encrypt: Bool) throws -> ([ZMUpdateEvent], [StoredUpdateEvent]) {
-        let conversation = self.createConversation(in: self.uiMOC)
-        let event1 = self.createNewConversationEvent(for: conversation)
-        let event2 = try self.createNewCallEvent(for: conversation)
+        let conversation = createConversation(in: uiMOC)
+        let event1 = createNewConversationEvent(for: conversation)
+        let event2 = try createNewCallEvent(for: conversation)
 
         guard let storedEvent1 = StoredUpdateEvent.encryptAndCreate(
             event1,
-            context: self.eventMOC,
+            context: eventMOC,
             index: 2,
-            publicKeys: encrypt ? self.publicKeys : nil
+            publicKeys: encrypt ? publicKeys : nil
         ) else {
             throw Failure("Did not create storedEvent")
         }
 
         guard let storedEvent2 = StoredUpdateEvent.encryptAndCreate(
             event2,
-            context: self.eventMOC,
+            context: eventMOC,
             index: 3,
-            publicKeys: encrypt ? self.publicKeys : nil
+            publicKeys: encrypt ? publicKeys : nil
         ) else {
             throw Failure("Did not create storedEvent")
         }

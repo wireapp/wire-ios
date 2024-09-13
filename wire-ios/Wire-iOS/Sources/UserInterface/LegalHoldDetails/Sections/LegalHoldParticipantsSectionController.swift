@@ -56,12 +56,12 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
     weak var delegate: LegalHoldParticipantsSectionControllerDelegate?
 
     init(conversation: LegalHoldDetailsConversation) {
-        viewModel = conversation.createViewModel()
+        self.viewModel = conversation.createViewModel()
         self.conversation = conversation
         super.init()
 
         if let userSession = ZMUserSession.shared() {
-            token = UserChangeInfo.add(userObserver: self, in: userSession)
+            self.token = UserChangeInfo.add(userObserver: self, in: userSession)
         }
     }
 

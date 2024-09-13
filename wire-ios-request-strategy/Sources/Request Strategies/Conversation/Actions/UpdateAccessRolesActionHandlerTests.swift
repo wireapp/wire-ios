@@ -156,11 +156,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             let action = UpdateAccessRolesAction(
-                conversation: self.conversation,
+                conversation: conversation,
                 accessMode: accessMode,
                 accessRoles: accessRoles
             )
-            let expectation = self.customExpectation(description: "wait for handler to be called")
+            let expectation = customExpectation(description: "wait for handler to be called")
             action.resultHandler = { _ in
                 expectation.fulfill()
             }
@@ -172,7 +172,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             let conversationEvent = conversationEventPayload(
                 from: payload,
                 conversationID: conversation.qualifiedID,
-                senderID: self.otherUser.qualifiedID
+                senderID: otherUser.qualifiedID
             )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(
@@ -190,11 +190,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                 ConversationAccessRoleV2.service,
             ])
 
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
         }
 
         // then
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
             XCTAssertEqual(conversation.accessRoles, [
                 ConversationAccessRoleV2.teamMember,
@@ -208,11 +208,11 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateAccessRolesAction(
-                conversation: self.conversation,
+                conversation: conversation,
                 accessMode: accessMode,
                 accessRoles: accessRoles
             )
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -227,7 +227,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             let conversationEvent = conversationEventPayload(
                 from: payload,
                 conversationID: conversation.qualifiedID,
-                senderID: self.otherUser.qualifiedID
+                senderID: otherUser.qualifiedID
             )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
             let response = ZMTransportResponse(
@@ -238,7 +238,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
         }
 
         // then
@@ -249,12 +249,12 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateAccessRolesAction(
-                conversation: self.conversation,
+                conversation: conversation,
                 accessMode: accessMode,
                 accessRoles: accessRoles
             )
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
@@ -269,7 +269,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

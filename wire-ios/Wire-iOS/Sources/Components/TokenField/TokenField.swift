@@ -722,7 +722,7 @@ final class TokenField: UIView {
         }
 
         let oldFilterText = filterText
-        self.filterText = ((textView.text as NSString).substring(from: indexOfFilterText)).replacingOccurrences(
+        filterText = ((textView.text as NSString).substring(from: indexOfFilterText)).replacingOccurrences(
             of: "\u{FFFC}",
             with: ""
         )

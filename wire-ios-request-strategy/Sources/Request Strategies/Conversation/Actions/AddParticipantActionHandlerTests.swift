@@ -188,7 +188,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
 
         syncMOC.performGroupedAndWait { [self] in
             // given
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
             let member = Payload.ConversationMember(
                 id: user.remoteIdentifier,
@@ -213,13 +213,13 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             )
         }
 
-        let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
+        let waitForHandler = customExpectation(description: "wait for Handler to be called")
 
         action.resultHandler = { _ in
             waitForHandler.fulfill()
         }
         // when
-        self.sut.handleResponse(response, action: action)
+        sut.handleResponse(response, action: action)
 
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -232,19 +232,19 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     func testThatItRefetchTeamUsers_On403() {
         syncMOC.performGroupedAndWait { [self] in
             // given
-            let team = Team.insertNewObject(in: self.syncMOC)
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let team = Team.insertNewObject(in: syncMOC)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
 
-            let teamUser = ZMUser.insertNewObject(in: self.syncMOC)
+            let teamUser = ZMUser.insertNewObject(in: syncMOC)
             teamUser.remoteIdentifier = UUID()
             teamUser.needsToBeUpdatedFromBackend = false
 
-            let nonTeamUser = ZMUser.insertNewObject(in: self.syncMOC)
+            let nonTeamUser = ZMUser.insertNewObject(in: syncMOC)
             nonTeamUser.remoteIdentifier = UUID()
             nonTeamUser.needsToBeUpdatedFromBackend = false
 
-            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
-            _ = Member.getOrUpdateMember(for: teamUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: syncMOC)
+            _ = Member.getOrUpdateMember(for: teamUser, in: team, context: syncMOC)
 
             let action = AddParticipantAction(users: [teamUser, nonTeamUser], conversation: conversation)
             let response = ZMTransportResponse(
@@ -255,7 +255,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(teamUser.needsToBeUpdatedFromBackend)
@@ -269,9 +269,9 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         var response: ZMTransportResponse!
         syncMOC.performGroupedAndWait { [self] in
             // given
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -304,7 +304,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         }
 
         // when
-        self.sut.handleResponse(response, action: action)
+        sut.handleResponse(response, action: action)
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -315,7 +315,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
@@ -329,7 +329,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -341,7 +341,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.customExpectation(description: "Result Handler was called")
+            let expectation = customExpectation(description: "Result Handler was called")
             action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
@@ -356,7 +356,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             )
 
             // when
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -369,11 +369,11 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             let applesDomain = "apples@domain.com"
             let bananasDomain = "bananas@domain.com"
 
-            let applesUser = ZMUser.insertNewObject(in: self.syncMOC)
+            let applesUser = ZMUser.insertNewObject(in: syncMOC)
             applesUser.remoteIdentifier = UUID()
             applesUser.domain = applesDomain
 
-            let bananasUser = ZMUser.insertNewObject(in: self.syncMOC)
+            let bananasUser = ZMUser.insertNewObject(in: syncMOC)
             bananasUser.remoteIdentifier = UUID()
             bananasUser.domain = bananasDomain
 
@@ -382,7 +382,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.customExpectation(description: "isDone")
+            let isDone = customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -406,7 +406,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             )
 
             // When
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -417,7 +417,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         syncMOC.performGroupedAndWait { [self] in
             // Given
             let unreachableDomain = "foma.wire.link"
-            let unreachableUser = ZMUser.insertNewObject(in: self.syncMOC)
+            let unreachableUser = ZMUser.insertNewObject(in: syncMOC)
             unreachableUser.remoteIdentifier = UUID()
             unreachableUser.domain = unreachableDomain
 
@@ -426,7 +426,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.customExpectation(description: "isDone")
+            let isDone = customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -450,7 +450,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             )
 
             // When
-            self.sut.handleResponse(response, action: action)
+            sut.handleResponse(response, action: action)
 
             // Then
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

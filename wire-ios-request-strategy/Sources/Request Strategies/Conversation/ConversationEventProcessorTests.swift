@@ -245,7 +245,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
         let event = try XCTUnwrap(updateEvent)
         // When
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
@@ -257,7 +257,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func testThatItProcessesConversationCreateEvents() async {
         // given
         var event: ZMUpdateEvent!
-        let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        let qualifiedID = QualifiedID(uuid: UUID(), domain: owningDomain)
 
         await syncMOC.perform {
             let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier!
@@ -278,7 +278,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             )
         }
         // when
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         await syncMOC.perform {
             // then
@@ -313,7 +313,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             event = try XCTUnwrap(ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nil))
         }
 
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         await syncMOC.perform {
             // THEN
@@ -339,7 +339,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // when
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         // then
         await syncMOC.perform {
@@ -351,8 +351,8 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     func receiptModeUpdateEvent(enabled: Bool) -> ZMUpdateEvent {
         let payload = [
-            "from": self.otherUser.remoteIdentifier!.transportString(),
-            "conversation": self.groupConversation.remoteIdentifier!.transportString(),
+            "from": otherUser.remoteIdentifier!.transportString(),
+            "conversation": groupConversation.remoteIdentifier!.transportString(),
             "time": Date().transportString(),
             "data": ["receipt_mode": enabled ? 1 : 0],
             "type": "conversation.receipt-mode-update",
@@ -362,16 +362,16 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
     func testThatItUpdatesHasReadReceiptsEnabled_WhenReceivingReceiptModeUpdateEvent() async {
         var event: ZMUpdateEvent!
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // GIVEN
             event = self.receiptModeUpdateEvent(enabled: true)
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         // THEN
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             XCTAssertEqual(self.groupConversation.hasReadReceiptsEnabled, true)
         }
     }
@@ -379,15 +379,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func testThatItInsertsSystemMessageEnabled_WhenReceivingReceiptModeUpdateEvent() async {
         var event: ZMUpdateEvent!
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // GIVEN
             event = self.receiptModeUpdateEvent(enabled: true)
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // THEN
             guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
@@ -400,15 +400,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func testThatItInsertsSystemMessageDisabled_WhenReceivingReceiptModeUpdateEvent() async {
         var event: ZMUpdateEvent!
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // GIVEN
             event = self.receiptModeUpdateEvent(enabled: false)
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // THEN
             guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
@@ -420,17 +420,17 @@ final class ConversationEventProcessorTests: MessagingTestBase {
     func testThatItDoesntInsertsSystemMessage_WhenReceivingReceiptModeUpdateEventWhichHasAlreadybeenApplied() async {
         var event: ZMUpdateEvent!
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
             // GIVEN
             event = receiptModeUpdateEvent(enabled: true)
             groupConversation.lastServerTimeStamp = event.timestamp
         }
         // WHEN
-        self.disableZMLogError(true)
-        await self.sut.processConversationEvents([event])
-        self.disableZMLogError(false)
+        disableZMLogError(true)
+        await sut.processConversationEvents([event])
+        disableZMLogError(false)
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // THEN
             XCTAssertEqual(self.groupConversation?.allMessages.count, 0)
         }
@@ -444,15 +444,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         let newAccessMode = ConversationAccessMode(values: ["code", "invite"])
         let newAccessRole: Set<ConversationAccessRoleV2> = [.teamMember, .guest]
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
 
-            XCTAssertNotEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertNotEqual(self.groupConversation.accessRoles, newAccessRole)
+            XCTAssertNotEqual(groupConversation.accessMode, newAccessMode)
+            XCTAssertNotEqual(groupConversation.accessRoles, newAccessRole)
 
-            event = self.updateEvent(
+            event = updateEvent(
                 type: "conversation.access-update",
-                senderID: self.otherUser.remoteIdentifier!,
-                conversationID: self.groupConversation.remoteIdentifier!,
+                senderID: otherUser.remoteIdentifier!,
+                conversationID: groupConversation.remoteIdentifier!,
                 timestamp: Date(),
                 dataPayload: [
                     "access": newAccessMode.stringValue,
@@ -461,12 +461,12 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             )
         }
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation.accessMode, newAccessMode)
-            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
+            XCTAssertEqual(groupConversation.accessMode, newAccessMode)
+            XCTAssertEqual(groupConversation.accessRoles, newAccessRole)
         }
     }
 
@@ -477,7 +477,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         var event: ZMUpdateEvent!
         let legacyAccessRole: ConversationAccessRole = .team
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             let newAccessMode = ConversationAccessMode(values: ["code", "invite"])
 
             event = self.updateEvent(
@@ -493,11 +493,11 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
             let newAccessRole = ConversationAccessRoleV2.fromLegacyAccessRole(legacyAccessRole)
-            XCTAssertEqual(self.groupConversation.accessRoles, newAccessRole)
+            XCTAssertEqual(groupConversation.accessRoles, newAccessRole)
         }
     }
 
@@ -520,13 +520,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31_536_000))
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, .init(rawValue: 31_536_000))
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            guard let message = groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
@@ -552,12 +552,12 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
             // THEN
-            XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
-            guard let message = self.groupConversation.lastMessage as? ZMSystemMessage else {
+            XCTAssertNil(groupConversation.activeMessageDestructionTimeoutValue)
+            guard let message = groupConversation.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
@@ -590,14 +590,14 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
 
             // THEN: the local timeout still exists
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, .fiveMinutes)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .selfUser)
-            guard let message = self.groupConversation?.lastMessage as? ZMSystemMessage else {
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, .fiveMinutes)
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .selfUser)
+            guard let message = groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(message.systemMessageType, .messageTimerUpdate)
@@ -630,12 +630,12 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
         var firstMessage: ZMSystemMessage?
-        await self.syncMOC.perform { [self] in
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage
+        await syncMOC.perform { [self] in
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            firstMessage = groupConversation?.lastMessage as? ZMSystemMessage
             guard let firstMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
@@ -643,13 +643,13 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // WHEN
-        await self.sut.processConversationEvents([event]) // Second duplicated event
+        await sut.processConversationEvents([event]) // Second duplicated event
 
-        await self.syncMOC.perform { [self] in
+        await syncMOC.perform { [self] in
             // THEN
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
-            XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
-            guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage else {
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutValue!, messageTimer)
+            XCTAssertEqual(groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
+            guard let secondMessage = groupConversation?.lastMessage as? ZMSystemMessage else {
                 return XCTFail("Last conversation message is not a system message")
             }
             XCTAssertEqual(firstMessage, secondMessage) // Check that no other messages are appended in the conversation
@@ -690,17 +690,17 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         // WHEN
 
         // First event with valued timer
-        await self.sut.processConversationEvents([valuedEvent])
+        await sut.processConversationEvents([valuedEvent])
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutType!, .groupConversation)
             XCTAssertEqual(self.groupConversation?.activeMessageDestructionTimeoutValue!, valuedMessageTimer)
         }
         // Second event with timer = nil
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         var firstMessage: ZMSystemMessage?
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
             firstMessage = self.groupConversation?.lastMessage as? ZMSystemMessage
             guard let firstMessage else {
@@ -710,9 +710,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         }
 
         // Third event with timer = nil
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
-        await self.syncMOC.perform {
+        await syncMOC.perform {
             // THEN
             XCTAssertNil(self.groupConversation?.activeMessageDestructionTimeoutValue)
             guard let secondMessage = self.groupConversation?.lastMessage as? ZMSystemMessage
@@ -760,7 +760,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             )
         }
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         await syncMOC.perform {
             // THEN
@@ -805,7 +805,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
             )
         }
         // WHEN
-        await self.sut.processConversationEvents([event])
+        await sut.processConversationEvents([event])
 
         await syncMOC.perform {
             // THEN

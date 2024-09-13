@@ -41,9 +41,9 @@ extension UpsideDownTableView {
 extension UITableView {
     fileprivate func scrollToTop(animated: Bool) {
         // kill existing scrolling animation
-        self.setContentOffset(self.contentOffset, animated: false)
+        setContentOffset(contentOffset, animated: false)
 
         // scroll completely to top
-        self.setContentOffset(CGPoint(x: 0, y: -self.contentInset.top), animated: animated)
+        setContentOffset(CGPoint(x: 0, y: -contentInset.top), animated: animated)
     }
 }

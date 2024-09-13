@@ -42,22 +42,22 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
         if let toggleCell = cell as? SettingsToggleCell {
             var boolValue = false
-            if let value = self.settingsProperty.value().value() as? NSNumber {
+            if let value = settingsProperty.value().value() as? NSNumber {
                 boolValue = value.boolValue
             } else {
                 boolValue = false
             }
 
-            if self.inverse {
+            if inverse {
                 boolValue = !boolValue
             }
 
             toggleCell.switchView.isOn = boolValue
             toggleCell.switchView.accessibilityLabel = identifier
-            toggleCell.switchView.isEnabled = self.settingsProperty.enabled
+            toggleCell.switchView.isEnabled = settingsProperty.enabled
         }
     }
 
@@ -77,12 +77,12 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
             }
         }
 
-        if self.inverse {
+        if inverse {
             valueToSet = !valueToSet
         }
 
         do {
-            try self.settingsProperty << SettingsPropertyValue(valueToSet)
+            try settingsProperty << SettingsPropertyValue(valueToSet)
         } catch {
             zmLog.error("Cannot set property: \(error)")
         }

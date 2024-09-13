@@ -48,8 +48,8 @@ final class MentionsHandler: NSObject {
         // 2. whole mention
         // 3. only the search string without @
         guard match.numberOfRanges == 4 else { return nil }
-        mentionMatchRange = match.range(at: 2)
-        searchQueryMatchRange = match.range(at: 3)
+        self.mentionMatchRange = match.range(at: 2)
+        self.searchQueryMatchRange = match.range(at: 3)
         // Character to the left of the cursor position should be inside the mention
         guard mentionMatchRange.contains(characterPosition) else { return nil }
     }

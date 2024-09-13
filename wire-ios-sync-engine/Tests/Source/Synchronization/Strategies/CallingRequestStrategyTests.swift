@@ -758,7 +758,7 @@ class CallingRequestStrategyTests: MessagingTest {
 
             let mockMLSService = MockMLSServiceInterface()
 
-            self.syncMOC.mlsService = mockMLSService
+            syncMOC.mlsService = mockMLSService
 
             let conversationAVSID = try XCTUnwrap(conversation.avsIdentifier)
             return (user1.avsIdentifier, client1.remoteIdentifier!, conversationAVSID)
@@ -768,7 +768,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let avsClient1 = AVSClient(userId: user1AVSIdentifier, clientId: client1RemoteIdentifier)
         let targets = [avsClient1]
 
-        let expectation = self.customExpectation(description: "reject message is sent to MLS self conversation")
+        let expectation = customExpectation(description: "reject message is sent to MLS self conversation")
         // When we schedule the message
         syncMOC.performGroupedBlock {
             self.sut.send(

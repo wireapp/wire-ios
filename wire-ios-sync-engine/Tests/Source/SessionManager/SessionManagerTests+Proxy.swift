@@ -26,7 +26,7 @@ final class SessionManagerProxyTests: IntegrationTest {
 
     override func createSessionManager() {
         guard
-            let application = self.application,
+            let application,
             let transportSession = mockTransportSession
         else {
             return XCTFail()
@@ -61,7 +61,7 @@ final class SessionManagerProxyTests: IntegrationTest {
             delegate: self,
             application: application,
             pushRegistry: pushRegistry,
-            dispatchGroup: self.dispatchGroup,
+            dispatchGroup: dispatchGroup,
             environment: mockEnvironment,
             configuration: sessionManagerConfiguration,
             detector: jailbreakDetector,
@@ -78,7 +78,7 @@ final class SessionManagerProxyTests: IntegrationTest {
 
         sessionManager?.start(launchOptions: [:])
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func test_markNetworkSessionsAsReady_createsUnauthenticatedSession() {

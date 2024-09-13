@@ -44,7 +44,7 @@ final class OutgoingConnectionViewController: UIViewController {
     }
 
     private func setupViews() {
-        self.view.backgroundColor = SemanticColors.View.backgroundConversationView
+        view.backgroundColor = SemanticColors.View.backgroundConversationView
         setupCancelButton()
         setupArchiveButton()
         [cancelButton, archiveButton].forEach(view.addSubview)

@@ -35,7 +35,7 @@ final class EmojiKeyboardViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        emojiDataSource = EmojiDataSource(provider: cellForEmoji)
+        self.emojiDataSource = EmojiDataSource(provider: cellForEmoji)
         collectionView.dataSource = emojiDataSource
         collectionView.delegate = self
         sectionViewController.sectionDelegate = self
@@ -97,7 +97,7 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func cellForEmoji(_ emoji: Emoji, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = self.collectionView.dequeueReusableCell(
+        let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: EmojiCollectionViewCell.zm_reuseIdentifier,
             for: indexPath
         ) as! EmojiCollectionViewCell
@@ -106,9 +106,9 @@ final class EmojiKeyboardViewController: UIViewController {
     }
 
     func updateSectionSelection() {
-        let minSection = Set(self.collectionView.indexPathsForVisibleItems.map(\.section)).min()
+        let minSection = Set(collectionView.indexPathsForVisibleItems.map(\.section)).min()
         guard let section = minSection  else { return }
-        self.sectionViewController.didSelectSection(self.emojiDataSource[section].id)
+        sectionViewController.didSelectSection(emojiDataSource[section].id)
     }
 
     @objc

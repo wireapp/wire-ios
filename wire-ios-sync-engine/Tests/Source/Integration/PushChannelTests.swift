@@ -24,8 +24,8 @@ import WireMockTransport
 class PushChannelTests: IntegrationTest {
     override func setUp() {
         super.setUp()
-        self.createSelfUserAndConversation()
-        self.createExtraUsersAndConversations()
+        createSelfUserAndConversation()
+        createExtraUsersAndConversations()
     }
 
     func testThatWeReceiveRemoteMessagesWhenThePushChannelIsUp() {
@@ -58,7 +58,7 @@ class PushChannelTests: IntegrationTest {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
-        let conversation = self.conversation(for: groupConversation)
+        let conversation = conversation(for: groupConversation)
         let message1 = conversation?.lastMessages(limit: 50)[1]
         let message2 = conversation?.lastMessages(limit: 50)[0]
 

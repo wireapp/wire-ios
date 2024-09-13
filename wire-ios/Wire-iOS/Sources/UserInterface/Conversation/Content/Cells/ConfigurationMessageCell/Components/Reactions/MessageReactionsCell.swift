@@ -83,12 +83,12 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
             ) { [weak self] in
                 guard
                     let self,
-                    let message = self.message
+                    let message
                 else {
                     return
                 }
 
-                self.delegate?.perform(
+                delegate?.perform(
                     action: .react(reaction.emoji),
                     for: message,
                     view: self

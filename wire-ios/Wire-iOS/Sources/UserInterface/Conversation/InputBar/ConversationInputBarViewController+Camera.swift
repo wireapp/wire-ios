@@ -59,7 +59,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
             switch UIDevice.current.userInterfaceIdiom {
             case .pad:
-                self.hideCameraKeyboardViewController {
+                hideCameraKeyboardViewController {
                     videoEditor.modalPresentationStyle = .popover
 
                     self.present(videoEditor, animated: true)
@@ -77,24 +77,24 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     }
                 }
             default:
-                self.present(videoEditor, animated: true) {}
+                present(videoEditor, animated: true) {}
             }
         } else {
             let context = ConfirmAssetViewController.Context(
                 asset: .video(url: videoURL),
                 onConfirm: { [unowned self] _ in
-                    self.dismiss(animated: true)
-                    self.uploadFile(at: videoURL)
+                    dismiss(animated: true)
+                    uploadFile(at: videoURL)
                 },
                 onCancel: { [unowned self] in
-                    self.dismiss(animated: true) {
+                    dismiss(animated: true) {
                         self.mode = .camera
                         self.inputBar.textView.becomeFirstResponder()
                     }
                 }
             )
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
-            confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
+            confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
 
             view.window?.endEditing(true)
             present(confirmVideoViewController, animated: true)
@@ -167,7 +167,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             asset: .image(mediaAsset: mediaAsset),
             onConfirm: { [weak self] (editedImage: UIImage?) in
                 guard let self else { return }
-                self.dismiss(animated: true) {
+                dismiss(animated: true) {
                     self.writeToSavedPhotoAlbumIfNecessary(
                         imageData: imageData,
                         isFromCamera: isFromCamera
@@ -255,7 +255,7 @@ extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
         let activityIndicator = BlockingActivityIndicator(view: editor.view)
         activityIndicator.start()
 
-        self.convertVideoAtPath(editedVideoPath) { success, resultPath, _ in
+        convertVideoAtPath(editedVideoPath) { success, resultPath, _ in
             activityIndicator.stop()
 
             guard let path = resultPath, success else {
@@ -280,7 +280,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         hideCameraKeyboardViewController { [weak self] in
             guard let self else { return }
 
-            self.dismiss(animated: true) {
+            dismiss(animated: true) {
                 if let imageData = image.pngData() {
                     self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
                 }

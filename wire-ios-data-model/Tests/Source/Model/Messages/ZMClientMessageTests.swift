@@ -64,12 +64,12 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
     func testThatItCreatesClientMessagesFromUpdateEvent() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
         let message = GenericMessage(
-            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            content: Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
         let contentData = try XCTUnwrap(message.serializedData())
@@ -81,7 +81,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -99,13 +99,13 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
     func testThatItCreatesOTRMessagesFromUpdateEvent() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         let message = GenericMessage(
-            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            content: Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
         let contentData = try XCTUnwrap(message.serializedData())
@@ -121,7 +121,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -143,12 +143,12 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let initialText = "initial text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
@@ -157,7 +157,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         try existingMessage.setUnderlyingMessage(message)
 
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         // We add a quote to the link preview update
@@ -190,7 +190,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             type: EventConversationAddOTRMessage,
             data: data,
             time: Date(),
-            from: self.selfUser
+            from: selfUser
         )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -198,7 +198,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -214,12 +214,12 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let initialText = "initial text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
@@ -227,7 +227,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         try existingMessage.setUnderlyingMessage(message)
 
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         // We add a quote to the link preview update
@@ -259,7 +259,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             type: EventConversationAddOTRMessage,
             data: data,
             time: Date(),
-            from: self.selfUser
+            from: selfUser
         )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -267,7 +267,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -358,14 +358,14 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 extension ClientMessageTests {
     func testThatItDoesNotCreateOTRMessageIfConversationIsForceReadonly() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
         conversation.isForcedReadOnly = true
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         let prototype = GenericMessage(
-            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            content: Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
 
@@ -380,7 +380,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -390,13 +390,13 @@ extension ClientMessageTests {
 
     func testThatItDoesNotCreateOTRMessageIfItsIdentifierIsInvalid() throws {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         var prototype = GenericMessage(
-            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            content: Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
         prototype.messageID = "please-fail"
@@ -414,7 +414,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -425,10 +425,10 @@ extension ClientMessageTests {
     func testThatItDoesNotCreateKnockMessagesIfThereIsAlreadyOtrKnockWithTheSameNonce() throws {
         // given
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
@@ -443,7 +443,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMKnockMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMKnockMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -455,7 +455,7 @@ extension ClientMessageTests {
     func testThatItDoesNotCreateMessageFromAvailabilityMessage() throws {
         // given
         let senderClientID: String = .randomClientIdentifier()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
         let availability = WireProtos.Availability(.away)
         let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
@@ -470,7 +470,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -485,19 +485,19 @@ extension ClientMessageTests {
         let modifiedText = "modified text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
 
         let modifiedMessage = GenericMessage(
             content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil),
@@ -516,7 +516,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -531,20 +531,20 @@ extension ClientMessageTests {
         let modifiedText = "modified text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
         let unknownSender: String = .randomClientIdentifier()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let modifiedMessage = GenericMessage(
@@ -565,7 +565,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -580,19 +580,19 @@ extension ClientMessageTests {
         let modifiedText = "modified text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: UUID.create()
         )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let modifiedMessage = GenericMessage(
@@ -611,7 +611,7 @@ extension ClientMessageTests {
             type: EventConversationAddOTRMessage,
             data: data,
             time: Date(),
-            from: self.selfUser
+            from: selfUser
         )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -619,7 +619,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -635,19 +635,19 @@ extension ClientMessageTests {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: `modifiedText` is not used, is the text correct?
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: UUID.create()
         )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let linkPreview = LinkPreview.with {
@@ -674,7 +674,7 @@ extension ClientMessageTests {
             type: EventConversationAddOTRMessage,
             data: data,
             time: Date(),
-            from: self.selfUser
+            from: selfUser
         )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -682,7 +682,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -696,19 +696,19 @@ extension ClientMessageTests {
         let initialText = "initial text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let linkPreview = LinkPreview.with {
@@ -735,7 +735,7 @@ extension ClientMessageTests {
             type: EventConversationAddOTRMessage,
             data: data,
             time: Date(),
-            from: self.selfUser
+            from: selfUser
         )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -743,7 +743,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -758,12 +758,12 @@ extension ClientMessageTests {
         let initialText = "initial text"
 
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let selfClient = self.createSelfClient()
+        let selfClient = createSelfClient()
 
-        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let message = GenericMessage(
             content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce,
@@ -771,7 +771,7 @@ extension ClientMessageTests {
         )
         try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
-        existingMessage.sender = self.selfUser
+        existingMessage.sender = selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let linkPreview = LinkPreview.with {
@@ -798,7 +798,7 @@ extension ClientMessageTests {
             type: EventConversationAddOTRMessage,
             data: data,
             time: Date(),
-            from: self.selfUser
+            from: selfUser
         )
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -806,7 +806,7 @@ extension ClientMessageTests {
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
         }
 
@@ -820,14 +820,14 @@ extension ClientMessageTests {
     func testThatItReturnsNilIfTheClientMessageIsZombie() throws {
         // given
         let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let existingMessage = try! conversation.appendText(content: "Initial") as! ZMClientMessage
         existingMessage.nonce = nonce
         existingMessage.visibleInConversation = conversation
         let message = GenericMessage(
-            content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil),
+            content: Text(content: name, mentions: [], linkPreviews: [], replyingTo: nil),
             nonce: nonce
         )
 
@@ -841,21 +841,21 @@ extension ClientMessageTests {
 
         let prefetch = ZMFetchRequestBatch()
         prefetch.addNonces(toPrefetchMessages: [existingMessage.nonce!])
-        let prefetchResult = prefetch.execute(in: self.uiMOC)
+        let prefetchResult = prefetch.execute(in: uiMOC)
         XCTAssertEqual(prefetchResult?.messagesByNonce[existingMessage.nonce!]?.count, 1)
         XCTAssertEqual(prefetchResult?.messagesByNonce[existingMessage.nonce!]?.first, existingMessage)
         XCTAssertFalse(existingMessage.isZombieObject)
 
         // when
-        self.uiMOC.delete(existingMessage)
-        self.uiMOC.saveOrRollback()
+        uiMOC.delete(existingMessage)
+        uiMOC.saveOrRollback()
 
         // then
         XCTAssertTrue(existingMessage.isZombieObject)
 
         // when
         var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
+        performPretendingUiMocIsSyncMoc {
             self.performIgnoringZMLogError {
                 sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: prefetchResult)
             }
@@ -871,7 +871,7 @@ extension ClientMessageTests {
 extension ClientMessageTests {
     func testThatItDecryptsMessageWithExternalBlobCorrectly() {
         // given
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.createSelfClient(onMOC: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()

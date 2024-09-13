@@ -58,7 +58,7 @@ extension ZMConversation {
         guard conversationType == .group else { return [] }
 
         // Exception 2) If there is only one user in the group and it's a service, we don't consider it as external
-        let participants = Set(self.localParticipants)
+        let participants = Set(localParticipants)
         let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         let otherUsers = participants.subtracting([selfUser])
 

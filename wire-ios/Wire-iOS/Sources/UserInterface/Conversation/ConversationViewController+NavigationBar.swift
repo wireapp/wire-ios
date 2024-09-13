@@ -155,7 +155,7 @@ extension ConversationViewController {
             return false
         }
 
-        switch self.conversation.conversationType {
+        switch conversation.conversationType {
         case .group: return true
         case .oneOnOne:
             if let connection = conversation.oneOnOneUser?.connection,
@@ -187,7 +187,7 @@ extension ConversationViewController {
     func leftNavigationItems(hasUnread: Bool) -> [UIBarButtonItem] {
         var items: [UIBarButtonItem] = []
 
-        if self.parent?.wr_splitViewController?.layoutSize != .regularLandscape {
+        if parent?.wr_splitViewController?.layoutSize != .regularLandscape {
             items.append(createBackButton(hasUnread: hasUnread))
         }
 
@@ -244,7 +244,7 @@ extension ConversationViewController {
 
     @objc
     func dismissCollectionIfNecessary() {
-        if let collectionController = self.collectionController {
+        if let collectionController {
             collectionController.dismiss(animated: false)
         }
     }

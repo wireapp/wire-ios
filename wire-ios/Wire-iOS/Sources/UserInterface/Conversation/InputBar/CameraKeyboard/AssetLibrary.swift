@@ -30,7 +30,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     let photoLibrary: PhotoLibraryProtocol
 
     var count: UInt {
-        guard let fetch = self.fetch else {
+        guard let fetch else {
             return 0
         }
         return UInt(fetch.count)
@@ -41,7 +41,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     }
 
     func asset(atIndex index: UInt) throws -> PHAsset {
-        guard let fetch = self.fetch else {
+        guard let fetch else {
             throw AssetError.notLoadedError
         }
 
@@ -52,11 +52,11 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     }
 
     func refetchAssets(synchronous: Bool = false) {
-        guard !self.fetchingAssets else {
+        guard !fetchingAssets else {
             return
         }
 
-        self.fetchingAssets = true
+        fetchingAssets = true
 
         let syncOperation = {
             let options = PHFetchOptions()
@@ -79,7 +79,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     }
 
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        guard let fetch = self.fetch else {
+        guard let fetch else {
             return
         }
 
@@ -88,7 +88,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         }
 
         self.fetch = changeDetails.fetchResultAfterChanges
-        self.notifyChangeToDelegate()
+        notifyChangeToDelegate()
     }
 
     fileprivate var fetch: PHFetchResult<PHAsset>?
@@ -113,7 +113,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         super.init()
 
         self.photoLibrary.register(self)
-        self.refetchAssets(synchronous: synchronous)
+        refetchAssets(synchronous: synchronous)
     }
 
     deinit {

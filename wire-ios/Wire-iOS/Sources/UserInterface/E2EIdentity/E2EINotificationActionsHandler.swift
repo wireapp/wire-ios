@@ -143,11 +143,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
                 guard let self else { return }
 
-                await self.snoozeCertificateEnrollmentUseCase.invoke(
+                await snoozeCertificateEnrollmentUseCase.invoke(
                     endOfPeriod: endOfPeriod,
-                    isUpdateMode: self.isUpdateMode
+                    isUpdateMode: isUpdateMode
                 )
-                self.isUpdateMode = false
+                isUpdateMode = false
             }
         }
         await presentScreen(viewController: alert)

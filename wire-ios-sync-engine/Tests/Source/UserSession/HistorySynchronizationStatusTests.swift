@@ -25,8 +25,8 @@ extension HistorySynchronizationStatusTests {
     func testThatItShouldNotDownloadHistoryWhenItStarts() {
         // given
         let sut = ForegroundOnlyHistorySynchronizationStatus(
-            managedObjectContext: self.uiMOC,
-            application: self.application
+            managedObjectContext: uiMOC,
+            application: application
         )
 
         // then
@@ -36,8 +36,8 @@ extension HistorySynchronizationStatusTests {
     func testThatItShouldDownloadWhenDidCompleteSync() {
         // given
         let sut = ForegroundOnlyHistorySynchronizationStatus(
-            managedObjectContext: self.uiMOC,
-            application: self.application
+            managedObjectContext: uiMOC,
+            application: application
         )
 
         // when
@@ -50,8 +50,8 @@ extension HistorySynchronizationStatusTests {
     func testThatItShouldNotDownloadWhenDidCompleteSyncAndThenStartSyncAgain() {
         // given
         let sut = ForegroundOnlyHistorySynchronizationStatus(
-            managedObjectContext: self.uiMOC,
-            application: self.application
+            managedObjectContext: uiMOC,
+            application: application
         )
 
         // when
@@ -65,14 +65,14 @@ extension HistorySynchronizationStatusTests {
     func testThatItShouldNotDownloadWhenDidCompleteSyncAndWillResignActive() {
         // given
         let sut = ForegroundOnlyHistorySynchronizationStatus(
-            managedObjectContext: self.uiMOC,
-            application: self.application
+            managedObjectContext: uiMOC,
+            application: application
         )
 
         // when
         sut.didCompleteSync()
-        self.application.simulateApplicationWillResignActive()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        application.simulateApplicationWillResignActive()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertFalse(sut.shouldDownloadFullHistory)
@@ -81,15 +81,15 @@ extension HistorySynchronizationStatusTests {
     func testThatItShouldDownloadWhenBecomingActive() {
         // given
         let sut = ForegroundOnlyHistorySynchronizationStatus(
-            managedObjectContext: self.uiMOC,
-            application: self.application
+            managedObjectContext: uiMOC,
+            application: application
         )
 
         // when
         sut.didCompleteSync()
-        self.application.simulateApplicationWillResignActive()
-        self.application.simulateApplicationDidBecomeActive()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        application.simulateApplicationWillResignActive()
+        application.simulateApplicationDidBecomeActive()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(sut.shouldDownloadFullHistory)
@@ -98,14 +98,14 @@ extension HistorySynchronizationStatusTests {
     func testThatItShouldNotDownloadAfterBecomingActiveIfItIsNotDoneSyncing() {
         // given
         let sut = ForegroundOnlyHistorySynchronizationStatus(
-            managedObjectContext: self.uiMOC,
-            application: self.application
+            managedObjectContext: uiMOC,
+            application: application
         )
 
         // when
-        self.application.simulateApplicationWillResignActive()
-        self.application.simulateApplicationDidBecomeActive()
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        application.simulateApplicationWillResignActive()
+        application.simulateApplicationDidBecomeActive()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertFalse(sut.shouldDownloadFullHistory)

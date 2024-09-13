@@ -30,18 +30,18 @@ extension ConversationInputBarViewController: ReplyComposingViewDelegate {
 
     func addReplyComposingView(_ composingView: ReplyComposingView) {
         quotedMessage = composingView.message
-        self.replyComposingView = composingView
+        replyComposingView = composingView
         composingView.delegate = self
     }
 
     func removeReplyComposingView() {
-        self.quotedMessage = nil
-        self.replyComposingView?.removeFromSuperview()
-        self.replyComposingView = nil
+        quotedMessage = nil
+        replyComposingView?.removeFromSuperview()
+        replyComposingView = nil
 
-        if let draft = self.conversation.draftMessage {
+        if let draft = conversation.draftMessage {
             let modifiedDraft = DraftMessage(text: draft.text, mentions: draft.mentions, quote: nil)
-            self.delegate?.conversationInputBarViewControllerDidComposeDraft(message: modifiedDraft)
+            delegate?.conversationInputBarViewControllerDidComposeDraft(message: modifiedDraft)
         }
     }
 
@@ -50,7 +50,7 @@ extension ConversationInputBarViewController: ReplyComposingViewDelegate {
     }
 
     func composingViewWantsToShowMessage(composingView: ReplyComposingView, message: ZMConversationMessage) {
-        self.delegate?.conversationInputBarViewControllerWants(toShow: message)
+        delegate?.conversationInputBarViewControllerWants(toShow: message)
     }
 
     var isReplyingToMessage: Bool {

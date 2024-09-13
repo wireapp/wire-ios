@@ -44,7 +44,7 @@ public final class LastEventIDRepository: NSObject, LastEventIDRepositoryInterfa
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )

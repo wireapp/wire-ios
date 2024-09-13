@@ -61,9 +61,9 @@ final class EphemeralKeyboardViewController: UIViewController {
     init(conversation: ZMConversation!) {
         self.conversation = conversation
         if Bundle.developerModeEnabled {
-            timeouts = MessageDestructionTimeoutValue.all + [nil]
+            self.timeouts = MessageDestructionTimeoutValue.all + [nil]
         } else {
-            timeouts = MessageDestructionTimeoutValue.all
+            self.timeouts = MessageDestructionTimeoutValue.all
         }
         super.init(nibName: nil, bundle: nil)
     }
@@ -141,7 +141,7 @@ final class EphemeralKeyboardViewController: UIViewController {
 
                 switch result {
                 case let .success(value):
-                    self.delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
+                    delegate?.ephemeralKeyboard(self, didSelectMessageTimeout: value)
                 default:
                     break
                 }

@@ -48,13 +48,13 @@ final class GroupParticipantsDetailViewController: UIViewController {
     ) {
         self.mainCoordinator = mainCoordinator
 
-        viewModel = GroupParticipantsDetailViewModel(
+        self.viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
             conversation: conversation,
             userSession: userSession
         )
 
-        collectionViewController = SectionCollectionViewController()
+        self.collectionViewController = SectionCollectionViewController()
 
         super.init(nibName: nil, bundle: nil)
     }

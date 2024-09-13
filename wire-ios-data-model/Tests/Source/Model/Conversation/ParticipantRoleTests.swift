@@ -27,13 +27,13 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
-        self.user = ZMUser.insertNewObject(in: self.uiMOC)
-        self.conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        self.role = Role.insertNewObject(in: self.uiMOC)
+        user = ZMUser.insertNewObject(in: uiMOC)
+        conversation = ZMConversation.insertNewObject(in: uiMOC)
+        role = Role.insertNewObject(in: uiMOC)
     }
 
     private func createParticipantRole() -> ParticipantRole {
-        let pr = ParticipantRole.insertNewObject(in: self.uiMOC)
+        let pr = ParticipantRole.insertNewObject(in: uiMOC)
         pr.user = user
         pr.conversation = conversation
         pr.role = role
@@ -42,10 +42,10 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
 
     func testThatServicesBelongToOneToOneConversations() throws {
         // GIVEN
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
         let service = createService(in: uiMOC, named: "Bob the Robot")
 
-        let team = Team.insertNewObject(in: self.uiMOC)
+        let team = Team.insertNewObject(in: uiMOC)
         team.remoteIdentifier = UUID.create()
 
         let conversation = ZMConversation.insertNewObject(in: uiMOC)

@@ -26,65 +26,65 @@ final class ZMProgressView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setup()
+        setup()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.setup()
+        setup()
     }
 
     fileprivate func setup() {
-        self.progressView.autoresizingMask = [.flexibleHeight, .flexibleRightMargin]
-        self.spinner.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        progressView.autoresizingMask = [.flexibleHeight, .flexibleRightMargin]
+        spinner.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
-        self.progressView.frame = self.bounds
-        self.spinner.frame = self.bounds
+        progressView.frame = bounds
+        spinner.frame = bounds
 
-        self.addSubview(self.progressView)
-        self.addSubview(self.spinner)
+        addSubview(progressView)
+        addSubview(spinner)
 
-        self.updateForStateAnimated(false)
-        self.updateProgress(false)
-        self.progressView.backgroundColor = self.tintColor
-        self.spinner.backgroundColor = self.tintColor
+        updateForStateAnimated(false)
+        updateProgress(false)
+        progressView.backgroundColor = tintColor
+        spinner.backgroundColor = tintColor
     }
 
     override var tintColor: UIColor? {
         didSet {
-            self.progressView.backgroundColor = tintColor
-            self.spinner.backgroundColor = tintColor
+            progressView.backgroundColor = tintColor
+            spinner.backgroundColor = tintColor
         }
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.updateProgress(false)
+        updateProgress(false)
     }
 
     func setDeterministic(_ determenistic: Bool, animated: Bool) {
-        if self.deterministic != .none, self.deterministic == determenistic {
+        if deterministic != .none, deterministic == determenistic {
             return
         }
-        self.deterministic = determenistic
-        self.updateForStateAnimated(animated)
-        self.updateProgress(animated)
+        deterministic = determenistic
+        updateForStateAnimated(animated)
+        updateProgress(animated)
     }
 
     func setProgress(_ progress: Float, animated: Bool) {
         self.progress = progress
-        self.updateProgress(animated)
+        updateProgress(animated)
     }
 
     fileprivate func updateProgress(_ animated: Bool) {
         guard self.progress.isNormal,
-              self.bounds.width != 0,
-              self.bounds.height != 0 else {
+              bounds.width != 0,
+              bounds.height != 0 else {
             return
         }
 
-        let progress = (self.deterministic ?? false) ? self.progress : 1
+        let progress = (deterministic ?? false) ? progress : 1
 
         let setBlock = {
             self.progressView.frame = CGRect(
@@ -109,14 +109,14 @@ final class ZMProgressView: UIView {
     }
 
     fileprivate func updateForStateAnimated(_: Bool) {
-        if let det = self.deterministic, det {
-            self.progressView.isHidden = false
-            self.spinner.isHidden = true
-            self.spinner.animating = false
+        if let det = deterministic, det {
+            progressView.isHidden = false
+            spinner.isHidden = true
+            spinner.animating = false
         } else {
-            self.progressView.isHidden = true
-            self.spinner.isHidden = false
-            self.spinner.animating = true
+            progressView.isHidden = true
+            spinner.isHidden = false
+            spinner.animating = true
         }
     }
 }

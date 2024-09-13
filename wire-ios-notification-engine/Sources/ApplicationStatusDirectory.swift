@@ -90,7 +90,7 @@ final class ApplicationStatusDirectory: ApplicationStatus {
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
-        self.clientRegistrationStatus
+        clientRegistrationStatus
     }
 
     public var requestCancellation: ZMRequestCancellation {

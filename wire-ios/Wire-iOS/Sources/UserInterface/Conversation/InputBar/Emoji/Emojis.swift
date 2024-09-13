@@ -40,7 +40,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         provider: @escaping CellProvider,
         emojiRepository: EmojiRepositoryInterface = EmojiRepository()
     ) {
-        cellProvider = provider
+        self.cellProvider = provider
         self.emojiRepository = emojiRepository
 
         let smileysAndEmotion = emojiRepository.emojis(for: .smileysAndEmotion)
@@ -53,7 +53,7 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
         let symbols = emojiRepository.emojis(for: .symbols)
         let flags = emojiRepository.emojis(for: .flags)
 
-        initialSections = [
+        self.initialSections = [
             Section(id: .people, items: smileysAndEmotion + peopleAndBody),
             Section(id: .nature, items: animalsAndNature),
             Section(id: .food, items: foodAndDrink),
@@ -64,12 +64,12 @@ final class EmojiDataSource: NSObject, UICollectionViewDataSource {
             Section(id: .flags, items: flags),
         ]
 
-        recentlyUsed = RecentlyUsedEmojiSection(
+        self.recentlyUsed = RecentlyUsedEmojiSection(
             capacity: 15,
             items: emojiRepository.fetchRecentlyUsedEmojis()
         )
 
-        sections = initialSections
+        self.sections = initialSections
 
         super.init()
         insertRecentlyUsedSectionIfNeeded()

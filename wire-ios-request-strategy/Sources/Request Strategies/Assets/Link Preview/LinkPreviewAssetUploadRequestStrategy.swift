@@ -117,16 +117,16 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
                 return false
             }
 
-            return self.managedObjectContext.zm_fileAssetCache.hasEncryptedMediumImageData(for: message)
+            return managedObjectContext.zm_fileAssetCache.hasEncryptedMediumImageData(for: message)
         }
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [self.linkPreviewPreprocessor, self.previewImagePreprocessor, self.assetUpstreamSync]
+        [linkPreviewPreprocessor, previewImagePreprocessor, assetUpstreamSync]
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        self.assetUpstreamSync.nextRequest(for: apiVersion)
+        assetUpstreamSync.nextRequest(for: apiVersion)
     }
 }
 

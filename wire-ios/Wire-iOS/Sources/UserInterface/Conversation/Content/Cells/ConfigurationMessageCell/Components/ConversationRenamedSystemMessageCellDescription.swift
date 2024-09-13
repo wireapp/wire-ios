@@ -58,8 +58,8 @@ final class ConversationRenamedSystemMessageCellDescription: ConversationMessage
             string: newName,
             attributes: [.font: UIFont.normalSemiboldFont, .foregroundColor: LabelColors.textDefault]
         )
-        configuration = View.Configuration(attributedText: title, newConversationName: conversationName)
-        actionController = nil
-        accessibilityLabel = "\(titleString), \(newName)"
+        self.configuration = View.Configuration(attributedText: title, newConversationName: conversationName)
+        self.actionController = nil
+        self.accessibilityLabel = "\(titleString), \(newName)"
     }
 }

@@ -271,14 +271,14 @@ final class MessageDetailsContentViewController: UIViewController {
     func updateData(_ sections: [MessageDetailsSectionDescription]) {
         noResultsView.isHidden = !sections.isEmpty
         self.sections = sections
-        self.updateTitle()
+        updateTitle()
 
-        guard let collectionView = self.collectionView else {
+        guard let collectionView else {
             return
         }
 
         collectionView.reloadData()
-        self.updateFooterPosition(for: collectionView)
+        updateFooterPosition(for: collectionView)
     }
 }
 

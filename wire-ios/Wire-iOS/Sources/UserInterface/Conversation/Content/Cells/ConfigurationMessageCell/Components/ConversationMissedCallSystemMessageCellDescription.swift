@@ -53,13 +53,13 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
 
         let attributedString = viewModel.attributedTitle()
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: viewModel.image(),
             attributedText: attributedString,
             showLine: false
         )
-        accessibilityLabel = attributedString?.string
-        actionController = nil
+        self.accessibilityLabel = attributedString?.string
+        self.actionController = nil
     }
 
     func isConfigurationEqual(with other: Any) -> Bool {
@@ -67,6 +67,6 @@ final class ConversationMissedCallSystemMessageCellDescription: ConversationMess
             return false
         }
 
-        return self.configuration == otherDescription.configuration
+        return configuration == otherDescription.configuration
     }
 }

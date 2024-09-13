@@ -23,8 +23,8 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         for account: Account,
         onReady: @escaping (NSManagedObjectContext) throws -> Void
     ) {
-        let sharedContainerURL = self.sharedContainerURL
-        let dispatchGroup = self.dispatchGroup
+        let sharedContainerURL = sharedContainerURL
+        let dispatchGroup = dispatchGroup
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
             self?.tearDownBackgroundSession(for: account.userIdentifier) {

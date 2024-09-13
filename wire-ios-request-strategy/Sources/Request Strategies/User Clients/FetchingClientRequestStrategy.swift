@@ -30,8 +30,8 @@ extension ZMUser {
     public func fetchUserClients() {
         NotificationInContext(
             name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
-            context: self.managedObjectContext!.notificationContext,
-            object: self.objectID
+            context: managedObjectContext!.notificationContext,
+            object: objectID
         ).post()
     }
 }
@@ -77,7 +77,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             transcoder: userClientByQualifiedUserIDTranscoder
         )
 
-        entitySync = EntityActionSync(actionHandlers: [
+        self.entitySync = EntityActionSync(actionHandlers: [
             FetchUserClientsActionHandler(context: managedObjectContext),
         ])
 
@@ -89,7 +89,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground,
         ]
-        self.userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
+        userClientByQualifiedUserIDTranscoder.contextChangedTracker = self
         self.userClientsObserverToken = NotificationInContext.addObserver(
             name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
             context: self.managedObjectContext.notificationContext,

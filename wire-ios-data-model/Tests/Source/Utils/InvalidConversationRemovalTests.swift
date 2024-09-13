@@ -30,10 +30,10 @@ class InvalidConversationRemovalTests: DiskDatabaseTest {
             conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
             return conversation
         }
-        try self.moc.save()
+        try moc.save()
 
         // When
-        WireDataModel.InvalidConversationRemoval.removeInvalid(in: self.moc)
+        WireDataModel.InvalidConversationRemoval.removeInvalid(in: moc)
 
         // Then - invalid conversation is deleted
         let invalidConversation = conversations[0]

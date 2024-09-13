@@ -503,13 +503,13 @@ extension MockTransportSession {
             onlyForUser = UUID(data: userId.uuid)?.transportString()
         }
 
-        let missedClients = self.missedClients(
+        let missedClients = missedClients(
             fromRecipients: otrMetaData.recipients,
             conversation: conversation,
             sender: senderClient,
             onlyForUserId: onlyForUser
         )
-        let deletedClients = self.deletedClients(fromRecipients: otrMetaData.recipients, conversation: conversation)
+        let deletedClients = deletedClients(fromRecipients: otrMetaData.recipients, conversation: conversation)
 
         let payload: [String: Any] = [
             "redundant": [:],

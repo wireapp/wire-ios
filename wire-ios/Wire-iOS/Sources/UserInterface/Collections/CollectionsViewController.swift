@@ -114,13 +114,13 @@ final class CollectionsViewController: UIViewController {
 
         switch sections {
         case CollectionsSectionSet.images:
-            imageMessages = messages
+            self.imageMessages = messages
         case CollectionsSectionSet.filesAndAudio:
-            fileAndAudioMessages = messages
+            self.fileAndAudioMessages = messages
         case CollectionsSectionSet.videos:
-            videoMessages = messages
+            self.videoMessages = messages
         case CollectionsSectionSet.links:
-            linkMessages = messages
+            self.linkMessages = messages
         default: break
         }
 
@@ -128,7 +128,7 @@ final class CollectionsViewController: UIViewController {
 
         super.init(nibName: .none, bundle: .none)
         collection.assetCollectionDelegate.add(self)
-        deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: self)
+        self.deletionDialogPresenter = DeletionDialogPresenter(sourceViewController: self)
     }
 
     deinit {
@@ -471,7 +471,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             fatal("Unknown section")
         }
 
-        let gridElementSize = self.gridElementSize(in: section)
+        let gridElementSize = gridElementSize(in: section)
 
         var desiredWidth: CGFloat?
         var desiredHeight: CGFloat?
@@ -595,7 +595,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
         default: fatal("Unknown section")
         }
 
-        let message = self.message(for: indexPath)
+        let message = message(for: indexPath)
         resultCell.message = message
         resultCell.delegate = self
         resultCell.messageChangeDelegate = self
@@ -633,20 +633,20 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
                     return
                 }
                 let collectionController = CollectionsViewController(
-                    collection: self.collection,
+                    collection: collection,
                     sections: section,
-                    messages: self.elements(for: section),
-                    fetchingDone: self.fetchingDone,
+                    messages: elements(for: section),
+                    fetchingDone: fetchingDone,
                     userSession: userSession,
                     mainCoordinator: mainCoordinator
                 )
-                collectionController.onDismiss = self.onDismiss
-                collectionController.delegate = self.delegate
-                self.navigationController?.pushViewController(collectionController, animated: true)
+                collectionController.onDismiss = onDismiss
+                collectionController.delegate = delegate
+                navigationController?.pushViewController(collectionController, animated: true)
             }
             let size = self.collectionView(
                 collectionView,
-                layout: self.contentView.collectionView.collectionViewLayout,
+                layout: contentView.collectionView.collectionViewLayout,
                 referenceSizeForHeaderInSection: indexPath.section
             )
             header.desiredWidth = size.width
@@ -704,7 +704,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             return
         }
 
-        let message = self.message(for: indexPath)
+        let message = message(for: indexPath)
         perform(.present, for: message, source: collectionView.cellForItem(at: indexPath)!)
     }
 }

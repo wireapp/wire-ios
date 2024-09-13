@@ -31,7 +31,7 @@ class OTRTests: IntegrationTest {
     func testThatItSendsEncryptedTextMessage() {
         // given
         XCTAssert(login())
-        guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
+        guard let conversation = conversation(for: selfToUser1Conversation) else { return XCTFail() }
 
         // when
         var message: ZMConversationMessage?
@@ -48,7 +48,7 @@ class OTRTests: IntegrationTest {
     func testThatItSendsEncryptedImageMessage() {
         // given
         XCTAssert(login())
-        guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
+        guard let conversation = conversation(for: selfToUser1Conversation) else { return XCTFail() }
 
         // when
         var message: ZMConversationMessage?
@@ -65,10 +65,10 @@ class OTRTests: IntegrationTest {
     func testThatItSendsARequestToUpdateSignalingKeys() {
         // given
         XCTAssert(login())
-        self.mockTransportSession.resetReceivedRequests()
+        mockTransportSession.resetReceivedRequests()
 
         var didReregister = false
-        self.mockTransportSession.responseGeneratorBlock = { response in
+        mockTransportSession.responseGeneratorBlock = { response in
             if response.path.contains("/clients/"), response.payload?.asDictionary()?["sigkeys"] != nil {
                 didReregister = true
                 return ZMTransportResponse(
@@ -82,7 +82,7 @@ class OTRTests: IntegrationTest {
         }
 
         // when
-        self.userSession?.perform {
+        userSession?.perform {
             UserClient.resetSignalingKeysInContext(self.userSession!.managedObjectContext)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -94,11 +94,11 @@ class OTRTests: IntegrationTest {
     func testThatItCreatesNewKeysIfReqeustToSyncSignalingKeysFailedWithBadRequest() {
         // given
         XCTAssert(login())
-        self.mockTransportSession.resetReceivedRequests()
+        mockTransportSession.resetReceivedRequests()
 
         var tryCount = 0
         var (firstMac, firstEnc) = (String(), String())
-        self.mockTransportSession.responseGeneratorBlock = { response in
+        mockTransportSession.responseGeneratorBlock = { response in
             guard let payload = response.payload?.asDictionary() else { return nil }
 
             if response.path.contains("/clients/"), payload["sigkeys"] != nil {

@@ -129,7 +129,7 @@ final class ReactionToggle: UIControl {
         value: String,
         count: UInt
     ) {
-        self.isAccessibilityElement = true
-        self.accessibilityIdentifier = "value: \(value), count: \(count)"
+        isAccessibilityElement = true
+        accessibilityIdentifier = "value: \(value), count: \(count)"
     }
 }

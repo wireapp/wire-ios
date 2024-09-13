@@ -44,7 +44,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItGeneratesARequestWhenSettingIsModified() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsToBeUpdatedFromBackend = false
@@ -61,7 +61,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
@@ -82,7 +82,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent_false() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
@@ -104,7 +104,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItUpdatesPropertyFromUpdateEvent_delete() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
             selfUser.needsPropertiesUpdate = false
@@ -129,7 +129,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
 
 extension UserPropertyRequestStrategyTests {
     func testThatItIsFetchingPropertyValue() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
 
@@ -157,7 +157,7 @@ extension UserPropertyRequestStrategyTests {
     }
 
     func testThatItIsFetchingPropertyValue_404() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: syncMOC)
 

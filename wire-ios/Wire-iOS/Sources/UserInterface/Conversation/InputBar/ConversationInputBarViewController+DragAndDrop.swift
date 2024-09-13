@@ -44,7 +44,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                         let context = ConfirmAssetViewController.Context(
                             asset: .image(mediaAsset: draggedImage),
                             onConfirm: { [unowned self] _ in
-                                self.dismiss(animated: true) {
+                                dismiss(animated: true) {
                                     if let draggedImageData = draggedImage
                                         .pngData() {
                                         self.sendController.sendMessage(
@@ -55,7 +55,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                                 }
                             },
                             onCancel: { [unowned self] in
-                                self.dismiss(animated: true)
+                                dismiss(animated: true)
                             }
                         )
 

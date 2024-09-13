@@ -102,10 +102,10 @@ final class SettingsPropertyTests: XCTestCase {
         let property = SettingsUserDefaultsProperty(
             propertyName: SettingsPropertyName.darkMode,
             userDefaultsKey: SettingKey.colorScheme.rawValue,
-            userDefaults: self.userDefaults
+            userDefaults: userDefaults
         )
         // when & then
-        try! self.saveAndCheck(property, value: "light")
+        try! saveAndCheck(property, value: "light")
     }
 
     func testThatBoolUserDefaultsSettingSave() {
@@ -113,10 +113,10 @@ final class SettingsPropertyTests: XCTestCase {
         let property = SettingsUserDefaultsProperty(
             propertyName: SettingsPropertyName.chatHeadsDisabled,
             userDefaultsKey: SettingKey.chatHeadsDisabled.rawValue,
-            userDefaults: self.userDefaults
+            userDefaults: userDefaults
         )
         // when & then
-        try! self.saveAndCheck(property, value: NSNumber(value: true))
+        try! saveAndCheck(property, value: NSNumber(value: true))
     }
 
     func testThatNamePropertySetsValue() {
@@ -126,7 +126,7 @@ final class SettingsPropertyTests: XCTestCase {
         let tracking = ZMMockTracking()
 
         let factory = SettingsPropertyFactory(
-            userDefaults: self.userDefaults,
+            userDefaults: userDefaults,
             tracking: tracking,
             mediaManager: mediaManager,
             userSession: userSession,
@@ -135,7 +135,7 @@ final class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.profileName)
         // when & then
-        try! self.saveAndCheck(property, value: "Test")
+        try! saveAndCheck(property, value: "Test")
     }
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
@@ -167,7 +167,7 @@ final class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
-        try! self.saveAndCheck(property, value: 1)
+        try! saveAndCheck(property, value: 1)
     }
 
     func testThatIntegerBlockSettingSave() {
@@ -177,7 +177,7 @@ final class SettingsPropertyTests: XCTestCase {
         let tracking = ZMMockTracking()
 
         let factory = SettingsPropertyFactory(
-            userDefaults: self.userDefaults,
+            userDefaults: userDefaults,
             tracking: tracking,
             mediaManager: mediaManager,
             userSession: userSession,
@@ -186,7 +186,7 @@ final class SettingsPropertyTests: XCTestCase {
 
         let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
-        try! self.saveAndCheck(property, value: 1)
+        try! saveAndCheck(property, value: 1)
     }
 
     func testThatItCanSetAIntegerUserDefaultsSettingsPropertyLargerThanOne() {

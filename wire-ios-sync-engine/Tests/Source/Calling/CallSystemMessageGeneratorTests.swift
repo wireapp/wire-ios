@@ -176,7 +176,7 @@ final class CallSystemMessageGeneratorTests: MessagingTest {
             previousCallState: nil
         )
         var msg2: ZMSystemMessage?
-        self.performIgnoringZMLogError {
+        performIgnoringZMLogError {
             msg2 = self.sut.appendSystemMessageIfNeeded(
                 callState: .terminating(reason: .canceled),
                 conversation: self.conversation,

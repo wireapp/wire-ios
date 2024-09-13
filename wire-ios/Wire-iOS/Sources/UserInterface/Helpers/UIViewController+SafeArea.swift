@@ -23,12 +23,12 @@ import UIKit
 extension UIViewController {
     @available(*, deprecated, message: "Will be removed")
     var safeBottomAnchor: NSLayoutYAxisAnchor {
-        self.view.safeAreaLayoutGuide.bottomAnchor
+        view.safeAreaLayoutGuide.bottomAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")
     var safeTopAnchor: NSLayoutYAxisAnchor {
-        self.view.safeAreaLayoutGuide.topAnchor
+        view.safeAreaLayoutGuide.topAnchor
     }
 
     @available(*, deprecated, message: "Will be removed")

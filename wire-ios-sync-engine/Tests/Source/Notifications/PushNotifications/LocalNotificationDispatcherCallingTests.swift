@@ -28,7 +28,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
     var conversation: ZMConversation!
 
     var scheduledRequests: [UNNotificationRequest] {
-        self.notificationCenter.scheduledRequests
+        notificationCenter.scheduledRequests
     }
 
     override func setUp() {

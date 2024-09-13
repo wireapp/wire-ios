@@ -26,8 +26,8 @@ public final class Version: NSObject, Comparable {
     @objc(initWithVersionString:)
     public init(string: String) {
         requireInternal(!string.isEmpty, "invalid version string")
-        versionString = string
-        arrayRepresentation = Version.integerComponents(of: string)
+        self.versionString = string
+        self.arrayRepresentation = Version.integerComponents(of: string)
         super.init()
     }
 

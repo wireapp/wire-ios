@@ -37,30 +37,30 @@ public enum ZMSound: String, CustomStringConvertible {
     fileprivate static var playingPreviewURL: URL?
 
     fileprivate static func stopPlayingPreview() {
-        if self.playingPreviewURL != nil,
-           let soundId = self.playingPreviewID {
+        if playingPreviewURL != nil,
+           let soundId = playingPreviewID {
             AudioServicesDisposeSystemSoundID(soundId)
-            self.playingPreviewID = .none
-            self.playingPreviewURL = .none
+            playingPreviewID = .none
+            playingPreviewURL = .none
         }
     }
 
     public static func playPreviewForURL(_ mediaURL: URL) {
-        self.stopPlayingPreview()
+        stopPlayingPreview()
 
-        self.playingPreviewURL = mediaURL
+        playingPreviewURL = mediaURL
         var soundId: SystemSoundID = 0
 
         if AudioServicesCreateSystemSoundID(mediaURL as CFURL, &soundId) == kAudioServicesNoError {
-            self.playingPreviewID = soundId
+            playingPreviewID = soundId
         }
 
         AudioServicesPlaySystemSound(soundId)
 
         DispatchQueue.main
             .asyncAfter(deadline: DispatchTime.now() + Double(Int64(4 * NSEC_PER_SEC)) / Double(NSEC_PER_SEC)) {
-                if self.playingPreviewID == soundId {
-                    self.stopPlayingPreview()
+                if playingPreviewID == soundId {
+                    stopPlayingPreview()
                 }
             }
     }
@@ -71,7 +71,7 @@ public enum ZMSound: String, CustomStringConvertible {
             return nil
         case .WireText, .WirePing, .WireCall:
             guard let path = Bundle.main.path(
-                forResource: self.rawValue,
+                forResource: rawValue,
                 ofType: type(of: self).fileExtension,
                 inDirectory: "audio-notifications"
             ) else {
@@ -84,11 +84,11 @@ public enum ZMSound: String, CustomStringConvertible {
     fileprivate static let fileExtension = "m4a"
 
     public func filename() -> String {
-        (self.rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
+        (rawValue as NSString).appendingPathExtension(type(of: self).fileExtension)!
     }
 
     public var description: String {
-        self.rawValue.capitalized
+        rawValue.capitalized
     }
 
     public var descriptionLocalizationKey: String {

@@ -29,7 +29,7 @@ extension ZMOTRMessage {
 
         guard
             let senderID = updateEvent.senderUUID,
-            let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
+            let conversation = conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
             !isSelf(
                 conversation: conversation,
                 andIsSenderID: senderID,

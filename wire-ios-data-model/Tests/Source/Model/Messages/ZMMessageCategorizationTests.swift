@@ -35,9 +35,9 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     override func setUp() {
         super.setUp()
-        self.conversation = ZMConversation.insertNewObject(in: uiMOC)
-        self.conversation.conversationType = .group
-        self.conversation.remoteIdentifier = UUID.create()
+        conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.remoteIdentifier = UUID.create()
 
         let selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
@@ -46,13 +46,13 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
     }
 
     override func tearDown() {
-        self.conversation = nil
+        conversation = nil
         super.tearDown()
     }
 
     func testThatItCategorizesATextMessage() {
         // GIVEN
-        let message = try! self.conversation.appendText(content: "ramble on!")
+        let message = try! conversation.appendText(content: "ramble on!")
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.text)
@@ -60,12 +60,12 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizeTimedMessages() {
         // GIVEN
-        let otherUser = ZMUser.insertNewObject(in: self.conversation.managedObjectContext!)
+        let otherUser = ZMUser.insertNewObject(in: conversation.managedObjectContext!)
         otherUser.remoteIdentifier = UUID.create()
 
         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
-        let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
+        let message = try! conversation.appendText(content: "ramble on!") as! ZMMessage
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.text)
@@ -73,7 +73,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesATextMessageWithLink() {
         // GIVEN
-        let message = try! self.conversation
+        let message = try! conversation
             .appendText(content: "ramble on https://en.wikipedia.org/wiki/Ramble_On here")
 
         // THEN
@@ -94,7 +94,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
             content: Text(content: "foo", mentions: [], linkPreviews: [article], replyingTo: nil),
             nonce: UUID.create()
         )
-        let message = try self.conversation.appendClientMessage(with: genericMessage)
+        let message = try conversation.appendClientMessage(with: genericMessage)
         message.linkPreviewState = .processed
 
         // THEN
@@ -106,7 +106,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesAnImageMessage() {
         // GIVEN
-        let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
+        let message = try! conversation.appendImage(from: verySmallJPEGData())
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.image)
@@ -114,7 +114,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesAnImageMessage_WithoutData() {
         // GIVEN
-        let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
+        let message = try! conversation.appendImage(from: verySmallJPEGData())
         uiMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
 
         // THEN
@@ -123,7 +123,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesAGifImageMessage() {
         // GIVEN
-        let data = self.data(forResource: "animated", extension: "gif")!
+        let data = data(forResource: "animated", extension: "gif")!
         let message = try! conversation.appendImage(from: data) as! ZMAssetClientMessage
 
         // THEN
@@ -132,7 +132,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesKnocks() throws {
         // GIVEN
-        let message = try self.conversation.appendKnock() as! ZMClientMessage
+        let message = try conversation.appendKnock() as! ZMClientMessage
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.knock)
@@ -140,7 +140,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: fileURL(
             forResource: "Lorem Ipsum",
             extension: "txt"
         )))
@@ -151,7 +151,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItDoesCategorizeAFailedToUploadFile_ExcludedFromCollection() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: fileURL(
             forResource: "Lorem Ipsum",
             extension: "txt"
         ))) as! ZMAssetClientMessage
@@ -164,7 +164,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItDoesNotCategorizeACancelledToUploadFile_ExcludedFromCollection() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: fileURL(
             forResource: "Lorem Ipsum",
             extension: "txt"
         ))) as! ZMAssetClientMessage
@@ -177,8 +177,8 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesAudioFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMAudioMetadata(
-            fileURL: self.fileURL(forResource: "audio", extension: "m4a"),
+        let message = try! conversation.appendFile(with: ZMAudioMetadata(
+            fileURL: fileURL(forResource: "audio", extension: "m4a"),
             duration: 12.2
         ))
 
@@ -188,9 +188,9 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesVideoFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+        let message = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         ))
 
         // THEN
@@ -199,7 +199,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesLocation() throws {
         // GIVEN
-        let message = try self.conversation.appendLocation(with: LocationData.locationData(
+        let message = try conversation.appendLocation(with: LocationData.locationData(
             withLatitude: 40.42,
             longitude: 50.2,
             name: "Fooland",
@@ -212,7 +212,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesV3Images() {
         // GIVEN
-        let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
+        let message = try! conversation.appendImage(from: verySmallJPEGData())
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.image)
@@ -229,11 +229,11 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesLikedTextMessageWhenLikedBySelfUser() {
         // GIVEN
-        let message = try! self.conversation.appendText(content: "ramble on!") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "ramble on!") as! ZMClientMessage
         message.delivered = true
         ZMMessage.addReaction("❤️", to: message)
         XCTAssertFalse(message.usersReaction.isEmpty)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.reacted])
@@ -241,14 +241,14 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesLikedFileMessageWhenLikedBySelfUser() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: fileURL(
             forResource: "Lorem Ipsum",
             extension: "txt"
         ))) as! ZMAssetClientMessage
         message.delivered = true
         ZMMessage.addReaction("❤️", to: message)
         XCTAssertFalse(message.usersReaction.isEmpty)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.file, MessageCategory.reacted])
@@ -256,13 +256,13 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
     func testThatItCategorizesLikedTextMessageWhenNotLikedBySelfUser() {
         // GIVEN
-        let otherUser = ZMUser.insertNewObject(in: self.conversation.managedObjectContext!)
+        let otherUser = ZMUser.insertNewObject(in: conversation.managedObjectContext!)
         otherUser.remoteIdentifier = UUID.create()
-        let message = try! self.conversation.appendText(content: "ramble on!") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "ramble on!") as! ZMClientMessage
         message.delivered = true
         message.setReactions(["❤️"], forUser: otherUser)
         XCTAssertFalse(message.usersReaction.isEmpty)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.text)
@@ -274,7 +274,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 extension ZMMessageCategorizationTests {
     func testThatItComputesTheCachedCategoryLazily() {
         // GIVEN
-        let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
+        let message = try! conversation.appendText(content: "ramble on!") as! ZMMessage
         message.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
         XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: 0))
 
@@ -291,7 +291,7 @@ extension ZMMessageCategorizationTests {
 
     func testThatItUsedCachedCategoryValueIfPresent() {
         // GIVEN
-        let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
+        let message = try! conversation.appendText(content: "ramble on!") as! ZMMessage
         message.willChangeValue(forKey: ZMMessageCachedCategoryKey)
         message.setPrimitiveValue(NSNumber(value: MessageCategory.audio.rawValue), forKey: ZMMessageCachedCategoryKey)
         message.didChangeValue(forKey: ZMMessageCachedCategoryKey)
@@ -309,7 +309,7 @@ extension ZMMessageCategorizationTests {
 
     func testThatItComputestheCachedCategoryWhenAsked() {
         // GIVEN
-        let message = try! self.conversation.appendText(content: "ramble on!") as! ZMMessage
+        let message = try! conversation.appendText(content: "ramble on!") as! ZMMessage
         message.setPrimitiveValue(NSNumber(value: 0), forKey: ZMMessageCachedCategoryKey)
         XCTAssertEqual(message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber, NSNumber(value: 0))
 
@@ -330,23 +330,23 @@ extension ZMMessageCategorizationTests {
 extension ZMMessageCategorizationTests {
     func testThatItCreatesAFetchRequestToFetchText() {
         // GIVEN
-        let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let textMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
         textMessage.serverTimestamp = Date(timeIntervalSince1970: 100)
-        let knockMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let knockMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         knockMessage.cachedCategory = MessageCategory.knock
         knockMessage.serverTimestamp = Date(timeIntervalSince1970: 2000)
-        let linkTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let linkTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
-        let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let likedTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
         let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text])
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -361,23 +361,23 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCreatesAFetchRequestToFetchTextOrKnock() {
         // GIVEN
-        let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let textMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
         textMessage.serverTimestamp = Date(timeIntervalSince1970: 100)
-        let knockMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let knockMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         knockMessage.cachedCategory = MessageCategory.knock
         knockMessage.serverTimestamp = Date(timeIntervalSince1970: 2000)
-        let linkTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let linkTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
-        let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let likedTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
         let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text, MessageCategory.knock])
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -392,23 +392,23 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCreatesAFetchRequestToFetchLikedText() {
         // GIVEN
-        let textMessage = try! self.conversation.appendText(content: "в ночной тиши") as! ZMMessage
+        let textMessage = try! conversation.appendText(content: "в ночной тиши") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
         textMessage.serverTimestamp = Date(timeIntervalSince1970: 100)
-        let knockMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let knockMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         knockMessage.cachedCategory = MessageCategory.knock
         knockMessage.serverTimestamp = Date(timeIntervalSince1970: 2000)
-        let linkTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let linkTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
-        let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let likedTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
         let fetchRequest = ZMMessage.fetchRequestMatching(categories: [[MessageCategory.text, MessageCategory.reacted]])
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -423,26 +423,26 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCreatesAFetchRequestToFetchLikedTextOrKnock() {
         // GIVEN
-        let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let textMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
         textMessage.serverTimestamp = Date(timeIntervalSince1970: 100)
-        let knockMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let knockMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         knockMessage.cachedCategory = MessageCategory.knock
         knockMessage.serverTimestamp = Date(timeIntervalSince1970: 2000)
-        let linkTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let linkTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
-        let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let likedTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
         let fetchRequest = ZMMessage.fetchRequestMatching(categories: [
             [MessageCategory.text, MessageCategory.reacted],
             MessageCategory.knock,
         ])
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -457,26 +457,26 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCreatesAFetchRequestToFetchTextExcludingLinksAndLiked() {
         // GIVEN
-        let textMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let textMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         textMessage.cachedCategory = MessageCategory.text
         textMessage.serverTimestamp = Date(timeIntervalSince1970: 100)
-        let knockMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let knockMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         knockMessage.cachedCategory = MessageCategory.knock
         knockMessage.serverTimestamp = Date(timeIntervalSince1970: 2000)
-        let linkTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let linkTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         linkTextMessage.cachedCategory = [MessageCategory.link, MessageCategory.text]
         linkTextMessage.serverTimestamp = Date(timeIntervalSince1970: 3000)
-        let likedTextMessage = try! self.conversation.appendText(content: "in the still of the night") as! ZMMessage
+        let likedTextMessage = try! conversation.appendText(content: "in the still of the night") as! ZMMessage
         likedTextMessage.cachedCategory = [MessageCategory.reacted, MessageCategory.text]
         likedTextMessage.serverTimestamp = Date(timeIntervalSince1970: 5000)
-        self.conversation.managedObjectContext?.saveOrRollback()
+        conversation.managedObjectContext?.saveOrRollback()
 
         // WHEN
         let fetchRequest = ZMMessage.fetchRequestMatching(
             categories: [MessageCategory.text],
             excluding: [MessageCategory.link, MessageCategory.reacted]
         )
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -491,11 +491,11 @@ extension ZMMessageCategorizationTests {
 
     func testThatItFetchesFromAllConversations() {
         // GIVEN
-        let otherConversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
         otherConversation.conversationType = .group
         otherConversation.remoteIdentifier = UUID.create()
 
-        let textMessage1 = try! self.conversation.appendText(content: "hey Jean!") as! ZMMessage
+        let textMessage1 = try! conversation.appendText(content: "hey Jean!") as! ZMMessage
         textMessage1.cachedCategory = MessageCategory.text
         textMessage1.serverTimestamp = Date(timeIntervalSince1970: 100)
 
@@ -505,7 +505,7 @@ extension ZMMessageCategorizationTests {
 
         // WHEN
         let fetchRequest = ZMMessage.fetchRequestMatching(categories: [MessageCategory.text])
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -518,11 +518,11 @@ extension ZMMessageCategorizationTests {
 
     func testThatItFetchesFromASpecificConversations() {
         // GIVEN
-        let otherConversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
         otherConversation.conversationType = .group
         otherConversation.remoteIdentifier = UUID.create()
 
-        let textMessage1 = try! self.conversation.appendText(content: "hey Jean!") as! ZMMessage
+        let textMessage1 = try! conversation.appendText(content: "hey Jean!") as! ZMMessage
         textMessage1.cachedCategory = MessageCategory.text
         textMessage1.serverTimestamp = Date(timeIntervalSince1970: 100)
 
@@ -535,7 +535,7 @@ extension ZMMessageCategorizationTests {
             categories: [MessageCategory.text],
             conversation: otherConversation
         )
-        let results = try? self.conversation.managedObjectContext!.fetch(fetchRequest)
+        let results = try? conversation.managedObjectContext!.fetch(fetchRequest)
 
         // THEN
         guard let messages = results as? [ZMMessage] else {
@@ -552,7 +552,7 @@ extension ZMMessageCategorizationTests {
 extension ZMMessageCategorizationTests {
     func testThatItCategorizesAClientMessageOnInsert() {
         // when
-        let message = try! self.conversation.appendText(content: "hey Jean!") as! ZMMessage
+        let message = try! conversation.appendText(content: "hey Jean!") as! ZMMessage
 
         // then
         XCTAssertEqual(
@@ -563,7 +563,7 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCategorizesALocationMessageOnInsert() throws {
         // when
-        let message = try self.conversation.appendLocation(with: LocationData.locationData(
+        let message = try conversation.appendLocation(with: LocationData.locationData(
             withLatitude: 40.42,
             longitude: 50.2,
             name: "Fooland",
@@ -579,7 +579,7 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCategorizesAKnockMessageOnInsert() throws {
         // when
-        let message = try self.conversation.appendKnock() as! ZMMessage
+        let message = try conversation.appendKnock() as! ZMMessage
         // then
         XCTAssertEqual(
             message.primitiveValue(forKey: ZMMessageCachedCategoryKey) as? NSNumber,
@@ -589,7 +589,7 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCategorizesAnImageMessageOnInsert() {
         // when
-        let message = try! self.conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMMessage
 
         // then
         XCTAssertEqual(
@@ -600,9 +600,9 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCategorizesAVideoMessageOnInsert() {
         // when
-        let message = try! self.conversation.appendFile(with: ZMVideoMetadata(
-            fileURL: self.fileURL(forResource: "video", extension: "mp4"),
-            thumbnail: self.verySmallJPEGData()
+        let message = try! conversation.appendFile(with: ZMVideoMetadata(
+            fileURL: fileURL(forResource: "video", extension: "mp4"),
+            thumbnail: verySmallJPEGData()
         )) as! ZMMessage
 
         // then
@@ -615,8 +615,8 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCategorizesAnAudioFile() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMAudioMetadata(
-            fileURL: self.fileURL(forResource: "audio", extension: "m4a"),
+        let message = try! conversation.appendFile(with: ZMAudioMetadata(
+            fileURL: fileURL(forResource: "audio", extension: "m4a"),
             duration: 12.2
         )) as! ZMMessage
 
@@ -630,7 +630,7 @@ extension ZMMessageCategorizationTests {
 
     func testThatItCategorizesAFileOnInsert() {
         // GIVEN
-        let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: self.fileURL(
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: fileURL(
             forResource: "Lorem Ipsum",
             extension: "txt"
         ))) as! ZMMessage

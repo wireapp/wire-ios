@@ -38,7 +38,7 @@ final class RenameGroupSectionController: NSObject, CollectionViewSectionControl
         super.init()
 
         if let conversation = conversation as? ZMConversation {
-            token = ConversationChangeInfo.add(observer: self, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: self, for: conversation)
         }
     }
 

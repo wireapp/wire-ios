@@ -163,7 +163,7 @@ extension IntegrationTest {
         pushRegistry = PushRegistryMock(queue: nil)
         application = ApplicationMock()
         notificationCenter = .init()
-        mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
+        mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         mockTransportSession.cookieStorage = ZMPersistentCookieStorage(
             forServerName: mockEnvironment.backendURL.host!,
             userIdentifier: currentUserIdentifier,
@@ -313,7 +313,7 @@ extension IntegrationTest {
             delegate: self,
             application: application,
             pushRegistry: pushRegistry,
-            dispatchGroup: self.dispatchGroup,
+            dispatchGroup: dispatchGroup,
             environment: mockEnvironment,
             configuration: sessionManagerConfiguration,
             detector: jailbreakDetector,
@@ -329,7 +329,7 @@ extension IntegrationTest {
 
         sessionManager?.start(launchOptions: [:])
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     @objc
@@ -790,7 +790,7 @@ extension IntegrationTest: SessionManagerDelegate {
     public func sessionManagerDidChangeActiveUserSession(userSession: ZMUserSession) {
         self.userSession = userSession
 
-        if let notificationCenter = self.notificationCenter {
+        if let notificationCenter {
             self.userSession?.localNotificationDispatcher?.notificationCenter = notificationCenter
         }
 
@@ -809,12 +809,12 @@ extension IntegrationTest: SessionManagerDelegate {
     }
 
     public func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
-        self.userSession = nil
+        userSession = nil
         userSessionCanBeTornDown()
     }
 
     public func sessionManagerWillLogout(error: Error?, userSessionCanBeTornDown: (() -> Void)?) {
-        self.userSession = nil
+        userSession = nil
         userSessionCanBeTornDown?()
     }
 
@@ -843,7 +843,7 @@ extension IntegrationTest: SessionManagerDelegate {
         from selectedAccount: Account?,
         userSessionCanBeTornDown: @escaping () -> Void
     ) {
-        self.userSession = nil
+        userSession = nil
         userSessionCanBeTornDown()
     }
 

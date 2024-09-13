@@ -36,8 +36,8 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<
     override func setUp() async throws {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
-        self.handler = PushSupportedProtocolsActionHandler(context: syncContext)
-        self.action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
+        handler = PushSupportedProtocolsActionHandler(context: syncContext)
+        action = PushSupportedProtocolsAction(supportedProtocols: [.proteus, .mls])
     }
 
     override func tearDown() async throws {

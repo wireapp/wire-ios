@@ -194,7 +194,7 @@ final class SketchColorCollectionViewCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        knobView = ColorKnobView()
+        self.knobView = ColorKnobView()
 
         contentStackView.axis = .vertical
         contentStackView.alignment = .center

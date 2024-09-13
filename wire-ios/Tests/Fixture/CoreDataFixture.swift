@@ -92,10 +92,10 @@ final class CoreDataFixture {
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
-        snapshotBackgroundColor = UIColor.clear
+        self.snapshotBackgroundColor = UIColor.clear
 
         do {
-            documentsDirectory = try FileManager.default.url(
+            self.documentsDirectory = try FileManager.default.url(
                 for: .documentDirectory,
                 in: .userDomainMask,
                 appropriateFor: nil,
@@ -124,11 +124,11 @@ final class CoreDataFixture {
 
         /////////////////////////
 
-        snapshotBackgroundColor = .white
+        self.snapshotBackgroundColor = .white
         setupTestObjects()
 
         MockUser.setMockSelf(selfUser)
-        selfUserProvider = SelfProvider(providedSelfUser: selfUser)
+        self.selfUserProvider = SelfProvider(providedSelfUser: selfUser)
 
         SelfUser.provider = selfUserProvider
     }
@@ -153,7 +153,7 @@ final class CoreDataFixture {
     // MARK: – Setup
 
     private func setupMember() {
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
 
         team = Team.insertNewObject(in: uiMOC)
         team!.remoteIdentifier = UUID()

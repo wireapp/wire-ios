@@ -184,7 +184,7 @@ extension ZMConversation {
             updateLastRead(timestamp, synchronize: false)
         }
 
-        self.needsToCalculateUnreadMessages = true
+        needsToCalculateUnreadMessages = true
     }
 
     /// Update timetamps after an message has been inserted locally by the self user
@@ -281,7 +281,7 @@ extension ZMConversation {
             return
         }
 
-        let objectID = self.objectID
+        let objectID = objectID
 
         syncMOC.performGroupedBlock {
             let conversation = syncMOC.object(with: objectID) as? ZMConversation

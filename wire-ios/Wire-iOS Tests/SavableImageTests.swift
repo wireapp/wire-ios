@@ -62,9 +62,9 @@ final class SavableImageTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        image = self.image(inTestBundleNamed: "transparent.png")
+        image = image(inTestBundleNamed: "transparent.png")
         imageData = image.imageData
-        gif = self.image(inTestBundleNamed: "animated.gif")
+        gif = image(inTestBundleNamed: "animated.gif")
         gifData = gif.imageData
     }
 

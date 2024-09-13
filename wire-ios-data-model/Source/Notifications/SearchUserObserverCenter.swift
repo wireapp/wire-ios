@@ -26,13 +26,12 @@ extension NSManagedObjectContext {
     @objc public var searchUserObserverCenter: SearchUserObserverCenter {
         assert(zm_isUserInterfaceContext, "SearchUserObserverCenter does not exist in syncMOC")
 
-        if let observer = self
-            .userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
+        if let observer = userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
             return observer
         }
 
         let newObserver = SearchUserObserverCenter(managedObjectContext: self)
-        self.userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] = newObserver
+        userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] = newObserver
         return newObserver
     }
 }
@@ -89,7 +88,7 @@ public class SearchUserSnapshot {
     func postNotification(changedKeys: [String]) {
         guard !changedKeys.isEmpty,
               let searchUser,
-              let moc = self.managedObjectContext
+              let moc = managedObjectContext
         else { return }
 
         let userChange = UserChangeInfo(object: searchUser)
@@ -117,7 +116,7 @@ public class SearchUserObserverCenter: NSObject, ChangeInfoConsumer {
     /// Adds a snapshots for the specified searchUser if not already present
     public func addSearchUser(_ searchUser: ZMSearchUser) {
         guard let remoteID = searchUser.remoteIdentifier,
-              let moc = self.managedObjectContext else {
+              let moc = managedObjectContext else {
             zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
             return
         }

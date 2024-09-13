@@ -26,7 +26,7 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         let fromClient = user1?.clients.anyObject() as! MockUserClient
         let toClient = selfUser?.clients.anyObject() as! MockUserClient
         let textMessage = GenericMessage(content: Text(content: "Hello"))
-        let conversation = self.conversation(for: selfToUser1Conversation!)
+        let conversation = conversation(for: selfToUser1Conversation!)
 
         let requestPath = "/conversations/\(conversation!.remoteIdentifier!.transportString())/otr/messages"
 
@@ -76,9 +76,9 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)
+        let conversation = conversation(for: selfToUser1Conversation!)
         var message: ZMClientMessage!
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Hello") as? ZMClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -114,9 +114,9 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)
+        let conversation = conversation(for: selfToUser1Conversation!)
         var message: ZMClientMessage!
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation?.appendText(content: "Hello") as? ZMClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -146,7 +146,8 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        if !convObserver!.notifications.isEmpty {
+        // swiftformat:disable:next isEmpty
+        if convObserver!.notifications.count > 0 {
             return XCTFail()
         }
         guard let messageChangeInfo = messageObserver?.notifications.firstObject  as? MessageChangeInfo else {

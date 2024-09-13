@@ -32,7 +32,7 @@ final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
         snapshotHelper = SnapshotHelper()
         cell = GroupDetailsNotificationOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         cell.overrideUserInterfaceStyle = .light
-        conversation = self.createGroupConversation()
+        conversation = createGroupConversation()
     }
 
     override func tearDown() {

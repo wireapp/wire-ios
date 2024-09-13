@@ -40,7 +40,7 @@ extension MockTransportSession {
             apiVersion: apiVersion
                 .rawValue
         ) }
-        if let members = self.selfUser.currentTeamMembers {
+        if let members = selfUser.currentTeamMembers {
             guard members.contains(user) else {
                 return ZMTransportResponse(
                     payload: ["label": "insufficient-permissions"] as NSDictionary,
@@ -83,6 +83,6 @@ extension MockTransportSession {
 
     @objc(insertUserWithName:)
     public func insertUserWithName(name: String) -> MockUser {
-        self.insertUserWith(name: name, includeClient: true)
+        insertUserWith(name: name, includeClient: true)
     }
 }

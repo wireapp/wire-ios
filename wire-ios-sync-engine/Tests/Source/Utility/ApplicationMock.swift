@@ -49,13 +49,13 @@ public final class ApplicationMock: NSObject {
 
 extension ApplicationMock: ZMApplication {
     public func registerForRemoteNotifications() {
-        self.registerForRemoteNotificationCount += 1
-        self.registerForRemoteNotificationsCallback()
-        self.updateDeviceToken()
+        registerForRemoteNotificationCount += 1
+        registerForRemoteNotificationsCallback()
+        updateDeviceToken()
     }
 
     public func setMinimumBackgroundFetchInterval(_ minimumBackgroundFetchInterval: TimeInterval) {
-        self.minimumBackgroundFetchInverval = minimumBackgroundFetchInterval
+        minimumBackgroundFetchInverval = minimumBackgroundFetchInterval
     }
 }
 
@@ -148,30 +148,30 @@ extension ApplicationMock {
     }
 
     var isInBackground: Bool {
-        self.applicationState == .background
+        applicationState == .background
     }
 
     @objc
     func setBackground() {
-        self.applicationState = .background
+        applicationState = .background
     }
 
     var isInactive: Bool {
-        self.applicationState == .inactive
+        applicationState == .inactive
     }
 
     @objc
     func setInactive() {
-        self.applicationState = .inactive
+        applicationState = .inactive
     }
 
     var isActive: Bool {
-        self.applicationState == .active
+        applicationState == .active
     }
 
     @objc
     func setActive() {
-        self.applicationState = .active
+        applicationState = .active
     }
 
     public func updateDeviceToken() {

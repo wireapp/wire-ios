@@ -81,10 +81,10 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
                 let shareableDebugReport = ShareableDebugReport(
                     logFileMetadata: metadata,
-                    shareFile: self.shareFile
+                    shareFile: shareFile
                 )
 
-                self.router.presentShareViewController(
+                router.presentShareViewController(
                     destinations: conversations,
                     debugReport: shareableDebugReport
                 )

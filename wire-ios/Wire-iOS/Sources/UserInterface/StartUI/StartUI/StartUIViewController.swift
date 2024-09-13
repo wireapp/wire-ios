@@ -84,7 +84,7 @@ final class StartUIViewController: UIViewController {
             isFederationEnabled: isFederationEnabled
         )
         self.userSession = userSession
-        profilePresenter = .init(mainCoordinator: mainCoordinator)
+        self.profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
 
         configGroupSelector()
@@ -92,11 +92,11 @@ final class StartUIViewController: UIViewController {
     }
 
     var searchHeader: SearchHeaderViewController {
-        self.searchHeaderViewController
+        searchHeaderViewController
     }
 
     var searchResults: SearchResultsViewController {
-        self.searchResultsViewController
+        searchResultsViewController
     }
 
     // MARK: - Life cycle methods
@@ -136,7 +136,7 @@ final class StartUIViewController: UIViewController {
         emptyResultView.delegate = self
 
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         searchHeader.delegate = self

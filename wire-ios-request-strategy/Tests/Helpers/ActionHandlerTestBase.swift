@@ -128,7 +128,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
         expect(action: &action, toPassValidation: validation)
 
         // When
-        let response = self.response(
+        let response = response(
             status: status,
             payload: payload,
             label: label,
@@ -173,7 +173,7 @@ extension ActionHandlerTestBase {
         line: UInt = #line,
         validation: @escaping ValidationBlock
     ) {
-        guard let action = self.action else {
+        guard let action else {
             return XCTFail("action must be set in child class' setup")
         }
 
@@ -294,7 +294,7 @@ extension ActionHandlerTestBase {
         action: inout Action,
         toPassValidation validateResult: @escaping ValidationBlock
     ) {
-        let expectation = self.customExpectation(description: "didPassValidation")
+        let expectation = customExpectation(description: "didPassValidation")
 
         action.onResult { result in
             guard validateResult(result) else { return }

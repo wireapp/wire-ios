@@ -510,7 +510,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             self.syncMOC.refresh(self.syncConversation, mergeChanges: false)
             let updateEvent = self.createMessageDeletedUpdateEvent(
                 sut.nonce!,
@@ -530,7 +530,7 @@ extension ZMClientMessageTests_Deletion {
     }
 
     func testThatIfSenderDeletesGroupEphemeralThenAllUsersAreRecipientsOfDeleteMessage() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // given
             self.syncConversation.conversationType = .group
             self.syncConversation.setMessageDestructionTimeoutValue(.custom(1000), for: .selfUser)

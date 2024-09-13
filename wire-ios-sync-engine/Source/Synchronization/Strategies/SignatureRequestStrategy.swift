@@ -38,7 +38,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         withManagedObjectContext managedObjectContext: NSManagedObjectContext,
         applicationStatus: ApplicationStatus
     ) {
-        syncContext = managedObjectContext
+        self.syncContext = managedObjectContext
         super.init(
             withManagedObjectContext: managedObjectContext,
             applicationStatus: applicationStatus
@@ -264,16 +264,16 @@ private struct SignatureResponse: Codable, Equatable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        responseID = try container.decodeIfPresent(String.self, forKey: .responseID)
+        self.responseID = try container.decodeIfPresent(String.self, forKey: .responseID)
         guard
             let consentURLString = try container.decodeIfPresent(String.self, forKey: .consentURL),
             let url = URL(string: consentURLString)
         else {
-            consentURL = nil
+            self.consentURL = nil
             return
         }
 
-        consentURL = url
+        self.consentURL = url
     }
 }
 
@@ -285,14 +285,14 @@ private struct SignatureRetrieveResponse: Codable, Equatable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
+        self.documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         guard
             let cmsBase64String = try container.decodeIfPresent(String.self, forKey: .cms),
             let cmsEncodedData = Data(base64Encoded: cmsBase64String)
         else {
-            cms = nil
+            self.cms = nil
             return
         }
-        cms = cmsEncodedData
+        self.cms = cmsEncodedData
     }
 }

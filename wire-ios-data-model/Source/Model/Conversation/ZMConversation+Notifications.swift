@@ -28,7 +28,7 @@ extension ZMConversation {
 
     /// Sends a notification with the given name on the UI context
     func notifyOnUI(name: Notification.Name) {
-        guard let userInterfaceContext = self.managedObjectContext?.zm_userInterface else {
+        guard let userInterfaceContext = managedObjectContext?.zm_userInterface else {
             return
         }
 

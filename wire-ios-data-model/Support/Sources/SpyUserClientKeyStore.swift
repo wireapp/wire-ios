@@ -29,7 +29,7 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
     public var lastGeneratedLastPrekey: String?
 
     override public func generateMoreKeys(_ count: UInt16, start: UInt16) throws -> [(id: UInt16, prekey: String)] {
-        if self.failToGeneratePreKeys {
+        if failToGeneratePreKeys {
             let error = NSError(
                 domain: "cryptobox.error",
                 code: 0,
@@ -44,7 +44,7 @@ public class SpyUserClientKeyStore: UserClientKeysStore {
     }
 
     override public func lastPreKey() throws -> String {
-        if self.failToGenerateLastPreKey {
+        if failToGenerateLastPreKey {
             let error = NSError(
                 domain: "cryptobox.error",
                 code: 0,

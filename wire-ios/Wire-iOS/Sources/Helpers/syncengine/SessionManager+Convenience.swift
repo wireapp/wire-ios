@@ -61,9 +61,9 @@ extension SessionManager {
         let isCallKitSupported = !UIDevice.isSimulator
 
         if isCallKitEnabled, isCallKitSupported, hasAudioPermissions {
-            self.callNotificationStyle = .callKit
+            callNotificationStyle = .callKit
         } else {
-            self.callNotificationStyle = .pushNotifications
+            callNotificationStyle = .pushNotifications
         }
     }
 

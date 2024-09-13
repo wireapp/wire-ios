@@ -41,9 +41,9 @@ open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
     convenience init?(object: NSObject, changes: Changes) {
         guard changes.hasChangeInfo else { return nil }
         self.init(object: object)
-        changedKeys = changes.changedKeys
-        changeInfos = changes.originalChanges
-        considerAllKeysChanged = changes.mayHaveUnknownChanges
+        self.changedKeys = changes.changedKeys
+        self.changeInfos = changes.originalChanges
+        self.considerAllKeysChanged = changes.mayHaveUnknownChanges
     }
 
     public required init(object: NSObject) {

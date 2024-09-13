@@ -24,20 +24,20 @@ import XCTest
 class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     func testThatAtCreationAMessageIsNotCausingDegradation_UIMoc() {
         // GIVEN
-        let convo = createConversation(moc: self.uiMOC)
+        let convo = createConversation(moc: uiMOC)
 
         // WHEN
         let message = try! convo.appendText(content: "Foo")
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // THEN
         XCTAssertFalse(message.causedSecurityLevelDegradation)
         XCTAssertTrue(convo.messagesThatCausedSecurityLevelDegradation.isEmpty)
-        XCTAssertFalse(self.uiMOC.zm_hasChanges)
+        XCTAssertFalse(uiMOC.zm_hasChanges)
     }
 
     func testThatAtCreationAMessageIsNotCausingDegradation_SyncMoc() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
 
@@ -51,7 +51,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItSetsMessageAsCausingDegradation() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -68,7 +68,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItDoesNotSetDeliveryReceiptAsCausingDegradation() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMClientMessage
@@ -94,7 +94,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsMessageAsCausingDegradation() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -112,7 +112,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsDegradedConversationWhenRemovingAllMessages() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message1 = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -140,7 +140,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsDegradedConversationWhenClearingDegradedMessagesOnConversation() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message1 = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -160,7 +160,7 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
     }
 
     func testThatItResetsOnlyDegradedConversationWhenClearingDegradedMessagesOnThatConversation() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message1 = try! convo.appendText(content: "Foo") as! ZMOTRMessage
@@ -192,12 +192,12 @@ class ZMOTRMessage_SecurityDegradationTests: BaseZMClientMessageTests {
 extension ZMOTRMessage_SecurityDegradationTests {
     func testThatMessageIsNotMarkedOnUIMOCBeforeMerge() {
         // GIVEN
-        let convo = createConversation(moc: self.uiMOC)
+        let convo = createConversation(moc: uiMOC)
         let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let syncMessage = try! self.syncMOC.existingObject(with: message.objectID) as! ZMOTRMessage
             syncMessage.causedSecurityLevelDegradation = true
             self.syncMOC.saveOrRollback()
@@ -209,11 +209,11 @@ extension ZMOTRMessage_SecurityDegradationTests {
 
     func testThatMessageIsMarkedOnUIMOCAfterMerge() {
         // GIVEN
-        let convo = createConversation(moc: self.uiMOC)
+        let convo = createConversation(moc: uiMOC)
         let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage
-        self.uiMOC.saveOrRollback()
+        uiMOC.saveOrRollback()
         var userInfo: [String: Any] = [:]
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             let syncMessage = try! self.syncMOC.existingObject(with: message.objectID) as! ZMOTRMessage
             syncMessage.causedSecurityLevelDegradation = true
             self.syncMOC.saveOrRollback()
@@ -221,14 +221,14 @@ extension ZMOTRMessage_SecurityDegradationTests {
         }
 
         // WHEN
-        self.uiMOC.mergeUserInfo(fromUserInfo: userInfo)
+        uiMOC.mergeUserInfo(fromUserInfo: userInfo)
 
         // THEN
         XCTAssertTrue(message.causedSecurityLevelDegradation)
     }
 
     func testThatItPreservesMessagesMargedOnSyncMOCAfterMerge() {
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let convo = self.createConversation(moc: self.syncMOC)
             let message = try! convo.appendText(content: "Foo") as! ZMOTRMessage

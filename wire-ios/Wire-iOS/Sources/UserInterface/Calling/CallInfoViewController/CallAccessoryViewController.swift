@@ -49,13 +49,13 @@ final class CallAccessoryViewController: UIViewController, CallParticipantsListV
     ) {
         self.configuration = configuration
 
-        participantsViewController = CallParticipantsListViewController(
+        self.participantsViewController = CallParticipantsListViewController(
             participants: configuration.accessoryType.participants,
             showParticipants: false,
             selfUser: selfUser
         )
 
-        avatarView = UserImageViewContainer(
+        self.avatarView = UserImageViewContainer(
             size: .big,
             maxSize: 240,
             yOffset: -8,

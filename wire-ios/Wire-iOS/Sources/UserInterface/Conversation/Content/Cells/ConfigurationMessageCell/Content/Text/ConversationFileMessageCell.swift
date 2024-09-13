@@ -102,7 +102,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
     override var tintColor: UIColor! {
         didSet {
-            self.fileTransferView.tintColor = self.tintColor
+            fileTransferView.tintColor = tintColor
         }
     }
 

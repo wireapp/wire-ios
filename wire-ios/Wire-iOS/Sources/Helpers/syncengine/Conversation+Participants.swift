@@ -61,7 +61,7 @@ extension ZMConversation {
                 }
 
                 let conversation = try await syncContext.perform { [self] in
-                    try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                    try ZMConversation.existingObject(for: objectID, in: syncContext)
                 }
 
                 try await service.addParticipants(users, to: conversation)
@@ -103,7 +103,7 @@ extension ZMConversation {
                 }
 
                 let conversation = try await syncContext.perform { [self] in
-                    try ZMConversation.existingObject(for: self.objectID, in: syncContext)
+                    try ZMConversation.existingObject(for: objectID, in: syncContext)
                 }
 
                 try await service.removeParticipant(user, from: conversation)

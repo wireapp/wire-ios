@@ -73,7 +73,7 @@ final class TeamImageView: UIImageView {
         super.init(frame: .zero)
 
         initialLabel.textAlignment = .center
-        self.addSubview(self.initialLabel)
+        addSubview(initialLabel)
         self.accessibilityElements = [initialLabel]
 
         initialLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -83,7 +83,7 @@ final class TeamImageView: UIImageView {
             initialLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
-        self.updateImage()
+        updateImage()
 
         updateRoundCorner()
 
@@ -101,7 +101,7 @@ final class TeamImageView: UIImageView {
         super.layoutSubviews()
 
         if !bounds.equalTo(lastLayoutBounds) {
-            lastLayoutBounds = self.bounds
+            lastLayoutBounds = bounds
             updateRoundCorner()
         }
     }

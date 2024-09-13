@@ -44,9 +44,9 @@ final class CameraController {
 
     init?(camera: SettingsCamera) {
         guard !UIDevice.isSimulator else { return nil }
-        currentCamera = camera
+        self.currentCamera = camera
         setupSession()
-        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
     }
 
     // MARK: - Session Management

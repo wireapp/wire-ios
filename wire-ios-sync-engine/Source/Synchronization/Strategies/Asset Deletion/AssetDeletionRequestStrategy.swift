@@ -56,7 +56,7 @@ public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSing
     ) {
         self.identifierProvider = identifierProvider
         super.init(withManagedObjectContext: context, applicationStatus: applicationStatus)
-        requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
+        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
 
     private func handle(response: ZMTransportResponse, for identifier: String) {

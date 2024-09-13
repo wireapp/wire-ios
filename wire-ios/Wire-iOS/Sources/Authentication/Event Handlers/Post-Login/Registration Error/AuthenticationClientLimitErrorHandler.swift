@@ -50,7 +50,7 @@ final class AuthenticationClientLimitErrorHandler: AuthenticationEventHandler {
 
         guard let nextStep = AuthenticationFlowStep.makeClientManagementStep(
             from: error,
-            statusProvider: self.statusProvider
+            statusProvider: statusProvider
         ) else {
             return nil
         }

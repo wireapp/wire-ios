@@ -24,14 +24,14 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
     func replyPreview() -> UIView? {
-        guard self.canBeQuoted else {
+        guard canBeQuoted else {
             return nil
         }
         return preparePreviewView()
     }
 
     func preparePreviewView(shouldDisplaySender: Bool = true) -> UIView {
-        if self.isImage || self.isVideo {
+        if isImage || isVideo {
             MessageThumbnailPreviewView(message: self, displaySender: shouldDisplaySender)
         } else {
             MessagePreviewView(message: self, displaySender: shouldDisplaySender)
@@ -173,7 +173,7 @@ final class MessageThumbnailPreviewView: UIView {
             .foregroundColor: SemanticColors.Label.textDefault,
         ]
 
-        senderLabel.attributedText = (message.senderName && attributes) + self.editIcon()
+        senderLabel.attributedText = (message.senderName && attributes) + editIcon()
         imagePreview.isHidden = !message.canBeShared
 
         if message.isImage {
@@ -318,7 +318,7 @@ final class MessagePreviewView: UIView {
             .foregroundColor: SemanticColors.Label.textDefault,
         ]
 
-        senderLabel.attributedText = (message.senderName && attributes) + self.editIcon()
+        senderLabel.attributedText = (message.senderName && attributes) + editIcon()
 
         if let textMessageData = message.textMessageData {
             contentTextView.attributedText = NSAttributedString.formatForPreview(

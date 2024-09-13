@@ -69,7 +69,7 @@ final class SenderNameCellComponent: UIView {
         indicatorView.translatesAutoresizingMaskIntoConstraints = false
 
         indicatorImageViewTrailing = indicatorView.trailingAnchor.constraint(
-            lessThanOrEqualTo: self.trailingAnchor,
+            lessThanOrEqualTo: trailingAnchor,
             constant: -conversationHorizontalMargins.right
         )
 

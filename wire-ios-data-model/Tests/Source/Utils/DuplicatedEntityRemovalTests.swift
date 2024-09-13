@@ -52,20 +52,20 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
         conversation: ZMConversation,
         client: UserClient
     ) -> [ZMSystemMessage] {
-        let addedMessage = self.appendSystemMessage(
+        let addedMessage = appendSystemMessage(
             conversation: conversation,
             type: .newClient,
-            sender: ZMUser.selfUser(in: self.moc),
+            sender: ZMUser.selfUser(in: moc),
             users: [client.user!],
             addedUsers: [client.user!],
             clients: [client],
             timestamp: Date()
         )
 
-        let ignoredMessage = self.appendSystemMessage(
+        let ignoredMessage = appendSystemMessage(
             conversation: conversation,
             type: .ignoredClient,
-            sender: ZMUser.selfUser(in: self.moc),
+            sender: ZMUser.selfUser(in: moc),
             users: [client.user!],
             clients: [client],
             timestamp: Date()
@@ -107,8 +107,8 @@ extension DuplicatedEntityRemovalTests {
 
         // WHEN
         client1.merge(with: client2)
-        self.moc.delete(client2)
-        self.moc.saveOrRollback()
+        moc.delete(client2)
+        moc.saveOrRollback()
 
         // THEN
         XCTAssertEqual(addedOrRemovedInSystemMessages.count, 2)
@@ -128,6 +128,6 @@ extension DuplicatedEntityRemovalTests {
 
 extension Array where Element: ZMManagedObject {
     fileprivate var nonZombies: [Element] {
-        self.filter { !($0.isZombieObject || $0.isDeleted) }
+        filter { !($0.isZombieObject || $0.isDeleted) }
     }
 }

@@ -24,7 +24,7 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
     let title: String
     let identifier: String?
     var visible: Bool {
-        if let visibilityAction = self.visibilityAction {
+        if let visibilityAction {
             visibilityAction(self)
         } else {
             true
@@ -72,7 +72,7 @@ class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
     }
 
     func featureCell(_ cell: SettingsCellType) {
-        cell.titleText = self.title
+        cell.titleText = title
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {

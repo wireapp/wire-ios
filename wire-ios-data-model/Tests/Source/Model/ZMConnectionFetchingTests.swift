@@ -23,12 +23,12 @@ class ZMConnectionFetchingTests: DatabaseBaseTest {
 
     override public func setUp() {
         super.setUp()
-        self.mocs = self.createStorageStackAndWaitForCompletion()
+        mocs = createStorageStackAndWaitForCompletion()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
     }
 
     override public func tearDown() {
-        self.mocs = nil
+        mocs = nil
         super.tearDown()
     }
 

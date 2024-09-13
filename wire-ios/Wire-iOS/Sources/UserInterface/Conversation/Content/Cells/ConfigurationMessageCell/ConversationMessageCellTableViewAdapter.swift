@@ -93,9 +93,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.cellView = C.View(frame: .zero)
-        self.cellView.translatesAutoresizingMaskIntoConstraints = false
+        cellView.translatesAutoresizingMaskIntoConstraints = false
         self.ephemeralCountdownView = EphemeralCountdownView()
-        self.ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
+        ephemeralCountdownView.translatesAutoresizingMaskIntoConstraints = false
 
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
@@ -107,12 +107,12 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         contentView.addSubview(cellView)
         contentView.addSubview(ephemeralCountdownView)
 
-        leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
-        trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
-        bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        self.leading = cellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+        self.trailing = cellView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        self.top = cellView.topAnchor.constraint(equalTo: contentView.topAnchor)
+        self.bottom = cellView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         bottom.priority = UILayoutPriority(999)
-        ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
+        self.ephemeralTop = ephemeralCountdownView.topAnchor.constraint(equalTo: cellView.topAnchor)
 
         NSLayoutConstraint.activate([
             ephemeralCountdownView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -124,14 +124,14 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
             bottom,
         ])
 
-        longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
+        self.longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(onLongPress))
         contentView.addGestureRecognizer(longPressGesture)
 
-        doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
+        self.doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onDoubleTap))
         doubleTapGesture.numberOfTapsRequired = 2
         contentView.addGestureRecognizer(doubleTapGesture)
 
-        singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
+        self.singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(onSingleTap))
         cellView.addGestureRecognizer(singleTapGesture)
         singleTapGesture.require(toFail: doubleTapGesture)
         singleTapGesture.delegate = self
@@ -144,10 +144,10 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
 
     func configure(with object: C.View.Configuration, fullWidth: Bool, topMargin: Float) {
         cellView.configure(with: object, animated: false)
-        self.isFullWidth = fullWidth
+        isFullWidth = fullWidth
         self.topMargin = topMargin
-        self.ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
-        self.ephemeralCountdownView.message = cellDescription?.message
+        ephemeralCountdownView.isHidden = cellDescription?.showEphemeralTimer == false
+        ephemeralCountdownView.message = cellDescription?.message
     }
 
     func configureConstraints(fullWidth: Bool) {
@@ -251,7 +251,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         if cellView.selectionView != nil {
             cellView.selectionRect
         } else {
-            self.bounds
+            bounds
         }
     }
 

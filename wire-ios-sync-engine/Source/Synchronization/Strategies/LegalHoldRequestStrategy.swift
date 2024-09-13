@@ -33,7 +33,7 @@ public class LegalHoldRequestStrategy: AbstractRequestStrategy, ZMSingleRequestT
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         configuration = [.allowsRequestsDuringSlowSync]
-        singleRequstSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
+        self.singleRequstSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 
     override public func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {

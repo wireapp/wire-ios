@@ -40,7 +40,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     let accessibilityLabel: String? = nil
 
     init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
             content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
             isCollapsed: isCollapsed,

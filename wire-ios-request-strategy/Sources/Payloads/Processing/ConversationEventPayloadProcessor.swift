@@ -107,7 +107,7 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext
     ) async {
         let conversation = await context.perform {
-            self.fetchOrCreateConversation(
+            fetchOrCreateConversation(
                 from: payload,
                 in: context
             )
@@ -478,7 +478,7 @@ struct ConversationEventPayloadProcessor {
         case .oneOnOne:
             // Conversations are of type `oneOnOne` when the connection
             // is accepted.
-            return await self.updateOrCreateOneToOneConversation(
+            return await updateOrCreateOneToOneConversation(
                 from: payload,
                 in: context,
                 serverTimestamp: serverTimestamp,
@@ -517,16 +517,16 @@ struct ConversationEventPayloadProcessor {
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
             conversation.isPendingInitialFetch = false
-            self.updateAttributes(from: payload, for: conversation, context: context)
-            self.updateMetadata(from: payload, for: conversation, context: context)
-            self.updateMembers(from: payload, for: conversation, context: context)
-            self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-            self.updateConversationStatus(from: payload, for: conversation)
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
 
             if isInitialFetch {
-                self.assignMessageProtocol(from: payload, for: conversation, in: context)
+                assignMessageProtocol(from: payload, for: conversation, in: context)
             } else {
-                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+                updateMessageProtocol(from: payload, for: conversation, in: context)
             }
 
             Flow.createGroup

@@ -24,7 +24,7 @@ import WireSyncEngine
 
 extension ZMUser {
     var hasValidEmail: Bool {
-        guard let email = self.emailAddress,
+        guard let email = emailAddress,
               !email.isEmpty else {
             return false
         }
@@ -154,7 +154,7 @@ extension SettingsCellDescriptorFactory {
 
     func actionsSection() -> SettingsSectionDescriptorType {
         var cellDescriptors = [resetPasswordElement()]
-        if let selfUser = self.settingsPropertyFactory.selfUser, !selfUser.isTeamMember {
+        if let selfUser = settingsPropertyFactory.selfUser, !selfUser.isTeamMember {
             cellDescriptors.append(deleteAccountButtonElement())
         }
 
@@ -320,7 +320,7 @@ extension SettingsCellDescriptorFactory {
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
         SettingsPropertyToggleCellDescriptor(
             settingsProperty:
-            self.settingsPropertyFactory.property(.readReceiptsEnabled),
+            settingsPropertyFactory.property(.readReceiptsEnabled),
             inverse: false,
             identifier: "ReadReceiptsSwitch"
         )
@@ -328,7 +328,7 @@ extension SettingsCellDescriptorFactory {
 
     func encryptMessagesAtRestElement() -> SettingsCellDescriptorType {
         SettingsPropertyToggleCellDescriptor(
-            settingsProperty: self.settingsPropertyFactory
+            settingsProperty: settingsPropertyFactory
                 .property(.encryptMessagesAtRest)
         )
     }

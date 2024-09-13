@@ -56,7 +56,10 @@ final class CallActionsView: UIView {
 
     init() {
         super.init(frame: .zero)
-        videoButtonDisabledTapRecognizer = UITapGestureRecognizer(target: self, action: #selector(performButtonAction))
+        self.videoButtonDisabledTapRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(performButtonAction)
+        )
         setupViews()
         setupAccessibility()
         createConstraints()

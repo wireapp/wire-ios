@@ -33,7 +33,7 @@ final class AuthenticationStartClientLimitErrorHandler: AuthenticationEventHandl
             error.userSessionErrorCode == .canNotRegisterMoreClients,
             let nextStep = AuthenticationFlowStep.makeClientManagementStep(
                 from: error,
-                statusProvider: self.statusProvider
+                statusProvider: statusProvider
             )
         else {
             return nil

@@ -37,7 +37,7 @@ public class MockPendingLegalHoldClient: NSManagedObject {
 extension MockUser {
     /// Requests a legal hold for the user.
     public func requestLegalHold() -> Bool {
-        guard let managedObjectContext = self.managedObjectContext else {
+        guard let managedObjectContext else {
             return false
         }
 

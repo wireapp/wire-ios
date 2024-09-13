@@ -24,12 +24,12 @@ final class AddressBookTests: XCTestCase {
     fileprivate var addressBook: MockAddressBook!
 
     override func setUp() {
-        self.addressBook = MockAddressBook()
+        addressBook = MockAddressBook()
         super.setUp()
     }
 
     override func tearDown() {
-        self.addressBook = nil
+        addressBook = nil
         super.tearDown()
     }
 }
@@ -39,7 +39,7 @@ final class AddressBookTests: XCTestCase {
 extension AddressBookTests {
     func testThatItReturnsAllContactsWhenTheyHaveValidEmailAndPhoneNumbers() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com", "janet@example.com"],
@@ -53,37 +53,37 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 2)
-        for i in 0 ..< self.addressBook.contacts.count {
-            XCTAssertEqual(contacts[i].emailAddresses, self.addressBook.contacts[i].rawEmails)
-            XCTAssertEqual(contacts[i].phoneNumbers, self.addressBook.contacts[i].rawPhoneNumbers)
+        for i in 0 ..< addressBook.contacts.count {
+            XCTAssertEqual(contacts[i].emailAddresses, addressBook.contacts[i].rawEmails)
+            XCTAssertEqual(contacts[i].phoneNumbers, addressBook.contacts[i].rawPhoneNumbers)
         }
     }
 
     func testThatItReturnsAllContactsWhenTheyHaveValidEmailOrPhoneNumbers() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["olaf@example.com"], phoneNumbers: []),
             MockAddressBookContact(firstName: "สยาม", emailAddresses: [], phoneNumbers: ["+15550101"]),
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 2)
-        for i in 0 ..< self.addressBook.contacts.count {
-            XCTAssertEqual(contacts[i].emailAddresses, self.addressBook.contacts[i].rawEmails)
-            XCTAssertEqual(contacts[i].phoneNumbers, self.addressBook.contacts[i].rawPhoneNumbers)
+        for i in 0 ..< addressBook.contacts.count {
+            XCTAssertEqual(contacts[i].emailAddresses, addressBook.contacts[i].rawEmails)
+            XCTAssertEqual(contacts[i].phoneNumbers, addressBook.contacts[i].rawPhoneNumbers)
         }
     }
 
     func testThatItFilterlContactsThatHaveNoEmailNorPhone() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -93,11 +93,11 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
-        XCTAssertEqual(contacts[0].emailAddresses, self.addressBook.contacts[0].rawEmails)
+        XCTAssertEqual(contacts[0].emailAddresses, addressBook.contacts[0].rawEmails)
     }
 }
 
@@ -106,12 +106,12 @@ extension AddressBookTests {
 extension AddressBookTests {
     func testThatItFilterlContactsThatHaveAnInvalidPhoneAndNoEmail() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["aabbccdd"]),
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 0)
@@ -119,7 +119,7 @@ extension AddressBookTests {
 
     func testThatIgnoresInvalidPhones() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["janet@example.com"],
@@ -128,22 +128,22 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
-        XCTAssertEqual(contacts[0].emailAddresses, self.addressBook.contacts[0].rawEmails)
+        XCTAssertEqual(contacts[0].emailAddresses, addressBook.contacts[0].rawEmails)
         XCTAssertEqual(contacts[0].phoneNumbers, [])
     }
 
     func testThatItFilterlContactsThatHaveNoPhoneAndInvalidEmail() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: []),
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 0)
@@ -151,27 +151,27 @@ extension AddressBookTests {
 
     func testThatIgnoresInvalidEmails() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: ["janet"], phoneNumbers: ["+15550103"]),
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
         XCTAssertEqual(contacts[0].emailAddresses, [])
-        XCTAssertEqual(contacts[0].phoneNumbers, self.addressBook.contacts[0].rawPhoneNumbers)
+        XCTAssertEqual(contacts[0].phoneNumbers, addressBook.contacts[0].rawPhoneNumbers)
     }
 
     func testThatItNormalizesPhoneNumbers() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+1 (555) 0103"]),
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -180,7 +180,7 @@ extension AddressBookTests {
 
     func testThatItNormalizesEmails() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["Olaf Karlsson <janet+1@example.com>"],
@@ -189,7 +189,7 @@ extension AddressBookTests {
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -198,12 +198,12 @@ extension AddressBookTests {
 
     func testThatItDoesNotIgnoresPhonesWithPlusZero() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(firstName: "Olaf", emailAddresses: [], phoneNumbers: ["+012345678"]),
         ]
 
         // when
-        let contacts = Array(self.addressBook.contacts(range: 0 ..< 100))
+        let contacts = Array(addressBook.contacts(range: 0 ..< 100))
 
         // then
         XCTAssertEqual(contacts.count, 1)
@@ -216,7 +216,7 @@ extension AddressBookTests {
 extension AddressBookTests {
     func testThatItEncodesUsers() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -227,10 +227,10 @@ extension AddressBookTests {
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = expectation(description: "Callback invoked")
 
         // when
-        self.addressBook
+        addressBook
             .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
                 // then
@@ -252,20 +252,20 @@ extension AddressBookTests {
                 expectation.fulfill()
             }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatItCallsCompletionHandlerWithNilIfNoContacts() {
         // given
-        self.addressBook.contacts = []
+        addressBook.contacts = []
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = expectation(description: "Callback invoked")
 
         // when
-        self.addressBook
+        addressBook
             .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
                 // then
@@ -273,14 +273,14 @@ extension AddressBookTests {
                 expectation.fulfill()
             }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatItEncodesOnlyAMaximumNumberOfUsers() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -291,10 +291,10 @@ extension AddressBookTests {
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = expectation(description: "Callback invoked")
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 2) { chunk in
+        addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 2) { chunk in
 
             // then
             if let chunk {
@@ -314,14 +314,14 @@ extension AddressBookTests {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatItEncodesOnlyTheRequestedUsers() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -334,10 +334,10 @@ extension AddressBookTests {
 
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = expectation(description: "Callback invoked")
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 1, maxNumberOfContacts: 2) { chunk in
+        addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 1, maxNumberOfContacts: 2) { chunk in
 
             // then
             if let chunk {
@@ -354,14 +354,14 @@ extension AddressBookTests {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatItEncodesAsManyContactsAsItCanIfAskedToEncodeTooMany() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -374,10 +374,10 @@ extension AddressBookTests {
 
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = expectation(description: "Callback invoked")
 
         // when
-        self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 2, maxNumberOfContacts: 20) { chunk in
+        addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 2, maxNumberOfContacts: 20) { chunk in
 
             // then
             if let chunk {
@@ -394,14 +394,14 @@ extension AddressBookTests {
             expectation.fulfill()
         }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatItEncodesNoContactIfAskedToEncodePastTheLastContact() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -413,10 +413,10 @@ extension AddressBookTests {
 
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation = self.expectation(description: "Callback invoked")
+        let expectation = expectation(description: "Callback invoked")
 
         // when
-        self.addressBook
+        addressBook
             .encodeWithCompletionHandler(queue, startingContactIndex: 20, maxNumberOfContacts: 20) { chunk in
 
                 // then
@@ -430,14 +430,14 @@ extension AddressBookTests {
                 expectation.fulfill()
             }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
     }
 
     func testThatItEncodesTheSameAddressBookInTheSameWay() {
         // given
-        self.addressBook.contacts = [
+        addressBook.contacts = [
             MockAddressBookContact(
                 firstName: "Olaf",
                 emailAddresses: ["olaf@example.com"],
@@ -448,32 +448,32 @@ extension AddressBookTests {
         ]
         let queue = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         queue.createDispatchGroups()
-        let expectation1 = self.expectation(description: "Callback invoked once")
+        let expectation1 = expectation(description: "Callback invoked once")
 
         var chunk1: [String: [String]]?
         var chunk2: [String: [String]]?
 
         // when
-        self.addressBook
+        addressBook
             .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
                 chunk1 = chunk?.otherContactsHashes
                 expectation1.fulfill()
             }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
 
-        let expectation2 = self.expectation(description: "Callback invoked twice")
-        self.addressBook
+        let expectation2 = expectation(description: "Callback invoked twice")
+        addressBook
             .encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
                 chunk2 = chunk?.otherContactsHashes
                 expectation2.fulfill()
             }
 
-        self.waitForExpectations(timeout: 0.5) { error in
+        waitForExpectations(timeout: 0.5) { error in
             XCTAssertNil(error)
         }
 

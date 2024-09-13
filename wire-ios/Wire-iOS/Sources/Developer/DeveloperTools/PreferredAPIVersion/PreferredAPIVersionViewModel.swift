@@ -61,7 +61,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
     // MARK: - Life cycle
 
     init() {
-        sections = [
+        self.sections = [
             Section(header: "", items: [Item(title: "No preference", value: .noPreference)]),
             Section(header: "Production versions", items: APIVersion.productionVersions.map {
                 Item(title: String($0.rawValue), value: Value(apiVersion: $0))
@@ -76,7 +76,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
             item.value == Value(apiVersion: BackendInfo.preferredAPIVersion)
         }!
 
-        selectedItemID = selectedItem.id
+        self.selectedItemID = selectedItem.id
     }
 
     // MARK: - Events

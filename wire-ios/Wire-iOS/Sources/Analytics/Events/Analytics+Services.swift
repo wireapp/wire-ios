@@ -46,9 +46,9 @@ struct ServiceAddedEvent: Event {
     private let context: Context
 
     init(service: ServiceUser, conversation: ZMConversation, context: Context) {
-        serviceIdentifier = service.serviceIdentifier ?? ""
-        conversationSize = conversation.otherNonServiceParticipants.count // Without service users
-        servicesSize = conversation.localParticipants.count - conversationSize
+        self.serviceIdentifier = service.serviceIdentifier ?? ""
+        self.conversationSize = conversation.otherNonServiceParticipants.count // Without service users
+        self.servicesSize = conversation.localParticipants.count - conversationSize
         self.context = context
     }
 
@@ -74,7 +74,7 @@ struct ServiceRemovedEvent: Event {
     private let serviceIdentifier: String
 
     init(service: ServiceUser) {
-        serviceIdentifier = service.serviceIdentifier ?? ""
+        self.serviceIdentifier = service.serviceIdentifier ?? ""
     }
 
     var name: String {

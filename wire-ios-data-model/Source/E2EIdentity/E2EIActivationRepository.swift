@@ -44,7 +44,7 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
-        storage = PrivateUserDefaults(
+        self.storage = PrivateUserDefaults(
             userID: userID,
             storage: sharedUserDefaults
         )

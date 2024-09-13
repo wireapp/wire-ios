@@ -43,8 +43,8 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
         applicationStatus: ApplicationStatus,
         syncProgress: SyncProgress
     ) {
-        actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
-        actionSync = EntityActionSync(actionHandlers: [actionHandler])
+        self.actionHandler = GetFeatureConfigsActionHandler(context: managedObjectContext)
+        self.actionSync = EntityActionSync(actionHandlers: [actionHandler])
         self.syncStatus = syncProgress
 
         super.init(
@@ -96,7 +96,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy {
                     }
                 }
 
-                self.slowSyncTask = nil
+                slowSyncTask = nil
             }
         }
 

@@ -26,24 +26,24 @@ class ProxiedRequestStrategyTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.requestsStatus = ProxiedRequestsStatus(requestCancellation: MockRequestCancellation())
-        self.mockApplicationStatus = MockApplicationStatus()
-        self.mockApplicationStatus.mockSynchronizationState = .online
-        self.sut = ProxiedRequestStrategy(
-            withManagedObjectContext: self.uiMOC,
-            applicationStatus: self.mockApplicationStatus,
-            requestsStatus: self.requestsStatus
+        requestsStatus = ProxiedRequestsStatus(requestCancellation: MockRequestCancellation())
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
+        sut = ProxiedRequestStrategy(
+            withManagedObjectContext: uiMOC,
+            applicationStatus: mockApplicationStatus,
+            requestsStatus: requestsStatus
         )
     }
 
     override func tearDown() {
-        self.sut = nil
-        self.requestsStatus = nil
+        sut = nil
+        requestsStatus = nil
         super.tearDown()
     }
 
     func testThatItGeneratesNoRequestsIfTheStatusIsEmpty() {
-        XCTAssertNil(self.sut.nextRequest(for: .v0))
+        XCTAssertNil(sut.nextRequest(for: .v0))
     }
 
     func testThatItGeneratesAGiphyRequest() {
@@ -56,7 +56,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         ))
 
         // when
-        let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request: ZMTransportRequest? = sut.nextRequest(for: .v0)
 
         // then
         if let request {
@@ -78,7 +78,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         ))
 
         // when
-        let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request: ZMTransportRequest? = sut.nextRequest(for: .v0)
 
         // then
         if let request {
@@ -101,7 +101,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         ))
 
         // when
-        let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request: ZMTransportRequest? = sut.nextRequest(for: .v0)
 
         // then
         if let request {
@@ -123,8 +123,8 @@ class ProxiedRequestStrategyTests: MessagingTest {
         ))
 
         // when
-        let request1: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
-        let request2: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request1: ZMTransportRequest? = sut.nextRequest(for: .v0)
+        let request2: ZMTransportRequest? = sut.nextRequest(for: .v0)
 
         // then
         XCTAssertNotNil(request1)
@@ -151,7 +151,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
             error: error,
             apiVersion: APIVersion.v0.rawValue
         )
-        let expectation = self.customExpectation(description: "Callback invoked")
+        let expectation = customExpectation(description: "Callback invoked")
 
         requestsStatus.add(request: ProxyRequest(
             type: .giphy,
@@ -166,14 +166,14 @@ class ProxiedRequestStrategyTests: MessagingTest {
         ))
 
         // when
-        let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request: ZMTransportRequest? = sut.nextRequest(for: .v0)
         if let request {
             request.complete(with: response)
         }
 
         // then
-        self.spinMainQueue(withTimeout: 0.2)
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        spinMainQueue(withTimeout: 0.2)
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItMakesTheRequestExpireAfter20Seconds() {
@@ -187,7 +187,7 @@ class ProxiedRequestStrategyTests: MessagingTest {
         ))
 
         // when
-        let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request: ZMTransportRequest? = sut.nextRequest(for: .v0)
 
         // then
         if let request {
@@ -205,13 +205,13 @@ class ProxiedRequestStrategyTests: MessagingTest {
         // given
         let proxyRequest = ProxyRequest(type: .giphy, path: "/foo/bar1", method: .get, callback: { _, _, _ in })
         requestsStatus.add(request: proxyRequest)
-        let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
+        let request: ZMTransportRequest? = sut.nextRequest(for: .v0)
 
         // when
         request?.callTaskCreationHandlers(withIdentifier: 1, sessionIdentifier: "123")
 
         // then
-        self.spinMainQueue(withTimeout: 0.2)
+        spinMainQueue(withTimeout: 0.2)
         let (executedRequest, taskIdentifier) = requestsStatus.executedRequests.first!
         XCTAssertEqual(proxyRequest, executedRequest)
         XCTAssertEqual(taskIdentifier.identifier, 1)

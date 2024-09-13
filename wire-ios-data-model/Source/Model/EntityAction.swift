@@ -65,7 +65,7 @@ extension EntityAction {
 
     /// Called by an `EntityActionHandler` when the action has been performed.
     public mutating func notifyResult(_ result: Swift.Result<Result, Failure>) {
-        let resultHandler = self.resultHandler
+        let resultHandler = resultHandler
         self.resultHandler = nil
 
         DispatchQueue.main.async {

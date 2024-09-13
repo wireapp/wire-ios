@@ -28,15 +28,15 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     var uiMOC: NSManagedObjectContext {
-        self.coreDataStack!.viewContext
+        coreDataStack!.viewContext
     }
 
     var syncMOC: NSManagedObjectContext {
-        self.coreDataStack!.syncContext
+        coreDataStack!.syncContext
     }
 
     var searchMOC: NSManagedObjectContext {
-        self.coreDataStack!.searchContext
+        coreDataStack!.searchContext
     }
 
     var sharedContainerURL: URL? {
@@ -91,7 +91,7 @@ class DatabaseTest: ZMTBaseTest {
     override func setUp() {
         super.setUp()
 
-        self.coreDataStack = createCoreDataStack()
+        coreDataStack = createCoreDataStack()
 
         configureCaches()
     }

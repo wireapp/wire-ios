@@ -46,13 +46,13 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
             style: .systemMessage
         )
 
-        configuration = View.Configuration(
+        self.configuration = View.Configuration(
             icon: .init(resource: .certificateValid),
             attributedText: title,
             showLine: true
         )
 
-        accessibilityLabel = title.string
-        actionController = nil
+        self.accessibilityLabel = title.string
+        self.actionController = nil
     }
 }

@@ -266,7 +266,7 @@ extension ZMConversation {
         guard let context = managedObjectContext else { return }
 
         let previousLastMessage = lastMessage
-        let systemMessage = self.appendSystemMessage(
+        let systemMessage = appendSystemMessage(
             type: .potentialGap,
             sender: ZMUser.selfUser(in: context),
             users: users,
@@ -360,7 +360,7 @@ extension ZMConversation {
         }
 
         // we will fetch the role once we fetch the entire convo metadata
-        self.addParticipantAndUpdateConversationState(user: user, role: nil)
+        addParticipantAndUpdateConversationState(user: user, role: nil)
 
         // A missing user indicate that we are out of sync with the BE so we'll re-sync the conversation
         needsToBeUpdatedFromBackend = true
@@ -376,7 +376,7 @@ extension ZMConversation {
 
         appendSystemMessage(
             type: .legalHoldEnabled,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: nil,
             clients: nil,
             timestamp: timestamp ?? timestampAfterLastMessage()
@@ -386,7 +386,7 @@ extension ZMConversation {
     private func appendLegalHoldEnabledSystemMessageForConversationAfterReceivingMessage(at timestamp: Date) {
         appendSystemMessage(
             type: .legalHoldEnabled,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: nil,
             clients: nil,
             timestamp: timestamp.previousNearestTimestamp
@@ -396,7 +396,7 @@ extension ZMConversation {
     private func appendLegalHoldDisabledSystemMessageForConversation() {
         appendSystemMessage(
             type: .legalHoldDisabled,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: nil,
             clients: nil,
             timestamp: timestampAfterLastMessage()
@@ -406,7 +406,7 @@ extension ZMConversation {
     private func appendLegalHoldDisabledSystemMessageForConversationAfterReceivingMessage(at timestamp: Date) {
         appendSystemMessage(
             type: .legalHoldDisabled,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: nil,
             clients: nil,
             timestamp: timestamp.previousNearestTimestamp
@@ -480,7 +480,7 @@ extension ZMConversation {
         block: @escaping (ZMOTRMessage)
             -> Void
     ) {
-        guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
+        guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation
             else { return }
@@ -552,7 +552,7 @@ extension ZMConversation {
     /// Replaces the first NewClient systemMessage for the selfClient with a UsingNewDevice system message
     @objc
     public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
+        let selfUser = ZMUser.selfUser(in: managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
 
         NSOrderedSet(array: lastMessages()).enumerateObjects { msg, idx, stop in
@@ -602,7 +602,7 @@ extension ZMConversation {
 
         appendSystemMessage(
             type: .conversationIsSecure,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: users,
             clients: clients,
             timestamp: timestampAfterLastMessage()
@@ -644,9 +644,9 @@ extension ZMConversation {
 
         guard !addedClients.isEmpty || !addedUsers.isEmpty else { return }
 
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .newClient,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: affectedUsers,
             addedUsers: addedUsers,
             clients: addedClients,
@@ -657,9 +657,9 @@ extension ZMConversation {
     private func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
         let users = Set(clients.compactMap(\.user))
-        self.appendSystemMessage(
+        appendSystemMessage(
             type: .ignoredClient,
-            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+            sender: ZMUser.selfUser(in: managedObjectContext!),
             users: users,
             clients: clients,
             timestamp: timestampAfterLastMessage()
@@ -702,7 +702,7 @@ extension ZMConversation {
         systemMessage.participantsRemovedReason = removedReason
         systemMessage.domains = domains
 
-        self.append(systemMessage)
+        append(systemMessage)
 
         return systemMessage
     }
@@ -710,14 +710,14 @@ extension ZMConversation {
     /// Returns a timestamp that is shortly (as short as possible) before the given message,
     /// or the last modified date if the message is nil
     private func timestamp(before: ZMMessage?) -> Date? {
-        guard let timestamp = before?.serverTimestamp ?? self.lastModifiedDate else { return nil }
+        guard let timestamp = before?.serverTimestamp ?? lastModifiedDate else { return nil }
         return timestamp.previousNearestTimestamp
     }
 
     /// Returns a timestamp that is shortly (as short as possible) after the given message,
     /// or the last modified date if the message is nil
     private func timestamp(after: ZMConversationMessage?) -> Date? {
-        guard let timestamp = after?.serverTimestamp ?? self.lastModifiedDate else { return nil }
+        guard let timestamp = after?.serverTimestamp ?? lastModifiedDate else { return nil }
         return timestamp.nextNearestTimestamp
     }
 
@@ -742,7 +742,7 @@ extension ZMConversation {
     }
 
     private var containsUnconnectedOrExternalParticipant: Bool {
-        guard let managedObjectContext = self.managedObjectContext else {
+        guard let managedObjectContext else {
             return true
         }
 
@@ -759,7 +759,7 @@ extension ZMConversation {
     }
 
     private var allParticipantsHaveClients: Bool {
-        self.localParticipants.first { $0.clients.isEmpty } == nil
+        localParticipants.first { $0.clients.isEmpty } == nil
     }
 
     private var hasMoreClientsThanSelfClient: Bool {
@@ -781,7 +781,7 @@ extension ZMConversation {
 
     /// If true the conversation might still be trusted / ignored
     @objc public var hasUntrustedClients: Bool {
-        self.localParticipants.contains { !$0.isTrusted }
+        localParticipants.contains { !$0.isTrusted }
     }
 }
 

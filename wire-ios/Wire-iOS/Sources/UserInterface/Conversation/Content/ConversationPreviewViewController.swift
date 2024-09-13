@@ -32,14 +32,14 @@ final class ConversationPreviewViewController: UIViewController {
         mainCoordinator: some MainCoordinating
     ) {
         self.conversation = conversation
-        actionController = ConversationActionController(
+        self.actionController = ConversationActionController(
             conversation: conversation,
             target: presentingViewController,
             sourceView: sourceView,
             userSession: userSession
         )
 
-        contentViewController = ConversationContentViewController(
+        self.contentViewController = ConversationContentViewController(
             conversation: conversation,
             mediaPlaybackManager: nil,
             userSession: userSession,
@@ -100,7 +100,7 @@ final class ConversationPreviewViewController: UIViewController {
     private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
         action.previewAction { [weak self] in
             guard let self else { return }
-            self.actionController.handleAction(action)
+            actionController.handleAction(action)
         }
     }
 }

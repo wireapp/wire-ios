@@ -35,7 +35,7 @@ extension UIColor {
 
     public var alpha: CGFloat {
         var alpha: CGFloat = 0
-        guard self.getRed(nil, green: nil, blue: nil, alpha: &alpha) else {
+        guard getRed(nil, green: nil, blue: nil, alpha: &alpha) else {
             return 0
         }
         return alpha

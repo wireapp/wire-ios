@@ -67,9 +67,9 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
 
         switch method {
         case .get:
-            self.request = getRequest(startReference: start, apiVersion: apiVersion)
+            request = getRequest(startReference: start, apiVersion: apiVersion)
         case .post:
-            self.request = postRequest(startReference: start, apiVersion: apiVersion)
+            request = postRequest(startReference: start, apiVersion: apiVersion)
         }
 
         request?.add(ZMCompletionHandler(on: context, block: { response in

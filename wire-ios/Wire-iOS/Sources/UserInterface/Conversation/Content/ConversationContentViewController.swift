@@ -114,11 +114,11 @@ final class ConversationContentViewController: UIViewController {
         userSession: UserSession,
         mainCoordinator: some MainCoordinating
     ) {
-        messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+        self.messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession
         self.mainCoordinator = mainCoordinator
         self.conversation = conversation
-        messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        self.messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
 
         super.init(nibName: nil, bundle: nil)
 
@@ -127,7 +127,7 @@ final class ConversationContentViewController: UIViewController {
         messagePresenter.targetViewController = self
         messagePresenter.modalTargetController = parent
 
-        token = NotificationCenter.default
+        self.token = NotificationCenter.default
             .addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
                 self?.updateMediaBar()
             }

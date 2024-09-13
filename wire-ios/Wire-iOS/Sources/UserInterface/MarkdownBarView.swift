@@ -54,7 +54,7 @@ final class MarkdownBarView: UIView {
     }
 
     required init() {
-        buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
+        self.buttons = [headerButton, boldButton, italicButton, numberListButton, bulletListButton, codeButton]
         super.init(frame: CGRect.zero)
         setupViews()
     }

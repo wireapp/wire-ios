@@ -191,7 +191,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         // "The session object keeps a strong reference to the delegate until your app
         // exits or explicitly invalidates the session.
         // If you do not invalidate the session, your app leaks memory until it exits."
-        self.session = nil
+        session = nil
     }
 }
 

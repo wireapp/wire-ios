@@ -66,11 +66,11 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
 
     init(email: String, canChangeEmail: Bool = true) {
         self.email = email
-        backButton = nil
-        mainView = VerificationCodeFieldDescription()
-        headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = .markdown(from: L10n.Localizable.Team.ActivationCode.subheadline(email), style: .login)
-        secondaryView = nil
-        footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
+        self.backButton = nil
+        self.mainView = VerificationCodeFieldDescription()
+        self.headline = L10n.Localizable.Team.ActivationCode.headline
+        self.subtext = .markdown(from: L10n.Localizable.Team.ActivationCode.subheadline(email), style: .login)
+        self.secondaryView = nil
+        self.footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
     }
 }

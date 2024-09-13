@@ -59,10 +59,10 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
         if let tableCell = cell as? SettingsAppearanceCell {
             tableCell.configure(with: .appearance(title: text))
 
-            if let previewGenerator = self.previewGenerator {
+            if let previewGenerator {
                 tableCell.type = previewGenerator(self)
             }
-            switch self.presentationStyle {
+            switch presentationStyle {
             case .modal, .alert:
                 tableCell.isAccessoryIconHidden = false
                 tableCell.hideDisclosureIndicator()

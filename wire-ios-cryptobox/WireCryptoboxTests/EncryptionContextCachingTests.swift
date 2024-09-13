@@ -38,7 +38,7 @@ class EncryptionContextCachingTests: XCTestCase {
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
 
-        let expectation = self.expectation(description: "Encryption succeeded")
+        let expectation = expectation(description: "Encryption succeeded")
 
         // WHEN
         mainContext.perform { sessionContext in
@@ -59,7 +59,7 @@ class EncryptionContextCachingTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
     func testThatItCachesWhenRequested() {
@@ -67,7 +67,7 @@ class EncryptionContextCachingTests: XCTestCase {
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
 
-        let expectation = self.expectation(description: "Encryption succeeded")
+        let expectation = expectation(description: "Encryption succeeded")
 
         // WHEN
         mainContext.perform { sessionContext in
@@ -88,7 +88,7 @@ class EncryptionContextCachingTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
     func testThatCacheKeyDependsOnData() {
@@ -96,7 +96,7 @@ class EncryptionContextCachingTests: XCTestCase {
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
 
-        let expectation = self.expectation(description: "Encryption succeeded")
+        let expectation = expectation(description: "Encryption succeeded")
 
         // WHEN
         mainContext.perform { sessionContext in
@@ -117,7 +117,7 @@ class EncryptionContextCachingTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 
     func testThatItFlushesTheCache() {
@@ -125,7 +125,7 @@ class EncryptionContextCachingTests: XCTestCase {
         let tempDir = createTempFolder()
         let mainContext = EncryptionContext(path: tempDir)
 
-        let expectation = self.expectation(description: "Encryption succeeded")
+        let expectation = expectation(description: "Encryption succeeded")
 
         // WHEN
         mainContext.perform { sessionContext in
@@ -147,6 +147,6 @@ class EncryptionContextCachingTests: XCTestCase {
         }
 
         // THEN
-        self.waitForExpectations(timeout: 0) { _ in }
+        waitForExpectations(timeout: 0) { _ in }
     }
 }

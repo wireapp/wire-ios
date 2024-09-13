@@ -67,7 +67,7 @@ public class MockUserClient: NSManagedObject {
 extension MockUserClient {
     /// Identifier for the session in Cryptobox
     public var sessionIdentifier: EncryptionSessionIdentifier? {
-        guard let identifier = self.identifier, let userIdentifier = self.user?.identifier else {
+        guard let identifier, let userIdentifier = user?.identifier else {
             return nil
         }
         return EncryptionSessionIdentifier(userId: userIdentifier, clientId: identifier)
@@ -190,24 +190,24 @@ extension MockUserClient {
     /// JSON representation
     public var transportData: ZMTransportData {
         var data = [String: Any]()
-        data["id"] = self.identifier
-        if self.label != nil {
-            data["label"] = self.label
+        data["id"] = identifier
+        if label != nil {
+            data["label"] = label
         }
-        data["type"] = self.type
-        if let time = self.time {
+        data["type"] = type
+        if let time {
             data["time"] = time.transportString()
         }
-        if let model = self.model {
+        if let model {
             data["model"] = model
         }
-        if let device = self.deviceClass {
+        if let device = deviceClass {
             data["class"] = device
         }
-        data["address"] = self.address
+        data["address"] = address
         data["location"] = [
-            "lat": self.locationLatitude,
-            "lon": self.locationLongitude,
+            "lat": locationLatitude,
+            "lon": locationLongitude,
         ]
         return data as NSDictionary
     }
@@ -240,7 +240,7 @@ extension MockUserClient {
     public func establishSession(client: MockUserClient) -> Bool {
         guard let identifier = client.sessionIdentifier else { return false }
         var hasSession = false
-        self.encryptionContext.perform { session in
+        encryptionContext.perform { session in
             if !session.hasSession(for: identifier) {
                 try? session.createClientSession(identifier, base64PreKeyString: client.lastPrekey.value)
                 hasSession = session.hasSession(for: identifier)
@@ -282,7 +282,7 @@ extension MockUserClient {
     public func hasSession(with client: MockUserClient) -> Bool {
         guard let identifier = client.sessionIdentifier else { return false }
         var hasSession = false
-        self.encryptionContext.perform { session in
+        encryptionContext.perform { session in
             hasSession = session.hasSession(for: identifier)
         }
         return hasSession

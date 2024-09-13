@@ -44,11 +44,11 @@ public class UserCredentials: NSObject {
         guard let other = object as? UserCredentials else {
             return false
         }
-        return self.email == other.email &&
-            self.password == other.password &&
-            self.phoneNumber == other.phoneNumber &&
-            self.phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
-            self.emailVerificationCode == other.emailVerificationCode
+        return email == other.email &&
+            password == other.password &&
+            phoneNumber == other.phoneNumber &&
+            phoneNumberVerificationCode == other.phoneNumberVerificationCode &&
+            emailVerificationCode == other.emailVerificationCode
     }
 
     override public var hash: Int {

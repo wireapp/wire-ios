@@ -32,7 +32,7 @@ final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDesc
             title: NoHistory.restoreBackup.capitalized,
             accessibilityIdentifier: "restore_backup"
         )
-        views = [restoreButton]
+        self.views = [restoreButton]
 
         restoreButton.buttonTapped = { [weak self] in
             self?.actioner?.executeAction(.startBackupFlow)
@@ -51,26 +51,26 @@ final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let footerView: AuthenticationFooterViewDescription?
 
     init(context: NoHistoryContext) {
-        backButton = BackButtonDescription()
-        mainView = SolidButtonDescription(
+        self.backButton = BackButtonDescription()
+        self.mainView = SolidButtonDescription(
             title: L10n.Localizable.Registration.NoHistory.gotIt,
             accessibilityIdentifier: "ignore_backup"
         )
-        secondaryView = nil
+        self.secondaryView = nil
         switch context {
         case .newDevice:
-            headline = L10n.Localizable.Registration.NoHistory.hero
-            subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.subtitle, style: .login)
+            self.headline = L10n.Localizable.Registration.NoHistory.hero
+            self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.subtitle, style: .login)
         case .loggedOut:
-            headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
-            subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
+            self.headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
+            self.subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
         }
 
         guard SecurityFlags.backup.isEnabled else {
-            footerView = nil
+            self.footerView = nil
             return
         }
 
-        footerView = BackupRestoreStepDescriptionFooterView()
+        self.footerView = BackupRestoreStepDescriptionFooterView()
     }
 }

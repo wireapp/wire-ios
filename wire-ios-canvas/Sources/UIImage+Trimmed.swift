@@ -20,7 +20,7 @@ import UIKit
 
 extension UIImage {
     public var imageWithAlphaTrimmed: UIImage {
-        let originalSize = self.size
+        let originalSize = size
 
         var minX = Int.max
         var maxX = Int.min

@@ -179,7 +179,12 @@ final class ConversationButtonMessageCellDescription: ConversationMessageCellDes
         hasError: Bool,
         buttonAction: @escaping Completion
     ) {
-        configuration = View.Configuration(text: text, state: state, buttonAction: buttonAction, hasError: hasError)
+        self.configuration = View.Configuration(
+            text: text,
+            state: state,
+            buttonAction: buttonAction,
+            hasError: hasError
+        )
     }
 }
 

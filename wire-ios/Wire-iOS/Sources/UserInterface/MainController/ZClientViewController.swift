@@ -100,12 +100,12 @@ final class ZClientViewController: UIViewController {
         self.account = account
         self.userSession = userSession
 
-        colorSchemeController = .init(userSession: userSession)
+        self.colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
-        proximityMonitorManager = ProximityMonitorManager()
-        mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
+        self.proximityMonitorManager = ProximityMonitorManager()
+        self.mediaPlaybackManager = MediaPlaybackManager(name: "conversationMedia", userSession: userSession)
 
         AVSMediaManager.sharedInstance().register(mediaPlaybackManager, withOptions: ["media": "external "])
 
@@ -633,10 +633,10 @@ final class ZClientViewController: UIViewController {
                     }
                 )
             } else {
-                self.topOverlayViewController?.removeFromParent()
+                topOverlayViewController?.removeFromParent()
                 previousViewController.view.removeFromSuperview()
-                self.topOverlayViewController = nil
-                self.updateSplitViewTopConstraint()
+                topOverlayViewController = nil
+                updateSplitViewTopConstraint()
             }
         } else if let viewController {
             addChild(viewController)
@@ -653,8 +653,8 @@ final class ZClientViewController: UIViewController {
                 let heightConstraint = viewController.view.heightAnchor.constraint(equalToConstant: 0)
                 heightConstraint.isActive = true
 
-                self.topOverlayViewController = viewController
-                self.updateSplitViewTopConstraint()
+                topOverlayViewController = viewController
+                updateSplitViewTopConstraint()
 
                 UIView.animate(
                     withDuration: 0.35,

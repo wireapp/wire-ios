@@ -61,19 +61,19 @@ public final class APSSignalingKeysStore: NSObject {
     /// we previously stored keys in the key chain. use this method to retreive the previously stored values to move
     /// them into the selfClient
     static func keysStoredInKeyChain() -> SignalingKeys? {
-        guard let verificationKey = ZMKeychain.data(forAccount: self.verificationKeyAccountName),
-              let decryptionKey = ZMKeychain.data(forAccount: self.decryptionKeyAccountName)
+        guard let verificationKey = ZMKeychain.data(forAccount: verificationKeyAccountName),
+              let decryptionKey = ZMKeychain.data(forAccount: decryptionKeyAccountName)
         else { return nil }
 
         return SignalingKeys(verificationKey: verificationKey, decryptionKey: decryptionKey)
     }
 
     static func clearSignalingKeysInKeyChain() {
-        ZMKeychain.deleteAllKeychainItems(withAccountName: self.verificationKeyAccountName)
-        ZMKeychain.deleteAllKeychainItems(withAccountName: self.decryptionKeyAccountName)
+        ZMKeychain.deleteAllKeychainItems(withAccountName: verificationKeyAccountName)
+        ZMKeychain.deleteAllKeychainItems(withAccountName: decryptionKeyAccountName)
     }
 
     public func decryptDataDictionary(_ payload: [AnyHashable: Any]!) -> [AnyHashable: Any]! {
-        self.apsDecoder.decodeAPSPayload(payload)
+        apsDecoder.decodeAPSPayload(payload)
     }
 }

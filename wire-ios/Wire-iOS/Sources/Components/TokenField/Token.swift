@@ -33,7 +33,7 @@ final class Token<T: NSObjectProtocol>: Hashable {
         self.title = title
         self.representedObject = HashBox(value: representedObject)
 
-        maxTitleWidth = .greatestFiniteMagnitude
+        self.maxTitleWidth = .greatestFiniteMagnitude
     }
 
     func hash(into hasher: inout Hasher) {

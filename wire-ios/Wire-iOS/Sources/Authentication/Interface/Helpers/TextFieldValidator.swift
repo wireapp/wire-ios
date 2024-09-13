@@ -147,13 +147,13 @@ extension TextFieldValidator.ValidationError: LocalizedError {
 
 extension String {
     var isEmail: Bool {
-        guard !self.hasPrefix("mailto:") else { return false }
+        guard !hasPrefix("mailto:") else { return false }
 
         guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
         else { return false }
 
-        let stringToMatch = self
-            .trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
+        let stringToMatch =
+            trimmingCharacters(in: .whitespacesAndNewlines) // We should ignore leading/trailing whitespace
         let range = NSRange(location: 0, length: stringToMatch.count)
         let firstMatch = dataDetector.firstMatch(
             in: stringToMatch,
@@ -173,7 +173,7 @@ extension String {
         if numberOfMatches != 1 { return false }
 
         /// patch the NSDataDetector for its false-positive cases
-        if self.contains("..") { return false }
+        if contains("..") { return false }
 
         return true
     }

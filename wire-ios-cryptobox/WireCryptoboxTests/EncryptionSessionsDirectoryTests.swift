@@ -28,9 +28,9 @@ class EncryptionSessionsDirectoryTests: XCTestCase {
     var statusBob: EncryptionSessionsDirectory!
 
     override func setUp() {
-        self.contextAlice = createEncryptionContext()
-        self.contextBob = createEncryptionContext()
-        self.recreateStatuses()
+        contextAlice = createEncryptionContext()
+        contextBob = createEncryptionContext()
+        recreateStatuses()
     }
 
     override func tearDown() {
@@ -321,7 +321,7 @@ extension EncryptionSessionsDirectoryTests {
             for: Person.Alice.identifier,
             prekeyMessage: prekeyMessage
         )
-        self.recreateStatuses() // force save
+        recreateStatuses() // force save
 
         // WHEN
         let cypherText = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
@@ -427,7 +427,7 @@ extension EncryptionSessionsDirectoryTests {
         _ = try! statusBob.decrypt(cypherText, from: Person.Alice.identifier)
 
         // WHEN
-        self.recreateStatuses() // force save
+        recreateStatuses() // force save
 
         // THEN
         do {
@@ -447,7 +447,7 @@ extension EncryptionSessionsDirectoryTests {
         establishSessionFromAliceToBob()
 
         // WHEN
-        self.recreateStatuses() // force save
+        recreateStatuses() // force save
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
@@ -549,7 +549,7 @@ extension EncryptionSessionsDirectoryTests {
 extension EncryptionSessionsDirectoryTests {
     func testThatItLogsEncryptionWhenExtendedLoggingIsSet() {
         // GIVEN
-        self.recreateAliceStatus(extendedLoggingSession: Set([Person.Bob.identifier]))
+        recreateAliceStatus(extendedLoggingSession: Set([Person.Bob.identifier]))
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
         let logExpectation = expectation(description: "Encrypting")
@@ -577,7 +577,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // set logging for a different identifier
         let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
-        self.recreateAliceStatus(extendedLoggingSession: Set([wrongIdentifier]))
+        recreateAliceStatus(extendedLoggingSession: Set([wrongIdentifier]))
 
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
@@ -596,7 +596,7 @@ extension EncryptionSessionsDirectoryTests {
 
     func testThatItLogsDecryptionWhenExtendedLoggingIsSet_prekeyMessage() {
         // GIVEN
-        self.recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
+        recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
         let logExpectation = expectation(description: "Encrypting")
@@ -629,7 +629,7 @@ extension EncryptionSessionsDirectoryTests {
 
         let plainText = Data("foo".utf8)
         establishSessionBetweenAliceAndBob()
-        self.recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
+        recreateBobStatus(extendedLoggingSession: Set([Person.Alice.identifier]))
         let logExpectation = expectation(description: "Encrypting")
         let message = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
@@ -656,7 +656,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // set logging for a different identifier
         let wrongIdentifier = EncryptionSessionIdentifier(domain: "example.com", userId: "foo", clientId: "bar")
-        self.recreateBobStatus(extendedLoggingSession: Set([wrongIdentifier]))
+        recreateBobStatus(extendedLoggingSession: Set([wrongIdentifier]))
 
         let plainText = Data("foo".utf8)
         establishSessionFromAliceToBob()
@@ -691,38 +691,38 @@ extension EncryptionSessionsDirectoryTests {
         only: Person? = nil
     ) {
         if only == nil || only == .Alice {
-            self.recreateAliceStatus()
+            recreateAliceStatus()
         }
         if only == nil || only == .Bob {
-            self.recreateBobStatus()
+            recreateBobStatus()
         }
     }
 
     func recreateAliceStatus(
         extendedLoggingSession: Set<EncryptionSessionIdentifier> = Set()
     ) {
-        self.statusAlice = EncryptionSessionsDirectory(
+        statusAlice = EncryptionSessionsDirectory(
             generatingContext: contextAlice,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
             extensiveLoggingSessions: extendedLoggingSession
         )
-        self.statusAlice.debug_disableContextValidityCheck = true
+        statusAlice.debug_disableContextValidityCheck = true
     }
 
     func recreateBobStatus(
         extendedLoggingSession: Set<EncryptionSessionIdentifier> = Set()
     ) {
-        self.statusBob = EncryptionSessionsDirectory(
+        statusBob = EncryptionSessionsDirectory(
             generatingContext: contextBob,
             encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100),
             extensiveLoggingSessions: extendedLoggingSession
         )
-        self.statusBob.debug_disableContextValidityCheck = true
+        statusBob.debug_disableContextValidityCheck = true
     }
 
     /// Sends a prekey message from Alice to Bob, decrypts it on Bob's side, and save both
     func establishSessionBetweenAliceAndBob() {
-        self.establishSessionFromAliceToBob()
+        establishSessionFromAliceToBob()
         let prekeyMessage = try! statusAlice.encrypt(Data("foo".utf8), for: Person.Bob.identifier)
         _ = try! statusBob.createClientSessionAndReturnPlaintext(
             for: Person.Alice.identifier,
@@ -730,7 +730,7 @@ extension EncryptionSessionsDirectoryTests {
         )
 
         /// This will force commit
-        self.recreateStatuses()
+        recreateStatuses()
     }
 
     /// Creates a client session from Alice to Bob

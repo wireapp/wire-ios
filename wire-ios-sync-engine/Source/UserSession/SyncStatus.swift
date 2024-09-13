@@ -32,7 +32,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public internal(set) var currentSyncPhase: SyncPhase = .done {
         didSet {
             if currentSyncPhase != oldValue {
-                self.log()
+                log()
                 zmLog.debug("did change sync phase: \(currentSyncPhase)")
                 notifySyncPhaseDidStart()
             }
@@ -117,7 +117,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Reset the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
-        self.log("slow sync")
+        log("slow sync")
         syncStateDelegate?.didStartSlowSync()
     }
 
@@ -127,7 +127,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
         // Set the status.
         currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
-        self.log("resyncResources")
+        log("resyncResources")
         syncStateDelegate?.didStartSlowSync()
     }
 
@@ -154,7 +154,7 @@ public class SyncStatus: NSObject, SyncStatusProtocol, SyncProgress {
     public func forceQuickSync() {
         isForceQuickSync = true
         currentSyncPhase = .fetchingMissedEvents
-        self.log("quick sync")
+        log("quick sync")
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
 }
@@ -267,7 +267,7 @@ extension SyncStatus {
         if !currentSyncPhase.isSyncing {
             // As soon as the pushChannel closes we should notify the UI that we are syncing (if we are not already
             // syncing)
-            self.syncStateDelegate?.didStartQuickSync()
+            syncStateDelegate?.didStartQuickSync()
         }
     }
 
@@ -285,7 +285,7 @@ extension SyncStatus {
 
         if !currentSyncPhase.isSyncing {
             // When the push channel opens we need to start syncing (if we are not already syncing)
-            self.currentSyncPhase = .fetchingMissedEvents
+            currentSyncPhase = .fetchingMissedEvents
         }
     }
 
@@ -302,7 +302,7 @@ extension SyncStatus {
             let message = "SYNC_STATUS: \(jsonString)"
             WireLogger.sync.info(message, attributes: .safePublic)
         } catch {
-            let message = "SYNC_STATUS: \(self.description)"
+            let message = "SYNC_STATUS: \(description)"
             WireLogger.sync.error(message, attributes: .safePublic)
         }
     }

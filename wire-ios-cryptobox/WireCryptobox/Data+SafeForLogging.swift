@@ -20,7 +20,7 @@ import WireUtilities
 
 extension Data: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        "<\(self.readableHash)>"
+        "<\(readableHash)>"
     }
 }
 

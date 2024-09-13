@@ -39,7 +39,7 @@ extension SecondaryButtonDescription: ViewDescriptor {
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(title, for: .normal)
-        button.accessibilityIdentifier = self.accessibilityIdentifier
+        button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(SecondaryButtonDescription.buttonTapped(_:)), for: .touchUpInside)
 
         NSLayoutConstraint.activate([

@@ -44,11 +44,11 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
     }
 
     func assertFeatureExists(name: Feature.Name) {
-        XCTAssertNotNil(Feature.fetch(name: name, context: self.syncMOC))
+        XCTAssertNotNil(Feature.fetch(name: name, context: syncMOC))
     }
 
     func assertFeatureDoesNotExist(name: Feature.Name) {
-        XCTAssertNil(Feature.fetch(name: name, context: self.syncMOC))
+        XCTAssertNil(Feature.fetch(name: name, context: syncMOC))
     }
 
     // MARK: - App lock

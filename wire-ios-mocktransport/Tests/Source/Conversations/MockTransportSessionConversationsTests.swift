@@ -35,8 +35,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
     }
 
     override func tearDown() {
-        self.team = nil
-        self.selfUser = nil
+        team = nil
+        selfUser = nil
         super.tearDown()
     }
 
@@ -207,7 +207,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // when
         let path = "/conversations/\(conversation.identifier)/roles"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -252,7 +252,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // when
         let path = "/conversations/\(conversation.identifier)/roles"
-        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
+        let response = response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -290,7 +290,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         var conversation: MockConversation?
 
-        self.sut.performRemoteChanges { session in
+        sut.performRemoteChanges { session in
             session.registerClient(for: self.selfUser!, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "bar")
@@ -327,7 +327,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // WHEN
         let requestPath = "/conversations/\(conversation!.identifier)/otr/messages"
-        let response = self.response(
+        let response = response(
             forProtobufData: messageData,
             path: requestPath,
             method: ZMTransportRequestMethod.post,
@@ -403,7 +403,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // WHEN
         let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
+        let response = response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
 
         // THEN
         XCTAssertNotNil(response)
@@ -476,7 +476,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // WHEN
         let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
+        let response = response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
 
         // THEN
         XCTAssertNotNil(response)

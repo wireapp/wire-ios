@@ -25,7 +25,7 @@ extension Team {
 
     fileprivate func updateRoles(with payload: [String: Any]) {
         guard let rolesPayload = payload["conversation_roles"] as? [[String: Any]] else { return }
-        let existingRoles = self.roles
+        let existingRoles = roles
 
         // Update or insert new roles
         let newRoles = rolesPayload.compactMap {
@@ -56,7 +56,7 @@ public final class TeamRolesDownloadRequestStrategy:
     ) {
         self.syncStatus = syncStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        downstreamSync = ZMDownstreamObjectSync(
+        self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Team.entityName(),
             predicateForObjectsToDownload: Team.predicateForTeamRolesNeedingToBeUpdated,
@@ -84,12 +84,12 @@ public final class TeamRolesDownloadRequestStrategy:
     fileprivate let expectedSyncPhase = SyncPhase.fetchingTeamRoles
 
     fileprivate var isSyncing: Bool {
-        syncStatus.currentSyncPhase == self.expectedSyncPhase
+        syncStatus.currentSyncPhase == expectedSyncPhase
     }
 
     private func completeSyncPhaseIfNoTeam() {
-        if self.syncStatus.currentSyncPhase == self.expectedSyncPhase, !self.downstreamSync.hasOutstandingItems {
-            self.syncStatus.finishCurrentSyncPhase(phase: self.expectedSyncPhase)
+        if syncStatus.currentSyncPhase == expectedSyncPhase, !downstreamSync.hasOutstandingItems {
+            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
         }
     }
 
@@ -113,8 +113,8 @@ public final class TeamRolesDownloadRequestStrategy:
         team.needsToDownloadRoles = false
         team.updateRoles(with: payload)
 
-        if self.isSyncing {
-            self.syncStatus.finishCurrentSyncPhase(phase: self.expectedSyncPhase)
+        if isSyncing {
+            syncStatus.finishCurrentSyncPhase(phase: expectedSyncPhase)
         }
     }
 

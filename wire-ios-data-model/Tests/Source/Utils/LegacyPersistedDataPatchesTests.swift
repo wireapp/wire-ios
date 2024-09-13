@@ -139,7 +139,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -155,12 +155,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             patchApplied = true
         }
         // this will bump last patched version to current version, which hopefully is less than 10000000.32.32
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 
@@ -176,12 +176,12 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             patchApplied = true
         }
         // this will bump last patched version to current version, which is greater than 0.0.1
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [])
         }
 
         // WHEN
-        self.syncMOC.performGroupedAndWait {
+        syncMOC.performGroupedAndWait {
             LegacyPersistedDataPatch.applyAll(in: self.syncMOC, patches: [patch])
         }
 

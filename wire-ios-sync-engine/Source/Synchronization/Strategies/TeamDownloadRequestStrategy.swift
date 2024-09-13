@@ -97,14 +97,14 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
         self.syncStatus = syncStatus
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         configuration = [.allowsRequestsWhileOnline, .allowsRequestsDuringSlowSync]
-        downstreamSync = ZMDownstreamObjectSync(
+        self.downstreamSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: Team.entityName(),
             predicateForObjectsToDownload: Team.predicateForObjectsNeedingToBeUpdated,
             filter: nil,
             managedObjectContext: managedObjectContext
         )
-        slowSync = ZMSingleRequestSync(
+        self.slowSync = ZMSingleRequestSync(
             singleRequestTranscoder: self,
             groupQueue: managedObjectContext
         )

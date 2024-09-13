@@ -105,7 +105,7 @@ final class BadgeUserImageView: UserImageView {
         super.userDidChange(changeInfo)
 
         if changeInfo.connectionStateChanged {
-            self.updateBadgeIcon()
+            updateBadgeIcon()
         }
     }
 

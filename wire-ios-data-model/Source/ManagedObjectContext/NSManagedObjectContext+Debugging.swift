@@ -26,17 +26,17 @@ extension NSManagedObjectContext {
     // Callback invoked when an error is generated during save
     public var errorOnSaveCallback: ErrorOnSaveCallback? {
         get {
-            self.userInfo[errorOnSaveCallbackKey] as? ErrorOnSaveCallback
+            userInfo[errorOnSaveCallbackKey] as? ErrorOnSaveCallback
         }
         set {
-            self.userInfo[errorOnSaveCallbackKey] = newValue
+            userInfo[errorOnSaveCallbackKey] = newValue
         }
     }
 
     /// Report an error during save
     @objc
     public func reportSaveError(error: NSError) {
-        if let callback = self.errorOnSaveCallback {
+        if let callback = errorOnSaveCallback {
             callback(self, error)
         }
     }

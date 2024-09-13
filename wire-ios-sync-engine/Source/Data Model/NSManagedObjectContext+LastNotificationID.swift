@@ -30,7 +30,7 @@ public protocol ZMLastNotificationIDStore {
 extension NSManagedObjectContext: ZMLastNotificationIDStore {
     public var zm_lastNotificationID: UUID? {
         get {
-            guard let uuidString = self.persistentStoreMetadata(forKey: lastUpdateEventIDKey) as? String,
+            guard let uuidString = persistentStoreMetadata(forKey: lastUpdateEventIDKey) as? String,
                   let uuid = UUID(uuidString: uuidString)
             else { return nil }
             return uuid
@@ -42,7 +42,7 @@ extension NSManagedObjectContext: ZMLastNotificationIDStore {
                 return
             }
             Logging.eventProcessing.debug("Setting zm_lastNotificationID = \(newValue?.transportString() ?? "nil")")
-            self.setPersistentStoreMetadata(newValue?.uuidString, key: lastUpdateEventIDKey)
+            setPersistentStoreMetadata(newValue?.uuidString, key: lastUpdateEventIDKey)
         }
     }
 

@@ -240,7 +240,7 @@ final class ConversationStatusStyle {
     private var contentSizeStyleUpdater: ContentSizeCategoryUpdater!
 
     init() {
-        contentSizeStyleUpdater = ContentSizeCategoryUpdater { [weak self] in
+        self.contentSizeStyleUpdater = ContentSizeCategoryUpdater { [weak self] in
             guard let self else {
                 return
             }
@@ -395,7 +395,7 @@ final class TypingMatcher: ConversationStatusMatcher {
             let typingUsersString = conversation.typingUsers.compactMap(\.name).joined(separator: ", ")
             let resultString = L10n.Localizable.Conversation.Status.Typing.group(typingUsersString)
             let intermediateString = NSAttributedString(string: resultString, attributes: type(of: self).regularStyle)
-            statusString = self.addEmphasis(to: intermediateString, for: typingUsersString)
+            statusString = addEmphasis(to: intermediateString, for: typingUsersString)
         } else {
             statusString = L10n.Localizable.Conversation.Status.typing && type(of: self).regularStyle
         }
@@ -645,7 +645,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
             if systemMessage.userTypes.contains(where: { ($0 as? UserType)?.isSelfUser == true }) {
                 let fullName = sender.name ?? ""
                 let result = L10n.Localizable.Conversation.Status.youWasAdded(fullName) && type(of: self).regularStyle
-                return self.addEmphasis(to: result, for: fullName)
+                return addEmphasis(to: result, for: fullName)
             }
         }
         return .none
@@ -669,7 +669,7 @@ final class GroupActivityMatcher: TypedConversationStatusMatcher {
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {
         var allStatusMessagesByType: [StatusMessageType: [ZMConversationMessage]] = [:]
 
-        for type in self.matchedTypes {
+        for type in matchedTypes {
             allStatusMessagesByType[type] = status.messagesRequiringAttention.filter {
                 StatusMessageType(message: $0) == type
             }

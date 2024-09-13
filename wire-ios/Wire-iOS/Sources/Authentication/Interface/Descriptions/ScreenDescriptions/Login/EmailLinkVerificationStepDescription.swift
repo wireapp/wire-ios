@@ -27,12 +27,15 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
     let footerView: AuthenticationFooterViewDescription?
 
     init(emailAddress: String) {
-        backButton = BackButtonDescription()
-        mainView = EmailLinkVerificationMainView()
-        headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = .markdown(from: L10n.Localizable.Registration.VerifyEmail.instructions(emailAddress), style: .login)
-        secondaryView = nil
-        footerView = VerifyEmailStepSecondaryView(canResend: false)
+        self.backButton = BackButtonDescription()
+        self.mainView = EmailLinkVerificationMainView()
+        self.headline = L10n.Localizable.Team.ActivationCode.headline
+        self.subtext = .markdown(
+            from: L10n.Localizable.Registration.VerifyEmail.instructions(emailAddress),
+            style: .login
+        )
+        self.secondaryView = nil
+        self.footerView = VerifyEmailStepSecondaryView(canResend: false)
     }
 }
 

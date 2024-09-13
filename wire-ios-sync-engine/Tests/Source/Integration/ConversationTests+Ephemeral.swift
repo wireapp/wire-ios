@@ -32,8 +32,8 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)!
-        self.userSession?.perform {
+        let conversation = conversation(for: selfToUser1Conversation!)!
+        userSession?.perform {
             _ = try! conversation.appendText(content: "Hello") as! ZMClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -42,7 +42,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // when
         conversation.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         var message: ZMClientMessage!
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation.appendText(content: "Hello") as? ZMClientMessage
             XCTAssertTrue(message.isEphemeral)
         }
@@ -60,8 +60,8 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)!
-        self.userSession?.perform {
+        let conversation = conversation(for: selfToUser1Conversation!)!
+        userSession?.perform {
             _ = try! conversation.appendText(content: "Hello") as! ZMClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -70,7 +70,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // when
         conversation.setMessageDestructionTimeoutValue(.custom(100), for: .selfUser)
         var message: ZMAssetClientMessage!
-        self.userSession?.perform {
+        userSession?.perform {
             message = try! conversation.appendImage(from: self.verySmallJPEGData()) as? ZMAssetClientMessage
             XCTAssertTrue(message.isEphemeral)
         }
@@ -89,13 +89,13 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)!
+        let conversation = conversation(for: selfToUser1Conversation!)!
         let messageCount = conversation.allMessages.count
 
         // insert ephemeral message
         conversation.setMessageDestructionTimeoutValue(.custom(0.1), for: .selfUser)
         var ephemeral: ZMClientMessage!
-        self.userSession?.perform {
+        userSession?.perform {
             ephemeral = try! conversation.appendText(content: "Hello") as? ZMClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -156,7 +156,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)!
+        let conversation = conversation(for: selfToUser1Conversation!)!
         let messageCount = conversation.allMessages.count
 
         // the other  user inserts an ephemeral message
@@ -172,7 +172,7 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
 
         // when
         // we start the destruction timer
-        self.userSession?.perform {
+        userSession?.perform {
             ephemeral.startDestructionIfNeeded()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -208,12 +208,12 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)!
+        let conversation = conversation(for: selfToUser1Conversation!)!
 
         // when
         conversation.setMessageDestructionTimeoutValue(.custom(1), for: .selfUser)
         var ephemeral: ZMClientMessage!
-        self.userSession?.perform {
+        userSession?.perform {
             ephemeral = try! conversation.appendText(content: "Hello") as? ZMClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))

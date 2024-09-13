@@ -27,7 +27,7 @@ final class TestTrustVerificator: NSObject, URLSessionDelegate {
     init(trustProvider: BackendTrustProvider = MockCertificateTrust(), callback: @escaping (Bool) -> Void) {
         self.callback = callback
         super.init()
-        session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+        self.session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         self.trustProvider = trustProvider
     }
 

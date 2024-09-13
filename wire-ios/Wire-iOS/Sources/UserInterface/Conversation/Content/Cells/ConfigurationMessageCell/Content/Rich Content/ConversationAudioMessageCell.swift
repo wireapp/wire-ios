@@ -100,7 +100,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
 
     override var tintColor: UIColor! {
         didSet {
-            self.transferView.tintColor = self.tintColor
+            transferView.tintColor = tintColor
         }
     }
 
@@ -140,6 +140,6 @@ final class ConversationAudioMessageCellDescription: ConversationMessageCellDesc
 
     init(message: ZMConversationMessage) {
         self.configuration = View.Configuration(message: message)
-        accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
+        self.accessibilityLabel = L10n.Accessibility.ConversationSearch.AudioMessage.description
     }
 }

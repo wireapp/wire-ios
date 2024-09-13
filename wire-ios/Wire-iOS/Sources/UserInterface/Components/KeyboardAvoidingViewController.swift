@@ -118,7 +118,7 @@ class KeyboardAvoidingViewController: UIViewController {
               let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval
         else { return }
 
-        let keyboardFrameInView = UIView.keyboardFrame(in: self.view, forKeyboardNotification: notification)
+        let keyboardFrameInView = UIView.keyboardFrame(in: view, forKeyboardNotification: notification)
         var bottomOffset: CGFloat
 
         // The keyboard frame includes the safe area so we need to substract it since the bottomEdgeConstraint is

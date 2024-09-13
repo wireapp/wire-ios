@@ -56,7 +56,7 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
         // Given
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)!
+        let conversation = conversation(for: groupConversation)!
         token = conversation.addTypingObserver(self)
 
         XCTAssertEqual(conversation.typingUsers.count, 0)
@@ -86,7 +86,7 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
         // Given
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)!
+        let conversation = conversation(for: groupConversation)!
         token = conversation.addTypingObserver(self)
 
         XCTAssertEqual(conversation.typingUsers.count, 0)
@@ -126,7 +126,7 @@ final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
         // Given
         XCTAssertTrue(login())
 
-        let conversation = self.conversation(for: groupConversation)!
+        let conversation = conversation(for: groupConversation)!
         token = conversation.addTypingObserver(self)
 
         XCTAssertEqual(conversation.typingUsers.count, 0)

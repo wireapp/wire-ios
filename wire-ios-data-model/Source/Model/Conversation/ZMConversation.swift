@@ -61,14 +61,14 @@ extension ZMConversation {
     @objc public var remoteIdentifier: UUID! {
         get {
             willAccessValue(forKey: Self.remoteIdentifierKey)
-            let value = self.transientUUID(forKey: Self.remoteIdentifierKey)
+            let value = transientUUID(forKey: Self.remoteIdentifierKey)
             didAccessValue(forKey: "remoteIdentifier")
             return value
         }
 
         set {
             willChangeValue(forKey: Self.remoteIdentifierKey)
-            self.setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
+            setTransientUUID(newValue, forKey: Self.remoteIdentifierKey)
             didChangeValue(forKey: Self.remoteIdentifierKey)
             updatePrimaryKey(remoteIdentifier: newValue, domain: domain)
         }

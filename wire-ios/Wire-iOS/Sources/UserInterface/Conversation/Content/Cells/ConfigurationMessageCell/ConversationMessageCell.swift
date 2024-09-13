@@ -254,42 +254,42 @@ final class AnyConversationMessageCellDescription: NSObject {
     private let _axLabel: AnyConstantProperty<String?>
 
     init<T: ConversationMessageCellDescription>(_ description: T) {
-        registrationBlock = { tableView in
+        self.registrationBlock = { tableView in
             description.register(in: tableView)
         }
 
-        configureBlock = { cell, animated in
+        self.configureBlock = { cell, animated in
             description.configureCell(cell, animated: animated)
         }
 
-        viewGenerator = {
+        self.viewGenerator = {
             description.makeView()
         }
 
-        cellGenerator = { tableView, indexPath in
+        self.cellGenerator = { tableView, indexPath in
             description.makeCell(for: tableView, at: indexPath)
         }
 
-        baseTypeGetter = {
+        self.baseTypeGetter = {
             T.self
         }
 
-        instanceGetter = {
+        self.instanceGetter = {
             description
         }
 
-        isConfigurationEqualBlock = { otherDescription in
+        self.isConfigurationEqualBlock = { otherDescription in
             description.isConfigurationEqual(with: otherDescription.instance)
         }
 
-        _delegate = AnyMutableProperty(description, keyPath: \.delegate)
-        _message = AnyMutableProperty(description, keyPath: \.message)
-        _actionController = AnyMutableProperty(description, keyPath: \.actionController)
-        _topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
-        _containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
-        _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
-        _axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
-        _axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
+        self._delegate = AnyMutableProperty(description, keyPath: \.delegate)
+        self._message = AnyMutableProperty(description, keyPath: \.message)
+        self._actionController = AnyMutableProperty(description, keyPath: \.actionController)
+        self._topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        self._containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
+        self._showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
+        self._axIdentifier = AnyConstantProperty(description, keyPath: \.accessibilityIdentifier)
+        self._axLabel = AnyConstantProperty(description, keyPath: \.accessibilityLabel)
     }
 
     var instance: AnyObject {

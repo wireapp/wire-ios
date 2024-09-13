@@ -84,7 +84,7 @@ class DependencyKeyStore {
             observableKeys: observable[$0]!,
             affectingKeys: affecting[$0]!
         ) }
-        effectedKeys = classIdentifiers
+        self.effectedKeys = classIdentifiers
             .mapToDictionary { DependencyKeyStore.setupEffectedKeys(affectingKeys: affecting[$0]!) }
 
         self.observableKeys = observable
