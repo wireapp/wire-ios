@@ -18,6 +18,7 @@
 
 import XCTest
 import WireFoundation
+import WireAccountImage
 
 final class MockUser: GetAccountImageUseCaseUserProtocol {
     var membership: MockTeamMembership? = .init()
