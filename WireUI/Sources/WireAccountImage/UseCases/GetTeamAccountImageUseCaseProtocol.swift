@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
 
-@testable import WireFoundation
+/// If the team has an image set, this use cases retrieves it.
+/// If no team image data is available, an image will be generated using the team name's initials.
+public protocol GetTeamAccountImageUseCaseProtocol {
 
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() throws {
-        throw XCTSkip()
-    }
+    func invoke<User, Account>(user: User, account: Account) async throws -> UIImage
+        where User: GetAccountImageUseCaseUserProtocol, Account: GetAccountImageUseCaseAccountProtocol
 }

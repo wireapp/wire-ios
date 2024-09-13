@@ -17,15 +17,6 @@
 //
 
 import SwiftUI
-import WireDesign
-
-// MARK: Constants
-
-/// Used for the intrinsic content size
-private let accountImageHeight: CGFloat = 26
-private let accountImageBorderWidth: CGFloat = 1
-private let teamAccountImageCornerRadius: CGFloat = 6
-private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 
 private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
@@ -33,6 +24,11 @@ private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
+
+    // MARK: Constants for intrinsic content size
+
+    private let accountImageHeight: CGFloat = 26
+    private let teamAccountImageCornerRadius: CGFloat = 6
 
     // MARK: - Public Properties
 
@@ -46,6 +42,14 @@ public final class AccountImageView: UIView {
 
     public var availability: Availability? {
         didSet { updateAvailabilityIndicator() }
+    }
+
+    public var accountImageBorderWidth: CGFloat = 1 {
+        didSet { updateAccountImageBorder() }
+    }
+
+    public var accountImageViewBorderColor: UIColor = .gray {
+        didSet { updateAccountImageBorder() }
     }
 
     // MARK: - Private Properties
@@ -153,7 +157,7 @@ public final class AccountImageView: UIView {
     private func updateAccountImageBorder() {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
-        accountImageViewWrapper.layer.borderWidth = 1
+        accountImageViewWrapper.layer.borderWidth = accountImageBorderWidth
         accountImageViewWrapper.layer.borderColor = accountImageViewBorderColor.cgColor
     }
 
@@ -212,27 +216,20 @@ struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            ForEach([false, true], id: \.self) { isTeamAccount in
+            previewWithNavigationBar(.none)
 
-                previewWithNavigationBar(isTeamAccount, .none)
-                    .previewDisplayName(isTeamAccount ? "team" : "personal")
-
-                ForEach(Availability.allCases, id: \.self) { availability in
-                    previewWithNavigationBar(isTeamAccount, availability)
-                        .previewDisplayName(isTeamAccount ? "team" : "personal" + " - \(availability)")
-                }
+            ForEach(Availability.allCases, id: \.self) { availability in
+                previewWithNavigationBar(availability)
+                    .previewDisplayName("\(availability)")
             }
         }
     }
 
     @ViewBuilder
-    static func previewWithNavigationBar(
-        _ isTeamAccount: Bool,
-        _ availability: Availability?
-    ) -> some View {
+    static func previewWithNavigationBar(_ availability: Availability?) -> some View {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
-            AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
+            AccountImageViewRepresentable(accountImage, availability)
                 // set a frame in order check that it scales,
                 // ensure it scales with "aspectFit" content mode
                 .frame(width: 32, height: 50)
@@ -249,7 +246,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
-                            AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
+                            AccountImageViewRepresentable(accountImage, availability)
                                 .padding(.horizontal)
                         }
                     }
@@ -269,16 +266,6 @@ private extension View {
                 Spacer()
             }
             Spacer()
-        }
-    }
-}
-
-private extension UIImage {
-
-    static func from(solidColor color: UIColor) -> UIImage {
-        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
-            color.setFill()
-            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
         }
     }
 }

@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import WireFoundation
+public enum AccountImageSource {
 
-final class PlaceholderTests: XCTestCase {
+    /// An image based on the provided image data is displayed.
+    case data(Data)
 
-    func testNothing() throws {
-        throw XCTSkip()
-    }
+    /// An account image based on the provided initials is generated.
+    case text(initials: String)
 }

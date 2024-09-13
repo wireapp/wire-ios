@@ -16,13 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-
-@testable import WireFoundation
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() throws {
-        throw XCTSkip()
-    }
+enum ConversationFilterType {
+    case favorites
+    case groups
+    case oneToOneConversations
 }
