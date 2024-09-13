@@ -19,7 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
-
+// TODO: snapshot tests
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public var accountInfo: SidebarAccountInfo?
