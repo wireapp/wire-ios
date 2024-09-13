@@ -23,6 +23,9 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     private let accountImage: UIImage
     private let availability: Availability?
 
+    @Environment(\.accountImageBorderWidth) private var accountImageBorderWidth
+    @Environment(\.accountImageViewBorderColor) private var accountImageViewBorderColor
+
     // MARK: - Life Cycle
 
     public init(
@@ -40,6 +43,8 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     public func updateUIView(_ view: AccountImageView, context: Context) {
         view.accountImage = accountImage
         view.availability = availability
+        view.accountImageBorderWidth = accountImageBorderWidth
+        view.accountImageViewBorderColor = accountImageViewBorderColor
     }
 }
 
@@ -53,5 +58,59 @@ extension AccountImageViewRepresentable {
             accountImage: accountImage,
             availability: availability
         )
+    }
+}
+
+// MARK: - View Modifiers + Environment
+
+extension View {
+    func accountImageBorderWidth(_ accountImageBorderWidth: CGFloat) -> some View {
+        modifier(AccountImageViewBorderWidthViewModifier(accountImageBorderWidth: accountImageBorderWidth))
+    }
+}
+
+struct AccountImageViewBorderWidthViewModifier: ViewModifier {
+    var accountImageBorderWidth: CGFloat
+    func body(content: Content) -> some View {
+        content
+            .environment(\.accountImageBorderWidth, accountImageBorderWidth)
+    }
+}
+
+private struct AccountImageBorderWidthKey: EnvironmentKey {
+    static let defaultValue = AccountImageView.Defaults.accountImageBorderWidth
+}
+
+private extension EnvironmentValues {
+    var accountImageBorderWidth: CGFloat {
+        get { self[AccountImageBorderWidthKey.self] }
+        set { self[AccountImageBorderWidthKey.self] = newValue }
+    }
+}
+
+// MARK: -
+
+extension View {
+    func accountImageViewBorderColor(_ accountImageViewBorderColor: UIColor) -> some View {
+        modifier(AccountImageViewBorderColorModifier(accountImageViewBorderColor: accountImageViewBorderColor))
+    }
+}
+
+struct AccountImageViewBorderColorModifier: ViewModifier {
+    var accountImageViewBorderColor: UIColor
+    func body(content: Content) -> some View {
+        content
+            .environment(\.accountImageViewBorderColor, accountImageViewBorderColor)
+    }
+}
+
+private struct AccountImageViewBorderColorKey: EnvironmentKey {
+    static let defaultValue = AccountImageView.Defaults.accountImageViewBorderColor
+}
+
+private extension EnvironmentValues {
+    var accountImageViewBorderColor: UIColor {
+        get { self[AccountImageViewBorderColorKey.self] }
+        set { self[AccountImageViewBorderColorKey.self] = newValue }
     }
 }

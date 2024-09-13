@@ -21,10 +21,12 @@ import WireDesign
 
 // MARK: Constants
 
-private let availableColor = ColorTheme.Base.positive
-private let awayColor = ColorTheme.Base.error
-private let busyColor = ColorTheme.Base.warning
-private let backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+// TODO: remove commented code
+//private let availableColor = ColorTheme.Base.positive
+//private let awayColor = ColorTheme.Base.error
+//private let busyColor = ColorTheme.Base.warning
+//private let backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+
 private let backgroundBorderWidth: CGFloat = 2
 
 // in the designs it's a 2px border width for size of 8.75 x 8.75 indicator view
@@ -36,6 +38,11 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 // MARK: -
 
 final class AvailabilityIndicatorView: UIView {
+
+    @Environment(\.availableColor) private var availableColor
+    @Environment(\.awayColor) private var awayColor
+    @Environment(\.busyColor) private var busyColor
+    @Environment(\.backgroundViewColor) private var backgroundViewColor
 
     // MARK: - Properties
 
@@ -68,7 +75,7 @@ final class AvailabilityIndicatorView: UIView {
     // MARK: - Methods
 
     private func setupSubviews() {
-        backgroundView.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        backgroundView.backgroundColor = backgroundViewColor
         addSubview(backgroundView)
 
         shapeContainerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -158,6 +165,110 @@ extension AvailabilityIndicatorView {
     }
 }
 
+// MARK: - View Modifiers + Environment
+
+extension View {
+    func availabilityIndicatorAvailableColor(_ availableColor: UIColor) -> some View {
+        modifier(AvailabilityIndicatorAvailableColorViewModifier(availableColor: availableColor))
+    }
+}
+
+struct AvailabilityIndicatorAvailableColorViewModifier: ViewModifier {
+    var availableColor: UIColor
+    func body(content: Content) -> some View {
+        content.environment(\.availableColor, availableColor)
+    }
+}
+
+private struct AvailableColorKey: EnvironmentKey {
+    static let defaultValue: UIColor = .green
+}
+
+private extension EnvironmentValues {
+    var availableColor: UIColor {
+        get { self[AvailableColorKey.self] }
+        set { self[AvailableColorKey.self] = newValue }
+    }
+}
+
+// MARK: -
+
+extension View {
+    func availabilityIndicatorAwayColor(_ awayColor: UIColor) -> some View {
+        modifier(AvailabilityIndicatorAwayColorViewModifier(awayColor: awayColor))
+    }
+}
+
+struct AvailabilityIndicatorAwayColorViewModifier: ViewModifier {
+    var awayColor: UIColor
+    func body(content: Content) -> some View {
+        content.environment(\.awayColor, awayColor)
+    }
+}
+
+private struct AwayColorKey: EnvironmentKey {
+    static let defaultValue: UIColor = .red
+}
+
+private extension EnvironmentValues {
+    var awayColor: UIColor {
+        get { self[AwayColorKey.self] }
+        set { self[AwayColorKey.self] = newValue }
+    }
+}
+
+// MARK: -
+
+extension View {
+    func availabilityIndicatorBusyColor(_ busyColor: UIColor) -> some View {
+        modifier(AvailabilityIndicatorBusyColorViewModifier(busyColor: busyColor))
+    }
+}
+
+struct AvailabilityIndicatorBusyColorViewModifier: ViewModifier {
+    var busyColor: UIColor
+    func body(content: Content) -> some View {
+        content.environment(\.busyColor, busyColor)
+    }
+}
+
+private struct BusyColorKey: EnvironmentKey {
+    static let defaultValue: UIColor = .brown
+}
+
+private extension EnvironmentValues {
+    var busyColor: UIColor {
+        get { self[BusyColorKey.self] }
+        set { self[BusyColorKey.self] = newValue }
+    }
+}
+
+// MARK: -
+
+extension View {
+    func availabilityIndicatorBackgroundColor(_ backgroundColor: UIColor) -> some View {
+        modifier(AvailabilityIndicatorBackgroundColorViewModifier(backgroundColor: backgroundColor))
+    }
+}
+
+struct AvailabilityIndicatorBackgroundColorViewModifier: ViewModifier {
+    var backgroundColor: UIColor
+    func body(content: Content) -> some View {
+        content.environment(\.backgroundViewColor, backgroundColor)
+    }
+}
+
+private struct BackgroundColorKey: EnvironmentKey {
+    static let defaultValue: UIColor = .systemBackground
+}
+
+private extension EnvironmentValues {
+    var backgroundViewColor: UIColor {
+        get { self[BackgroundColorKey.self] }
+        set { self[BackgroundColorKey.self] = newValue }
+    }
+}
+
 // MARK: - Previews
 
 @available(iOS 17, *)
@@ -172,11 +283,8 @@ extension AvailabilityIndicatorView {
 }
 
 private struct AvailabilityIndicatorViewRepresentable: UIViewRepresentable {
-
     @State private(set) var availability: Availability?
-
     func makeUIView(context: Context) -> AvailabilityIndicatorView { .init() }
-
     func updateUIView(_ view: AvailabilityIndicatorView, context: Context) {
         view.availability = availability
     }
