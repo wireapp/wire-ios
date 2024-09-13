@@ -25,10 +25,16 @@ private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
 
-    // MARK: Constants for intrinsic content size
+    // MARK: - Constants
 
+    // Constants relevant for calculating the intrinsic content size
     private let accountImageHeight: CGFloat = 26
     private let teamAccountImageCornerRadius: CGFloat = 6
+
+    enum Defaults {
+        static let accountImageBorderWidth: CGFloat = 1
+        static let accountImageViewBorderColor: UIColor = .gray
+    }
 
     // MARK: - Public Properties
 
@@ -44,12 +50,11 @@ public final class AccountImageView: UIView {
         didSet { updateAvailabilityIndicator() }
     }
 
-    public var accountImageBorderWidth: CGFloat = 1 {
+    public var accountImageBorderWidth = Defaults.accountImageBorderWidth {
         didSet { updateAccountImageBorder() }
     }
 
-    // TODO: create code in Wire-iOS which sets this to ColorTheme.Strokes.outline
-    public var accountImageViewBorderColor: UIColor = .gray { // ColorTheme.Strokes.outline
+    public var accountImageViewBorderColor = Defaults.accountImageViewBorderColor {
         didSet { updateAccountImageBorder() }
     }
 

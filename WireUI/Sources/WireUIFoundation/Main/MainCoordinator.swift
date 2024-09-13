@@ -24,6 +24,10 @@ public final class MainCoordinator<MainSplitViewController, MainTabBarController
     private weak var mainSplitViewContent: MainSplitViewController?
     private weak var mainTabBarContent: MainTabBarController?
 
+    // TODO: setup inside or outside?
+    // only navigation here?
+    // protocols/accessors for each navigation controller? or viewControllers array
+
     @discardableResult
     public init(
         mainSplitViewContent: MainSplitViewController,

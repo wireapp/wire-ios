@@ -18,12 +18,12 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<Sidebar, ConversationList, Conversation, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
-    Sidebar: UIViewController,
-    ConversationList: UIViewController,
-    Conversation: UIViewController,
-    TabContainer: UIViewController {
+public final class MainSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
 
+    public typealias Sidebar = UIViewController
+    public typealias ConversationList = UIViewController
+    public typealias Conversation = UIViewController
+    public typealias TabContainer = UIViewController
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
     // MARK: - Public Properties

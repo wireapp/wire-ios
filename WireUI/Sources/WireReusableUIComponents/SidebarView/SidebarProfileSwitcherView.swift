@@ -19,8 +19,7 @@
 import SwiftUI
 import WireDesign
 
-struct SidebarProfileSwitcherView<AccountImageView>: View
-    where AccountImageView: View {
+struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
 
     @State private var accountImageDiameter: CGFloat = 0
 
