@@ -16,13 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
 
-@testable import WireFoundation
+public extension UIImage {
 
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() throws {
-        throw XCTSkip()
+    static func from(solidColor color: UIColor) -> UIImage {
+        UIGraphicsImageRenderer(size: .init(width: 1, height: 1)).image { rendererContext in
+            color.setFill()
+            rendererContext.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        }
     }
 }

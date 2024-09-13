@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import WireAccountImage
+import WireDataModel
+import WireReusableUIComponents
 
-@testable import WireFoundation
+extension WireDataModel.Availability {
 
-final class PlaceholderTests: XCTestCase {
+    /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
 
-    func testNothing() throws {
-        throw XCTSkip()
+    func map() -> WireAccountImage.Availability? {
+        switch self {
+        case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
+        }
     }
 }

@@ -16,13 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
 
-@testable import WireFoundation
+extension UISplitViewController.Column: CustomDebugStringConvertible {
 
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() throws {
-        throw XCTSkip()
+    public var debugDescription: String {
+        switch self {
+        case .primary:
+            "primary"
+        case .supplementary:
+            "supplementary"
+        case .secondary:
+            "secondary"
+        case .compact:
+            "compact"
+        @unknown default:
+            "unknown"
+        }
     }
 }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum AccentColor: Int16, CaseIterable, Hashable {
+public enum AccentColor: Int16, CaseIterable, Hashable, Sendable {
     case blue = 1
     case green
     // yellow used to be defined here

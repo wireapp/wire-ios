@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
 
-@testable import WireFoundation
-
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() throws {
-        throw XCTSkip()
-    }
+/// Creates an image based on a user's or team's initials.
+public protocol AccountImageGeneratorProtocol {
+    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage
 }
