@@ -173,11 +173,14 @@ import Foundation
         return self.v2Asset ?? self.v3Asset
     }
 
-    public override func expire() {
-        super.expire()
+    public override func expire(withReason reason: ExpirationReason) {
+        super.expire(withReason: reason)
 
-        if transferState != .uploaded {
+        switch transferState {
+        case .uploading:
             transferState = .uploadingFailed
+        case .uploaded, .uploadingCancelled, .uploadingFailed:
+            break
         }
     }
 

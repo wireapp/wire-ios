@@ -94,11 +94,6 @@ extension SettingsCellDescriptorFactory {
                 selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
             ),
             SettingsButtonCellDescriptor(
-                title: SelfSettingsAdvancedLocale.DebuggingTools.ShowUserId.title,
-                isDestructive: false,
-                selectAction: DebugActions.showUserId
-            ),
-            SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,
                 isDestructive: false,
                 selectAction: DebugActions.enterDebugCommand
