@@ -34,11 +34,10 @@ private let busyMaskRelativeRectangleHeight = 1.75 / 8.75
 final class AvailabilityIndicatorView: UIView {
 
     enum Defaults {
-        // TODO: remove comments
-        static let availableColor: UIColor = .green // ColorTheme.Base.positive
-        static let awayColor: UIColor = .red // ColorTheme.Base.error
-        static let busyColor: UIColor = .brown // ColorTheme.Base.warning
-        static let backgroundViewColor: UIColor = .systemBackground // ColorTheme.Backgrounds.surfaceVariant
+        static let availableColor: UIColor = .green
+        static let awayColor: UIColor = .red
+        static let busyColor: UIColor = .brown
+        static let backgroundViewColor: UIColor = .systemBackground
     }
 
     @Environment(\.availableColor) private var availableColor
