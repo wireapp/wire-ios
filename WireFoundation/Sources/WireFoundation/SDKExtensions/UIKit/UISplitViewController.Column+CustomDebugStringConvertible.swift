@@ -21,7 +21,6 @@ import UIKit
 extension UISplitViewController.Column: CustomDebugStringConvertible {
 
     public var debugDescription: String {
-
         switch self {
         case .primary:
             "primary"

@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireAccountImage
 
 extension ConversationListViewController {
 
@@ -37,7 +38,6 @@ extension ConversationListViewController {
         didUpdate accountImage: (image: UIImage, isTeamAccount: Bool)
     ) {
 
-        accountImageView?.isTeamAccount = accountImage.isTeamAccount
         accountImageView?.accountImage = accountImage.image
 
         if accountImage.isTeamAccount, let teamName = viewModel.account.teamName ?? viewModel.userSession.selfUser.teamName {
@@ -61,7 +61,6 @@ extension ConversationListViewController {
     private func setupAccountImageView() -> AccountImageView {
 
         let accountImageView = AccountImageView()
-        accountImageView.isTeamAccount = viewModel.accountImage.isTeamAccount
         accountImageView.accountImage = viewModel.accountImage.image
         accountImageView.availability = viewModel.selfUserStatus.availability.map()
         accountImageView.accessibilityTraits = .button
@@ -73,6 +72,10 @@ extension ConversationListViewController {
 
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
+
+        accountImageView.translatesAutoresizingMaskIntoConstraints = false
+        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
 
         return accountImageView
     }

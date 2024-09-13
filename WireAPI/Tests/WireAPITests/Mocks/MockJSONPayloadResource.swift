@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTestingPackage
 
 struct MockJSONPayloadResource {
 

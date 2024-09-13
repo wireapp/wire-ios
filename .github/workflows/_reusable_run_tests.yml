@@ -5,15 +5,7 @@ on:
         type: boolean
         default: false
         required: false
-      wire-reusable-ui-components:
-        type: boolean
-        default: false
-        required: false
-      wire-ui-foundation:
-        type: boolean
-        default: false
-        required: false
-      wire-design:
+      wire-ui:
         type: boolean
         default: false
         required: false
@@ -132,7 +124,9 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          lfs: 'true'
 
       - name: Retrieve Xcode version
         run: |
@@ -614,73 +608,27 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireSyncEngine -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-sync-engine.log | bundle exec xcpretty --report junit --output build/reports/WireSyncEngine.junit
           exit ${PIPESTATUS[0]}
 
-      # WireDesign
+      # WireUI
 
-      - name: Build WireDesign
-        if: ${{ inputs.wire-design || inputs.all }}
+      - name: Test WireUI
+        if: ${{ inputs.wire-ui || inputs.all }}
         run: |
-          echo "WireDesign has changes"
-          echo "Building WireDesign..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireDesign -resultBundlePath xcodebuild-wire-design.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-design.log | bundle exec xcpretty
+          echo "WireUI has changes"
+          echo "Building WireUI..."
+          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUI -resultBundlePath xcodebuild-wire-ui.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui.log | bundle exec xcpretty
 
       - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-design || inputs.all }}
+        if: ${{ inputs.wire-ui || inputs.all }}
         with:
-          results: xcodebuild-wire-design.xcresult
+          results: xcodebuild-wire-ui.xcresult
           warningAnnotations: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test WireDesign
-        if: ${{ inputs.wire-design || inputs.all }}
+      - name: Test WireUI
+        if: ${{ inputs.wire-ui || inputs.all }}
         run: |
-          echo "Testing WireDesign..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireDesign -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-design.log | bundle exec xcpretty --report junit --output build/reports/WireDesign.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireUIFoundation
-
-      - name: Test WireUIFoundation
-        if: ${{ inputs.wire-ui-foundation || inputs.all }}
-        run: |
-          echo "WireUIFoundation has changes"
-          echo "Building WireUIFoundation..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireUIFoundation -resultBundlePath xcodebuild-wire-ui-foundation.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ui-foundation.log | bundle exec xcpretty
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-ui-foundation || inputs.all }}
-        with:
-          results: xcodebuild-wire-ui-foundation.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireUIFoundation
-        if: ${{ inputs.wire-ui-foundation || inputs.all }}
-        run: |
-          echo "Testing WireUIFoundation..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUIFoundation -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui-foundation.log | bundle exec xcpretty --report junit --output build/reports/WireUIFoundation.junit
-          exit ${PIPESTATUS[0]}
-
-      # WireReusableUIComponents
-
-      - name: Test WireReusableUIComponents
-        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        run: |
-          echo "WireReusableUIComponents has changes"
-          echo "Building WireReusableUIComponents..."
-          xcodebuild build-for-testing -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -resultBundlePath xcodebuild-wire-reusable-ui-components.xcresult -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty
-
-      - uses: kronenthaler/analyze-xcoderesults-action@0.1.9
-        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        with:
-          results: xcodebuild-wire-reusable-ui-components.xcresult
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Test WireReusableUIComponents
-        if: ${{ inputs.wire-reusable-ui-components || inputs.all }}
-        run: |
-          echo "Testing WireReusableUIComponents..."
-          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireReusableUIComponents -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-reusable-ui-components.log | bundle exec xcpretty --report junit --output build/reports/WireReusableUIComponents.junit
+          echo "Testing WireUI..."
+          xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme WireUI -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ui.log | bundle exec xcpretty --report junit --output build/reports/WireUI.junit
           exit ${PIPESTATUS[0]}
 
       # Wire-iOS
@@ -714,7 +662,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Failed snapshots
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Failed Snapshots and log
@@ -755,7 +703,7 @@ jobs:
           key: ${{ github.event.head_commit.id || github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}-Danger.results
 
       - name: Upload Test Reports as Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports
@@ -771,7 +719,7 @@ jobs:
           compare_to_earlier_commit: false
 
       - name: Archiving DerivedData Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: derived-data-xcode

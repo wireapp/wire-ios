@@ -49,7 +49,7 @@ final class NavigationBarContainer: UIViewController {
           view.bottomAnchor.constraint(equalTo: navigationBar.bottomAnchor)
         ])
 
-        navigationBar.topAnchor.constraint(equalTo: safeTopAnchor).isActive = true
+        navigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
     }
 
     override func viewDidLayoutSubviews() {

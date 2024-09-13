@@ -51,7 +51,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    let mainTabBarController = MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>()
+    private(set) var mainTabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -289,7 +289,7 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
     static var shared: ZClientViewController? {
-        AppDelegate.shared.appRootRouter?.zClientViewController
+        return (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.

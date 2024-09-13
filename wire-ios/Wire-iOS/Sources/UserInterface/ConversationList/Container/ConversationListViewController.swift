@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireAccountImage
 
 final class ConversationListViewController: UIViewController {
 
@@ -120,7 +121,8 @@ final class ConversationListViewController: UIViewController {
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            getUserAccountImageUseCase: GetUserAccountImageUseCase()
         )
         self.init(
             viewModel: viewModel,
@@ -332,7 +334,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
             onboardingHint.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),

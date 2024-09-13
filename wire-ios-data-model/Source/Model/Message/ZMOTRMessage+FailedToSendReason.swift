@@ -20,16 +20,16 @@ import Foundation
 
 extension ZMMessage: SwiftConversationMessage {
 
-    public var failedToSendReason: MessageSendFailure? {
+    public var expirationReason: ExpirationReason? {
         guard
             isExpired,
             let reasonCode = expirationReasonCode,
-            let expirationReason = MessageSendFailure(rawValue: reasonCode.intValue)
+            let reason = ExpirationReason(rawValue: reasonCode.intValue)
         else {
             return nil
         }
 
-        return expirationReason
+        return reason
     }
 
     public var failedToSendUsers: [UserType] {

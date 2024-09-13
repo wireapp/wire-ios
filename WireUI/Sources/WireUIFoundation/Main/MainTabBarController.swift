@@ -81,7 +81,7 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
         viewControllers![tab.rawValue] as! UINavigationController
     }
 
-    public var selectedTab: Tab {
+    public var currentTab: Tab {
         get { Tab(rawValue: selectedIndex) ?? .conversations }
         set { selectedIndex = newValue.rawValue }
     }
@@ -100,7 +100,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
     }
 
     private func setupAppearance() {
-
         let tabBarItemAppearance = UITabBarItemAppearance()
         tabBarItemAppearance.normal.iconColor = ColorTheme.Base.secondaryText
         tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
@@ -119,7 +118,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
         for tab in Tab.allCases {
             let tabBarItem: UITabBarItem
             switch tab {
-
             case .conversations:
                 tabBarItem = .init(
                     title: String(localized: "tabBar.conversations.title", bundle: .module),
@@ -150,7 +148,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
                 // TODO: [WPB-9727] missing string localization
                 tabBarItem.accessibilityLabel = String(localized: "tabBar.settings.description", bundle: .module)
                 tabBarItem.accessibilityHint = String(localized: "tabBar.settings.hint", bundle: .module)
-
             }
             viewControllers?[tab.rawValue].tabBarItem = tabBarItem
         }
@@ -174,7 +171,7 @@ func MainTabBarController_Preview() -> some MainTabBarControllerProtocol {
     for tab in MainTabBarController.Tab.allCases {
         tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
     }
-    tabBarController.selectedTab = .conversations
+    tabBarController.currentTab = .conversations
     return tabBarController
 }
 

@@ -24,10 +24,6 @@ public final class MainCoordinator<MainSplitViewController, MainTabBarController
     private weak var mainSplitViewContent: MainSplitViewController?
     private weak var mainTabBarContent: MainTabBarController?
 
-    // TODO: setup inside or outside?
-    // only navigation here?
-    // protocols/accessors for each navigation controller? or viewControllers array
-
     @discardableResult
     public init(
         mainSplitViewContent: MainSplitViewController,
@@ -68,11 +64,11 @@ public final class MainCoordinator<MainSplitViewController, MainTabBarController
 
     // MARK: - UISplitViewControllerDelegate
 
-    public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+    public func splitViewControllerDidCollapse(_: UISplitViewController) {
         fatalError("not implemented yet")
     }
 
-    public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+    public func splitViewControllerDidExpand(_: UISplitViewController) {
         fatalError("not implemented yet")
     }
 }

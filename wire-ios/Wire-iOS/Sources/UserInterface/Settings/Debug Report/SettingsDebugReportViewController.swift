@@ -104,11 +104,11 @@ class SettingsDebugReportViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            infoLabel.topAnchor.constraint(equalTo: view.safeTopAnchor, constant: LayoutConstants.padding),
+            infoLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: LayoutConstants.padding),
             infoLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
             infoLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
 
-            shareReportButton.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -LayoutConstants.safeBottomPadding),
+            shareReportButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -LayoutConstants.safeBottomPadding),
             shareReportButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.padding),
             shareReportButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -LayoutConstants.padding),
             shareReportButton.heightAnchor.constraint(greaterThanOrEqualToConstant: LayoutConstants.buttonHeight),

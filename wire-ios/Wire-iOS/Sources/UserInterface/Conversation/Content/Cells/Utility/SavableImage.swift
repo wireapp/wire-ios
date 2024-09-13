@@ -141,7 +141,10 @@ final class SavableImage: NSObject {
             style: .cancel
         ))
 
-        AppDelegate.shared.mainWindow.rootViewController?.present(alert, animated: true)
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
     }
 
 }

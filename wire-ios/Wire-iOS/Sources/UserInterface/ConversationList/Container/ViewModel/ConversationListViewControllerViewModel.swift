@@ -20,8 +20,10 @@ import UIKit
 import UserNotifications
 import WireCommonComponents
 import WireDataModel
+import WireFoundation
 import WireReusableUIComponents
 import WireSyncEngine
+import WireAccountImage
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
@@ -74,6 +76,7 @@ extension ConversationListViewController {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
         }
 
+        // TODO: create two properties
         private(set) var accountImage = (image: UIImage(), isTeamAccount: false) {
             didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: accountImage) }
         }
@@ -102,8 +105,7 @@ extension ConversationListViewController {
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
 
-        @MainActor
-        let miniatureAccountImageFactory = MiniatureAccountImageFactory()
+        let getUserAccountImageUseCase: GetUserAccountImageUseCaseProtocol
 
         @MainActor
         init(
@@ -112,7 +114,8 @@ extension ConversationListViewController {
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
-            mainCoordinator: some MainCoordinating
+            mainCoordinator: some MainCoordinating,
+            getUserAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -123,6 +126,7 @@ extension ConversationListViewController {
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
+            self.getUserAccountImageUseCase = getUserAccountImageUseCase
             super.init()
 
             updateE2EICertifiedStatus()
@@ -185,8 +189,13 @@ extension ConversationListViewController.ViewModel {
     @MainActor
     private func updateAccountImage() {
         Task {
-            accountImage.image = await AccountImage(userSession, account, miniatureAccountImageFactory)
-            accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
+            do {
+                accountImage.image = try await getUserAccountImageUseCase.invoke(account: account)
+                accountImage.isTeamAccount = userSession.selfUser.membership?.team != nil
+            } catch {
+                WireLogger.ui.error("Failed to get user account image: \(String(reflecting: error))")
+                accountImage.image = .init()
+            }
         }
     }
 
