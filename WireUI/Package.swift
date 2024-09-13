@@ -15,14 +15,13 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
         .target(name: "WireDesign"),
         .testTarget(
             name: "WireDesignTests",
-            dependencies: ["WireDesign", .product(name: "SnapshotTesting", package: "swift-snapshot-testing")]
+            dependencies: ["WireDesign"]
         ),
 
         .target(
@@ -35,7 +34,6 @@ let package = Package(
         .testTarget(
             name: "WireReusableUIComponentsTests",
             dependencies: [
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireReusableUIComponents",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
@@ -45,7 +43,6 @@ let package = Package(
         .testTarget(
             name: "WireUIFoundationTests",
             dependencies: [
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireUIFoundation",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
@@ -55,7 +52,6 @@ let package = Package(
         .testTarget(
             name: "WireAccountImageTests",
             dependencies: [
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 "WireAccountImage",
                 .product(name: "WireTestingPackage", package: "WireFoundation")
             ]
