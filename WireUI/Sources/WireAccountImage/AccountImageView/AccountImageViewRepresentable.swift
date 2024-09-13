@@ -23,6 +23,8 @@ public struct AccountImageViewRepresentable: UIViewRepresentable {
     private let accountImage: UIImage
     private let availability: Availability?
 
+    // MARK: - Life Cycle
+
     public init(
         accountImage: UIImage,
         availability: Availability?

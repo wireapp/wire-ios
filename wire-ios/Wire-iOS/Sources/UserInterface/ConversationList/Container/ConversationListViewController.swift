@@ -22,7 +22,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireUserProfile
+import WireAccountImage
 
 final class ConversationListViewController: UIViewController {
 

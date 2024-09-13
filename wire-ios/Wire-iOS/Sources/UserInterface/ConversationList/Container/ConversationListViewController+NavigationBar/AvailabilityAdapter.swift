@@ -17,14 +17,14 @@
 //
 
 import WireDataModel
-import WireReusableUIComponents
+import WireAccountImage
 
 extension WireDataModel.Availability {
 
     /// Since `WireReusableUIComponents` does not know about the type `WireDataModel.Availability`,
-    /// this function serves as an adapter from `WireDataModel.Availability` to `WireReusableUIComponents.Availability?`.
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
 
-    func map() -> WireReusableUIComponents.Availability? {
+    func map() -> WireAccountImage.Availability? {
         switch self {
         case .none: .none
         case .available: .available

@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireAccountImage
 
 extension ConversationListViewController {
 
