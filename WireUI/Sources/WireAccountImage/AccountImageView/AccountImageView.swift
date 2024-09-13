@@ -33,7 +33,7 @@ public final class AccountImageView: UIView {
 
     enum Defaults {
         static let accountImageBorderWidth: CGFloat = 1
-        static let accountImageViewBorderColor: UIColor = .gray // ColorTheme.Strokes.outline // TODO: remove comment
+        static let accountImageViewBorderColor: UIColor = .gray
     }
 
     // MARK: - Public Properties
