@@ -18,12 +18,12 @@
 
 import UIKit
 import UserNotifications
+import WireAccountImage
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireAccountImage
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void

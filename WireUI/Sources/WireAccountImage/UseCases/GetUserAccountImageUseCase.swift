@@ -35,7 +35,6 @@ public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
     }
 
     public func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage {
-
         // user's custom image
         if let data = account.imageData, let accountImage = UIImage(data: data) {
             return accountImage

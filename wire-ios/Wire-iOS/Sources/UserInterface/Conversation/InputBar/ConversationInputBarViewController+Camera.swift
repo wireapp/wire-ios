@@ -36,7 +36,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
             fatal("SplitViewController is not created")
         }
         let cameraKeyboardViewController = CameraKeyboardViewController(
-            //splitLayoutObservable: SplitViewControllerObserver(splitViewController: splitViewController)
+            // splitLayoutObservable: SplitViewControllerObserver(splitViewController: splitViewController)
         )
         cameraKeyboardViewController.delegate = self
 

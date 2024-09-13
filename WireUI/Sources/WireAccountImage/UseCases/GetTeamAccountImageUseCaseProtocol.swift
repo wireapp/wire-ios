@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import CoreData
+import UIKit
 
 /// If the team has an image set, this use cases retrieves it.
 /// If no team image data is available, an image will be generated using the team name's initials.

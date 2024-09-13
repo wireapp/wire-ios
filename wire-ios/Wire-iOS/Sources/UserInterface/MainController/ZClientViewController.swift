@@ -19,12 +19,12 @@
 import avs
 import SwiftUI
 import UIKit
+import WireAccountImage
 import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
 import WireUIFoundation
-import WireAccountImage
 
 final class ZClientViewController: UIViewController {
 

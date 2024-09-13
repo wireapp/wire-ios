@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireFoundation
+import XCTest
 
 @testable import WireAccountImage
 
@@ -42,7 +42,6 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
     }
 
     func testUserImageDataMatches() async throws {
-
         // Given
         let expectedData = try imageData(from: .green)
         mockAccount.imageData = expectedData
@@ -55,7 +54,6 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
     }
 
     func testInitalsImageDataMatches() async throws {
-
         // Given
         let expectedData = try imageData(from: .green)
         mockInitialsProvider.initialsResult = "W"
@@ -69,7 +67,6 @@ final class GetUserAccountImageUseCaseTests: XCTestCase {
     }
 
     func testErrorIsThrown() async throws {
-
         // When
         do {
             _ = try await sut.invoke(account: mockAccount)
