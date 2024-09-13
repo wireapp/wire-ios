@@ -21,12 +21,15 @@ import WireCommonComponents
 import WireDesign
 import WireFoundation
 import WireSyncEngine
+import Inject
 
 struct AccentColorPicker: View {
 
     @State
     var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
+
+    @ObserveInjection var inject
 
     let onColorSelect: ((AccentColor) -> Void)?
 
@@ -47,6 +50,10 @@ struct AccentColorPicker: View {
             .modifier(ListBackgroundStyleModifier())
             .background(Color(SemanticColors.View.backgroundDefault))
         }
+        .onAppear {
+            InjectConfiguration.animation = .interactiveSpring()
+        }
+        .enableInjection()
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack {
