@@ -24,15 +24,13 @@ import XCTest
 final class GetTeamAccountImageUseCaseTests: XCTestCase {
 
     private var mockAccountImageGenerator: MockAccountImageGenerator!
-    private var mockInitialsProvider: MockInitialsProvider!
     private var mockUser: MockUser!
     private var mockAccount: MockAccount!
-    private var sut: GetTeamAccountImageUseCase<MockInitialsProvider, MockAccountImageGenerator>!
+    private var sut: GetTeamAccountImageUseCase<MockAccountImageGenerator>!
 
     override func setUp() {
         mockAccountImageGenerator = .init()
-        mockInitialsProvider = .init()
-        sut = .init(initalsProvider: mockInitialsProvider, accountImageGenerator: mockAccountImageGenerator)
+        sut = .init(accountImageGenerator: mockAccountImageGenerator)
         mockUser = .init()
         mockAccount = .init()
     }
@@ -47,7 +45,7 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
     func testTeamImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
-        mockAccount.imageData = expectedData
+        mockUser.membership?.team?.teamImageSource = .data(expectedData)
 
         // When
         let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
@@ -59,7 +57,7 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
     func testAccountImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
-        mockAccount.teamImageSource = expectedData
+        mockAccount.teamImageSource = .data(expectedData)
 
         // When
         let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
@@ -71,13 +69,15 @@ final class GetTeamAccountImageUseCaseTests: XCTestCase {
     func testInitalsImageDataMatches() async throws {
         // Given
         let expectedData = try imageData(from: .green)
-        mockInitialsProvider.initialsResult = "W"
+        mockAccount.teamName = " Wire Team "
         mockAccountImageGenerator.resultImage = try XCTUnwrap(.init(data: expectedData))
 
         // When
         let actualData = try await sut.invoke(user: mockUser, account: mockAccount).pngData()
 
         // Then
+        XCTAssertEqual(mockAccountImageGenerator.createImage_Invocations.count, 1)
+        XCTAssertEqual(mockAccountImageGenerator.createImage_Invocations.first?.initials, "W")
         XCTAssertEqual(expectedData, actualData)
     }
 

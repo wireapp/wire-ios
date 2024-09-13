@@ -19,22 +19,18 @@
 import UIKit
 import WireFoundation
 
-public struct GetTeamAccountImageUseCase<InitalsProvider: GetAccountImageUseCaseInitialsProvider, AccountImageGenerator: AccountImageGeneratorProtocol>: GetTeamAccountImageUseCaseProtocol {
+public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGeneratorProtocol>: GetTeamAccountImageUseCaseProtocol {
 
     typealias Error = GetTeamAccountImageUseCaseError
 
-    var initalsProvider: InitalsProvider
     var accountImageGenerator: AccountImageGenerator
 
-    public init(
-        initalsProvider: InitalsProvider,
-        accountImageGenerator: AccountImageGenerator
-    ) {
-        self.initalsProvider = initalsProvider
+    public init(accountImageGenerator: AccountImageGenerator) {
         self.accountImageGenerator = accountImageGenerator
     }
 
     public func invoke(user: some GetAccountImageUseCaseUserProtocol, account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage {
+        var teamName = ""
         if let team = await user.membership?.team, let teamImageSource = await team.teamImageSource ?? account.teamImageSource {
             // team image
             if case .data(let data) = teamImageSource, let accountImage = UIImage(data: data) {
@@ -42,11 +38,17 @@ public struct GetTeamAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
             }
 
             // team name initials
-            let teamName: String = if case .text(let value) = teamImageSource {
-                value
-            } else {
-                await team.name ?? account.teamName ?? ""
+            if case .text(let value) = teamImageSource {
+                teamName = value.trimmingCharacters(in: .whitespacesAndNewlines)
             }
+        }
+
+        if teamName.isEmpty {
+            teamName = await user.membership?.team?.name ?? account.teamName ?? ""
+            teamName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        if !teamName.isEmpty {
             let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
             if !initials.isEmpty {
                 return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
