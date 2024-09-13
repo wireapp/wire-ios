@@ -22,7 +22,6 @@ struct AggregateFilePreviewGenerator: FilePreviewGenerator {
 
     let generators: [FilePreviewGenerator]
     let thumbnailSize: CGSize
-    let callbackQueue: OperationQueue
 
     func supportsPreviewGenerationForFile(at url: URL) -> Bool {
         !generators.filter {
