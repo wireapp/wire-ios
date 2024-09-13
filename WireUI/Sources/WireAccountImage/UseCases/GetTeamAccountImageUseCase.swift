@@ -43,16 +43,12 @@ public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGene
             }
         }
 
-        if teamName.isEmpty {
-            teamName = await user.membership?.team?.name ?? account.teamName ?? ""
-            teamName = teamName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if teamName.isEmpty, let alternativeTeamName = await user.membership?.team?.name ?? account.teamName {
+            teamName = alternativeTeamName.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
-        if !teamName.isEmpty {
-            let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map { "\($0)" } ?? ""
-            if !initials.isEmpty {
-                return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
-            }
+        if !teamName.isEmpty, let initials = teamName.trimmingCharacters(in: .whitespacesAndNewlines).first.map({ "\($0)" }), !initials.isEmpty {
+            return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
         }
 
         throw Error.invalidImageSource
