@@ -34,11 +34,12 @@ final class AvailabilityIndicatorView: UIView {
 
     // MARK: - Constants
 
+    // TODO: remove comments
     enum Defaults {
-        static let availableColor: UIColor = .green
-        static let awayColor: UIColor = .red
-        static let busyColor: UIColor = .brown
-        static let backgroundViewColor: UIColor = .systemBackground
+        static let availableColor: UIColor = .green // ColorTheme.Base.positive
+        static let awayColor: UIColor = .red // ColorTheme.Base.error
+        static let busyColor: UIColor = .brown // ColorTheme.Base.warning
+        static let backgroundViewColor: UIColor = .systemBackground // ColorTheme.Backgrounds.surfaceVariant
     }
 
     // MARK: - Properties
