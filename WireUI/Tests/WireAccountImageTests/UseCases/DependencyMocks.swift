@@ -16,10 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAccountImage
 import WireFoundation
 import XCTest
 
-@testable import WireAccountImage
+final class MockUser: GetAccountImageUseCaseUserProtocol {
+    var membership: MockTeamMembership?
+}
+
+struct MockTeamMembership: GetAccountImageUseCaseTeamMembershipProtocol {
+    var team: MockTeam?
+}
+
+struct MockTeam: GetAccountImageUseCaseTeamProtocol {
+    var name: String?
+    var teamImageSource: AccountImageSource?
+}
 
 final class MockAccount: GetAccountImageUseCaseAccountProtocol {
     var imageData: Data?

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import UIKit
 
 /// If the personal user has an account image set, this use cases retrieves it.
