@@ -17,15 +17,6 @@
 //
 
 import SwiftUI
-import WireDesign
-
-// MARK: Constants
-
-/// Used for the intrinsic content size
-private let accountImageHeight: CGFloat = 26
-private let accountImageBorderWidth: CGFloat = 1
-private let teamAccountImageCornerRadius: CGFloat = 6
-private let accountImageViewBorderColor = ColorTheme.Strokes.outline
 
 private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
@@ -33,6 +24,11 @@ private let availabilityIndicatorDiameterFraction = CGFloat(10) / 32
 
 /// Displays the image of a user account plus optional availability.
 public final class AccountImageView: UIView {
+
+    // MARK: Constants for intrinsic content size
+
+    private let accountImageHeight: CGFloat = 26
+    private let teamAccountImageCornerRadius: CGFloat = 6
 
     // MARK: - Public Properties
 
@@ -46,6 +42,14 @@ public final class AccountImageView: UIView {
 
     public var availability: Availability? {
         didSet { updateAvailabilityIndicator() }
+    }
+
+    public var accountImageBorderWidth: CGFloat = 1 {
+        didSet { updateAccountImageBorder() }
+    }
+
+    public var accountImageViewBorderColor: UIColor = .gray {
+        didSet { updateAccountImageBorder() }
     }
 
     // MARK: - Private Properties
@@ -153,7 +157,7 @@ public final class AccountImageView: UIView {
     private func updateAccountImageBorder() {
         guard let accountImageViewWrapper = accountImageView.superview else { return }
 
-        accountImageViewWrapper.layer.borderWidth = 1
+        accountImageViewWrapper.layer.borderWidth = accountImageBorderWidth
         accountImageViewWrapper.layer.borderColor = accountImageViewBorderColor.cgColor
     }
 

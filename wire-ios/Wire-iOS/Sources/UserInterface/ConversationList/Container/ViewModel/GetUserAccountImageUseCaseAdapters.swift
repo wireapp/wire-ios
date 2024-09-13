@@ -43,6 +43,7 @@ extension GetUserAccountImageUseCaseProtocol {
 // MARK: -
 
 private struct InitialsProviderAdapter: GetAccountImageUseCaseInitialsProvider {
+    @MainActor
     func initials(from fullName: String) -> String {
         PersonName.person(withName: fullName, schemeTagger: nil).initials
     }
