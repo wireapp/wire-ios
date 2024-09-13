@@ -34,6 +34,7 @@ public extension UserDefault where Value: ExpressibleByNilLiteral {
     /// Creates a new User Defaults property wrapper for the given key.
     /// - Parameters:
     ///   - key: The key to use with the user defaults store.
+    ///   - userID: The user ID for whom the data is stored.
     init(
         key: Key,
         _ container: UserDefaults = .standard,
