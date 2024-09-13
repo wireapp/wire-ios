@@ -16,17 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import UniformTypeIdentifiers
-import WireUtilities
-
-extension NSItemProvider {
-
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        }
-    }
+enum ConversationFilterType {
+    case favorites
+    case groups
+    case oneToOneConversations
 }

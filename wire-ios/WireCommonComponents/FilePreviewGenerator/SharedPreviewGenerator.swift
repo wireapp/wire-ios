@@ -16,17 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import UniformTypeIdentifiers
-import WireUtilities
+import Foundation
 
-extension NSItemProvider {
+enum SharedPreviewGenerator {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        }
-    }
+    static var generator: AggregateFilePreviewGenerator = {
+
+        let thumbnailSizeDefault = CGSize(width: 120, height: 120)
+        let thumbnailSizeVideo = CGSize(width: 640, height: 480)
+
+        let imageGenerator = ImageFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault)
+        let movieGenerator = MovieFilePreviewGenerator(thumbnailSize: thumbnailSizeVideo)
+        let pdfGenerator = PDFFilePreviewGenerator(thumbnailSize: thumbnailSizeDefault)
+
+        return AggregateFilePreviewGenerator(
+            generators: [imageGenerator, movieGenerator, pdfGenerator],
+            thumbnailSize: thumbnailSizeDefault
+        )
+    }()
 }

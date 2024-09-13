@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import UniformTypeIdentifiers
-import WireUtilities
+import WireAccountImage
+import WireDataModel
+import WireReusableUIComponents
 
-extension NSItemProvider {
+extension WireDataModel.Availability {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
+    /// Since `WireAccountImage` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireAccountImage.Availability?`.
+
+    func map() -> WireAccountImage.Availability? {
+        switch self {
+        case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
         }
     }
 }

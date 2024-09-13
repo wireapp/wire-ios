@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import UniformTypeIdentifiers
-import WireUtilities
+import Foundation
+import WireDataModel
 
-extension NSItemProvider {
+// sourcery: AutoMockable
+public protocol FileMetaDataGeneratorProtocol {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        }
-    }
+    /// Determines the file type and name of the file and generates metadata including a thumbnail if possible.
+    func metadataForFile(at url: URL) async -> ZMFileMetadata
 }
