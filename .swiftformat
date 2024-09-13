@@ -55,7 +55,7 @@
     redundantTypedThrows, \
     redundantVoidReturnType, \
     semicolons, \
-    # sortDeclarations, \ TODO
+    sortDeclarations, \
     sortImports, \
     sortTypealiases, \
     spaceAroundBraces, \

@@ -19,10 +19,11 @@
 import Foundation
 import WireTransport
 
+// swiftformat:sort
 private enum WebsitePages {
-    case termsOfServices
-    case privacyPolicy
     case legal
+    case privacyPolicy
+    case termsOfServices
 }
 
 enum TeamSource: Int {
