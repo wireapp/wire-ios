@@ -22,12 +22,11 @@ import WireSyncEngine
 extension SidebarAccountInfo {
 
     init(_ user: some UserType, _ accountImage: UIImage) {
-        fatalError("TODO: availability")
         self.init(
             displayName: user.name ?? "",
             username: user.handle ?? "",
             accountImage: accountImage,
-            availability: .none // user.membership?.team != nil
+            availability: user.availability.map()
         )
     }
 }

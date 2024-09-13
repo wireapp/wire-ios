@@ -54,7 +54,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
+    let mainTabBarController = MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>()
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(

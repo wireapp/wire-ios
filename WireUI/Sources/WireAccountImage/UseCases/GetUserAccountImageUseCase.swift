@@ -42,7 +42,7 @@ public struct GetUserAccountImageUseCase<InitalsProvider: GetAccountImageUseCase
         }
 
         // image base on user's initials
-        let initials = initalsProvider.initials(from: account.userName).trimmingCharacters(in: .whitespacesAndNewlines)
+        let initials = await initalsProvider.initials(from: account.userName).trimmingCharacters(in: .whitespacesAndNewlines)
         guard !initials.isEmpty else { throw Error.invalidImageSource }
         return await accountImageGenerator.createImage(initials: initials, backgroundColor: .white)
     }

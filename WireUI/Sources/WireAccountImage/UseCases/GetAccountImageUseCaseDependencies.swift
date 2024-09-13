@@ -45,5 +45,5 @@ public protocol GetAccountImageUseCaseAccountProtocol {
 }
 
 public protocol GetAccountImageUseCaseInitialsProvider {
-    func initials(from fullName: String) -> String
+    func initials(from fullName: String) async -> String
 }
