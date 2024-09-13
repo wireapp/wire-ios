@@ -19,7 +19,18 @@
 import XCTest
 import WireFoundation
 
-@testable import WireUserProfile
+final class MockUser: GetAccountImageUseCaseUserProtocol {
+    var membership: MockTeamMembership? = .init()
+}
+
+struct MockTeamMembership: GetAccountImageUseCaseTeamMembershipProtocol {
+    var team: MockTeam? = .init()
+}
+
+struct MockTeam: GetAccountImageUseCaseTeamProtocol {
+    var name: String?
+    var teamImageSource: AccountImageSource?
+}
 
 final class MockAccount: GetAccountImageUseCaseAccountProtocol {
     var imageData: Data?
@@ -34,6 +45,10 @@ final class MockInitialsProvider: GetAccountImageUseCaseInitialsProvider {
 }
 
 final class MockAccountImageGenerator: AccountImageGeneratorProtocol {
+    var createImage_Invocations = [(initials: String, backgroundColor: UIColor)]()
     var resultImage = UIImage()
-    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage { resultImage }
+    func createImage(initials: String, backgroundColor: UIColor) async -> UIImage {
+        createImage_Invocations += [(initials, backgroundColor)]
+        return resultImage
+    }
 }

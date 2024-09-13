@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAccountImage
 import WireDataModel
 import WireFoundation
-import WireUserProfile
 
 extension GetUserAccountImageUseCase<InitialsProviderAdapter, AccountImageGenerator> {
 

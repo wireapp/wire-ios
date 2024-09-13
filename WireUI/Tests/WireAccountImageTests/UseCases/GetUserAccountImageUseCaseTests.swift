@@ -19,7 +19,7 @@
 import XCTest
 import WireFoundation
 
-@testable import WireUserProfile
+@testable import WireAccountImage
 
 final class GetUserAccountImageUseCaseTests: XCTestCase {
 

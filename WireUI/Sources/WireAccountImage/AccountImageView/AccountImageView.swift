@@ -212,27 +212,20 @@ struct AccountImageView_Previews: PreviewProvider {
 
     static var previews: some View {
         Group {
-            ForEach([false, true], id: \.self) { isTeamAccount in
+            previewWithNavigationBar(.none)
 
-                previewWithNavigationBar(isTeamAccount, .none)
-                    .previewDisplayName(isTeamAccount ? "team" : "personal")
-
-                ForEach(Availability.allCases, id: \.self) { availability in
-                    previewWithNavigationBar(isTeamAccount, availability)
-                        .previewDisplayName(isTeamAccount ? "team" : "personal" + " - \(availability)")
-                }
+            ForEach(Availability.allCases, id: \.self) { availability in
+                previewWithNavigationBar(availability)
+                    .previewDisplayName("\(availability)")
             }
         }
     }
 
     @ViewBuilder
-    static func previewWithNavigationBar(
-        _ isTeamAccount: Bool,
-        _ availability: Availability?
-    ) -> some View {
+    static func previewWithNavigationBar(_ availability: Availability?) -> some View {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
-            AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
+            AccountImageViewRepresentable(accountImage, availability)
                 // set a frame in order check that it scales,
                 // ensure it scales with "aspectFit" content mode
                 .frame(width: 32, height: 50)
@@ -249,7 +242,7 @@ struct AccountImageView_Previews: PreviewProvider {
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {} label: {
-                            AccountImageViewRepresentable(accountImage, isTeamAccount, availability)
+                            AccountImageViewRepresentable(accountImage, availability)
                                 .padding(.horizontal)
                         }
                     }
