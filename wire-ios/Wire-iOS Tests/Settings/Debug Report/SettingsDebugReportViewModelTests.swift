@@ -22,7 +22,7 @@ import XCTest
 
 @testable import Wire
 
-class SettingsDebugReportViewModelTests: XCTestCase {
+final class SettingsDebugReportViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -31,7 +31,7 @@ class SettingsDebugReportViewModelTests: XCTestCase {
     private var mockShareFile: MockShareFileUseCaseProtocol!
     private var mockFetchShareableConversations: MockFetchShareableConversationsUseCaseProtocol!
     private var mockLogsProvider: MockLogFilesProviding!
-    private var mockFileMetaDataGenerator: MockFileMetaDataGenerating!
+    private var mockFileMetaDataGenerator: MockFileMetaDataGeneratorProtocol!
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var coreDataStack: CoreDataStack!
@@ -39,13 +39,12 @@ class SettingsDebugReportViewModelTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() async throws {
-        try await super.setUp()
 
         mockRouter = MockSettingsDebugReportRouterProtocol()
         mockShareFile = MockShareFileUseCaseProtocol()
         mockFetchShareableConversations = MockFetchShareableConversationsUseCaseProtocol()
         mockLogsProvider = MockLogFilesProviding()
-        mockFileMetaDataGenerator = MockFileMetaDataGenerating()
+        mockFileMetaDataGenerator = .init()
 
         sut = SettingsDebugReportViewModel(
             router: mockRouter,
@@ -70,16 +69,20 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         mockFileMetaDataGenerator = nil
         coreDataStack = nil
         coreDataStackHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Tests
 
-    func testShareReport() {
+    func testShareReport() async {
+
         // GIVEN
-        let conversation = ZMConversation.insertNewObject(in: coreDataStack.viewContext)
+        let conversation = await coreDataStack.viewContext.perform { [self] in
+            ZMConversation.insertNewObject(in: coreDataStack.viewContext)
+        }
         let mockURL = URL(fileURLWithPath: "mockURL")
-        let mockMetadata = ZMFileMetadata(fileURL: mockURL)
+        let mockMetadata = await coreDataStack.viewContext.perform {
+            ZMFileMetadata(fileURL: mockURL)
+        }
         let mockDebugReport = ShareableDebugReport(
             logFileMetadata: mockMetadata,
             shareFile: mockShareFile
@@ -89,30 +92,23 @@ class SettingsDebugReportViewModelTests: XCTestCase {
         mockFetchShareableConversations.invoke_MockValue = [conversation]
         mockLogsProvider.generateLogFilesZip_MockValue = mockURL
         mockLogsProvider.clearLogsDirectory_MockMethod = {}
-        mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_MockMethod = { url, uti, name, completion in
-
+        mockFileMetaDataGenerator.metadataForFileAt_MockMethod = { url in
             XCTAssertEqual(url, mockURL)
-            XCTAssertEqual(uti, mockURL.UTI())
-            XCTAssertEqual(name, mockURL.lastPathComponent)
-
-            completion(mockMetadata)
+            return mockMetadata
         }
         mockRouter.presentShareViewControllerDestinationsDebugReport_MockMethod = { destinations, debugReport in
-
             XCTAssertEqual(destinations.count, 1)
             XCTAssertEqual(destinations.first, conversation)
             XCTAssertEqual(debugReport, mockDebugReport)
-
         }
 
         // WHEN
-        sut.shareReport()
+        await sut.shareReport()
 
         // THEN
         XCTAssertEqual(mockFetchShareableConversations.invoke_Invocations.count, 1)
         XCTAssertEqual(mockLogsProvider.generateLogFilesZip_Invocations.count, 1)
-        XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAtURLUTINameCompletion_Invocations.count, 1)
+        XCTAssertEqual(mockFileMetaDataGenerator.metadataForFileAt_Invocations.count, 1)
         XCTAssertEqual(mockRouter.presentShareViewControllerDestinationsDebugReport_Invocations.count, 1)
     }
-
 }

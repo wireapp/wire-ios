@@ -16,17 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import UniformTypeIdentifiers
-import WireUtilities
+import UIKit
 
-extension NSItemProvider {
+// sourcery: AutoMockable
+protocol SettingsDebugReportViewModelProtocol {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        }
-    }
+    /// Send a debug report via email or shows fallback alert if email is not available
+    func sendReport(sender: UIView)
+
+    /// Presents a list of conversation for the user to share the debug report with
+    func shareReport() async
 }

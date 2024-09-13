@@ -127,7 +127,7 @@ class SettingsDebugReportViewController: UIViewController {
     }
 
     @objc private func didTapShareReport() {
-        viewModel.shareReport()
+        Task { await viewModel.shareReport() }
     }
 
     // MARK: - Helpers

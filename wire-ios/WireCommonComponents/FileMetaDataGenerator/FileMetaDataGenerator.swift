@@ -23,63 +23,60 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "UI")
 
-// sourcery: AutoMockable
-public protocol FileMetaDataGenerating {
-
-    func metadataForFileAtURL(
-        _ url: URL,
-        UTI uti: String,
-        name: String,
-        completion: @escaping (ZMFileMetadata) -> Void
-    )
-
-}
-
-public final class FileMetaDataGenerator: FileMetaDataGenerating {
+public final class FileMetaDataGenerator: FileMetaDataGeneratorProtocol {
 
     @available(*, deprecated, message: "This shared instance supports legacy static usage. Don't use it.")
-    public static var shared = FileMetaDataGenerator()
+    public static var shared = FileMetaDataGenerator(previewGenerator: SharedPreviewGenerator.generator)
 
-    public init() {}
+    private let previewGenerator: FilePreviewGenerator
 
-    public func metadataForFileAtURL(
-        _ url: URL,
-        UTI uti: String,
-        name: String,
-        completion: @escaping (ZMFileMetadata) -> Void
-    ) {
-        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
-            let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
-
-            if AVURLAsset.wr_isAudioVisualUTI(uti) {
-                let asset = AVURLAsset(url: url)
-
-                if let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first {
-                    completion(ZMVideoMetadata(fileURL: url, duration: asset.duration.seconds, dimensions: videoTrack.naturalSize, thumbnail: thumbnail))
-                } else {
-                    let loudness = asset.audioSamplesFromAsset(maxSamples: 100)
-
-                    completion(ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? []))
-                }
-            } else {
-                // swiftlint:disable:next todo_requires_jira_link
-                // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
-                completion(ZMFileMetadata(fileURL: url, thumbnail: thumbnail))
-            }
-        }
+    init(previewGenerator: FilePreviewGenerator) {
+        self.previewGenerator = previewGenerator
     }
 
+    public convenience init() {
+        self.init(previewGenerator: SharedPreviewGenerator.generator)
+    }
+
+    public func metadataForFile(at url: URL) async -> ZMFileMetadata {
+
+        let thumbnail: Data?
+        do {
+            thumbnail = try await previewGenerator.generatePreviewForFile(at: url)
+                .jpegData(compressionQuality: 0.9)
+        } catch {
+            thumbnail = nil
+            WireLogger.ui.error("Failed to generate preview for file: \(url)")
+        }
+
+        if let uniformType = url.uniformType, AVURLAsset.wr_isAudioVisualUniformType(uniformType) {
+            let asset = AVURLAsset(url: url)
+            if let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first {
+                return ZMVideoMetadata(fileURL: url, duration: asset.duration.seconds, dimensions: videoTrack.naturalSize, thumbnail: thumbnail)
+            } else {
+                let loudness = asset.audioSamplesFromAsset(maxSamples: 100)
+                return ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? [])
+            }
+
+        } else {
+            // swiftlint:disable:next todo_requires_jira_link
+            // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
+            return ZMFileMetadata(fileURL: url, thumbnail: thumbnail)
+        }
+    }
 }
 
 extension AVURLAsset {
-    static func wr_isAudioVisualUTI(_ UTI: String) -> Bool {
-        return audiovisualTypes().contains(where: { compatibleUTI -> Bool in
-            UTTypeConformsTo(UTI as CFString, compatibleUTI as CFString)
-        })
+
+    static func wr_isAudioVisualUniformType(_ uniformType: UTType) -> Bool {
+        audiovisualTypes()
+            .compactMap { avFileType in UTType(avFileType.rawValue) }
+            .contains { uniformType.conforms(to: $0) }
     }
 }
 
 extension AVAsset {
+
     fileprivate func audioSamplesFromAsset(maxSamples: UInt64) -> [Float]? {
         guard let assetTrack: AVAssetTrack = tracks(withMediaType: AVMediaType.audio).first else {
             return .none
@@ -171,5 +168,4 @@ extension AVAsset {
 
         return sampleData
     }
-
 }

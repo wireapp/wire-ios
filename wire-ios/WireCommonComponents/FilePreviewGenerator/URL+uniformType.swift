@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
+import Foundation
 import UniformTypeIdentifiers
-import WireUtilities
 
-extension NSItemProvider {
+extension URL {
 
-    /// Extracts the URL from the item provider
-    func fetchURL(completion: @escaping (URL?) -> Void) {
-        loadItem(forTypeIdentifier: UTType.url.identifier, options: nil) { url, error in
-            error?.log(message: "Unable to fetch URL for type URL")
-            completion(url as? URL)
-        }
+    public var uniformType: UTType? {
+        UTType(tag: pathExtension, tagClass: .filenameExtension, conformingTo: nil)
     }
 }

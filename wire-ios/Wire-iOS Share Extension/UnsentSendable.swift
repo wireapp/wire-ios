@@ -278,19 +278,14 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
                 // Generating PDF previews can be expensive. To avoid hitting the Share Extension's
                 // memory budget we should avoid to generate previews if the file is a PDF.
-                guard let type = UTType(url.UTI()), type.conforms(to: UTType.pdf) else {
+                guard let uniformType = url.uniformType, uniformType.conforms(to: .pdf) else {
                     self?.metadata = ZMFileMetadata(fileURL: url)
-                    completion()
-                    return
+                    return completion()
                 }
 
                 // Generate preview
-                self?.fileMetaDataGenerator.metadataForFileAtURL(
-                    url,
-                    UTI: url.UTI(),
-                    name: name ?? url.lastPathComponent
-                ) { [weak self] metadata in
-                    self?.metadata = metadata
+                Task { [weak self] in
+                    self?.metadata = await self?.fileMetaDataGenerator.metadataForFile(at: url)
                     completion()
                 }
             }
@@ -356,8 +351,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             do {
                 try FileManager.default.removeTmpIfNeededAndCopy(fileURL: dataURL, tmpURL: tempFileURL)
             } catch {
-                error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
-                return
+                return error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
             }
 
             convertVideoIfNeeded(UTI: UTI, fileURL: tempFileURL, completion: completion)

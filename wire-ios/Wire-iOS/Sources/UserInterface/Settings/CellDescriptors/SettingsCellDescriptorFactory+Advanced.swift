@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -50,7 +51,8 @@ extension SettingsCellDescriptorFactory {
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
                     shareFile: shareFile,
-                    fetchShareableConversations: fetchShareableConversations
+                    fetchShareableConversations: fetchShareableConversations,
+                    fileMetaDataGenerator: FileMetaDataGenerator()
                 )
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
