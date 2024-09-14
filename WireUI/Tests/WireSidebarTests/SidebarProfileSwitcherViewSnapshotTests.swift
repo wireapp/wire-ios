@@ -36,7 +36,7 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariants() {
+    func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
         let sut = SidebarProfileSwitcherViewPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
@@ -47,5 +47,21 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
                 .verify(matching: sut, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariants() {
+        let screenBounds = UIScreen.main.bounds
+        let sut = SidebarProfileSwitcherViewPreview()
+            .frame(width: screenBounds.width * 2/3, height: screenBounds.height * 2/3)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(
+                    matching: sut.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
     }
 }
