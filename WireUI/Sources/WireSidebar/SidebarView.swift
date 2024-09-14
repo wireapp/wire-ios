@@ -101,7 +101,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     private var menuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("sidebar.conversation_filter.title", bundle: .module)
-                // TODO: .font(.textStyle(.h2))
+                .wireTextStyle(.h2)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
             ForEach([SidebarConversationFilter?.none] + SidebarConversationFilter.allCases, id: \.self) { conversationFilter in
@@ -111,7 +111,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             }
 
             Text("sidebar.contacts.title", bundle: .module)
-                // TODO: .font(.textStyle(.h2))
+                .wireTextStyle(.h2)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
                 .padding(.top, 12)

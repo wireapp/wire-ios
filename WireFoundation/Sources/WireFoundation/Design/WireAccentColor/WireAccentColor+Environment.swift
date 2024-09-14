@@ -22,14 +22,14 @@ private struct WireAccentColorKey: EnvironmentKey {
     static let defaultValue: AccentColor = .default
 }
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var wireAccentColor: WireAccentColor {
         get { self[WireAccentColorKey.self] }
         set { self[WireAccentColorKey.self] = newValue }
     }
 }
 
-extension View {
+public extension View {
     func wireAccentColor(_ accentColor: WireAccentColor) -> some View {
         environment(\.wireAccentColor, accentColor)
     }

@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Text styles defined in Wire's design system.
+import SwiftUI
 
-public enum WireTextStyle: Sendable {
+private struct WireTextStyleKey: EnvironmentKey {
+    static let defaultValue: WireTextStyle? = .none
+}
 
-    case largeTitle
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case buttonSmall
-    case buttonBig
+public extension EnvironmentValues {
+    var wireTextStyle: WireTextStyle? {
+        get { self[WireTextStyleKey.self] }
+        set { self[WireTextStyleKey.self] = newValue }
+    }
+}
 
+public extension View {
+    func wireTextStyle(_ textStyle: WireTextStyle?) -> some View {
+        environment(\.wireTextStyle, textStyle)
+    }
 }
