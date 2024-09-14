@@ -10,10 +10,11 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
+        .library(name: "WireAccountImage", targets: ["WireAccountImage"]),
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
-        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"]),
-        .library(name: "WireAccountImage", targets: ["WireAccountImage"])
+        .library(name: "WireSidebar", targets: ["WireSidebar"]),
+        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
