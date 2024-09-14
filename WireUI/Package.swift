@@ -3,6 +3,8 @@
 
 import PackageDescription
 
+let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
+
 let package = Package(
     name: "WireUI",
     defaultLocalization: "en",
@@ -18,44 +20,21 @@ let package = Package(
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
+        // WireDesign
         .target(name: "WireDesign"),
-        .testTarget(
-            name: "WireDesignTests",
-            dependencies: ["WireDesign"]
-        ),
-
-        .target(
-            name: "WireReusableUIComponents",
-            dependencies: [
-                "WireDesign",
-                .product(name: "WireFoundation", package: "WireFoundation")
-            ]
-        ),
-        .testTarget(
-            name: "WireReusableUIComponentsTests",
-            dependencies: [
-                "WireReusableUIComponents",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
-            ]
-        ),
-
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign"]),
+        // WireReusableUIComponents
+        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
+        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
+        // WireUIFoundation
         .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
-        .testTarget(
-            name: "WireUIFoundationTests",
-            dependencies: [
-                "WireUIFoundation",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
-            ]
-        ),
-
+        .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage]),
+        // WireAccountImage
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
-        .testTarget(
-            name: "WireAccountImageTests",
-            dependencies: [
-                "WireAccountImage",
-                .product(name: "WireTestingPackage", package: "WireFoundation")
-            ]
-        )
+        .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
+        // WireSidebar
+        .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
+        .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage])
     ]
 )
 
