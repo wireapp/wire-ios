@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 
 final class BackupPasswordViewController: UIViewController {
 

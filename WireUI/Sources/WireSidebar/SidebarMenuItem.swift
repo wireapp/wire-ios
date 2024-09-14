@@ -17,13 +17,12 @@
 //
 
 import SwiftUI
-import WireDesign
 
-private let titleForegroundColor = Color(ColorTheme.Backgrounds.onBackground)
-private let linkIconForegroundColor = Color(ColorTheme.Base.secondaryText)
-private let isPressedForegroundColor = Color(ColorTheme.Base.onPrimary)
+private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
+private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
+private let isPressedForegroundColor: UIColor = .magenta // Color(ColorTheme.Base.onPrimary)
 // TODO: get from Environment
-private let accentColor_ = Color(ColorTheme.Base.primary)
+private let accentColor_: UIColor = .lightGray // Color(ColorTheme.Base.primary)
 
 private let backgroundCornerRadius: CGFloat = 12
 
@@ -46,11 +45,11 @@ struct SidebarMenuItem: View {
             HStack {
                 Label {
                     title()
-                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)
+                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : titleForegroundColor))
                 } icon: {
                     let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
                     let icon = Image(systemName: icon + iconSystemNameSuffix)
-                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : accentColor_)
+                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : accentColor_))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
@@ -65,13 +64,13 @@ struct SidebarMenuItem: View {
 
                 if isLink {
                     Image(systemName: "arrow.up.forward.square")
-                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor)
+                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor))
                 }
             }
             .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
-            .background(isHighlighted ? accentColor_ : .clear)
+            .background(Color(isHighlighted ? accentColor_ : .clear))
             .cornerRadius(backgroundCornerRadius)
         }
     }

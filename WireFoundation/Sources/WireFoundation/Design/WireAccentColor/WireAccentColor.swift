@@ -16,21 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Text styles defined in Wire's design system.
+public typealias AccentColor = WireAccentColor
 
-public enum WireTextStyle {
+public enum WireAccentColor: Int16, CaseIterable, Hashable, Sendable {
+    case blue = 1
+    case green
+    // yellow used to be defined here
+    case red = 4
+    case amber
+    case turquoise
+    case purple
+}
 
-    case largeTitle
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case buttonSmall
-    case buttonBig
+// MARK: - Default and random value
 
+public extension WireAccentColor {
+    static var `default`: Self { .blue }
+    static var random: Self! { allCases.randomElement() }
 }

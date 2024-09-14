@@ -17,8 +17,11 @@
 //
 
 import SwiftUI
-import WireDesign
 import WireFoundation
+
+private let sidebarBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.background
+private let defaultBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.backgroundVariant
+
 // TODO: snapshot tests
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
@@ -38,7 +41,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         ZStack {
             // background color
             Rectangle()
-                .foregroundStyle(Color(ColorTheme.Backgrounds.background))
+                .foregroundStyle(Color(sidebarBackgroundColor))
                 .ignoresSafeArea()
 
             // content
@@ -98,7 +101,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     private var menuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("sidebar.conversation_filter.title", bundle: .module)
-                .font(.textStyle(.h2))
+                .wireTextStyle(.h2)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
             ForEach([SidebarConversationFilter?.none] + SidebarConversationFilter.allCases, id: \.self) { conversationFilter in
@@ -108,7 +111,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             }
 
             Text("sidebar.contacts.title", bundle: .module)
-                .font(.textStyle(.h2))
+                .wireTextStyle(.h2)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
                 .padding(.top, 12)
@@ -190,7 +193,7 @@ private extension SidebarConversationFilter? {
         splitViewController.preferredDisplayMode = .twoBesideSecondary
         splitViewController.preferredPrimaryColumnWidth = 260
         splitViewController.preferredSupplementaryColumnWidth = 320
-        splitViewController.view.backgroundColor = ColorTheme.Backgrounds.background
+        splitViewController.view.backgroundColor = sidebarBackgroundColor
 
         return splitViewController
     }() as UIViewController
@@ -216,8 +219,8 @@ private struct MockAccountImageView: View {
 private final class EmptyViewController: UIHostingController<AnyView> {
     convenience init() { self.init(rootView: AnyView(EmptyView())) }
     private struct EmptyView: View {
-        let sidebarBackground = Color(ColorTheme.Backgrounds.background)
-        let defaultBackground = Color(ColorTheme.Backgrounds.backgroundVariant)
+        let sidebarBackground = Color(sidebarBackgroundColor)
+        let defaultBackground = Color(defaultBackgroundColor)
         var body: some View {
             VStack {
                 Rectangle().foregroundStyle(sidebarBackground).frame(height: 22)

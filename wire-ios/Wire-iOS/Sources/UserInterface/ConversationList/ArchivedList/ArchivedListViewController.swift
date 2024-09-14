@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireFoundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign

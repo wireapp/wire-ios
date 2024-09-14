@@ -17,8 +17,10 @@
 //
 
 import SwiftUI
-import WireDesign
 import WireFoundation
+
+private let titleColor: UIColor = .black // ColorTheme.Backgrounds.onSurface
+private let subtitleColor: UIColor = .gray // ColorTheme.Base.secondaryText
 
 struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
 
@@ -36,10 +38,10 @@ struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView
             VStack(alignment: .leading) {
                 Text(displayName)
                     .font(.headline)
-                    .foregroundStyle(Color(ColorTheme.Backgrounds.onSurface))
+                    .foregroundStyle(Color(titleColor))
                 Text(username)
                     .font(.subheadline)
-                    .foregroundStyle(Color(ColorTheme.Base.secondaryText))
+                    .foregroundStyle(Color(subtitleColor))
             }
             .background(GeometryReader { geometryProxy in
                 Color.clear.preference(
