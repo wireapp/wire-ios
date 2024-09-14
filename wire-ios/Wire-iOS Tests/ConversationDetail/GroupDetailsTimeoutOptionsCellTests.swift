@@ -25,7 +25,7 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var cell: GroupDetailsTimeoutOptionsCell!
     private var conversation: ZMConversation!
 
@@ -33,7 +33,7 @@ final class GroupDetailsTimeoutOptionsCellTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         cell = GroupDetailsTimeoutOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         conversation = createGroupConversation()
     }

@@ -44,12 +44,12 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
     private var mockMainCoordinator: MockMainCoordinator!
     private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
         mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
     }

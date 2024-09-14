@@ -24,11 +24,11 @@ import XCTest
 final class RoundedBlurViewTests: XCTestCase {
 
     private var sut: RoundedBlurView!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = RoundedBlurView()
     }
 

@@ -39,7 +39,7 @@ final class GridViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: GridView!
     private var gridViewDelegateMock: GridViewDelegateMock!
     private var tiles = [OrientableView]()

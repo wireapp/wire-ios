@@ -28,14 +28,14 @@ final class ProfileViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var userSession: UserSessionMock!
     private var isUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
     private var isSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         userSession = UserSessionMock()
         isUserE2EICertifiedUseCase = .init()
         isUserE2EICertifiedUseCase.invokeConversationUser_MockValue = false

@@ -28,13 +28,13 @@ final class SketchColorPickerControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
     typealias SketchColors = SemanticColors.DrawingColors
     var sut: SketchColorPickerController!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = SketchColorPickerController()
 
         sut.sketchColors = SketchColor.getAllColors()

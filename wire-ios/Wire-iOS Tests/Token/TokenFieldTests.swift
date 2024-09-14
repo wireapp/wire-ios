@@ -26,12 +26,12 @@ final class TokenFieldTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: TokenField!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = TokenField()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 44))
         sut.backgroundColor = .black

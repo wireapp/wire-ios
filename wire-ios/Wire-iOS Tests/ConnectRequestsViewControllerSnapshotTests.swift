@@ -28,11 +28,11 @@ final class ConnectRequestsViewControllerSnapshotTests: XCTestCase {
     var sut: ConnectRequestsViewController!
     var mockConnectionRequest: SwiftMockConversation!
     var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
         mockUser.zmAccentColor = .amber
         mockUser.handle = "bruno"

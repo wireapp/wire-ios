@@ -25,12 +25,12 @@ final class TextSearchResultsViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: TextSearchResultsView!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = TextSearchResultsView()
         sut.frame = CGRect(origin: .zero, size: CGSize.iPhoneSize.iPhone4_7)
     }

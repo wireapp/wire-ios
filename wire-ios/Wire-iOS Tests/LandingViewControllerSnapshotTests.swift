@@ -27,7 +27,7 @@ final class LandingViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: LandingViewController!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 

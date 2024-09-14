@@ -30,14 +30,14 @@ final class ProfileViewControllerTests: XCTestCase {
     private var mockUser: MockUser!
     private var selfUser: MockUser!
     private var mockViewModel: MockProfileViewControllerViewModeling!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .blue
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         let teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
         selfUser.handle = "georgejohnson"

@@ -36,11 +36,11 @@ struct MockStatusViewConfiguration: CallStatusViewInputType {
 final class CallStatusViewTests: XCTestCase {
 
     private var sut: CallStatusView!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = CallStatusView(
             configuration: MockStatusViewConfiguration(
             state: .connecting,

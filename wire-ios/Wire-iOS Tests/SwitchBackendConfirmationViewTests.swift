@@ -23,11 +23,11 @@ import XCTest
 
 final class SwitchBackendConfirmationViewTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper().withLayout(.device(config: .iPhone13))
+        snapshotHelper = SnapshotHelper_().withLayout(.device(config: .iPhone13))
     }
 
     override func tearDown() {

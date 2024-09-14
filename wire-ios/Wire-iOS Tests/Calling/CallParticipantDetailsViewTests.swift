@@ -23,7 +23,7 @@ import XCTest
 
 class CallParticipantDetailsViewTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: CallParticipantDetailsView!
 
     override func setUp() {

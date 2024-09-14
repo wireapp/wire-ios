@@ -73,13 +73,13 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     private var mockConversation: MockConversation!
     private var mockUserSession: UserSessionMock!
     private var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
         mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()

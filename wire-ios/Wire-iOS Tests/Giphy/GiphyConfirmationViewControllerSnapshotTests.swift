@@ -25,11 +25,11 @@ import XCTest
 final class GiphyConfirmationViewControllerSnapshotTests: XCTestCase {
 
     var sut: GiphyConfirmationViewController!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = GiphyConfirmationViewController(
             withZiph: nil,
             previewImage: nil,

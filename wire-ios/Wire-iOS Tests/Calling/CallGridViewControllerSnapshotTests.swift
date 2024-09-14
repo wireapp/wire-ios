@@ -52,11 +52,11 @@ final class CallGridViewControllerSnapshotTests: XCTestCase {
     var stubProvider = StreamStubProvider()
     var mockHintView: MockCallGridHintNotificationLabel!
     var allParticipantsNames = ["Alice", "Bob", "Carol", "Chuck", "Craig", "Dan", "Erin", "Eve", "Faythe"]
-    var snapshotHelper: SnapshotHelper!
+    var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         accentColor = .blue
         mediaManager = ZMMockAVSMediaManager()
         configuration = MockCallGridViewControllerInput()

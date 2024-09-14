@@ -29,13 +29,13 @@ final class LegalHoldDetailsViewControllerSnapshotTests: XCTestCase {
     private var sut: LegalHoldDetailsViewController!
     private var selfUser: MockUserType!
     private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         userSession = UserSessionMock()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         selfUser = SelfUser.provider?.providedSelfUser as? MockUserType

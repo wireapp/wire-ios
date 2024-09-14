@@ -27,13 +27,13 @@ final class CheckmarkCellTests: XCTestCase {
 
     private var sut: CheckmarkCell!
     private var conversation: SwiftMockConversation!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         conversation = SwiftMockConversation.groupConversation()
     }
 

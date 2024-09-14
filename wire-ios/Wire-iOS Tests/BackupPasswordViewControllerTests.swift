@@ -23,11 +23,11 @@ import XCTest
 
 final class BackupPasswordViewControllerTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
     }
 
     override func tearDown() {

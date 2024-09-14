@@ -26,7 +26,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: ConversationCellBurstTimestampView!
     private var userSession: UserSessionMock!
 
@@ -34,7 +34,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         userSession = UserSessionMock()
         sut = ConversationCellBurstTimestampView()
         sut.frame = CGRect(origin: .zero, size: CGSize(width: 320, height: 40))

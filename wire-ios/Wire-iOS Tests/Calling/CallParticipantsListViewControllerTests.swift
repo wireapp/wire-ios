@@ -49,7 +49,7 @@ final class CallParticipantsListViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: CallParticipantsListViewController!
     private var mockParticipants: CallParticipantsList!
     private var selfUser: UserType!

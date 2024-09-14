@@ -26,11 +26,11 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
 
     var sut: FolderCreationController!
     var coreDataFixture: CoreDataFixture!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         coreDataFixture = CoreDataFixture()
 
         let convo = createTeamGroupConversation()

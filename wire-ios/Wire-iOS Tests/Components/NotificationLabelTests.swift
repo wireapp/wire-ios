@@ -25,7 +25,7 @@ final class NotificationLabelTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: NotificationLabel!
     private let message = "Double Tap on a tile for fullscreen"
 
@@ -33,7 +33,7 @@ final class NotificationLabelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = NotificationLabel(shouldAnimate: false)
         sut.frame = CGRect(x: 0, y: 0, width: 220, height: 24)
         sut.backgroundColor = .black

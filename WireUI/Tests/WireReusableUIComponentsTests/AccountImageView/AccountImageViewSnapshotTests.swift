@@ -24,7 +24,7 @@ import XCTest
 
 final class AccountImageViewSnapshotTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         snapshotHelper = .init()

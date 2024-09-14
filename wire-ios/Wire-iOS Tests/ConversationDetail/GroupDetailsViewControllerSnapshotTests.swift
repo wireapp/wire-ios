@@ -29,12 +29,12 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
     private var mockSelfUser: MockUserType!
     private var otherUser: MockUserType!
     private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
         mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         mockConversation = MockGroupDetailsConversation()
         mockConversation.displayName = "iOS Team"
         mockConversation.securityLevel = .notSecure

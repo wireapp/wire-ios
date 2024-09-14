@@ -31,7 +31,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     private var serviceUser: ZMUser!
     private var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
-    var snapshotHelper: SnapshotHelper!
+    var snapshotHelper: SnapshotHelper_!
     private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
@@ -43,7 +43,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     override func setUp() {
         super.setUp()
         mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))

@@ -26,7 +26,7 @@ final class PreBackendSwitchViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: PreBackendSwitchViewController!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 

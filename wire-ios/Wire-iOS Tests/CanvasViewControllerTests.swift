@@ -26,13 +26,13 @@ final class CanvasViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: CanvasViewController!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = CanvasViewController()
 
         sut.loadViewIfNeeded()

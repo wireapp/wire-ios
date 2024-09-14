@@ -25,11 +25,11 @@ final class ScreenCurtainWindowTests: XCTestCase {
 
     var sut: ScreenCurtainWindow!
     var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         sut = ScreenCurtainWindow()
         userSession = UserSessionMock()
         sut.userSession = userSession

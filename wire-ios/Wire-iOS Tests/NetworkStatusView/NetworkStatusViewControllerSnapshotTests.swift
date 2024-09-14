@@ -36,7 +36,7 @@ final class NetworkStatusViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: NetworkStatusViewController!
     private var mockContainerViewController: MockContainerViewController!
     private var mockContentView: UIView!

@@ -26,11 +26,11 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
     var coreDataFixture: CoreDataFixture!
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         coreDataFixture = CoreDataFixture()
         accentColor = .blue
 

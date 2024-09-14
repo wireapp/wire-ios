@@ -25,7 +25,7 @@ final class TokenSeparatorAttachmentSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: TokenSeparatorAttachment!
 
     // MARK: - setUp

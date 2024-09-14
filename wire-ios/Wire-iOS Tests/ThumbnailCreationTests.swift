@@ -25,7 +25,7 @@ final class ThumbnailCreationTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var squareImage: UIImage!
     private var verticalPanoramaImage: UIImage!
     private var horizontalPanoramaImage: UIImage!
@@ -37,7 +37,7 @@ final class ThumbnailCreationTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         squareImage = self.image(inTestBundleNamed: "unsplash_square.jpg")
         verticalPanoramaImage = self.image(inTestBundleNamed: "unsplash_vertical_pano.jpg")
         horizontalPanoramaImage = self.image(inTestBundleNamed: "unsplash_pano.jpg")

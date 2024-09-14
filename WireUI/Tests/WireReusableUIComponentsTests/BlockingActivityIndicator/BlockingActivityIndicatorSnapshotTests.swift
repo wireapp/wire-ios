@@ -28,7 +28,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
     private var viewController: UIViewController!
     private var sut: BlockingActivityIndicator!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 

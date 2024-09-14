@@ -27,13 +27,13 @@ final class ContactsViewControllerSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     var sut: ContactsViewController!
-    var snapshotHelper: SnapshotHelper!
+    var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         XCTestCase.accentColor = .blue
         sut = ContactsViewController()
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark

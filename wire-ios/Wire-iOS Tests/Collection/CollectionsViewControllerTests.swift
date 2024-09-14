@@ -28,7 +28,7 @@ final class CollectionsViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     private var emptyCollection: AssetCollectionWrapper!
     private var imageMessage: ZMConversationMessage!

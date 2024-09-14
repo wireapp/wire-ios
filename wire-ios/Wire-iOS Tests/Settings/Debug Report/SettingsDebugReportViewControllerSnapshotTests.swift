@@ -26,14 +26,14 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: SettingsDebugReportViewController!
 
     // MARK: - setUp
 
     @MainActor
     override func setUp() async throws {
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         accentColor = .blue
         sut = SettingsDebugReportViewController(viewModel: MockSettingsDebugReportViewModelProtocol())
     }

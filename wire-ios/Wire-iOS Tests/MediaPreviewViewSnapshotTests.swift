@@ -24,7 +24,7 @@ import XCTest
 final class MediaPreviewViewSnapshotTests: XCTestCase {
 
     private var sut: MediaPreviewView!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()

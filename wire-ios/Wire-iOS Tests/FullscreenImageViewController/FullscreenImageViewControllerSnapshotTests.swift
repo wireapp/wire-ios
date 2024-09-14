@@ -25,7 +25,7 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: FullscreenImageViewController!
     private var userSession: UserSessionMock!
 
@@ -33,7 +33,7 @@ final class FullscreenImageViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         userSession = UserSessionMock()
     }
 

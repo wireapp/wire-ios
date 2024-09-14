@@ -26,11 +26,11 @@ final class RemoveClientStepViewControllerSnapshotTests: XCTestCase, CoreDataFix
 
     var coreDataFixture: CoreDataFixture!
     var sut: RemoveClientStepViewController!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         coreDataFixture = CoreDataFixture()
         sut = RemoveClientStepViewController(
             clients: [

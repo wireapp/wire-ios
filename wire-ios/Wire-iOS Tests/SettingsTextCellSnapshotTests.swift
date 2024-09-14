@@ -23,7 +23,7 @@ import XCTest
 
 final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: SettingsTextCell!
     private var settingsCellDescriptorFactory: SettingsCellDescriptorFactory!
 

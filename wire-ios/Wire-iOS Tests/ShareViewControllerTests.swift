@@ -42,11 +42,11 @@ final class ShareViewControllerTests: XCTestCase {
     private var groupConversation: MockShareViewControllerConversation!
     private var oneToOneConversation: MockShareViewControllerConversation!
     private var sut: ShareViewController<MockShareViewControllerConversation, MockShareableMessage>!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         let mockUser = MockUserType.createDefaultOtherUser()
 
         groupConversation = MockShareViewControllerConversation()

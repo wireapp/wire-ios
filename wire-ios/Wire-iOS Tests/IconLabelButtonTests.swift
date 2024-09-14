@@ -25,7 +25,7 @@ import XCTest
 final class IconLabelButtonTests: XCTestCase {
 
     private var button: IconLabelButton!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     override func setUp() {
         super.setUp()

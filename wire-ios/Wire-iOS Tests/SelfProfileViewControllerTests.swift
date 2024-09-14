@@ -27,7 +27,7 @@ final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelpe
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     var coreDataFixture: CoreDataFixture!
     private var sut: SelfProfileViewController!
     private var selfUser: MockUserType!

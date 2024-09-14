@@ -25,7 +25,7 @@ final class DecodeImageOperationTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var operationQueue: OperationQueue!
     private var sut: UIImageView!
 
@@ -33,7 +33,7 @@ final class DecodeImageOperationTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         operationQueue = OperationQueue()
         sut = UIImageView(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
         sut.contentMode = .scaleAspectFit

@@ -26,7 +26,7 @@ final class MediaBarSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: MediaBar!
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
 
     // MARK: - setUp
 

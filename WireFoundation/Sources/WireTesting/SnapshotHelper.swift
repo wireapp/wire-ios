@@ -24,7 +24,7 @@ import XCTest
 ///
 /// Create variations of the snapshot behavior using the "with" methods.
 
-public struct SnapshotHelper {
+public struct SnapshotHelper_ {
 
     private var perceptualPrecision: Float = 1
     private var traits = UITraitCollection()
@@ -266,7 +266,7 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let allDevices = SnapshotHelper.phoneConfigs + SnapshotHelper.iPadConfigs
+        let allDevices = SnapshotHelper_.phoneConfigs + SnapshotHelper_.iPadConfigs
 
         for (config, name) in allDevices {
             let failure = verifySnapshot(
@@ -299,7 +299,7 @@ public struct SnapshotHelper {
         testName: String = #function,
         line: UInt = #line
     ) {
-        for (config, name) in SnapshotHelper.phoneConfigs {
+        for (config, name) in SnapshotHelper_.phoneConfigs {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(

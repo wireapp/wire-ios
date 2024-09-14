@@ -83,7 +83,7 @@ final class ConversationListCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper!
+    private var snapshotHelper: SnapshotHelper_!
     private var sut: ConversationListCell!
     private var otherUserConversation: MockConversation!
     private var otherUser: MockUserType!
@@ -92,7 +92,7 @@ final class ConversationListCellTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper()
+        snapshotHelper = SnapshotHelper_()
         otherUser = MockUserType.createDefaultOtherUser()
         otherUserConversation = MockConversation.createOneOnOneConversation(otherUser: otherUser)
 
