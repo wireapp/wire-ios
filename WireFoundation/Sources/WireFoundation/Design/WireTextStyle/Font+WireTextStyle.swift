@@ -17,14 +17,6 @@
 //
 
 import SwiftUI
-import WireFoundation
-
-public struct WireTextStyleMapping: WireTextStyle2FontMapping {
-
-    public func font(for textStyle: WireTextStyle) -> Font {
-        .textStyle(textStyle)
-    }
-}
 
 public extension Font {
 
@@ -74,12 +66,11 @@ func WireTextStyleMappingPreview() -> some View {
         ZStack(alignment: .center) {
             VStack {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
-                    HStack {
+                    if textStyle != .buttonSmall {
                         Text("\(textStyle)")
                             .wireTextStyle(textStyle)
-                            .wireTextStyle2FontMapping(WireTextStyleMapping())
-                        Text("\(textStyle)")
-                            .wireTextStyle(textStyle)
+                    } else {
+                        Text(verbatim: "buttonSmall not implemented")
                     }
                 }
             }

@@ -20,6 +20,7 @@ import MessageUI
 import UIKit
 import WireDataModel
 import WireDesign
+import WireFoundation
 
 class SettingsDebugReportViewController: UIViewController {
 
