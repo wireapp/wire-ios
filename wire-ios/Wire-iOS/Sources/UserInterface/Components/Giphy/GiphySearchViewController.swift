@@ -23,6 +23,7 @@ import WireDataModel
 import WireDesign
 import WireFoundation
 import WireSyncEngine
+import WireFoundation
 import Ziphy
 
 protocol GiphySearchViewControllerDelegate: AnyObject {

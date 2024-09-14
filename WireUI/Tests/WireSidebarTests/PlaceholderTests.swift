@@ -16,21 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import XCTest
 
-private struct AccentColorKey: EnvironmentKey {
-    static let defaultValue: AccentColor = .default
-}
+final class PlaceholderTests: XCTestCase {
 
-extension EnvironmentValues {
-    var accentColor: AccentColor {
-        get { self[AccentColorKey.self] }
-        set { self[AccentColorKey.self] = newValue }
-    }
-}
-
-extension View {
-    func accentColor(_ accentColor: AccentColor) -> some View {
-        environment(\.accentColor, accentColor)
+    func testSomething() {
+        XCTFail()
     }
 }

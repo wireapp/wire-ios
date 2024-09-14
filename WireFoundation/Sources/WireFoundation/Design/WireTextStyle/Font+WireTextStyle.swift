@@ -53,5 +53,29 @@ public extension Font {
             .title3.weight(.semibold)
         }
     }
+}
 
+@available(iOS 16, *)
+#Preview {
+    WireTextStyleMappingPreview()
+}
+
+@available(iOS 16, *) @ViewBuilder @MainActor
+func WireTextStyleMappingPreview() -> some View {
+    NavigationStack {
+        ZStack(alignment: .center) {
+            VStack {
+                ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
+                    if textStyle != .buttonSmall {
+                        Text("\(textStyle)")
+                            .wireTextStyle(textStyle)
+                    } else {
+                        Text(verbatim: "buttonSmall not implemented")
+                    }
+                }
+            }
+        }
+        .navigationTitle(Text(verbatim: "WireTextStyle"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
 }

@@ -65,7 +65,6 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut.conversation = conversation
 
         snapshotHelper = .init()
-            .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
     }
 

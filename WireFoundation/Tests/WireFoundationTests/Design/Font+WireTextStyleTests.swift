@@ -17,10 +17,30 @@
 //
 
 import XCTest
+import WireTestingPackage
 
-final class PlaceholderTests: XCTestCase {
+@testable import WireFoundation
 
-    func testNothing() throws {
-        throw XCTSkip()
+final class Font_WireTextStyleTests: XCTestCase {
+
+    private var snapshotHelper: SnapshotHelper!
+
+    override func setUp() {
+        snapshotHelper = .init()
+            .withSnapshotDirectory(relativeTo: #file)
+    }
+
+    override func tearDown() {
+        snapshotHelper = nil
+    }
+
+    @MainActor
+    func testWireTextStyleMappingPreview() throws {
+        guard #available(iOS 16, *) else { return XCTFail() }
+
+        let screenBounds = UIScreen.main.bounds
+            let sut = WireTextStyleMappingPreview()
+            .frame(width: screenBounds.width, height: screenBounds.height)
+            snapshotHelper.verify(matching: sut)
     }
 }
