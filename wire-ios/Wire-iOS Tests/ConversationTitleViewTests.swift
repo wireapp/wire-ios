@@ -27,7 +27,7 @@ final class ConversationTitleViewTests: XCTestCase {
 
     private var sut: ConversationTitleView!
     private var conversation: MockGroupDetailsConversation!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 

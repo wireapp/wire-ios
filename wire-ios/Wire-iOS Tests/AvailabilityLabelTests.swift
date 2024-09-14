@@ -27,13 +27,13 @@ final class AvailabilityLabelTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setup
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     // MARK: - tearDown

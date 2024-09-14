@@ -25,14 +25,14 @@ final class BasicReactionPickerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var picker: BasicReactionPicker!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     // MARK: - tearDown

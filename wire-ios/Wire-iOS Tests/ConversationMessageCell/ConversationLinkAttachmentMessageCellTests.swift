@@ -25,7 +25,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var mockThumbnail: MockImageResource!
     private var sut: ConversationLinkAttachmentCell!
 
@@ -33,7 +33,7 @@ final class ConversationLinkAttachmentMessageCellTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         let imageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg")
         mockThumbnail = MockImageResource()
         mockThumbnail.imageData = imageData.pngData()!

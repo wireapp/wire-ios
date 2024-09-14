@@ -27,13 +27,13 @@ final class ConfirmAssetViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: ConfirmAssetViewController!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     // MARK: - tearDown

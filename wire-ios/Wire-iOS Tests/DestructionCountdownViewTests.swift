@@ -25,14 +25,14 @@ final class DestructionCountdownViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: DestructionCountdownView!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     // MARK: - tearDown

@@ -27,11 +27,11 @@ final class ServiceDetailViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     private var serviceUser: MockServiceUserType!
     private var groupConversation: ZMConversation!
     private var mockSelfUser: MockUserType!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         serviceUser = .createServiceUser(name: "ServiceUser")
         groupConversation = createGroupConversation()
         mockSelfUser = .createSelfUser(name: "Bob")

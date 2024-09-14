@@ -25,12 +25,12 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
     }
 

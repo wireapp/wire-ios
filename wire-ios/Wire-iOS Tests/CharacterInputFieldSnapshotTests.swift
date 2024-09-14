@@ -23,7 +23,7 @@ import XCTest
 
 final class CharacterInputFieldSnapshotTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: CharacterInputField! = nil
 
     private var rootViewController: UIViewController! {

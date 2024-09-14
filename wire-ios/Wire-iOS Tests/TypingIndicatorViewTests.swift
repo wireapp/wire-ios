@@ -25,14 +25,14 @@ final class TypingIndicatorViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: TypingIndicatorView!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = TypingIndicatorView()
         sut.translatesAutoresizingMaskIntoConstraints = false
     }

@@ -25,11 +25,11 @@ final class GroupConversationCellTests: XCTestCase {
 
     private var sut: GroupConversationCell!
     private var otherUser: MockUserType!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         otherUser = MockUserType.createDefaultOtherUser()
         sut = GroupConversationCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
     }

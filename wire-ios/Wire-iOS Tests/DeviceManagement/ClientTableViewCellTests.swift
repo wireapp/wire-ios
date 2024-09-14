@@ -27,13 +27,13 @@ final class ClientTableViewCellTests: XCTestCase {
 
     private var sut: ClientTableViewCell!
     private var container: UIView!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = ClientTableViewCell(style: .default, reuseIdentifier: nil)
         container = containerView(with: sut, snapshotBackgroundColor: nil)
         container.frame = CGRect(x: 0, y: 0, width: 390, height: 84)

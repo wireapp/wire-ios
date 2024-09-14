@@ -28,11 +28,11 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
     var selfUser: MockUserType!
     var defaultRichProfile: [UserRichProfileField]!
     var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         selfUserTeam = UUID()
         selfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: selfUserTeam)
 

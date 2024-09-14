@@ -32,13 +32,13 @@ final class SettingsTableViewControllerSnapshotTests: XCTestCase {
     var settingsPropertyFactory: SettingsPropertyFactory!
     var userSession: UserSessionMock!
     var selfUser: MockZMEditableUser!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         selfUser = MockZMEditableUser()
 
         selfUser.teamName = "Wire"

@@ -26,11 +26,11 @@ import XCTest
 final class AudioEffectsPickerViewControllerTests: XCTestCase {
 
     var sut: AudioEffectsPickerViewController! = .none
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         let path = Bundle(for: type(of: self)).path(forResource: "audio_sample", ofType: "m4a")!
         self.sut = AudioEffectsPickerViewController(recordingPath: path, duration: TimeInterval(10.0))
         self.sut.normalizedLoudness = (0...100).map { Float($0) / 100.0 }

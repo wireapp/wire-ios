@@ -37,11 +37,11 @@ final class OtherUserDeviceDetailsViewTests: XCTestCase {
     private var sut: DeviceInfoViewController<OtherUserDeviceDetailsView>!
     private var client: UserClient!
     private var mockContextProvider: ContextProvider!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
         let otherYearFormatter = WRDateFormatter.otherYearFormatter
         XCTAssertEqual(

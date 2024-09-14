@@ -25,14 +25,14 @@ final class ConnectRequestsCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: ConnectRequestsCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .amber
         sut = ConnectRequestsCell(frame: CGRect(x: 0, y: 0, width: 375, height: 56))
         let titleString = L10n.Localizable.List.ConnectRequest.peopleWaiting(1)

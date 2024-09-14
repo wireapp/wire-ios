@@ -50,13 +50,13 @@ final class AddParticipantsViewControllerSnapshotTests: XCTestCase {
     var userSession: UserSessionMock!
     var mockSelfUser: MockUserType!
     var sut: AddParticipantsViewController!
-    var snapshotHelper: SnapshotHelper_!
+    var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: UUID())
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         userSession = UserSessionMock(mockUser: mockSelfUser)

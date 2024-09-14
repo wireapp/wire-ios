@@ -52,7 +52,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: StartUIViewController!
     private var mockAddressBookHelper: MockAddressBookHelper!
@@ -63,7 +63,7 @@ final class StartUIViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     override func setUp() {
         super.setUp()
         mockMainCoordinator = .init()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockAddressBookHelper = MockAddressBookHelper()
         SelfUser.provider = selfUserProvider
         userSession = UserSessionMock()

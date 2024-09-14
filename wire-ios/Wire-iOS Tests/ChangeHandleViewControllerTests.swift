@@ -25,14 +25,14 @@ final class ChangeHandleViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var mockSelfUser: MockUserType!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
         mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil

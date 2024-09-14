@@ -27,11 +27,11 @@ class AppLockChangeWarningViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
     }
 

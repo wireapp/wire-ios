@@ -26,14 +26,14 @@ final class EmptySearchResultsViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: EmptySearchResultsView!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = setupEmptySearchResultsView(
             isSelfUserAdmin: false,
             isFederationEnabled: false,

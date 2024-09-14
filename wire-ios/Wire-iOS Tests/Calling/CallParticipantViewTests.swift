@@ -23,7 +23,7 @@ import XCTest
 
 class CallParticipantViewTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var size = XCTestCase.DeviceSizeIPhone5
     private var sut: CallParticipantView!
     private var stubProvider = StreamStubProvider()

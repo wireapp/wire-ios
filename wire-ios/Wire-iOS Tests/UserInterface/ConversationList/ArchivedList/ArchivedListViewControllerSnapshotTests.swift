@@ -25,11 +25,11 @@ import XCTest
 final class ArchivedListViewControllerSnapshotTests: XCTestCase {
 
     private var userSessionMock: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         userSessionMock = .init()
     }
 

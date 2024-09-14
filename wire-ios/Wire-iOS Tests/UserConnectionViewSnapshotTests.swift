@@ -41,7 +41,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var mockUser: MockUserType!
     private var sut: UserConnectionView!
 
@@ -49,7 +49,7 @@ final class UserConnectionViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .purple
         mockUser = SwiftMockLoader.mockUsers().first!
         sut = sutForUser(mockUser)

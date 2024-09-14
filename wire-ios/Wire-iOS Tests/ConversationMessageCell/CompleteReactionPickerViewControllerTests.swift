@@ -27,13 +27,13 @@ final class CompleteReactionPickerViewControllerTests: XCTestCase {
 
     var sut: CompleteReactionPickerViewController!
     var emojiRepository: EmojiRepository!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         emojiRepository = EmojiRepository()
         sut = setUpCompleteReactionPickerViewController()
     }

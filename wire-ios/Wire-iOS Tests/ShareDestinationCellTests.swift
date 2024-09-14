@@ -57,7 +57,7 @@ final class ShareDestinationCellTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: ShareDestinationCell<MockDestination>!
     private var destination: MockDestination?
     private var mockAvatarView: UIImageView {
@@ -72,7 +72,7 @@ final class ShareDestinationCellTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .red
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
 

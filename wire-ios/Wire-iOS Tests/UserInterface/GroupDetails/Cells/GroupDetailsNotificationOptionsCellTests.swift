@@ -23,14 +23,14 @@ import XCTest
 
 final class GroupDetailsNotificationOptionsCellTests: CoreDataSnapshotTestCase {
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var cell: GroupDetailsNotificationOptionsCell!
     private var conversation: ZMConversation!
 
     override func setUp() {
         selfUserInTeam = true
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         cell = GroupDetailsNotificationOptionsCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         cell.overrideUserInterfaceStyle = .light
         conversation = self.createGroupConversation()

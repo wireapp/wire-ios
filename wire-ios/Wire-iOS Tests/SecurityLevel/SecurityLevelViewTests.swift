@@ -29,13 +29,13 @@ final class SecurityLevelViewTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: SecurityLevelView!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = SecurityLevelView()
         sut.backgroundColor = SemanticColors.View.backgroundDefaultWhite
         sut.translatesAutoresizingMaskIntoConstraints = true

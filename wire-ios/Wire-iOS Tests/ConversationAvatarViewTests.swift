@@ -26,13 +26,13 @@ final class ConversationAvatarViewTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: ConversationAvatarView!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = ConversationAvatarView()
     }
 

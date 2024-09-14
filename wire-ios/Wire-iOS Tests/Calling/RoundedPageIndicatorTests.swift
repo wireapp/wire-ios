@@ -25,7 +25,7 @@ final class RoundedPageIndicatorTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: RoundedPageIndicator!
     private let frame = CGRect(x: 0, y: 0, width: 120, height: 24)
 
@@ -33,7 +33,7 @@ final class RoundedPageIndicatorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
         sut = RoundedPageIndicator()
         sut.frame = frame

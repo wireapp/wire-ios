@@ -27,11 +27,11 @@ final class WipeDatabaseViewControllerTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: WipeDatabaseViewController!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     // MARK: - tearDown

@@ -27,13 +27,13 @@ final class PasscodeSetupViewControllerTests: XCTestCase {
     // MARK: Properties
 
     var sut: PasscodeSetupViewController!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
     }
 

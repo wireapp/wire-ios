@@ -26,14 +26,14 @@ final class TopPeopleCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: TopPeopleCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
         sut.user = MockUserType.createDefaultOtherUser()
         sut.backgroundColor = SemanticColors.View.backgroundDefault

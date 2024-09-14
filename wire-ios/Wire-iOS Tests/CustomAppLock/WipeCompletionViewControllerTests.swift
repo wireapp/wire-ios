@@ -25,10 +25,10 @@ import XCTest
 final class WipeCompletionViewControllerTests: XCTestCase {
 
     var sut: WipeCompletionViewController!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = WipeCompletionViewController()
     }
 

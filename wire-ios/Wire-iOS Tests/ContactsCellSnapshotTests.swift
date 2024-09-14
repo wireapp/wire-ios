@@ -27,13 +27,13 @@ final class ContactsCellSnapshotTests: XCTestCase {
     // MARK: - Properties
 
     private var sut: ContactsCell!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         XCTestCase.accentColor = .blue
         sut = ContactsCell()
     }

@@ -25,7 +25,7 @@ final class ConversationListAccessoryViewTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: ConversationListAccessoryView!
     private var userSession: UserSessionMock!
 
@@ -33,7 +33,7 @@ final class ConversationListAccessoryViewTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
         accentColor = .purple

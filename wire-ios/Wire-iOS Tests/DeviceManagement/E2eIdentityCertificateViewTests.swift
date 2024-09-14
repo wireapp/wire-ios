@@ -27,7 +27,7 @@ final class E2eIdentityCertificateViewTests: XCTestCase {
     // MARK: - Properties
 
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     lazy var kCertificate: String = {
         return .mockCertificate
@@ -35,7 +35,7 @@ final class E2eIdentityCertificateViewTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     override func tearDown() {

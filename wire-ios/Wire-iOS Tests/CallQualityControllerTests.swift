@@ -26,7 +26,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: MockCallQualityController!
     var coreDataFixture: CoreDataFixture!
     private var router: MockCallQualityRouterProtocol!
@@ -38,7 +38,7 @@ final class CallQualityControllerTests: XCTestCase, CoreDataFixtureTestHelper {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         router = .init()
         coreDataFixture = CoreDataFixture()
         conversation = ZMConversation.createOtherUserConversation(

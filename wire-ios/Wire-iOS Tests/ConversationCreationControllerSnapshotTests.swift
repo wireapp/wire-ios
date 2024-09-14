@@ -28,13 +28,13 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     var sut: ConversationCreationController!
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .purple
     }
 

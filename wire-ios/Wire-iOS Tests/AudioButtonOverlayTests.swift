@@ -24,7 +24,7 @@ import XCTest
 final class AudioButtonOverlayTests: XCTestCase {
 
     var sut: AudioButtonOverlay!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     var buttonTapHistory: [AudioButtonOverlay.AudioButtonOverlayButtonType]!
 
     override func setUp() {

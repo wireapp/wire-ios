@@ -30,13 +30,13 @@ final class IncomingConnectionViewTests: XCTestCase {
     // MARK: - Properties
 
     private let sutBackgroundColor = SemanticColors.View.backgroundDefault
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
     }
 

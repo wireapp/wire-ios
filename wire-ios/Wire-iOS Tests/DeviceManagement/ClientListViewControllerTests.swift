@@ -30,14 +30,14 @@ final class ClientListViewControllerTests: XCTestCase, CoreDataFixtureTestHelper
     private var client: UserClient!
     private var selfClient: UserClient!
     private weak var clientRemovalObserver: ClientRemovalObserver!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     var coreDataFixture: CoreDataFixture!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         coreDataFixture = CoreDataFixture()
 
         mockUser = SwiftMockLoader.mockUsers().first

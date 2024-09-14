@@ -29,13 +29,13 @@ final class MessageDetailsViewControllerTests: XCTestCase {
     private var mockSelfUser: MockUserType!
     private var otherUser: MockUserType!
     private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp method
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockSelfUser = MockUserType.createSelfUser(name: "Alice")
         otherUser = MockUserType.createDefaultOtherUser()
         SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)

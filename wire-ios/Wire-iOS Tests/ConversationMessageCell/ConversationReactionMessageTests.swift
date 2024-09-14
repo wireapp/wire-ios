@@ -25,14 +25,14 @@ final class ConversationReactionMessageTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: MessageReactionsCell!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = MessageReactionsCell()
         sut.translatesAutoresizingMaskIntoConstraints = false
         sut.widthAnchor.constraint(equalToConstant: 375).isActive = true

@@ -104,7 +104,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: CameraKeyboardViewController!
     private var splitView: SplitLayoutObservableMock!
     private var delegateMock: CameraKeyboardViewControllerDelegateMock!
@@ -115,7 +115,7 @@ final class CameraKeyboardViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockAssetLibrary = MockAssetLibrary(photoLibrary: MockPhotoLibrary())
         mockImageManager = MockImageManager()
         splitView = SplitLayoutObservableMock()

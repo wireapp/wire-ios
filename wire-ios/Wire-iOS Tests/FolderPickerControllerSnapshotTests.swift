@@ -26,11 +26,11 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
 
     var directory: MockConversationDirectory!
     var mockConversation: MockConversation!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation.groupConversation()
         directory = MockConversationDirectory()
         accentColor = .purple

@@ -25,7 +25,7 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: UserImageViewContainer!
     private var mockUser: MockUserType!
 
@@ -33,7 +33,7 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockUser = SwiftMockLoader.mockUsers().first
         mockUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").imageData
         mockUser.mediumProfileImageCacheKey = "test"

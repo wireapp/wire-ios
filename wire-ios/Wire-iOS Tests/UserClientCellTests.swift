@@ -25,11 +25,11 @@ final class UserClientCellTests: XCTestCase {
 
     private var sut: UserClientCell!
     private var container: UIView!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         let frame = CGRect(x: 0, y: 0, width: 390, height: 84)
         sut = UserClientCell(frame: frame)
         container = containerView(with: sut, snapshotBackgroundColor: nil)

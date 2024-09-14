@@ -26,11 +26,11 @@ final class EphemeralKeyboardViewControllerTests: CoreDataSnapshotTestCase {
 
     var sut: EphemeralKeyboardViewController!
     var conversation: ZMConversation!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         conversation = self.createGroupConversation()
         conversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         sut = EphemeralKeyboardViewController(conversation: conversation)

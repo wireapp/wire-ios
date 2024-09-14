@@ -25,14 +25,14 @@ final class ValidatedTextFieldTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: ValidatedTextField!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = ValidatedTextField(style: .default)
         sut.frame = CGRect(x: 0, y: 0, width: 375, height: 56)
     }

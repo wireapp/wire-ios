@@ -29,13 +29,13 @@ final class UserCellTests: XCTestCase {
     private var teamID = UUID()
     private var conversation: MockGroupDetailsConversation!
     private var mockUser: MockUserType!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser(inTeam: teamID)
 
         mockUser = MockUserType.createUser(name: "James Hetfield", inTeam: teamID)

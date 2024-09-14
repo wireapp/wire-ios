@@ -26,7 +26,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: ConversationSenderMessageDetailsCell!
     private var teamID = UUID()
     private var mockUser: MockUserType!
@@ -35,7 +35,7 @@ final class ConversationSenderMessageDetailsCellSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockUser = MockUserType.createUser(name: "Bruno", inTeam: teamID)
         mockUser.isConnected = true
         sut = ConversationSenderMessageDetailsCell()

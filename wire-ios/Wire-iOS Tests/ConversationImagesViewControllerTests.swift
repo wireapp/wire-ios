@@ -38,7 +38,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: ConversationImagesViewController! = nil
     private var navigatorController: UINavigationController! = nil
     private var userSession: UserSessionMock!
@@ -49,7 +49,7 @@ final class ConversationImagesViewControllerTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
         userSession = UserSessionMock()
         snapshotBackgroundColor = UIColor.white

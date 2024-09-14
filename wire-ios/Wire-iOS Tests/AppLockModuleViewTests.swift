@@ -26,11 +26,11 @@ final class AppLockModuleViewTests: XCTestCase {
 
     private var sut: AppLockModule.View!
     private var presenter: AppLockModule.MockPresenter!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = .init()
         presenter = .init()
 

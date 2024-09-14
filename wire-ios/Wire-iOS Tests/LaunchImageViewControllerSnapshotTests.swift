@@ -25,11 +25,11 @@ import XCTest
 final class LaunchImageViewControllerSnapshotTests: XCTestCase {
 
     var sut: LaunchImageViewController!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         sut = LaunchImageViewController()
         sut.loadViewIfNeeded()
     }

@@ -27,7 +27,7 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var sut: GiphySearchViewController!
 
     private var mockConversation: MockConversation!
@@ -41,7 +41,7 @@ final class GiphySearchViewControllerSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         mockConversation = MockConversation.oneOnOneConversation()
         requester = MockURLSession(cache: nil)
         client = ZiphyClient(

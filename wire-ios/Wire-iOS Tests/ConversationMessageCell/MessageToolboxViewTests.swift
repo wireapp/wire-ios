@@ -26,7 +26,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     // MARK: - Properties
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
     private var message: MockMessage!
     private var sut: MessageToolboxView!
     private let backgroundColor = SemanticColors.View.backgroundConversationView
@@ -35,7 +35,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         SelfUser.setupMockSelfUser()
 
         message = MockMessageFactory.textMessage(withText: "Hello")

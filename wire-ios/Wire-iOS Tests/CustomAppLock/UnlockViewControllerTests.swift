@@ -25,11 +25,11 @@ import XCTest
 final class UnlockViewControllerTests: XCTestCase {
 
     var sut: UnlockViewController!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         let selfUser = MockUserType.createSelfUser(name: "Bobby McFerrin")
         sut = UnlockViewController(selfUser: selfUser)
     }

@@ -43,11 +43,11 @@ final class MockServicesOptionsViewModelConfiguration: ConversationServicesOptio
 
 final class ConversationServicesOptionsViewControllerTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
     }
 
     override func tearDown() {

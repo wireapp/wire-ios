@@ -20,13 +20,11 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
-public typealias SnapshotHelper = SnapshotHelper_
-
 /// A helper object for verifying image snapshots.
 ///
 /// Create variations of the snapshot behavior using the "with" methods.
 
-public struct SnapshotHelper_ {
+public struct SnapshotHelper {
 
     private var perceptualPrecision: Float = 1
     private var traits = UITraitCollection()

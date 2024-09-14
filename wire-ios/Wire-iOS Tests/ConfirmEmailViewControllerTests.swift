@@ -27,13 +27,13 @@ final class ConfirmEmailViewControllerTests: XCTestCase {
 
     private var sut: ConfirmEmailViewController!
     private var userSession: UserSessionMock!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     // MARK: setUp
 
     override func setUp() {
         super.setUp()
-        snapshotHelper = SnapshotHelper_()
+        snapshotHelper = SnapshotHelper()
         userSession = UserSessionMock()
         sut = ConfirmEmailViewController(newEmail: "bill@wire.com", delegate: nil, userSession: userSession)
         sut.overrideUserInterfaceStyle = .dark
