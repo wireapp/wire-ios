@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 public extension Font {
 
@@ -53,5 +54,4 @@ public extension Font {
             .title3.weight(.semibold)
         }
     }
-
 }

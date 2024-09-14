@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireFoundation
 
 extension UIFont {
 
