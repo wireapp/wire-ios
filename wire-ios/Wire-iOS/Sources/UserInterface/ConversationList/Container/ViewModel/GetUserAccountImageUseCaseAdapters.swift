@@ -124,12 +124,12 @@ fileprivate extension Optional where Wrapped == NSManagedObjectContext {
     /// If the `managedObjectContext` is non-nil, the provided closure will be wrapped in a call to `.perform`.
     /// Otherwise the closure will be executed synchronously.
     func perform<T>(
-        schedule: NSManagedObjectContext.ScheduledTaskType = .immediate,
+        _ schedule: NSManagedObjectContext.ScheduledTaskType = .immediate,
         _ block: @escaping () throws -> T
     ) async rethrows -> T {
 
         if let context = self {
-            try await context.perform {
+            try await context.perform(schedule: schedule) {
                 try block()
             }
         } else {
