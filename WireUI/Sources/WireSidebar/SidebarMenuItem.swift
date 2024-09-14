@@ -18,9 +18,10 @@
 
 import SwiftUI
 
+// TODO: remove commented code
 private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
 private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
-private let isPressedForegroundColor: UIColor = .magenta // Color(ColorTheme.Base.onPrimary)
+private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
 // TODO: get from Environment
 private let accentColor_: UIColor = .lightGray // Color(ColorTheme.Base.primary)
 
@@ -125,3 +126,5 @@ private struct SidebarMenuItemContainer<Content>: View where Content: View {
         }
     }
 }
+
+// TODO: snapshot tests

@@ -19,8 +19,9 @@
 import SwiftUI
 import WireFoundation
 
+// TODO: remove commented code
 private let sidebarBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.background
-private let defaultBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.backgroundVariant
+private let defaultBackgroundColor: UIColor = .lightGray // ColorTheme.Backgrounds.backgroundVariant
 
 // TODO: snapshot tests
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
@@ -174,29 +175,32 @@ private extension SidebarConversationFilter? {
 
 @available(iOS 17, *)
 #Preview {
-    {
-        let splitViewController = UISplitViewController(style: .tripleColumn)
-        if splitViewController.traitCollection.userInterfaceIdiom != .pad {
-            return HintViewController("For previewing please switch to iPad (iOS 17+)!")
-        }
+    SidebarPreview()
+}
 
-        let sidebarViewController = SidebarViewController { accountImage, availability in
-            AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
-        }
-        sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
-        sidebarViewController.accountInfo?.username = "@username"
-        splitViewController.setViewController(sidebarViewController, for: .primary)
-        splitViewController.setViewController(EmptyViewController(), for: .supplementary)
-        splitViewController.setViewController(EmptyViewController(), for: .secondary)
-        splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)
-        splitViewController.preferredSplitBehavior = .tile
-        splitViewController.preferredDisplayMode = .twoBesideSecondary
-        splitViewController.preferredPrimaryColumnWidth = 260
-        splitViewController.preferredSupplementaryColumnWidth = 320
-        splitViewController.view.backgroundColor = sidebarBackgroundColor
+@MainActor
+func SidebarPreview() -> UIViewController {
+    let splitViewController = UISplitViewController(style: .tripleColumn)
+    if splitViewController.traitCollection.userInterfaceIdiom != .pad {
+        return HintViewController("For previewing please switch to iPad (iOS 17+)!")
+    }
 
-        return splitViewController
-    }() as UIViewController
+    let sidebarViewController = SidebarViewController { accountImage, availability in
+        AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
+    }
+    sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
+    sidebarViewController.accountInfo?.username = "@username"
+    splitViewController.setViewController(sidebarViewController, for: .primary)
+    splitViewController.setViewController(EmptyViewController(), for: .supplementary)
+    splitViewController.setViewController(EmptyViewController(), for: .secondary)
+    splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)
+    splitViewController.preferredSplitBehavior = .tile
+    splitViewController.preferredDisplayMode = .twoBesideSecondary
+    splitViewController.preferredPrimaryColumnWidth = 260
+    splitViewController.preferredSupplementaryColumnWidth = 320
+    splitViewController.view.backgroundColor = sidebarBackgroundColor
+
+    return splitViewController
 }
 
 @MainActor private var conversationFilter: SidebarConversationFilter?
@@ -235,3 +239,5 @@ private final class HintViewController: UIHostingController<Text> {
         self.init(rootView: Text(verbatim: hint).font(.title2))
     }
 }
+
+// TODO: snapshot tests
