@@ -52,22 +52,27 @@ private extension UIColor {
 
 // MARK: - Previews
 
+@available(iOS 16.0, *)
 #Preview {
     WireAccentColorMappingPreview()
 }
 
-@ViewBuilder @MainActor
+@available(iOS 16.0, *) @ViewBuilder @MainActor
 func WireAccentColorMappingPreview() -> some View {
-    VStack {
-        ForEach (WireAccentColor.allCases, id: \.self) { accentColor in
-            MappingTestView()
-                .wireAccentColor(accentColor)
-            if accentColor != WireAccentColor.allCases.last {
-                Divider()
+    NavigationStack {
+        VStack {
+            ForEach (WireAccentColor.allCases, id: \.self) { accentColor in
+                MappingTestView()
+                    .wireAccentColor(accentColor)
+                if accentColor != WireAccentColor.allCases.last {
+                    Divider()
+                }
             }
         }
+        .environment(\.wireAccentColorMapping, WireAccentColorMapping())
+        .navigationTitle(Text(verbatim: "WireAccentColors"))
+        .navigationBarTitleDisplayMode(.inline)
     }
-    .environment(\.wireAccentColorMapping, WireAccentColorMapping())
 }
 
 private struct MappingTestView: View {
