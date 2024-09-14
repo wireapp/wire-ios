@@ -22,12 +22,13 @@ import SwiftUI
 private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
 private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
 private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
-// TODO: get from Environment
-private let accentColor_: UIColor = .lightGray // Color(ColorTheme.Base.primary)
+// private let accentColor_: UIColor = .lightGray // Color(ColorTheme.Base.primary)
 
 private let backgroundCornerRadius: CGFloat = 12
 
 struct SidebarMenuItem: View {
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     /// If `isHighlighted` is `true`, ".fill" will be appended to the icon name.
@@ -50,7 +51,7 @@ struct SidebarMenuItem: View {
                 } icon: {
                     let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
                     let icon = Image(systemName: icon + iconSystemNameSuffix)
-                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : accentColor_))
+                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : wireAccentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
@@ -71,7 +72,7 @@ struct SidebarMenuItem: View {
             .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
             .padding(.horizontal, 8)
             .padding(.vertical, 12)
-            .background(Color(isHighlighted ? accentColor_ : .clear))
+            .background(Color(isHighlighted ? wireAccentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
         }
     }
