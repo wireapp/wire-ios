@@ -105,6 +105,7 @@ private extension EnvironmentValues {
         set { self[AccountImageViewBorderColorKey.self] = newValue }
     }
 
+    // TODO: could/should it be of type `SwiftUI.Color` instead?
     var availabilityIndicatorAvailableColor: UIColor {
         get { self[AvailableColorKey.self] }
         set { self[AvailableColorKey.self] = newValue }
