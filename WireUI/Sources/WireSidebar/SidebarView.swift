@@ -20,8 +20,8 @@ import SwiftUI
 import WireFoundation
 
 // TODO: remove commented code
-private let sidebarBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.background
-private let defaultBackgroundColor: UIColor = .lightGray // ColorTheme.Backgrounds.backgroundVariant
+private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
+private let defaultBackgroundColor: UIColor = .init(white: 0.8, alpha: 1) // ColorTheme.Backgrounds.backgroundVariant
 
 // TODO: snapshot tests
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
@@ -223,12 +223,13 @@ private struct MockAccountImageView: View {
 private final class EmptyViewController: UIHostingController<AnyView> {
     convenience init() { self.init(rootView: AnyView(EmptyView())) }
     private struct EmptyView: View {
-        let sidebarBackground = Color(sidebarBackgroundColor)
-        let defaultBackground = Color(defaultBackgroundColor)
         var body: some View {
-            VStack {
-                Rectangle().foregroundStyle(sidebarBackground).frame(height: 22)
-                Rectangle().foregroundStyle(defaultBackground)
+            VStack(spacing: 0) {
+                Rectangle()
+                    .foregroundStyle(Color(sidebarBackgroundColor))
+                    .frame(height: 22)
+                Rectangle()
+                    .foregroundStyle(Color(defaultBackgroundColor))
             }.ignoresSafeArea()
         }
     }
