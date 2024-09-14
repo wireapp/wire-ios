@@ -40,11 +40,11 @@ public final class WireAccentColorMapping: ObservableObject, Sendable {
         self.colorMapping = colorMapping
     }
 
-    func uiColor(for accentColor: WireAccentColor) -> UIColor {
+    public func uiColor(for accentColor: WireAccentColor) -> UIColor {
         uiColorMapping(accentColor)
     }
 
-    func color(for accentColor: WireAccentColor) -> Color {
+    public func color(for accentColor: WireAccentColor) -> Color {
         colorMapping(accentColor)
     }
 }
@@ -67,35 +67,5 @@ public extension EnvironmentValues {
     var wireAccentColorMapping: WireAccentColorMapping {
         get { self[WireAccentColorMappingKey.self] }
         set { self[WireAccentColorMappingKey.self] = newValue }
-    }
-}
-
-// MARK: - Previews
-
-#Preview {
-    WireAccentColorMappingPreview()
-}
-
-@ViewBuilder @MainActor
-func WireAccentColorMappingPreview() -> some View {
-    VStack {
-        ForEach (WireAccentColor.allCases, id: \.self) { accentColor in
-            MappingTestView()
-                .wireAccentColor(accentColor)
-            if accentColor != WireAccentColor.allCases.last {
-                Divider()
-            }
-        }
-    }
-}
-
-private struct MappingTestView: View {
-    @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
-    var body: some View {
-        VStack {
-            Text(verbatim: "\(String(describing: wireAccentColor))")
-            Circle().foregroundStyle(wireAccentColorMapping.color(for: wireAccentColor))
-        }
     }
 }

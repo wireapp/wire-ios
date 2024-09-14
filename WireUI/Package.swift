@@ -22,7 +22,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireDesignTests"),
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage]),
 
             .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
