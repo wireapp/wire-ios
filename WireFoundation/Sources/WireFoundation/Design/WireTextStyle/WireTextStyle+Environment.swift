@@ -30,7 +30,11 @@ public extension EnvironmentValues {
 }
 
 public extension View {
+    @ViewBuilder
     func wireTextStyle(_ textStyle: WireTextStyle?) -> some View {
-        environment(\.wireTextStyle, textStyle)
+        @Environment(\.wireTextStyle2FontMapping) var wireTextStyle2FontMapping
+        if let textStyle {
+            font(wireTextStyle2FontMapping.font(for: textStyle))
+        }
     }
 }

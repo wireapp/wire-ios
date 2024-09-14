@@ -19,6 +19,13 @@
 import SwiftUI
 import WireFoundation
 
+public struct WireTextStyleMapping: WireTextStyle2FontMapping {
+
+    public func font(for textStyle: WireTextStyle) -> Font {
+        .textStyle(textStyle)
+    }
+}
+
 public extension Font {
 
     /// Creates a font from the given text style.
@@ -53,5 +60,31 @@ public extension Font {
         case .buttonBig:
             .title3.weight(.semibold)
         }
+    }
+}
+
+@available(iOS 16, *)
+#Preview {
+    WireTextStyleMappingPreview()
+}
+
+@available(iOS 16, *) @ViewBuilder @MainActor
+func WireTextStyleMappingPreview() -> some View {
+    NavigationStack {
+        ZStack(alignment: .center) {
+            VStack {
+                ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
+                    HStack {
+                        Text("\(textStyle)")
+                            .wireTextStyle(textStyle)
+                            .wireTextStyle2FontMapping(WireTextStyleMapping())
+                        Text("\(textStyle)")
+                            .wireTextStyle(textStyle)
+                    }
+                }
+            }
+        }
+        .navigationTitle(Text(verbatim: "WireTextStyle"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
