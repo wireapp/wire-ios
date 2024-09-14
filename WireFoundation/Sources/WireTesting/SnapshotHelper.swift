@@ -20,6 +20,8 @@ import SnapshotTesting
 import SwiftUI
 import XCTest
 
+public typealias SnapshotHelper = SnapshotHelper_
+
 /// A helper object for verifying image snapshots.
 ///
 /// Create variations of the snapshot behavior using the "with" methods.
@@ -266,7 +268,7 @@ public struct SnapshotHelper_ {
         testName: String = #function,
         line: UInt = #line
     ) {
-        let allDevices = SnapshotHelper_.phoneConfigs + SnapshotHelper_.iPadConfigs
+        let allDevices = SnapshotHelper.phoneConfigs + SnapshotHelper.iPadConfigs
 
         for (config, name) in allDevices {
             let failure = verifySnapshot(
@@ -299,7 +301,7 @@ public struct SnapshotHelper_ {
         testName: String = #function,
         line: UInt = #line
     ) {
-        for (config, name) in SnapshotHelper_.phoneConfigs {
+        for (config, name) in SnapshotHelper.phoneConfigs {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(

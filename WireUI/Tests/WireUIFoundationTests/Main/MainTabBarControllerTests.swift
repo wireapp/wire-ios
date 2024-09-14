@@ -23,7 +23,7 @@ import XCTest
 
 final class MainTabBarControllerTests: XCTestCase {
 
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         snapshotHelper = .init()

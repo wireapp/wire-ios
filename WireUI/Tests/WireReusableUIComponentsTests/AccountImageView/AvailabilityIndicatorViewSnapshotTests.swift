@@ -28,7 +28,7 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
     /// A container is needed because the availability indicator view has a border beyond its frame.
     private var container: UIView!
     private var sut: SUT!
-    private var snapshotHelper: SnapshotHelper_!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() async throws {
         (sut, container) = await MainActor.run {
