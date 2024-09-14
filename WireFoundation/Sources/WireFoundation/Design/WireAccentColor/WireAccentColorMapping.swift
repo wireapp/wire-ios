@@ -18,76 +18,84 @@
 
 import SwiftUI
 
-public protocol WireAccentColorMapping: ObservableObject {
-    func uiColor(for accentColor: WireAccentColor) -> UIColor
-    func color(for accentColor: WireAccentColor) -> Color
+public final class WireAccentColorMapping: ObservableObject, Sendable {
+
+    public typealias UIColorMapping = @Sendable (WireAccentColor) -> UIColor
+    public typealias ColorMapping = @Sendable (WireAccentColor) -> Color
+
+    let uiColorMapping: UIColorMapping
+    let colorMapping: ColorMapping
+
+    public convenience init(uiColorMapping: @escaping UIColorMapping) {
+        self.init(uiColorMapping: uiColorMapping) { uiColor in
+            Color(uiColor: uiColorMapping(uiColor))
+        }
+    }
+
+    public init(
+        uiColorMapping: @escaping UIColorMapping,
+        colorMapping: @escaping ColorMapping
+    ) {
+        self.uiColorMapping = uiColorMapping
+        self.colorMapping = colorMapping
+    }
+
+    func uiColor(for accentColor: WireAccentColor) -> UIColor {
+        uiColorMapping(accentColor)
+    }
+
+    func color(for accentColor: WireAccentColor) -> Color {
+        colorMapping(accentColor)
+    }
 }
 
-final class WireAccentColorMapper: ObservableObject, WireAccentColorMapping {
-    func uiColor(for accentColor: WireAccentColor) -> UIColor {
-        fatalError()
-    }
-    func color(for accentColor: WireAccentColor) -> Color {
+
+private struct WireAccentColorMappingKey: EnvironmentKey {
+    static let defaultValue = WireAccentColorMapping { accentColor in
         switch accentColor {
-        case .blue:
-                .blue
-        case .green:
-                .green
-        case .red:
-                .red
-        case .amber:
-                .yellow
-        case .turquoise:
-                .teal
-        case .purple:
-                .purple
+        case .blue: .systemBlue
+        case .green: .systemGreen
+        case .red: .systemRed
+        case .amber: .systemYellow
+        case .turquoise: .systemTeal
+        case .purple: .systemPurple
         }
     }
 }
 
-//@available(iOS 17, *)
-//#Preview {
-//    MappingTestView_()
-//}
+public extension EnvironmentValues {
+    var wireAccentColorMapping: WireAccentColorMapping {
+        get { self[WireAccentColorMappingKey.self] }
+        set { self[WireAccentColorMappingKey.self] = newValue }
+    }
+}
+
+// MARK: - Previews
 
 #Preview {
+    WireAccentColorMappingPreview()
+}
+
+@ViewBuilder @MainActor
+func WireAccentColorMappingPreview() -> some View {
     VStack {
-        MappingTestView()
-            .wireAccentColor(.green)
+        ForEach (WireAccentColor.allCases, id: \.self) { accentColor in
+            MappingTestView()
+                .wireAccentColor(accentColor)
+            if accentColor != WireAccentColor.allCases.last {
+                Divider()
+            }
+        }
     }
-    .environmentObject(WireAccentColorMapper())
 }
 
 private struct MappingTestView: View {
-
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @EnvironmentObject private var wireAccentColorMapper: WireAccentColorMapping & ObservableObject
-
-    init() {}
-
+    @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
     var body: some View {
         VStack {
             Text(verbatim: "\(String(describing: wireAccentColor))")
-            if let patternImage {
-                Image(uiImage: patternImage)
-            } else {
-                Text(verbatim: "patternImage == nil")
-            }
-            Circle()
-                .foregroundStyle(wireAccentColorMapper.color(for: wireAccentColor))
+            Circle().foregroundStyle(wireAccentColorMapping.color(for: wireAccentColor))
         }
-    }
-}
-
-let patternImage = UIImage(systemName: "pencil.circle")
-let patternColor = UIColor(patternImage: patternImage!)
-
-private final class MappingTestView_: UIView {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = patternColor
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
