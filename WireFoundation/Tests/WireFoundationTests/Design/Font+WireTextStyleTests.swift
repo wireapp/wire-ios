@@ -27,7 +27,6 @@ final class Font_WireTextStyleTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
     }
 
