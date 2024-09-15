@@ -18,6 +18,7 @@
 
 import WireReusableUIComponents
 import WireSyncEngine
+import WireSidebar
 
 extension SidebarAccountInfo {
 
