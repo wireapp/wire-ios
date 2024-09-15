@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireDesign
 
-final class WireTextStyleMappingTests: XCTestCase {
+final class UITabBarController_applyMainTabBarControllerAppearanceTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,34 +35,9 @@ final class WireTextStyleMappingTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @available(iOS 16, *) @MainActor
-    func testFontDarkUserInterfaceStyle() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = WireTextStyleFontMappingPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut)
-    }
-
-    @available(iOS 16, *) @MainActor
-    func testFontDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = WireTextStyleFontMappingPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height * 1.5)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
-        }
-    }
-
-    @available(iOS 16, *) @MainActor
+    @MainActor
     func testUIFontDarkUserInterfaceStyle() {
-        let sut = WireTextStyleUIFontMappingPreview()
+        let sut = MainTabBarControllerAppearancePreview()
         snapshotHelper
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
@@ -70,8 +45,8 @@ final class WireTextStyleMappingTests: XCTestCase {
 
     @available(iOS 17, *) @MainActor
     func testUIFontContentSizeCategories() {
-        let sut = WireTextStyleUIFontMappingPreview()
-        for contentSizeCategory in UIContentSizeCategory.allCases {
+        let sut = MainTabBarControllerAppearancePreview()
+        for contentSizeCategory in [UIContentSizeCategory.small, .accessibilityExtraExtraExtraLarge] {
             sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
             snapshotHelper
                 .verify(

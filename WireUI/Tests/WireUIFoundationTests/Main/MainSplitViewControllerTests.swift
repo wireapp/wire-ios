@@ -25,7 +25,6 @@ import XCTest
 final class MainSplitViewControllerTests: XCTestCase {
 
     private var sut: MainSplitViewController!
-    private var sut: MainSplitViewController<UIViewController, UIViewController, UIViewController, UIViewController>!
     private var sidebar: UIViewController!
     private var conversationList: UIViewController!
     private var conversation: UIViewController!

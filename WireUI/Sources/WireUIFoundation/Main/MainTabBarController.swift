@@ -17,15 +17,15 @@
 //
 
 import SwiftUI
-//import WireDesign // TODO: can the dependency be removed?
 
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
-public final class MainTabBarController<ConversationList, Conversation, Archive, Settings>: UITabBarController, MainTabBarControllerProtocol where
-    ConversationList: UIViewController,
-    Conversation: UIViewController,
-    Archive: UIViewController,
-    Settings: UIViewController {
+public final class MainTabBarController: UITabBarController, MainTabBarControllerProtocol {
+
+    public typealias ConversationList = UIViewController
+    public typealias Conversation = UIViewController
+    public typealias Archive = UIViewController
+    public typealias Settings = UIViewController
 
     public enum Tab: Int, CaseIterable {
         case conversations, archive, settings
@@ -90,26 +90,12 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
 
     public required init() {
         super.init(nibName: nil, bundle: nil)
-        setupAppearance()
         setupTabs()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
-    }
-
-    private func setupAppearance() {
-        let tabBarItemAppearance = UITabBarItemAppearance()
-        tabBarItemAppearance.normal.iconColor = ColorTheme.Base.secondaryText
-        tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
-
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
-        tabBarAppearance.backgroundColor = ColorTheme.Backgrounds.background
-        tabBarAppearance.inlineLayoutAppearance = tabBarItemAppearance
-        tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
-        tabBarAppearance.compactInlineLayoutAppearance = tabBarItemAppearance
     }
 
     private func setupTabs() {
@@ -153,8 +139,6 @@ public final class MainTabBarController<ConversationList, Conversation, Archive,
         }
 
         selectedIndex = Tab.conversations.rawValue
-        tabBar.backgroundColor = ColorTheme.Backgrounds.background
-        tabBar.unselectedItemTintColor = ColorTheme.Base.secondaryText
     }
 }
 
@@ -180,7 +164,7 @@ private final class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = ColorTheme.Backgrounds.surfaceVariant
+        view.backgroundColor = .yellow // ColorTheme.Backgrounds.surfaceVariant
         navigationItem.title = navigationController!.tabBarItem.title
         let imageView = UIImageView(image: navigationController!.tabBarItem.image)
         imageView.translatesAutoresizingMaskIntoConstraints = false
