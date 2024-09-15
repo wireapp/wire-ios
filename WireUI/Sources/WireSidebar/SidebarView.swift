@@ -196,7 +196,7 @@ struct SidebarBackgroundColorViewModifier: ViewModifier {
 }
 
 private struct SidebarBackgroundColorKey: EnvironmentKey {
-    static let defaultValue = Color.secondary.opacity(0.9)
+    static let defaultValue = Color(uiColor: .systemGray5)
 }
 
 // MARK: - Previews
@@ -226,7 +226,7 @@ func SidebarPreview() -> UIViewController {
     splitViewController.preferredDisplayMode = .twoBesideSecondary
     splitViewController.preferredPrimaryColumnWidth = 260
     splitViewController.preferredSupplementaryColumnWidth = 320
-    splitViewController.view.backgroundColor = sidebarBackgroundColor
+    splitViewController.view.backgroundColor = .init(white: 0.9, alpha: 1)
 
     return splitViewController
 }
@@ -254,10 +254,10 @@ private final class EmptyViewController: UIHostingController<AnyView> {
         var body: some View {
             VStack(spacing: 0) {
                 Rectangle()
-                    .foregroundStyle(Color(sidebarBackgroundColor))
+                    .foregroundStyle(Color(uiColor: .systemGray5))
                     .frame(height: 22)
                 Rectangle()
-                    .foregroundStyle(Color.secondary.opacity(0.8))
+                    .foregroundStyle(Color(uiColor: .systemBackground))
             }.ignoresSafeArea()
         }
     }

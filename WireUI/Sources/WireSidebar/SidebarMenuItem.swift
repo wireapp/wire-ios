@@ -167,7 +167,7 @@ struct SidebarMenuItemIsPressedForegroundColorViewModifier: ViewModifier {
 }
 
 private struct SidebarMenuItemIsPressedForegroundColorKey: EnvironmentKey {
-    static let defaultValue = Color.blue
+    static let defaultValue = Color.white
 }
 
 // MARK: - Previews
