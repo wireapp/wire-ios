@@ -14,7 +14,13 @@
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
-
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSidebarTests",
+        "name" : "WireSidebarTests"
+      }
+    }
   ],
   "version" : 1
 }

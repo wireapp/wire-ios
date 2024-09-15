@@ -19,8 +19,9 @@
 import SwiftUI
 import WireFoundation
 
-private let sidebarBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.background
-private let defaultBackgroundColor: UIColor = .white // ColorTheme.Backgrounds.backgroundVariant
+// TODO: remove commented code
+private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
+private let defaultBackgroundColor: UIColor = .init(white: 0.8, alpha: 1) // ColorTheme.Backgrounds.backgroundVariant
 
 // TODO: snapshot tests
 @MainActor
@@ -175,29 +176,32 @@ private extension SidebarConversationFilter? {
 
 @available(iOS 17, *)
 #Preview {
-    {
-        let splitViewController = UISplitViewController(style: .tripleColumn)
-        if splitViewController.traitCollection.userInterfaceIdiom != .pad {
-            return HintViewController("For previewing please switch to iPad (iOS 17+)!")
-        }
+    SidebarPreview()
+}
 
-        let sidebarViewController = SidebarViewController { accountImage, availability in
-            AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
-        }
-        sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
-        sidebarViewController.accountInfo?.username = "@username"
-        splitViewController.setViewController(sidebarViewController, for: .primary)
-        splitViewController.setViewController(EmptyViewController(), for: .supplementary)
-        splitViewController.setViewController(EmptyViewController(), for: .secondary)
-        splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)
-        splitViewController.preferredSplitBehavior = .tile
-        splitViewController.preferredDisplayMode = .twoBesideSecondary
-        splitViewController.preferredPrimaryColumnWidth = 260
-        splitViewController.preferredSupplementaryColumnWidth = 320
-        splitViewController.view.backgroundColor = sidebarBackgroundColor
+@MainActor
+func SidebarPreview() -> UIViewController {
+    let splitViewController = UISplitViewController(style: .tripleColumn)
+    if splitViewController.traitCollection.userInterfaceIdiom != .pad {
+        return HintViewController("For previewing please switch to iPad (iOS 17+)!")
+    }
 
-        return splitViewController
-    }() as UIViewController
+    let sidebarViewController = SidebarViewController { accountImage, availability in
+        AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
+    }
+    sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
+    sidebarViewController.accountInfo?.username = "@username"
+    splitViewController.setViewController(sidebarViewController, for: .primary)
+    splitViewController.setViewController(EmptyViewController(), for: .supplementary)
+    splitViewController.setViewController(EmptyViewController(), for: .secondary)
+    splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)
+    splitViewController.preferredSplitBehavior = .tile
+    splitViewController.preferredDisplayMode = .twoBesideSecondary
+    splitViewController.preferredPrimaryColumnWidth = 260
+    splitViewController.preferredSupplementaryColumnWidth = 320
+    splitViewController.view.backgroundColor = sidebarBackgroundColor
+
+    return splitViewController
 }
 
 @MainActor private var conversationFilter: SidebarConversationFilter?
@@ -220,12 +224,13 @@ private struct MockAccountImageView: View {
 private final class EmptyViewController: UIHostingController<AnyView> {
     convenience init() { self.init(rootView: AnyView(EmptyView())) }
     private struct EmptyView: View {
-        let sidebarBackground = Color(sidebarBackgroundColor)
-        let defaultBackground = Color(defaultBackgroundColor)
         var body: some View {
-            VStack {
-                Rectangle().foregroundStyle(sidebarBackground).frame(height: 22)
-                Rectangle().foregroundStyle(defaultBackground)
+            VStack(spacing: 0) {
+                Rectangle()
+                    .foregroundStyle(Color(sidebarBackgroundColor))
+                    .frame(height: 22)
+                Rectangle()
+                    .foregroundStyle(Color(defaultBackgroundColor))
             }.ignoresSafeArea()
         }
     }
@@ -236,3 +241,5 @@ private final class HintViewController: UIHostingController<Text> {
         self.init(rootView: Text(verbatim: hint).font(.title2))
     }
 }
+
+// TODO: snapshot tests

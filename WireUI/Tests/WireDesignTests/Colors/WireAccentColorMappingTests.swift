@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireTestingPackage
+import XCTest
 
-@testable import WireFoundation
+@testable import WireDesign
 
-final class Font_WireTextStyleTests: XCTestCase {
+final class WireAccentColorMappingTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,11 +35,11 @@ final class Font_WireTextStyleTests: XCTestCase {
     }
 
     @MainActor
-    func testWireTextStyleMappingPreview() {
+    func testAccentColors() {
         guard #available(iOS 16, *) else { return XCTFail() }
 
         let screenBounds = UIScreen.main.bounds
-            let sut = WireTextStyleMappingPreview()
+            let sut = WireAccentColorMappingPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
