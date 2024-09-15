@@ -78,6 +78,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical)
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onPreferenceChange(SidebarMenuItemMinIconSizeKey.self) { newIconSize in
             guard var iconSize else { return iconSize = newIconSize }
             iconSize.width = max(iconSize.width, newIconSize.width)
@@ -203,16 +204,18 @@ private struct SidebarBackgroundColorKey: EnvironmentKey {
 
 @available(iOS 17, *)
 #Preview {
-    SidebarPreview()
+    {
+        if UIViewController().traitCollection.userInterfaceIdiom != .pad {
+            HintViewController("For previewing please switch to iPad (iOS 17+)!")
+        } else {
+            SidebarPreview()
+        }
+    }()
 }
 
 @MainActor
 func SidebarPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
-    if splitViewController.traitCollection.userInterfaceIdiom != .pad {
-        return HintViewController("For previewing please switch to iPad (iOS 17+)!")
-    }
-
     let sidebarViewController = SidebarViewController { accountImage, availability in
         AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
     }

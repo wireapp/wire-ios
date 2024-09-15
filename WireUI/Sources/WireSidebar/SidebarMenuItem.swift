@@ -88,6 +88,7 @@ struct SidebarMenuItem: View {
             .background(Color(isHighlighted ? accentColor : .clear))
             .cornerRadius(backgroundCornerRadius)
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 }
 
@@ -173,20 +174,24 @@ private struct SidebarMenuItemIsPressedForegroundColorKey: EnvironmentKey {
 // MARK: - Previews
 
 #Preview {
+    SidebarMenuItemPreview()
+}
+
+@MainActor @ViewBuilder
+func SidebarMenuItemPreview() -> some View {
     VStack {
+        // Displaying two separate menus here in order to verify, that
+        // the size of the icons is constant only within one menu.
         SidebarMenuItemContainer { iconSize in
             SidebarMenuItem(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
             SidebarMenuItem(icon: "gamecontroller", iconSize: iconSize, isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
             SidebarMenuItem(icon: "person.3", iconSize: iconSize, isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
         }
-        Rectangle()
-            .frame(height: 1)
+        Divider()
         SidebarMenuItemContainer { iconSize in
             SidebarMenuItem(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Small Icon") }, action: { print("show all conversations") })
             SidebarMenuItem(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
         }
-        Text("Make sure, the icons' sizes match only within their menu! (the icon sizes of the menu below are independent from the ones above)")
-            .font(.caption)
     }
     .frame(width: 260)
 }
@@ -209,5 +214,3 @@ private struct SidebarMenuItemContainer<Content>: View where Content: View {
         }
     }
 }
-
-// TODO: snapshot tests
