@@ -18,7 +18,7 @@
 
 import UIKit
 
-extension UIContentSizeCategory: @retroactive CustomDebugStringConvertible {
+extension UIContentSizeCategory: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         switch self {
