@@ -24,6 +24,10 @@ public final class MainSplitViewController<Sidebar, ConversationList, Conversati
     Conversation: UIViewController,
     TabContainer: UIViewController {
 
+    public typealias Sidebar = UIViewController
+    public typealias ConversationList = UIViewController
+    public typealias Conversation = UIViewController
+    public typealias TabContainer = UIViewController
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
     // MARK: - Public Properties
