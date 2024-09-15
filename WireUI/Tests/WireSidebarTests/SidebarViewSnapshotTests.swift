@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireSidebar
 
-final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
+final class SidebarViewSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,31 +35,27 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor
-    func testColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
+    @available(iOS 17, *) @MainActor
+    func testUIFontDarkUserInterfaceStyle() {
+        let sut = SidebarPreview()
+        sut.view.frame.size = .init(width: 1_024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
+            .verify(matching: sut)
     }
 
-    @MainActor
-    func testDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
-            .frame(width: screenBounds.width * 2 / 3, height: screenBounds.height * 2 / 3)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
+    @available(iOS 17, *) @MainActor
+    func testUIFontContentSizeCategories() {
+        let sut = SidebarPreview()
+        sut.view.frame.size = .init(width: 1_024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        for contentSizeCategory in UIContentSizeCategory.allCases {
+            sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
             snapshotHelper
                 .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    matching: sut,
+                    named: "\(contentSizeCategory)"
                 )
         }
     }

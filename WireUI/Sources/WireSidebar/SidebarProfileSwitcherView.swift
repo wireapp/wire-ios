@@ -38,7 +38,6 @@ struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView
 
     var body: some View {
         HStack {
-
             accountImageView()
                 .frame(width: accountImageDiameter, height: accountImageDiameter)
 
@@ -50,7 +49,6 @@ struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView
             // and being invisible
 
             ZStack {
-
                 displayNameAndUsername(displayName, username)
                     .lineLimit(1)
                     .layoutPriority(-1)
@@ -137,6 +135,7 @@ struct SidebarProfileSwitcherDisplayNameColorViewModifier: ViewModifier {
             .environment(\.sidebarProfileSwitcherDisplayNameColor, sidebarProfileSwitcherDisplayNameColor)
     }
 }
+
 private struct SidebarProfileSwitcherDisplayNameColorKey: EnvironmentKey {
     static let defaultValue = Color.primary
 }
@@ -148,6 +147,7 @@ struct SidebarProfileSwitcherUsernameColorViewModifier: ViewModifier {
             .environment(\.sidebarProfileSwitcherUsernameColor, sidebarProfileSwitcherUsernameColor)
     }
 }
+
 private struct SidebarProfileSwitcherUsernameColorKey: EnvironmentKey {
     static let defaultValue = Color.primary.opacity(0.7)
 }

@@ -27,7 +27,6 @@ private struct WireTextStyleView<Content: View>: View {
     @ViewBuilder let content: () -> Content
 
     var body: some View {
-
         // do nothing if the mapping has not been set into the environment
         if let wireTextStyleMapping {
             let font = textStyle.map { textStyle in

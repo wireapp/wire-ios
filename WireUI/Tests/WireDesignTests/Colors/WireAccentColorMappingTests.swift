@@ -34,19 +34,17 @@ final class WireAccentColorMappingTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor
+    @available(iOS 16, *) @MainActor
     func testAccentColors() {
-        guard #available(iOS 16, *) else { return XCTFail() }
-
         let screenBounds = UIScreen.main.bounds
-            let sut = WireAccentColorMappingPreview()
+        let sut = WireAccentColorMappingPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
-                .withUserInterfaceStyle(.light)
-                .verify(matching: sut, named: "light")
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: sut, named: "dark")
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
     }
 }
