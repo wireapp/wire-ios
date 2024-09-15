@@ -38,7 +38,7 @@ final class SidebarViewSnapshotTests: XCTestCase {
     @available(iOS 17, *) @MainActor
     func testUIFontDarkUserInterfaceStyle() {
         let sut = SidebarPreview()
-        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.view.frame.size = .init(width: 1_024, height: 768)
         sut.traitOverrides.userInterfaceIdiom = .pad
         snapshotHelper
             .withUserInterfaceStyle(.dark)
@@ -48,7 +48,7 @@ final class SidebarViewSnapshotTests: XCTestCase {
     @available(iOS 17, *) @MainActor
     func testUIFontContentSizeCategories() {
         let sut = SidebarPreview()
-        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.view.frame.size = .init(width: 1_024, height: 768)
         sut.traitOverrides.userInterfaceIdiom = .pad
         for contentSizeCategory in UIContentSizeCategory.allCases {
             sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireTestingPackage
 import XCTest
-import SwiftUI
 
 @testable import WireFoundation
 
@@ -36,32 +36,31 @@ final class UIImage_fromSolidColorTests: XCTestCase {
     }
 
     func testImagesMatch() {
-
         let testColors: [(String, UIColor)] = [
-("black", .black),
-("darkGray", .darkGray),
-("lightGray", .lightGray),
-("white", .white),
-("gray", .gray),
-("red", .red),
-("green", .green),
-("blue", .blue),
-("cyan", .cyan),
-("yellow", .yellow),
-("magenta", .magenta),
-("orange", .orange),
-("purple", .purple),
-("brown", .brown),
-("clear", .clear)
+            ("black", .black),
+            ("darkGray", .darkGray),
+            ("lightGray", .lightGray),
+            ("white", .white),
+            ("gray", .gray),
+            ("red", .red),
+            ("green", .green),
+            ("blue", .blue),
+            ("cyan", .cyan),
+            ("yellow", .yellow),
+            ("magenta", .magenta),
+            ("orange", .orange),
+            ("purple", .purple),
+            ("brown", .brown),
+            ("clear", .clear)
         ]
         for (name, color) in testColors {
             let sut = UIImage.from(solidColor: color)
             XCTAssertEqual(sut.size.width, 1)
             XCTAssertEqual(sut.size.height, 1)
             let image = Image(uiImage: sut)
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: image, named: name)
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: image, named: name)
         }
     }
 }

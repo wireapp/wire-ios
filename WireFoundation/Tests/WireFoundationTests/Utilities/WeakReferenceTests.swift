@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireTestingPackage
 import XCTest
-import SwiftUI
 
 @testable import WireFoundation
 
@@ -54,7 +54,7 @@ final class WeakReferenceTests: XCTestCase {
     @MainActor
     func testStoringInArray() async {
         // Given
-        var objects = (0...4)
+        var objects = (0 ... 4)
             .map { _ in NSObject() }
         let weakReferences = objects
             .map { WeakReference($0) }
