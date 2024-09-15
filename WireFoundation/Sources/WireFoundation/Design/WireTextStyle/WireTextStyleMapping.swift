@@ -44,65 +44,11 @@ public final class WireTextStyleMapping: ObservableObject, Sendable {
 }
 
 private struct WireTextStyleMappingKey: EnvironmentKey {
-    static let defaultValue = WireTextStyleMapping { textStyle in
-        switch textStyle {
-        case .largeTitle:
-                .init()
-        case .h1:
-                .init()
-        case .h2:
-                .init()
-        case .h3:
-                .init()
-        case .h4:
-                .init()
-        case .h5:
-                .init()
-        case .body1:
-                .init()
-        case .body2:
-                .init()
-        case .body3:
-                .init()
-        case .subline1:
-                .init()
-        case .buttonSmall:
-                .init()
-        case .buttonBig:
-                .init()
-        }
-    } fontMapping: { textStyle in
-        switch textStyle {
-        case .largeTitle:
-                .largeTitle
-        case .h1:
-                .footnote
-        case .h2:
-                .footnote
-        case .h3:
-                .footnote
-        case .h4:
-                .footnote
-        case .h5:
-                .footnote
-        case .body1:
-                .footnote
-        case .body2:
-                .footnote
-        case .body3:
-                .footnote
-        case .subline1:
-                .footnote
-        case .buttonSmall:
-                .footnote
-        case .buttonBig:
-                .footnote
-        }
-    }
+    static let defaultValue = WireTextStyleMapping?.none
 }
 
 public extension EnvironmentValues {
-    var wireTextStyleMapping: WireTextStyleMapping {
+    var wireTextStyleMapping: WireTextStyleMapping? {
         get { self[WireTextStyleMappingKey.self] }
         set { self[WireTextStyleMappingKey.self] = newValue }
     }

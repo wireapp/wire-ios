@@ -46,15 +46,12 @@ func WireTextStyleFontMappingPreview() -> some View {
             VStack {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
                     if textStyle != .buttonSmall {
-                        HStack {
-                            Text("\(textStyle)")
+                        Text("\(textStyle)")
                                 .wireTextStyle(textStyle)
                                 .environment(\.wireTextStyleMapping, WireTextStyleMapping())
-                            Text("\(textStyle)")
-                                .wireTextStyle(textStyle)
-                        }
                     } else {
                         Text(verbatim: "buttonSmall not implemented")
+                            .foregroundStyle(Color.red)
                     }
                 }
         }
@@ -70,10 +67,7 @@ func WireTextStyleUIFontMappingPreview() -> some View {
             Rectangle().foregroundStyle(Color.clear)
                 VStack {
                     ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
-                        HStack {
-                            LabelRepresentable(textStyle: textStyle, textAlignment: .right)
-                            LabelRepresentable(textStyle: textStyle)
-                        }
+                        LabelRepresentable(textStyle: textStyle)
                     }
                 }
             Rectangle().foregroundStyle(Color.clear)
@@ -85,11 +79,10 @@ func WireTextStyleUIFontMappingPreview() -> some View {
 
 private struct LabelRepresentable: UIViewRepresentable {
     var textStyle: WireTextStyle
-    var textAlignment = NSTextAlignment.left
     func makeUIView(context: Context) -> UILabel { .init() }
     func updateUIView(_ label: UILabel, context: Context) {
         label.text = "\(textStyle)"
         label.font = .font(for: textStyle)
-        label.textAlignment = textAlignment
+        label.textAlignment = .center
     }
 }
