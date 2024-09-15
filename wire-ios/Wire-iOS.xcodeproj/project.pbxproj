@@ -7860,6 +7860,7 @@
 				59D2D9342BEB8E9A002319BB /* ConversationListViewController+NavigationBar.swift */,
 				E96AB4FB2C07262400792DA9 /* FilterButtonStyleHelper.swift */,
 				5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */,
+				5950A9462C2F1C31005AB9CE /* AvailabilityAdapter.swift */,
 				E96AB4F82C071BC300792DA9 /* FilterImageName.swift */,
 			);
 			path = "ConversationListViewController+NavigationBar";

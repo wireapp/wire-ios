@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireDesign
+//import WireDesign // TODO: can the dependency be removed?
 
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.

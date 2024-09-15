@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireDesign
+import WireDesign // TODO: can the dependency be removed?
 
 public extension UIViewController {
 
