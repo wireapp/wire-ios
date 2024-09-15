@@ -22,7 +22,6 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireFoundation
 
 final class ClientTableViewCell: UITableViewCell {
 

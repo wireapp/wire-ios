@@ -30,10 +30,7 @@ public extension EnvironmentValues {
 }
 
 public extension View {
-    @ViewBuilder
     func wireTextStyle(_ textStyle: WireTextStyle?) -> some View {
-        if let textStyle {
-            font(.textStyle(textStyle))
-        }
+        environment(\.wireTextStyle, textStyle)
     }
 }
