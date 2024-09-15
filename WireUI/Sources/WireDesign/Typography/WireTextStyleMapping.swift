@@ -43,46 +43,68 @@ public extension WireTextStyleMapping {
 @available(iOS 16, *) @ViewBuilder @MainActor
 func WireTextStyleFontMappingPreview() -> some View {
     NavigationStack {
-            VStack {
+        ScrollView {
+            VStack(spacing: 2) {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
                     if textStyle != .buttonSmall {
                         Text("\(textStyle)")
-                                .wireTextStyle(textStyle)
-                                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+                            .wireTextStyle(textStyle)
+                            .environment(\.wireTextStyleMapping, WireTextStyleMapping())
                     } else {
                         Text(verbatim: "buttonSmall not implemented")
                             .foregroundStyle(Color.red)
                     }
                 }
+                .padding(.top)
+            }
         }
-        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
+            .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-@available(iOS 16, *) @ViewBuilder @MainActor
-func WireTextStyleUIFontMappingPreview() -> some View {
-    NavigationStack {
-        VStack {
-            Rectangle().foregroundStyle(Color.clear)
-                VStack {
-                    ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
-                        LabelRepresentable(textStyle: textStyle)
-                    }
-                }
-            Rectangle().foregroundStyle(Color.clear)
+@MainActor
+func WireTextStyleUIFontMappingPreview() -> UIViewController {
+
+    let labels = WireTextStyle.allCases
+        .map { textStyle in
+            let label = UILabel()
+            label.text = "\(textStyle)"
+            label.font = .font(for: textStyle)
+            label.adjustsFontForContentSizeCategory = true
+            label.textAlignment = .center
+            return label
         }
-        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
-        .navigationBarTitleDisplayMode(.inline)
-    }
+
+    let stackView = UIStackView(arrangedSubviews: labels)
+    stackView.axis = .vertical
+    stackView.spacing = 8
+    stackView.distribution = .equalSpacing
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+
+    let viewController = UIViewController()
+    viewController.navigationItem.title = "WireTextStyle -> SwiftUI.Font"
+    viewController.navigationItem.largeTitleDisplayMode = .never
+    viewController.view.backgroundColor = .systemBackground
+    viewController.view.addSubview(stackView)
+    NSLayoutConstraint.activate([
+        stackView.leadingAnchor.constraint(equalTo: viewController.view.safeAreaLayoutGuide.leadingAnchor),
+        stackView.topAnchor.constraint(equalToSystemSpacingBelow: viewController.view.safeAreaLayoutGuide.topAnchor, multiplier: 2),
+        viewController.view.trailingAnchor.constraint(equalTo: stackView.safeAreaLayoutGuide.trailingAnchor)
+    ])
+
+    return UINavigationController(rootViewController: viewController)
 }
 
+/*
 private struct LabelRepresentable: UIViewRepresentable {
     var textStyle: WireTextStyle
     func makeUIView(context: Context) -> UILabel { .init() }
     func updateUIView(_ label: UILabel, context: Context) {
         label.text = "\(textStyle)"
         label.font = .font(for: textStyle)
+        label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
     }
 }
+ */

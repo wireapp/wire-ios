@@ -49,10 +49,9 @@ final class WireTextStyleMappingTests: XCTestCase {
     func testFontDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
         let sut = WireTextStyleFontMappingPreview()
-            .frame(width: screenBounds.width * 2/3, height: screenBounds.height * 2/3)
+            .frame(width: screenBounds.width, height: screenBounds.height * 1.5)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
-            guard !dynamicTypeSize.isAccessibilitySize else { continue }
             snapshotHelper
                 .verify(
                     matching: sut.dynamicTypeSize(dynamicTypeSize),
@@ -63,26 +62,21 @@ final class WireTextStyleMappingTests: XCTestCase {
 
     @available(iOS 16, *) @MainActor
     func testUIFontDarkUserInterfaceStyle() {
-        let screenBounds = UIScreen.main.bounds
         let sut = WireTextStyleUIFontMappingPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
                 .verify(matching: sut)
     }
 
-    @available(iOS 16, *) @MainActor
-    func testUIFontDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
+    @available(iOS 17, *) @MainActor
+    func testUIFontContentSizeCategories() {
         let sut = WireTextStyleUIFontMappingPreview()
-            .frame(width: screenBounds.width * 2/3, height: screenBounds.height * 2/3)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            guard !dynamicTypeSize.isAccessibilitySize else { continue }
+        for contentSizeCategory in UIContentSizeCategory.allCases {
+            sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
             snapshotHelper
                 .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
+                    matching: sut,
+                    named: "\(contentSizeCategory)"
                 )
         }
     }

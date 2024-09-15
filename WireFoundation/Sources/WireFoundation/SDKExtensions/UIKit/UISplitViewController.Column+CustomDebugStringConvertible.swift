@@ -18,19 +18,37 @@
 
 import UIKit
 
-extension UISplitViewController.Column: CustomDebugStringConvertible {
+extension UIContentSizeCategory: @retroactive CustomDebugStringConvertible {
 
     public var debugDescription: String {
         switch self {
-        case .primary:
-            "primary"
-        case .supplementary:
-            "supplementary"
-        case .secondary:
-            "secondary"
-        case .compact:
-            "compact"
-        @unknown default:
+        case .unspecified:
+            "unspecified"
+        case .extraSmall:
+            "extraSmall"
+        case .small:
+            "small"
+        case .medium:
+            "medium"
+        case .large:
+            "large"
+        case .extraLarge:
+            "extraLarge"
+        case .extraExtraLarge:
+            "extraExtraLarge"
+        case .extraExtraExtraLarge:
+            "extraExtraExtraLarge"
+        case .accessibilityMedium:
+            "accessibilityMedium"
+        case .accessibilityLarge:
+            "accessibilityLarge"
+        case .accessibilityExtraLarge:
+            "accessibilityExtraLarge"
+        case .accessibilityExtraExtraLarge:
+            "accessibilityExtraExtraLarge"
+        case .accessibilityExtraExtraExtraLarge:
+            "accessibilityExtraExtraExtraLarge"
+        default:
             "unknown"
         }
     }
