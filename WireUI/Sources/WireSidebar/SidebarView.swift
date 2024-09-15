@@ -20,11 +20,12 @@ import SwiftUI
 import WireFoundation
 
 // TODO: remove commented code
-private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
-private let defaultBackgroundColor: UIColor = .init(white: 0.8, alpha: 1) // ColorTheme.Backgrounds.backgroundVariant
+// private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
 
 // TODO: snapshot tests
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
+
+    @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var conversationFilter: SidebarConversationFilter?
@@ -42,7 +43,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         ZStack {
             // background color
             Rectangle()
-                .foregroundStyle(Color(sidebarBackgroundColor))
+                .foregroundStyle(sidebarBackgroundColor)
                 .ignoresSafeArea()
 
             // content
@@ -171,6 +172,33 @@ private extension SidebarConversationFilter? {
     }
 }
 
+// MARK: - View Modifiers + Environment
+
+extension View {
+    func sidebarBackgroundColor(_ sidebarBackgroundColor: Color) -> some View {
+        modifier(SidebarBackgroundColorViewModifier(sidebarBackgroundColor: sidebarBackgroundColor))
+    }
+}
+
+private extension EnvironmentValues {
+    var sidebarBackgroundColor: Color {
+        get { self[SidebarBackgroundColorKey.self] }
+        set { self[SidebarBackgroundColorKey.self] = newValue }
+    }
+}
+
+struct SidebarBackgroundColorViewModifier: ViewModifier {
+    var sidebarBackgroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarBackgroundColor, sidebarBackgroundColor)
+    }
+}
+
+private struct SidebarBackgroundColorKey: EnvironmentKey {
+    static let defaultValue = Color.secondary.opacity(0.9)
+}
+
 // MARK: - Previews
 
 @available(iOS 17, *)
@@ -229,7 +257,7 @@ private final class EmptyViewController: UIHostingController<AnyView> {
                     .foregroundStyle(Color(sidebarBackgroundColor))
                     .frame(height: 22)
                 Rectangle()
-                    .foregroundStyle(Color(defaultBackgroundColor))
+                    .foregroundStyle(Color.secondary.opacity(0.8))
             }.ignoresSafeArea()
         }
     }
@@ -240,5 +268,3 @@ private final class HintViewController: UIHostingController<Text> {
         self.init(rootView: Text(verbatim: hint).font(.title2))
     }
 }
-
-// TODO: snapshot tests

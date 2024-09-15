@@ -155,7 +155,7 @@ struct SidebarMenuItemLinkIconForegroundColorViewModifier: ViewModifier {
 }
 
 private struct SidebarMenuItemLinkIconForegroundColorKey: EnvironmentKey {
-    static let defaultValue = Color.primary
+    static let defaultValue = Color.primary.opacity(0.6)
 }
 
 struct SidebarMenuItemIsPressedForegroundColorViewModifier: ViewModifier {
@@ -167,7 +167,7 @@ struct SidebarMenuItemIsPressedForegroundColorViewModifier: ViewModifier {
 }
 
 private struct SidebarMenuItemIsPressedForegroundColorKey: EnvironmentKey {
-    static let defaultValue = Color.primary
+    static let defaultValue = Color.blue
 }
 
 // MARK: - Previews
