@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import WireTestingPackage
 import XCTest
+import SwiftUICore
 
-@testable import WireSidebar
+@testable import WireDesign
 
-final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
+final class WireTextStyleMappingTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,31 +35,48 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor
-    func testColorSchemeVariants() {
+    @available(iOS 16, *) @MainActor
+    func testFontDarkUserInterfaceStyle() {
         let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
+        let sut = WireTextStyleFontMappingPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
-
-        snapshotHelper
-                .withUserInterfaceStyle(.light)
-                .verify(matching: sut, named: "light")
             snapshotHelper
                 .withUserInterfaceStyle(.dark)
-                .verify(matching: sut, named: "dark")
+                .verify(matching: sut)
     }
 
-    @MainActor
-    func testDynamicTypeVariants() {
+    @available(iOS 16, *) @MainActor
+    func testFontDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
-            .frame(width: screenBounds.width * 2/3, height: screenBounds.height * 2/3)
+        let sut = WireTextStyleFontMappingPreview()
+            .frame(width: screenBounds.width, height: screenBounds.height * 1.5)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
                 .verify(
                     matching: sut.dynamicTypeSize(dynamicTypeSize),
                     named: "\(dynamicTypeSize)"
+                )
+        }
+    }
+
+    @available(iOS 16, *) @MainActor
+    func testUIFontDarkUserInterfaceStyle() {
+        let sut = WireTextStyleUIFontMappingPreview()
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: sut)
+    }
+
+    @available(iOS 17, *) @MainActor
+    func testUIFontContentSizeCategories() {
+        let sut = WireTextStyleUIFontMappingPreview()
+        for contentSizeCategory in UIContentSizeCategory.allCases {
+            sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
+            snapshotHelper
+                .verify(
+                    matching: sut,
+                    named: "\(contentSizeCategory)"
                 )
         }
     }

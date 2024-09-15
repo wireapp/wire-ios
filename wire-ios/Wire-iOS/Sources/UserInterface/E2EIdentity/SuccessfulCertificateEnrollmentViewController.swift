@@ -19,7 +19,6 @@
 import SwiftUI
 import WireDesign
 import WireSyncEngine
-import WireFoundation
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
 
