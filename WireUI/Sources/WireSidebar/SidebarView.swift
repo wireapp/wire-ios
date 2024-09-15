@@ -204,13 +204,11 @@ private struct SidebarBackgroundColorKey: EnvironmentKey {
 
 @available(iOS 17, *)
 #Preview {
-    {
-        if UIViewController().traitCollection.userInterfaceIdiom != .pad {
-            HintViewController("For previewing please switch to iPad (iOS 17+)!")
-        } else {
-            SidebarPreview()
-        }
-    }()
+    if UIViewController().traitCollection.userInterfaceIdiom != .pad {
+        HintViewController("For previewing please switch to iPad (iOS 17+)!")
+    } else {
+        SidebarPreview()
+    }
 }
 
 @MainActor
