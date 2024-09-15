@@ -100,7 +100,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         }
     }
 
-    @ViewBuilder
+    @ViewBuilder @MainActor
     private var menuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("sidebar.conversation_filter.title", bundle: .module)
