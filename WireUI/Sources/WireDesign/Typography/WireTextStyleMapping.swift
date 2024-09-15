@@ -95,16 +95,3 @@ func WireTextStyleUIFontMappingPreview() -> UIViewController {
 
     return UINavigationController(rootViewController: viewController)
 }
-
-/*
-private struct LabelRepresentable: UIViewRepresentable {
-    var textStyle: WireTextStyle
-    func makeUIView(context: Context) -> UILabel { .init() }
-    func updateUIView(_ label: UILabel, context: Context) {
-        label.text = "\(textStyle)"
-        label.font = .font(for: textStyle)
-        label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center
-    }
-}
- */
