@@ -53,8 +53,8 @@ private struct UserTypeAdapter<User>: GetAccountImageUseCaseUserProtocol where U
     private(set) var user: User
     var membership: TeamMembershipAdapter? {
         get async {
-            if let user = user as? (NSManagedObject & UserType), let context = user.managedObjectContext {
-                await context.perform {
+            if let user = user as? (NSManagedObject & UserType) {
+                await user.managedObjectContext.perform {
                     user.membership.map(TeamMembershipAdapter.init(teamMembership:))
                 }
             } else {
@@ -68,11 +68,7 @@ private struct TeamMembershipAdapter: GetAccountImageUseCaseTeamMembershipProtoc
     private(set) var teamMembership: TeamMembership
     var team: TeamAdapter? {
         get async {
-            if let context = teamMembership.managedObjectContext {
-                await context.perform {
-                    teamMembership.team.map(TeamAdapter.init(team:))
-                }
-            } else {
+            await teamMembership.managedObjectContext.perform {
                 teamMembership.team.map(TeamAdapter.init(team:))
             }
         }
@@ -85,11 +81,7 @@ private struct TeamAdapter: GetAccountImageUseCaseTeamProtocol {
 
     var name: String? {
         get async {
-            if let context = team.managedObjectContext {
-                await context.perform {
-                    team.name
-                }
-            } else {
+            await team.managedObjectContext.perform {
                 team.name
             }
         }
@@ -97,11 +89,7 @@ private struct TeamAdapter: GetAccountImageUseCaseTeamProtocol {
 
     var teamImageSource: AccountImageSource? {
         get async {
-            if let context = team.managedObjectContext {
-                await context.perform {
-                    .init(team.teamImageViewContent)
-                }
-            } else {
+            await team.managedObjectContext.perform {
                 .init(team.teamImageViewContent)
             }
         }
@@ -124,6 +112,28 @@ private extension AccountImageSource {
             self = .data(data)
         case .teamName(let initials):
             self = .text(initials: initials)
+        }
+    }
+}
+
+// MARK: - Helper
+
+// A little helper to make the code above compacter.
+fileprivate extension Optional where Wrapped == NSManagedObjectContext {
+
+    /// If the `managedObjectContext` is non-nil, the provided closure will be wrapped in a call to `.perform`.
+    /// Otherwise the closure will be executed synchronously.
+    func perform<T>(
+        _ schedule: NSManagedObjectContext.ScheduledTaskType = .immediate,
+        _ block: @escaping () throws -> T
+    ) async rethrows -> T {
+
+        if let self {
+            try await self.perform(schedule: schedule) {
+                try block()
+            }
+        } else {
+            try block()
         }
     }
 }
