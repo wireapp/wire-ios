@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+public protocol SidebarViewControllerDelegate: AnyObject {
 
-final class PlaceholderTests: XCTestCase {
-
-    func testNothing() {}
+    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?)
+    func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController)
+    func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController)
+    func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController)
 }

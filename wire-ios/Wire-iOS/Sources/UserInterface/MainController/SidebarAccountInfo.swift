@@ -16,21 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Text styles defined in Wire's design system.
+import UIKit
+import WireDataModel
+import WireSidebar
 
-public enum WireTextStyle {
+extension SidebarAccountInfo {
 
-    case largeTitle
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case buttonSmall
-    case buttonBig
-
+    init(_ user: some UserType, _ accountImage: UIImage) {
+        self.init(
+            displayName: user.name ?? "",
+            username: user.handle ?? "",
+            accountImage: accountImage,
+            availability: user.availability.map()
+        )
+    }
 }
