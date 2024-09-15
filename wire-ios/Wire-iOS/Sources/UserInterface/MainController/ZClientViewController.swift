@@ -21,9 +21,9 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSidebar
 import WireSyncEngine
 import WireUIFoundation
-import WireSidebar
 
 final class ZClientViewController: UIViewController {
 
