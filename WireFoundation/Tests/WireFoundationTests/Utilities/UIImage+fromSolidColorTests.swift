@@ -18,10 +18,11 @@
 
 import WireTestingPackage
 import XCTest
+import SwiftUI
 
 @testable import WireFoundation
 
-final class Font_WireTextStyleTests: XCTestCase {
+final class UIImage_fromSolidColorTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -34,19 +35,33 @@ final class Font_WireTextStyleTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor
-    func testWireTextStyleMappingPreview() {
-        guard #available(iOS 16, *) else { return XCTFail() }
+    func testImagesMatch() {
 
-        let screenBounds = UIScreen.main.bounds
-        let sut = WireTextStyleMappingPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
-
+        let testColors: [(String, UIColor)] = [
+("black", .black),
+("darkGray", .darkGray),
+("lightGray", .lightGray),
+("white", .white),
+("gray", .gray),
+("red", .red),
+("green", .green),
+("blue", .blue),
+("cyan", .cyan),
+("yellow", .yellow),
+("magenta", .magenta),
+("orange", .orange),
+("purple", .purple),
+("brown", .brown),
+("clear", .clear)
+        ]
+        for (name, color) in testColors {
+            let sut = UIImage.from(solidColor: color)
+            XCTAssertEqual(sut.size.width, 1)
+            XCTAssertEqual(sut.size.height, 1)
+            let image = Image(uiImage: sut)
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
+            .verify(matching: image, named: name)
+        }
     }
 }
