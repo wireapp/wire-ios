@@ -54,7 +54,11 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    let mainTabBarController = MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>()
+    let mainTabBarController = {
+        let tabBarController = MainTabBarController()
+        tabBarController.applyMainTabBarControllerAppearance()
+        return tabBarController
+    }()
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -881,11 +885,12 @@ extension ZClientViewController: UISplitViewControllerDelegate {
     }
 }
 
+// TODO: can this be removed?
 private struct ContainerViewControllers {
 
     var supplementaryColumn: UINavigationController
     var secondaryColumn: UINavigationController
-    var compactColumn: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>
+    var compactColumn: MainTabBarController
 
     init(of splitViewController: UISplitViewController) {
 
