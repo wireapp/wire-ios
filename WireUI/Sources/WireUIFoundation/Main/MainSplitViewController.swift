@@ -92,6 +92,17 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
+
+    public override func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        // default to showing sidebar in landscape
+        if size.width > size.height {
+            preferredDisplayMode = .twoBesideSecondary
+        } else {
+            preferredDisplayMode = .oneBesideSecondary
+        }
+    }
 }
 
 // MARK: - Previews
