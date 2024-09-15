@@ -57,6 +57,7 @@ extension WireSidebar.SidebarAccountInfo.Availability {
 
     func map() -> WireAccountImage.Availability {
         switch self {
+        case .none: .none
         case .available: .available
         case .busy: .busy
         case .away: .away

@@ -28,5 +28,4 @@ final class OpenServicesAdminCell: StartUIIconCell {
         accessibilityLabel = title
         accessibilityIdentifier = "button.searchui.open-services"
     }
-
 }
