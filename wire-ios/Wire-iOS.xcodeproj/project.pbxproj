@@ -405,9 +405,8 @@
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */; };
-		59E506F22C971DD6004214AC /* SidebarAccountInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E506F12C971DD6004214AC /* SidebarAccountInfo.swift */; };
+		59E506F22C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E506F12C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */; };
 		59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */; };
-		59FFAD9B2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFAD9A2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
 		5E001FD3229BD2F600F22CDD /* TargetConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FC8229BD2F200F22CDD /* TargetConversationCell.swift */; };
 		5E028DEE21F9C34D00E5512A /* AuthenticationNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E028DED21F9C34D00E5512A /* AuthenticationNavigationBar.swift */; };
@@ -2408,9 +2407,8 @@
 		59D8A62B2B7A73B2008236FF /* ShapeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeView.swift; sourceTree = "<group>"; };
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewBuilder.swift; sourceTree = "<group>"; };
-		59E506F12C971DD6004214AC /* SidebarAccountInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarAccountInfo.swift; sourceTree = "<group>"; };
+		59E506F12C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarAccountInfo+initWithUserSessionAndAccount.swift"; sourceTree = "<group>"; };
 		59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerBuilder.swift; sourceTree = "<group>"; };
-		59FFAD9A2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SidebarAccountInfo+initWithUserSessionAndAccount.swift"; sourceTree = "<group>"; };
 		5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStateAccessoryView.swift; sourceTree = "<group>"; };
 		5E001FC8229BD2F200F22CDD /* TargetConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetConversationCell.swift; sourceTree = "<group>"; };
 		5E028DED21F9C34D00E5512A /* AuthenticationNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationNavigationBar.swift; sourceTree = "<group>"; };
@@ -6761,9 +6759,8 @@
 		8FC851E3199245760008B66B /* MainController */ = {
 			isa = PBXGroup;
 			children = (
-				59E506F12C971DD6004214AC /* SidebarAccountInfo.swift */,
+				59E506F12C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				597C918D2C81CADA00054B4E /* NoConversationPlaceholderViewController.swift */,
-				59FFAD9A2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift */,
 				59797A452C6F98880044882D /* ZClientControllerBuilder.swift */,
 				877798AB205A8EF500898A5E /* ZClientViewController.swift */,
 				1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */,
@@ -6771,7 +6768,6 @@
 				0619FBBA258A1DF700A0F3E2 /* ZClientViewController+FeatureChange.swift */,
 				EFF9404722414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift */,
 				1687C0FB2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift */,
-				EF2C246E22AFA76C009389C6 /* ZClientViewController+UserObserving.swift */,
 			);
 			path = MainController;
 			sourceTree = "<group>";
@@ -9208,7 +9204,7 @@
 				59D53E452C74ADBF007EB3EF /* LaunchScreenViewController.swift in Sources */,
 				A9806A3E23E41EF400691DFE /* Token.swift in Sources */,
 				A978D993236C587B00B568AE /* ZMUserSession+Shared.swift in Sources */,
-				59E506F22C971DD6004214AC /* SidebarAccountInfo.swift in Sources */,
+				59E506F22C971DD6004214AC /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */,
 				6328BBB12C2F03E8007A3288 /* ShareableDebugReport.swift in Sources */,
 				E9929EF72BCEC6FB00C40274 /* AppLocationManager.swift in Sources */,
 				5E8DA75A211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift in Sources */,
@@ -9284,7 +9280,6 @@
 				E90BE8EE2BF3A33C00002506 /* ListBackgroundStyleModifier.swift in Sources */,
 				EF883F292151190900B440CC /* UserCellSubtitleProtocol.swift in Sources */,
 				EFDC36DB2257A8F300F916F3 /* CollectionViewContainerCell.swift in Sources */,
-				59FFAD9B2C822844000C8085 /* SidebarAccountInfo+initWithUserSessionAndAccount.swift in Sources */,
 				A98CF97425A47295008818D8 /* ConversationProtocol.swift in Sources */,
 				D518947B20504C6A00C095C1 /* LoadingIndicatorCell.swift in Sources */,
 				599EA3C82C2426DA009319D4 /* ConversationListViewController+UISearchResultsUpdating.swift in Sources */,
