@@ -19,28 +19,40 @@
 import SwiftUI
 
 // TODO: make stylable and remove commented code
-private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
-private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
-private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
-
-private let backgroundCornerRadius: CGFloat = 12
+//private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
+//private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
+//private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
 
 struct SidebarMenuItem: View {
+
+    // MARK: - Constants
+
+    private let backgroundCornerRadius: CGFloat = 12
+
+    // MARK: - Properties
 
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
+    @Environment(\.sidebarMenuItemTitleForegroundColor) private var titleForegroundColor
+     @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
+     @Environment(\.sidebarMenuItemIsPressedForegroundColor) private var isPressedForegroundColor
+
     /// The `systemName` which is passed into `SwiftUI.Image`.
-    /// If `isHighlighted` is `true`, ".fill" will be appended to the icon name.
     private(set) var icon: String
     private(set) var iconSize: CGSize?
+
     /// If `true` an icon will be shown at the trailing side of the title.
     private(set) var isLink = false
+
     /// Displays a highlighted/selection state.
+    /// If `true`, ".fill" will be appended to the value of the `icon` property.
     private(set) var isHighlighted = false
 
     private(set) var title: () -> Text
     private(set) var action: () -> Void
+
+    // MARK: -
 
     var body: some View {
         let accentColor = wireAccentColorMapping.uiColor(for: wireAccentColor)
@@ -48,11 +60,11 @@ struct SidebarMenuItem: View {
             HStack {
                 Label {
                     title()
-                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : titleForegroundColor))
+                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : titleForegroundColor)
                 } icon: {
                     let iconSystemNameSuffix = isHighlighted ? ".fill" : ""
                     let icon = Image(systemName: icon + iconSystemNameSuffix)
-                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : accentColor))
+                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : Color(accentColor))
                         .background(GeometryReader { geometryProxy in
                             Color.clear.preference(key: SidebarMenuItemMinIconSizeKey.self, value: geometryProxy.size)
                         })
@@ -67,7 +79,7 @@ struct SidebarMenuItem: View {
 
                 if isLink {
                     Image(systemName: "arrow.up.forward.square")
-                        .foregroundStyle(Color(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor))
+                        .foregroundStyle(isHighlighted ? isPressedForegroundColor : linkIconForegroundColor)
                 }
             }
             .contentShape(RoundedRectangle(cornerRadius: backgroundCornerRadius))
@@ -87,6 +99,72 @@ struct SidebarMenuItemMinIconSizeKey: PreferenceKey {
         value.width = max(value.width, nextValue().width)
         value.height = max(value.height, nextValue().height)
     }
+}
+
+// MARK: - View Modifiers + Environment
+
+extension View {
+    func sidebarMenuItemTitleForegroundColor(_ titleForegroundColor: Color) -> some View {
+        modifier(SidebarMenuItemTitleForegroundColorViewModifier(titleForegroundColor: titleForegroundColor))
+    }
+
+    func sidebarMenuItemLinkIconForegroundColor(_ linkIconForegroundColor: Color) -> some View {
+        modifier(SidebarMenuItemLinkIconForegroundColorViewModifier(linkIconForegroundColor: linkIconForegroundColor))
+    }
+
+    func sidebarMenuItemIsPressedForegroundColor(_ isPressedForegroundColor: Color) -> some View {
+        modifier(SidebarMenuItemIsPressedForegroundColorViewModifier(isPressedForegroundColor: isPressedForegroundColor))
+    }
+}
+
+private extension EnvironmentValues {
+    var sidebarMenuItemTitleForegroundColor: Color {
+        get { self[SidebarMenuItemTitleForegroundColorKey.self] }
+        set { self[SidebarMenuItemTitleForegroundColorKey.self] = newValue }
+    }
+
+    var sidebarMenuItemLinkIconForegroundColor: Color {
+        get { self[SidebarMenuItemLinkIconForegroundColorKey.self] }
+        set { self[SidebarMenuItemLinkIconForegroundColorKey.self] = newValue }
+    }
+
+    var sidebarMenuItemIsPressedForegroundColor: Color {
+        get { self[SidebarMenuItemIsPressedForegroundColorKey.self] }
+        set { self[SidebarMenuItemIsPressedForegroundColorKey.self] = newValue }
+    }
+}
+
+struct SidebarMenuItemTitleForegroundColorViewModifier: ViewModifier {
+    var titleForegroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarMenuItemTitleForegroundColor, titleForegroundColor)
+    }
+}
+private struct SidebarMenuItemTitleForegroundColorKey: EnvironmentKey {
+    static let defaultValue = Color.primary
+}
+
+struct SidebarMenuItemLinkIconForegroundColorViewModifier: ViewModifier {
+    var linkIconForegroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarMenuItemLinkIconForegroundColor, linkIconForegroundColor)
+    }
+}
+private struct SidebarMenuItemLinkIconForegroundColorKey: EnvironmentKey {
+    static let defaultValue = Color.primary
+}
+
+struct SidebarMenuItemIsPressedForegroundColorViewModifier: ViewModifier {
+    var isPressedForegroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarMenuItemIsPressedForegroundColor, isPressedForegroundColor)
+    }
+}
+private struct SidebarMenuItemIsPressedForegroundColorKey: EnvironmentKey {
+    static let defaultValue = Color.primary
 }
 
 // MARK: - Previews
