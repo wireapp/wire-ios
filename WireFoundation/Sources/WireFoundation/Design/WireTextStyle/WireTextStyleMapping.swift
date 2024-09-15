@@ -18,40 +18,60 @@
 
 import SwiftUI
 
-// TODO: check if WireTextStyle->UIFont and WireTextStyle->Font are both needed, what about CTFont?
 public final class WireTextStyleMapping: ObservableObject, Sendable {
 
-    // public typealias UIFontMapping = @Sendable (WireTextStyle) -> UIFont
+    public typealias UIFontMapping = @Sendable (WireTextStyle) -> UIFont
     public typealias FontMapping = @Sendable (WireTextStyle) -> Font
 
-    // let uiFontMapping: UIFontMapping
+    let uiFontMapping: UIFontMapping
     let fontMapping: FontMapping
 
-    //public convenience init(uiFontMapping: @escaping UIFontMapping) {
-    //    self.init(uiFontMapping: uiFontMapping) { uiFont in
-    //        Font(uiFontMapping(uiFont))
-    //    }
-    //}
-
     public init(
-        // uiFontMapping: @escaping UIFontMapping,
+        uiFontMapping: @escaping UIFontMapping,
         fontMapping: @escaping FontMapping
     ) {
-        // self.uiFontMapping = uiFontMapping
+        self.uiFontMapping = uiFontMapping
         self.fontMapping = fontMapping
     }
 
-    // public func uiFont(for textStyle: WireTextStyle) -> UIFont {
-    //     uiFontMapping(textStyle)
-    // }
+     public func uiFont(for textStyle: WireTextStyle) -> UIFont {
+         uiFontMapping(textStyle)
+     }
 
-    public func color(for textStyle: WireTextStyle) -> Font {
+    public func font(for textStyle: WireTextStyle) -> Font {
         fontMapping(textStyle)
     }
 }
 
 private struct WireTextStyleMappingKey: EnvironmentKey {
     static let defaultValue = WireTextStyleMapping { textStyle in
+        switch textStyle {
+        case .largeTitle:
+                .init()
+        case .h1:
+                .init()
+        case .h2:
+                .init()
+        case .h3:
+                .init()
+        case .h4:
+                .init()
+        case .h5:
+                .init()
+        case .body1:
+                .init()
+        case .body2:
+                .init()
+        case .body3:
+                .init()
+        case .subline1:
+                .init()
+        case .buttonSmall:
+                .init()
+        case .buttonBig:
+                .init()
+        }
+    } fontMapping: { textStyle in
         switch textStyle {
         case .largeTitle:
                 .largeTitle

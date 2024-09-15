@@ -23,70 +23,73 @@ public extension WireTextStyleMapping {
 
     convenience init() {
         self.init { textStyle in
-                .textStyle(textStyle)
-        }
-    }
-}
-
-public extension Font {
-
-    /// Creates a font from the given text style.
-    ///
-    /// - Parameter textStyle: The text style to use to create the Font.
-    /// - Returns: Font that uses the style you specify.
-
-    static func textStyle(_ textStyle: WireTextStyle) -> Font {
-        switch textStyle {
-        case .largeTitle:
-            .largeTitle
-        case .h1:
-            .title3
-        case .h2:
-            .title3.bold()
-        case .h3:
-            .headline
-        case .h4:
-            .subheadline
-        case .h5:
-            .footnote
-        case .body1:
-            .body
-        case .body2:
-            .callout.weight(.semibold)
-        case .body3:
-            .callout.bold()
-        case .subline1:
-            .caption
-        case .buttonSmall:
-            fatalError("not implemented")
-        case .buttonBig:
-            .title3.weight(.semibold)
+            .font(for: textStyle)
+        } fontMapping: { textStyle in
+            .textStyle(textStyle)
         }
     }
 }
 
 @available(iOS 16, *)
-#Preview {
-    WireTextStyleMappingPreview()
+#Preview("SwiftUI.Font") {
+    WireTextStyleFontMappingPreview()
+}
+
+@available(iOS 17, *)
+#Preview("UIKit.UIFont") {
+    WireTextStyleUIFontMappingPreview()
 }
 
 @available(iOS 16, *) @ViewBuilder @MainActor
-func WireTextStyleMappingPreview() -> some View {
+func WireTextStyleFontMappingPreview() -> some View {
     NavigationStack {
-        ZStack(alignment: .center) {
             VStack {
                 ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
-                    HStack {
-                        Text("\(textStyle)")
-                            .wireTextStyle(textStyle)
-                            .wireTextStyleMapping(WireTextStyleMapping())
-                        Text("\(textStyle)")
-                            .wireTextStyle(textStyle)
+                    if textStyle != .buttonSmall {
+                        HStack {
+                            Text("\(textStyle)")
+                                .wireTextStyle(textStyle)
+                                .environment(\.wireTextStyleMapping, WireTextStyleMapping())
+                            Text("\(textStyle)")
+                                .wireTextStyle(textStyle)
+                        }
+                    } else {
+                        Text(verbatim: "buttonSmall not implemented")
                     }
                 }
-            }
         }
-        .navigationTitle(Text(verbatim: "WireTextStyle"))
+        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+@available(iOS 16, *) @ViewBuilder @MainActor
+func WireTextStyleUIFontMappingPreview() -> some View {
+    NavigationStack {
+        VStack {
+            Rectangle().foregroundStyle(Color.clear)
+                VStack {
+                    ForEach(WireTextStyle.allCases, id: \.self) { textStyle in
+                        HStack {
+                            LabelRepresentable(textStyle: textStyle, textAlignment: .right)
+                            LabelRepresentable(textStyle: textStyle)
+                        }
+                    }
+                }
+            Rectangle().foregroundStyle(Color.clear)
+        }
+        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private struct LabelRepresentable: UIViewRepresentable {
+    var textStyle: WireTextStyle
+    var textAlignment = NSTextAlignment.left
+    func makeUIView(context: Context) -> UILabel { .init() }
+    func updateUIView(_ label: UILabel, context: Context) {
+        label.text = "\(textStyle)"
+        label.font = .font(for: textStyle)
+        label.textAlignment = textAlignment
     }
 }

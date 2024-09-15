@@ -18,19 +18,45 @@
 
 import SwiftUI
 
-private struct WireTextStyleKey: EnvironmentKey {
-    static let defaultValue: WireTextStyle? = .none
-}
+// TODO: remove commented code
+//private struct WireTextStyleKey: EnvironmentKey {
+//    static let defaultValue: WireTextStyle? = .none
+//}
+//
+//private extension EnvironmentValues {
+//    var wireTextStyle: WireTextStyle? {
+//        get { self[WireTextStyleKey.self] }
+//        set { self[WireTextStyleKey.self] = newValue }
+//    }
+//}
+//
+//public extension View {
+//    func wireTextStyle(_ textStyle: WireTextStyle?) -> some View {
+//        environment(\.wireTextStyle, textStyle)
+//    }
+//}
 
-public extension EnvironmentValues {
-    var wireTextStyle: WireTextStyle? {
-        get { self[WireTextStyleKey.self] }
-        set { self[WireTextStyleKey.self] = newValue }
+/// Used for getting the text style mapping from the environment.
+private struct WireTextStyleView<Content: View>: View {
+
+    @Environment(\.wireTextStyleMapping) private var wireTextStyleMapping
+
+    let textStyle: WireTextStyle?
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        let font = textStyle.map { textStyle in
+                wireTextStyleMapping.font(for: textStyle)
+            }
+        content()
+            .font(font)
     }
 }
 
 public extension View {
     func wireTextStyle(_ textStyle: WireTextStyle?) -> some View {
-        environment(\.wireTextStyle, textStyle)
+        WireTextStyleView(textStyle: textStyle) {
+            self
+        }
     }
 }
