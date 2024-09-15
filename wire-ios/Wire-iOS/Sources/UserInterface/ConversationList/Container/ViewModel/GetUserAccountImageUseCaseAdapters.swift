@@ -128,8 +128,8 @@ fileprivate extension Optional where Wrapped == NSManagedObjectContext {
         _ block: @escaping () throws -> T
     ) async rethrows -> T {
 
-        if let context = self {
-            try await context.perform(schedule: schedule) {
+        if let self {
+            try await self.perform(schedule: schedule) {
                 try block()
             }
         } else {
