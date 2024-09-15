@@ -27,7 +27,7 @@ let package = Package(
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
 
-        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]), // TODO: can WireDesign be removed?
+        .target(name: "WireUIFoundation"),
         .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
