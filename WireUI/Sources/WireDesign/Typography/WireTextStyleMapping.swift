@@ -58,14 +58,13 @@ func WireTextStyleFontMappingPreview() -> some View {
                 .padding(.top)
             }
         }
-            .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
+        .navigationTitle(Text(verbatim: "WireTextStyle -> SwiftUI.Font"))
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 @MainActor
 func WireTextStyleUIFontMappingPreview() -> UIViewController {
-
     let labels = WireTextStyle.allCases
         .map { textStyle in
             let label = UILabel()

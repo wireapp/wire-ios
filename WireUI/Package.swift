@@ -24,16 +24,16 @@ let package = Package(
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage]),
 
-            .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
+        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
 
-            .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
+        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
         .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage]),
 
-            .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
+        .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
 
-            .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
+        .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage])
     ]
 )

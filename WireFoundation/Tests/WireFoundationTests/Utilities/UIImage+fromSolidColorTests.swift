@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
 import WireTestingPackage
 import XCTest
+import SwiftUI
 
-@testable import WireSidebar
+@testable import WireFoundation
 
-final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
+final class UIImage_fromSolidColorTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,32 +35,33 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
         snapshotHelper = nil
     }
 
-    @MainActor
-    func testColorSchemeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
-            .frame(width: screenBounds.width, height: screenBounds.height)
+    func testImagesMatch() {
 
+        let testColors: [(String, UIColor)] = [
+("black", .black),
+("darkGray", .darkGray),
+("lightGray", .lightGray),
+("white", .white),
+("gray", .gray),
+("red", .red),
+("green", .green),
+("blue", .blue),
+("cyan", .cyan),
+("yellow", .yellow),
+("magenta", .magenta),
+("orange", .orange),
+("purple", .purple),
+("brown", .brown),
+("clear", .clear)
+        ]
+        for (name, color) in testColors {
+            let sut = UIImage.from(solidColor: color)
+            XCTAssertEqual(sut.size.width, 1)
+            XCTAssertEqual(sut.size.height, 1)
+            let image = Image(uiImage: sut)
         snapshotHelper
             .withUserInterfaceStyle(.light)
-            .verify(matching: sut, named: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark")
-    }
-
-    @MainActor
-    func testDynamicTypeVariants() {
-        let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
-            .frame(width: screenBounds.width * 2 / 3, height: screenBounds.height * 2 / 3)
-
-        for dynamicTypeSize in DynamicTypeSize.allCases {
-            snapshotHelper
-                .verify(
-                    matching: sut.dynamicTypeSize(dynamicTypeSize),
-                    named: "\(dynamicTypeSize)"
-                )
+            .verify(matching: image, named: name)
         }
     }
 }

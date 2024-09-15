@@ -25,17 +25,17 @@ public extension WireAccentColorMapping {
         self.init { wireAccentColor in
             switch wireAccentColor {
             case .blue:
-                    .init(light: .blue500Light, dark: .blue500Dark)
+                .init(light: .blue500Light, dark: .blue500Dark)
             case .green:
-                    .init(light: .green500Light, dark: .green500Dark)
+                .init(light: .green500Light, dark: .green500Dark)
             case .red:
-                    .init(light: .red500Light, dark: .red500Dark)
+                .init(light: .red500Light, dark: .red500Dark)
             case .amber:
-                    .init(light: .amber500Light, dark: .amber500Dark)
+                .init(light: .amber500Light, dark: .amber500Dark)
             case .turquoise:
-                    .init(light: .turquoise500Light, dark: .turquoise500Dark)
+                .init(light: .turquoise500Light, dark: .turquoise500Dark)
             case .purple:
-                    .init(light: .purple500Light, dark: .purple500Dark)
+                .init(light: .purple500Light, dark: .purple500Dark)
             }
         }
     }
@@ -61,7 +61,7 @@ private extension UIColor {
 func WireAccentColorMappingPreview() -> some View {
     NavigationStack {
         VStack {
-            ForEach (WireAccentColor.allCases, id: \.self) { accentColor in
+            ForEach(WireAccentColor.allCases, id: \.self) { accentColor in
                 MappingTestView()
                     .wireAccentColor(accentColor)
                 if accentColor != WireAccentColor.allCases.last {

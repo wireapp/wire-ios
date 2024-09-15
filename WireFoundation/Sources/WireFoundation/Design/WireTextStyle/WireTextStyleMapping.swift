@@ -34,9 +34,9 @@ public final class WireTextStyleMapping: ObservableObject, Sendable {
         self.fontMapping = fontMapping
     }
 
-     public func uiFont(for textStyle: WireTextStyle) -> UIFont {
-         uiFontMapping(textStyle)
-     }
+    public func uiFont(for textStyle: WireTextStyle) -> UIFont {
+        uiFontMapping(textStyle)
+    }
 
     public func font(for textStyle: WireTextStyle) -> Font {
         fontMapping(textStyle)

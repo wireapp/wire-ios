@@ -20,11 +20,12 @@ import SwiftUI
 import WireFoundation
 
 // TODO: remove commented code
-private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
-private let defaultBackgroundColor: UIColor = .init(white: 0.8, alpha: 1) // ColorTheme.Backgrounds.backgroundVariant
+// private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
 
 // TODO: snapshot tests
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
+
+    @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var conversationFilter: SidebarConversationFilter?
@@ -42,7 +43,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         ZStack {
             // background color
             Rectangle()
-                .foregroundStyle(Color(sidebarBackgroundColor))
+                .foregroundStyle(sidebarBackgroundColor)
                 .ignoresSafeArea()
 
             // content
@@ -77,6 +78,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical)
         }
+        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onPreferenceChange(SidebarMenuItemMinIconSizeKey.self) { newIconSize in
             guard var iconSize else { return iconSize = newIconSize }
             iconSize.width = max(iconSize.width, newIconSize.width)
@@ -171,20 +173,49 @@ private extension SidebarConversationFilter? {
     }
 }
 
+// MARK: - View Modifiers + Environment
+
+extension View {
+    func sidebarBackgroundColor(_ sidebarBackgroundColor: Color) -> some View {
+        modifier(SidebarBackgroundColorViewModifier(sidebarBackgroundColor: sidebarBackgroundColor))
+    }
+}
+
+private extension EnvironmentValues {
+    var sidebarBackgroundColor: Color {
+        get { self[SidebarBackgroundColorKey.self] }
+        set { self[SidebarBackgroundColorKey.self] = newValue }
+    }
+}
+
+struct SidebarBackgroundColorViewModifier: ViewModifier {
+    var sidebarBackgroundColor: Color
+    func body(content: Content) -> some View {
+        content
+            .environment(\.sidebarBackgroundColor, sidebarBackgroundColor)
+    }
+}
+
+private struct SidebarBackgroundColorKey: EnvironmentKey {
+    static let defaultValue = Color(uiColor: .systemGray5)
+}
+
 // MARK: - Previews
 
 @available(iOS 17, *)
 #Preview {
-    SidebarPreview()
+    {
+        if UIViewController().traitCollection.userInterfaceIdiom != .pad {
+            HintViewController("For previewing please switch to iPad (iOS 17+)!")
+        } else {
+            SidebarPreview()
+        }
+    }()
 }
 
 @MainActor
 func SidebarPreview() -> UIViewController {
     let splitViewController = UISplitViewController(style: .tripleColumn)
-    if splitViewController.traitCollection.userInterfaceIdiom != .pad {
-        return HintViewController("For previewing please switch to iPad (iOS 17+)!")
-    }
-
     let sidebarViewController = SidebarViewController { accountImage, availability in
         AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
     }
@@ -198,7 +229,7 @@ func SidebarPreview() -> UIViewController {
     splitViewController.preferredDisplayMode = .twoBesideSecondary
     splitViewController.preferredPrimaryColumnWidth = 260
     splitViewController.preferredSupplementaryColumnWidth = 320
-    splitViewController.view.backgroundColor = sidebarBackgroundColor
+    splitViewController.view.backgroundColor = .init(white: 0.9, alpha: 1)
 
     return splitViewController
 }
@@ -226,10 +257,10 @@ private final class EmptyViewController: UIHostingController<AnyView> {
         var body: some View {
             VStack(spacing: 0) {
                 Rectangle()
-                    .foregroundStyle(Color(sidebarBackgroundColor))
+                    .foregroundStyle(Color(uiColor: .systemGray5))
                     .frame(height: 22)
                 Rectangle()
-                    .foregroundStyle(Color(defaultBackgroundColor))
+                    .foregroundStyle(Color(uiColor: .systemBackground))
             }.ignoresSafeArea()
         }
     }
@@ -240,5 +271,3 @@ private final class HintViewController: UIHostingController<Text> {
         self.init(rootView: Text(verbatim: hint).font(.title2))
     }
 }
-
-// TODO: snapshot tests

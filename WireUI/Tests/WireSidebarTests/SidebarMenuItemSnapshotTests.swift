@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SwiftUI
 import WireTestingPackage
+import XCTest
 
-@testable import WireFoundation
+@testable import WireSidebar
 
-final class Font_WireTextStyleTests: XCTestCase {
+final class SidebarMenuItemSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,18 +36,31 @@ final class Font_WireTextStyleTests: XCTestCase {
     }
 
     @MainActor
-    func testWireTextStyleMappingPreview() {
-        guard #available(iOS 16, *) else { return XCTFail() }
-
+    func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
-            let sut = WireTextStyleMappingPreview()
+        let sut = SidebarMenuItemPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
-                .withUserInterfaceStyle(.light)
-                .verify(matching: sut, named: "light")
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
+    }
+
+    @MainActor
+    func testDynamicTypeVariants() {
+        let screenBounds = UIScreen.main.bounds
+        let sut = SidebarMenuItemPreview()
+            .frame(width: screenBounds.width, height: screenBounds.height)
+
+        for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: sut, named: "dark")
+                .verify(
+                    matching: sut.dynamicTypeSize(dynamicTypeSize),
+                    named: "\(dynamicTypeSize)"
+                )
+        }
     }
 }
