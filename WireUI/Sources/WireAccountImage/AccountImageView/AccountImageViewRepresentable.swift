@@ -77,19 +77,19 @@ extension View {
         modifier(AccountImageViewBorderColorModifier(accountImageViewBorderColor: borderColor))
     }
 
-    func availabilityIndicatorAvailableColor(_ availableColor: UIColor) -> some View {
+    func availabilityIndicatorAvailableColor(_ availableColor: Color) -> some View {
         modifier(AvailabilityIndicatorViewAvailableColorViewModifier(availableColor: availableColor))
     }
 
-    func availabilityIndicatorAwayColor(_ awayColor: UIColor) -> some View {
+    func availabilityIndicatorAwayColor(_ awayColor: Color) -> some View {
         modifier(AvailabilityIndicatorViewAwayColorViewModifier(awayColor: awayColor))
     }
 
-    func availabilityIndicatorBusyColor(_ busyColor: UIColor) -> some View {
+    func availabilityIndicatorBusyColor(_ busyColor: Color) -> some View {
         modifier(AvailabilityIndicatorViewBusyColorViewModifier(availabilityIndicatorBusyColor: busyColor))
     }
 
-    func availabilityIndicatorBackgroundViewColor(_ backgroundViewColor: UIColor) -> some View {
+    func availabilityIndicatorBackgroundViewColor(_ backgroundViewColor: Color) -> some View {
         modifier(AvailabilityIndicatorBackgroundColorViewModifier(availabilityIndicatorBackgroundViewColor: backgroundViewColor))
     }
 }
@@ -105,22 +105,22 @@ private extension EnvironmentValues {
         set { self[AccountImageViewBorderColorKey.self] = newValue }
     }
 
-    var availabilityIndicatorAvailableColor: UIColor {
+    var availabilityIndicatorAvailableColor: Color {
         get { self[AvailableColorKey.self] }
         set { self[AvailableColorKey.self] = newValue }
     }
 
-    var availabilityIndicatorAwayColor: UIColor {
+    var availabilityIndicatorAwayColor: Color {
         get { self[AvailabilityIndicatorViewAwayColorKey.self] }
         set { self[AvailabilityIndicatorViewAwayColorKey.self] = newValue }
     }
 
-    var availabilityIndicatorBusyColor: UIColor {
+    var availabilityIndicatorBusyColor: Color {
         get { self[AvailabilityIndicatorViewBusyColorKey.self] }
         set { self[AvailabilityIndicatorViewBusyColorKey.self] = newValue }
     }
 
-    var availabilityIndicatorBackgroundViewColor: UIColor {
+    var availabilityIndicatorBackgroundViewColor: Color {
         get { self[AvailabilityIndicatorBackgroundViewColorKey.self] }
         set { self[AvailabilityIndicatorBackgroundViewColorKey.self] = newValue }
     }
@@ -150,45 +150,45 @@ private struct AccountImageViewBorderColorKey: EnvironmentKey {
 }
 
 struct AvailabilityIndicatorViewAvailableColorViewModifier: ViewModifier {
-    var availableColor: UIColor
+    var availableColor: Color
     func body(content: Content) -> some View {
         content.environment(\.availabilityIndicatorAvailableColor, availableColor)
     }
 }
 
 private struct AvailableColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.availableColor
+    static let defaultValue = Color(AvailabilityIndicatorView.Defaults.availableColor)
 }
 
 struct AvailabilityIndicatorViewAwayColorViewModifier: ViewModifier {
-    var awayColor: UIColor
+    var awayColor: Color
     func body(content: Content) -> some View {
         content.environment(\.availabilityIndicatorAwayColor, awayColor)
     }
 }
 
 private struct AvailabilityIndicatorViewAwayColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.awayColor
+    static let defaultValue = Color(AvailabilityIndicatorView.Defaults.awayColor)
 }
 
 struct AvailabilityIndicatorViewBusyColorViewModifier: ViewModifier {
-    var availabilityIndicatorBusyColor: UIColor
+    var availabilityIndicatorBusyColor: Color
     func body(content: Content) -> some View {
         content.environment(\.availabilityIndicatorBusyColor, availabilityIndicatorBusyColor)
     }
 }
 
 private struct AvailabilityIndicatorViewBusyColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.busyColor
+    static let defaultValue = Color(AvailabilityIndicatorView.Defaults.busyColor)
 }
 
 struct AvailabilityIndicatorBackgroundColorViewModifier: ViewModifier {
-    var availabilityIndicatorBackgroundViewColor: UIColor
+    var availabilityIndicatorBackgroundViewColor: Color
     func body(content: Content) -> some View {
         content.environment(\.availabilityIndicatorBackgroundViewColor, availabilityIndicatorBackgroundViewColor)
     }
 }
 
 private struct AvailabilityIndicatorBackgroundViewColorKey: EnvironmentKey {
-    static let defaultValue: UIColor = AvailabilityIndicatorView.Defaults.backgroundViewColor
+    static let defaultValue = Color(AvailabilityIndicatorView.Defaults.backgroundViewColor)
 }
