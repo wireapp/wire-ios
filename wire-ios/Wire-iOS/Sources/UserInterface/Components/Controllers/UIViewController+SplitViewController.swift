@@ -16,20 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireReusableUIComponents
+import WireSyncEngine
+import WireSidebar
 
-extension UIViewController {
-    var wr_splitViewController: SplitViewController? {
-        var possibleSplit: UIViewController? = self
+extension SidebarAccountInfo {
 
-        repeat {
-            if let splitViewController = possibleSplit as? SplitViewController {
-                return splitViewController
-            }
-
-            possibleSplit = possibleSplit?.parent
-        } while possibleSplit != nil
-
-        return nil
+    init(_ user: some UserType, _ accountImage: UIImage) {
+        self.init(
+            displayName: user.name ?? "",
+            username: user.handle ?? "",
+            accountImage: accountImage,
+            availability: user.availability.map()
+        )
     }
 }

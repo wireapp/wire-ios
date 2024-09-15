@@ -18,7 +18,7 @@
 
 import UIKit
 
-extension UISplitViewController.Column: @retroactive CustomDebugStringConvertible {
+extension UISplitViewController.Column: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         switch self {
