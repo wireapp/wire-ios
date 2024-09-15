@@ -21,20 +21,19 @@ let package = Package(
         .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
-        // WireDesign
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireDesignTests"),
-        // WireReusableUIComponents
-        .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage]),
+
+            .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
-        // WireUIFoundation
-        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
+
+            .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
         .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage]),
-        // WireAccountImage
-        .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
+
+            .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
-        // WireSidebar
-        .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
+
+            .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage])
     ]
 )
