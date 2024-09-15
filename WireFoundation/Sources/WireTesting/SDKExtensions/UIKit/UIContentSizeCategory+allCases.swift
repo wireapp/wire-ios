@@ -22,19 +22,19 @@ public extension UIContentSizeCategory {
 
     static var allCases: [UIContentSizeCategory] {
         [
-        .unspecified,
-        .extraSmall,
-        .small,
-        .medium,
-        .large,
-        .extraLarge,
-        .extraExtraLarge,
-        .extraExtraExtraLarge,
-        .accessibilityMedium,
-        .accessibilityLarge,
-        .accessibilityExtraLarge,
-        .accessibilityExtraExtraLarge,
-        .accessibilityExtraExtraExtraLarge
+            .unspecified,
+            .extraSmall,
+            .small,
+            .medium,
+            .large,
+            .extraLarge,
+            .extraExtraLarge,
+            .extraExtraExtraLarge,
+            .accessibilityMedium,
+            .accessibilityLarge,
+            .accessibilityExtraLarge,
+            .accessibilityExtraExtraLarge,
+            .accessibilityExtraExtraExtraLarge
         ]
     }
 }

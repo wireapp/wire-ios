@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireTestingPackage
+import XCTest
 
 @testable import WireFoundation
 
@@ -39,14 +39,14 @@ final class Font_WireTextStyleTests: XCTestCase {
         guard #available(iOS 16, *) else { return XCTFail() }
 
         let screenBounds = UIScreen.main.bounds
-            let sut = WireTextStyleMappingPreview()
+        let sut = WireTextStyleMappingPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
-                .withUserInterfaceStyle(.light)
-                .verify(matching: sut, named: "light")
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: sut, named: "dark")
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
     }
 }

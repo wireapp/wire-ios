@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUICore
 import WireTestingPackage
 import XCTest
-import SwiftUICore
 
 @testable import WireDesign
 
@@ -40,9 +40,9 @@ final class WireTextStyleMappingTests: XCTestCase {
         let screenBounds = UIScreen.main.bounds
         let sut = WireTextStyleFontMappingPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     @available(iOS 16, *) @MainActor
@@ -63,9 +63,9 @@ final class WireTextStyleMappingTests: XCTestCase {
     @available(iOS 16, *) @MainActor
     func testUIFontDarkUserInterfaceStyle() {
         let sut = WireTextStyleUIFontMappingPreview()
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: sut)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
     }
 
     @available(iOS 17, *) @MainActor

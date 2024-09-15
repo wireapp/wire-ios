@@ -19,9 +19,9 @@
 import SwiftUI
 
 // TODO: make stylable and remove commented code
-//private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
-//private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
-//private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
+// private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
+// private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
+// private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
 
 struct SidebarMenuItem: View {
 
@@ -35,8 +35,8 @@ struct SidebarMenuItem: View {
     @Environment(\.wireAccentColorMapping) private var wireAccentColorMapping
 
     @Environment(\.sidebarMenuItemTitleForegroundColor) private var titleForegroundColor
-     @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
-     @Environment(\.sidebarMenuItemIsPressedForegroundColor) private var isPressedForegroundColor
+    @Environment(\.sidebarMenuItemLinkIconForegroundColor) private var linkIconForegroundColor
+    @Environment(\.sidebarMenuItemIsPressedForegroundColor) private var isPressedForegroundColor
 
     /// The `systemName` which is passed into `SwiftUI.Image`.
     private(set) var icon: String
@@ -141,6 +141,7 @@ struct SidebarMenuItemTitleForegroundColorViewModifier: ViewModifier {
             .environment(\.sidebarMenuItemTitleForegroundColor, titleForegroundColor)
     }
 }
+
 private struct SidebarMenuItemTitleForegroundColorKey: EnvironmentKey {
     static let defaultValue = Color.primary
 }
@@ -152,6 +153,7 @@ struct SidebarMenuItemLinkIconForegroundColorViewModifier: ViewModifier {
             .environment(\.sidebarMenuItemLinkIconForegroundColor, linkIconForegroundColor)
     }
 }
+
 private struct SidebarMenuItemLinkIconForegroundColorKey: EnvironmentKey {
     static let defaultValue = Color.primary
 }
@@ -163,6 +165,7 @@ struct SidebarMenuItemIsPressedForegroundColorViewModifier: ViewModifier {
             .environment(\.sidebarMenuItemIsPressedForegroundColor, isPressedForegroundColor)
     }
 }
+
 private struct SidebarMenuItemIsPressedForegroundColorKey: EnvironmentKey {
     static let defaultValue = Color.primary
 }

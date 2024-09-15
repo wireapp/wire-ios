@@ -42,18 +42,18 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
-                .withUserInterfaceStyle(.light)
-                .verify(matching: sut, named: "light")
-            snapshotHelper
-                .withUserInterfaceStyle(.dark)
-                .verify(matching: sut, named: "dark")
+            .withUserInterfaceStyle(.light)
+            .verify(matching: sut, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut, named: "dark")
     }
 
     @MainActor
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
         let sut = SidebarProfileSwitcherViewPreview()
-            .frame(width: screenBounds.width * 2/3, height: screenBounds.height * 2/3)
+            .frame(width: screenBounds.width * 2 / 3, height: screenBounds.height * 2 / 3)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
