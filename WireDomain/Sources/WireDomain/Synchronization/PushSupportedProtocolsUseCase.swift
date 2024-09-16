@@ -20,8 +20,7 @@ import WireAPI
 import WireDataModel
 import WireSystem
 
-/// A domain strictly related use case.
-/// Helps calculating the supported protocols.
+/// Calculates and pushes the supported protocols to the backend
 struct PushSupportedProtocolsUseCase {
 
     private enum ProteusToMLSMigrationState: String {
@@ -33,9 +32,15 @@ struct PushSupportedProtocolsUseCase {
 
     let featureConfigRepository: any FeatureConfigRepositoryProtocol
     let userRepository: any UserRepositoryProtocol
+
     private let logger = WireLogger(tag: "supported-protocols")
 
-    func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
+    func invoke() async throws {
+        let supportedProtocols = await calculateSupportedProtocols()
+        try await userRepository.pushSelfSupportedProtocols(supportedProtocols)
+    }
+
+    private func calculateSupportedProtocols() async -> Set<WireAPI.MessageProtocol> {
         logger.debug("calculating supported protocols...")
 
         let remoteProtocols = await remotelySupportedProtocols()

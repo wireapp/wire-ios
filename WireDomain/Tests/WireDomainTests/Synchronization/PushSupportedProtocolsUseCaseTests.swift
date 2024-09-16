@@ -31,6 +31,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
+    private var mockSelfUserAPI: MockSelfUserAPI!
 
     private var context: NSManagedObjectContext {
         stack.syncContext
@@ -43,6 +44,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
+        mockSelfUserAPI = MockSelfUserAPI()
 
         sut = PushSupportedProtocolsUseCase(
             featureConfigRepository: FeatureConfigRepository(
@@ -52,7 +54,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
             userRepository: UserRepository(
                 context: context,
                 usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI()
+                selfUserAPI: mockSelfUserAPI
             )
         )
     }
@@ -60,6 +62,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         stack = nil
+        mockSelfUserAPI = nil
 
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
@@ -74,24 +77,24 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         try await mock(allActiveMLSClients: true)
         await mock(remoteSupportedProtocols: [.proteus])
-
-        // When / then
-
-        await mock(migrationState: .disabled)
-        let supportedProtocols_Disabled = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Disabled, [.proteus])
-
-        await mock(migrationState: .notStarted)
-        let supportedProtocols_NotStarted = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_NotStarted, [.proteus])
-
-        await mock(migrationState: .ongoing)
-        let supportedProtocols_OnGoing = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_OnGoing, [.proteus])
-
-        await mock(migrationState: .finalised)
-        let supportedProtocols_Finalised = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Finalised, [.proteus])
+        
+        mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        
+        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+           (migrationState: .disabled, supportedProtocols: [.proteus]),
+           (migrationState: .notStarted, supportedProtocols: [.proteus]),
+           (migrationState: .ongoing, supportedProtocols: [.proteus]),
+           (migrationState: .finalised, supportedProtocols: [.proteus])
+        ]
+        
+        for testCase in testCases {
+            await mock(migrationState: testCase.migrationState)
+            // When
+            try await sut.invoke()
+            let pushedProtocols = try XCTUnwrap(mockSelfUserAPI.pushSupportedProtocols_Invocations.last)
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
+        }
     }
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteProteusAndMLS() async throws {
@@ -99,22 +102,24 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         try await mock(allActiveMLSClients: true)
         await mock(remoteSupportedProtocols: [.proteus, .mls])
+        
+        mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        
+        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+            (migrationState: .disabled, supportedProtocols: [.proteus, .mls]),
+            (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
+            (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
+            (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
+        ]
 
-        // When / then
-
-        await mock(migrationState: .disabled)
-        let supportedProtocols_Disabled = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Disabled, [.proteus, .mls])
-
-        await mock(migrationState: .notStarted)
-        let supportedProtocols_NotSupported = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_NotSupported, [.proteus, .mls])
-
-        await mock(migrationState: .ongoing)
-        let supportedProtocols_OnGoing = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_OnGoing, [.proteus, .mls])
-
-        await mock(migrationState: .finalised)
+        for testCase in testCases {
+            await mock(migrationState: testCase.migrationState)
+            // When
+            try await sut.invoke()
+            let pushedProtocols = try XCTUnwrap(mockSelfUserAPI.pushSupportedProtocols_Invocations.last)
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
+        }
     }
 
     func test_CalculateSupportedProtocols_AllActiveMLSClients_RemoteMLS() async throws {
@@ -122,24 +127,24 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         try await mock(allActiveMLSClients: true)
         await mock(remoteSupportedProtocols: [.mls])
-
-        // When / then
-
-        await mock(migrationState: .disabled)
-        let supportedProtocols_Disabled = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Disabled, [.mls])
-
-        await mock(migrationState: .notStarted)
-        let supportedProtocols_NotStarted = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_NotStarted, [.proteus, .mls])
-
-        await mock(migrationState: .ongoing)
-        let supportedProtocols_OnGoing = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_OnGoing, [.proteus, .mls])
-
-        await mock(migrationState: .finalised)
-        let supportedProtocols_Finalised = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Finalised, [.mls])
+        
+        mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        
+        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+           (migrationState: .disabled, supportedProtocols: [.mls]),
+           (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
+           (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
+           (migrationState: .finalised, supportedProtocols: [.mls])
+        ]
+        
+        for testCase in testCases {
+            await mock(migrationState: testCase.migrationState)
+            // When
+            try await sut.invoke()
+            let pushedProtocols = try XCTUnwrap(mockSelfUserAPI.pushSupportedProtocols_Invocations.last)
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
+        }
     }
 
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteus() async throws {
@@ -148,23 +153,23 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         try await mock(allActiveMLSClients: false)
         await mock(remoteSupportedProtocols: [.proteus])
 
-        // When / then
-
-        await mock(migrationState: .disabled)
-        let supportedProtocols_Disabled = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Disabled, [.proteus])
-
-        await mock(migrationState: .notStarted)
-        let supportedProtocols_NotStarted = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_NotStarted, [.proteus])
-
-        await mock(migrationState: .ongoing)
-        let supportedProtocols_OnGoing = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_OnGoing, [.proteus])
-
-        await mock(migrationState: .finalised)
-        let supportedProtocols_Finalised = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Finalised, [.proteus])
+        mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        
+        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+           (migrationState: .disabled, supportedProtocols: [.proteus]),
+           (migrationState: .notStarted, supportedProtocols: [.proteus]),
+           (migrationState: .ongoing, supportedProtocols: [.proteus]),
+           (migrationState: .finalised, supportedProtocols: [.proteus])
+        ]
+        
+        for testCase in testCases {
+            await mock(migrationState: testCase.migrationState)
+            // When
+            try await sut.invoke()
+            let pushedProtocols = try XCTUnwrap(mockSelfUserAPI.pushSupportedProtocols_Invocations.last)
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
+        }
     }
 
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteProteusAndMLS() async throws {
@@ -173,23 +178,23 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         try await mock(allActiveMLSClients: false)
         await mock(remoteSupportedProtocols: [.proteus, .mls])
 
-        // When / then
-
-        await mock(migrationState: .disabled)
-        let supportedProtocols_Disabled = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Disabled, [.proteus])
-
-        await mock(migrationState: .notStarted)
-        let supportedProtocols_NotStarted = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_NotStarted, [.proteus])
-
-        await mock(migrationState: .ongoing)
-        let supportedProtocols_OnGoing = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_OnGoing, [.proteus])
-
-        await mock(migrationState: .finalised)
-        let supportedProtocols_Finalised = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Finalised, [.proteus, .mls])
+        mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        
+        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+           (migrationState: .disabled, supportedProtocols: [.proteus]),
+           (migrationState: .notStarted, supportedProtocols: [.proteus]),
+           (migrationState: .ongoing, supportedProtocols: [.proteus]),
+           (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
+        ]
+        
+        for testCase in testCases {
+            await mock(migrationState: testCase.migrationState)
+            // When
+            try await sut.invoke()
+            let pushedProtocols = try XCTUnwrap(mockSelfUserAPI.pushSupportedProtocols_Invocations.last)
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
+        }
     }
 
     func test_CalculateSupportedProtocols_NotAllActiveMLSClients_RemoteMLS() async throws {
@@ -198,23 +203,23 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         try await mock(allActiveMLSClients: false)
         await mock(remoteSupportedProtocols: [.mls])
 
-        // When / then
-
-        await mock(migrationState: .disabled)
-        let supportedProtocols_Disabled = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Disabled, [.mls])
-
-        await mock(migrationState: .notStarted)
-        let supportedProtocols_NotStarted = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_NotStarted, [.proteus])
-
-        await mock(migrationState: .ongoing)
-        let supportedProtocols_OnGoing = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_OnGoing, [.proteus])
-
-        await mock(migrationState: .finalised)
-        let supportedProtocols_Finalised = await sut.calculateSupportedProtocols()
-        XCTAssertEqual(supportedProtocols_Finalised, [.mls])
+        mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
+        
+        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+           (migrationState: .disabled, supportedProtocols: [.mls]),
+           (migrationState: .notStarted, supportedProtocols: [.proteus]),
+           (migrationState: .ongoing, supportedProtocols: [.proteus]),
+           (migrationState: .finalised, supportedProtocols: [.mls])
+        ]
+        
+        for testCase in testCases {
+            await mock(migrationState: testCase.migrationState)
+            // When
+            try await sut.invoke()
+            let pushedProtocols = try XCTUnwrap(mockSelfUserAPI.pushSupportedProtocols_Invocations.last)
+            // Then
+            XCTAssertEqual(testCase.supportedProtocols, pushedProtocols)
+        }
     }
 
     // MARK: - Mock
