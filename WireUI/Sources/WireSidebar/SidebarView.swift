@@ -22,8 +22,6 @@ import WireFoundation
 // TODO: remove commented code
 // private let sidebarBackgroundColor: UIColor = .init(white: 0.9, alpha: 1) // ColorTheme.Backgrounds.background
 
-// TODO: snapshot tests
-@MainActor
 public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
