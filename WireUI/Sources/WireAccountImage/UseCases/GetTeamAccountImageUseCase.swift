@@ -29,7 +29,10 @@ public struct GetTeamAccountImageUseCase<AccountImageGenerator: AccountImageGene
         self.accountImageGenerator = accountImageGenerator
     }
 
-    public func invoke(user: some GetAccountImageUseCaseUserProtocol, account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage {
+    public func invoke(
+        user: some GetAccountImageUseCaseUserProtocol,
+        account: some GetAccountImageUseCaseAccountProtocol
+    ) async throws -> UIImage {
         var teamName = ""
         if let team = await user.membership?.team, let teamImageSource = await team.teamImageSource ?? account.teamImageSource {
             // team image
