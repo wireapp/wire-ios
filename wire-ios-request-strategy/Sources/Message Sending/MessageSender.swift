@@ -270,13 +270,6 @@ public final class MessageSender: MessageSenderInterface {
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
         
-        await context.perform {
-            if message.shouldExpire {
-                message.setExpirationDate()
-                self.context.saveOrRollback()
-            }
-        }
-        
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
             .sendMLSMessage(message: encryptedData,
                             conversationID: conversationID,
