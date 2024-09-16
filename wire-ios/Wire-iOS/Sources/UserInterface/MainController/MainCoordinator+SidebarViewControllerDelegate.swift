@@ -24,7 +24,7 @@ import WireSidebar
 
 final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<MainSplitViewController, MainTabBarController> where MainSplitViewController.ConversationList == MainTabBarController.ConversationList {
 
-    private weak var zClientViewController: ZClientViewController!
+    // private weak var zClientViewController: ZClientViewController!
 
     // private(set) var settingsBuilder: ViewControllerBuilder
 
@@ -35,7 +35,7 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         selfProfileBuilder: ViewControllerBuilder,
         settingsBuilder: ViewControllerBuilder
     ) {
-        self.zClientViewController = zClientViewController
+        // self.zClientViewController = zClientViewController
         // self.selfProfileBuilder = selfProfileBuilder
         // self.settingsBuilder = settingsBuilder
         super.init(

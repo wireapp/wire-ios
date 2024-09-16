@@ -19,7 +19,7 @@
 import UIKit
 import WireFoundation
 
-// TODO: make public final
+// TODO: make `public final`
 open /*public final*/ class MainCoordinator<MainSplitViewController, MainTabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
 where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol, MainSplitViewController.ConversationList == MainTabBarController.ConversationList {
 
@@ -60,19 +60,19 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
     @MainActor
     public func showSelfProfile() async {
+        guard selfProfileViewController == nil else {
+            return assertionFailure() // TODO: inject logger instead
+        }
+
         let conversationList = if isLayoutCollapsed {
             mainTabBarController.conversations!.conversationList
         } else {
             mainSplitViewController.conversationList!
         }
 
-        let selfProfileViewController = selfProfileViewController ?? UINavigationController(rootViewController: selfProfileBuilder.build())
-        self.selfProfileViewController = selfProfileViewController
-        // selfProfileViewController?.presentingViewController?.dismiss(animated: false)
-
-        // TODO: verify if this is correct
+        let selfProfileViewController = UINavigationController(rootViewController: selfProfileBuilder.build())
         selfProfileViewController.modalPresentationStyle = .formSheet
-        //selfProfileViewController.view.backgroundColor = .black
+        self.selfProfileViewController = selfProfileViewController
 
         await withCheckedContinuation { continuation in
             conversationList.present(selfProfileViewController, animated: true, completion: continuation.resume)
@@ -147,7 +147,9 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     // }
 
     /*public*/ open func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
-        guard splitViewController === mainSplitViewController else { return }
+        guard splitViewController === mainSplitViewController else {
+            return assertionFailure() // TODO: inject logger instead
+        }
 
         isLayoutCollapsed = true
 
@@ -184,7 +186,9 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     // }
 
     /*public*/ open func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
-        guard splitViewController === mainSplitViewController else { return }
+        guard splitViewController === mainSplitViewController else {
+            return assertionFailure() // TODO: inject logger instead
+        }
 
         isLayoutCollapsed = false
 

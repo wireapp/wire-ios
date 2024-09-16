@@ -783,17 +783,31 @@ final class ZClientViewController: UIViewController {
 extension ZClientViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.accentColorValueChanged {
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            appDelegate.mainWindow?.tintColor = UIColor.accent()
-        }
-        if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
-            Task { @MainActor [self] in
+        Task { @MainActor [self] in
+
+            var sidebarUpdateNeeded = false
+
+            if changeInfo.nameChanged || changeInfo.availabilityChanged {
+                sidebarUpdateNeeded = true
+            }
+
+            if changeInfo.accentColorValueChanged {
+                sidebarUpdateNeeded = true
+                let appDelegate = UIApplication.shared.delegate as! AppDelegate
+                appDelegate.mainWindow?.tintColor = UIColor.accent()
+            }
+
+            if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+                sidebarUpdateNeeded = true
                 do {
                     cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
                 } catch {
                     WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
                 }
+            }
+
+            if sidebarUpdateNeeded {
+                sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
             }
         }
     }
