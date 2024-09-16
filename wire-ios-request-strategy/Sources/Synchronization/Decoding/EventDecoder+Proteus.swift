@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCryptobox
+import WireFoundation
 
 private let zmLog = ZMSLog(tag: "EventDecoder")
 

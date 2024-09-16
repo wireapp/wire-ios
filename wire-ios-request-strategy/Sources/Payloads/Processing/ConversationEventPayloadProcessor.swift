@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireFoundation
 
 enum ConversationEventPayloadProcessorError: Error {
     case noBackendConversationId

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030C2A0CED010000CFF2 /* WireLogger.swift */; };
 		16AAA62A2C21903200080A06 /* ExpiringActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA6292C21903200080A06 /* ExpiringActivity.swift */; };
 		16AAA62E2C22F7D500080A06 /* ExpiringActivityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16AAA62D2C22F7D500080A06 /* ExpiringActivityTests.swift */; };
 		5442AB7F1CA29CC000BC099C /* ZMSAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */; };
@@ -84,6 +85,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01CB030C2A0CED010000CFF2 /* WireLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireLogger.swift; sourceTree = "<group>"; };
 		092758691B70E68F00AD5A78 /* WireSystem.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireSystem.xcconfig; sourceTree = "<group>"; };
 		096A3A1C1B67CEF700565001 /* ZMSLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ZMSLogging.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		096A3A1E1B67CEF700565001 /* ZMSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLog.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 		01CB030B2A0CED010000CFF2 /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				01CB030C2A0CED010000CFF2 /* WireLogger.swift */,
 				E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */,
 			);
 			path = Logging;
@@ -600,6 +603,7 @@
 				59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */,
 				5993B5502C6CFA47006AECBD /* SupportedOrientationsDelegatingSplitViewControllerDelegate.swift in Sources */,
 				8701221620F64171001E6342 /* Cache.swift in Sources */,
+				01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */,
 				597D26052C6E019600D8AF15 /* SupportedOrientationsDelegatingNavigationControllerDelegate.swift in Sources */,
 				598368A62C51095300ACF0C3 /* ZMAssertionDumpFile.swift in Sources */,
 				EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */,

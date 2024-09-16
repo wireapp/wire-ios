@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 extension ZMOTRMessage {
 
