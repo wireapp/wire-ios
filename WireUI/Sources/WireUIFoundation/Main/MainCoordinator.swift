@@ -21,7 +21,7 @@ import WireFoundation
 
 // TODO: make public final
 open /*public final*/ class MainCoordinator<MainSplitViewController, MainTabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
-    where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol {
+where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol, MainSplitViewController.ConversationList == MainTabBarController.ConversationList {
 
     private weak var mainSplitViewController: MainSplitViewController!
     private weak var mainTabBarController: MainTabBarController!
@@ -127,17 +127,111 @@ open /*public final*/ class MainCoordinator<MainSplitViewController, MainTabBarC
 //        fatalError("not implemented yet")
 //    }
 
+// TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
+
     // MARK: - UISplitViewControllerDelegate
 
-    public func splitViewControllerDidCollapse(_: UISplitViewController) {
+    // func splitViewController(
+    //     _ svc: UISplitViewController,
+    //     topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
+    // ) -> UISplitViewController.Column {
+    //     //
+    // }
+
+    // func splitViewController(_ svc: UISplitViewController, willHide column: UISplitViewController.Column) {
+    //     print("349ur09e willHide \(column)")
+    // }
+
+    /*public*/ open func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+        guard splitViewController === mainSplitViewController else { return }
+
         isLayoutCollapsed = true
 
-        // TODO: make changes
+        /*
+        let containers = ContainerViewControllers(of: splitViewController)
+
+        // validate assumptions
+        guard
+            // there should never be anything pushed onto the nc of the supplmentary and secondary columns
+            containers.supplementaryColumn.viewControllers.count == 1,
+            containers.secondaryColumn.viewControllers.count == 1
+        else { return assertionFailure("view controller hierarchy invalid assumptions") }
+         */
+
+        // move view controllers from the split view controller's columns to the tab bar controller
+        let conversationListViewController = mainSplitViewController.conversationList!
+        mainSplitViewController.conversationList = nil
+        mainTabBarController.conversations = (conversationListViewController, nil)
+
+        // TODO: conversations
+
+        // TODO: more to move?
     }
 
-    public func splitViewControllerDidExpand(_: UISplitViewController) {
+    // func splitViewController(
+    //     _ svc: UISplitViewController,
+    //     displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode
+    // ) -> UISplitViewController.DisplayMode {
+    //     //
+    // }
+
+    // func splitViewController(_ svc: UISplitViewController, willShow column: UISplitViewController.Column) {
+    //     print("349ur09e willShow \(column)")
+    // }
+
+    public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+        guard splitViewController === mainSplitViewController else { return }
+
         isLayoutCollapsed = false
 
-        // TODO: make changes
+        /*
+        let containers = ContainerViewControllers(of: splitViewController)
+
+        // validate assumptions
+        print(containers.compactColumn[tab: .conversations].viewControllers)
+        guard
+            // there should never be anything pushed onto the nc of the supplmentary and secondary columns
+            [1, 2].contains(containers.compactColumn[tab: .conversations].viewControllers.count)
+        else { return assertionFailure("view controller hierarchy invalid assumptions") }
+
+        // move view controllers from the tab bar controller to the supplementary column
+        let conversationViewController = containers.compactColumn[tab: .conversations].viewControllers[1...].first as! ConversationViewController?
+        if let conversationViewController {
+            containers.compactColumn[tab: .conversations].viewControllers.remove(at: 1)
+            containers.secondaryColumn.viewControllers = [conversationViewController]
+        } else {
+            let placeholderViewController = NoConversationPlaceholderViewController()
+            containers.secondaryColumn.viewControllers = [placeholderViewController]
+        }
+
+        let conversationListViewController = containers.compactColumn[tab: .conversations].viewControllers[0] as! ConversationListViewController
+        containers.compactColumn[tab: .conversations].viewControllers = []
+        containers.supplementaryColumn.viewControllers = [conversationListViewController]
+        conversationListViewController.splitViewControllerMode = .expanded
+         */
+    }
+}
+
+// TODO: can this be removed?
+private struct ContainerViewControllers {
+
+    var supplementaryColumn: UINavigationController
+    var secondaryColumn: UINavigationController
+    var compactColumn: MainTabBarController
+
+    init(of splitViewController: UISplitViewController) {
+
+        // ensure the compact column contains the tab bar controller, all others navigation controllers
+        guard
+            let supplementaryColumnNavigationController = splitViewController.viewController(for: .supplementary) as? UINavigationController,
+            let secondaryColumnNavigationController = splitViewController.viewController(for: .secondary) as? UINavigationController,
+            let compactColumnTabBarController = splitViewController.viewController(for: .compact) as? MainTabBarController
+        else {
+            fatalError("precondition check fail")
+        }
+
+        supplementaryColumn = supplementaryColumnNavigationController
+        secondaryColumn = secondaryColumnNavigationController
+        compactColumn = compactColumnTabBarController
     }
 }

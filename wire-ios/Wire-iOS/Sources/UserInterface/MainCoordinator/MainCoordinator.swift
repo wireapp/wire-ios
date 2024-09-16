@@ -21,9 +21,9 @@ import WireDataModel
 import WireSystem
 import WireUIFoundation
 
-final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<MainSplitViewController, MainTabBarController> {
+final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<MainSplitViewController, MainTabBarController> where MainSplitViewController.ConversationList == MainTabBarController.ConversationList {
 
-    // private weak var zClientViewController: ZClientViewController!
+    private weak var zClientViewController: ZClientViewController!
 
     // private(set) var settingsBuilder: ViewControllerBuilder
 
@@ -34,7 +34,7 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         selfProfileBuilder: ViewControllerBuilder,
         settingsBuilder: ViewControllerBuilder
     ) {
-        //self.zClientViewController = zClientViewController
+        self.zClientViewController = zClientViewController
         // self.selfProfileBuilder = selfProfileBuilder
         // self.settingsBuilder = settingsBuilder
         super.init(
@@ -98,11 +98,17 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         fatalError("TODO: present if needed")
     }
      */
-}
 
 // MARK: - UISplitViewControllerDelegate
 
-extension MainCoordinator {
+    override func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+        super.splitViewControllerDidCollapse(splitViewController)
 
-    //
+        // TODO: remove
+        let mainTabBarController = splitViewController.viewController(for: .compact) as! MainTabBarController
+        let navigationController = mainTabBarController.viewControllers![0] as! UINavigationController
+        let conversationListViewController = navigationController.viewControllers[0] as! ConversationListViewController
+        // TODO: how can this be done then?
+        conversationListViewController.splitViewControllerMode = .collapsed
+    }
 }
