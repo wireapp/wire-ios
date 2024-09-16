@@ -51,6 +51,7 @@
 		CB79AC2F2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2E2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
+		E66F22EF2C2ADCD0005FD57E /* WireLoggerObjc.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */; };
 		EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC832BD1585500F7853F /* WireSystem.docc */; };
 		EEDC67192A1778D600201436 /* UserDefaults+Temporary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */; };
 		F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1670FAD22A7C5F500BC6811 /* SanitizedString.swift */; };
@@ -136,6 +137,7 @@
 		CB79AC2E2C69F1D8003CF5F4 /* Error+SafeForLoggingStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+SafeForLoggingStringConvertible.swift"; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
+		E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireLoggerObjc.swift; sourceTree = "<group>"; };
 		E6B58E402B21D8920046B6E1 /* ZipArchive.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZipArchive.xcframework; path = ../Carthage/Build/ZipArchive.xcframework; sourceTree = "<group>"; };
 		EE9AEC832BD1585500F7853F /* WireSystem.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireSystem.docc; sourceTree = "<group>"; };
 		EEDC67182A1778D600201436 /* UserDefaults+Temporary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Temporary.swift"; sourceTree = "<group>"; };
@@ -174,6 +176,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		01CB030B2A0CED010000CFF2 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				E66F22EE2C2ADCD0005FD57E /* WireLoggerObjc.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
 		3ECC34C31AD430BB0089FD4B = {
 			isa = PBXGroup;
 			children = (
@@ -221,6 +231,7 @@
 				54DB81641DBFACE800AF495D /* CircularArray.swift */,
 				59059B982B4DBA1D0087D1F1 /* DateProviding */,
 				59D985EE2B5FCE1A009B99F0 /* Extensions */,
+				01CB030B2A0CED010000CFF2 /* Logging */,
 				597D26042C6E019600D8AF15 /* NavigationControllerDelegate */,
 				5993B54E2C6CFA15006AECBD /* SplitViewControllerDelegate */,
 				F19E554422AA8748005C792D /* SafeForLoggingStringConvertible.swift */,
@@ -583,6 +594,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E66F22EF2C2ADCD0005FD57E /* WireLoggerObjc.swift in Sources */,
 				544CFC511B70B933007AA694 /* ZMSLog.swift in Sources */,
 				594450582BE0F0C8003ACC98 /* GroupQueue.swift in Sources */,
 				59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */,

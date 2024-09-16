@@ -63,7 +63,7 @@ open class Flow {
   /// - Parameters:
   ///   - description: A short single line string describing a point of interest.
 
-  public func checkpoint(description: LogConvertible) {
+    public func checkpoint(description: any LogConvertible) {
       logger.info(FlowLog(name: name, event: .init(type: .checkpoint, description: description.logDescription, outcome: .success)))
   }
 
@@ -78,7 +78,7 @@ open class Flow {
   /// - Parameters:
   ///   - error: The failure reason.
 
-  public func fail(_ error: Error) {
+    public func fail(_ error: any Error) {
       logger.error(FlowLog(name: name, event: .init(type: .end, description: String(describing: error), outcome: .failure)))
   }
 
@@ -87,7 +87,7 @@ open class Flow {
   /// - Parameters:
   ///   - reason: The failure reason.
 
-  public func fail(_ reason: LogConvertible) {
+    public func fail(_ reason: any LogConvertible) {
       logger.error(FlowLog(name: name, event: .init(type: .end, description: reason.logDescription, outcome: .failure)))
   }
 
