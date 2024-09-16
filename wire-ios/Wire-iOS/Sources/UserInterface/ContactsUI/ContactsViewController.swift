@@ -30,9 +30,11 @@ final class ContactsViewController: UIViewController {
 
     let bottomContainerView = UIView()
     let bottomContainerSeparatorView = UIView()
-    let noContactsLabel = DynamicFontLabel(text: PeoplePicker.noContactsTitle,
-                                           fontSpec: .headerRegularFont,
-                                           color: LabelColors.textSettingsPasswordPlaceholder)
+    let noContactsLabel = DynamicFontLabel(
+        text: PeoplePicker.noContactsTitle,
+        style: .body1,
+        color: LabelColors.textSettingsPasswordPlaceholder
+    )
     let searchHeaderViewController = SearchHeaderViewController(userSelection: .init())
     let separatorView = UIView()
     let tableView = UITableView()
@@ -41,9 +43,11 @@ final class ContactsViewController: UIViewController {
         cornerRadius: 16,
         fontSpec: .normalSemiboldFont
     )
-    let emptyResultsLabel = DynamicFontLabel(text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
-                                             fontSpec: .headerRegularFont,
-                                             color: LabelColors.textSettingsPasswordPlaceholder)
+    let emptyResultsLabel = DynamicFontLabel(
+        text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
+        style: .body1,
+        color: LabelColors.textSettingsPasswordPlaceholder
+    )
 
     var bottomEdgeConstraint: NSLayoutConstraint?
     var bottomContainerBottomConstraint: NSLayoutConstraint?
