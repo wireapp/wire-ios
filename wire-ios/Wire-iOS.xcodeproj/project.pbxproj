@@ -340,6 +340,7 @@
 		592344A32BFE1EBD00859FEB /* SettingsMainViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592344A12BFE1EBC00859FEB /* SettingsMainViewControllerBuilder.swift */; };
 		592ED06E2C1C7D0700FE1F4E /* WireReusableUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = 592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		5937ABE52C981399005D6A4A /* WireUIFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 5937ABE42C981399005D6A4A /* WireUIFoundation */; };
 		594211BF2C90542C00576053 /* FilePreviewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211BE2C90542C00576053 /* FilePreviewGenerator.swift */; };
 		594211C12C90547200576053 /* URL+uniformType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211C02C90547200576053 /* URL+uniformType.swift */; };
 		594211C32C9054A000576053 /* SharedPreviewGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211C22C9054A000576053 /* SharedPreviewGenerator.swift */; };
@@ -4013,6 +4014,7 @@
 				01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */,
 				CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */,
 				5996E8A82C19D09D007A52F0 /* WireSyncEngineSupport.framework in Frameworks */,
+				5937ABE52C981399005D6A4A /* WireUIFoundation in Frameworks */,
 				5996E8A42C19D074007A52F0 /* WireRequestStrategySupport.framework in Frameworks */,
 				598E86F72BF4DD5C00FC5438 /* WireSystemSupport.framework in Frameworks */,
 				598E86D12BF4D97800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
@@ -8708,6 +8710,7 @@
 				59B48C612C89CD3D00EA7999 /* WireTestingPackage */,
 				59076F962C934AA100AE7529 /* WireAccountImage */,
 				590DCA092C971AFF002D0A2C /* WireFoundation */,
+				5937ABE42C981399005D6A4A /* WireUIFoundation */,
 			);
 			productName = "ZClient-iOS Tests";
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
@@ -11778,6 +11781,10 @@
 		592ED06D2C1C7D0700FE1F4E /* WireReusableUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireReusableUIComponents;
+		};
+		5937ABE42C981399005D6A4A /* WireUIFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireUIFoundation;
 		};
 		5945D0292C219F7200D039E3 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;

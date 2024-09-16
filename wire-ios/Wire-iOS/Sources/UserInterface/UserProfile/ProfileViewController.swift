@@ -103,7 +103,7 @@ final class ProfileViewController: UIViewController {
 
     required init(
         viewModel: some ProfileViewControllerViewModeling,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator

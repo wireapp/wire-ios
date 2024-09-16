@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: remove typealias
-public typealias MainCoordinating = MainCoordinatorProtocol
-
 /// Handles the navigation when a user is authenticated.
-@MainActor
 public protocol MainCoordinatorProtocol: AnyObject {
+
+    @MainActor
     func showConversations()
+
+    @MainActor
     func showArchivedConversation()
+
+    @MainActor
     func showSettings()
 
 //    func openConversation(

@@ -113,7 +113,7 @@ final class ConversationViewController: UIViewController {
         conversation: ZMConversation,
         visibleMessage: ZMMessage?,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinatorProtocol,
         mediaPlaybackManager: MediaPlaybackManager?,
         classificationProvider: (any SecurityClassificationProviding)?,
         networkStatusObservable: any NetworkStatusObservable
