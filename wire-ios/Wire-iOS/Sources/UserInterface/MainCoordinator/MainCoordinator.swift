@@ -18,10 +18,37 @@
 
 import WireDataModel
 import WireSystem
+import WireCommonComponents
+import WireUIFoundation
 
-struct MainCoordinator: MainCoordinating {
+final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: MainCoordinating, UISplitViewControllerDelegate {
 
-    weak var zClientViewController: ZClientViewController?
+    private weak var zClientViewController: ZClientViewController!
+    private weak var mainSplitViewController: MainSplitViewController!
+    private weak var mainTabBarController: MainTabBarController!
+
+    private(set) var selfProfileBuilder: ViewControllerBuilder
+    private(set) var settingsBuilder: ViewControllerBuilder
+
+    private weak var settingsViewController: UIViewController?
+
+    init(
+        zClientViewController: ZClientViewController!,
+        mainSplitViewController: MainSplitViewController!,
+        mainTabBarController: MainTabBarController!,
+        selfProfileBuilder: ViewControllerBuilder,
+        settingsBuilder: ViewControllerBuilder
+    ) {
+        self.zClientViewController = zClientViewController
+        self.mainSplitViewController = mainSplitViewController
+        self.mainTabBarController = mainTabBarController
+        self.selfProfileBuilder = selfProfileBuilder
+        self.settingsBuilder = settingsBuilder
+    }
+
+    deinit {
+        WireLogger.ui.debug("MainCoordinator.deinit")
+    }
 
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
         guard let zClientViewController else {
@@ -53,6 +80,27 @@ struct MainCoordinator: MainCoordinating {
         guard let zClientViewController else {
             return WireLogger.mainCoordinator.warn("zClientViewController is nil")
         }
-        zClientViewController.showSelfProfile()
+
+        settingsViewController = settingsViewController ?? settingsBuilder.build()
+
+        let settingsViewController = selfProfileBuilder
+                .build()
+                .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
+
+    func showSettings() {
+        guard let zClientViewController else {
+            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
+        }
+
+        settingsViewController = settingsViewController ?? settingsBuilder.build()
+        fatalError("TODO: present if needed")
+    }
+}
+
+// MARK: - UISplitViewControllerDelegate
+
+extension MainCoordinator {
+
+    //
 }

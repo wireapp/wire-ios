@@ -73,10 +73,11 @@ final class ZClientViewController: UIViewController {
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
         zClientViewController: self,
-        mainCoordinator: MainCoordinator(zClientViewController: self),
+        mainCoordinator: tmpMainCoordinator, // TODO: fix
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
     )
+    var tmpMainCoordinator: MainCoordinator<MainSplitViewController, MainTabBarController>!
 
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
@@ -369,7 +370,7 @@ final class ZClientViewController: UIViewController {
                 conversation: conversation,
                 message: message,
                 userSession: userSession,
-                mainCoordinator: MainCoordinator(zClientViewController: self),
+                mainCoordinator: tmpMainCoordinator, // TODO: fix
                 mediaPlaybackManager: mediaPlaybackManager
             )
         }
@@ -394,7 +395,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: MainCoordinator(zClientViewController: self),
+            mainCoordinator: tmpMainCoordinator, // TODO: fix
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -452,7 +453,7 @@ final class ZClientViewController: UIViewController {
             conversation: currentConversation,
             message: nil,
             userSession: userSession,
-            mainCoordinator: MainCoordinator(zClientViewController: self),
+            mainCoordinator: tmpMainCoordinator, // TODO: fix
             mediaPlaybackManager: mediaPlaybackManager
         )
 
@@ -684,7 +685,7 @@ final class ZClientViewController: UIViewController {
                 viewer: selfUser,
                 context: .deviceList,
                 userSession: userSession,
-                mainCoordinator: MainCoordinator(zClientViewController: self)
+                mainCoordinator: tmpMainCoordinator // TODO: fix
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {
@@ -704,12 +705,6 @@ final class ZClientViewController: UIViewController {
 
     func showConversationList() {
         transitionToList(animated: true, completion: nil)
-    }
-
-    // MARK: - Profile
-
-    func showSelfProfile() {
-        conversationListViewController.presentProfile()
     }
 
     // MARK: - Select conversation

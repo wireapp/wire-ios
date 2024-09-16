@@ -300,14 +300,18 @@ extension ConversationListViewController {
     }
 
     @objc
-    func presentProfile() {
+    private func presentProfile() {
+        return mainCoordinator.showSelfProfile()
+
+
+// TODO: remove?
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
         }
 
-        let settingsViewController = createSettingsViewController(selfUser: selfUser)
-        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
+//        let settingsViewController = createSettingsViewController(selfUser: selfUser)
+//        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
         // TODO: fix
         fatalError("TODO")
@@ -318,12 +322,6 @@ extension ConversationListViewController {
         //     keyboardAvoidingViewController.view.backgroundColor = .black
         //     present(keyboardAvoidingViewController, animated: true)
         // }
-    }
-
-    func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
-        selfProfileViewControllerBuilder
-            .build()
-            .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
     // MARK: - Legal Hold
