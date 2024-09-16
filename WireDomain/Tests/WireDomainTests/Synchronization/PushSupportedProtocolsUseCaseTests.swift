@@ -77,16 +77,16 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         try await mock(allActiveMLSClients: true)
         await mock(remoteSupportedProtocols: [.proteus])
-        
+
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
-        
-        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
-           (migrationState: .disabled, supportedProtocols: [.proteus]),
-           (migrationState: .notStarted, supportedProtocols: [.proteus]),
-           (migrationState: .ongoing, supportedProtocols: [.proteus]),
-           (migrationState: .finalised, supportedProtocols: [.proteus])
+
+        let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+            (migrationState: .disabled, supportedProtocols: [.proteus]),
+            (migrationState: .notStarted, supportedProtocols: [.proteus]),
+            (migrationState: .ongoing, supportedProtocols: [.proteus]),
+            (migrationState: .finalised, supportedProtocols: [.proteus])
         ]
-        
+
         for testCase in testCases {
             await mock(migrationState: testCase.migrationState)
             // When
@@ -102,10 +102,10 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         try await mock(allActiveMLSClients: true)
         await mock(remoteSupportedProtocols: [.proteus, .mls])
-        
+
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
-        
-        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+
+        let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
             (migrationState: .disabled, supportedProtocols: [.proteus, .mls]),
             (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
             (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
@@ -127,16 +127,16 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
 
         try await mock(allActiveMLSClients: true)
         await mock(remoteSupportedProtocols: [.mls])
-        
+
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
-        
-        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
-           (migrationState: .disabled, supportedProtocols: [.mls]),
-           (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
-           (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
-           (migrationState: .finalised, supportedProtocols: [.mls])
+
+        let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+            (migrationState: .disabled, supportedProtocols: [.mls]),
+            (migrationState: .notStarted, supportedProtocols: [.proteus, .mls]),
+            (migrationState: .ongoing, supportedProtocols: [.proteus, .mls]),
+            (migrationState: .finalised, supportedProtocols: [.mls])
         ]
-        
+
         for testCase in testCases {
             await mock(migrationState: testCase.migrationState)
             // When
@@ -154,14 +154,14 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         await mock(remoteSupportedProtocols: [.proteus])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
-        
-        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
-           (migrationState: .disabled, supportedProtocols: [.proteus]),
-           (migrationState: .notStarted, supportedProtocols: [.proteus]),
-           (migrationState: .ongoing, supportedProtocols: [.proteus]),
-           (migrationState: .finalised, supportedProtocols: [.proteus])
+
+        let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+            (migrationState: .disabled, supportedProtocols: [.proteus]),
+            (migrationState: .notStarted, supportedProtocols: [.proteus]),
+            (migrationState: .ongoing, supportedProtocols: [.proteus]),
+            (migrationState: .finalised, supportedProtocols: [.proteus])
         ]
-        
+
         for testCase in testCases {
             await mock(migrationState: testCase.migrationState)
             // When
@@ -179,14 +179,14 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         await mock(remoteSupportedProtocols: [.proteus, .mls])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
-        
-        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
-           (migrationState: .disabled, supportedProtocols: [.proteus]),
-           (migrationState: .notStarted, supportedProtocols: [.proteus]),
-           (migrationState: .ongoing, supportedProtocols: [.proteus]),
-           (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
+
+        let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+            (migrationState: .disabled, supportedProtocols: [.proteus]),
+            (migrationState: .notStarted, supportedProtocols: [.proteus]),
+            (migrationState: .ongoing, supportedProtocols: [.proteus]),
+            (migrationState: .finalised, supportedProtocols: [.proteus, .mls])
         ]
-        
+
         for testCase in testCases {
             await mock(migrationState: testCase.migrationState)
             // When
@@ -204,14 +204,14 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
         await mock(remoteSupportedProtocols: [.mls])
 
         mockSelfUserAPI.pushSupportedProtocols_MockMethod = { _ in }
-        
-        let testCases: [(migrationState:Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
-           (migrationState: .disabled, supportedProtocols: [.mls]),
-           (migrationState: .notStarted, supportedProtocols: [.proteus]),
-           (migrationState: .ongoing, supportedProtocols: [.proteus]),
-           (migrationState: .finalised, supportedProtocols: [.mls])
+
+        let testCases: [(migrationState: Scaffolding.MigrationState, supportedProtocols: Set<WireAPI.MessageProtocol>)] = [
+            (migrationState: .disabled, supportedProtocols: [.mls]),
+            (migrationState: .notStarted, supportedProtocols: [.proteus]),
+            (migrationState: .ongoing, supportedProtocols: [.proteus]),
+            (migrationState: .finalised, supportedProtocols: [.mls])
         ]
-        
+
         for testCase in testCases {
             await mock(migrationState: testCase.migrationState)
             // When
