@@ -129,7 +129,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
 
         if expired {
-            message.expire()
+            message.expire(withReason: .other)
         }
 
         syncMOC.saveOrRollback()

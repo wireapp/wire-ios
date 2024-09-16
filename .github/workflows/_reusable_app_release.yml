@@ -16,6 +16,9 @@ on:
       distribute_externals:
         type: boolean
         default: false
+      pr_s3_path:
+        required: false
+        type: string
 
     secrets:
       KEYCHAIN_PASSWORD:
@@ -118,7 +121,8 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
-    
+      PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
+      
     steps:
       - name: Add Masks
         run: |
