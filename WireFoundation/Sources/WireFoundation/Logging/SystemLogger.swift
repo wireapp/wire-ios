@@ -28,7 +28,7 @@ struct SystemLogger: LoggerProtocol {
     let persistQueue = DispatchQueue(label: "persistQueue")
 
     var logFiles: [URL] {
-        return []
+        []
     }
 
     var lastReportTime: Date? {
@@ -66,16 +66,16 @@ struct SystemLogger: LoggerProtocol {
     }
 
     func addTag(_ key: LogAttributesKey, value: String?) {
-       // do nothing, as it's only available on datadog
+        // do nothing, as it's only available on datadog
     }
 
     private func log(_ message: any LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
         var mergedAttributes: LogAttributes = [:]
-        attributes.forEach {
-            mergedAttributes.merge($0) { _, new in new }
+        for attribute in attributes {
+            mergedAttributes.merge(attribute) { _, new in new }
         }
 
-        var logger: OSLog = OSLog.default
+        var logger = OSLog.default
         if let tag = mergedAttributes[.tag] as? String {
             logger = loggers[tag] ?? OSLog(subsystem: Bundle.main.bundleIdentifier ?? "main", category: tag)
         }

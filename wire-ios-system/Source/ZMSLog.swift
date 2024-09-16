@@ -18,8 +18,8 @@
 
 import Foundation
 import os.log
-import ZipArchive
 import WireFoundation
+import ZipArchive
 
 /// Represents an entry to be logged.
 @objcMembers

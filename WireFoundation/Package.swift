@@ -22,7 +22,8 @@ let package = Package(
             name: "WireFoundation",
             dependencies: [
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack")
-            ]),
+            ]
+        ),
         .testTarget(name: "WireFoundationTests", dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]),
         .target(
             name: "WireFoundationSupport",
