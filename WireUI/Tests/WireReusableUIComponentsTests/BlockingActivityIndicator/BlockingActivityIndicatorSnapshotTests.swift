@@ -32,22 +32,20 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
     // MARK: - setUp
 
+    @MainActor
     override func setUp() async throws {
-        await MainActor.run {
-            viewController = UIViewController()
-            viewController.view.backgroundColor = .white
+        viewController = UIViewController()
+        viewController.view.backgroundColor = .white
 
-            sut = .init(view: viewController.view, accessibilityAnnouncement: .none)
-            snapshotHelper = .init()
-                .withSnapshotDirectory(relativeTo: #file)
-        }
+        sut = .init(view: viewController.view, accessibilityAnnouncement: .none)
+        snapshotHelper = .init()
+            .withSnapshotDirectory(relativeTo: #file)
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
         snapshotHelper = nil
-        super.tearDown()
     }
 
     // MARK: - Snapshot Tests

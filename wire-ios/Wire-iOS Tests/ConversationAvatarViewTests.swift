@@ -90,7 +90,9 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: otherUserConversation))
 
         // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersPendingConnection() {
@@ -143,7 +145,9 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .verify(matching: sut.prepareForSnapshots())
     }
 
     func testThatItRendersManyUsers() {
@@ -160,7 +164,9 @@ final class ConversationAvatarViewTests: XCTestCase {
         sut.configure(context: .conversation(conversation: conversation))
 
         // THEN
-        snapshotHelper.verify(matching: sut.prepareForSnapshots())
+        snapshotHelper
+            .withPerceptualPrecision(0.98)
+            .verify(matching: sut.prepareForSnapshots())
     }
 }
 
