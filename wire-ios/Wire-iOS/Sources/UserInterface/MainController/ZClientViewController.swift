@@ -73,11 +73,10 @@ final class ZClientViewController: UIViewController {
         selfUserLegalHoldSubject: userSession.selfUserLegalHoldSubject,
         userSession: userSession,
         zClientViewController: self,
-        mainCoordinator: tmpMainCoordinator, // TODO: fix
+        mainCoordinator: mainCoordinator,
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
     )
-    var tmpMainCoordinator: MainCoordinator<MainSplitViewController, MainTabBarController>!
 
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
@@ -92,7 +91,7 @@ final class ZClientViewController: UIViewController {
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
-    private weak var mainCoordinator: MainCoordinatorProtocol?
+    private(set) var mainCoordinator: MainCoordinatorProtocol!
 
     /// init method for testing allows injecting an Account object and self user
     required init(
@@ -202,6 +201,17 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupSplitViewController() {
+
+        mainCoordinator = MainCoordinator(
+            zClientViewController: self,
+            mainSplitViewController: wireSplitViewController,
+            mainTabBarController: mainTabBarController,
+            selfProfileBuilder: selfProfileViewControllerBuilder,
+            settingsBuilder: SettingsMainViewControllerBuilder(
+                userSession: userSession,
+                selfUser: userSession.editableSelfUser
+            )
+        )
 
         addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -370,7 +380,7 @@ final class ZClientViewController: UIViewController {
                 conversation: conversation,
                 message: message,
                 userSession: userSession,
-                mainCoordinator: tmpMainCoordinator, // TODO: fix
+                mainCoordinator: mainCoordinator,
                 mediaPlaybackManager: mediaPlaybackManager
             )
         }
@@ -395,7 +405,7 @@ final class ZClientViewController: UIViewController {
         let controller = GroupDetailsViewController(
             conversation: conversation,
             userSession: userSession,
-            mainCoordinator: tmpMainCoordinator, // TODO: fix
+            mainCoordinator: mainCoordinator,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
         let navController = controller.wrapInNavigationController()
@@ -453,7 +463,7 @@ final class ZClientViewController: UIViewController {
             conversation: currentConversation,
             message: nil,
             userSession: userSession,
-            mainCoordinator: tmpMainCoordinator, // TODO: fix
+            mainCoordinator: mainCoordinator,
             mediaPlaybackManager: mediaPlaybackManager
         )
 
@@ -685,7 +695,7 @@ final class ZClientViewController: UIViewController {
                 viewer: selfUser,
                 context: .deviceList,
                 userSession: userSession,
-                mainCoordinator: tmpMainCoordinator // TODO: fix
+                mainCoordinator: mainCoordinator
             )
 
             if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {

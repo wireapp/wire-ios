@@ -45,7 +45,7 @@ final class SearchUserViewController: UIViewController {
         userId: UUID,
         profileViewControllerDelegate: ProfileViewControllerDelegate?,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: MainCoordinatorProtocol
     ) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate

@@ -66,7 +66,7 @@ final class ProfileViewController: UIViewController {
         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
         viewControllerDismisser: ViewControllerDismisser? = nil,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: MainCoordinatorProtocol
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
         if let context {

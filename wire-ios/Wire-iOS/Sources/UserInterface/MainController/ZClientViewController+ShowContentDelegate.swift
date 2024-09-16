@@ -36,7 +36,7 @@ extension ZClientViewController {
             userId: userId,
             profileViewControllerDelegate: self,
             userSession: userSession,
-            mainCoordinator: tmpMainCoordinator // TODO: fix
+            mainCoordinator: mainCoordinator
         )
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
@@ -53,7 +53,7 @@ extension ZClientViewController {
             viewer: selfUser,
             context: .profileViewer,
             userSession: userSession,
-            mainCoordinator: tmpMainCoordinator // TODO: fix
+            mainCoordinator: mainCoordinator
         )
         profileViewController.delegate = self
 

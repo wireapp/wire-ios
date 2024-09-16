@@ -22,6 +22,7 @@ import WireSyncEngine
 
 struct SettingsMainViewControllerBuilder: ViewControllerBuilder {
 
+    // TODO: can selfUser be taken from the userSession?
     var userSession: UserSession
     var selfUser: SettingsSelfUser
 
