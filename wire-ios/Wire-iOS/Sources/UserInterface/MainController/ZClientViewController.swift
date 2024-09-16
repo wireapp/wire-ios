@@ -223,14 +223,7 @@ final class ZClientViewController: UIViewController {
         createTopViewConstraints()
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
-        Task {
-            do {
-                cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
-            } catch {
-                WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
-            }
-        }
-
+        sidebarViewController.delegate = mainCoordinator
         wireSplitViewController.setViewController(sidebarViewController, for: .primary)
         let supplementaryNavigationController = UINavigationController(rootViewController: conversationListViewController)
         wireSplitViewController.setViewController(supplementaryNavigationController, for: .supplementary)
@@ -245,6 +238,14 @@ final class ZClientViewController: UIViewController {
                 wireSplitViewController.traitOverrides.horizontalSizeClass = .compact
             } else {
                 setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: wireSplitViewController)
+            }
+        }
+
+        Task {
+            do {
+                cachedAccountImage = try await GetUserAccountImageUseCase().invoke(account: account)
+            } catch {
+                WireLogger.ui.error("Failed to update user's account image: \(String(reflecting: error))")
             }
         }
     }

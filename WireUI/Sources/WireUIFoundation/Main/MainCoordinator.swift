@@ -60,16 +60,20 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
     @MainActor
     public func showSelfProfile() async {
-        let selfProfileViewController = selfProfileViewController ?? selfProfileBuilder.build()
+        let conversationList = if isLayoutCollapsed {
+            mainTabBarController.conversations!.conversationList
+        } else {
+            mainSplitViewController.conversationList!
+        }
+
+        let selfProfileViewController = selfProfileViewController ?? UINavigationController(rootViewController: selfProfileBuilder.build())
         self.selfProfileViewController = selfProfileViewController
         // selfProfileViewController?.presentingViewController?.dismiss(animated: false)
 
-        let conversationList: UIViewController
-        if isLayoutCollapsed {
-            conversationList = mainTabBarController.conversations!.conversationList
-        } else {
-            conversationList = mainSplitViewController.conversationList!
-        }
+        // TODO: verify if this is correct
+        selfProfileViewController.modalPresentationStyle = .formSheet
+        //selfProfileViewController.view.backgroundColor = .black
+
         await withCheckedContinuation { continuation in
             conversationList.present(selfProfileViewController, animated: true, completion: continuation.resume)
         }
@@ -179,35 +183,18 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     //     print("349ur09e willShow \(column)")
     // }
 
-    public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+    /*public*/ open func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
         guard splitViewController === mainSplitViewController else { return }
 
         isLayoutCollapsed = false
 
-        /*
-        let containers = ContainerViewControllers(of: splitViewController)
-
-        // validate assumptions
-        print(containers.compactColumn[tab: .conversations].viewControllers)
-        guard
-            // there should never be anything pushed onto the nc of the supplmentary and secondary columns
-            [1, 2].contains(containers.compactColumn[tab: .conversations].viewControllers.count)
-        else { return assertionFailure("view controller hierarchy invalid assumptions") }
-
         // move view controllers from the tab bar controller to the supplementary column
-        let conversationViewController = containers.compactColumn[tab: .conversations].viewControllers[1...].first as! ConversationViewController?
-        if let conversationViewController {
-            containers.compactColumn[tab: .conversations].viewControllers.remove(at: 1)
-            containers.secondaryColumn.viewControllers = [conversationViewController]
-        } else {
-            let placeholderViewController = NoConversationPlaceholderViewController()
-            containers.secondaryColumn.viewControllers = [placeholderViewController]
-        }
+        let (conversationViewController, _) = mainTabBarController.conversations!
+        mainTabBarController.conversations = nil
+        mainSplitViewController.conversationList = conversationViewController
 
-        let conversationListViewController = containers.compactColumn[tab: .conversations].viewControllers[0] as! ConversationListViewController
-        containers.compactColumn[tab: .conversations].viewControllers = []
-        containers.supplementaryColumn.viewControllers = [conversationListViewController]
-        conversationListViewController.splitViewControllerMode = .expanded
-         */
+        // TODO: conversations
+
+        // TODO: more to move?
     }
 }

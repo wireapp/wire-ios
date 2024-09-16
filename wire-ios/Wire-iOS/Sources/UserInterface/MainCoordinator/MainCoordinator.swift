@@ -20,6 +20,7 @@ import WireCommonComponents
 import WireDataModel
 import WireSystem
 import WireUIFoundation
+import WireSidebar
 
 final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<MainSplitViewController, MainTabBarController> where MainSplitViewController.ConversationList == MainTabBarController.ConversationList {
 
@@ -110,5 +111,41 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         let conversationListViewController = navigationController.viewControllers[0] as! ConversationListViewController
         // TODO: how can this be done then?
         conversationListViewController.splitViewControllerMode = .collapsed
+    }
+
+    override func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+        super.splitViewControllerDidExpand(splitViewController)
+
+        // TODO: remove
+        let navigationController = splitViewController.viewController(for: .supplementary) as! UINavigationController
+        let conversationListViewController = navigationController.viewControllers[0] as! ConversationListViewController
+        // TODO: how can this be done then?
+        conversationListViewController.splitViewControllerMode = .expanded
+    }
+}
+
+// TODO: adapter needed
+extension MainCoordinator: SidebarViewControllerDelegate {
+
+    func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
+        Task {
+            await showSelfProfile()
+        }
+    }
+
+    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
+        fatalError("TODO")
+    }
+
+    func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
+        fatalError("TODO")
+    }
+
+    func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController) {
+        fatalError("TODO")
+    }
+
+    func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
+        fatalError("TODO")
     }
 }

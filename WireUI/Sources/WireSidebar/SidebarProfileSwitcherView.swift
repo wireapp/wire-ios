@@ -23,6 +23,8 @@ import WireFoundation
 // private let titleColor: UIColor = .black // ColorTheme.Backgrounds.onSurface
 // private let subtitleColor: UIColor = .gray // ColorTheme.Base.secondaryText
 
+// TODO: consider renaming if it's not for switching profiles but opening the profile
+
 struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
 
     @Environment(\.sidebarProfileSwitcherDisplayNameColor) private var displayNameColor
