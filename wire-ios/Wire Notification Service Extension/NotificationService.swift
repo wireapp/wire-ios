@@ -25,7 +25,6 @@ final class NotificationService: UNNotificationServiceExtension {
 
     // MARK: - Properties
 
-    let simpleService = SimpleNotificationService()
     let legacyService = LegacyNotificationService()
 
     override init() {
