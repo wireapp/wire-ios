@@ -69,7 +69,7 @@ struct SystemLogger: LoggerProtocol {
        // do nothing, as it's only available on datadog
     }
 
-    private func log(_ message: LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
+    private func log(_ message: any LogConvertible, attributes: [LogAttributes], osLogType: OSLogType) {
         var mergedAttributes: LogAttributes = [:]
         attributes.forEach {
             mergedAttributes.merge($0) { _, new in new }

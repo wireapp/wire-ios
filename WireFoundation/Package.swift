@@ -12,12 +12,13 @@ let package = Package(
         .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
     ],
     dependencies: [
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", from: "3.8.5"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireFoundation"),
+        .target(name: "WireFoundation", dependencies: ["CocoaLumberjack"]),
         .testTarget(name: "WireFoundationTests", dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]),
         .target(
             name: "WireFoundationSupport",
