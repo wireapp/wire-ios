@@ -20,9 +20,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       wire-ios: ${{ steps.filter.outputs.wire-ios == 'true' || steps.filter.outputs.carthage == 'true' }}
-      wire-reusable-ui-components: ${{ steps.filter.outputs.wire-reusable-ui-components }}
-      wire-ui-foundation: ${{ steps.filter.outputs.wire-ui-foundation }}
-      wire-design: ${{ steps.filter.outputs.wire-design }}
+      wire-ui: ${{ steps.filter.outputs.wire-ui }}
       wire-ios-sync-engine: ${{ steps.filter.outputs.wire-ios-sync-engine }}
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
@@ -55,15 +53,8 @@ jobs:
           filters: |
             wire-ios:
               - 'wire-ios/**'
-            wire-reusable-ui-components:
-              - 'WireUI/Sources/WireReusableUIComponents/**'
-              - 'WireUI/Tests/WireReusableUIComponentsTests/**'
-            wire-ui-foundation:
-              - 'WireUI/Sources/WireUIFoundation/**'
-              - 'WireUI/Tests/WireUIFoundationTests/**'
-            wire-design:
-              - 'WireUI/Sources/WireDesign/**'
-              - 'WireUI/Tests/WireDesignTests/**'
+            wire-ui:
+              - 'WireUI/**'
             wire-ios-share-engine:
               - 'wire-ios-share-engine/**'
             wire-ios-notification-engine:
@@ -118,9 +109,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       wire-ios: ${{ needs.detect-changes.outputs.wire-ios == 'true' }}
-      wire-reusable-ui-components: ${{ needs.detect-changes.outputs.wire-reusable-ui-components == 'true' }}
-      wire-ui-foundation: ${{ needs.detect-changes.outputs.wire-ui-foundation == 'true' }}
-      wire-design: ${{ needs.detect-changes.outputs.wire-design == 'true' }}
+      wire-ui: ${{ needs.detect-changes.outputs.wire-ui == 'true' }}
       wire-ios-sync-engine: ${{ needs.detect-changes.outputs.wire-ios-sync-engine == 'true' }}
       wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
       wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}

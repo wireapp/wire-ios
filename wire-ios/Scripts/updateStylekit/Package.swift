@@ -9,6 +9,7 @@ let package = Package(
         .target(
             name: "update_stylekit",
             dependencies: [],
-            path: ".")
+            path: "."
+        )
     ]
 )

@@ -2161,6 +2161,20 @@
 			path = MLS;
 			sourceTree = "<group>";
 		};
+		592D598B2C328A6F007966DB /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				BF491CE31F063EDB0055EE44 /* Account.swift */,
+				EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */,
+				161E05692667C4D000DADC3D /* AccountDeletedObserver.swift */,
+				BF491CE71F063EEB0055EE44 /* AccountManager.swift */,
+				BF491CE51F063EE50055EE44 /* AccountStore.swift */,
+				5E67168D2174B9AF00522E61 /* LoginCredentials.swift */,
+				BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 		594EB2FE2B1E31D30022A5CD /* Sourcery */ = {
 			isa = PBXGroup;
 			children = (
@@ -2444,20 +2458,6 @@
 				BF491CDA1F0525DC0055EE44 /* AccountTests.swift */,
 				BF491CDC1F0525E50055EE44 /* AccountManagerTests.swift */,
 				BF491CDF1F0529D80055EE44 /* AccountStoreTests.swift */,
-			);
-			name = Accounts;
-			sourceTree = "<group>";
-		};
-		BF491CE91F063F0A0055EE44 /* Accounts */ = {
-			isa = PBXGroup;
-			children = (
-				BF491CE31F063EDB0055EE44 /* Account.swift */,
-				EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */,
-				161E05692667C4D000DADC3D /* AccountDeletedObserver.swift */,
-				BF491CE71F063EEB0055EE44 /* AccountManager.swift */,
-				BF491CE51F063EE50055EE44 /* AccountStore.swift */,
-				5E67168D2174B9AF00522E61 /* LoginCredentials.swift */,
-				BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */,
 			);
 			name = Accounts;
 			sourceTree = "<group>";
@@ -2810,7 +2810,7 @@
 				CE4EDC071D6D9A04002A20AA /* Reaction */,
 				F93A30281D6EFB66005CCB1D /* Confirmation */,
 				F9A705D51CAEE01D00C2F5FE /* Connection */,
-				BF491CE91F063F0A0055EE44 /* Accounts */,
+				592D598B2C328A6F007966DB /* Account */,
 				BF1B98051EC313D100DE033B /* Teams */,
 				F9A705D91CAEE01D00C2F5FE /* Conversation */,
 				F9A705F01CAEE01D00C2F5FE /* Message */,

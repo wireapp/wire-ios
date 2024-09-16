@@ -33,7 +33,7 @@ protocol AVSMediaManagerInterface {
 extension AVSMediaManager: AVSMediaManagerInterface {
 }
 
-typealias SettingsSelfUser = EditableUserType & UserType
+typealias SettingsSelfUser = UserType & EditableUserType
 
 enum SettingsPropertyError: Error {
     case WrongValue(String)

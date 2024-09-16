@@ -7,6 +7,12 @@ require 'fastlane/action'
 opt_out_usage
 default_platform(:ios)
 
+# Since PR https://github.com/wireapp/wire-ios/pull/1929
+# CI is failing sometimes now when getting the build settings
+# attempt to fix it by increasing the timeout
+# https://github.com/fastlane/fastlane/issues/20919
+ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
+
 platform :ios do
     def iPhoneNameForTesting
         ENV['IPHONE_MODEL']
