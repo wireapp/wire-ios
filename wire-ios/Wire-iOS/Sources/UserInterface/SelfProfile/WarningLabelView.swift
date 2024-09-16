@@ -24,7 +24,7 @@ import WireDesign
 final class WarningLabelView: UIView {
     private let stackView = UIStackView(axis: .horizontal)
     private let imageView = UIImageView(image: UIImage(named: "Info"))
-    private let label = DynamicFontLabel(fontSpec: .mediumSemiboldFont,
+    private let label = DynamicFontLabel(style: .h5,
                                  color: SemanticColors.Label.textErrorDefault)
 
     // MARK: - Setup
