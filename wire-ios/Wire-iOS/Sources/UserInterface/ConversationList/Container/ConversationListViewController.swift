@@ -98,7 +98,7 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
-    var splitViewControllerMode: SplitViewControllerMode = .expanded {
+    var splitViewControllerMode: MainLayoutStatus = .expanded {
         didSet {
             setupTitleView()
             updateNavigationItem()
@@ -538,12 +538,5 @@ private extension NSAttributedString {
 
         let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
         return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
-    }
-}
-
-extension ConversationListViewController {
-
-    enum SplitViewControllerMode {
-        case collapsed, expanded
     }
 }

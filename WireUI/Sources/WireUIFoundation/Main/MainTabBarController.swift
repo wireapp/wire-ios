@@ -38,8 +38,9 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
             let navigationController = viewControllers![Tab.conversations.rawValue] as! UINavigationController
             guard !navigationController.viewControllers.isEmpty else { return nil }
 
-            let conversationList = navigationController.viewControllers.removeFirst() as! ConversationList
-            let conversation = navigationController.viewControllers.first.map { $0 as! Conversation }
+            var viewControllers = navigationController.viewControllers
+            let conversationList = viewControllers.removeFirst() as! ConversationList
+            let conversation = viewControllers.first.map { $0 as! Conversation }
             return (conversationList, conversation)
         }
         set {

@@ -211,27 +211,3 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
          */
     }
 }
-
-// TODO: can this be removed?
-private struct ContainerViewControllers {
-
-    var supplementaryColumn: UINavigationController
-    var secondaryColumn: UINavigationController
-    var compactColumn: MainTabBarController
-
-    init(of splitViewController: UISplitViewController) {
-
-        // ensure the compact column contains the tab bar controller, all others navigation controllers
-        guard
-            let supplementaryColumnNavigationController = splitViewController.viewController(for: .supplementary) as? UINavigationController,
-            let secondaryColumnNavigationController = splitViewController.viewController(for: .secondary) as? UINavigationController,
-            let compactColumnTabBarController = splitViewController.viewController(for: .compact) as? MainTabBarController
-        else {
-            fatalError("precondition check fail")
-        }
-
-        supplementaryColumn = supplementaryColumnNavigationController
-        secondaryColumn = secondaryColumnNavigationController
-        compactColumn = compactColumnTabBarController
-    }
-}
