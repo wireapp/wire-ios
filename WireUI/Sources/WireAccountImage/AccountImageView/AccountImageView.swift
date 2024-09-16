@@ -61,7 +61,7 @@ public final class AccountImageView: UIView {
     // MARK: - Private Properties
 
     private let accountImageView = UIImageView()
-    private let availabilityIndicatorView = AvailabilityIndicatorView()
+    let availabilityIndicatorView = AvailabilityIndicatorView()
 
     override public var intrinsicContentSize: CGSize {
         .init(
@@ -236,6 +236,12 @@ struct AccountImageView_Previews: PreviewProvider {
         let accountImage = UIImage.from(solidColor: .init(red: 0, green: 0.73, blue: 0.87, alpha: 1))
         NavigationStack {
             AccountImageViewRepresentable(accountImage, availability)
+                // slightly differnet colors so that we can verify that the view modifiers work
+                .accountImageViewBorderColor(.init(red: 0.56, green: 0.56, blue: 0.56, alpha: 1.00))
+                .availabilityIndicatorAvailableColor(.init(red: 0.01, green: 0.99, blue: 0.66, alpha: 1))
+                .availabilityIndicatorAwayColor(.init(red: 0.7, green: 0.15, blue: 0.07, alpha: 1))
+                .availabilityIndicatorBusyColor(.init(red: 0.42, green: 0.19, blue: 0.1, alpha: 1))
+                .availabilityIndicatorBackgroundViewColor(.init(red: 0.83, green: 0.81, blue: 0.8, alpha: 1))
                 // set a frame in order check that it scales,
                 // ensure it scales with "aspectFit" content mode
                 .frame(width: 32, height: 50)

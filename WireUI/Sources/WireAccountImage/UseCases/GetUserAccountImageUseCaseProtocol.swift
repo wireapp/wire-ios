@@ -22,6 +22,5 @@ import UIKit
 /// Otherwise an image will be generated using the initials of the person's name.
 public protocol GetUserAccountImageUseCaseProtocol {
 
-    func invoke<Account>(account: Account) async throws -> UIImage
-        where Account: GetAccountImageUseCaseAccountProtocol
+    func invoke(account: some GetAccountImageUseCaseAccountProtocol) async throws -> UIImage
 }
