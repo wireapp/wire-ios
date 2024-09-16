@@ -45,7 +45,11 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
             title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
             content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
             isCollapsed: isCollapsed,
+<<<<<<< HEAD
             icon: .init(resource: .attention),
+=======
+            icon: Asset.Images.attention.image.withRenderingMode(.alwaysOriginal),
+>>>>>>> 97674cde79 (fix: System message icon color - WPB-10936 (#1930))
             buttonAction: buttonAction
         )
     }
