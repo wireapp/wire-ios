@@ -41,24 +41,13 @@ final class NotificationService: UNNotificationServiceExtension {
     ) {
         WireLogger.notifications.info("did receive notification request: \(request.debugDescription)")
 
-        if DeveloperFlag.nseV2.isOn {
-            simpleService.didReceive(
-                request,
-                withContentHandler: contentHandler
-            )
-        } else {
-            legacyService.didReceive(
-                request,
-                withContentHandler: contentHandler
-            )
-        }
+        legacyService.didReceive(
+            request,
+            withContentHandler: contentHandler
+        )
     }
 
     override func serviceExtensionTimeWillExpire() {
-        if DeveloperFlag.nseV2.isOn {
-            simpleService.serviceExtensionTimeWillExpire()
-        } else {
-            legacyService.serviceExtensionTimeWillExpire()
-        }
+        legacyService.serviceExtensionTimeWillExpire()
     }
 }
