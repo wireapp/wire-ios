@@ -32,9 +32,21 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
     /// Join group after creating it if needed
     func joinNewGroup(with groupID: MLSGroupID) async throws
 
-    func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite
+    func establishGroup(
+        for groupID: MLSGroupID,
+        with users: [MLSUser],
+        removalKeys: BackendMLSPublicKeys?
+    ) async throws -> MLSCipherSuite
 
-    func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite
+    func createGroup(
+        for groupID: MLSGroupID,
+        parentGroupID: MLSGroupID
+    ) async throws -> MLSCipherSuite
+
+    func createGroup(
+        for groupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys?
+    ) async throws -> MLSCipherSuite
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
@@ -433,11 +445,15 @@ public final class MLSService: MLSServiceInterface {
     /// - Throws:
     ///   - MLSGroupCreationError if the group could not be created.
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
+    public func establishGroup(
+        for groupID: MLSGroupID,
+        with users: [MLSUser],
+        removalKeys: BackendMLSPublicKeys? = nil
+    ) async throws -> MLSCipherSuite {
         guard let context else { throw MLSGroupCreationError.failedToCreateGroup }
 
         do {
-            let ciphersuite = try await createGroup(for: groupID)
+            let ciphersuite = try await createGroup(for: groupID, removalKeys: removalKeys)
             let mlsSelfUser = await context.perform {
                 let selfUser = ZMUser.selfUser(in: context)
                 return MLSUser(from: selfUser)
@@ -454,7 +470,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func createGroup(
         for groupID: MLSGroupID,
-        parentGroupID: MLSGroupID? = nil
+        parentGroupID: MLSGroupID
     ) async throws -> MLSCipherSuite {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
@@ -464,22 +480,57 @@ public final class MLSService: MLSServiceInterface {
             throw MLSGroupCreationError.invalidCiphersuite
         }
 
+        // Anyone in the parent conversation can create a subconversation,
+        // even people from different domains. We need to make sure that
+        // the external senders is the same as the parent, otherwise we
+        // won't be able to decrypt external remove proposals from the
+        // owning domain.
+        let externalSenders = try await coreCrypto.perform {
+            [try await $0.getExternalSender(conversationId: parentGroupID.data)]
+        }
+
+        return try await createGroup(
+            for: groupID,
+            externalSenders: externalSenders,
+            ciphersuite: ciphersuite)
+    }
+
+    public func createGroup(
+        for groupID: MLSGroupID,
+        removalKeys: BackendMLSPublicKeys? = nil
+    ) async throws -> MLSCipherSuite {
+        logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
+
+        let ciphersuiteRawValue = await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue
+
+        guard let ciphersuite = MLSCipherSuite(rawValue: ciphersuiteRawValue) else {
+            throw MLSGroupCreationError.invalidCiphersuite
+        }
+
+        let externalSenders: [Data]
+
         do {
-            let externalSenders: [Data]
-            if let parentGroupID {
-                // Anyone in the parent conversation can create a subconversation,
-                // even people from different domains. We need to make sure that
-                // the external senders is the same as the parent, otherwise we
-                // won't be able to decrypt external remove proposals from the
-                // owning domain.
-                externalSenders = try await coreCrypto.perform {
-                    [try await $0.getExternalSender(conversationId: parentGroupID.data)]
-                }
+            if let removalKeys {
+                externalSenders = removalKeys.externalSenderKey(for: ciphersuite)
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
                 externalSenders = backendPublicKeys.externalSenderKey(for: ciphersuite)
             } else {
                 throw MLSGroupCreationError.failedToGetExternalSenders
             }
+
+            return try await createGroup(
+                for: groupID,
+                externalSenders: externalSenders,
+                ciphersuite: ciphersuite)
+        }
+    }
+
+    private func createGroup(
+        for groupID: MLSGroupID,
+        externalSenders: [Data],
+        ciphersuite: MLSCipherSuite
+    ) async throws -> MLSCipherSuite {
+        do {
             let config = ConversationConfiguration(
                 ciphersuite: UInt16(ciphersuite.rawValue),
                 externalSenders: externalSenders,
