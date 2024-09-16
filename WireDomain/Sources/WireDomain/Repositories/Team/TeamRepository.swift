@@ -44,6 +44,11 @@ protocol TeamRepositoryProtocol {
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 
+    /// Sets the team member `needsToBeUpdatedFromBackend` flag to true.
+    /// - Parameter membershipID: The id of the team member.
+
+    func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws
+
 }
 
 final class TeamRepository: TeamRepositoryProtocol {
@@ -70,6 +75,22 @@ final class TeamRepository: TeamRepositoryProtocol {
     func pullSelfTeam() async throws {
         let team = try await fetchSelfTeamRemotely()
         await storeTeamLocally(team)
+    }
+
+    func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws {
+        try await context.perform { [context] in
+
+            guard let member = Member.fetch(
+                with: membershipID,
+                in: context
+            ) else {
+                throw TeamRepositoryError.failedToFindTeamMember(membershipID)
+            }
+
+            member.needsToBeUpdatedFromBackend = true
+
+            try context.save()
+        }
     }
 
     private func fetchSelfTeamRemotely() async throws -> WireAPI.Team {
