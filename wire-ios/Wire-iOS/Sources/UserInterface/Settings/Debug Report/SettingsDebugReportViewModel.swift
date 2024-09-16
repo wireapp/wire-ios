@@ -20,18 +20,7 @@ import MessageUI
 import WireCommonComponents
 import WireSyncEngine
 
-// sourcery: AutoMockable
-protocol SettingsDebugReportViewModelProtocol {
-
-    /// Send a debug report via email or shows fallback alert if email is not available
-    func sendReport(sender: UIView)
-
-    /// Presents a list of conversation for the user to share the debug report with
-    func shareReport()
-
-}
-
-class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
+final class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
 
     // MARK: - Properties
 
@@ -39,7 +28,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
     private let shareFile: ShareFileUseCaseProtocol
     private let fetchShareableConversations: FetchShareableConversationsUseCaseProtocol
     private let logsProvider: LogFilesProviding
-    private let fileMetaDataGenerator: FileMetaDataGenerating
+    private let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
 
     // MARK: - Life cycle
 
@@ -48,7 +37,7 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
         shareFile: ShareFileUseCaseProtocol,
         fetchShareableConversations: FetchShareableConversationsUseCaseProtocol,
         logsProvider: LogFilesProviding = LogFilesProvider(),
-        fileMetaDataGenerator: FileMetaDataGenerating = FileMetaDataGenerator()
+        fileMetaDataGenerator: FileMetaDataGeneratorProtocol
     ) {
         self.router = router
         self.shareFile = shareFile
@@ -69,33 +58,20 @@ class SettingsDebugReportViewModel: SettingsDebugReportViewModelProtocol {
         }
     }
 
-    func shareReport() {
+    @MainActor
+    func shareReport() async {
 
         do {
             let conversations = fetchShareableConversations.invoke()
             let logsURL = try logsProvider.generateLogFilesZip()
-
-            fileMetaDataGenerator.metadataForFileAtURL(
-                logsURL,
-                UTI: logsURL.UTI(),
-                name: logsURL.lastPathComponent
-            ) { [weak self] metadata in
-
-                guard let `self` else { return }
-
-                let shareableDebugReport = ShareableDebugReport(
-                    logFileMetadata: metadata,
-                    shareFile: self.shareFile
-                )
-
-                self.router.presentShareViewController(
-                    destinations: conversations,
-                    debugReport: shareableDebugReport
-                )
-            }
+            let metadata = await fileMetaDataGenerator.metadataForFile(at: logsURL)
+            let shareableDebugReport = ShareableDebugReport(logFileMetadata: metadata, shareFile: shareFile)
+            router.presentShareViewController(
+                destinations: conversations,
+                debugReport: shareableDebugReport
+            )
         } catch {
             WireLogger.system.error("failed to generate log files \(error)")
         }
-
     }
 }

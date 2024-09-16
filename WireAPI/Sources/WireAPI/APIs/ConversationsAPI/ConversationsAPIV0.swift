@@ -30,11 +30,11 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
 
     var apiVersion: APIVersion { .v0 }
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
     // MARK: - Initialize
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 

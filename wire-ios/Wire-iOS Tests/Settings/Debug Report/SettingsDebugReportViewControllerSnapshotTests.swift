@@ -17,7 +17,7 @@
 //
 
 import SnapshotTesting
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -31,8 +31,8 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
 
     // MARK: - setUp
 
-    override func setUp() {
-        super.setUp()
+    @MainActor
+    override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
         accentColor = .blue
         sut = SettingsDebugReportViewController(viewModel: MockSettingsDebugReportViewModelProtocol())
@@ -43,6 +43,7 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
     override func tearDown() {
         snapshotHelper = nil
         sut = nil
+
         super.tearDown()
     }
 
@@ -53,5 +54,4 @@ final class SettingsDebugReportViewControllerSnapshotTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: sut)
     }
-
 }

@@ -686,7 +686,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
-        message.expire()
+        message.expire(withReason: .other)
         self.uiMOC.saveOrRollback()
 
         // then
@@ -764,7 +764,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // when
         self.token = nil
-        message.expire()
+        message.expire(withReason: .other)
         self.uiMOC.saveOrRollback()
 
         // then

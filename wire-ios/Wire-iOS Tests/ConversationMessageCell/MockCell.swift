@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireUtilitiesPkg
+import WireFoundation
 
 @testable import Wire
 

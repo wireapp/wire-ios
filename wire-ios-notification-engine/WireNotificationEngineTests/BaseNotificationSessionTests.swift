@@ -20,10 +20,11 @@ import Foundation
 import WireDataModel
 import WireDataModelSupport
 import WireMockTransport
-@testable import WireNotificationEngine
 import WireRequestStrategy
 import WireTesting
 import XCTest
+
+@testable import WireNotificationEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated

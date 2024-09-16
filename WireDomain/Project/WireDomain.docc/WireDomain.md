@@ -12,9 +12,20 @@ It depends on WireAPI and for the time being other older frameworks like WireDat
 
 ## Topics
 
+### Conversations
+
+- <doc:conversations>
+- ``ConversationRepository``
+- ``ConversationLocalStore``
+
+### Federation
+
+- <doc:federation>
+
 ### Repositories
 
 - ``UserRepository``
+- ``ConversationRepository``
 
 ### UseCases
 
