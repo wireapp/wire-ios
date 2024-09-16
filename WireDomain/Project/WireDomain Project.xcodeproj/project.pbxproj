@@ -304,6 +304,7 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
+				C9EA76AD2C98548900A7D35C /* UseCases */,
 				EECC35A42C2EB6C100679448 /* Synchronization */,
 				EE57A6FC2C298F280096F242 /* Event Decryption */,
 				EE368CCD2C2DAA87009DBAB0 /* Event Processing */,
@@ -483,6 +484,14 @@
 			path = Team;
 			sourceTree = "<group>";
 		};
+		C9EA76AD2C98548900A7D35C /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -609,7 +618,6 @@
 		EECC35A42C2EB6C100679448 /* Synchronization */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */,
 				EECC35A52C2EB6CD00679448 /* SyncManager.swift */,
 				EECC35A72C2EB70400679448 /* SyncState.swift */,
 			);
