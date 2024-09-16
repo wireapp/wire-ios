@@ -58,7 +58,7 @@ public struct PushSupportedProtocolsUseCase {
             result.insert(.proteus)
         }
 
-        /// All clients are mls ready so we support it if the backend does.
+        /// We support mls if the backend does and all MLS clients are ready.
         if remoteProtocols.contains(.mls), allClientsMLSReady {
             result.insert(.mls)
         }
