@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilitiesPkg
+import WireFoundation
 
 public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
@@ -33,7 +33,6 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         sharedUserDefaults: UserDefaults
     ) {
         self.userID = userID
-        self.keychainAccessGroup = keychainAccessGroup
         self.sharedUserDefaults = sharedUserDefaults
     }
 
@@ -159,6 +158,6 @@ enum PersistentAuthenticationStorageError: Error {
     case cookieNotFound
     case unableToFetchCookieData(status: Int32?)
     case missingCookieEncryptionKey
-    case unabledToDecryptCookie(Error)
+    case unabledToDecryptCookie(any Error)
 
 }
