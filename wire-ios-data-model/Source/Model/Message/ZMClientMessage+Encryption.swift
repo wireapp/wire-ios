@@ -137,6 +137,12 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         else {
             return nil
         }
+       
+        let corecrypto = await context.perform { context.zm_sync.coreCrypto }
+        await corecrypto?.acquireLock()
+        defer {
+            corecrypto?.releaseLock()
+        }
 
         let underlyingMessage = await context.perform {
             self.updateUnderlayingMessageBeforeSending(in: context)
@@ -152,6 +158,13 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         else {
             return nil
         }
+
+        let corecrypto = await context.perform { context.zm_sync.coreCrypto }
+        await corecrypto?.acquireLock()
+        defer {
+            corecrypto?.releaseLock()
+        }
+
 
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
@@ -174,7 +187,13 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
         else {
             return nil
         }
-
+       
+        let corecrypto = await context.perform { context.zm_sync.coreCrypto }
+        await corecrypto?.acquireLock()
+        defer {
+            corecrypto?.releaseLock()
+        }
+        
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
         }
@@ -187,6 +206,12 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
             let conversation = await context.perform({ self.conversation })
         else {
             return nil
+        }
+
+        let corecrypto = await context.perform { context.zm_sync.coreCrypto }
+        await corecrypto?.acquireLock()
+        defer {
+            corecrypto?.releaseLock()
         }
 
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
@@ -375,7 +400,7 @@ extension GenericMessage {
 
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
-
+            
             let message = await proteusMessage(
                 selfClient,
                 selfDomain: selfDomain,

@@ -145,7 +145,7 @@ public final class ProteusService: ProteusServiceInterface {
         logger.info("encrypting data")
 
         do {
-            let encryptedData = try await coreCrypto.perform {
+            let encryptedData = try await coreCrypto.unsafePerform {
                 try await $0.proteusEncrypt(
                     sessionId: id.rawValue,
                     plaintext: data
