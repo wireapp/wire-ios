@@ -4318,6 +4318,7 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - performPendingJoins
 
+<<<<<<< HEAD
     public var performPendingJoins_Invocations: [Void] = []
     public var performPendingJoins_MockError: Error?
     public var performPendingJoins_MockMethod: (() async throws -> Void)?
@@ -4331,6 +4332,26 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
         guard let mock = performPendingJoins_MockMethod else {
             fatalError("no mock for `performPendingJoins`")
+=======
+    public var establishGroupForWithRemovalKeys_Invocations: [(groupID: MLSGroupID, users: [MLSUser], removalKeys: BackendMLSPublicKeys?)] = []
+    public var establishGroupForWithRemovalKeys_MockError: Error?
+    public var establishGroupForWithRemovalKeys_MockMethod: ((MLSGroupID, [MLSUser], BackendMLSPublicKeys?) async throws -> MLSCipherSuite)?
+    public var establishGroupForWithRemovalKeys_MockValue: MLSCipherSuite?
+
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser], removalKeys: BackendMLSPublicKeys?) async throws -> MLSCipherSuite {
+        establishGroupForWithRemovalKeys_Invocations.append((groupID: groupID, users: users, removalKeys: removalKeys))
+
+        if let error = establishGroupForWithRemovalKeys_MockError {
+            throw error
+        }
+
+        if let mock = establishGroupForWithRemovalKeys_MockMethod {
+            return try await mock(groupID, users, removalKeys)
+        } else if let mock = establishGroupForWithRemovalKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `establishGroupForWithRemovalKeys`")
+>>>>>>> a43e45b27b (feat: Use proper MLS removal key with federated 1:1 conversations - WPB-10745 (#1868))
         }
 
         try await mock()
@@ -4338,12 +4359,22 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - wipeGroup
 
+<<<<<<< HEAD
     public var wipeGroup_Invocations: [MLSGroupID] = []
     public var wipeGroup_MockError: Error?
     public var wipeGroup_MockMethod: ((MLSGroupID) async throws -> Void)?
 
     public func wipeGroup(_ groupID: MLSGroupID) async throws {
         wipeGroup_Invocations.append(groupID)
+=======
+    public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID)] = []
+    public var createGroupForParentGroupID_MockError: Error?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID) async throws -> MLSCipherSuite)?
+    public var createGroupForParentGroupID_MockValue: MLSCipherSuite?
+
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID) async throws -> MLSCipherSuite {
+        createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
+>>>>>>> a43e45b27b (feat: Use proper MLS removal key with federated 1:1 conversations - WPB-10745 (#1868))
 
         if let error = wipeGroup_MockError {
             throw error
@@ -4354,6 +4385,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         }
 
         try await mock(groupID)
+    }
+
+    // MARK: - createGroup
+
+    public var createGroupForRemovalKeys_Invocations: [(groupID: MLSGroupID, removalKeys: BackendMLSPublicKeys?)] = []
+    public var createGroupForRemovalKeys_MockError: Error?
+    public var createGroupForRemovalKeys_MockMethod: ((MLSGroupID, BackendMLSPublicKeys?) async throws -> MLSCipherSuite)?
+    public var createGroupForRemovalKeys_MockValue: MLSCipherSuite?
+
+    public func createGroup(for groupID: MLSGroupID, removalKeys: BackendMLSPublicKeys?) async throws -> MLSCipherSuite {
+        createGroupForRemovalKeys_Invocations.append((groupID: groupID, removalKeys: removalKeys))
+
+        if let error = createGroupForRemovalKeys_MockError {
+            throw error
+        }
+
+        if let mock = createGroupForRemovalKeys_MockMethod {
+            return try await mock(groupID, removalKeys)
+        } else if let mock = createGroupForRemovalKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createGroupForRemovalKeys`")
+        }
     }
 
     // MARK: - conversationExists
