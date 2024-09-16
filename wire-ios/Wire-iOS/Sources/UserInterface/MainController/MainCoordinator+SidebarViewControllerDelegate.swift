@@ -124,28 +124,28 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
     }
 }
 
-// TODO: adapter needed
-extension MainCoordinator: SidebarViewControllerDelegate {
+// TODO: remove "WireUIFoundation."
+extension WireUIFoundation.MainCoordinator: SidebarViewControllerDelegate {
 
-    func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
+    public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
             await showSelfProfile()
         }
     }
 
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
+    public func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
         fatalError("TODO")
     }
 
-    func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
+    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
         fatalError("TODO")
     }
 
-    func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController) {
+    public func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController) {
         fatalError("TODO")
     }
 
-    func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
+    public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {
         fatalError("TODO")
     }
 }
