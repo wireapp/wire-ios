@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Inject
 import SwiftUI
 import WireCommonComponents
 import WireDesign
@@ -27,6 +28,8 @@ struct AccentColorPicker: View {
     @State
     var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
+
+    @ObserveInjection var inject
 
     let onColorSelect: ((AccentColor) -> Void)?
 
@@ -47,6 +50,7 @@ struct AccentColorPicker: View {
             .modifier(ListBackgroundStyleModifier())
             .background(Color(SemanticColors.View.backgroundDefault))
         }
+        .enableInjection()
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack {
