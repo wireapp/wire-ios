@@ -17,24 +17,37 @@
 //
 
 import UIKit
+import WireFoundation
 
-public final class MainCoordinator<MainSplitViewController, MainTabBarController, Conversation, ConversationMessage>: MainCoordinatorProtocol, UISplitViewControllerDelegate
+// TODO: make public final
+open /*public final*/ class MainCoordinator<MainSplitViewController, MainTabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
     where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol {
 
-    private weak var mainSplitViewContent: MainSplitViewController?
-    private weak var mainTabBarContent: MainTabBarController?
+    private weak var mainSplitViewController: MainSplitViewController!
+    private weak var mainTabBarController: MainTabBarController!
 
     // TODO: setup inside or outside?
     // only navigation here?
     // protocols/accessors for each navigation controller? or viewControllers array
 
-    @discardableResult
+    private var selfProfileBuilder: any ViewControllerBuilder
+
+    private weak var selfProfileViewController: UIViewController?
+
+    private var isLayoutCollapsed = false
+
     public init(
-        mainSplitViewContent: MainSplitViewController,
-        mainTabBarContent: MainTabBarController
+        mainSplitViewController: MainSplitViewController,
+        mainTabBarController: MainTabBarController,
+        selfProfileBuilder: /*some*/ any ViewControllerBuilder
     ) {
-        // self.splitViewController = splitViewController
-        // objc_setAssociatedObject(splitViewController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        self.mainSplitViewController = mainSplitViewController
+        self.mainTabBarController = mainTabBarController
+        self.selfProfileBuilder = selfProfileBuilder
+    }
+
+    deinit {
+        /*WireLogger.ui.debug*/print("MainCoordinator.deinit")
     }
 
     public func showConversations() {
@@ -45,36 +58,86 @@ public final class MainCoordinator<MainSplitViewController, MainTabBarController
         fatalError("not implemented yet")
     }
 
+    @MainActor
+    public func showSelfProfile() async {
+        let selfProfileViewController = selfProfileViewController ?? selfProfileBuilder.build()
+        self.selfProfileViewController = selfProfileViewController
+        // selfProfileViewController?.presentingViewController?.dismiss(animated: false)
+
+        let conversationList: UIViewController
+        if isLayoutCollapsed {
+            conversationList = mainTabBarController.conversations!.conversationList
+        } else {
+            conversationList = mainSplitViewController.conversationList!
+        }
+        await withCheckedContinuation { continuation in
+            conversationList.present(selfProfileViewController, animated: true, completion: continuation.resume)
+        }
+    }
+
     public func showSettings() {
         fatalError("not implemented yet")
+
+
+
+        //        private func createSettingsViewController() -> UIViewController {
+        //            let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
+        //                userSession: userSession,
+        //                selfUser: userSession.selfUserLegalHoldSubject
+        //            )
+        //            return settingsViewControllerBuilder.build()
+        //        }
+
+
+
+        // TODO: remove?
+                // guard let selfUser = ZMUser.selfUser() else {
+                //     assertionFailure("ZMUser.selfUser() is nil")
+                //     return
+                // }
+
+        //        let settingsViewController = createSettingsViewController(selfUser: selfUser)
+        //        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
+
+                // TODO: fix
+                fatalError("TODO")
+                // if wr_splitViewController?.layoutSize == .compact {
+                //     present(keyboardAvoidingViewController, animated: true)
+                // } else {
+                //     keyboardAvoidingViewController.modalPresentationStyle = .formSheet
+                //     keyboardAvoidingViewController.view.backgroundColor = .black
+                //     present(keyboardAvoidingViewController, animated: true)
+                // }
     }
 
-    public func openConversation(
-        _ conversation: Conversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        fatalError("not implemented yet")
-    }
-
-    public func openConversation(
-        _ conversation: Conversation,
-        andScrollTo message: ConversationMessage,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        fatalError("not implemented yet")
-    }
+//    public func openConversation(
+//        _ conversation: Conversation,
+//        focusOnView focus: Bool,
+//        animated: Bool
+//    ) {
+//        fatalError("not implemented yet")
+//    }
+//
+//    public func openConversation(
+//        _ conversation: Conversation,
+//        andScrollTo message: ConversationMessage,
+//        focusOnView focus: Bool,
+//        animated: Bool
+//    ) {
+//        fatalError("not implemented yet")
+//    }
 
     // MARK: - UISplitViewControllerDelegate
 
     public func splitViewControllerDidCollapse(_: UISplitViewController) {
-        fatalError("not implemented yet")
+        isLayoutCollapsed = true
+
+        // TODO: make changes
     }
 
     public func splitViewControllerDidExpand(_: UISplitViewController) {
-        fatalError("not implemented yet")
+        isLayoutCollapsed = false
+
+        // TODO: make changes
     }
 }
-
-// private nonisolated(unsafe) var associatedObjectKey = 0

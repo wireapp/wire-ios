@@ -301,28 +301,9 @@ extension ConversationListViewController {
 
     @objc
     private func presentProfile() {
-        fatalError("TODO")
-        // TODO: fix
-        // return mainCoordinator.showSelfProfile()
-
-// TODO: remove?
-        guard let selfUser = ZMUser.selfUser() else {
-            assertionFailure("ZMUser.selfUser() is nil")
-            return
+        Task {
+            await mainCoordinator.showSelfProfile()
         }
-
-//        let settingsViewController = createSettingsViewController(selfUser: selfUser)
-//        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
-
-        // TODO: fix
-        fatalError("TODO")
-        // if wr_splitViewController?.layoutSize == .compact {
-        //     present(keyboardAvoidingViewController, animated: true)
-        // } else {
-        //     keyboardAvoidingViewController.modalPresentationStyle = .formSheet
-        //     keyboardAvoidingViewController.view.backgroundColor = .black
-        //     present(keyboardAvoidingViewController, animated: true)
-        // }
     }
 
     // MARK: - Legal Hold

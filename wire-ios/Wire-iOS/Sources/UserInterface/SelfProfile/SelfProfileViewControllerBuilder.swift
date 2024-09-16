@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import WireUIFoundation
 
 struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
 

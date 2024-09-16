@@ -21,29 +21,27 @@ import WireDataModel
 import WireSystem
 import WireUIFoundation
 
-final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: MainCoordinatorProtocol, UISplitViewControllerDelegate {
+final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<MainSplitViewController, MainTabBarController> {
 
-    private weak var zClientViewController: ZClientViewController!
-    private weak var mainSplitViewController: MainSplitViewController!
-    private weak var mainTabBarController: MainTabBarController!
+    // private weak var zClientViewController: ZClientViewController!
 
-    private(set) var selfProfileBuilder: ViewControllerBuilder
-    private(set) var settingsBuilder: ViewControllerBuilder
-
-    private weak var settingsViewController: UIViewController?
+    // private(set) var settingsBuilder: ViewControllerBuilder
 
     init(
-        zClientViewController: ZClientViewController!,
-        mainSplitViewController: MainSplitViewController!,
-        mainTabBarController: MainTabBarController!,
+        zClientViewController: ZClientViewController,
+        mainSplitViewController: MainSplitViewController,
+        mainTabBarController: MainTabBarController,
         selfProfileBuilder: ViewControllerBuilder,
         settingsBuilder: ViewControllerBuilder
     ) {
-        self.zClientViewController = zClientViewController
-        self.mainSplitViewController = mainSplitViewController
-        self.mainTabBarController = mainTabBarController
-        self.selfProfileBuilder = selfProfileBuilder
-        self.settingsBuilder = settingsBuilder
+        //self.zClientViewController = zClientViewController
+        // self.selfProfileBuilder = selfProfileBuilder
+        // self.settingsBuilder = settingsBuilder
+        super.init(
+            mainSplitViewController: mainSplitViewController,
+            mainTabBarController: mainTabBarController,
+            selfProfileBuilder: selfProfileBuilder
+        )
     }
 
     deinit {
@@ -51,18 +49,6 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
     }
 
     // MARK: - Methods
-
-    func showConversations() {
-        fatalError("TODO")
-    }
-
-    func showArchivedConversation() {
-        fatalError("TODO")
-    }
-
-    func showSettings() {
-        fatalError("TODO")
-    }
 
     /*
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {

@@ -202,7 +202,7 @@ final class ZClientViewController: UIViewController {
 
     private func setupSplitViewController() {
 
-        mainCoordinator = MainCoordinator(
+        let mainCoordinator = MainCoordinator(
             zClientViewController: self,
             mainSplitViewController: wireSplitViewController,
             mainTabBarController: mainTabBarController,
@@ -212,12 +212,13 @@ final class ZClientViewController: UIViewController {
                 selfUser: userSession.editableSelfUser
             )
         )
+        self.mainCoordinator = mainCoordinator
+        wireSplitViewController.delegate = mainCoordinator
 
         addChild(wireSplitViewController)
         wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(wireSplitViewController.view)
         wireSplitViewController.didMove(toParent: self)
-        wireSplitViewController.delegate = self
 
         createTopViewConstraints()
 
@@ -774,16 +775,6 @@ final class ZClientViewController: UIViewController {
         viewController.delegate = conversationListViewController
         return viewController
     }
-
-    // MARK: - Settings
-
-    private func createSettingsViewController() -> UIViewController {
-        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
-            userSession: userSession,
-            selfUser: userSession.selfUserLegalHoldSubject
-        )
-        return settingsViewControllerBuilder.build()
-    }
 }
 
 // MARK: - ZClientViewController + UserObserving
@@ -813,7 +804,7 @@ extension ZClientViewController: UserObserving {
 
 // MARK: - ZClientViewController + UISplitViewControllerDelegate
 
-// TODO: could this be implemented by MainCoordinator instead?
+// TODO: move to MainCoordinator
 // TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
 extension ZClientViewController: UISplitViewControllerDelegate {
 

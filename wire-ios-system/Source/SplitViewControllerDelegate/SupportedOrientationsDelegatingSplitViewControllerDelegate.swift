@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: is this file needed?
+// TODO: remove file
 
 import UIKit
 

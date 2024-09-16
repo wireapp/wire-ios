@@ -16,33 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Handles the navigation when a user is authenticated.
-public protocol MainCoordinatorProtocol: AnyObject {
+import UIKit
+
+// TODO: remove file
+public extension UIViewController {
 
     @MainActor
-    func showConversations()
-
-    @MainActor
-    func showArchivedConversation()
-
-    @MainActor
-    func showSelfProfile() async
-
-    @MainActor
-    func showSettings()
-
-//    func openConversation(
-//        _ conversation: ZMConversation,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    )
-//
-//    func openConversation<Message>(
-//        _ conversation: ZMConversation,
-//        scrollTo message: Message,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) where Message: ZMConversationMessage
-//
-//    func showConversationList()
+    func presentAsync(
+        _ viewControllerToPresent: UIViewController,
+        animated: Bool
+    ) async {
+        await withCheckedContinuation { continuation in
+            present(viewControllerToPresent, animated: animated) {
+                continuation.resume()
+            }
+        }
+    }
 }
