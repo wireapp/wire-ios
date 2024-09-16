@@ -21,7 +21,7 @@ import WireDataModel
 import WireSystem
 
 /// Calculates and pushes the supported protocols to the backend
-struct PushSupportedProtocolsUseCase {
+public struct PushSupportedProtocolsUseCase {
 
     private enum ProteusToMLSMigrationState: String {
         case disabled
@@ -35,7 +35,7 @@ struct PushSupportedProtocolsUseCase {
 
     private let logger = WireLogger(tag: "supported-protocols")
 
-    func invoke() async throws {
+    public func invoke() async throws {
         let supportedProtocols = await calculateSupportedProtocols()
         try await userRepository.pushSelfSupportedProtocols(supportedProtocols)
     }
