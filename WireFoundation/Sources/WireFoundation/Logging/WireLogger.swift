@@ -75,7 +75,7 @@ public struct WireLogger: LoggerProtocol, Sendable {
 
     // MARK: - Private Helpers
 
-    private func shouldLogMessage(_ message: LogConvertible) -> Bool {
+    private func shouldLogMessage(_ message: any LogConvertible) -> Bool {
         return !message.logDescription.isEmpty
     }
 
@@ -95,7 +95,7 @@ public struct WireLogger: LoggerProtocol, Sendable {
         provider.logFiles
     }
 
-    public static func addLogger(_ logger: LoggerProtocol) {
+    public static func addLogger(_ logger: any LoggerProtocol) {
         provider.addLogger(logger)
     }
 }

@@ -18,7 +18,11 @@ let package = Package(
         .package(path: "../SourceryPlugin")
     ],
     targets: [
-        .target(name: "WireFoundation", dependencies: ["CocoaLumberjack"]),
+        .target(
+            name: "WireFoundation",
+            dependencies: [
+                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack")
+            ]),
         .testTarget(name: "WireFoundationTests", dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]),
         .target(
             name: "WireFoundationSupport",
