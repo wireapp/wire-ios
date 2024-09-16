@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireUIFoundation
 
 // MARK: - MessageDetailsSectionDescription
 
@@ -76,7 +77,7 @@ final class MessageDetailsContentViewController: UIViewController {
     private let sectionHeaderIdentifier = "SectionHeader"
 
     let userSession: UserSession
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: MainCoordinatorProtocol
 
     /// The displayed sections.
     private(set) var sections = [MessageDetailsSectionDescription]()
@@ -98,7 +99,7 @@ final class MessageDetailsContentViewController: UIViewController {
         contentType: ContentType,
         conversation: ZMConversation,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.contentType = contentType
         self.conversation = conversation

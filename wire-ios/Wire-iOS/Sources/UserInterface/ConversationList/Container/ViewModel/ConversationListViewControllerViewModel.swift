@@ -24,6 +24,7 @@ import WireDataModel
 import WireFoundation
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUIFoundation
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
@@ -100,7 +101,7 @@ extension ConversationListViewController {
         var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
-        let mainCoordinator: MainCoordinating
+        let mainCoordinator: MainCoordinatorProtocol
 
         let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
         let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
@@ -114,7 +115,7 @@ extension ConversationListViewController {
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
-            mainCoordinator: some MainCoordinating,
+            mainCoordinator: some MainCoordinatorProtocol,
             getUserAccountImageUseCase: any GetUserAccountImageUseCaseProtocol
         ) {
             self.account = account

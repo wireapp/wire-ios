@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import WireUIFoundation
 
 extension MessagePresenter {
 
@@ -34,7 +35,7 @@ extension MessagePresenter {
         actionResponder: MessageActionResponder,
         isPreviewing: Bool,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {
 
         guard let conversation = message.conversation else {

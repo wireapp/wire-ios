@@ -23,6 +23,7 @@ import WireDesign
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUIFoundation
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
@@ -95,7 +96,7 @@ final class ConversationContentViewController: UIViewController {
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: MainCoordinatorProtocol
     var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var userClientToken: Any?
@@ -115,7 +116,7 @@ final class ConversationContentViewController: UIViewController {
         message: ZMConversationMessage? = nil,
         mediaPlaybackManager: MediaPlaybackManager?,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         self.userSession = userSession

@@ -16,10 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: remove typealias
+public typealias MainCoordinating = MainCoordinatorProtocol
+
 /// Handles the navigation when a user is authenticated.
 @MainActor
 public protocol MainCoordinatorProtocol: AnyObject {
     func showConversations()
     func showArchivedConversation()
     func showSettings()
+
+//    func openConversation(
+//        _ conversation: ZMConversation,
+//        focusOnView focus: Bool,
+//        animated: Bool
+//    )
+//
+//    func openConversation<Message>(
+//        _ conversation: ZMConversation,
+//        scrollTo message: Message,
+//        focusOnView focus: Bool,
+//        animated: Bool
+//    ) where Message: ZMConversationMessage
+//
+//    func showConversationList()
+//
+//    func showSelfProfile()
 }

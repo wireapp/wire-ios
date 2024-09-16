@@ -23,13 +23,14 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUIFoundation
 
 final class ConversationListViewController: UIViewController {
 
     // MARK: - Properties
 
     let viewModel: ViewModel
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: MainCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -112,7 +113,7 @@ final class ConversationListViewController: UIViewController {
         selfUserLegalHoldSubject: any SelfUserLegalHoldable,
         userSession: UserSession,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinatorProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
@@ -135,7 +136,7 @@ final class ConversationListViewController: UIViewController {
     required init(
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinatorProtocol,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel

@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireUIFoundation
 
 /**
  * A view controller wrapping the message details.
@@ -91,7 +92,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     convenience init(
         message: ZMConversationMessage,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.init(
             message: message,
@@ -113,7 +114,7 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
         message: ZMConversationMessage,
         preferredDisplayMode: MessageDetailsDisplayMode,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) {
         self.message = message
         self.dataSource = MessageDetailsDataSource(message: message)

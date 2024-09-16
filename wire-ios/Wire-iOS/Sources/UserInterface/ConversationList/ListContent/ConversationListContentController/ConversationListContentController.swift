@@ -21,13 +21,14 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
+import WireUIFoundation
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let mainCoordinator: MainCoordinating
+    private let mainCoordinator: MainCoordinatorProtocol
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -45,7 +46,7 @@ final class ConversationListContentController: UICollectionViewController {
 
     init(
         userSession: UserSession,
-        mainCoordinator: MainCoordinating,
+        mainCoordinator: MainCoordinatorProtocol,
         zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession
@@ -383,9 +384,13 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
 
         if let conversation = item as? ZMConversation {
             if let scrollToMessageOnNextSelection {
-                mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                fatalError("TODO")
+                // TODO: fix
+                //mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
-                mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                fatalError("TODO")
+                // TODO: fix
+                //mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             }
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if item is ConversationListConnectRequestsItem {

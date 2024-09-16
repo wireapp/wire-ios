@@ -21,7 +21,7 @@ import WireSystem
 import WireCommonComponents
 import WireUIFoundation
 
-final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: MainCoordinating, UISplitViewControllerDelegate {
+final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: MainCoordinatorProtocol, UISplitViewControllerDelegate {
 
     private weak var zClientViewController: ZClientViewController!
     private weak var mainSplitViewController: MainSplitViewController!
@@ -50,6 +50,21 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         WireLogger.ui.debug("MainCoordinator.deinit")
     }
 
+    // MARK: - Methods
+
+    func showConversations() {
+        fatalError("TODO")
+    }
+
+    func showArchivedConversation() {
+        fatalError("TODO")
+    }
+
+    func showSettings() {
+        fatalError("TODO")
+    }
+
+    /*
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
         guard let zClientViewController else {
             return WireLogger.mainCoordinator.warn("zClientViewController is nil")
@@ -96,6 +111,7 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         settingsViewController = settingsViewController ?? settingsBuilder.build()
         fatalError("TODO: present if needed")
     }
+     */
 }
 
 // MARK: - UISplitViewControllerDelegate

@@ -20,10 +20,11 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import WireUIFoundation
 
 final class ConversationViewController: UIViewController {
 
-    let mainCoordinator: MainCoordinating
+    let mainCoordinator: MainCoordinatorProtocol
     private let visibleMessage: ZMConversationMessage?
 
     typealias keyboardShortcut = L10n.Localizable.Keyboardshortcut
@@ -438,7 +439,9 @@ final class ConversationViewController: UIViewController {
             return
         }
 
-        mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
+        fatalError("TODO")
+        // TODO: fix
+        //mainCoordinator.openConversation(mlsConversation, focusOnView: true, animated: true)
     }
 
     // MARK: - ParticipantsPopover

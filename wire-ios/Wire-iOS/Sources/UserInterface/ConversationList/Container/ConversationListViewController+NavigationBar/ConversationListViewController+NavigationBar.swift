@@ -301,7 +301,9 @@ extension ConversationListViewController {
 
     @objc
     private func presentProfile() {
-        return mainCoordinator.showSelfProfile()
+        fatalError("TODO")
+        // TODO: fix
+        //return mainCoordinator.showSelfProfile()
 
 
 // TODO: remove?

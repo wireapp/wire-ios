@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSyncEngine
+import WireUIFoundation
 
 enum UserDetailViewControllerFactory {
 
@@ -36,7 +37,7 @@ enum UserDetailViewControllerFactory {
         profileViewControllerDelegate: ProfileViewControllerDelegate,
         viewControllerDismisser: ViewControllerDismisser,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinating
+        mainCoordinator: some MainCoordinatorProtocol
     ) -> UIViewController {
 
         if user.isServiceUser, let serviceUser = user as? ServiceUser {

@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUIFoundation
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
@@ -80,7 +81,7 @@ final class StartUIViewController: UIViewController {
         addressBookHelperType: AddressBookHelperProtocol.Type = AddressBookHelper.self,
         isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         userSession: UserSession,
-        mainCoordinator: MainCoordinating
+        mainCoordinator: MainCoordinatorProtocol
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
