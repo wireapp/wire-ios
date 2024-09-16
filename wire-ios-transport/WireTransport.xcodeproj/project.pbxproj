@@ -103,6 +103,7 @@
 		591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
 		591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
+		594FFC3F2C9896ED008182FD /* WireFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 594FFC3E2C9896ED008182FD /* WireFoundation */; };
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
 		59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */; };
 		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
@@ -413,6 +414,7 @@
 			files = (
 				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
 				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
+				594FFC3F2C9896ED008182FD /* WireFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,6 +978,7 @@
 			name = "WireTransport-ios";
 			packageProductDependencies = (
 				01BBCFD72BF559AA001D9397 /* Starscream */,
+				594FFC3E2C9896ED008182FD /* WireFoundation */,
 			);
 			productName = Transport;
 			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
@@ -1634,6 +1637,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
 			productName = Starscream;
+		};
+		594FFC3E2C9896ED008182FD /* WireFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireFoundation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
