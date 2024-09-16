@@ -35,6 +35,8 @@ struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
     let context: NSManagedObjectContext
 
     func processEvent() async throws {
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: revisit this implementation
         let notification = AccountDeletedNotification(context: context)
         notification.post(in: context.notificationContext)
     }
