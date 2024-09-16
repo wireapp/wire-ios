@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Conversations";
+"sidebar.conversation_filter.all.title" = "All";
+"sidebar.conversation_filter.favorites.title" = "Favorites";
+"sidebar.conversation_filter.groups.title" = "Kumpulan";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Archive";
+
+"sidebar.contacts.title" = "Kontak";
+"sidebar.contacts.connect.title" = "Menghubungi";
+
+"sidebar.settings.title" = "tetapan";
+
+"sidebar.support.title" = "Support";

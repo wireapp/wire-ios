@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireUtilitiesPkg
+import WireFoundation
 
 extension UnregisteredUser {
 

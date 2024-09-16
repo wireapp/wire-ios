@@ -32,6 +32,13 @@
 @class ZMReaction;
 @class ZMClientMessage;
 
+typedef NS_CLOSED_ENUM(NSInteger, ZMExpirationReason) {
+    ZMExpirationReasonOther = 0,
+    ZMExpirationReasonFederationRemoteError,
+    ZMExpirationReasonCancelled,
+    ZMExpirationReasonTimeout,
+} NS_SWIFT_NAME(ExpirationReason);
+
 @protocol UserClientType;
 
 extern NSString * _Nonnull const ZMMessageIsExpiredKey;
@@ -163,7 +170,10 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic, readonly) NSSet<ZMMessageConfirmation*> * _Nonnull confirmations;
 
 - (void)removeExpirationDate;
-- (void)expire;
+
+/// Expires `self` setting `expirationReasonCode` based on `expirationReason`.
+/// @Param expirationReason The `ZMExpirationReason` to set on `self`.
+- (void)expireWithExpirationReason:(ZMExpirationReason)expirationReason NS_SWIFT_NAME(expire(withReason:));
 
 /// Sets a flag to mark the message as being delivered to the backend
 - (void)markAsSent;

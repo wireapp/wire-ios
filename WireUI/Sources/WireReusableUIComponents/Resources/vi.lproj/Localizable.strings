@@ -15,8 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Sidebar
-
 
 "sidebar.conversation_filter.title" = "Các cuộc hội thoại";
+"sidebar.conversation_filter.all.title" = "Tất cả";
+"sidebar.conversation_filter.favorites.title" = "Các ưa thích";
+"sidebar.conversation_filter.groups.title" = "Nhóm";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
+"sidebar.conversation_filter.archived.title" = "Lưu trữ";
+
+"sidebar.contacts.title" = "Danh bạ";
+"sidebar.contacts.connect.title" = "Kết nối";
+
+"sidebar.settings.title" = "Cài đặt";
+
+"sidebar.support.title" = "Hỗ trợ";

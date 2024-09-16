@@ -988,33 +988,9 @@ internal enum L10n {
       }
     }
     internal enum TabBar {
-      internal enum Archived {
-        /// Archive
-        internal static let description = L10n.tr("Accessibility", "tabBar.archived.description", fallback: "Archive")
-        /// Double tap to open list of archived conversations
-        internal static let hint = L10n.tr("Accessibility", "tabBar.archived.hint", fallback: "Double tap to open list of archived conversations")
-      }
-      internal enum Contacts {
-        /// Contacts
-        internal static let description = L10n.tr("Accessibility", "tabBar.contacts.description", fallback: "Contacts")
-        /// Double tap to search for people and open contact list
-        internal static let hint = L10n.tr("Accessibility", "tabBar.contacts.hint", fallback: "Double tap to search for people and open contact list")
-      }
-      internal enum Conversations {
-        /// List of recent conversations
-        internal static let description = L10n.tr("Accessibility", "tabBar.conversations.description", fallback: "List of recent conversations")
-        /// Double tap to open list of recent conversations
-        internal static let hint = L10n.tr("Accessibility", "tabBar.conversations.hint", fallback: "Double tap to open list of recent conversations")
-      }
       internal enum Email {
         /// Log in via email
         internal static let description = L10n.tr("Accessibility", "tabBar.email.description", fallback: "Log in via email")
-      }
-      internal enum Folders {
-        /// List of conversations organized in folders
-        internal static let description = L10n.tr("Accessibility", "tabBar.folders.description", fallback: "List of conversations organized in folders")
-        /// Double tap to open list of conversations organized in folders
-        internal static let hint = L10n.tr("Accessibility", "tabBar.folders.hint", fallback: "Double tap to open list of conversations organized in folders")
       }
       internal enum Item {
         /// Selected
@@ -2083,6 +2059,8 @@ internal enum L10n {
           internal static let generalReason = L10n.tr("Localizable", "content.system.failedtosend_message.general_reason", fallback: "Message could not be sent due to connectivity issues.")
           /// Retry
           internal static let retry = L10n.tr("Localizable", "content.system.failedtosend_message.retry", fallback: "Retry")
+          /// Message not sent as you canceled the upload.
+          internal static let userCancelledUploadReason = L10n.tr("Localizable", "content.system.failedtosend_message.user_cancelled_upload_reason", fallback: "Message not sent as you canceled the upload.")
         }
         internal enum FailedtosendParticipants {
           /// Plural format key: "%#@lu_number_of_participants@"
@@ -2695,24 +2673,6 @@ internal enum L10n {
       }
     }
     internal enum ConversationList {
-      internal enum BottomBar {
-        internal enum Archived {
-          /// Archive
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.archived.title", fallback: "Archive")
-        }
-        internal enum Contacts {
-          /// Contacts
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.contacts.title", fallback: "Contacts")
-        }
-        internal enum Conversations {
-          /// Conversations
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.conversations.title", fallback: "Conversations")
-        }
-        internal enum Folders {
-          /// Folders
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.folders.title", fallback: "Folders")
-        }
-      }
       internal enum Empty {
         internal enum AllArchived {
           /// Everything archived

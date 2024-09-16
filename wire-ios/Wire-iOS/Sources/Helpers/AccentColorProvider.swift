@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireUtilitiesPkg
+import WireFoundation
 
 extension UserType {
 

@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import WireReusableUIComponents
@@ -28,7 +28,6 @@ final class AccountImageViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withPerceptualPrecision(1)
             .withSnapshotDirectory(relativeTo: #file)
     }
 

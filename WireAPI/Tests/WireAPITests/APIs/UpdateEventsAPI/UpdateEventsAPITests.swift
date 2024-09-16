@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 @testable import WireAPI
 import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
 
-    private func createSnapshotter() -> APISnapshotHelper<UpdateEventsAPI> {
+    private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {
         APISnapshotHelper { httpClient, apiVersion in
             UpdateEventsAPIBuilder(httpClient: httpClient)
                 .makeAPI(for: apiVersion)

@@ -76,7 +76,7 @@
 "conversationSearch.audioMessage.description" = "Ljudmeddelande";
 "conversationSearch.linkMessage.description" = "Länk";
 "conversationSearch.sentBy.description" = "Sent by %@";
-"conversationSearch.fileName.description" = "File name";
+"conversationSearch.fileName.description" = "Filnamn";
 "conversationSearch.fileSize.description" = "Storlek";
 "conversationSearch.fileType.description" = "Type";
 
@@ -152,17 +152,17 @@
 
 "settings.deviceCount.hint" = "%@ devices in use";
 "settings.closeButton.description" = "Close settings";
-"settings.backButton.description" = "Go back to Settings";
+"settings.backButton.description" = "Gå tillbaka till Inställningar";
 
-"accountSettings.backButton.description" = "Go back to Account";
+"accountSettings.backButton.description" = "Gå tillbaka till Konto";
 
 "optionsSettings.backButton.description" = "Go back to Options";
 
 "advancedSettings.backButton.description" = "Go back to Advanced";
 
-"supportSettings.backButton.description" = "Go back to Support";
+"supportSettings.backButton.description" = "Gå tillbaka till Support";
 
-"aboutSettings.backButton.description" = "Go back to About";
+"aboutSettings.backButton.description" = "Gå tillbaka till Om";
 
 "developerOptionsSettings.backButton.description" = "Go back to Developer options";
 
@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Medlem";
 "contactsList.userCell.hint" = "Double tap to open conversation";
 "contactsList.pendingConnection.hint" = "Double tap to open profile";
-"contactsList.closeButton.description" = "Close contact list";
+"contactsList.closeButton.description" = "Stäng kontaktlista";
 
 "servicesList.serviceCell.hint" = "Double tap to open service details";
 
@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Kontakter";
-"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
-"tabBar.conversations.description" = "List of recent conversations";
-"tabBar.conversations.hint" = "Double tap to open list of recent conversations";
-"tabBar.folders.description" = "List of conversations organized in folders";
-"tabBar.folders.hint" = "Double tap to open list of conversations organized in folders";
-"tabBar.archived.description" = "Arkiv";
-"tabBar.archived.hint" = "Double tap to open list of archived conversations";
 "tabBar.item.value" = "Selected";
 
 "landing.loginEnterpriseButton.description" = "Logga in med SSO";
@@ -298,7 +290,7 @@
 "createSecureGuestLink.securedGuestLinkPasswordValidatedTextField.announcement" = "Password validation error. Please make sure the password matches the one above";
 
 "createSecureGuestLink.CreateLinkButton.description" = "Skapa gästlänk";
-"createSecureGuestLink.CreateLinkButton.hint" = "Tap to create a secure guest link";
+"createSecureGuestLink.CreateLinkButton.hint" = "Tryck för att skapa en säker gästlänk";
 
 // MARK: - Search Gifs
 
