@@ -303,8 +303,7 @@ extension ConversationListViewController {
     private func presentProfile() {
         fatalError("TODO")
         // TODO: fix
-        //return mainCoordinator.showSelfProfile()
-
+        // return mainCoordinator.showSelfProfile()
 
 // TODO: remove?
         guard let selfUser = ZMUser.selfUser() else {

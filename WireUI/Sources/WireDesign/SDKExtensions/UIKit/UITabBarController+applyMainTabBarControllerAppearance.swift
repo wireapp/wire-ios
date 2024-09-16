@@ -46,12 +46,11 @@ public extension UITabBarController {
 
 @MainActor
 func MainTabBarControllerAppearancePreview() -> UIViewController {
-
     let systemNames = ["eraser", "highlighter", "trash", "lasso"]
     let colors = [UIColor.green, .orange, .red, .yellow]
 
     let tabBarController = UITabBarController()
-    tabBarController.viewControllers = (0..<4).map { index in
+    tabBarController.viewControllers = (0 ..< 4).map { index in
         let viewController = UIViewController()
         viewController.view.backgroundColor = colors[index]
         viewController.tabBarItem.image = .init(systemName: systemNames[index])

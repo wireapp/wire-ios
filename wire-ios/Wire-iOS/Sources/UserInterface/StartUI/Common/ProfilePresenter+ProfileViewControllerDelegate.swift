@@ -27,7 +27,7 @@ extension ProfilePresenter: ProfileViewControllerDelegate {
         dismiss(viewController: controller) {
             fatalError("TODO")
             // TODO: fix
-            //self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+            // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

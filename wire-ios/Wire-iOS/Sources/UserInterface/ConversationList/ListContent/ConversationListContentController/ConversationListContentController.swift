@@ -386,11 +386,11 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             if let scrollToMessageOnNextSelection {
                 fatalError("TODO")
                 // TODO: fix
-                //mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
                 fatalError("TODO")
                 // TODO: fix
-                //mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
+                // mainCoordinator.openConversation(conversation, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             }
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if item is ConversationListConnectRequestsItem {

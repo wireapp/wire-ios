@@ -471,7 +471,7 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
         dismiss(animated: true) {
             fatalError("TODO")
             // TODO: fix
-            //self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
+            // self.mainCoordinator.openConversation(conversation, focusOnView: true, animated: true)
         }
     }
 }

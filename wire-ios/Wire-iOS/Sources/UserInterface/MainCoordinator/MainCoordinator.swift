@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import WireDataModel
 import WireSystem
-import WireCommonComponents
 import WireUIFoundation
 
 final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: MainCoordinatorProtocol, UISplitViewControllerDelegate {

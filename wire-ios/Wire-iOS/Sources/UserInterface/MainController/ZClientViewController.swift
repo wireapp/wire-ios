@@ -22,9 +22,9 @@ import UIKit
 import WireAccountImage
 import WireCommonComponents
 import WireDesign
+import WireSidebar
 import WireSyncEngine
 import WireUIFoundation
-import WireSidebar
 
 final class ZClientViewController: UIViewController {
 

@@ -26,11 +26,11 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     func showConversations() {
         fatalError("TODO")
     }
-    
+
     func showArchivedConversation() {
         fatalError("TODO")
     }
-    
+
     func showSettings() {
         fatalError("TODO")
     }
