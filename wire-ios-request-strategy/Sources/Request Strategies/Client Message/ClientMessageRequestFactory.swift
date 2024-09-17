@@ -51,7 +51,7 @@ public final class ClientMessageRequestFactory: NSObject {
                 withSenderId: selfClient.clientId.client,
                 nativePush: false,
                 recipients: [],
-                missingClientsStrategy: .doNotIgnoreAnyMissingClient    
+                missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
         case .v1, .v2, .v3, .v4, .v5, .v6:

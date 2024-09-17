@@ -38,21 +38,24 @@ private extension String {
 struct MessagePayloadBuilder {
     var context: NSManagedObjectContext
     var proteusService: ProteusServiceInterface
-    
+
     var useQualifiedIds: Bool = false
 
     func encryptForTransport(message: GenericMessage, in conversation: ZMConversation, externalData: Data? = nil) async throws -> Data {
         let extractor = MessageInfoExtractor(context: context)
         let messageInfo = try await extractor.infoForTransport(message: message, in: conversation)
-        
+
         let plainText = try message.serializedData()
+        let allSessionIds = messageInfo.allSessionIds()
+        let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
+
         var messageData: Data
         if useQualifiedIds {
-            messageData = try await qualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: externalData)
+            messageData = try await qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
         } else {
-            messageData = try await unQualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: externalData)
+            messageData = try await unQualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
         }
-        
+
         // Message too big?
         if  UInt(messageData.count) > ZMClientMessage.byteSizeExternalThreshold && externalData == nil {
             // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
@@ -69,9 +72,9 @@ struct MessagePayloadBuilder {
 
         return messageData
     }
-    
+
     private func encryptForTransportExternalDataBlob(message: GenericMessage, messageInfo: MessageInfo) async throws -> Data {
-        
+
         guard
             let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: message),
             let data = encryptedDataWithKeys.data,
@@ -82,25 +85,24 @@ struct MessagePayloadBuilder {
 
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: keys))
         let plainText = try externalGenericMessage.serializedData()
-   
-        if useQualifiedIds {
-            return try await qualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: data)
-        } else {
-            return try await unQualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: data)
-        }
-    }
-        
-    private func unQualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
         let allSessionIds = messageInfo.allSessionIds()
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
-        
+
+        if useQualifiedIds {
+            return try await qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: data)
+        } else {
+            return try await unQualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: data)
+        }
+    }
+
+    private func unQualifiedData(messageInfo: MessageInfo, encryptedDatas: [String: Data], externalData: Data? = nil) async throws -> Data {
         var userEntries = [Proteus_UserEntry]()
         for (_, entries) in messageInfo.listClients {
 
             for (userId, sessionsIds) in entries {
 
                 let userId = Proteus_UserId.with({ $0.uuid = userId.uuidData })
-                
+
                 let clientEntries = sessionsIds.compactMap { sessionID in
                     let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
                     if let encryptedData = encryptedDatas[sessionID.rawValue] {
@@ -124,11 +126,11 @@ struct MessagePayloadBuilder {
             missingClientsStrategy: messageInfo.missingClientsStrategy,
             blob: externalData
         )
-        
+
         return try message.serializedData()
     }
-        
-    private func qualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
+
+    private func qualifiedData(messageInfo: MessageInfo, encryptedDatas: [String: Data], externalData: Data? = nil) async throws -> Data {
 
         var finalRecipients = [Proteus_QualifiedUserEntry]()
         for (domain, entries) in messageInfo.listClients {
@@ -136,14 +138,17 @@ struct MessagePayloadBuilder {
             var userEntries = [Proteus_UserEntry]()
 
             for (userId, sessionsIds) in entries {
-                
-                let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: sessionsIds)
-                
+
                 let userId = Proteus_UserId.with({ $0.uuid = userId.uuidData })
-                
-                let clientEntries = encryptedDatas.map { (sessionID, encryptedData) in
-                    let clientId = Proteus_ClientId.with({ $0.client = sessionID.hexRemoteIdentifier })
-                    return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
+
+                let clientEntries = sessionsIds.compactMap { sessionID in
+                    let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
+                    if let encryptedData = encryptedDatas[sessionID.rawValue] {
+                        return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
+                    } else {
+                        assertionFailure("should not happen")
+                        return nil
+                    }
                 }
 
                 userEntries.append(
@@ -155,8 +160,7 @@ struct MessagePayloadBuilder {
                 Proteus_QualifiedUserEntry(withDomain: domain, userEntries: userEntries)
             )
         }
-        
-        
+
         let message = Proteus_QualifiedNewOtrMessage(
             withSenderId: messageInfo.selfClientID.hexRemoteIdentifier,
             nativePush: messageInfo.nativePush,
@@ -164,12 +168,10 @@ struct MessagePayloadBuilder {
             missingClientsStrategy: messageInfo.missingClientsStrategy,
             blob: externalData
         )
-        
+
         return try message.serializedData()
     }
-   
 
-    
     /* TODO: handle failedToEstablishSession
      
      guard await !client.failedToEstablishSession else {
@@ -189,6 +191,5 @@ struct MessagePayloadBuilder {
          return nil
      }
      */
-    
 
 }

@@ -25,7 +25,7 @@ public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func tearDown() throws
-    
+
     func acquireLock() async
     func releaseLock()
 }
@@ -79,11 +79,11 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         safeContext.acquireDirectoryLock()
         await restoreFromDisk()
     }
-    
+
     public func releaseLock() {
         safeContext.releaseDirectoryLock()
     }
-    
+
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
         return try await block(coreCrypto)
     }

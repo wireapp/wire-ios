@@ -137,7 +137,7 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
         else {
             return nil
         }
-       
+
         let corecrypto = await context.perform { context.zm_sync.coreCrypto }
         await corecrypto?.acquireLock()
         defer {
@@ -165,7 +165,6 @@ extension ZMClientMessage: EncryptedPayloadGenerator {
             corecrypto?.releaseLock()
         }
 
-
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
         }
@@ -187,13 +186,13 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
         else {
             return nil
         }
-       
+
         let corecrypto = await context.perform { context.zm_sync.coreCrypto }
         await corecrypto?.acquireLock()
         defer {
             corecrypto?.releaseLock()
         }
-        
+
         let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
             return self.underlyingMessage
         }
@@ -392,7 +391,7 @@ extension GenericMessage {
 
         if useQualifiedIdentifiers,
             let selfDomain = await context.perform({ ZMUser.selfUser(in: context).domain }) {
-            
+
             let message = await proteusMessage(
                 selfClient,
                 selfDomain: selfDomain,
@@ -727,7 +726,7 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: @escaping EncryptionFunction
     ) async -> [Proteus_UserEntry] {
-        
+
         return await withTaskGroup(of: Proteus_UserEntry?.self, returning: [Proteus_UserEntry].self) { taskGroup in
             for (user, clients) in recipients {
                 taskGroup.addTask {
@@ -747,7 +746,7 @@ extension GenericMessage {
                     }
                 }
             }
-            
+
             return await taskGroup.reduce(into: [Proteus_UserEntry]()) { partialResult, userEntry in
                 if let userEntry {
                     partialResult.append(userEntry)
@@ -797,13 +796,13 @@ extension GenericMessage {
             }
         }
 
-        return await withTaskGroup(of: Proteus_ClientEntry?.self,  returning: [Proteus_ClientEntry].self) { taskGroup in
+        return await withTaskGroup(of: Proteus_ClientEntry?.self, returning: [Proteus_ClientEntry].self) { taskGroup in
             for client in filteredClientEntries {
                 taskGroup.addTask {
                     await clientEntry(for: client, using: encryptionFunction)
                 }
             }
-            
+
             return await taskGroup.reduce(into: [Proteus_ClientEntry]()) { partialResult, clientEntry in
                 if let clientEntry {
                     partialResult.append(clientEntry)
@@ -907,8 +906,7 @@ extension GenericMessage {
            }
        }
 
-
-    public func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: [ZMUser : Set<UserClient>], strategy: MissingClientsStrategy) {
+    public func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: [ZMUser: Set<UserClient>], strategy: MissingClientsStrategy) {
         let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
         func recipientForButtonActionMessage() -> Set<ZMUser> {
@@ -1012,7 +1010,6 @@ extension GenericMessage {
             return recipientUsers.count != conversation.localParticipants.count
         }()
 
-       
         let strategy: MissingClientsStrategy
         if hasRestrictions {
             let qualifiedIds = recipientUsers.compactMap({ user in

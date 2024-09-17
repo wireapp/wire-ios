@@ -343,7 +343,7 @@ public extension Proteus_UserEntry {
             $0.clients = clientEntries
         }
     }
-    
+
     init(withProteusUserId id: Proteus_UserId, clientEntries: [Proteus_ClientEntry]) {
         self = Proteus_UserEntry.with {
             $0.user = id
@@ -355,7 +355,7 @@ public extension Proteus_UserEntry {
 // MARK: - QualifiedNewOtrMessage
 
 public extension Proteus_QualifiedNewOtrMessage {
-    
+
     // TODO: remove this
     init(withSender sender: UserClient,
          nativePush: Bool,
@@ -386,7 +386,7 @@ public extension Proteus_QualifiedNewOtrMessage {
             }
         }
     }
-    
+
     init(withSenderId userId: UInt64,
          nativePush: Bool,
          recipients: [Proteus_QualifiedUserEntry],
@@ -421,7 +421,7 @@ public extension Proteus_QualifiedNewOtrMessage {
 // MARK: - NewOtrMessage
 
 public extension Proteus_NewOtrMessage {
-    init(withSenderId senderClientId: UInt64, 
+    init(withSenderId senderClientId: UInt64,
          nativePush: Bool,
          recipients: [Proteus_UserEntry],
          missingClientsStrategy: MissingClientsStrategy,
@@ -434,7 +434,7 @@ public extension Proteus_NewOtrMessage {
             if blob != nil {
                 $0.blob = blob!
             }
-            
+
             switch missingClientsStrategy {
             case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
                 $0.reportMissing = userIds.map { qualifiedID in
