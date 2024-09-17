@@ -17,12 +17,13 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 public final class SidebarViewController: UIHostingController<SidebarViewAdapter<AnyView>> {
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
-    public var accountInfo: SidebarAccountInfo? {
+    public var accountInfo: SidebarAccountInfo {
         get { rootView.accountInfo }
         set { rootView.accountInfo = newValue }
     }
@@ -32,6 +33,11 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
         set { rootView.conversationFilter = newValue }
     }
 
+    public var wireTextStyleMapping: WireTextStyleMapping? {
+        get { rootView.wireTextStyleMapping }
+        set { rootView.wireTextStyleMapping = newValue }
+    }
+
     public convenience init(
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
     ) {
@@ -39,7 +45,7 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
     }
 
     public required init(
-        accountInfo: SidebarAccountInfo?,
+        accountInfo: SidebarAccountInfo,
         conversationFilter: SidebarConversationFilter?,
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
     ) {
@@ -69,7 +75,8 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
 
 public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView: View {
 
-    fileprivate var accountInfo: SidebarAccountInfo?
+    fileprivate var accountInfo: SidebarAccountInfo
+    fileprivate var wireTextStyleMapping: WireTextStyleMapping?
 
     @State fileprivate(set) var conversationFilter: SidebarConversationFilter?
     fileprivate let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
@@ -91,9 +98,9 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
             settingsAction: settingsAction,
             supportAction: supportAction,
             accountImageView: accountImageView
-        )
+        ).environment(\.wireTextStyleMapping, wireTextStyleMapping)
         if #available(iOS 17.0, *) {
-            sidebarView.onChange(of: conversationFilter) { _, conversationFilter in
+            sidebarView.onChange(of: conversationFilter) { old, conversationFilter in
                 conversationFilterUpdated(conversationFilter)
             }
         } else {
