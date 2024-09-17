@@ -16,21 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+import UIKit
 
-private struct AccentColorKey: EnvironmentKey {
-    static let defaultValue: AccentColor = .default
-}
+public extension UIContentSizeCategory {
 
-extension EnvironmentValues {
-    var accentColor: AccentColor {
-        get { self[AccentColorKey.self] }
-        set { self[AccentColorKey.self] = newValue }
-    }
-}
-
-extension View {
-    func accentColor(_ accentColor: AccentColor) -> some View {
-        environment(\.accentColor, accentColor)
+    static var allCases: [UIContentSizeCategory] {
+        [
+            .unspecified,
+            .extraSmall,
+            .small,
+            .medium,
+            .large,
+            .extraLarge,
+            .extraExtraLarge,
+            .extraExtraExtraLarge,
+            .accessibilityMedium,
+            .accessibilityLarge,
+            .accessibilityExtraLarge,
+            .accessibilityExtraExtraLarge,
+            .accessibilityExtraExtraExtraLarge
+        ]
     }
 }

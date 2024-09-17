@@ -16,9 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+public typealias AccentColor = WireAccentColor
 
-final class PlaceholderTests: XCTestCase {
+public enum WireAccentColor: Int16, CaseIterable, Hashable, Sendable {
+    case blue = 1
+    case green
+    // yellow used to be defined here
+    case red = 4
+    case amber
+    case turquoise
+    case purple
+}
 
-    func testNothing() {}
+// MARK: - Default and random value
+
+public extension WireAccentColor {
+    static var `default`: Self { .blue }
+    static var random: Self! { allCases.randomElement() }
 }
