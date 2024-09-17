@@ -1348,7 +1348,6 @@
 		E91DCC34278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */; };
 		E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */; };
 		E92A07A02817E553006BA73B /* DynamicFontButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A079F2817E553006BA73B /* DynamicFontButton.swift */; };
-		E92C8CC62C942A5C00E0F7F7 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E92C8CC52C942A5C00E0F7F7 /* Inject */; };
 		E92D1B95285B773B00366AFC /* LabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D1B94285B773B00366AFC /* LabelStyle.swift */; };
 		E92D31752B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D31742B0CBAD400F5AAD4 /* FontBookSnapshotTests.swift */; };
 		E9398D312B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9398D302B5EBF5500C4AFBA /* MLSMigrationSupportCellDescription.swift */; };
@@ -3933,7 +3932,6 @@
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				CB4E15122C81CC81005DDEC8 /* Down in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
-				E92C8CC62C942A5C00E0F7F7 /* Inject in Frameworks */,
 				59D038272C85D31E009FE583 /* WireUIFoundation in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				EEE25B2A29719A730008B894 /* cryptobox.xcframework in Frameworks */,
@@ -8593,7 +8591,6 @@
 				59B99FAF2C89DFB700201827 /* WireDomainPackage */,
 				59076F942C934A9800AE7529 /* WireAccountImage */,
 				590DCA072C971A56002D0A2C /* WireSidebar */,
-				E92C8CC52C942A5C00E0F7F7 /* Inject */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -8756,7 +8753,6 @@
 				061F34172B1E2E8F0099CBAB /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 				E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */,
 				CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */,
-				E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */,
 			);
 			productRefGroup = 8F42C539199244A700288E4D /* Products */;
 			projectDirPath = "";
@@ -11237,16 +11233,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-Xlinker",
-					"-interposable",
-				);
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_COMPILATION_MODE = singlefile;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -11270,7 +11260,6 @@
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -11632,14 +11621,6 @@
 				version = 2.3.5;
 			};
 		};
-		E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
-			requirement = {
-				kind = exactVersion;
-				version = 1.5.2;
-			};
-		};
 		E9FBF3A42C47C23100C65DA8 /* XCRemoteSwiftPackageReference "FLAnimatedImage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flipboard/FLAnimatedImage";
@@ -11739,11 +11720,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CB4E15102C81CC81005DDEC8 /* XCRemoteSwiftPackageReference "Down" */;
 			productName = Down;
-		};
-		E92C8CC52C942A5C00E0F7F7 /* Inject */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E92C8CC42C942A5C00E0F7F7 /* XCRemoteSwiftPackageReference "Inject" */;
-			productName = Inject;
 		};
 		E9FBF3A52C47C23100C65DA8 /* FLAnimatedImage */ = {
 			isa = XCSwiftPackageProductDependency;
