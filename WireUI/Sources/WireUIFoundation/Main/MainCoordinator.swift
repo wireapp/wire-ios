@@ -266,7 +266,9 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
             archivedConversations!.willMove(toParent: nil)
             archivedConversations!.view.removeFromSuperview()
             archivedConversations!.removeFromParent()
+            archivedConversations!.view.translatesAutoresizingMaskIntoConstraints = true
             mainTabBarController.archive = archivedConversations
+            mainTabBarController.selectedContent = .archive
         }
     }
 }

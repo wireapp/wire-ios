@@ -41,6 +41,24 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     @State private var iconSize: CGSize?
 
+    public init(
+        accountInfo: SidebarAccountInfo,
+        conversationFilter: Binding<SidebarConversationFilter?>,
+        accountImageAction: @escaping () -> Void,
+        connectAction: @escaping () -> Void,
+        settingsAction: @escaping () -> Void,
+        supportAction: @escaping () -> Void,
+        accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
+    ) {
+        self.accountInfo = accountInfo
+        _conversationFilter = conversationFilter
+        self.accountImageAction = accountImageAction
+        self.connectAction = connectAction
+        self.settingsAction = settingsAction
+        self.supportAction = supportAction
+        self.accountImageView = accountImageView
+    }
+
     public var body: some View {
         ZStack {
             // background color
@@ -225,8 +243,9 @@ func SidebarPreview() -> UIViewController {
     let sidebarViewController = SidebarViewController { accountImage, availability in
         AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
     }
-    sidebarViewController.accountInfo?.displayName = "Firstname Lastname"
-    sidebarViewController.accountInfo?.username = "@username"
+    sidebarViewController.accountInfo.displayName = "Firstname Lastname"
+    sidebarViewController.accountInfo.username = "@username"
+    sidebarViewController.wireTextStyleMapping = PreviewTextStyleMapping()
     splitViewController.setViewController(sidebarViewController, for: .primary)
     splitViewController.setViewController(EmptyViewController(), for: .supplementary)
     splitViewController.setViewController(EmptyViewController(), for: .secondary)
@@ -275,5 +294,18 @@ private final class EmptyViewController: UIHostingController<AnyView> {
 private final class HintViewController: UIHostingController<Text> {
     convenience init(_ hint: String) {
         self.init(rootView: Text(verbatim: hint).font(.title2))
+    }
+}
+
+private func PreviewTextStyleMapping() -> WireTextStyleMapping {
+    .init { textStyle in
+        fatalError("not implemented for preview yet")
+    } fontMapping: { textStyle in
+        switch textStyle {
+        case .h2:
+            .title3.bold()
+        default:
+            fatalError("not implemented for preview yet")
+        }
     }
 }

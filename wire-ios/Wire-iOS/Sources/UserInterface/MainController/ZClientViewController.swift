@@ -33,7 +33,7 @@ final class ZClientViewController: UIViewController {
     let account: Account
     let userSession: UserSession
     private(set) var cachedAccountImage = UIImage() {
-        didSet { sidebarViewController.accountInfo?.accountImage = cachedAccountImage }
+        didSet { sidebarViewController.accountInfo.accountImage = cachedAccountImage }
     }
 
     private(set) var conversationRootViewController: UIViewController?
@@ -42,9 +42,13 @@ final class ZClientViewController: UIViewController {
 
     weak var router: AuthenticatedRouterProtocol?
 
-    let sidebarViewController = SidebarViewController { accountImage, availability in
-        AnyView(AccountImageViewRepresentable(accountImage: accountImage, availability: availability?.map()))
-    }
+    let sidebarViewController = {
+        let sidebarViewController = SidebarViewController { accountImage, availability in
+            AnyView(AccountImageViewRepresentable(accountImage: accountImage, availability: availability?.map()))
+        }
+        sidebarViewController.wireTextStyleMapping = .init()
+        return sidebarViewController
+    }()
 
     private(set) lazy var wireSplitViewController = MainSplitViewController(
         sidebar: sidebarViewController,
