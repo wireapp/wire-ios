@@ -83,7 +83,7 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
     ) -> AccountImageView
 
     public var body: some View {
-        SidebarView(
+        let sidebarView = SidebarView(
             accountInfo: accountInfo,
             conversationFilter: $conversationFilter,
             accountImageAction: accountImageAction,
@@ -92,8 +92,14 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
             supportAction: supportAction,
             accountImageView: accountImageView
         )
-        .onReceive(conversationFilter.publisher) { conversationFilter in
-            conversationFilterUpdated(conversationFilter)
+        if #available(iOS 17.0, *) {
+            sidebarView.onChange(of: conversationFilter) { old, conversationFilter in
+                conversationFilterUpdated(conversationFilter)
+            }
+        } else {
+            sidebarView.onChange(of: conversationFilter) { conversationFilter in
+                conversationFilterUpdated(conversationFilter)
+            }
         }
     }
 }
