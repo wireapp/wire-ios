@@ -19,9 +19,12 @@
 import Foundation
 
 struct MessageInfo {
+    typealias Domain = String
+    typealias UserID = UUID
+    
     var genericMessage: GenericMessage
     /// list of clients divided per domain and userId
-    var listClients: [String: [UUID: [ProteusSessionID]]]
+    var listClients: [Domain: [UserID: [ProteusSessionID]]]
     var missingClientsStrategy: MissingClientsStrategy
     var selfClientID: String
     var nativePush: Bool
@@ -46,7 +49,6 @@ enum MessageInfoExtractorError: Error {
 struct MessageInfoExtractor {
     var context: NSManagedObjectContext
 
-    
     func infoForTransport(message: any ProteusMessage, conversationID: QualifiedID) async throws -> MessageInfo {
         let (conversation, genericMessage) = await context.perform { [context] in
             (ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context),

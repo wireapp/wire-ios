@@ -162,6 +162,15 @@ public final class MessageSender: MessageSenderInterface {
             let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
+            // set expiration so request can be expired later
+            await context.perform {
+                if message.shouldExpire {
+                    message.setExpirationDate()
+                    self.context.saveOrRollback()
+                }
+            }
+            
+            // 3) send it via API
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
@@ -199,7 +208,15 @@ public final class MessageSender: MessageSenderInterface {
             let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
-            // 2) send it via API
+            // set expiration so request can be expired later
+            await context.perform {
+                if message.shouldExpire {
+                    message.setExpirationDate()
+                    self.context.saveOrRollback()
+                }
+            }
+            
+            // 3) send it via API
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(message: messageData, conversationID: conversationID, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
@@ -304,6 +321,7 @@ public final class MessageSender: MessageSenderInterface {
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
         
+        // set expiration so request can be expired later
         await context.perform {
             if message.shouldExpire {
                 message.setExpirationDate()
