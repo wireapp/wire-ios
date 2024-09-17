@@ -277,7 +277,7 @@ private final class HintViewController: UIHostingController<Text> {
 }
 
 private func PreviewTextStyleMapping() -> WireTextStyleMapping {
-    .init { textStyle in
+    .init { _ in
         fatalError("not implemented for preview yet")
     } fontMapping: { textStyle in
         switch textStyle {
