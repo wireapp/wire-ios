@@ -18,13 +18,19 @@
 
 import Foundation
 
+struct UserClientData {
+    var sessionID: ProteusSessionID
+    var data: Data?
+}
+
 struct MessageInfo {
     typealias Domain = String
     typealias UserID = UUID
+    typealias ClientList = [Domain: [UserID: [UserClientData]]]
     
     var genericMessage: GenericMessage
     /// list of clients divided per domain and userId
-    var listClients: [Domain: [UserID: [ProteusSessionID]]]
+    var listClients: ClientList
     var missingClientsStrategy: MissingClientsStrategy
     var selfClientID: String
     var nativePush: Bool
@@ -32,7 +38,8 @@ struct MessageInfo {
     func allSessionIds() -> [ProteusSessionID] {
         var result = [ProteusSessionID]()
         for (_, userClientIdAndSessionIds) in listClients {
-            for (_, sessionIds) in userClientIdAndSessionIds {
+            for (_, userClientDatas) in userClientIdAndSessionIds {
+                let sessionIds = userClientDatas.compactMap( { $0.data == nil ? $0.sessionID : nil })
                 result.append(contentsOf: sessionIds)
             }
         }
@@ -104,7 +111,7 @@ struct MessageInfoExtractor {
         return (await context.perform { users }, missingClientsStrategy)
     }
 
-    private func listOfClients(for recipients: [ZMUser: Set<UserClient>], selfDomain: String, selfClientID: String) async -> [String: [UUID: [ProteusSessionID]]] {
+    private func listOfClients(for recipients: [ZMUser: Set<UserClient>], selfDomain: String, selfClientID: String) async -> MessageInfo.ClientList {
 
         let recipientsByDomain = await context.perform {
             Dictionary(grouping: recipients) { element -> String in
@@ -113,32 +120,40 @@ struct MessageInfoExtractor {
             }
         }
 
-        var qualifiedUserEntries = [String: [UUID: [ProteusSessionID]]]()
+        var qualifiedUserEntries = MessageInfo.ClientList()
         for (domain, recipients) in recipientsByDomain {
 
-            var userEntries = [UUID: [ProteusSessionID]]()
+            var userEntries = [MessageInfo.UserID: [UserClientData]]()
             for (user, clients) in recipients {
                 guard let userId = await context.perform({
                     !user.isAccountDeleted ? user.remoteIdentifier : nil
                 }) else { continue }
 
-                let sessionIds = await sessionIds(selfClientID, userClients: clients)
-                userEntries[userId] = sessionIds
+                let userClientDatas = await userClientDatas(selfClientID, userClients: clients)
+                userEntries[userId] = userClientDatas
             }
             qualifiedUserEntries[domain] = userEntries
         }
         return qualifiedUserEntries
     }
 
-    private func sessionIds(_ selfClientID: String, userClients: Set<UserClient>) async -> [ProteusSessionID] {
+    private func userClientDatas(_ selfClientID: String, userClients: Set<UserClient>) async -> [UserClientData] {
 
         return await context.perform {
             userClients.compactMap {
-                guard $0.remoteIdentifier != selfClientID else {
+                guard let sessionID = $0.proteusSessionID,
+                      $0.remoteIdentifier != selfClientID else {
                     // skips self client session
                     return nil
                 }
-                return $0.proteusSessionID
+
+                guard !$0.failedToEstablishSession else {
+                    let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
+                    WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(String(describing: $0.remoteIdentifier))")
+                    return UserClientData(sessionID: sessionID, data: data)
+                }
+              
+                return UserClientData(sessionID: sessionID, data: nil)
             }
         }
     }

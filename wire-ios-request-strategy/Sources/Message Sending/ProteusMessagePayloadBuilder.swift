@@ -64,6 +64,7 @@ struct ProteusMessagePayloadBuilder {
         }
 
         // TODO: Reset all failed sessions. -> [F] why do we reset the failedToEstablishSession on all clients ??
+        // is it the right place
 //        await context.perform {
 //            recipients.values
 //                .flatMap { $0 }
@@ -99,9 +100,9 @@ struct ProteusMessagePayloadBuilder {
         var userEntries = [Proteus_UserEntry]()
         for (_, entries) in messageInfo.listClients {
 
-            for (userId, sessionsIds) in entries {
+            for (userId, userClientDatas) in entries {
 
-                let userEntry = proteusUserEntry(sessionIds: sessionsIds, for: userId, encryptedDatas: encryptedDatas)
+                let userEntry = proteusUserEntry(userClientDatas: userClientDatas, for: userId, encryptedDatas: encryptedDatas)
                 userEntries.append(userEntry)
             }
         }
@@ -123,9 +124,9 @@ struct ProteusMessagePayloadBuilder {
         for (domain, entries) in messageInfo.listClients {
 
             var userEntries = [Proteus_UserEntry]()
-            for (userId, sessionsIds) in entries {
+            for (userId, userClientDatas) in entries {
 
-                let userEntry = proteusUserEntry(sessionIds: sessionsIds, for: userId, encryptedDatas: encryptedDatas)
+                let userEntry = proteusUserEntry(userClientDatas: userClientDatas, for: userId, encryptedDatas: encryptedDatas)
                 userEntries.append(userEntry)
             }
 
@@ -145,14 +146,18 @@ struct ProteusMessagePayloadBuilder {
         return try message.serializedData()
     }
     
-    private func proteusUserEntry(sessionIds: [ProteusSessionID],
+    private func proteusUserEntry(userClientDatas: [UserClientData],
                                   for userID: UUID,
                                   encryptedDatas: [String: Data]) -> Proteus_UserEntry {
         let proteusUserID = Proteus_UserId.with({ $0.uuid = userID.uuidData })
 
-        let clientEntries = sessionIds.compactMap { sessionID in
-            let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
-            if let encryptedData = encryptedDatas[sessionID.rawValue] {
+        let clientEntries = userClientDatas.compactMap { userClientData in
+            let clientId = Proteus_ClientId.with({ $0.client = userClientData.sessionID.clientID.hexRemoteIdentifier })
+            
+            if let data = userClientData.data {
+                return Proteus_ClientEntry(withClientId: clientId, data: data)
+            }
+            if let encryptedData = encryptedDatas[userClientData.sessionID.rawValue] {
                 return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
             } else {
                 assertionFailure("should not happen")
@@ -161,25 +166,4 @@ struct ProteusMessagePayloadBuilder {
         }
         return Proteus_UserEntry(withProteusUserId: proteusUserID, clientEntries: clientEntries)
     }
-
-    /* TODO: handle failedToEstablishSession
-     
-     guard await !client.failedToEstablishSession else {
-         // If the session is corrupted, we will send a special payload.
-         let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
-         WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(await client.loggedId)")
-         return await client.proteusClientEntry(with: data)
-     }
-   
-     do {
-         let plainText = try serializedData()
-         let encryptedData = try await encryptionFunction(sessionID, plainText)
-         guard let data = encryptedData else { return nil }
-         return await client.proteusClientEntry(with: data)
-     } catch {
-         // this is handled by message sender, it's just that we don't throw the errors
-         return nil
-     }
-     */
-
 }
