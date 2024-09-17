@@ -29,9 +29,12 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public var accountInfo: SidebarAccountInfo?
     @Binding public var conversationFilter: SidebarConversationFilter?
+
+    private(set) var accountImageAction: () -> Void
     private(set) var connectAction: () -> Void
     private(set) var settingsAction: () -> Void
     private(set) var supportAction: () -> Void
+
     private(set) var accountImageView: (
         _ accountImage: UIImage,
         _ availability: SidebarAccountInfo.Availability?
@@ -49,6 +52,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
             // content
             VStack(alignment: .leading, spacing: 0) {
                 profileSwitcher
+                    .onTapGesture(perform: accountImageAction)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom)
 
                 let menuItemsScrollView = ScrollView(.vertical) { menuItems }
                 if #available(iOS 16.4, *) {
@@ -95,8 +101,6 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 username: accountInfo.username,
                 accountImageView: { accountImageView(accountInfo.accountImage, accountInfo.availability) }
             )
-            .padding(.horizontal, 24)
-            .padding(.bottom)
         }
     }
 
