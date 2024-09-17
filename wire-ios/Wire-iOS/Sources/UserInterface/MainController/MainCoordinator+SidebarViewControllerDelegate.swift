@@ -33,7 +33,6 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         mainSplitViewController: MainSplitViewController,
         mainTabBarController: MainTabBarController,
         selfProfileBuilder: ViewControllerBuilder,
-        archivedConversationsBuilder: ViewControllerBuilder,
         settingsBuilder: ViewControllerBuilder
     ) {
         // self.zClientViewController = zClientViewController
@@ -42,7 +41,6 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
         super.init(
             mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
-            archivedConversationsBuilder: archivedConversationsBuilder,
             selfProfileBuilder: selfProfileBuilder
         )
     }

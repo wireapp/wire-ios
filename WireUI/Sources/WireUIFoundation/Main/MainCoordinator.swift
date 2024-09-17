@@ -30,10 +30,15 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     // only navigation here?
     // protocols/accessors for each navigation controller? or viewControllers array
 
-    private var archivedConversationsBuilder: any ViewControllerBuilder
+    // TODO: remove
+    //private var archivedConversationsBuilder: any ViewControllerBuilder
+
     private var selfProfileBuilder: any ViewControllerBuilder
 
+    /// A reference to the archived conversations view controller. This property is needed for the expanded layout mode
+    /// when the archived conversations list is taken out of the tab bar controller and presented on top of the conversation list.
     private weak var archivedConversations: MainTabBarController.Archive?
+
     private weak var selfProfileViewController: UIViewController?
 
     private var isLayoutCollapsed = false
@@ -41,13 +46,13 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     public init(
         mainSplitViewController: MainSplitViewController,
         mainTabBarController: MainTabBarController,
-        archivedConversationsBuilder: /*some*/ any ViewControllerBuilder,
         selfProfileBuilder: /*some*/ any ViewControllerBuilder
     ) {
         self.mainSplitViewController = mainSplitViewController
         self.mainTabBarController = mainTabBarController
-        self.archivedConversationsBuilder = archivedConversationsBuilder
         self.selfProfileBuilder = selfProfileBuilder
+
+        archivedConversations = mainTabBarController.archive
     }
 
     deinit {
@@ -59,12 +64,16 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     }
 
     public func showArchivedConversations() {
-        let archivedConversations = archivedConversations ?? archivedConversationsBuilder.build()
-        self.archivedConversations = archivedConversations
+        switch isLayoutCollapsed {
 
-        if isLayoutCollapsed {
+        case true:
             mainTabBarController.selectedContent = .archive
-        } else {
+
+        case false:
+            // if it's already visible (and not contained in the tabBarController anymore), do nothing
+
+            guard let archivedConversations = mainTabBarController.archive else { return }
+            mainTabBarController.archive = nil
             mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
         }
     }
@@ -182,9 +191,10 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
         // TODO: conversations
 
-        if let archivedConversations {
-            mainTabBarController.archive = nil
-            mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
+        // move the archived conversations list back to the tab bar controller if needed
+        if mainTabBarController.archive == nil, let archivedConversations {
+            archivedConversations.presentingViewController?.dismiss(animated: false)
+            mainTabBarController.archive = archivedConversations
         }
 
         // TODO: more to move?
@@ -215,9 +225,10 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
         // TODO: conversations
 
-        if let archivedConversations {
-            archivedConversations.presentingViewController?.dismiss(animated: false)
-            mainTabBarController.archive = archivedConversations
+        // if the archived conversations view controller was visible, present it on top of the conversation list
+        if mainTabBarController.selectedContent == .archive, let archivedConversations = mainTabBarController.archive {
+            mainTabBarController.archive = nil
+            mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
         }
 
         // TODO: more to move?

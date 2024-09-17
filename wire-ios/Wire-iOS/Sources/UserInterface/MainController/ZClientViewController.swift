@@ -208,7 +208,6 @@ final class ZClientViewController: UIViewController {
             mainSplitViewController: wireSplitViewController,
             mainTabBarController: mainTabBarController,
             selfProfileBuilder: selfProfileViewControllerBuilder,
-            archivedConversationsBuilder: ArchivedConversationsViewControllerBuilder(userSession: userSession),
             settingsBuilder: SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
         )
         self.mainCoordinator = mainCoordinator
@@ -229,6 +228,7 @@ final class ZClientViewController: UIViewController {
         let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
         wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
 
+        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
         // prevent split view appearance on large phones
