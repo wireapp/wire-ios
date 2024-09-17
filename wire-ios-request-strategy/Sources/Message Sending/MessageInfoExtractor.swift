@@ -19,6 +19,7 @@
 import Foundation
 
 struct MessageInfo {
+    var genericMessage: GenericMessage
     /// list of clients divided per domain and userId
     var listClients: [String: [UUID: [ProteusSessionID]]]
     var missingClientsStrategy: MissingClientsStrategy
@@ -28,7 +29,7 @@ struct MessageInfo {
     func allSessionIds() -> [ProteusSessionID] {
         var result = [ProteusSessionID]()
         for (_, userClientIdAndSessionIds) in listClients {
-            for (userId, sessionIds) in userClientIdAndSessionIds {
+            for (_, sessionIds) in userClientIdAndSessionIds {
                 result.append(contentsOf: sessionIds)
             }
         }
@@ -36,11 +37,34 @@ struct MessageInfo {
     }
 }
 
+enum MessageInfoExtractorError: Error {
+    case missingConversation
+    case missingGenericMessage
+}
+
 /// Pull out of coredata object info to send a message
 struct MessageInfoExtractor {
     var context: NSManagedObjectContext
 
-    func infoForTransport(message: GenericMessage, in conversation: ZMConversation) async throws -> MessageInfo {
+    
+    func infoForTransport(message: any ProteusMessage, conversationID: QualifiedID) async throws -> MessageInfo {
+        let (conversation, genericMessage) = await context.perform { [context] in
+            (ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context),
+             message.underlyingMessage)
+        }
+        
+        guard let conversation else {
+            throw MessageInfoExtractorError.missingConversation
+        }
+        
+        guard let genericMessage else {
+            throw MessageInfoExtractorError.missingGenericMessage
+        }
+        
+        return try await infoForTransport(message: genericMessage, in: conversation)
+    }
+    
+    private func infoForTransport(message: GenericMessage, in conversation: ZMConversation) async throws -> MessageInfo {
         let selfUser = await context.perform { ZMUser.selfUser(in: context) }
         let selfClientID = try await selfClientID()
         guard let selfDomain = selfUser.domain else {
@@ -53,13 +77,15 @@ struct MessageInfoExtractor {
         // get the list of clients
         let clients = await listOfClients(for: recipients, selfDomain: selfDomain, selfClientID: selfClientID)
 
-        return MessageInfo(listClients: clients,
-                           missingClientsStrategy: missingClientsStrategy,
-                           selfClientID: selfClientID,
-                           // We do not want to send pushes for delivery receipts.
-                           nativePush: !message.hasConfirmation
-                )
-
+        return MessageInfo(
+            genericMessage: message,
+            listClients: clients,
+            missingClientsStrategy: missingClientsStrategy,
+            selfClientID: selfClientID,
+            // We do not want to send pushes for delivery receipts.
+            nativePush: !message.hasConfirmation
+            
+        )
     }
 
     private func selfClientID() async throws -> String {

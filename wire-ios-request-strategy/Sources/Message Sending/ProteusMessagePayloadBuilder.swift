@@ -41,17 +41,14 @@ struct ProteusMessagePayloadBuilder {
 
     var useQualifiedIds: Bool = false
 
-    func encryptForTransport(message: GenericMessage, in conversation: ZMConversation, externalData: Data? = nil) async throws -> Data {
-        // 1) get the info for the message from CoreData objects
-        let extractor = MessageInfoExtractor(context: context)
-        let messageInfo = try await extractor.infoForTransport(message: message, in: conversation)
-
-        // 2) encrypt the data with proteusService
-        let plainText = try message.serializedData()
+    func encryptForTransport(with messageInfo: MessageInfo, externalData: Data? = nil) async throws -> Data {
+       
+        // 1) encrypt the data with proteusService
+        let plainText = try messageInfo.genericMessage.serializedData()
         let allSessionIds = messageInfo.allSessionIds()
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
 
-        // 3) Wrap the encryptedData in protobuf object that will be serialized
+        // 2) Wrap the encryptedData in protobuf object that will be serialized
         var messageData: Data
         if useQualifiedIds {
             messageData = try await qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
@@ -63,7 +60,7 @@ struct ProteusMessagePayloadBuilder {
         if  UInt(messageData.count) > ZMClientMessage.byteSizeExternalThreshold && externalData == nil {
             // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
             // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
-            messageData = try await encryptForTransportExternalDataBlob(message: message, messageInfo: messageInfo)
+            messageData = try await encryptForTransportExternalDataBlob(message: messageInfo.genericMessage, messageInfo: messageInfo)
         }
 
         // TODO: Reset all failed sessions. -> [F] why do we reset the failedToEstablishSession on all clients ??

@@ -25,6 +25,7 @@ public enum MessageSendError: Error, Equatable {
     case missingMlsService
     case unresolvedApiVersion
     case messageExpired
+    case missingProteusService
 }
 
 public typealias SendableMessage = ProteusMessage & MLSMessage
@@ -139,8 +140,29 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
+        
+        let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
+        
+        guard let proteusService else {
+            throw MessageSendError.missingProteusService
+        }
+        
+        guard let conversationID else {
+            throw MessageSendError.missingQualifiedID
+        }
+        
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: message)
+            try message.prepareForSending()
+            
+            // 1) get the info for the message from CoreData objects
+            let extractor = MessageInfoExtractor(context: context)
+            let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
+
+            // 2) get the encrypted payload
+            let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -150,8 +172,12 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let conversationID = await context.perform { message.conversation?.qualifiedID }
-
+        let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
+        
+        guard let proteusService else {
+            throw MessageSendError.missingProteusService
+        }
+        
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
         }
@@ -163,10 +189,18 @@ public final class MessageSender: MessageSenderInterface {
         )
 
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
-                message: message,
-                conversationID: conversationID
-            )
+            try message.prepareForSending()
+            
+            // 1) get the info for the message from CoreData objects
+            let extractor = MessageInfoExtractor(context: context)
+            let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
+
+            // 2) get the encrypted payload
+            let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+
+            // 2) send it via API
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(message: messageData, conversationID: conversationID, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
