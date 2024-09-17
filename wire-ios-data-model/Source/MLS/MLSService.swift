@@ -48,7 +48,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         parentGroupID: MLSGroupID
     ) async throws -> MLSCipherSuite
 
-    
     ///  Creates a new group or subgroup with the given ID.
     ///
     /// - Parameters:
