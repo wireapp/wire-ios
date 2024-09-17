@@ -63,7 +63,7 @@ struct MessageInfoExtractor {
     private func recipients(for message: GenericMessage, selfUser: ZMUser, in conversation: ZMConversation) async -> ([ZMUser : Set<UserClient>], MissingClientsStrategy) {
         let (users, missingClientsStrategy) = await context.perform { message.recipientUsersForMessage(in: conversation, selfUser: selfUser) }
         
-        return (await context.perform { users.mapToDictionary { $0.clients } }, missingClientsStrategy)
+        return (await context.perform { users }, missingClientsStrategy)
     }
     
     private func listOfClients(for recipients: [ZMUser : Set<UserClient>], selfDomain: String, selfClientID: String) async -> [String: [UUID: [ProteusSessionID]]] {

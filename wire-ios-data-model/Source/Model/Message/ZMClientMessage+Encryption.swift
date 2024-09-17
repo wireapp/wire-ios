@@ -243,7 +243,7 @@ extension GenericMessage {
 
         let selfUser = await context.perform { ZMUser.selfUser(in: context) }
         let (users, missingClientsStrategy) = await context.perform { recipientUsersForMessage(in: conversation, selfUser: selfUser) }
-        let recipients = await context.perform { users.mapToDictionary { $0.clients } }
+        let recipients = await context.perform { users }
 
         var encryptedData: Data?
 
@@ -908,7 +908,7 @@ extension GenericMessage {
        }
 
 
-    public func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
+    public func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: [ZMUser : Set<UserClient>], strategy: MissingClientsStrategy) {
         let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
         func recipientForButtonActionMessage() -> Set<ZMUser> {
@@ -1023,7 +1023,7 @@ extension GenericMessage {
             strategy = .doNotIgnoreAnyMissingClient
         }
 
-        return (recipientUsers, strategy)
+        return (recipientUsers.mapToDictionary { $0.clients }, strategy)
     }
 }
 
