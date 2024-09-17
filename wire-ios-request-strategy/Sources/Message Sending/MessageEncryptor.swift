@@ -60,7 +60,7 @@ struct MessagePayloadBuilder {
             messageData = try await encryptForTransportExternalDataBlob(message: message, messageInfo: messageInfo)
         }
 
-        // Reset all failed sessions. -> [F] why do we reset the failedToEstablishSession on all clients ??
+        // TODO: Reset all failed sessions. -> [F] why do we reset the failedToEstablishSession on all clients ??
 //        await context.perform {
 //            recipients.values
 //                .flatMap { $0 }
@@ -90,20 +90,25 @@ struct MessagePayloadBuilder {
         }
     }
         
-    func unQualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
+    private func unQualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
+        let allSessionIds = messageInfo.allSessionIds()
+        let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
         
         var userEntries = [Proteus_UserEntry]()
         for (_, entries) in messageInfo.listClients {
 
             for (userId, sessionsIds) in entries {
-                
-                let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: sessionsIds)
-                
+
                 let userId = Proteus_UserId.with({ $0.uuid = userId.uuidData })
                 
-                let clientEntries = encryptedDatas.map { (sessionID, encryptedData) in
-                    let clientId = Proteus_ClientId.with({ $0.client = sessionID.hexRemoteIdentifier })
-                    return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
+                let clientEntries = sessionsIds.compactMap { sessionID in
+                    let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
+                    if let encryptedData = encryptedDatas[sessionID.rawValue] {
+                        return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
+                    } else {
+                        assertionFailure("should not happen")
+                        return nil
+                    }
                 }
 
                 userEntries.append(
@@ -123,7 +128,7 @@ struct MessagePayloadBuilder {
         return try message.serializedData()
     }
         
-    func qualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
+    private func qualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
 
         var finalRecipients = [Proteus_QualifiedUserEntry]()
         for (domain, entries) in messageInfo.listClients {

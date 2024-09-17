@@ -24,6 +24,17 @@ struct MessageInfo {
     var missingClientsStrategy: MissingClientsStrategy
     var selfClientID: String
     var nativePush: Bool
+    
+    
+    func allSessionIds() -> [ProteusSessionID] {
+        var result = [ProteusSessionID]()
+        for (_, userClientIdAndSessionIds) in listClients {
+            for (userId, sessionIds) in userClientIdAndSessionIds {
+                result.append(contentsOf: sessionIds)
+            }
+        }
+        return result
+    }
 }
 
 /// Pull out of coredata object info to send a message
