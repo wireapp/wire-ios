@@ -263,7 +263,7 @@ class MessageAPIV4: MessageAPIV3 {
     override func broadcastProteusMessage(message encryptedMessage: Data,
                                           expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
-        
+
         let request = ZMTransportRequest(
             path: path,
             method: .post,
@@ -276,7 +276,7 @@ class MessageAPIV4: MessageAPIV3 {
         if let expirationDate {
             request.expire(at: expirationDate)
         }
-        
+
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {

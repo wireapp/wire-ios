@@ -25,15 +25,15 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
 
     /// Sets the expiration date with the default time interval.
     func setExpirationDate()
-    
+
     /// Updates the underlying message - TODO: check naming
     func prepareForSending() throws
-    
+
     var underlyingMessage: GenericMessage? { get }
 }
 
 extension ZMClientMessage: ProteusMessage {
-    
+
     public func prepareForSending() throws {
         if conversation?.conversationType == .oneOnOne {
             // Update expectsReadReceipt flag to reflect the current user setting
@@ -54,7 +54,7 @@ extension ZMClientMessage: ProteusMessage {
 }
 
 extension ZMAssetClientMessage: ProteusMessage {
-    
+
     public func prepareForSending() throws {
         if conversation?.conversationType == .oneOnOne {
             // Update expectsReadReceipt flag to reflect the current user setting

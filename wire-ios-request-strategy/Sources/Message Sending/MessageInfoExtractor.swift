@@ -27,7 +27,7 @@ struct MessageInfo {
     typealias Domain = String
     typealias UserID = UUID
     typealias ClientList = [Domain: [UserID: [UserClientData]]]
-    
+
     var genericMessage: GenericMessage
     /// list of clients divided per domain and userId
     var listClients: ClientList
@@ -61,18 +61,18 @@ struct MessageInfoExtractor {
             (ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context),
              message.underlyingMessage)
         }
-        
+
         guard let conversation else {
             throw MessageInfoExtractorError.missingConversation
         }
-        
+
         guard let genericMessage else {
             throw MessageInfoExtractorError.missingGenericMessage
         }
-        
+
         return try await infoForTransport(message: genericMessage, in: conversation)
     }
-    
+
     private func infoForTransport(message: GenericMessage, in conversation: ZMConversation) async throws -> MessageInfo {
         let selfUser = await context.perform { ZMUser.selfUser(in: context) }
         let selfClientID = try await selfClientID()
@@ -93,7 +93,7 @@ struct MessageInfoExtractor {
             selfClientID: selfClientID,
             // We do not want to send pushes for delivery receipts.
             nativePush: !message.hasConfirmation
-            
+
         )
     }
 
@@ -152,7 +152,7 @@ struct MessageInfoExtractor {
                     WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(String(describing: $0.remoteIdentifier))")
                     return UserClientData(sessionID: sessionID, data: data)
                 }
-              
+
                 return UserClientData(sessionID: sessionID, data: nil)
             }
         }

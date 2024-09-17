@@ -42,7 +42,7 @@ struct ProteusMessagePayloadBuilder {
     var useQualifiedIds: Bool = false
 
     func encryptForTransport(with messageInfo: MessageInfo, externalData: Data? = nil) async throws -> Data {
-       
+
         // 1) encrypt the data with proteusService
         let plainText = try messageInfo.genericMessage.serializedData()
         let allSessionIds = messageInfo.allSessionIds()
@@ -145,7 +145,7 @@ struct ProteusMessagePayloadBuilder {
 
         return try message.serializedData()
     }
-    
+
     private func proteusUserEntry(userClientDatas: [UserClientData],
                                   for userID: UUID,
                                   encryptedDatas: [String: Data]) -> Proteus_UserEntry {
@@ -153,7 +153,7 @@ struct ProteusMessagePayloadBuilder {
 
         let clientEntries = userClientDatas.compactMap { userClientData in
             let clientId = Proteus_ClientId.with({ $0.client = userClientData.sessionID.clientID.hexRemoteIdentifier })
-            
+
             if let data = userClientData.data {
                 return Proteus_ClientEntry(withClientId: clientId, data: data)
             }

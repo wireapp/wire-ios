@@ -140,20 +140,20 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
-        
+
         let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
-        
+
         guard let proteusService else {
             throw MessageSendError.missingProteusService
         }
-        
+
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
         }
-        
+
         do {
             try message.prepareForSending()
-            
+
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
             let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
@@ -169,7 +169,7 @@ public final class MessageSender: MessageSenderInterface {
                     self.context.saveOrRollback()
                 }
             }
-            
+
             // 3) send it via API
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
@@ -182,11 +182,11 @@ public final class MessageSender: MessageSenderInterface {
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
         let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
-        
+
         guard let proteusService else {
             throw MessageSendError.missingProteusService
         }
-        
+
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
         }
@@ -199,7 +199,7 @@ public final class MessageSender: MessageSenderInterface {
 
         do {
             try message.prepareForSending()
-            
+
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
             let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
@@ -215,7 +215,7 @@ public final class MessageSender: MessageSenderInterface {
                     self.context.saveOrRollback()
                 }
             }
-            
+
             // 3) send it via API
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(message: messageData, conversationID: conversationID, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
@@ -320,7 +320,7 @@ public final class MessageSender: MessageSenderInterface {
 
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
-        
+
         // set expiration so request can be expired later
         await context.perform {
             if message.shouldExpire {
@@ -328,7 +328,7 @@ public final class MessageSender: MessageSenderInterface {
                 self.context.saveOrRollback()
             }
         }
-        
+
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
             .sendMLSMessage(message: encryptedData,
                             conversationID: conversationID,

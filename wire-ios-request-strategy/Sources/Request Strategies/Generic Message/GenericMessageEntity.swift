@@ -20,9 +20,7 @@ import Foundation
 
 @objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
 
-    
     public var underlyingMessage: WireProtos.GenericMessage?
-    
 
     public enum Recipients {
         case conversationParticipants
@@ -71,7 +69,7 @@ import Foundation
     public func delivered(with response: ZMTransportResponse) {
         // no-op
     }
-    
+
     public func prepareForSending() throws {
         // no-op - TODO: double check this
     }
