@@ -60,12 +60,9 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     }
 
     public func showConversationList() {
-        switch isLayoutCollapsed {
+        mainTabBarController.selectedContent = .conversations
 
-        case true:
-            mainTabBarController.selectedContent = .conversations
-
-        case false:
+        if !isLayoutCollapsed {
             moveArchivedConversationsIntoMainTabBarControllerIfNeeded()
 
             // TODO: complete
@@ -76,12 +73,9 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     }
 
     public func showArchivedConversations() {
-        switch isLayoutCollapsed {
+        mainTabBarController.selectedContent = .archive
 
-        case true:
-            mainTabBarController.selectedContent = .archive
-
-        case false:
+        if !isLayoutCollapsed {
             // if it's already visible (and not contained in the tabBarController anymore), do nothing
             guard mainTabBarController.archive != nil else { return }
             addArchivedConversationsAsChildOfConversationList()
@@ -235,6 +229,7 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         // if the archived conversations view controller was visible, present it on top of the conversation list
         if mainTabBarController.selectedContent == .archive {
             addArchivedConversationsAsChildOfConversationList()
+            //mainSplitViewController.sidebar.conversationFilter = .archive
         }
 
         // TODO: more to move?
