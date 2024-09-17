@@ -34,8 +34,7 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
 /// Concrete implementation of the EnableAnalyticsUseCaseProtocol.
 /// This struct is responsible for enabling analytics sharing for a specific user profile.
-struct EnableAnalyticsUseCase<UserSession>: EnableAnalyticsUseCaseProtocol
-where UserSession: EnableAnalyticsUseCaseUserSession {
+struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
@@ -47,21 +46,24 @@ where UserSession: EnableAnalyticsUseCaseUserSession {
 
     private let analyticsUserProfile: AnalyticsUserProfile
 
-    private let userSession: UserSession
+    private let userSession: EnableAnalyticsUseCaseUserSession
 
     // MARK: - Initialization
 
     /// Initializes a new instance of EnableAnalyticsUseCase.
     ///
     /// - Parameters:
-    ///   - analyticsManager: The analytics manager to use for enabling tracking.
+    ///   - analyticsManagerBuilder: A closure that provides an `AnalyticsManagerProtocol` implementation.
+    ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
+    ///   - analyticsSessionConfiguration: The configuration for the analytics session.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
+    ///   - userSession: The user session that conforms to `EnableAnalyticsUseCaseUserSession`.
     init(
-        analyticsManagerBuilder: @escaping (_ appKey: String, _ host: URL) -> some AnalyticsManagerProtocol,
+        analyticsManagerBuilder: @escaping (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol,
         sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
-        userSession: UserSession
+        userSession: EnableAnalyticsUseCaseUserSession
     ) {
         self.analyticsManagerBuilder = analyticsManagerBuilder
         self.sessionManager = sessionManager

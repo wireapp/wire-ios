@@ -26,7 +26,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: DisableAnalyticsUseCase<MockDisableAnalyticsUseCaseUserSession>!
+    private var sut: DisableAnalyticsUseCase!
     private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
     private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
     private var mockUserSession: MockDisableAnalyticsUseCaseUserSession!

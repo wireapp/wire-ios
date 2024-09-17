@@ -29,20 +29,19 @@ public protocol DisableAnalyticsUseCaseProtocol {
 
 /// Concrete implementation of the DisableAnalyticsUseCaseProtocol.
 /// This struct is responsible for disabling analytics sharing.
-struct DisableAnalyticsUseCase<UserSession>: DisableAnalyticsUseCaseProtocol
-where UserSession: DisableAnalyticsUseCaseUserSession {
+struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
     private let sessionManager: AnalyticsManagerProviding
-    private let userSession: UserSession
+    private let userSession: DisableAnalyticsUseCaseUserSession
 
     /// Initializes a new instance of `DisableAnalyticsUseCase`.
     ///
     /// - Parameters:
     ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
-    ///   - didDisableAnalytics: A closure to be executed after analytics have been disabled.
+    ///   - userSession: An instance conforming to `DisableAnalyticsUseCaseUserSession` that manages the user's analytics session state.
     init(
         sessionManager: AnalyticsManagerProviding,
-        userSession: UserSession
+        userSession: DisableAnalyticsUseCaseUserSession
     ) {
         self.sessionManager = sessionManager
         self.userSession = userSession
