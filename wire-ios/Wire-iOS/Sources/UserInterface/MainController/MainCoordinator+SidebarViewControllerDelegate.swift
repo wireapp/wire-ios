@@ -22,7 +22,7 @@ import WireSystem
 import WireUIFoundation
 import WireSidebar
 
-final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<MainSplitViewController, MainTabBarController> where MainSplitViewController.ConversationList == MainTabBarController.ConversationList, MainTabBarController.Archive == UIViewController {
+final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol, TabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<SplitViewController, TabBarController> where SplitViewController.Sidebar: MainSidebarProtocol, SplitViewController.ConversationList == TabBarController.ConversationList, TabBarController.Archive == UIViewController {
 
     // private weak var zClientViewController: ZClientViewController!
 
@@ -30,8 +30,8 @@ final class MainCoordinator<MainSplitViewController: MainSplitViewControllerProt
 
     init(
         zClientViewController: ZClientViewController,
-        mainSplitViewController: MainSplitViewController,
-        mainTabBarController: MainTabBarController,
+        mainSplitViewController: SplitViewController,
+        mainTabBarController: TabBarController,
         selfProfileBuilder: ViewControllerBuilder,
         settingsBuilder: ViewControllerBuilder
     ) {

@@ -20,11 +20,11 @@ import UIKit
 import WireFoundation
 
 // TODO: make `public final`
-open /*public final*/ class MainCoordinator<MainSplitViewController, MainTabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
-where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol, MainSplitViewController.ConversationList == MainTabBarController.ConversationList, MainTabBarController.Archive == UIViewController {
+open /*public final*/ class MainCoordinator<SplitViewController, TabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
+where SplitViewController: MainSplitViewControllerProtocol, TabBarController: MainTabBarControllerProtocol, SplitViewController.Sidebar: MainSidebarProtocol, SplitViewController.ConversationList == TabBarController.ConversationList, TabBarController.Archive == UIViewController {
 
-    private weak var mainSplitViewController: MainSplitViewController!
-    private weak var mainTabBarController: MainTabBarController!
+    private weak var mainSplitViewController: SplitViewController!
+    private weak var mainTabBarController: TabBarController!
 
     // TODO: setup inside or outside?
     // only navigation here?
@@ -37,15 +37,15 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
     /// A reference to the archived conversations view controller. This property is needed for the expanded layout mode
     /// when the archived conversations list is taken out of the tab bar controller and presented on top of the conversation list.
-    private weak var archivedConversations: MainTabBarController.Archive?
+    private weak var archivedConversations: TabBarController.Archive?
 
     private weak var selfProfileViewController: UIViewController?
 
     private var isLayoutCollapsed = false
 
     public init(
-        mainSplitViewController: MainSplitViewController,
-        mainTabBarController: MainTabBarController,
+        mainSplitViewController: SplitViewController,
+        mainTabBarController: TabBarController,
         selfProfileBuilder: /*some*/ any ViewControllerBuilder
     ) {
         self.mainSplitViewController = mainSplitViewController
