@@ -27,7 +27,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var sut: EnableAnalyticsUseCase<MockEnableAnalyticsUseCaseUserSession>!
+    private var sut: EnableAnalyticsUseCase!
     private var mockAnalyticsManagerProvider: MockAnalyticsManagerProviding!
     private var mockAnalyticsManager: MockAnalyticsManagerProtocol!
     private var sessionConfiguration: AnalyticsSessionConfiguration!
@@ -49,7 +49,7 @@ final class EnableAnalyticsUseCaseTests: XCTestCase {
             sessionManager: mockAnalyticsManagerProvider,
             analyticsSessionConfiguration: sessionConfiguration,
             analyticsUserProfile: userProfile,
-            userSession: mockUserSession
+            analyticsSessionProvider: mockUserSession
         )
     }
 

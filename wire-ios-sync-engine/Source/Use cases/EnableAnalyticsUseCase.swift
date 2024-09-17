@@ -46,7 +46,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     private let analyticsUserProfile: AnalyticsUserProfile
 
-    private let userSession: EnableAnalyticsUseCaseUserSession
+    private let analyticsSessionProvider: EnableAnalyticsUseCaseUserSession
 
     // MARK: - Initialization
 
@@ -57,19 +57,19 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
     ///   - analyticsSessionConfiguration: The configuration for the analytics session.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
-    ///   - userSession: The user session that conforms to `EnableAnalyticsUseCaseUserSession`.
+    ///   - analyticsSessionProvider: An instance conforming to `EnableAnalyticsUseCaseUserSession` that manages the user's analytics session state.
     init(
         analyticsManagerBuilder: @escaping (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol,
         sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
-        userSession: EnableAnalyticsUseCaseUserSession
+        analyticsSessionProvider: EnableAnalyticsUseCaseUserSession
     ) {
         self.analyticsManagerBuilder = analyticsManagerBuilder
         self.sessionManager = sessionManager
         self.analyticsSessionConfiguration = analyticsSessionConfiguration
         self.analyticsUserProfile = analyticsUserProfile
-        self.userSession = userSession
+        self.analyticsSessionProvider = analyticsSessionProvider
     }
 
     // MARK: - Public methods
@@ -87,7 +87,7 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
         sessionManager.analyticsManager = analyticsManager
 
         let analyticsSession = analyticsManager.enableTracking(analyticsUserProfile)
-        userSession.analyticsSession = analyticsSession
+        analyticsSessionProvider.analyticsSession = analyticsSession
     }
 }
 

@@ -37,7 +37,7 @@ extension SessionManager {
 
         return DisableAnalyticsUseCase(
             sessionManager: self,
-            userSession: userSession
+            analyticsSessionProvider: userSession
         )
     }
 
@@ -60,7 +60,7 @@ extension SessionManager {
             sessionManager: self,
             analyticsSessionConfiguration: analyticsSessionConfiguration,
             analyticsUserProfile: analyticsUserProfile,
-            userSession: userSession
+            analyticsSessionProvider: userSession
         )
     }
 

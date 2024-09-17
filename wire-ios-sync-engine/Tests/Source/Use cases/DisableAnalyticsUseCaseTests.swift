@@ -42,7 +42,7 @@ final class DisableAnalyticsUseCaseTests: XCTestCase {
 
         sut = .init(
             sessionManager: mockAnalyticsManagerProvider,
-            userSession: mockUserSession
+            analyticsSessionProvider: mockUserSession
         )
     }
 
