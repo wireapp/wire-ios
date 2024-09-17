@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum MainSidebarConversationFilter {
-    case favorites, groups, oneOnOne, archived
+public protocol MainSidebarConversationFilterProtocol {
+    static var favorites: Self { get }
+    static var groups: Self { get }
+    static var oneOnOne: Self { get }
+    static var archived: Self { get }
 }

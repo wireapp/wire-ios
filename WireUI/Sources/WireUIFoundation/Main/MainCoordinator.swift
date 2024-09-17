@@ -20,26 +20,23 @@ import UIKit
 import WireFoundation
 
 // TODO: make `public final`
-open /*public final*/ class MainCoordinator<SplitViewController, TabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
-where SplitViewController: MainSplitViewControllerProtocol, TabBarController: MainTabBarControllerProtocol, SplitViewController.Sidebar: MainSidebarProtocol, SplitViewController.ConversationList == TabBarController.ConversationList, TabBarController.Archive == UIViewController {
+open /*public final*/ class MainCoordinator<SplitViewController, TabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
+SplitViewController: MainSplitViewControllerProtocol,
+TabBarController: MainTabBarControllerProtocol,
+SplitViewController.Sidebar: MainSidebarProtocol,
+SplitViewController.ConversationList == TabBarController.ConversationList,
+TabBarController.Archive == UIViewController {
 
     private weak var mainSplitViewController: SplitViewController!
     private weak var mainTabBarController: TabBarController!
-
-    // TODO: setup inside or outside?
-    // only navigation here?
-    // protocols/accessors for each navigation controller? or viewControllers array
-
-    // TODO: remove
-    //private var archivedConversationsBuilder: any ViewControllerBuilder
-
-    private var selfProfileBuilder: any ViewControllerBuilder
 
     /// A reference to the archived conversations view controller. This property is needed for the expanded layout mode
     /// when the archived conversations list is taken out of the tab bar controller and presented on top of the conversation list.
     private weak var archivedConversations: TabBarController.Archive?
 
     private weak var selfProfileViewController: UIViewController?
+
+    private var selfProfileBuilder: any ViewControllerBuilder
 
     private var isLayoutCollapsed = false
 

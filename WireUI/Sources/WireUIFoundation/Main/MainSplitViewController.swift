@@ -18,9 +18,8 @@
 
 import SwiftUI
 
-public final class MainSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+public final class MainSplitViewController<Sidebar: MainSidebarProtocol>: UISplitViewController, MainSplitViewControllerProtocol {
 
-    public typealias Sidebar = UIViewController
     public typealias ConversationList = UIViewController
     public typealias Conversation = UIViewController
     public typealias TabContainer = UIViewController
@@ -111,11 +110,20 @@ public final class MainSplitViewController: UISplitViewController, MainSplitView
 #Preview {
     {
         let splitViewController = MainSplitViewController(
-            sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
+            sidebar: PreviewSidebarViewController(rootView: Text(verbatim: "sidebar")),
             noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
             tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
         )
         splitViewController.conversationList = UIHostingController(rootView: Text(verbatim: "conversation list"))
         return splitViewController
     }()
+}
+
+private final class PreviewSidebarViewController: UIHostingController<Text>, MainSidebarProtocol {
+
+    var conversationFilter: ConversationFilter?
+
+    enum ConversationFilter: MainSidebarConversationFilterProtocol {
+        case favorites, groups, oneOnOne, archived
+    }
 }

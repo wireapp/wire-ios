@@ -24,7 +24,7 @@ import XCTest
 
 final class MainSplitViewControllerTests: XCTestCase {
 
-    private var sut: MainSplitViewController!
+    private var sut: MainSplitViewController<<#Sidebar: UIViewController & MainSidebarProtocol#>>!
     private var sidebar: UIViewController!
     private var conversationList: UIViewController!
     private var conversation: UIViewController!
@@ -35,6 +35,7 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
+    TODO: move into target and use for preview
         let hostingController: (String, Color) -> UIHostingController<AnyView> = { text, backgroundColor in
             UIHostingController(
                 rootView: AnyView(

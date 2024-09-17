@@ -18,6 +18,8 @@
 
 import UIKit
 
+@MainActor
 public protocol MainSidebarProtocol: UIViewController {
-    var conversationFilter: MainSidebarConversationFilter? { get set }
+    associatedtype ConversationFilter: MainSidebarConversationFilterProtocol
+    var conversationFilter: ConversationFilter? { get set }
 }
