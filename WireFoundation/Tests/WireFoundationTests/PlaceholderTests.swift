@@ -22,5 +22,7 @@ import XCTest
 
 final class PlaceholderTests: XCTestCase {
 
-    func testNothing() {}
+    func testNothing() throws {
+        throw XCTSkip()
+    }
 }
