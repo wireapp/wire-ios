@@ -22,6 +22,7 @@ import WireProtos
 enum MessageEncryptorError: Error {
     case missingValidSelfClient
     case missingSelfDomain
+    case unableToEncryptForExternalData
 }
 
 private extension String {
@@ -45,18 +46,54 @@ struct MessagePayloadBuilder {
         let messageInfo = try await extractor.infoForTransport(message: message, in: conversation)
         
         let plainText = try message.serializedData()
-        
+        var messageData: Data
         if useQualifiedIds {
-            return try await qualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: externalData)
+            messageData = try await qualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: externalData)
         } else {
-            return try await unqualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: externalData)
+            messageData = try await unQualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: externalData)
+        }
+        
+        // Message too big?
+        if  UInt(messageData.count) > ZMClientMessage.byteSizeExternalThreshold && externalData == nil {
+            // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
+            // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
+            messageData = try await encryptForTransportExternalDataBlob(message: message, messageInfo: messageInfo)
+        }
+
+        // Reset all failed sessions. -> [F] why do we reset the failedToEstablishSession on all clients ??
+//        await context.perform {
+//            recipients.values
+//                .flatMap { $0 }
+//                .forEach { $0.failedToEstablishSession = false }
+//        }
+
+        return messageData
+    }
+    
+    private func encryptForTransportExternalDataBlob(message: GenericMessage, messageInfo: MessageInfo) async throws -> Data {
+        
+        guard
+            let encryptedDataWithKeys = GenericMessage.encryptedDataWithKeys(from: message),
+            let data = encryptedDataWithKeys.data,
+            let keys = encryptedDataWithKeys.keys
+        else {
+            throw MessageEncryptorError.unableToEncryptForExternalData
+        }
+
+        let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: keys))
+        let plainText = try externalGenericMessage.serializedData()
+   
+        if useQualifiedIds {
+            return try await qualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: data)
+        } else {
+            return try await unQualifiedData(messageInfo: messageInfo, plainText: plainText, externalData: data)
         }
     }
         
-    func unqualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
+    func unQualifiedData(messageInfo: MessageInfo, plainText: Data, externalData: Data? = nil) async throws -> Data {
         
         var userEntries = [Proteus_UserEntry]()
-        for (domain, entries) in messageInfo.listClients {
+        for (_, entries) in messageInfo.listClients {
 
             for (userId, sessionsIds) in entries {
                 

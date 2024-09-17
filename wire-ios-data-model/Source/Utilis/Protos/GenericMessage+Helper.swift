@@ -667,7 +667,7 @@ extension External {
         }
     }
 
-    init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
+    public init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
         self = External(withOTRKey: key.aesKey, sha256: key.sha256)
     }
 }
