@@ -20,7 +20,7 @@
 public protocol MainCoordinatorProtocol: AnyObject {
 
     @MainActor
-    func showConversations()
+    func showConversationList()
 
     @MainActor
     func showArchivedConversations()

@@ -59,8 +59,20 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         /*WireLogger.ui.debug*/print("MainCoordinator.deinit")
     }
 
-    public func showConversations() {
-        fatalError("not implemented yet")
+    public func showConversationList() {
+        switch isLayoutCollapsed {
+
+        case true:
+            mainTabBarController.selectedContent = .conversations
+
+        case false:
+            moveArchivedConversationsIntoMainTabBarControllerIfNeeded()
+
+            // TODO: complete
+            // settings visible?
+            // archive visible?
+            // selfProfile visible?
+        }
     }
 
     public func showArchivedConversations() {
@@ -71,10 +83,8 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
         case false:
             // if it's already visible (and not contained in the tabBarController anymore), do nothing
-
-            guard let archivedConversations = mainTabBarController.archive else { return }
-            mainTabBarController.archive = nil
-            mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
+            guard mainTabBarController.archive != nil else { return }
+            addArchivedConversationsAsChildOfConversationList()
         }
     }
 
@@ -115,43 +125,43 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
 
         // TODO: remove?
-                // guard let selfUser = ZMUser.selfUser() else {
-                //     assertionFailure("ZMUser.selfUser() is nil")
-                //     return
-                // }
+        // guard let selfUser = ZMUser.selfUser() else {
+        //     assertionFailure("ZMUser.selfUser() is nil")
+        //     return
+        // }
 
         //        let settingsViewController = createSettingsViewController(selfUser: selfUser)
         //        let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
-                // TODO: fix
-                fatalError("TODO")
-                // if wr_splitViewController?.layoutSize == .compact {
-                //     present(keyboardAvoidingViewController, animated: true)
-                // } else {
-                //     keyboardAvoidingViewController.modalPresentationStyle = .formSheet
-                //     keyboardAvoidingViewController.view.backgroundColor = .black
-                //     present(keyboardAvoidingViewController, animated: true)
-                // }
+        // TODO: fix
+        fatalError("TODO")
+        // if wr_splitViewController?.layoutSize == .compact {
+        //     present(keyboardAvoidingViewController, animated: true)
+        // } else {
+        //     keyboardAvoidingViewController.modalPresentationStyle = .formSheet
+        //     keyboardAvoidingViewController.view.backgroundColor = .black
+        //     present(keyboardAvoidingViewController, animated: true)
+        // }
     }
 
-//    public func openConversation(
-//        _ conversation: Conversation,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) {
-//        fatalError("not implemented yet")
-//    }
-//
-//    public func openConversation(
-//        _ conversation: Conversation,
-//        andScrollTo message: ConversationMessage,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) {
-//        fatalError("not implemented yet")
-//    }
+    //    public func openConversation(
+    //        _ conversation: Conversation,
+    //        focusOnView focus: Bool,
+    //        animated: Bool
+    //    ) {
+    //        fatalError("not implemented yet")
+    //    }
+    //
+    //    public func openConversation(
+    //        _ conversation: Conversation,
+    //        andScrollTo message: ConversationMessage,
+    //        focusOnView focus: Bool,
+    //        animated: Bool
+    //    ) {
+    //        fatalError("not implemented yet")
+    //    }
 
-// TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
+    // TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
 
     // MARK: - UISplitViewControllerDelegate
 
@@ -174,14 +184,14 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         isLayoutCollapsed = true
 
         /*
-        let containers = ContainerViewControllers(of: splitViewController)
+         let containers = ContainerViewControllers(of: splitViewController)
 
-        // validate assumptions
-        guard
-            // there should never be anything pushed onto the nc of the supplmentary and secondary columns
-            containers.supplementaryColumn.viewControllers.count == 1,
-            containers.secondaryColumn.viewControllers.count == 1
-        else { return assertionFailure("view controller hierarchy invalid assumptions") }
+         // validate assumptions
+         guard
+         // there should never be anything pushed onto the nc of the supplmentary and secondary columns
+         containers.supplementaryColumn.viewControllers.count == 1,
+         containers.secondaryColumn.viewControllers.count == 1
+         else { return assertionFailure("view controller hierarchy invalid assumptions") }
          */
 
         // move view controllers from the split view controller's columns to the tab bar controller
@@ -192,10 +202,7 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         // TODO: conversations
 
         // move the archived conversations list back to the tab bar controller if needed
-        if mainTabBarController.archive == nil, let archivedConversations {
-            archivedConversations.presentingViewController?.dismiss(animated: false)
-            mainTabBarController.archive = archivedConversations
-        }
+        moveArchivedConversationsIntoMainTabBarControllerIfNeeded()
 
         // TODO: more to move?
     }
@@ -226,11 +233,40 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         // TODO: conversations
 
         // if the archived conversations view controller was visible, present it on top of the conversation list
-        if mainTabBarController.selectedContent == .archive, let archivedConversations = mainTabBarController.archive {
-            mainTabBarController.archive = nil
-            mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
+        if mainTabBarController.selectedContent == .archive {
+            addArchivedConversationsAsChildOfConversationList()
         }
 
         // TODO: more to move?
+    }
+
+    // MARK: - Helpers
+
+    @MainActor
+    private func addArchivedConversationsAsChildOfConversationList() {
+        let conversationList = mainSplitViewController.conversationList!
+        let archivedConversations = archivedConversations!
+        mainTabBarController.archive = nil
+
+        conversationList.addChild(archivedConversations)
+        archivedConversations.view.translatesAutoresizingMaskIntoConstraints = false
+        conversationList.view.addSubview(archivedConversations.view)
+        NSLayoutConstraint.activate([
+            archivedConversations.view.leadingAnchor.constraint(equalTo: conversationList.view.leadingAnchor),
+            archivedConversations.view.topAnchor.constraint(equalTo: conversationList.view.topAnchor),
+            conversationList.view.trailingAnchor.constraint(equalTo: archivedConversations.view.trailingAnchor),
+            conversationList.view.bottomAnchor.constraint(equalTo: archivedConversations.view.bottomAnchor)
+        ])
+        archivedConversations.didMove(toParent: conversationList)
+    }
+
+    @MainActor
+    private func moveArchivedConversationsIntoMainTabBarControllerIfNeeded() {
+        if mainTabBarController.archive == nil {
+            archivedConversations!.willMove(toParent: nil)
+            archivedConversations!.view.removeFromSuperview()
+            archivedConversations!.removeFromParent()
+            mainTabBarController.archive = archivedConversations
+        }
     }
 }

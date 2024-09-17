@@ -203,6 +203,8 @@ final class ZClientViewController: UIViewController {
 
     private func setupSplitViewController() {
 
+        // TODO: make sure the order of initialization is correct (coordinator, tab controller, split view controller)
+        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
         let mainCoordinator = MainCoordinator(
             zClientViewController: self,
             mainSplitViewController: wireSplitViewController,
@@ -228,7 +230,6 @@ final class ZClientViewController: UIViewController {
         let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
         wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
 
-        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
         wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
         // prevent split view appearance on large phones

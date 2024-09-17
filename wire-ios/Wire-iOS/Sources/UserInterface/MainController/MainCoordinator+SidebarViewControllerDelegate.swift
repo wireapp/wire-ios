@@ -135,9 +135,11 @@ extension WireUIFoundation.MainCoordinator: SidebarViewControllerDelegate {
 
     public func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
         if conversationFilter == .archived {
-            return showArchivedConversations()
+            showArchivedConversations()
+        } else {
+            // TODO: apply filter
+            showConversationList()
         }
-        fatalError("TODO")
     }
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
