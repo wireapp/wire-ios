@@ -19,6 +19,10 @@
 import SwiftUI
 import WireFoundation
 
+// TODO: remove commented code
+// private let titleColor: UIColor = .black // ColorTheme.Backgrounds.onSurface
+// private let subtitleColor: UIColor = .gray // ColorTheme.Base.secondaryText
+
 struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
 
     @Environment(\.sidebarProfileSwitcherDisplayNameColor) private var displayNameColor
