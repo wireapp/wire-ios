@@ -355,6 +355,8 @@ public extension Proteus_UserEntry {
 // MARK: - QualifiedNewOtrMessage
 
 public extension Proteus_QualifiedNewOtrMessage {
+    
+    // TODO: remove this
     init(withSender sender: UserClient,
          nativePush: Bool,
          recipients: [Proteus_QualifiedUserEntry],
@@ -375,17 +377,40 @@ public extension Proteus_QualifiedNewOtrMessage {
                 $0.clientMismatchStrategy = .reportAll(.init())
             case .ignoreAllMissingClients:
                 $0.clientMismatchStrategy = .ignoreAll(.init())
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
+            case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
                 $0.clientMismatchStrategy = .reportOnly(.with({
-                    $0.userIds = users.compactMap({
-                        guard
-                            let uuid = $0.remoteIdentifier,
-                            let domain = $0.domain
-                        else {
-                            return nil
-                        }
+                    $0.userIds = userIds.compactMap({
+                        return Proteus_QualifiedUserId(with: $0.uuid, domain: $0.domain)
+                    })
+                }))
+            }
+        }
+    }
+    
+    init(withSenderId userId: UInt64,
+         nativePush: Bool,
+         recipients: [Proteus_QualifiedUserEntry],
+         missingClientsStrategy: MissingClientsStrategy,
+         blob: Data? = nil ) {
 
-                        return Proteus_QualifiedUserId(with: uuid, domain: domain)
+        self = Proteus_QualifiedNewOtrMessage.with {
+            $0.nativePush = nativePush
+            $0.sender = Proteus_ClientId.with { $0.client = userId }
+            $0.recipients = recipients
+
+            if let blob {
+                $0.blob = blob
+            }
+
+            switch missingClientsStrategy {
+            case .doNotIgnoreAnyMissingClient:
+                $0.clientMismatchStrategy = .reportAll(.init())
+            case .ignoreAllMissingClients:
+                $0.clientMismatchStrategy = .ignoreAll(.init())
+            case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
+                $0.clientMismatchStrategy = .reportOnly(.with({
+                    $0.userIds = userIds.compactMap({
+                        return Proteus_QualifiedUserId(with: $0.uuid, domain: $0.domain)
                     })
                 }))
             }
@@ -396,13 +421,27 @@ public extension Proteus_QualifiedNewOtrMessage {
 // MARK: - NewOtrMessage
 
 public extension Proteus_NewOtrMessage {
-    init(withSender sender: UserClient, nativePush: Bool, recipients: [Proteus_UserEntry], blob: Data? = nil) {
+    init(withSenderId senderClientId: UInt64, 
+         nativePush: Bool,
+         recipients: [Proteus_UserEntry],
+         missingClientsStrategy: MissingClientsStrategy,
+         blob: Data? = nil) {
         self = Proteus_NewOtrMessage.with {
             $0.nativePush = nativePush
-            $0.sender = sender.clientId
+            $0.sender = Proteus_ClientId.with { $0.client = senderClientId }
             $0.recipients = recipients
+
             if blob != nil {
                 $0.blob = blob!
+            }
+            
+            switch missingClientsStrategy {
+            case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
+                $0.reportMissing = userIds.map { qualifiedID in
+                    Proteus_UserId.with({ $0.uuid = qualifiedID.uuid.uuidData })
+                }
+            case .ignoreAllMissingClients, .doNotIgnoreAnyMissingClient:
+                break
             }
         }
     }
