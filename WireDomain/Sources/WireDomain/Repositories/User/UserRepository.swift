@@ -43,6 +43,10 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Disables user legal hold.
+
+    func disableUserLegalHold() async throws
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -86,6 +90,15 @@ public final class UserRepository: UserRepositoryProtocol {
             }
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+
+    public func disableUserLegalHold() async throws {
+        try await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+            selfUser.legalHoldRequestWasCancelled()
+
+            try context.save()
         }
     }
 

@@ -32,9 +32,10 @@ protocol UserLegalholdDisableEventProcessorProtocol {
 
 struct UserLegalholdDisableEventProcessor: UserLegalholdDisableEventProcessorProtocol {
 
+    let repository: any UserRepositoryProtocol
+
     func processEvent(_: UserLegalholdDisableEvent) async throws {
-        // TODO: [WPB-10194]
-        assertionFailure("not implemented yet")
+        try await repository.disableUserLegalHold()
     }
 
 }
