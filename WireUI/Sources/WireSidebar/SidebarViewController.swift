@@ -49,6 +49,7 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
                 accountInfo: accountInfo,
                 conversationFilter: conversationFilter,
                 conversationFilterUpdated: { self_?.delegate?.sidebarViewController(self_!, didSelect: $0) },
+                accountImageAction: { self_?.delegate?.sidebarViewControllerDidSelectAccountImage(self_!) },
                 connectAction: { self_?.delegate?.sidebarViewControllerDidSelectConnect(self_!) },
                 settingsAction: { self_?.delegate?.sidebarViewControllerDidSelectSettings(self_!) },
                 supportAction: { self_?.delegate?.sidebarViewControllerDidSelectSupport(self_!) },
@@ -72,6 +73,7 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
 
     @State fileprivate(set) var conversationFilter: SidebarConversationFilter?
     fileprivate let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
+    fileprivate var accountImageAction: () -> Void
     fileprivate var connectAction: () -> Void
     fileprivate var settingsAction: () -> Void
     fileprivate var supportAction: () -> Void
@@ -84,6 +86,7 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
         SidebarView(
             accountInfo: accountInfo,
             conversationFilter: $conversationFilter,
+            accountImageAction: accountImageAction,
             connectAction: connectAction,
             settingsAction: settingsAction,
             supportAction: supportAction,
