@@ -32,8 +32,8 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        let container = UIView(frame: .init(origin: .zero, size: .init(width: 26, height: 26)))
-        let sut = SUT(frame: .init(x: 3, y: 3, width: 20, height: 20))
+        sut = SUT(frame: .init(x: 3, y: 3, width: 20, height: 20))
+        container = UIView(frame: .init(origin: .zero, size: .init(width: 26, height: 26)))
         container.addSubview(sut)
 
         snapshotHelper = .init()
