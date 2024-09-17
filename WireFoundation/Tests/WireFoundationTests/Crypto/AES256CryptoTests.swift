@@ -23,7 +23,7 @@ import XCTest
 
 final class AES256CryptoTests: XCTestCase {
 
-    // Encryption / decryption
+    // Plain ould encryption / decryption
 
     // AES operates on fixed-size blocks of data, which for AES is 128 bits (16 bytes).
     // Therefore we want to test encryption and decryption with data that is not a
@@ -106,6 +106,78 @@ final class AES256CryptoTests: XCTestCase {
 
         // Then
         XCTAssertNotEqual(plaintext, originalData)
+    }
+
+    // MARK: - Prefixed IV
+
+    func testEncryptDecryptWithPrefixedIV() throws {
+        // Given
+        let originalData = Scaffolding.originalData(from: "Hello, world")
+        let key = try Scaffolding.randomKey()
+
+        // When
+        let ciphertext = try AES256Crypto.encryptAllAtOnceWithPrefixedIV(
+            plaintext: originalData,
+            key: key
+        )
+
+        // Then
+        XCTAssertNotEqual(ciphertext, originalData)
+
+        // When
+        let plaintext = try AES256Crypto.decryptAllAtOnceWithPrefixedIV(
+            ciphertext: ciphertext,
+            key: key
+        )
+
+        // Then
+        XCTAssertEqual(plaintext, originalData)
+    }
+
+    func testEncryptDecryptWithPrefixedIV_IVIsRandomlyGenerated() throws {
+        // Given
+        let originalData = Scaffolding.originalData(from: "Hello, world")
+        let key = try Scaffolding.randomKey()
+
+        // When
+        let ciphertext1 = try AES256Crypto.encryptAllAtOnceWithPrefixedIV(
+            plaintext: originalData,
+            key: key
+        )
+
+        let ciphertext2 = try AES256Crypto.encryptAllAtOnceWithPrefixedIV(
+            plaintext: originalData,
+            key: key
+        )
+
+        // Then
+        XCTAssertNotEqual(ciphertext1, ciphertext2)
+    }
+
+    func testEncryptWithPrefixIV_DecryptWithoutPrefixedIV() throws {
+        // Given
+        let originalData = Scaffolding.originalData(from: "Hello, world")
+        let key = try Scaffolding.randomKey()
+
+        let ciphertext = try AES256Crypto.encryptAllAtOnceWithPrefixedIV(
+            plaintext: originalData,
+            key: key
+        )
+
+        // When
+        let invalidPlaintext = try AES256Crypto.decryptAllAtOnce(
+            ciphertext: ciphertext,
+            key: key
+        )
+
+        let validPlaintext = try AES256Crypto.decryptAllAtOnceWithPrefixedIV(
+            ciphertext: ciphertext,
+            key: key
+        )
+
+        // Then
+        XCTAssertNotEqual(invalidPlaintext, originalData)
+        XCTAssertEqual(validPlaintext, originalData)
     }
 
     // MARK: - Keys

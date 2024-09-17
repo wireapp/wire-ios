@@ -66,7 +66,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         }
 
         do {
-            return try AES256Crypto.decryptAllAtOnce(
+            return try AES256Crypto.decryptAllAtOnceWithPrefixedIV(
                 ciphertext: encryptedCookieData,
                 key: encryptionKey
             )
@@ -124,8 +124,12 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
             throw PersistentAuthenticationStorageError.cookieNotFound
 
         case errSecSuccess:
-            guard let cookieData = result as? Data else {
+            guard let base64CookieData = result as? Data else {
                 throw PersistentAuthenticationStorageError.unableToFetchCookieData(status: nil)
+            }
+
+            guard let cookieData = Data(base64Encoded: base64CookieData) else {
+                throw PersistentAuthenticationStorageError.failedToBase64DecodeCookie
             }
 
             return cookieData
@@ -157,6 +161,7 @@ enum PersistentAuthenticationStorageError: Error {
 
     case cookieNotFound
     case unableToFetchCookieData(status: Int32?)
+    case failedToBase64DecodeCookie
     case missingCookieEncryptionKey
     case unabledToDecryptCookie(any Error)
 

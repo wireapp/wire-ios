@@ -23,6 +23,7 @@ import Foundation
 
 public enum AES256Crypto {
 
+    // MARK: - Keys
 
     /// Generate a random encryption key for AES256 cryptography.
     /// - Returns: A 32-byte key.
@@ -30,6 +31,65 @@ public enum AES256Crypto {
     public static func generateRandomEncryptionKey() throws -> Data {
         try SecureRandomByteGenerator.generateBytes(count: UInt(kCCKeySizeAES256))
     }
+
+    // MARK: - Prefixed IV
+
+    /// Encrypt data with a prefixed IV all at once.
+    ///
+    /// This method will prefix a random IV before encrypting. To decrypt back
+    /// into plaintext, you must use the corresponding `decryptAllAtOnceWithPrefixedIV`
+    /// function.
+    ///
+    /// The entire cryptographic operation will occur in memory, therefore
+    /// this method should only be used with relatively small data.
+    ///
+    /// - Parameters:
+    ///   - plaintext: The data to encrypt.
+    ///   - key: The encryption key. It must be 32 bytes.
+    ///
+    /// - Returns: The encrypted ciphertext.
+
+    public static func encryptAllAtOnceWithPrefixedIV(
+        plaintext: Data,
+        key: Data
+    ) throws -> Data {
+        let ivSize = kCCBlockSizeAES128
+        let iv = try SecureRandomByteGenerator.generateBytes(count: UInt(ivSize))
+
+        return try encryptAllAtOnce(
+            plaintext: iv + plaintext,
+            key: key
+        )
+    }
+
+    /// Decrypt data with a prefixed IV all at once.
+    ///
+    /// Use this function to decrypt ciphertext that has been generated with
+    /// `encryptAllAtOnceWithPrefixedIV`.
+    ///
+    /// The entire cryptographic operation will occur in memory, therefore
+    /// this method should only be used with relatively small data.
+    ///
+    /// - Parameters:
+    ///   - ciphertext: The data to decrypt.
+    ///   - key: The decryption key. It must be 32 bytes.
+    ///
+    /// - Returns: The decrypted plaintext.
+
+    public static func decryptAllAtOnceWithPrefixedIV(
+        ciphertext: Data,
+        key: Data
+    ) throws -> Data {
+        let plaintext = try decryptAllAtOnce(
+            ciphertext: ciphertext,
+            key: key
+        )
+
+        let ivSize = kCCBlockSizeAES128
+        return plaintext.dropFirst(ivSize)
+    }
+
+    // MARK: - Plain old encrypt / decrypt
 
     /// Encrypt data all at once.
     ///
