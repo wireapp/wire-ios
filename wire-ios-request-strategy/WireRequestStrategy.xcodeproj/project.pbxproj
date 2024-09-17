@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0106AC8C2C9832EF0022E2CF /* MessageEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8B2C9832EF0022E2CF /* MessageEncryptor.swift */; };
+		0106AC8C2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */; };
 		0106AC8E2C99A4DC0022E2CF /* MessageInfoExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */; };
 		012B55F62C4A8FFC00DC12D0 /* EventHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55F52C4A8FFC00DC12D0 /* EventHasher.swift */; };
 		06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06025661248E467B00E060E1 /* NotificationStreamSync.swift */; };
@@ -478,7 +478,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0106AC8B2C9832EF0022E2CF /* MessageEncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEncryptor.swift; sourceTree = "<group>"; };
+		0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilder.swift; sourceTree = "<group>"; };
 		0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractor.swift; sourceTree = "<group>"; };
 		012B55F52C4A8FFC00DC12D0 /* EventHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHasher.swift; sourceTree = "<group>"; };
 		06025661248E467B00E060E1 /* NotificationStreamSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStreamSync.swift; sourceTree = "<group>"; };
@@ -1237,7 +1237,7 @@
 			isa = PBXGroup;
 			children = (
 				1623F8D22AE66F28004F0319 /* MessageSender.swift */,
-				0106AC8B2C9832EF0022E2CF /* MessageEncryptor.swift */,
+				0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */,
 				0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */,
 				16BBA1F32AF3952300CDF38A /* MessageSenderTests.swift */,
 				1623F8D42AE6729D004F0319 /* SessionEstablisher.swift */,
@@ -2464,7 +2464,7 @@
 				166A22912577C06B00EF313D /* ResetSessionRequestStrategy.swift in Sources */,
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
 				630D41AC2B077F3900633867 /* ProteusConversationParticipantsService.swift in Sources */,
-				0106AC8C2C9832EF0022E2CF /* MessageEncryptor.swift in Sources */,
+				0106AC8C2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift in Sources */,
 				16A86B2722A128A800A674F8 /* IdentifierObjectSync.swift in Sources */,
 				F18401C82073BE0800E9F4CC /* AssetDownloadRequestFactory.swift in Sources */,
 				16A48936268A0665001F9127 /* ModifiedKeyObjectSync.swift in Sources */,

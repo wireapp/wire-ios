@@ -34,21 +34,24 @@ private extension String {
     }
 }
 
-/// Provide the payload information for a message
-struct MessagePayloadBuilder {
+/// Provide the payload for a given proteus message
+struct ProteusMessagePayloadBuilder {
     var context: NSManagedObjectContext
     var proteusService: ProteusServiceInterface
 
     var useQualifiedIds: Bool = false
 
     func encryptForTransport(message: GenericMessage, in conversation: ZMConversation, externalData: Data? = nil) async throws -> Data {
+        // 1) get the info for the message from CoreData objects
         let extractor = MessageInfoExtractor(context: context)
         let messageInfo = try await extractor.infoForTransport(message: message, in: conversation)
 
+        // 2) encrypt the data with proteusService
         let plainText = try message.serializedData()
         let allSessionIds = messageInfo.allSessionIds()
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
 
+        // 3) Wrap the encryptedData in protobuf object that will be serialized
         var messageData: Data
         if useQualifiedIds {
             messageData = try await qualifiedData(messageInfo: messageInfo, encryptedDatas: encryptedDatas, externalData: externalData)
@@ -101,21 +104,8 @@ struct MessagePayloadBuilder {
 
             for (userId, sessionsIds) in entries {
 
-                let userId = Proteus_UserId.with({ $0.uuid = userId.uuidData })
-
-                let clientEntries = sessionsIds.compactMap { sessionID in
-                    let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
-                    if let encryptedData = encryptedDatas[sessionID.rawValue] {
-                        return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
-                    } else {
-                        assertionFailure("should not happen")
-                        return nil
-                    }
-                }
-
-                userEntries.append(
-                    Proteus_UserEntry(withProteusUserId: userId, clientEntries: clientEntries)
-                )
+                let userEntry = proteusUserEntry(sessionIds: sessionsIds, for: userId, encryptedDatas: encryptedDatas)
+                userEntries.append(userEntry)
             }
         }
 
@@ -136,24 +126,10 @@ struct MessagePayloadBuilder {
         for (domain, entries) in messageInfo.listClients {
 
             var userEntries = [Proteus_UserEntry]()
-
             for (userId, sessionsIds) in entries {
 
-                let userId = Proteus_UserId.with({ $0.uuid = userId.uuidData })
-
-                let clientEntries = sessionsIds.compactMap { sessionID in
-                    let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
-                    if let encryptedData = encryptedDatas[sessionID.rawValue] {
-                        return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
-                    } else {
-                        assertionFailure("should not happen")
-                        return nil
-                    }
-                }
-
-                userEntries.append(
-                    Proteus_UserEntry(withProteusUserId: userId, clientEntries: clientEntries)
-                )
+                let userEntry = proteusUserEntry(sessionIds: sessionsIds, for: userId, encryptedDatas: encryptedDatas)
+                userEntries.append(userEntry)
             }
 
             finalRecipients.append(
@@ -170,6 +146,23 @@ struct MessagePayloadBuilder {
         )
 
         return try message.serializedData()
+    }
+    
+    private func proteusUserEntry(sessionIds: [ProteusSessionID],
+                                  for userID: UUID,
+                                  encryptedDatas: [String: Data]) -> Proteus_UserEntry {
+        let proteusUserID = Proteus_UserId.with({ $0.uuid = userID.uuidData })
+
+        let clientEntries = sessionIds.compactMap { sessionID in
+            let clientId = Proteus_ClientId.with({ $0.client = sessionID.clientID.hexRemoteIdentifier })
+            if let encryptedData = encryptedDatas[sessionID.rawValue] {
+                return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
+            } else {
+                assertionFailure("should not happen")
+                return nil
+            }
+        }
+        return Proteus_UserEntry(withProteusUserId: proteusUserID, clientEntries: clientEntries)
     }
 
     /* TODO: handle failedToEstablishSession
