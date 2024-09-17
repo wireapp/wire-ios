@@ -22,7 +22,7 @@ import XCTest
 
 @testable import WireFoundation
 
-final class UIImage_fromSolidColorTests: XCTestCase {
+final class UIImageFromSolidColorTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
