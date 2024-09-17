@@ -20,6 +20,7 @@ import UIKit
 
 @MainActor
 public protocol MainTabBarControllerProtocol: UITabBarController {
+
     associatedtype ConversationList: UIViewController
     associatedtype Conversation: UIViewController
     associatedtype Archive: UIViewController
@@ -29,4 +30,5 @@ public protocol MainTabBarControllerProtocol: UITabBarController {
     var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
     var archive: Archive? { get set }
     var settings: Settings? { get set }
+    var selectedContent: MainTabBarControllerContent { get set }
 }

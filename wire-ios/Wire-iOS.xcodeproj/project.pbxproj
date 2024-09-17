@@ -351,6 +351,7 @@
 		594211D02C90700200576053 /* FileMetaDataGeneratorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */; };
 		594211D32C90778E00576053 /* SettingsDebugReportViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */; };
 		5945D02A2C219F7200D039E3 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 5945D0292C219F7200D039E3 /* WireDesign */; };
+		59491A432C99737500219252 /* ArchivedConversationsViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59491A422C99737500219252 /* ArchivedConversationsViewControllerBuilder.swift */; };
 		5950467D2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */; };
 		5950A9472C2F1C31005AB9CE /* AvailabilityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */; };
 		5952693F2BE8C93B001C1E8B /* AppLockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952693E2BE8C93B001C1E8B /* AppLockView.swift */; };
@@ -2370,6 +2371,7 @@
 		594211CC2C90591700576053 /* PDFFilePreviewGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFFilePreviewGenerator.swift; sourceTree = "<group>"; };
 		594211CF2C90700200576053 /* FileMetaDataGeneratorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMetaDataGeneratorProtocol.swift; sourceTree = "<group>"; };
 		594211D12C90775700576053 /* SettingsDebugReportViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDebugReportViewModelProtocol.swift; sourceTree = "<group>"; };
+		59491A422C99737500219252 /* ArchivedConversationsViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedConversationsViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5950467C2C6F3DA9005315DE /* NetworkStatusViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusViewSnapshotTests.swift; sourceTree = "<group>"; };
 		5950A9462C2F1C31005AB9CE /* AvailabilityMappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityMappings.swift; sourceTree = "<group>"; };
 		5952693E2BE8C93B001C1E8B /* AppLockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockView.swift; sourceTree = "<group>"; };
@@ -4558,6 +4560,7 @@
 		5902F8D52BF78F8A00F1D392 /* ArchivedList */ = {
 			isa = PBXGroup;
 			children = (
+				59491A422C99737500219252 /* ArchivedConversationsViewControllerBuilder.swift */,
 				BF52C1561CAEB9E10037331F /* ArchivedListViewController.swift */,
 				5902F8D62BF78FC200F1D392 /* ArchivedListViewControllerDelegate.swift */,
 				BF52C15F1CB25FE70037331F /* ArchivedListViewModel.swift */,
@@ -9889,6 +9892,7 @@
 				EF1ABCA82310147C00496A1B /* UIViewController+Invite.swift in Sources */,
 				D5F22D4C2048052900879444 /* UIAlertController+RemoveAction.swift in Sources */,
 				F1B5EAC92029AC7E0081D402 /* SimpleTextFieldValidator.swift in Sources */,
+				59491A432C99737500219252 /* ArchivedConversationsViewControllerBuilder.swift in Sources */,
 				06B3091326AEDC990057AF9E /* UIAlertController+FeatureConfig.swift in Sources */,
 				163FB99120518BF400E74F83 /* UIFont+FontSpec.swift in Sources */,
 				E9F2D6442B55DBEC00133C59 /* ConversationEncryptionInfoSystemMessageCellDescription.swift in Sources */,

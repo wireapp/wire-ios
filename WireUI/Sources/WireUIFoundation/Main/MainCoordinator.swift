@@ -21,7 +21,7 @@ import WireFoundation
 
 // TODO: make `public final`
 open /*public final*/ class MainCoordinator<MainSplitViewController, MainTabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate
-where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol, MainSplitViewController.ConversationList == MainTabBarController.ConversationList {
+where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol, MainSplitViewController.ConversationList == MainTabBarController.ConversationList, MainTabBarController.Archive == UIViewController {
 
     private weak var mainSplitViewController: MainSplitViewController!
     private weak var mainTabBarController: MainTabBarController!
@@ -30,8 +30,10 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     // only navigation here?
     // protocols/accessors for each navigation controller? or viewControllers array
 
+    private var archivedConversationsBuilder: any ViewControllerBuilder
     private var selfProfileBuilder: any ViewControllerBuilder
 
+    private weak var archivedConversations: MainTabBarController.Archive?
     private weak var selfProfileViewController: UIViewController?
 
     private var isLayoutCollapsed = false
@@ -39,10 +41,12 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
     public init(
         mainSplitViewController: MainSplitViewController,
         mainTabBarController: MainTabBarController,
+        archivedConversationsBuilder: /*some*/ any ViewControllerBuilder,
         selfProfileBuilder: /*some*/ any ViewControllerBuilder
     ) {
         self.mainSplitViewController = mainSplitViewController
         self.mainTabBarController = mainTabBarController
+        self.archivedConversationsBuilder = archivedConversationsBuilder
         self.selfProfileBuilder = selfProfileBuilder
     }
 
@@ -54,8 +58,15 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         fatalError("not implemented yet")
     }
 
-    public func showArchivedConversation() {
-        fatalError("not implemented yet")
+    public func showArchivedConversations() {
+        let archivedConversations = archivedConversations ?? archivedConversationsBuilder.build()
+        self.archivedConversations = archivedConversations
+
+        if isLayoutCollapsed {
+            mainTabBarController.selectedContent = .archive
+        } else {
+            mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
+        }
     }
 
     @MainActor
@@ -171,6 +182,11 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
 
         // TODO: conversations
 
+        if let archivedConversations {
+            mainTabBarController.archive = nil
+            mainSplitViewController.conversationList?.present(archivedConversations, animated: false)
+        }
+
         // TODO: more to move?
     }
 
@@ -198,6 +214,11 @@ where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarContro
         mainSplitViewController.conversationList = conversationViewController
 
         // TODO: conversations
+
+        if let archivedConversations {
+            archivedConversations.presentingViewController?.dismiss(animated: false)
+            mainTabBarController.archive = archivedConversations
+        }
 
         // TODO: more to move?
     }

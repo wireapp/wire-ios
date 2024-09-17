@@ -54,6 +54,7 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
+
     let mainTabBarController = {
         let tabBarController = MainTabBarController()
         tabBarController.applyMainTabBarControllerAppearance()
@@ -207,10 +208,8 @@ final class ZClientViewController: UIViewController {
             mainSplitViewController: wireSplitViewController,
             mainTabBarController: mainTabBarController,
             selfProfileBuilder: selfProfileViewControllerBuilder,
-            settingsBuilder: SettingsMainViewControllerBuilder(
-                userSession: userSession,
-                selfUser: userSession.editableSelfUser
-            )
+            archivedConversationsBuilder: ArchivedConversationsViewControllerBuilder(userSession: userSession),
+            settingsBuilder: SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
         )
         self.mainCoordinator = mainCoordinator
         wireSplitViewController.delegate = mainCoordinator
@@ -322,7 +321,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarController.Tab.conversations.rawValue
+        mainTabBarController.selectedIndex = MainTabBarControllerContent.conversations.rawValue
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
@@ -767,14 +766,6 @@ final class ZClientViewController: UIViewController {
         completion: Completion?
     ) {
         router?.minimizeCallOverlay(animated: animated, completion: completion)
-    }
-
-    // MARK: - Archive
-
-    private func createArchivedListViewController() -> UIViewController {
-        let viewController = ArchivedListViewController(userSession: userSession)
-        viewController.delegate = conversationListViewController
-        return viewController
     }
 }
 

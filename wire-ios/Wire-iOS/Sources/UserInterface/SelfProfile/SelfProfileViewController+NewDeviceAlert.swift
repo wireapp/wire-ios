@@ -85,7 +85,7 @@ extension SelfProfileViewController {
                cellIdentifier == identifier {
 
                 presentingViewController?.dismiss(animated: true) {
-                    tabBarController.selectedIndex = MainTabBarController.Tab.settings.rawValue
+                    tabBarController.selectedIndex = MainTabBarControllerContent.settings.rawValue
                     navigationController.pushViewController(viewController, animated: true)
                 }
                 resultViewController = viewController
@@ -100,7 +100,7 @@ extension SelfProfileViewController {
                        cellIdentifier == identifier {
 
                         presentingViewController?.dismiss(animated: true) {
-                            tabBarController.selectedIndex = MainTabBarController.Tab.settings.rawValue
+                            tabBarController.selectedIndex = MainTabBarControllerContent.settings.rawValue
                             navigationController.pushViewController(topViewController, animated: true)
                             navigationController.pushViewController(viewController, animated: true)
                         }

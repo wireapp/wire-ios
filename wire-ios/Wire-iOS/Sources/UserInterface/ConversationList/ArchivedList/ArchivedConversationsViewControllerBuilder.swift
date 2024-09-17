@@ -16,33 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Handles the navigation when a user is authenticated.
-public protocol MainCoordinatorProtocol: AnyObject {
+import UIKit
+import WireSyncEngine
+import WireUIFoundation
 
-    @MainActor
-    func showConversations()
+struct ArchivedConversationsViewControllerBuilder: ViewControllerBuilder {
 
-    @MainActor
-    func showArchivedConversations()
+    var userSession: UserSession
 
-    @MainActor
-    func showSelfProfile() async
-
-    @MainActor
-    func showSettings()
-
-//    func openConversation(
-//        _ conversation: ZMConversation,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    )
-//
-//    func openConversation<Message>(
-//        _ conversation: ZMConversation,
-//        scrollTo message: Message,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) where Message: ZMConversationMessage
-//
-//    func showConversationList()
+    func build() -> UIViewController {
+            ArchivedListViewController(userSession: userSession)
+    }
 }

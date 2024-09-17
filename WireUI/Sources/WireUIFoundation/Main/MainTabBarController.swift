@@ -27,15 +27,11 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
     public typealias Archive = UIViewController
     public typealias Settings = UIViewController
 
-    public enum Tab: Int, CaseIterable {
-        case conversations, archive, settings
-    }
-
     // MARK: - Public Properties
 
     public var conversations: (conversationList: ConversationList, conversation: Conversation?)? {
         get {
-            let navigationController = viewControllers![Tab.conversations.rawValue] as! UINavigationController
+            let navigationController = viewControllers![MainTabBarControllerContent.conversations.rawValue] as! UINavigationController
             guard !navigationController.viewControllers.isEmpty else { return nil }
 
             var viewControllers = navigationController.viewControllers
@@ -44,7 +40,7 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
             return (conversationList, conversation)
         }
         set {
-            let navigationController = viewControllers![Tab.conversations.rawValue] as! UINavigationController
+            let navigationController = viewControllers![MainTabBarControllerContent.conversations.rawValue] as! UINavigationController
             if let newValue {
                 navigationController.viewControllers = [newValue.conversationList, newValue.conversation].compactMap { $0 }
             } else {
@@ -55,36 +51,37 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
 
     public var archive: Archive? {
         get {
-            let navigationController = viewControllers![Tab.archive.rawValue] as! UINavigationController
+            let navigationController = viewControllers![MainTabBarControllerContent.archive.rawValue] as! UINavigationController
             return navigationController.viewControllers.first.map { $0 as! Archive }
         }
         set {
-            let navigationController = viewControllers![Tab.archive.rawValue] as! UINavigationController
+            let navigationController = viewControllers![MainTabBarControllerContent.archive.rawValue] as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
         }
     }
 
     public var settings: Settings? {
         get {
-            let navigationController = viewControllers![Tab.settings.rawValue] as! UINavigationController
+            let navigationController = viewControllers![MainTabBarControllerContent.settings.rawValue] as! UINavigationController
             return navigationController.viewControllers.first.map { $0 as! Settings }
         }
         set {
-            let navigationController = viewControllers![Tab.settings.rawValue] as! UINavigationController
+            let navigationController = viewControllers![MainTabBarControllerContent.settings.rawValue] as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
         }
     }
 
-    // MARK: - Tab Subscript and Index
-
-    @available(*, deprecated, message: "Use properties")
-    public subscript(tab tab: Tab) -> UINavigationController {
-        viewControllers![tab.rawValue] as! UINavigationController
+    public var selectedContent: MainTabBarControllerContent {
+        get { .init(rawValue: selectedIndex) ?? .conversations }
+        set { selectedIndex = newValue.rawValue }
     }
 
-    public var currentTab: Tab {
-        get { Tab(rawValue: selectedIndex) ?? .conversations }
-        set { selectedIndex = newValue.rawValue }
+    // MARK: - Tab Subscript and Index
+
+    // TODO: remove
+    @available(*, deprecated, message: "Use properties")
+    public subscript(tab tab: MainTabBarControllerContent) -> UINavigationController {
+        viewControllers![tab.rawValue] as! UINavigationController
     }
 
     // MARK: - Life Cycle
@@ -100,9 +97,9 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
     }
 
     private func setupTabs() {
-        viewControllers = Tab.allCases.map { _ in UINavigationController() }
+        viewControllers = MainTabBarControllerContent.allCases.map { _ in UINavigationController() }
 
-        for tab in Tab.allCases {
+        for tab in MainTabBarControllerContent.allCases {
             let tabBarItem: UITabBarItem
             switch tab {
             case .conversations:
@@ -139,7 +136,7 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
             viewControllers?[tab.rawValue].tabBarItem = tabBarItem
         }
 
-        selectedIndex = Tab.conversations.rawValue
+        selectedIndex = MainTabBarControllerContent.conversations.rawValue
     }
 }
 
@@ -153,10 +150,10 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
 @MainActor
 func MainTabBarController_Preview() -> some MainTabBarControllerProtocol {
     let tabBarController = MainTabBarController()
-    for tab in MainTabBarController.Tab.allCases {
+    for tab in MainTabBarControllerContent.allCases {
         tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
     }
-    tabBarController.currentTab = .conversations
+    tabBarController.selectedContent = .conversations
     return tabBarController
 }
 
