@@ -96,11 +96,10 @@ final class SettingsPropertyFactory {
         userPropertyValidator = UserPropertyValidator()
 
         userSession?.fetchMarketingConsent { [weak self] result in
-            switch result {
-            case .failure:
+            if let consentValue = try? result.get() {
+                self?.marketingConsent = SettingsPropertyValue.bool(value: consentValue)
+            } else {
                 self?.marketingConsent = .none
-            case .success(let result):
-                self?.marketingConsent = SettingsPropertyValue.bool(value: result)
             }
         }
     }

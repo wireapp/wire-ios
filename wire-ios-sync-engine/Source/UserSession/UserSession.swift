@@ -189,7 +189,7 @@ public protocol UserSession: AnyObject {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool, Error>
+            Result<Bool?, Error>
         ) -> Void
     )
 

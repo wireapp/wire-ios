@@ -30,7 +30,7 @@ public enum ConsentRequestError: Error {
 }
 
 extension ZMUser {
-    public typealias CompletionFetch = (Result<Bool, Error>) -> Void
+    public typealias CompletionFetch = (Result<Bool?, Error>) -> Void
 
     public func fetchMarketingConsent(in userSession: ZMUserSession,
                                       completion: @escaping CompletionFetch) {
@@ -59,6 +59,9 @@ extension ZMUser {
         return result
     }
 
+    /// Fetches consent for `consentType`.
+    /// - Parameter completion: On success, completes with `true` if consent given, `false` if denied or `nil` if
+    /// consent has not been asked.
     func fetchConsent(for consentType: ConsentType,
                       on transportSession: TransportSessionType,
                       completion: @escaping CompletionFetch) {
@@ -88,8 +91,7 @@ extension ZMUser {
             }
 
             let parsedPayload = ZMUser.parse(consentPayload: payload)
-            let status: Bool = parsedPayload[consentType] ?? false
-            completion(.success(status))
+            completion(.success(parsedPayload[consentType]))
         })
 
         transportSession.enqueueOneTime(request)

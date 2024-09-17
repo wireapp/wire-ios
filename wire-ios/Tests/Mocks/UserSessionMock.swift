@@ -250,7 +250,7 @@ final class UserSessionMock: UserSession {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool, Error>
+            Result<Bool?, Error>
         ) -> Void
     ) {
 

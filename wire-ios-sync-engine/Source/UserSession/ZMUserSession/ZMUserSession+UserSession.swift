@@ -260,9 +260,12 @@ extension ZMUserSession: UserSession {
         featureRepository.setNeedsToNotifyUser(false, for: feature)
     }
 
+    /// Fetches marketing consent.
+    /// - Parameter completion: On success, completes with `true` if consent given, `false` if denied or `nil` if
+    /// consent has not been asked.
     public func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool, Error>
+            Result<Bool?, Error>
         ) -> Void
     ) {
         ZMUser.selfUser(inUserSession: self).fetchConsent(
