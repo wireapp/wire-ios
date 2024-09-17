@@ -93,7 +93,7 @@ public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView:
             accountImageView: accountImageView
         )
         if #available(iOS 17.0, *) {
-            sidebarView.onChange(of: conversationFilter) { old, conversationFilter in
+            sidebarView.onChange(of: conversationFilter) { _, conversationFilter in
                 conversationFilterUpdated(conversationFilter)
             }
         } else {
