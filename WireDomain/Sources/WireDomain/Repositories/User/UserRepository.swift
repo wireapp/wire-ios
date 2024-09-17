@@ -43,17 +43,31 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Adds a user client.
+    ///
+    /// - Parameter userClient: The user client to add.
+    func addUserClient(_ userClient: WireAPI.UserClient) async throws
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
 
-    public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
+    // MARK: - Object lifecycle
+
+    public init(
+        context: NSManagedObjectContext,
+        usersAPI: any UsersAPI
+    ) {
         self.context = context
         self.usersAPI = usersAPI
     }
+
+    // MARK: - Public
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
@@ -88,6 +102,67 @@ public final class UserRepository: UserRepositoryProtocol {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
     }
+
+    public func addUserClient(_ userClient: WireAPI.UserClient) async throws {
+        await context.perform { [context] in
+            let localUserClient: (client: WireDataModel.UserClient, isNew: Bool) = {
+                if let existingClient = UserClient.fetchExistingUserClient(
+                    with: userClient.id,
+                    in: context
+                ) {
+                    return (client: existingClient, isNew: false)
+                } else {
+                    let newClient = UserClient.insertNewObject(in: context)
+                    return (client: newClient, isNew: true)
+                }
+            }()
+
+            let localClient = localUserClient.client
+            let isNewClient = localUserClient.isNew
+
+            localClient.label = userClient.label
+            localClient.type = userClient.type.toDomainModel()
+            localClient.model = userClient.model
+            localClient.deviceClass = userClient.deviceClass?.toDomainModel()
+            localClient.activationDate = userClient.activationDate
+            localClient.lastActiveDate = userClient.lastActiveDate
+            localClient.remoteIdentifier = userClient.id
+
+            let selfUser = ZMUser.selfUser(in: context)
+            localClient.user = localClient.user ?? selfUser
+
+            if isNewClient {
+                localClient.needsSessionMigration = selfUser.domain == nil
+            }
+
+            if localClient.isLegalHoldDevice, isNewClient {
+                selfUser.legalHoldRequest = nil
+                selfUser.needsToAcknowledgeLegalHoldStatus = true
+            }
+
+            if !localClient.isSelfClient() {
+                localClient.mlsPublicKeys = .init(
+                    ed25519: userClient.mlsPublicKeys?.ed25519,
+                    ed448: userClient.mlsPublicKeys?.ed448,
+                    p256: userClient.mlsPublicKeys?.p256,
+                    p384: userClient.mlsPublicKeys?.p384,
+                    p521: userClient.mlsPublicKeys?.p512
+                )
+            }
+
+            if let selfClient = selfUser.selfClient(),
+               localClient.remoteIdentifier != selfClient.remoteIdentifier, isNewClient,
+               let selfClientActivationDate = selfClient.activationDate,
+               localClient.activationDate?.compare(selfClientActivationDate) == .orderedDescending {
+                localClient.needsToNotifyUser = true
+            }
+
+            selfUser.selfClient()?.addNewClientToIgnored(localClient)
+            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+        }
+    }
+
+    // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {
         let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)

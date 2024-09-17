@@ -32,9 +32,10 @@ protocol UserClientAddEventProcessorProtocol {
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
 
-    func processEvent(_: UserClientAddEvent) async throws {
-        // TODO: [WPB-10189]
-        assertionFailure("not implemented yet")
+    let repository: any UserRepositoryProtocol
+
+    func processEvent(_ event: UserClientAddEvent) async throws {
+        try await repository.addUserClient(event.client)
     }
 
 }

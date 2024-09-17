@@ -445,6 +445,26 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - addUserClient
+
+    public var addUserClient_Invocations: [WireAPI.UserClient] = []
+    public var addUserClient_MockError: Error?
+    public var addUserClient_MockMethod: ((WireAPI.UserClient) async throws -> Void)?
+
+    public func addUserClient(_ userClient: WireAPI.UserClient) async throws {
+        addUserClient_Invocations.append(userClient)
+
+        if let error = addUserClient_MockError {
+            throw error
+        }
+
+        guard let mock = addUserClient_MockMethod else {
+            fatalError("no mock for `addUserClient`")
+        }
+
+        try await mock(userClient)
+    }
+
 }
 
 // swiftlint:enable variable_name
