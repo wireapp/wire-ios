@@ -21,7 +21,7 @@ import Foundation
 /// A token used to make authenticated requests to
 /// the backend.
 
-public struct AccessToken {
+public struct AccessToken: Sendable {
 
     /// The user id of whom the token belongs.
 
