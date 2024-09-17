@@ -23,11 +23,8 @@ import WireCoreCrypto
 
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
-    func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
+    func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
     func tearDown() throws
-
-    func acquireLock() async
-    func releaseLock()
 }
 
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
@@ -75,17 +72,8 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         return try await block(coreCrypto)
     }
 
-    public func acquireLock() async {
-        safeContext.acquireDirectoryLock()
-        await restoreFromDisk()
-    }
-
-    public func releaseLock() {
-        safeContext.releaseDirectoryLock()
-    }
-
-    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        return try await block(coreCrypto)
+    public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
+        try block(coreCrypto)
     }
 
     private func restoreFromDisk() async {
