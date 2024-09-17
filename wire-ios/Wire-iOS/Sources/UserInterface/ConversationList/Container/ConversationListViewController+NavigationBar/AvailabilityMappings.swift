@@ -18,7 +18,7 @@
 
 import WireAccountImage
 import WireDataModel
-import WireReusableUIComponents
+import WireSidebar
 
 extension WireDataModel.Availability {
 
@@ -28,6 +28,35 @@ extension WireDataModel.Availability {
     func map() -> WireAccountImage.Availability? {
         switch self {
         case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
+        }
+    }
+}
+
+extension WireDataModel.Availability {
+
+    /// Since `WireSidebar` does not know about the type `WireDataModel.Availability`,
+    /// this function serves as an adapter from `WireDataModel.Availability` to `WireSidebar.SidebarAccountInfo.Availability?`.
+
+    func map() -> WireSidebar.SidebarAccountInfo.Availability? {
+        switch self {
+        case .none: .none
+        case .available: .available
+        case .busy: .busy
+        case .away: .away
+        }
+    }
+}
+
+extension WireSidebar.SidebarAccountInfo.Availability {
+
+    /// Since `WireSidebar` does not know about the type `WireAccountImage.Availability`,
+    /// this function serves as an adapter from `WireAccountImage.Availability` to `WireSidebar.SidebarAccountInfo.Availability?`.
+
+    func map() -> WireAccountImage.Availability {
+        switch self {
         case .available: .available
         case .busy: .busy
         case .away: .away

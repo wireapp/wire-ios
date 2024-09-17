@@ -152,6 +152,7 @@ public struct SnapshotHelper {
 
     public func verify<View: SwiftUI.View>(
         matching value: View,
+        named name: String? = nil,
         testName: String = #function,
         file: StaticString = #file,
         line: UInt = #line
@@ -163,6 +164,7 @@ public struct SnapshotHelper {
                 layout: layout,
                 traits: traits
             ),
+            named: name,
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,
             testName: testName,

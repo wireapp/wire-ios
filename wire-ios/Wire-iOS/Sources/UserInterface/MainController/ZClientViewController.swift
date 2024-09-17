@@ -21,6 +21,7 @@ import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireSidebar
 import WireSyncEngine
 import WireUIFoundation
 
