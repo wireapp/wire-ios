@@ -23,9 +23,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     private let userID: UUID
     private var accessToken: AccessToken?
-
     private let sharedUserDefaults: UserDefaults
-
     private static let cookieEncryptionKeyKey = "ZMCookieKey"
 
     public init(
@@ -36,6 +34,8 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         self.sharedUserDefaults = sharedUserDefaults
     }
 
+    // MARK: - Access token
+
     public func storeAccessToken(_ accessToken: AccessToken) async {
         self.accessToken = accessToken
     }
@@ -44,13 +44,28 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         accessToken
     }
 
-    public func storeCookieData(_ cookieData: Data?) async {
-        fatalError("not implemented yet")
-        // encrypt data
-        // check if a value already exists for the account name
-        // the account name is just the user uuid string
-        //  if yes, then do an update.
-        //  if no, then do an add.
+    // MARK: - Cookie
+
+    public func storeCookieData(_ cookieData: Data) async throws {
+        guard let encryptionKey = fetchCookieEncryptionKey() else {
+            throw PersistentAuthenticationStorageError.missingCookieEncryptionKey
+        }
+
+        let encryptedCookieData: Data
+        do {
+            encryptedCookieData = try AES256Crypto.encryptAllAtOnceWithPrefixedIV(
+                plaintext: cookieData,
+                key: encryptionKey
+            )
+        } catch {
+            throw PersistentAuthenticationStorageError.failedToEncryptCookie(error)
+        }
+
+        if try await fetchCookieData() != nil {
+            try updateCookieInKeychain(encryptedCookieData)
+        } else {
+            try addCookieToKeychain(encryptedCookieData)
+        }
     }
 
     public func fetchCookieData() async throws -> Data? {
@@ -71,48 +86,24 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
                 key: encryptionKey
             )
         } catch {
-            throw PersistentAuthenticationStorageError.unabledToDecryptCookie(error)
+            throw PersistentAuthenticationStorageError.failedToDecryptCookie(error)
         }
     }
 
     // MARK: - Keychain
 
-    // TODO: investigate: kSecAttrAccessGroup should be set to the
-    // keychain access group, but the original code (in ZMKeychain)
-    // always resulted in a nil group, and infact it works to fetch
-    // existing cookie data if we omit the group from the query.
-    // But if there is no group, how does the extensions access the
-    // cookie? Is it needed?
+    private func addCookieToKeychain(_ cookieData: Data) throws {
+        let query = addQuery(cookieData: cookieData)
+        let status = SecItemAdd(query as CFDictionary, nil)
 
-    private var fetchQuery: [CFString: Any] {
-        [
-            kSecAttrService: "Wire: Credentials for wire.com",
-            kSecAttrAccount: userID.uuidString,
-            kSecClass: kSecClassGenericPassword,
-            //kSecAttrAccessGroup: ..., // Is this needed?
-            kSecReturnData: true
-        ]
+        guard status == errSecSuccess else {
+            throw PersistentAuthenticationStorageError.failedToAddCookieData(status: status)
+        }
     }
 
-    private func addQuery(cookieData: Data) -> [CFString: Any] {
-        [
-            kSecAttrService: "Wire: Credentials for wire.com",
-            kSecAttrAccount: userID.uuidString,
-            kSecClass: kSecClassGenericPassword,
-            //kSecAttrAccessGroup: ..., // Is this needed?
-            kSecValueData: cookieData,
-            kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock
-        ]
-    }
-
-    private func updateQuery(cookieData: Data) -> [CFString: Any] {
-        [
-            kSecAttrService: "Wire: Credentials for wire.com",
-            kSecAttrAccount: userID.uuidString,
-            kSecClass: kSecClassGenericPassword,
-            //kSecAttrAccessGroup: ..., // Is this needed?
-            kSecValueData: cookieData
-        ]
+    private func updateCookieInKeychain(_ cookieData: Data) throws {
+        let updateQuery = updateQuery(cookieData: cookieData)
+        let status = SecItemUpdate(fetchQuery as CFDictionary, updateQuery as CFDictionary)
     }
 
     private func fetchCookieDataFromKeychain() throws -> Data {
@@ -139,6 +130,30 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         }
     }
 
+    private lazy var baseQuery: [CFString: Any] = [
+        kSecAttrService: "Wire: Credentials for wire.com",
+        kSecAttrAccount: userID.uuidString,
+        kSecClass: kSecClassGenericPassword,
+    ]
+
+    private lazy var fetchQuery: [CFString: Any] = {
+        var result = baseQuery
+        result[kSecReturnData] = true
+        return result
+    }()
+
+    private func addQuery(cookieData: Data) -> [CFString: Any] {
+        var result = updateQuery(cookieData: cookieData)
+        result[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
+        return result
+    }
+
+    private func updateQuery(cookieData: Data) -> [CFString: Any] {
+        var result = baseQuery
+        result[kSecValueData] = cookieData.base64EncodedData()
+        return result
+    }
+
     // MARK: - Cookie encryption key
 
     private func fetchOrCreateCookieEncryptionKey() throws -> Data {
@@ -154,15 +169,5 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
     private func fetchCookieEncryptionKey() -> Data? {
         sharedUserDefaults.data(forKey: Self.cookieEncryptionKeyKey)
     }
-
-}
-
-enum PersistentAuthenticationStorageError: Error {
-
-    case cookieNotFound
-    case unableToFetchCookieData(status: Int32?)
-    case failedToBase64DecodeCookie
-    case missingCookieEncryptionKey
-    case unabledToDecryptCookie(any Error)
 
 }

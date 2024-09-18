@@ -31,7 +31,7 @@ final class InMemoryAuthenticationStorage: AuthenticationStorage {
         accessToken
     }
 
-    func storeCookieData(_ cookieData: Data?) {
+    func storeCookieData(_ cookieData: Data) throws {
         self.cookieData = cookieData
     }
 

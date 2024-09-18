@@ -18,32 +18,14 @@
 
 import Foundation
 
-/// Storage for authentication primitives.
+enum PersistentAuthenticationStorageError: Error {
 
-public protocol AuthenticationStorage {
-
-    /// Store an access token.
-    ///
-    /// - Parameter accessToken: The token to store.
-
-    func storeAccessToken(_ accessToken: AccessToken) async
-
-    /// Fetch a stored access token.
-    ///
-    /// - Returns: The stored access token.
-
-    func fetchAccessToken() async -> AccessToken?
-
-    /// Store a cookie.
-    ///
-    /// - Parameter cookieData: The cookie data to store.
-
-    func storeCookieData(_ cookieData: Data) async throws
-
-    /// Fetch a stored cookie.
-    ///
-    /// - Returns: The stored cookie data.
-
-    func fetchCookieData() async throws -> Data?
+    case cookieNotFound
+    case unableToFetchCookieData(status: Int32?)
+    case failedToAddCookieData(status: Int32)
+    case failedToBase64DecodeCookie
+    case missingCookieEncryptionKey
+    case failedToEncryptCookie(any Error)
+    case failedToDecryptCookie(any Error)
 
 }
