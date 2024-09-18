@@ -37,14 +37,16 @@ import WireDesign
  * should be updated from the cell.
  */
 protocol SettingsCellDescriptorType: AnyObject {
-    static var cellType: SettingsTableCellProtocol.Type {get}
-    var visible: Bool {get}
-    var title: String {get}
-    var identifier: String? {get}
-    var group: SettingsGroupCellDescriptorType? {get}
+
+    associatedtype Cell: SettingsTableCellProtocol
+
+    var visible: Bool { get }
+    var title: String { get }
+    var identifier: String? { get }
+    var group: (any SettingsGroupCellDescriptorType)? { get }
     var copiableText: String? { get }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView)
+    func select(_ value: SettingsPropertyValue, sender: Cell)
     func featureCell(_: SettingsCellType)
 }
 
@@ -54,7 +56,7 @@ extension SettingsCellDescriptorType {
     }
 }
 
-func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) -> Bool {
+func == (left: any SettingsCellDescriptorType, right: any SettingsCellDescriptorType) -> Bool {
     if let leftID = left.identifier,
         let rightID = right.identifier {
             return leftID == rightID
@@ -63,22 +65,22 @@ func == (left: SettingsCellDescriptorType, right: SettingsCellDescriptorType) ->
     }
 }
 
-typealias PreviewGeneratorType = (SettingsCellDescriptorType) -> SettingsCellPreview
+typealias PreviewGeneratorType = (any SettingsCellDescriptorType) -> SettingsCellPreview
 
-protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
+protocol SettingsGroupCellDescriptorType: any SettingsCellDescriptorType {
     var viewController: UIViewController? {get set}
 }
 
 protocol SettingsSectionDescriptorType: AnyObject {
-    var cellDescriptors: [SettingsCellDescriptorType] {get}
-    var visibleCellDescriptors: [SettingsCellDescriptorType] {get}
+    var cellDescriptors: [any SettingsCellDescriptorType] {get}
+    var visibleCellDescriptors: [any SettingsCellDescriptorType] {get}
     var header: String? {get}
     var footer: String? {get}
     var visible: Bool {get}
 }
 
 extension SettingsSectionDescriptorType {
-    func allCellDescriptors() -> [SettingsCellDescriptorType] {
+    func allCellDescriptors() -> [any any SettingsCellDescriptorType] {
         return cellDescriptors
     }
 }
@@ -96,8 +98,8 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 }
 
 extension SettingsInternalGroupCellDescriptorType {
-    func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
+    func allCellDescriptors() -> [any SettingsCellDescriptorType] {
+        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [any SettingsCellDescriptorType] in
             return section.allCellDescriptors()
         })
     }
@@ -107,7 +109,7 @@ protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorTy
     var presentationAction: () -> (UIViewController?) {get}
 }
 
-protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
+protocol SettingsPropertyCellDescriptorType: any SettingsCellDescriptorType {
     var settingsProperty: SettingsProperty {get}
 }
 
@@ -118,8 +120,8 @@ protocol SettingsControllerGeneratorType {
 // MARK: - Classes
 
 class SettingsSectionDescriptor: SettingsSectionDescriptorType {
-    let cellDescriptors: [SettingsCellDescriptorType]
-    var visibleCellDescriptors: [SettingsCellDescriptorType] {
+    let cellDescriptors: [any SettingsCellDescriptorType]
+    var visibleCellDescriptors: [any SettingsCellDescriptorType] {
         return self.cellDescriptors.filter {
             $0.visible
         }
@@ -139,11 +141,11 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
     let headerGenerator: () -> String?
     let footerGenerator: () -> String?
 
-    convenience init(cellDescriptors: [SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
+    convenience init(cellDescriptors: [any SettingsCellDescriptorType], header: String? = .none, footer: String? = .none, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
         self.init(cellDescriptors: cellDescriptors, headerGenerator: { return header }, footerGenerator: { return footer }, visibilityAction: visibilityAction)
     }
 
-    init(cellDescriptors: [SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
+    init(cellDescriptors: [any SettingsCellDescriptorType], headerGenerator: @escaping () -> String?, footerGenerator: @escaping () -> String?, visibilityAction: ((SettingsSectionDescriptorType) -> (Bool))? = .none) {
         self.cellDescriptors = cellDescriptors
         self.headerGenerator = headerGenerator
         self.footerGenerator = footerGenerator
@@ -152,7 +154,9 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 }
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    typealias Cell = SettingsTableCell
+
     var visible: Bool = true
     let title: String
     let accessibilityBackButtonText: String
@@ -163,7 +167,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
 
     let previewGenerator: PreviewGeneratorType?
 
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
 
     var visibleItems: [SettingsSectionDescriptorType] {
         return self.items.filter {
@@ -195,7 +199,7 @@ final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType
         }
     }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: Cell) {
         if let navigationController = viewController?.navigationController,
            let controllerToPush = generateViewController() {
             navigationController.pushViewController(controllerToPush, animated: true)

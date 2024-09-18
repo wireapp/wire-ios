@@ -21,12 +21,12 @@ import SwiftUI
 
 extension SettingsCellDescriptorFactory {
 
-    var developerGroup: SettingsCellDescriptorType {
+    var developerGroup: any SettingsCellDescriptorType {
         typealias ExternalScreen = SettingsExternalScreenCellDescriptor
         typealias Toggle = SettingsPropertyToggleCellDescriptor
         typealias Button = SettingsButtonCellDescriptor
 
-        var developerCellDescriptors: [SettingsCellDescriptorType] = []
+        var developerCellDescriptors: [any SettingsCellDescriptorType] = []
 
         developerCellDescriptors.append(
             ExternalScreen(title: "Logging") { DeveloperOptionsController() }

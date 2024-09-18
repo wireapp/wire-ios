@@ -21,6 +21,10 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
+enum TrackingMAnagerError: Error {
+    case userConsentDenied
+}
+
 final class TrackingManager: NSObject, TrackingInterface {
 
     private let flowManagerObserver: NSObjectProtocol
@@ -44,25 +48,29 @@ final class TrackingManager: NSObject, TrackingInterface {
     }
 
     var disableAnalyticsSharing: Bool {
-        get {
-            ExtensionSettings.shared.disableAnalyticsSharing
-        }
-        set {
-            let isEnabled = !newValue
+        get { ExtensionSettings.shared.disableAnalyticsSharing }
+    }
 
-            if isEnabled {
-                self.showAnalyticsConsentAlert { userConsented in
-                    if userConsented {
-                        self.updateAnalyticsSharing(disabled: !newValue)
-                    } else {
-                        // User rejected, so we keep analytics disabled
-                        self.updateAnalyticsSharing(disabled: true)
-                    }
+    func disableAnalyticsSharing(isDisabled: Bool, resultHandler: @escaping (Result<Void, any Error>) -> Void) {
+        let isEnabled = !isDisabled
+
+        if isEnabled {
+            self.showAnalyticsConsentAlert { userConsented in
+                if userConsented {
+                    self.updateAnalyticsSharing(disabled: false)
+                    resultHandler(.success(()))
+                } else {
+                    // User rejected, so we keep analytics disabled
+                    self.updateAnalyticsSharing(disabled: true)
+                    resultHandler(.failure(TrackingMAnagerError.userConsentDenied))
                 }
-            } else {
-                self.updateAnalyticsSharing(disabled: true)
             }
+        } else {
+            self.updateAnalyticsSharing(disabled: true)
+            resultHandler(.success(()))
         }
+
+        
     }
 
     private func updateAnalyticsSharing(disabled: Bool) {

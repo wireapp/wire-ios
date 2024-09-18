@@ -78,7 +78,7 @@ enum SettingsPropertyValue: Equatable {
 protocol SettingsProperty {
     var propertyName: SettingsPropertyName { get }
     func value() -> SettingsPropertyValue
-    func set(newValue: SettingsPropertyValue) throws
+    func set(newValue: SettingsPropertyValue, resultHandler: @escaping (Result<Void, Error>) -> Void) throws
     var enabled: Bool { get set }
 }
 
@@ -97,7 +97,7 @@ extension SettingsProperty {
 func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws {
     let value = expr()
 
-    try property.set(newValue: SettingsPropertyValue.propertyValue(value))
+    try property.set(newValue: SettingsPropertyValue.propertyValue(value), resultHandler: {_ in })
 }
 
 /**
@@ -109,7 +109,7 @@ func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws 
 func << (property: inout SettingsProperty, expr: @autoclosure () -> SettingsPropertyValue) throws {
     let value = expr()
 
-    try property.set(newValue: value)
+    try property.set(newValue: value, resultHandler: {_ in })
 }
 
 /**
@@ -122,12 +122,18 @@ func << (value: inout Any?, property: SettingsProperty) {
     value = property.rawValue()
 }
 
-/// Generic user defaults property
 final class SettingsUserDefaultsProperty: SettingsProperty {
+
+    func set(newValue: SettingsPropertyValue, resultHandler: @escaping (Result<Void, any Error>) -> Void) throws {
+        try set(newValue: newValue)
+        resultHandler(.success(()))
+    }
+
     var enabled: Bool = true
 
     func set(newValue: SettingsPropertyValue) throws {
         self.userDefaults.set(newValue.value(), forKey: self.userDefaultsKey)
+
         NotificationCenter.default.post(name: Notification.Name(rawValue: self.propertyName.changeNotificationName), object: self)
     }
 
@@ -144,7 +150,6 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
 
     let propertyName: SettingsPropertyName
     let userDefaults: UserDefaults
-
     let userDefaultsKey: String
 
     init(propertyName: SettingsPropertyName, userDefaultsKey: String, userDefaults: UserDefaults) {
@@ -155,10 +160,11 @@ final class SettingsUserDefaultsProperty: SettingsProperty {
 }
 
 typealias GetAction = (SettingsBlockProperty) -> SettingsPropertyValue
-typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue) throws -> Void
+typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue, @escaping (Result<Void, any Error>) -> Void) throws -> Void
 
 /// Genetic block property
 final class SettingsBlockProperty: SettingsProperty {
+    
     var enabled: Bool = true
 
     let propertyName: SettingsPropertyName
@@ -166,9 +172,10 @@ final class SettingsBlockProperty: SettingsProperty {
         return self.getAction(self)
     }
 
-    func set(newValue: SettingsPropertyValue) throws {
-        try setAction(self, newValue)
+    func set(newValue: SettingsPropertyValue, resultHandler: @escaping (Result<Void, any Error>) -> Void) throws {
+        try setAction(self, newValue, resultHandler)
         NotificationCenter.default.post(name: Notification.Name(rawValue: propertyName.changeNotificationName), object: self)
+        resultHandler(.success(()))
     }
 
     private let getAction: GetAction

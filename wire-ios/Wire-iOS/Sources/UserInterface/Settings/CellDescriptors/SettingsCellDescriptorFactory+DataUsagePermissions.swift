@@ -19,7 +19,7 @@
 import Foundation
 
 extension SettingsCellDescriptorFactory {
-    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> SettingsCellDescriptorType {
+    func dataUsagePermissionsGroup(isPublicDomain: Bool) -> any SettingsCellDescriptorType {
 
         var items: [SettingsSectionDescriptor] = []
 

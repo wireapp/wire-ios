@@ -55,7 +55,7 @@ final class SettingsLinkTableCell: SettingsTableCellProtocol {
 
     var icon: StyleKitIcon?
 
-    var descriptor: SettingsCellDescriptorType?
+    var descriptor: any SettingsCellDescriptorType?
 
     // MARK: - Logic
 

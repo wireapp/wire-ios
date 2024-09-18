@@ -18,7 +18,7 @@
 
 import UIKit
 
-final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
+final class SettingsProfileLinkCellDescriptor: any SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsLinkTableCell.self
 
     // MARK: - Configuration
@@ -30,7 +30,7 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
         linkCell.titleText = title
     }
 
-    // MARK: - SettingsCellDescriptorType
+    // MARK: - any SettingsCellDescriptorType
 
     var visible: Bool {
         return true

@@ -20,7 +20,7 @@ import MobileCoreServices
 import UIKit
 import WireSyncEngine
 
-class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
+class SettingsAppearanceCellDescriptor: any SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
 
     private var text: String

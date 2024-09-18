@@ -18,7 +18,7 @@
 
 import UIKit
 
-final class SettingsStaticTextCellDescriptor: SettingsCellDescriptorType {
+final class SettingsStaticTextCellDescriptor: any SettingsCellDescriptorType {
 
     static let cellType: SettingsTableCellProtocol.Type = SettingsStaticTextTableCell.self
 
@@ -36,7 +36,7 @@ final class SettingsStaticTextCellDescriptor: SettingsCellDescriptorType {
         cell.titleText = self.text
     }
 
-    // MARK: - SettingsCellDescriptorType
+    // MARK: - any SettingsCellDescriptorType
 
     var visible: Bool {
         return true
