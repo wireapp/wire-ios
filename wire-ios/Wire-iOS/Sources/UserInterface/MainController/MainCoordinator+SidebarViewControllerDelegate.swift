@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import WireDataModel
-import WireSystem
+//import WireCommonComponents
+//import WireDataModel
+//import WireSystem
 import WireUIFoundation
 import WireSidebar
 
+/*
 final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol, TabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<SplitViewController, TabBarController> where SplitViewController.Sidebar: MainSidebarProtocol, SplitViewController.ConversationList == TabBarController.ConversationList, TabBarController.Archive == UIViewController {
 
     // private weak var zClientViewController: ZClientViewController!
@@ -51,7 +52,6 @@ final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol
 
     // MARK: - Methods
 
-    /*
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
         guard let zClientViewController else {
             return WireLogger.mainCoordinator.warn("zClientViewController is nil")
@@ -98,11 +98,10 @@ final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol
         settingsViewController = settingsViewController ?? settingsBuilder.build()
         fatalError("TODO: present if needed")
     }
-     */
 }
+ */
 
-// TODO: remove "WireUIFoundation."
-extension WireUIFoundation.MainCoordinator: SidebarViewControllerDelegate {
+extension MainCoordinator: SidebarViewControllerDelegate {
 
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
         Task {
