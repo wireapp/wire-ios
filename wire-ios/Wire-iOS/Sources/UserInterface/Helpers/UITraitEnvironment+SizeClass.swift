@@ -30,9 +30,11 @@ extension UITraitEnvironment {
     }
 
     func isIPadRegularPortrait(
-        device: DeviceAbstraction = DeviceWrapper(device: .current),
-        application: ApplicationProtocol = UIApplication.shared
+        device: DeviceAbstraction = DeviceWrapper(device: .current)
     ) -> Bool {
-        return isIPadRegular(device: device) && application.statusBarOrientation.isPortrait
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return false
+        }
+        return isIPadRegular(device: device) && windowScene.interfaceOrientation.isPortrait
     }
 }

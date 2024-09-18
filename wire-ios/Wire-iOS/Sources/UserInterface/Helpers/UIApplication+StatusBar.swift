@@ -38,13 +38,4 @@ extension UIApplication {
 
         return topController
     }
-
-    @available(*, deprecated, message: "Don't use this property!")
-    static var userInterfaceStyle: UIUserInterfaceStyle? {
-        return (UIApplication.shared.delegate as? AppDelegate)?
-            .mainWindow?
-            .rootViewController?
-            .traitCollection
-            .userInterfaceStyle
-    }
 }

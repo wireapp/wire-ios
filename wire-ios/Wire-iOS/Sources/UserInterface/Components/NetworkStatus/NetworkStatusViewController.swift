@@ -194,7 +194,11 @@ extension NetworkStatusViewController {
         guard isIPadRegular(device: device) else { return true }
         guard let delegate else { return true }
 
-        let newOrientation = application.statusBarOrientation
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return true
+        }
+
+        let newOrientation = windowScene.interfaceOrientation
 
         return delegate.showInIPad(networkStatusViewController: self, with: newOrientation)
     }
