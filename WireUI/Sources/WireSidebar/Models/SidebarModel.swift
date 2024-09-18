@@ -24,32 +24,14 @@ import WireFoundation
 final class SidebarModel: ObservableObject {
 
     @Published var wireTextStyleMapping: WireTextStyleMapping?
-    @Published var accountInfo: SidebarAccountInfo
+    @Published var accountInfo = SidebarAccountInfo()
     @Published var conversationFilter: SidebarConversationFilter? {
         didSet { conversationFilterUpdated(conversationFilter) }
     }
 
-    let accountImageAction: () -> Void
-    let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
-    let connectAction: () -> Void
-    let settingsAction: () -> Void
-    let supportAction: () -> Void
-
-    init(
-        accountInfo: SidebarAccountInfo,
-        conversationFilter: SidebarConversationFilter?,
-        accountImageAction: @escaping () -> Void,
-        conversationFilterUpdated: @escaping (_ conversationFilter: SidebarConversationFilter?) -> Void,
-        connectAction: @escaping () -> Void,
-        settingsAction: @escaping () -> Void,
-        supportAction: @escaping () -> Void
-    ) {
-        self.accountInfo = accountInfo
-        self.conversationFilter = conversationFilter
-        self.accountImageAction = accountImageAction
-        self.conversationFilterUpdated = conversationFilterUpdated
-        self.connectAction = connectAction
-        self.settingsAction = settingsAction
-        self.supportAction = supportAction
-    }
+    var accountImageAction: () -> Void = {}
+    var conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void = { _ in }
+    var connectAction: () -> Void = {}
+    var settingsAction: () -> Void = {}
+    var supportAction: () -> Void = {}
 }

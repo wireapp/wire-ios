@@ -38,32 +38,28 @@ public final class SidebarViewController: UIHostingController<AnyView> {
         set { model.wireTextStyleMapping = newValue }
     }
 
-    private let model: SidebarModel
-
-    public convenience init(
-        accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
-    ) {
-        self.init(accountInfo: .init(), conversationFilter: .none, accountImageView: accountImageView)
-    }
+    private let model = SidebarModel()
 
     public required init(
-        accountInfo: SidebarAccountInfo,
-        conversationFilter: SidebarConversationFilter?,
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
     ) {
-        var self_: SidebarViewController?
-        let model = SidebarModel(
-            accountInfo: accountInfo,
-            conversationFilter: conversationFilter,
-            accountImageAction: { self_?.delegate?.sidebarViewControllerDidSelectAccountImage(self_!) },
-            conversationFilterUpdated: { self_?.delegate?.sidebarViewController(self_!, didSelect: $0) },
-            connectAction: { self_?.delegate?.sidebarViewControllerDidSelectConnect(self_!) },
-            settingsAction: { self_?.delegate?.sidebarViewControllerDidSelectSettings(self_!) },
-            supportAction: { self_?.delegate?.sidebarViewControllerDidSelectSupport(self_!) }
-        )
-        self.model = model
         super.init(rootView: AnyView(SidebarAdapter(model: model, accountImageView: accountImageView)))
-        self_ = self
+
+        model.accountImageAction = { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
+        }
+        model.conversationFilterUpdated = { [weak self] conversationFilter in
+            self?.delegate?.sidebarViewController(self!, didSelect: conversationFilter)
+        }
+        model.connectAction = { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
+        }
+        model.settingsAction = { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectSettings(self!)
+        }
+        model.supportAction = { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
+        }
     }
 
     @available(*, unavailable) @MainActor
