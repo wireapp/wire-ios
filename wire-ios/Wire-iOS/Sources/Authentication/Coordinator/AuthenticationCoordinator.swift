@@ -654,9 +654,8 @@ extension AuthenticationCoordinator {
         userSession: ZMUserSession
     ) {
         // Marketing consent
+        UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
         userSession.submitMarketingConsent(with: fields.marketingConsent)
-        let marketingRepo = userSession.marketingRepo
-        Task { await marketingRepo.didPromptForConsent() }
     }
 
     // MARK: - Login
