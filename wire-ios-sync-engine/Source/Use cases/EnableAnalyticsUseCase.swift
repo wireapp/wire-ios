@@ -38,15 +38,20 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
-    private let analyticsSessionConfiguration: AnalyticsSessionConfiguration
+    /// The configuration for the analytics session.
+    private(set) var analyticsSessionConfiguration: AnalyticsSessionConfiguration
 
-    private let analyticsManagerBuilder: (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol
+    /// A closure that provides an `AnalyticsManagerProtocol` implementation.
+    private(set) var analyticsManagerBuilder: (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol
 
-    private let sessionManager: AnalyticsManagerProviding
+    /// The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
+    private(set) var sessionManager: AnalyticsManagerProviding
 
-    private let analyticsUserProfile: AnalyticsUserProfile
+    /// The user profile for which to enable analytics sharing.
+    private(set) var analyticsUserProfile: AnalyticsUserProfile
 
-    private let analyticsSessionProvider: EnableAnalyticsUseCaseUserSession
+    /// An instance conforming to `EnableAnalyticsUseCaseUserSession` that manages the user's analytics session state.
+    private(set) var analyticsSessionProvider: EnableAnalyticsUseCaseUserSession
 
     // MARK: - Initialization
 
