@@ -16,8 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebar
+import UIKit
 import WireUIFoundation
 
-extension SidebarViewController: MainSidebarProtocol {}
-extension SidebarConversationFilter: MainSidebarConversationFilterProtocol {}
+@testable import Wire
+
+final class MockMainConversationListProtocol: UIViewController, MainConversationListProtocol {
+    var conversationFilter: ConversationFilterType?
+    var splitViewInterface: MainSplitViewInterface = .expanded
+}

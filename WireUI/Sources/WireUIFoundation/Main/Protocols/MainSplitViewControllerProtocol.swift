@@ -20,8 +20,9 @@ import UIKit
 
 @MainActor
 public protocol MainSplitViewControllerProtocol: UISplitViewController {
+
     associatedtype Sidebar: MainSidebarProtocol
-    associatedtype ConversationList: UIViewController
+    associatedtype ConversationList: MainConversationListProtocol
     associatedtype Conversation: UIViewController
     associatedtype TabContainer: UIViewController
 

@@ -24,9 +24,9 @@ import XCTest
 
 final class MainSplitViewControllerTests: XCTestCase {
 
-    private var sut: MainSplitViewController<PreviewSidebarViewController, PreviewSidebarViewController>!
+    private var sut: MainSplitViewController<PreviewSidebarViewController, PreviewConversationListViewController>!
     private var sidebar: PreviewSidebarViewController!
-    private var conversationList: PreviewSidebarViewController!
+    private var conversationList: PreviewConversationListViewController!
     private var conversation: UIViewController!
     private var noConversationPlaceholder: UIViewController!
     private var tabContainer: UIViewController!
@@ -35,8 +35,8 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        sidebar = PreviewSidebarViewController("Sidebar", .gray)
-        conversationList = PreviewSidebarViewController("Conversation List", .purple)
+        sidebar = .init("Sidebar", .gray)
+        conversationList = .init("Conversation List", .purple)
         conversation = PreviewSidebarViewController("Conversation", .blue)
         noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
         tabContainer = PreviewSidebarViewController("Tab Container", .cyan)

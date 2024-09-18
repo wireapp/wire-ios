@@ -16,15 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireUIFoundation
+import SwiftUI
 
-@testable import Wire
+final class PreviewConversationListViewController: UIHostingController<LabelView>, MainConversationListProtocol {
 
-struct MockViewControllerBuilder: ViewControllerBuilder {
-    func build() -> UIViewController { .init() }
-}
+    // MARK: - MainConversationListProtocol
 
-extension ViewControllerBuilder where Self == MockViewControllerBuilder {
-    static var mock: Self { .init() }
+    var conversationFilter: ConversationFilter?
+    var splitViewInterface: MainSplitViewInterface = .expanded
+
+    enum ConversationFilter: MainConversationListFilterProtocol {
+        case favorites, groups, oneOnOne
+    }
+
+    // MARK: - Life Cycle
+
+    convenience init(_ content: String) {
+        self.init(content, .init(uiColor: .systemBackground))
+    }
+
+    convenience init(_ content: String, _ backgroundColor: Color) {
+        self.init(rootView: .init(content: content, backgroundColor: backgroundColor))
+    }
 }

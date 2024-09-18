@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebar
 import WireUIFoundation
 
-extension SidebarViewController: MainSidebarProtocol {}
-extension SidebarConversationFilter: MainSidebarConversationFilterProtocol {}
+extension ConversationListViewController: MainConversationListProtocol {
+    var conversationFilter: ConversationFilterType? {
+        get { listContentController.listViewModel.selectedFilter }
+        set { listContentController.listViewModel.selectedFilter = newValue }
+    }
+}
+
+extension ConversationFilterType: MainConversationListFilterProtocol {
+    static var oneOnOne: ConversationFilterType { .oneToOneConversations }
+}

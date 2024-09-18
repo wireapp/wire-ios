@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebar
-import WireUIFoundation
-
-extension SidebarViewController: MainSidebarProtocol {}
-extension SidebarConversationFilter: MainSidebarConversationFilterProtocol {}
+public protocol MainSidebarConversationFilterProtocol {
+    static var favorites: Self { get }
+    static var groups: Self { get }
+    static var oneOnOne: Self { get }
+    static var archived: Self { get }
+}

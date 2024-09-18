@@ -108,42 +108,17 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol, Convers
 @available(iOS 17, *)
 #Preview {
     {
-        let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewSidebarViewController>(
+        let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewConversationListViewController>(
             sidebar: PreviewSidebarViewController("sidebar"),
             noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
             tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
         )
-        splitViewController.conversationList = PreviewSidebarViewController("conversation list")
+        splitViewController.conversationList = PreviewConversationListViewController("conversation list")
         return splitViewController
     }()
 }
 
-final class PreviewSidebarViewController: UIHostingController<PreviewSidebarView>, MainSidebarProtocol, MainConversationListProtocol {
-
-    // MARK: - MainSidebarProtocol
-
-    var conversationFilter: ConversationFilter?
-
-    enum ConversationFilter: MainConversationListFilterProtocol {
-        case favorites, groups, oneOnOne, archived
-    }
-
-    // MARK: - MainConversationListProtocol
-
-    var splitViewInterface: MainSplitViewInterface = .expanded
-
-    // MARK: - Life Cycle
-
-    convenience init(_ content: String) {
-        self.init(content, .init(uiColor: .systemBackground))
-    }
-
-    convenience init(_ content: String, _ backgroundColor: Color) {
-        self.init(rootView: PreviewSidebarView(content: content, backgroundColor: backgroundColor))
-    }
-}
-
-struct PreviewSidebarView: View {
+struct LabelView: View {
     var content: String
     var backgroundColor: Color
     var body: some View {

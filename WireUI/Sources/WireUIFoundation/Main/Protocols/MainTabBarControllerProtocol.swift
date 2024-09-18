@@ -21,7 +21,7 @@ import UIKit
 @MainActor
 public protocol MainTabBarControllerProtocol: UITabBarController {
 
-    associatedtype ConversationList: UIViewController
+    associatedtype ConversationList: MainConversationListProtocol
     associatedtype Conversation: UIViewController
     associatedtype Archive: UIViewController
     associatedtype Settings: UIViewController

@@ -50,7 +50,7 @@ final class ZClientViewController: UIViewController {
         return sidebarViewController
     }()
 
-    private(set) lazy var wireSplitViewController = MainSplitViewController(
+    private(set) lazy var wireSplitViewController = MainSplitViewController<SidebarViewController, ConversationListViewController>(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
         tabContainer: mainTabBarController
@@ -60,7 +60,7 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
 
     let mainTabBarController = {
-        let tabBarController = MainTabBarController()
+        let tabBarController = MainTabBarController<ConversationListViewController>()
         tabBarController.applyMainTabBarControllerAppearance()
         return tabBarController
     }()

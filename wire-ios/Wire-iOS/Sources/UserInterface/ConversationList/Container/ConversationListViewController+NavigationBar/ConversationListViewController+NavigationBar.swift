@@ -124,7 +124,7 @@ extension ConversationListViewController {
     }
 
     func setupTitleView() {
-        switch splitViewControllerMode {
+        switch splitViewInterface {
         case .expanded:
             navigationItem.title = L10n.Localizable.ConversationList.Filter.AllConversations.title
         case .collapsed:

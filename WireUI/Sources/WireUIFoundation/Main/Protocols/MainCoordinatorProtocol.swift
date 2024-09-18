@@ -19,17 +19,10 @@
 /// Handles the navigation when a user is authenticated.
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    @MainActor
-    func showConversationList()
-
-    @MainActor
-    func showArchivedConversations()
-
-    @MainActor
+    func showConversationList() async
+    func showArchivedConversations() async
     func showSelfProfile() async
-
-    @MainActor
-    func showSettings()
+    func showSettings() async
 
 //    func openConversation(
 //        _ conversation: ZMConversation,

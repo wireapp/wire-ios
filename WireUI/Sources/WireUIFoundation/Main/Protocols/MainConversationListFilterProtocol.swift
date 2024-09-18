@@ -20,5 +20,4 @@ public protocol MainConversationListFilterProtocol {
     static var favorites: Self { get }
     static var groups: Self { get }
     static var oneOnOne: Self { get }
-    static var archived: Self { get }
 }

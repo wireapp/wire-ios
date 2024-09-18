@@ -20,9 +20,8 @@ import SwiftUI
 
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
-public final class MainTabBarController: UITabBarController, MainTabBarControllerProtocol {
+public final class MainTabBarController<ConversationList: MainConversationListProtocol>: UITabBarController, MainTabBarControllerProtocol {
 
-    public typealias ConversationList = UIViewController
     public typealias Conversation = UIViewController
     public typealias Archive = UIViewController
     public typealias Settings = UIViewController
@@ -149,14 +148,19 @@ public final class MainTabBarController: UITabBarController, MainTabBarControlle
 
 @MainActor
 func MainTabBarController_Preview() -> some MainTabBarControllerProtocol {
-    let tabBarController = MainTabBarController()
-    for tab in MainTabBarControllerContent.allCases {
-        tabBarController[tab: tab].viewControllers = [PlaceholderViewController()]
-    }
+    let tabBarController = MainTabBarController<PreviewConversationListViewController>()
+    tabBarController.conversations = (
+        .init("conversationList"),
+        .init()
+    )
+    tabBarController.archive = PlaceholderViewController()
+    tabBarController.settings = PlaceholderViewController()
     tabBarController.selectedContent = .conversations
     return tabBarController
 }
 
+
+// TODO: not needed?
 private final class PlaceholderViewController: UIViewController {
 
     override func viewDidLoad() {

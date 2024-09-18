@@ -23,42 +23,21 @@ import WireUIFoundation
 
 final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    func showConversations() {
-        fatalError("TODO")
+    func showConversationList() async {
+        fatalError("Mock method not implemented")
     }
 
-    func showArchivedConversation() {
-        fatalError("TODO")
+    func showArchivedConversations() async {
+        fatalError("Mock method not implemented")
     }
 
-    func showSettings() {
-        fatalError("TODO")
+    func showSelfProfile() async {
+        fatalError("Mock method not implemented")
     }
 
-//    func openConversation(
-//        _ conversation: ZMConversation,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) {
-//        fatalError("Mock method not implemented")
-//    }
-//
-//    func openConversation<Message>(
-//        _ conversation: ZMConversation,
-//        scrollTo message: Message,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) where Message: ZMConversationMessage {
-//        fatalError("Mock method not implemented")
-//    }
-//
-//    func showConversationList() {
-//        fatalError("Mock method not implemented")
-//    }
-//
-//    func showSelfProfile() {
-//        fatalError("Mock method not implemented")
-//    }
+    func showSettings() async {
+        fatalError("Mock method not implemented")
+    }
 }
 
 // MARK: - MainCoordinatorProtocol + mock

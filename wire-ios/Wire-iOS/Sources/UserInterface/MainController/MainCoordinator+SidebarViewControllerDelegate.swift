@@ -99,29 +99,6 @@ final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol
         fatalError("TODO: present if needed")
     }
      */
-
-// MARK: - UISplitViewControllerDelegate
-
-    override func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
-        super.splitViewControllerDidCollapse(splitViewController)
-
-        // TODO: remove
-        let mainTabBarController = splitViewController.viewController(for: .compact) as! MainTabBarController
-        let navigationController = mainTabBarController.viewControllers![0] as! UINavigationController
-        let conversationListViewController = navigationController.viewControllers[0] as! ConversationListViewController
-        // TODO: how can this be done then?
-        conversationListViewController.splitViewControllerMode = .collapsed
-    }
-
-    override func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
-        super.splitViewControllerDidExpand(splitViewController)
-
-        // TODO: remove
-        let navigationController = splitViewController.viewController(for: .supplementary) as! UINavigationController
-        let conversationListViewController = navigationController.viewControllers[0] as! ConversationListViewController
-        // TODO: how can this be done then?
-        conversationListViewController.splitViewControllerMode = .expanded
-    }
 }
 
 // TODO: remove "WireUIFoundation."

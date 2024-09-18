@@ -19,6 +19,8 @@
 import UIKit
 import WireFoundation
 
+// TODO: could typaliases take some of the generic conditions?
+
 // TODO: make `public final`
 open /*public final*/ class MainCoordinator<SplitViewController, TabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
 SplitViewController: MainSplitViewControllerProtocol,
@@ -189,6 +191,7 @@ TabBarController.Archive == UIViewController {
         let conversationListViewController = mainSplitViewController.conversationList!
         mainSplitViewController.conversationList = nil
         mainTabBarController.conversations = (conversationListViewController, nil)
+        mainSplitViewController.conversationList!.splitViewInterface = .collapsed
 
         // TODO: conversations
 
@@ -220,6 +223,7 @@ TabBarController.Archive == UIViewController {
         let (conversationViewController, _) = mainTabBarController.conversations!
         mainTabBarController.conversations = nil
         mainSplitViewController.conversationList = conversationViewController
+        mainSplitViewController.conversationList!.splitViewInterface = .expanded
 
         // TODO: conversations
 

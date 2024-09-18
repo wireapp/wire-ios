@@ -16,8 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebar
-import WireUIFoundation
+import SwiftUI
 
-extension SidebarViewController: MainSidebarProtocol {}
-extension SidebarConversationFilter: MainSidebarConversationFilterProtocol {}
+final class PreviewSidebarViewController: UIHostingController<LabelView>, MainSidebarProtocol {
+
+    // MARK: - MainSidebarProtocol
+
+    var conversationFilter: ConversationFilter?
+
+    enum ConversationFilter: MainSidebarConversationFilterProtocol {
+        case favorites, groups, oneOnOne, archived
+    }
+
+    // MARK: - Life Cycle
+
+    convenience init(_ content: String) {
+        self.init(content, .init(uiColor: .systemBackground))
+    }
+
+    convenience init(_ content: String, _ backgroundColor: Color) {
+        self.init(rootView: .init(content: content, backgroundColor: backgroundColor))
+    }
+}
