@@ -22,6 +22,7 @@ import WireFoundation
 // TODO: could typaliases take some of the generic conditions?
 
 // TODO: make `public final`
+@MainActor
 open /*public final*/ class MainCoordinator<SplitViewController, TabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
 SplitViewController: MainSplitViewControllerProtocol,
 TabBarController: MainTabBarControllerProtocol,
@@ -56,6 +57,25 @@ TabBarController.Archive == UIViewController {
 
     deinit {
         /*WireLogger.ui.debug*/print("MainCoordinator.deinit")
+    }
+
+    // MARK: - Methods
+
+    public func showConversationList(conversationFilter: TabBarController.ConversationList.ConversationFilter?) {
+        showConversationList()
+
+        switch conversationFilter {
+        case .none:
+            mainSplitViewController.conversationList?.conversationFilter = .none
+        case .favorites:
+            mainSplitViewController.conversationList?.conversationFilter = .favorites
+        case .groups:
+            mainSplitViewController.conversationList?.conversationFilter = .groups
+        case .oneOnOne:
+            mainSplitViewController.conversationList?.conversationFilter = .oneOnOne
+        default:
+            break
+        }
     }
 
     public func showConversationList() {
@@ -176,22 +196,11 @@ TabBarController.Archive == UIViewController {
 
         isLayoutCollapsed = true
 
-        /*
-         let containers = ContainerViewControllers(of: splitViewController)
-
-         // validate assumptions
-         guard
-         // there should never be anything pushed onto the nc of the supplmentary and secondary columns
-         containers.supplementaryColumn.viewControllers.count == 1,
-         containers.secondaryColumn.viewControllers.count == 1
-         else { return assertionFailure("view controller hierarchy invalid assumptions") }
-         */
-
         // move view controllers from the split view controller's columns to the tab bar controller
         let conversationListViewController = mainSplitViewController.conversationList!
         mainSplitViewController.conversationList = nil
         mainTabBarController.conversations = (conversationListViewController, nil)
-        mainSplitViewController.conversationList!.splitViewInterface = .collapsed
+        conversationListViewController.splitViewInterface = .collapsed
 
         // TODO: conversations
 
@@ -223,7 +232,7 @@ TabBarController.Archive == UIViewController {
         let (conversationViewController, _) = mainTabBarController.conversations!
         mainTabBarController.conversations = nil
         mainSplitViewController.conversationList = conversationViewController
-        mainSplitViewController.conversationList!.splitViewInterface = .expanded
+        conversationViewController.splitViewInterface = .expanded
 
         // TODO: conversations
 

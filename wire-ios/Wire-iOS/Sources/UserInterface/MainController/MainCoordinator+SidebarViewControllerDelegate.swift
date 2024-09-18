@@ -110,11 +110,17 @@ extension MainCoordinator: SidebarViewControllerDelegate {
     }
 
     public func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
-        if conversationFilter == .archived {
+        switch conversationFilter {
+        case .favorites:
+            showConversationList(conversationFilter: .favorites)
+        case .groups:
+            showConversationList(conversationFilter: .groups)
+        case .oneOnOne:
+            showConversationList(conversationFilter: .oneOnOne)
+        case .archived:
             showArchivedConversations()
-        } else {
-            // TODO: apply filter
-            showConversationList()
+        case nil:
+            showConversationList(conversationFilter: .none)
         }
     }
 

@@ -19,7 +19,10 @@
 /// Handles the navigation when a user is authenticated.
 public protocol MainCoordinatorProtocol: AnyObject {
 
+    /// Show the conversation list keeping the selected conversation filter as is.
     func showConversationList() async
+    /// Show the conversation list and change the filter setting to some or none.
+    //func showConversationList(conversationFilter: Int?) async // TODO: add associated type?
     func showArchivedConversations() async
     func showSelfProfile() async
     func showSettings() async
