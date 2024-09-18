@@ -34,7 +34,23 @@ struct MessageInfo {
     var missingClientsStrategy: MissingClientsStrategy
     var selfClientID: String
     var nativePush: Bool
-
+    private var userClients: [UserClient]
+    
+    internal init(genericMessage: GenericMessage,
+                  listClients: MessageInfo.ClientList,
+                  missingClientsStrategy: MissingClientsStrategy,
+                  selfClientID: String,
+                  nativePush: Bool,
+                  userClients: [UserClient]
+    ) {
+        self.genericMessage = genericMessage
+        self.listClients = listClients
+        self.missingClientsStrategy = missingClientsStrategy
+        self.selfClientID = selfClientID
+        self.nativePush = nativePush
+        self.userClients = userClients
+    }
+    
     func allSessionIds() -> [ProteusSessionID] {
         var result = [ProteusSessionID]()
         for (_, userClientIdAndSessionIds) in listClients {
@@ -44,6 +60,13 @@ struct MessageInfo {
             }
         }
         return result
+    }
+    
+    func resetAllUserClientsFailedSessions(in context: NSManagedObjectContext) async {
+        await context.perform {
+            userClients.forEach { $0.failedToEstablishSession = false }
+            context.saveOrRollback()
+        }
     }
 }
 
@@ -88,15 +111,15 @@ struct MessageInfoExtractor {
 
         // get the list of clients
         let clients = await listOfClients(for: recipients, selfDomain: selfDomain, selfClientID: selfClientID)
-
+        let userClients = await context.perform { recipients.map { $1 }.flatMap { $0 } }
         return MessageInfo(
             genericMessage: message,
             listClients: clients,
             missingClientsStrategy: missingClientsStrategy,
             selfClientID: selfClientID,
             // We do not want to send pushes for delivery receipts.
-            nativePush: !message.hasConfirmation
-
+            nativePush: !message.hasConfirmation,
+            userClients: userClients
         )
     }
 
@@ -147,6 +170,7 @@ struct MessageInfoExtractor {
                 guard let sessionID = $0.proteusSessionID,
                       $0.remoteIdentifier != selfClientID else {
                     // skips self client session
+                    WireLogger.proteus.warn("skips cliend id: \(String(describing: $0.remoteIdentifier)), proteusSession id: \(String(describing: $0.proteusSessionID))")
                     return nil
                 }
 

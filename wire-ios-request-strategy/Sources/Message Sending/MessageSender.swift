@@ -161,6 +161,8 @@ public final class MessageSender: MessageSenderInterface {
             // 2) get the encrypted payload
             let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+            await messageInfo.resetAllUserClientsFailedSessions(in: context)
+            
             // 3) send it via API
             // no need to expire the broadcast message as it's only availability status no report to the user
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData)
@@ -210,6 +212,7 @@ public final class MessageSender: MessageSenderInterface {
             }
 
             // 3) send it via API
+            await messageInfo.resetAllUserClientsFailedSessions(in: context)
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(message: messageData, conversationID: conversationID, expirationDate: nil)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {

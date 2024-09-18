@@ -68,14 +68,6 @@ struct ProteusMessagePayloadBuilder {
             messageData = try await encryptForTransportExternalDataBlob(message: messageInfo.genericMessage, messageInfo: messageInfo)
         }
 
-        // TODO: Reset all failed sessions. -> [F] why do we reset the failedToEstablishSession on all clients ??
-        // is it the right place
-//        await context.perform {
-//            recipients.values
-//                .flatMap { $0 }
-//                .forEach { $0.failedToEstablishSession = false }
-//        }
-
         return messageData
     }
 
