@@ -19,24 +19,28 @@
 import SwiftUI
 import WireFoundation
 
-public final class SidebarViewController: UIHostingController<SidebarViewAdapter<AnyView>> {
+public final class SidebarViewController: UIHostingController<AnyView> {
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
+    private let model: SidebarAdapterModel
+
     public var accountInfo: SidebarAccountInfo {
-        get { rootView.accountInfo }
-        set { rootView.accountInfo = newValue }
+        get { model.accountInfo }
+        set { model.accountInfo = newValue }
     }
 
     public var conversationFilter: SidebarConversationFilter? {
-        get { rootView.conversationFilter }
-        set { rootView.conversationFilter = newValue }
+        get { model.conversationFilter }
+        set { model.conversationFilter = newValue }
     }
 
     public var wireTextStyleMapping: WireTextStyleMapping? {
-        get { rootView.wireTextStyleMapping }
-        set { rootView.wireTextStyleMapping = newValue }
+        get { model.wireTextStyleMapping }
+        set { model.wireTextStyleMapping = newValue }
     }
+
+    public typealias AccountImageViewBuilder = (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
 
     public convenience init(
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
@@ -50,18 +54,17 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
     ) {
         var self_: SidebarViewController?
-        super.init(
-            rootView: SidebarViewAdapter(
-                accountInfo: accountInfo,
-                conversationFilter: conversationFilter,
-                conversationFilterUpdated: { self_?.delegate?.sidebarViewController(self_!, didSelect: $0) },
-                accountImageAction: { self_?.delegate?.sidebarViewControllerDidSelectAccountImage(self_!) },
-                connectAction: { self_?.delegate?.sidebarViewControllerDidSelectConnect(self_!) },
-                settingsAction: { self_?.delegate?.sidebarViewControllerDidSelectSettings(self_!) },
-                supportAction: { self_?.delegate?.sidebarViewControllerDidSelectSupport(self_!) },
-                accountImageView: accountImageView
-            )
+        let model = SidebarAdapterModel(
+            accountInfo: accountInfo,
+            conversationFilter: conversationFilter,
+            accountImageAction: { self_?.delegate?.sidebarViewControllerDidSelectAccountImage(self_!) },
+            conversationFilterUpdated: { self_?.delegate?.sidebarViewController(self_!, didSelect: $0) },
+            connectAction: { self_?.delegate?.sidebarViewControllerDidSelectConnect(self_!) },
+            settingsAction: { self_?.delegate?.sidebarViewControllerDidSelectSettings(self_!) },
+            supportAction: { self_?.delegate?.sidebarViewControllerDidSelectSupport(self_!) }
         )
+        self.model = model
+        super.init(rootView: AnyView(SidebarAdapter(model: model, accountImageView: accountImageView)))
         self_ = self
     }
 
@@ -71,42 +74,59 @@ public final class SidebarViewController: UIHostingController<SidebarViewAdapter
     }
 }
 
-// MARK: - SidebarViewAdapter
+// MARK: - SidebarAdapter
 
-public struct SidebarViewAdapter<AccountImageView>: View where AccountImageView: View {
+struct SidebarAdapter<AccountImageView>: View where AccountImageView: View {
 
-    fileprivate var accountInfo: SidebarAccountInfo
-    fileprivate var wireTextStyleMapping: WireTextStyleMapping?
+    @ObservedObject fileprivate var model: SidebarAdapterModel
 
-    @State fileprivate(set) var conversationFilter: SidebarConversationFilter?
-    fileprivate let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
-    fileprivate var accountImageAction: () -> Void
-    fileprivate var connectAction: () -> Void
-    fileprivate var settingsAction: () -> Void
-    fileprivate var supportAction: () -> Void
     private(set) var accountImageView: (
         _ accountImage: UIImage,
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
-    public var body: some View {
-        let sidebarView = SidebarView(
-            accountInfo: accountInfo,
-            conversationFilter: $conversationFilter,
-            accountImageAction: accountImageAction,
-            connectAction: connectAction,
-            settingsAction: settingsAction,
-            supportAction: supportAction,
+    var body: some View {
+        SidebarView(
+            accountInfo: model.accountInfo,
+            conversationFilter: $model.conversationFilter,
+            accountImageAction: model.accountImageAction,
+            connectAction: model.connectAction,
+            settingsAction: model.settingsAction,
+            supportAction: model.supportAction,
             accountImageView: accountImageView
-        ).environment(\.wireTextStyleMapping, wireTextStyleMapping)
-        if #available(iOS 17.0, *) {
-            sidebarView.onChange(of: conversationFilter) { _, conversationFilter in
-                conversationFilterUpdated(conversationFilter)
-            }
-        } else {
-            sidebarView.onChange(of: conversationFilter) { conversationFilter in
-                conversationFilterUpdated(conversationFilter)
-            }
-        }
+        ).environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
+    }
+}
+
+final class SidebarAdapterModel: ObservableObject {
+
+    @Published var wireTextStyleMapping: WireTextStyleMapping?
+    @Published var accountInfo: SidebarAccountInfo
+    @Published var conversationFilter: SidebarConversationFilter? {
+        didSet { conversationFilterUpdated(conversationFilter) }
+    }
+
+    let accountImageAction: () -> Void
+    let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
+    let connectAction: () -> Void
+    let settingsAction: () -> Void
+    let supportAction: () -> Void
+
+    init(
+        accountInfo: SidebarAccountInfo,
+        conversationFilter: SidebarConversationFilter?,
+        accountImageAction: @escaping () -> Void,
+        conversationFilterUpdated: @escaping (_: SidebarConversationFilter?) -> Void,
+        connectAction: @escaping () -> Void,
+        settingsAction: @escaping () -> Void,
+        supportAction: @escaping () -> Void
+    ) {
+        self.accountInfo = accountInfo
+        self.conversationFilter = conversationFilter
+        self.accountImageAction = accountImageAction
+        self.conversationFilterUpdated = conversationFilterUpdated
+        self.connectAction = connectAction
+        self.settingsAction = settingsAction
+        self.supportAction = supportAction
     }
 }

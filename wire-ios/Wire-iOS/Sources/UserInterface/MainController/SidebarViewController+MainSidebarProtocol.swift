@@ -19,14 +19,19 @@
 import WireSidebar
 import WireUIFoundation
 
-extension SidebarViewController: MainSidebarProtocol {
-    public var conversationFilter: MainSidebarConversationFilter? {
-        get {
-            fatalError()
-            
-        }
-        set {
-            fatalError()
-        }
-    }
-}
+//extension SidebarViewController: MainSidebarProtocol {
+//    public var conversationFilterr: SidebarConversationFilter? {
+//        get {
+//
+//            print(self.conversationFilter)
+//fatalError()
+//        }
+//        set {
+//            //
+//        }
+//    }
+//}
+
+
+extension SidebarConversationFilter: MainSidebarConversationFilterProtocol {}
+extension SidebarViewController: MainSidebarProtocol {}

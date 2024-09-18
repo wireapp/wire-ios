@@ -226,7 +226,7 @@ TabBarController.Archive == UIViewController {
         // if the archived conversations view controller was visible, present it on top of the conversation list
         if mainTabBarController.selectedContent == .archive {
             addArchivedConversationsAsChildOfConversationList()
-            //mainSplitViewController.sidebar.conversationFilter = .archive
+            mainSplitViewController.sidebar.conversationFilter = .archived
         }
 
         // TODO: more to move?
