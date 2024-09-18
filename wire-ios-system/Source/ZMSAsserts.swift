@@ -79,3 +79,8 @@ public func requireInternal(_ condition: Bool, _ message: @autoclosure () -> Str
         WireLogger.system.critical("requireInternal: \(errorMessage)")
     }
 }
+
+/// Terminates the application if build is `.debug` or `.develop`, otherwise logs a critical error
+public func internalFailure(_ message: @autoclosure () -> String, file: StaticString = #file, line: UInt = #line) {
+    requireInternal(false, message(), file: file, line: line)
+}
