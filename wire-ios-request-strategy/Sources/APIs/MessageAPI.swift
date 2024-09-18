@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MessageAPI {
 
-    func broadcastProteusMessage(message encryptedMessage: Data, expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
+    func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
     func sendProteusMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse)
 
@@ -60,8 +60,7 @@ class MessageAPIV0: MessageAPI {
         self.httpClient = httpClient
     }
 
-    func broadcastProteusMessage(message encryptedMessage: Data,
-                                 expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/otr/messages"
 
         let request = ZMTransportRequest(
@@ -72,11 +71,6 @@ class MessageAPIV0: MessageAPI {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        if let expirationDate {
-            // TODO: [F] check this is needed for broadcast messages
-            request.expire(at: expirationDate)
-        }
 
         let response = await httpClient.send(request)
 
@@ -167,8 +161,7 @@ class MessageAPIV1: MessageAPIV0 {
         .v1
     }
 
-    override func broadcastProteusMessage(message encryptedMessage: Data,
-                                          expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
 
         let request = ZMTransportRequest(
@@ -179,10 +172,6 @@ class MessageAPIV1: MessageAPIV0 {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        if let expirationDate {
-            request.expire(at: expirationDate)
-        }
 
         let response = await httpClient.send(request)
 
@@ -260,8 +249,7 @@ class MessageAPIV4: MessageAPIV3 {
 
     private let protobufContentType = "application/x-protobuf"
 
-    override func broadcastProteusMessage(message encryptedMessage: Data,
-                                          expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+    override func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
         let path = "/broadcast/proteus/messages"
 
         let request = ZMTransportRequest(
@@ -272,11 +260,7 @@ class MessageAPIV4: MessageAPIV3 {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-
-        if let expirationDate {
-            request.expire(at: expirationDate)
-        }
-
+        
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {

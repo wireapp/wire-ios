@@ -777,24 +777,24 @@ public class MockMessageAPI: MessageAPI {
 
     // MARK: - broadcastProteusMessage
 
-    public var broadcastProteusMessageMessageExpirationDate_Invocations: [(encryptedMessage: Data, expirationDate: Date?)] = []
-    public var broadcastProteusMessageMessageExpirationDate_MockError: Error?
-    public var broadcastProteusMessageMessageExpirationDate_MockMethod: ((Data, Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
-    public var broadcastProteusMessageMessageExpirationDate_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+    public var broadcastProteusMessageMessage_Invocations: [Data] = []
+    public var broadcastProteusMessageMessage_MockError: Error?
+    public var broadcastProteusMessageMessage_MockMethod: ((Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
 
-    public func broadcastProteusMessage(message encryptedMessage: Data, expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        broadcastProteusMessageMessageExpirationDate_Invocations.append((encryptedMessage: encryptedMessage, expirationDate: expirationDate))
+    public func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        broadcastProteusMessageMessage_Invocations.append(encryptedMessage)
 
-        if let error = broadcastProteusMessageMessageExpirationDate_MockError {
+        if let error = broadcastProteusMessageMessage_MockError {
             throw error
         }
 
-        if let mock = broadcastProteusMessageMessageExpirationDate_MockMethod {
-            return try await mock(encryptedMessage, expirationDate)
-        } else if let mock = broadcastProteusMessageMessageExpirationDate_MockValue {
+        if let mock = broadcastProteusMessageMessage_MockMethod {
+            return try await mock(encryptedMessage)
+        } else if let mock = broadcastProteusMessageMessage_MockValue {
             return mock
         } else {
-            fatalError("no mock for `broadcastProteusMessageMessageExpirationDate`")
+            fatalError("no mock for `broadcastProteusMessageMessage`")
         }
     }
 
