@@ -19,7 +19,9 @@
 import SwiftUI
 import WireFoundation
 
-public final class SidebarViewController: UIHostingController<AnyView> {
+public final class SidebarViewController: UIViewController {
+
+    // MARK: - Public Properties
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
@@ -38,33 +40,53 @@ public final class SidebarViewController: UIHostingController<AnyView> {
         set { model.wireTextStyleMapping = newValue }
     }
 
+    // MARK: - Private Properties
+
     private let model = SidebarModel()
+    private var setupHostingController: (() -> Void)?
 
-    public required init(
-        accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
-    ) {
-        super.init(rootView: AnyView(SidebarAdapter(model: model, accountImageView: accountImageView)))
+    // MARK: - Life Cycle
 
-        model.accountImageAction = { [weak self] in
-            self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
-        }
-        model.conversationFilterUpdated = { [weak self] conversationFilter in
-            self?.delegate?.sidebarViewController(self!, didSelect: conversationFilter)
-        }
-        model.connectAction = { [weak self] in
-            self?.delegate?.sidebarViewControllerDidSelectConnect(self!)
-        }
-        model.settingsAction = { [weak self] in
-            self?.delegate?.sidebarViewControllerDidSelectSettings(self!)
-        }
-        model.supportAction = { [weak self] in
-            self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
+    public typealias AccountImageViewBuilder<AccountImageView> = (
+        _ accountImage: UIImage,
+        _ availability: SidebarAccountInfo.Availability?
+    ) -> AccountImageView
+
+    public init<AccountImageView: View>(accountImageView: @escaping AccountImageViewBuilder<AccountImageView>) {
+        super.init(nibName: nil, bundle: nil)
+
+        model.accountImageAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!) }
+        model.conversationFilterUpdated = { [weak self] conversationFilter in self?.delegate?.sidebarViewController(self!, didSelect: conversationFilter) }
+        model.connectAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectConnect(self!) }
+        model.settingsAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectSettings(self!) }
+        model.supportAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectSupport(self!) }
+
+        setupHostingController = { [weak self] in
+            guard let self else { return }
+
+            let sidebarAdapter = SidebarAdapter(model: model, accountImageView: accountImageView)
+            let hostingController = UIHostingController(rootView: sidebarAdapter)
+            addChild(hostingController)
+            hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(hostingController.view)
+            NSLayoutConstraint.activate([
+                hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+                view.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
+                view.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor)
+            ])
+            hostingController.didMove(toParent: self)
         }
     }
 
-    @available(*, unavailable) @MainActor
-    dynamic required init?(coder aDecoder: NSCoder) {
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setupHostingController?()
     }
 }
 
