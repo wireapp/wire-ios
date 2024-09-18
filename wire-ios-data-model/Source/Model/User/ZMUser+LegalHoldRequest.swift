@@ -119,7 +119,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     // MARK: Initialization
 
-    public init(target: UUID, requester: UUID, clientIdentifier: String, lastPrekey: Prekey) {
+    public init(target: UUID, requester: UUID?, clientIdentifier: String, lastPrekey: Prekey) {
         self.target = target
         self.requester = requester
         self.client = Client(id: clientIdentifier)

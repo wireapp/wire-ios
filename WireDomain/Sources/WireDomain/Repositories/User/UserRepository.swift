@@ -43,6 +43,23 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Adds a legal hold request.
+    ///
+    /// - parameters:
+    ///     - userID: The user ID of the target legalhold subject.
+    ///     - clientID: The client ID of the legalhold device.
+    ///     - lastPrekey: The last prekey of the legalhold device.
+    ///
+    /// Legal hold is the ability to provide an auditable transcript of all communication
+    /// held by team members that are put under legal hold compliance (from a third-party),
+    /// achieved by collecting the content of such communication for later auditing.
+
+    func addLegalHoldRequest(
+        for userID: UUID,
+        clientID: String,
+        lastPrekey: Prekey
+    ) async
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -86,6 +103,31 @@ public final class UserRepository: UserRepositoryProtocol {
             }
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+
+    public func addLegalHoldRequest(
+        for userID: UUID,
+        clientID: String,
+        lastPrekey: Prekey
+    ) async {
+        await context.perform { [context] in
+            let selfUser = ZMUser.selfUser(in: context)
+
+            guard let prekey = lastPrekey.toDomainModel() else {
+                return WireLogger.eventProcessing.error(
+                    "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
+                )
+            }
+
+            let legalHoldRequest = LegalHoldRequest(
+                target: userID,
+                requester: nil,
+                clientIdentifier: clientID,
+                lastPrekey: prekey
+            )
+
+            selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
     }
 
