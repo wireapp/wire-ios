@@ -23,8 +23,6 @@ public final class SidebarViewController: UIHostingController<AnyView> {
 
     public weak var delegate: (any SidebarViewControllerDelegate)?
 
-    private let model: SidebarAdapterModel
-
     public var accountInfo: SidebarAccountInfo {
         get { model.accountInfo }
         set { model.accountInfo = newValue }
@@ -40,7 +38,7 @@ public final class SidebarViewController: UIHostingController<AnyView> {
         set { model.wireTextStyleMapping = newValue }
     }
 
-    public typealias AccountImageViewBuilder = (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
+    private let model: SidebarModel
 
     public convenience init(
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
@@ -54,7 +52,7 @@ public final class SidebarViewController: UIHostingController<AnyView> {
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AnyView
     ) {
         var self_: SidebarViewController?
-        let model = SidebarAdapterModel(
+        let model = SidebarModel(
             accountInfo: accountInfo,
             conversationFilter: conversationFilter,
             accountImageAction: { self_?.delegate?.sidebarViewControllerDidSelectAccountImage(self_!) },
@@ -76,9 +74,9 @@ public final class SidebarViewController: UIHostingController<AnyView> {
 
 // MARK: - SidebarAdapter
 
-struct SidebarAdapter<AccountImageView>: View where AccountImageView: View {
+private struct SidebarAdapter<AccountImageView>: View where AccountImageView: View {
 
-    @ObservedObject fileprivate var model: SidebarAdapterModel
+    @ObservedObject fileprivate var model: SidebarModel
 
     private(set) var accountImageView: (
         _ accountImage: UIImage,
@@ -95,38 +93,5 @@ struct SidebarAdapter<AccountImageView>: View where AccountImageView: View {
             supportAction: model.supportAction,
             accountImageView: accountImageView
         ).environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
-    }
-}
-
-final class SidebarAdapterModel: ObservableObject {
-
-    @Published var wireTextStyleMapping: WireTextStyleMapping?
-    @Published var accountInfo: SidebarAccountInfo
-    @Published var conversationFilter: SidebarConversationFilter? {
-        didSet { conversationFilterUpdated(conversationFilter) }
-    }
-
-    let accountImageAction: () -> Void
-    let conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void
-    let connectAction: () -> Void
-    let settingsAction: () -> Void
-    let supportAction: () -> Void
-
-    init(
-        accountInfo: SidebarAccountInfo,
-        conversationFilter: SidebarConversationFilter?,
-        accountImageAction: @escaping () -> Void,
-        conversationFilterUpdated: @escaping (_: SidebarConversationFilter?) -> Void,
-        connectAction: @escaping () -> Void,
-        settingsAction: @escaping () -> Void,
-        supportAction: @escaping () -> Void
-    ) {
-        self.accountInfo = accountInfo
-        self.conversationFilter = conversationFilter
-        self.accountImageAction = accountImageAction
-        self.conversationFilterUpdated = conversationFilterUpdated
-        self.connectAction = connectAction
-        self.settingsAction = settingsAction
-        self.supportAction = supportAction
     }
 }
