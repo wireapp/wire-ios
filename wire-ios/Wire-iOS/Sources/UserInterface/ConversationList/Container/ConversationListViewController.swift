@@ -468,6 +468,7 @@ final class ConversationListViewController: UIViewController {
 
     /// Present the new conversation view controller
     func presentNewConversationViewController() {
+        // TODO: move into main coordinator
         let viewController = StartUIViewController(
             userSession: viewModel.userSession,
             mainCoordinator: mainCoordinator

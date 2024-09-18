@@ -22,10 +22,11 @@ public protocol MainCoordinatorProtocol: AnyObject {
     /// Show the conversation list keeping the selected conversation filter as is.
     func showConversationList() async
     /// Show the conversation list and change the filter setting to some or none.
-    //func showConversationList(conversationFilter: Int?) async // TODO: add associated type?
+    //func showConversationList(conversationFilter: Int?) async // TODO: add associated type? or declare enums in WireUIFoundation
     func showArchivedConversations() async
     func showSelfProfile() async
     func showSettings() async
+    func showNewConversation() async
 
 //    func openConversation(
 //        _ conversation: ZMConversation,
@@ -39,6 +40,4 @@ public protocol MainCoordinatorProtocol: AnyObject {
 //        focusOnView focus: Bool,
 //        animated: Bool
 //    ) where Message: ZMConversationMessage
-//
-//    func showConversationList()
 }

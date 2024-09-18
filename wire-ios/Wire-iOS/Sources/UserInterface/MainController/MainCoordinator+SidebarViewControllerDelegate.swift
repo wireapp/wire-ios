@@ -16,42 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//import WireCommonComponents
-//import WireDataModel
-//import WireSystem
 import WireUIFoundation
 import WireSidebar
 
 /*
-final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol, TabBarController: MainTabBarControllerProtocol>: WireUIFoundation.MainCoordinator<SplitViewController, TabBarController> where SplitViewController.Sidebar: MainSidebarProtocol, SplitViewController.ConversationList == TabBarController.ConversationList, TabBarController.Archive == UIViewController {
-
-    // private weak var zClientViewController: ZClientViewController!
-
-    // private(set) var settingsBuilder: ViewControllerBuilder
-
-    init(
-        zClientViewController: ZClientViewController,
-        mainSplitViewController: SplitViewController,
-        mainTabBarController: TabBarController,
-        selfProfileBuilder: ViewControllerBuilder,
-        settingsBuilder: ViewControllerBuilder
-    ) {
-        // self.zClientViewController = zClientViewController
-        // self.selfProfileBuilder = selfProfileBuilder
-        // self.settingsBuilder = settingsBuilder
-        super.init(
-            mainSplitViewController: mainSplitViewController,
-            mainTabBarController: mainTabBarController,
-            selfProfileBuilder: selfProfileBuilder
-        )
-    }
-
-    deinit {
-        WireLogger.ui.debug("MainCoordinator.deinit")
-    }
-
-    // MARK: - Methods
-
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {
         guard let zClientViewController else {
             return WireLogger.mainCoordinator.warn("zClientViewController is nil")
@@ -70,43 +38,12 @@ final class MainCoordinator<SplitViewController: MainSplitViewControllerProtocol
         }
         zClientViewController.load(conversation, scrollTo: message, focusOnView: focus, animated: animated)
     }
-
-    func showConversationList() {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-        zClientViewController.showConversationList()
-    }
-
-    func showSelfProfile() {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-
-        settingsViewController = settingsViewController ?? settingsBuilder.build()
-
-        let settingsViewController = selfProfileBuilder
-                .build()
-                .wrapInNavigationController(navigationControllerClass: NavigationController.self)
-    }
-
-    func showSettings() {
-        guard let zClientViewController else {
-            return WireLogger.mainCoordinator.warn("zClientViewController is nil")
-        }
-
-        settingsViewController = settingsViewController ?? settingsBuilder.build()
-        fatalError("TODO: present if needed")
-    }
-}
  */
 
 extension MainCoordinator: SidebarViewControllerDelegate {
 
     public func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController) {
-        Task {
-            await showSelfProfile()
-        }
+        showSelfProfile()
     }
 
     public func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
@@ -125,7 +62,7 @@ extension MainCoordinator: SidebarViewControllerDelegate {
     }
 
     public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
-        fatalError("TODO")
+        showNewConversation()
     }
 
     public func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController) {

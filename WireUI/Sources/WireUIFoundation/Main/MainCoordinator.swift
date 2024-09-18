@@ -101,8 +101,7 @@ TabBarController.Archive == UIViewController {
         }
     }
 
-    @MainActor
-    public func showSelfProfile() async {
+    public func showSelfProfile() {
         guard selfProfileViewController == nil else {
             return assertionFailure() // TODO: inject logger instead
         }
@@ -117,9 +116,7 @@ TabBarController.Archive == UIViewController {
         selfProfileViewController.modalPresentationStyle = .formSheet
         self.selfProfileViewController = selfProfileViewController
 
-        await withCheckedContinuation { continuation in
-            conversationList.present(selfProfileViewController, animated: true, completion: continuation.resume)
-        }
+        conversationList.present(selfProfileViewController, animated: true)
     }
 
     public func showSettings() {
@@ -155,6 +152,10 @@ TabBarController.Archive == UIViewController {
         //     keyboardAvoidingViewController.view.backgroundColor = .black
         //     present(keyboardAvoidingViewController, animated: true)
         // }
+    }
+
+    public func showNewConversation() {
+fatalError("TODO")
     }
 
     //    public func openConversation(
@@ -247,7 +248,6 @@ TabBarController.Archive == UIViewController {
 
     // MARK: - Helpers
 
-    @MainActor
     private func addArchivedConversationsAsChildOfConversationList() {
         let conversationList = mainSplitViewController.conversationList!
         let archivedConversations = archivedConversations!
@@ -265,8 +265,9 @@ TabBarController.Archive == UIViewController {
         archivedConversations.didMove(toParent: conversationList)
     }
 
-    @MainActor
     private func moveArchivedConversationsIntoMainTabBarControllerIfNeeded() {
+        // If the archive tab is empty, we're showing the conversation archive in the expanded layout.
+        // That's how we know that we need to move it back.
         if mainTabBarController.archive == nil {
             archivedConversations!.willMove(toParent: nil)
             archivedConversations!.view.removeFromSuperview()
