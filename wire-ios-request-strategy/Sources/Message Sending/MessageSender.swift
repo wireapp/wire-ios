@@ -152,7 +152,7 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            try message.prepareForSending()
+            try await message.updateUnderlyingMessageIfNeeded()
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
@@ -198,7 +198,7 @@ public final class MessageSender: MessageSenderInterface {
         )
 
         do {
-            try message.prepareForSending()
+            try await message.updateUnderlyingMessageIfNeeded()
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
@@ -207,7 +207,8 @@ public final class MessageSender: MessageSenderInterface {
             // 2) get the encrypted payload
             let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
-
+          
+            
             // set expiration so request can be expired later
             await context.perform {
                 if message.shouldExpire {

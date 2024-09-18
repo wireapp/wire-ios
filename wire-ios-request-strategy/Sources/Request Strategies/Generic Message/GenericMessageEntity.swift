@@ -70,7 +70,7 @@ import Foundation
         // no-op
     }
 
-    public func prepareForSending() throws {
+    public func updateUnderlyingMessageIfNeeded() async throws {
         // no-op - TODO: double check this
     }
 

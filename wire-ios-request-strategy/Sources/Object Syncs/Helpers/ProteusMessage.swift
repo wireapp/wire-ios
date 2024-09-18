@@ -27,49 +27,55 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
     func setExpirationDate()
 
     /// Updates the underlying message - TODO: check naming
-    func prepareForSending() throws
+    func updateUnderlyingMessageIfNeeded() async throws
 
     var underlyingMessage: GenericMessage? { get }
 }
 
 extension ZMClientMessage: ProteusMessage {
 
-    public func prepareForSending() throws {
-        if conversation?.conversationType == .oneOnOne {
-            // Update expectsReadReceipt flag to reflect the current user setting
-            if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: context).readReceiptsEnabled)
-                try setUnderlyingMessage(updatedGenericMessage)
+    public func updateUnderlyingMessageIfNeeded() async throws {
+        try await context.perform { [self] in
+            if conversation?.conversationType == .oneOnOne {
+                // Update expectsReadReceipt flag to reflect the current user setting
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: context).readReceiptsEnabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
             }
-        }
 
-        if let legalHoldStatus = conversation?.legalHoldStatus {
-            // Update the legalHoldStatus flag to reflect the current known legal hold status
-            if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
-                try setUnderlyingMessage(updatedGenericMessage)
+            if let legalHoldStatus = conversation?.legalHoldStatus {
+                // Update the legalHoldStatus flag to reflect the current known legal hold status
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
             }
+
         }
     }
 }
 
 extension ZMAssetClientMessage: ProteusMessage {
 
-    public func prepareForSending() throws {
-        if conversation?.conversationType == .oneOnOne {
-            // Update expectsReadReceipt flag to reflect the current user setting
-            if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: context).readReceiptsEnabled)
-                try setUnderlyingMessage(updatedGenericMessage)
+    public func updateUnderlyingMessageIfNeeded() async throws {
+        try await context.perform { [self] in
+            if conversation?.conversationType == .oneOnOne {
+                // Update expectsReadReceipt flag to reflect the current user setting
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: context).readReceiptsEnabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
             }
-        }
 
-        if let legalHoldStatus = conversation?.legalHoldStatus {
-            // Update the legalHoldStatus flag to reflect the current known legal hold status
-            if var updatedGenericMessage = underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
-                try setUnderlyingMessage(updatedGenericMessage)
+            if let legalHoldStatus = conversation?.legalHoldStatus {
+                // Update the legalHoldStatus flag to reflect the current known legal hold status
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
             }
+
         }
     }
 }

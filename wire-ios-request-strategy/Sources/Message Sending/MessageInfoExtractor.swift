@@ -74,9 +74,12 @@ struct MessageInfoExtractor {
     }
 
     private func infoForTransport(message: GenericMessage, in conversation: ZMConversation) async throws -> MessageInfo {
-        let selfUser = await context.perform { ZMUser.selfUser(in: context) }
+        let (selfUser, selfDomain) = await context.perform {
+            let user = ZMUser.selfUser(in: context)
+            return (user, user.domain)
+        }
         let selfClientID = try await selfClientID()
-        guard let selfDomain = selfUser.domain else {
+        guard let selfDomain else {
             throw MessageEncryptorError.missingSelfDomain
         }
 
@@ -108,7 +111,7 @@ struct MessageInfoExtractor {
     private func recipients(for message: GenericMessage, selfUser: ZMUser, in conversation: ZMConversation) async -> ([ZMUser: Set<UserClient>], MissingClientsStrategy) {
         let (users, missingClientsStrategy) = await context.perform { message.recipientUsersForMessage(in: conversation, selfUser: selfUser) }
 
-        return (await context.perform { users }, missingClientsStrategy)
+        return (users , missingClientsStrategy)
     }
 
     private func listOfClients(for recipients: [ZMUser: Set<UserClient>], selfDomain: String, selfClientID: String) async -> MessageInfo.ClientList {
@@ -129,7 +132,7 @@ struct MessageInfoExtractor {
                     !user.isAccountDeleted ? user.remoteIdentifier : nil
                 }) else { continue }
 
-                let userClientDatas = await userClientDatas(selfClientID, userClients: clients)
+                let userClientDatas = await userClientDatas(selfClientID: selfClientID, userClients: clients)
                 userEntries[userId] = userClientDatas
             }
             qualifiedUserEntries[domain] = userEntries
@@ -137,7 +140,7 @@ struct MessageInfoExtractor {
         return qualifiedUserEntries
     }
 
-    private func userClientDatas(_ selfClientID: String, userClients: Set<UserClient>) async -> [UserClientData] {
+    private func userClientDatas(selfClientID: String, userClients: Set<UserClient>) async -> [UserClientData] {
 
         return await context.perform {
             userClients.compactMap {
