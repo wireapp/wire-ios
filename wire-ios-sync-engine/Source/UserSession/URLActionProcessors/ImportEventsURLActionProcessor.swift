@@ -24,6 +24,14 @@ enum ImportEventsError: Error {
 
 class ImportEventsURLActionProcessor: URLActionProcessor {
 
+    private static var isRunningOnSimulator: Bool {
+        #if targetEnvironment(simulator)
+        return true
+        #else
+        return false
+        #endif
+    }
+
     private let eventProcessor: UpdateEventProcessor
 
     init(eventProcessor: UpdateEventProcessor) {
@@ -31,7 +39,7 @@ class ImportEventsURLActionProcessor: URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate: (any PresentationDelegate)?) {
-        guard case .importEvents = urlAction else {
+        guard case .importEvents = urlAction, Self.isRunningOnSimulator else {
             return
         }
 
