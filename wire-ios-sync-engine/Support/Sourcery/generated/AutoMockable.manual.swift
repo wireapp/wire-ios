@@ -252,7 +252,7 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
        }
 }
 
-class MockDisableAnalyticsUseCaseUserSession: DisableAnalyticsUseCaseUserSession {
+class MockDisableAnalyticsUseCaseAnalyticsSessionProviding: DisableAnalyticsUseCaseAnalyticsSessionProviding {
 
     // MARK: - Life cycle
 
@@ -261,7 +261,7 @@ class MockDisableAnalyticsUseCaseUserSession: DisableAnalyticsUseCaseUserSession
     var analyticsSession: (any AnalyticsSessionProtocol)?
 }
 
-class MockEnableAnalyticsUseCaseUserSession: EnableAnalyticsUseCaseUserSession {
+class MockEnableAnalyticsUseCaseAnalyticsSessionProviding: EnableAnalyticsUseCaseAnalyticsSessionProviding {
 
     // MARK: - Life cycle
 

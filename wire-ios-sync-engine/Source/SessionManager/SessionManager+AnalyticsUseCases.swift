@@ -66,5 +66,5 @@ extension SessionManager {
 
 }
 
-extension ZMUserSession: EnableAnalyticsUseCaseUserSession {}
-extension ZMUserSession: DisableAnalyticsUseCaseUserSession {}
+extension ZMUserSession: EnableAnalyticsUseCaseAnalyticsSessionProviding {}
+extension ZMUserSession: DisableAnalyticsUseCaseAnalyticsSessionProviding {}

@@ -50,8 +50,8 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     /// The user profile for which to enable analytics sharing.
     private(set) var analyticsUserProfile: AnalyticsUserProfile
 
-    /// An instance conforming to `EnableAnalyticsUseCaseUserSession` that manages the user's analytics session state.
-    private(set) var analyticsSessionProvider: EnableAnalyticsUseCaseUserSession
+    /// An instance conforming to `EnableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
+    private(set) var analyticsSessionProvider: EnableAnalyticsUseCaseAnalyticsSessionProviding
 
     // MARK: - Initialization
 
@@ -62,13 +62,13 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
     ///   - analyticsSessionConfiguration: The configuration for the analytics session.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
-    ///   - analyticsSessionProvider: An instance conforming to `EnableAnalyticsUseCaseUserSession` that manages the user's analytics session state.
+    ///   - analyticsSessionProvider: An instance conforming to `EnableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
     init(
         analyticsManagerBuilder: @escaping (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol,
         sessionManager: AnalyticsManagerProviding,
         analyticsSessionConfiguration: AnalyticsSessionConfiguration,
         analyticsUserProfile: AnalyticsUserProfile,
-        analyticsSessionProvider: EnableAnalyticsUseCaseUserSession
+        analyticsSessionProvider: EnableAnalyticsUseCaseAnalyticsSessionProviding
     ) {
         self.analyticsManagerBuilder = analyticsManagerBuilder
         self.sessionManager = sessionManager
@@ -96,6 +96,6 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     }
 }
 
-protocol EnableAnalyticsUseCaseUserSession: AnyObject {
+protocol EnableAnalyticsUseCaseAnalyticsSessionProviding: AnyObject {
     var analyticsSession: (any AnalyticsSessionProtocol)? { get set }
 }

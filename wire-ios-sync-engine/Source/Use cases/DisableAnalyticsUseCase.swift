@@ -32,16 +32,16 @@ public protocol DisableAnalyticsUseCaseProtocol {
 struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
     private let sessionManager: AnalyticsManagerProviding
-    private let analyticsSessionProvider: DisableAnalyticsUseCaseUserSession
+    private let analyticsSessionProvider: DisableAnalyticsUseCaseAnalyticsSessionProviding
 
     /// Initializes a new instance of `DisableAnalyticsUseCase`.
     ///
     /// - Parameters:
     ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
-    ///   - analyticsSessionProvider: An instance conforming to `DisableAnalyticsUseCaseUserSession` that manages the user's analytics session state.
+    ///   - analyticsSessionProvider: An instance conforming to `DisableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
     init(
         sessionManager: AnalyticsManagerProviding,
-        analyticsSessionProvider: DisableAnalyticsUseCaseUserSession
+        analyticsSessionProvider: DisableAnalyticsUseCaseAnalyticsSessionProviding
     ) {
         self.sessionManager = sessionManager
         self.analyticsSessionProvider = analyticsSessionProvider
@@ -57,6 +57,6 @@ struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
     }
 }
 
-protocol DisableAnalyticsUseCaseUserSession: AnyObject {
+protocol DisableAnalyticsUseCaseAnalyticsSessionProviding: AnyObject {
     var analyticsSession: (any AnalyticsSessionProtocol)? { get set }
 }
