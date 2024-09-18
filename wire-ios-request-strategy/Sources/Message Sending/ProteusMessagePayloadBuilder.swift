@@ -23,6 +23,7 @@ enum MessageEncryptorError: Error {
     case missingValidSelfClient
     case missingSelfDomain
     case unableToEncryptForExternalData
+    case emptyEncryptedData
 }
 
 private extension String {
@@ -48,6 +49,10 @@ struct ProteusMessagePayloadBuilder {
         let allSessionIds = messageInfo.allSessionIds()
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
 
+        guard !encryptedDatas.isEmpty else {
+            throw MessageEncryptorError.emptyEncryptedData
+        }
+        
         // 2) Wrap the encryptedData in protobuf object that will be serialized
         var messageData: Data
         if useQualifiedIds {
