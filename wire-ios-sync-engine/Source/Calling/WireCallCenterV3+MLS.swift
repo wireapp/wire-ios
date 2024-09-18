@@ -204,6 +204,7 @@ extension WireCallCenterV3 {
         }
     }
 
+<<<<<<< HEAD
     /// Deletes a subconversation.
     ///
     /// - Parameter conversationID: The `AVSIdentifier` of the parent conversation.
@@ -234,6 +235,8 @@ extension WireCallCenterV3 {
         }
     }
 
+=======
+>>>>>>> a22151ac2a (feat: Remove call to deleteSubConversation after ending a 1:1 SFT call - WPB-11123 (#1944))
 }
 
 extension CallParticipantState {
