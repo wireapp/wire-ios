@@ -232,7 +232,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
-        currentPostRegistrationFields().map(sendPostRegistrationFields)
+        currentPostRegistrationFields().map { sendPostRegistrationFields($0, userSession: userSession) }
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -649,15 +649,14 @@ extension AuthenticationCoordinator {
     }
 
     /// Sends the fields provided during registration that requires a registered user session.
-    private func sendPostRegistrationFields(_ fields: AuthenticationPostRegistrationFields) {
-        guard let userSession = statusProvider.sharedUserSession else {
-            log.error("Could not save the marketing consent as there is no user session for the user.")
-            return
-        }
-
+    private func sendPostRegistrationFields(
+        _ fields: AuthenticationPostRegistrationFields,
+        userSession: ZMUserSession
+    ) {
         // Marketing consent
-        UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
         userSession.submitMarketingConsent(with: fields.marketingConsent)
+        let marketingRepo = userSession.marketingRepo
+        Task { await marketingRepo.didPromptForConsent() }
     }
 
     // MARK: - Login
