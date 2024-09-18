@@ -24,8 +24,8 @@ import XCTest
 
 final class MainSplitViewControllerTests: XCTestCase {
 
-    private var sut: MainSplitViewController<<#Sidebar: UIViewController & MainSidebarProtocol#>>!
-    private var sidebar: UIViewController!
+    private var sut: MainSplitViewController<PreviewSidebarViewController>!
+    private var sidebar: PreviewSidebarViewController!
     private var conversationList: UIViewController!
     private var conversation: UIViewController!
     private var noConversationPlaceholder: UIViewController!
@@ -35,28 +35,11 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-    TODO: move into target and use for preview
-        let hostingController: (String, Color) -> UIHostingController<AnyView> = { text, backgroundColor in
-            UIHostingController(
-                rootView: AnyView(
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Text(text)
-                                .ignoresSafeArea()
-                            Spacer()
-                        }
-                        Spacer()
-                    }.background(backgroundColor)
-                )
-            )
-        }
-        sidebar = hostingController("Sidebar", .gray)
-        conversationList = hostingController("Conversation List", .purple)
-        conversation = hostingController("Conversation", .blue)
-        noConversationPlaceholder = hostingController("No Conversation Selected", .brown)
-        tabContainer = hostingController("Tab Container", .cyan)
+        sidebar = PreviewSidebarViewController("Sidebar", .gray)
+        conversationList = PreviewSidebarViewController("Conversation List", .purple)
+        conversation = PreviewSidebarViewController("Conversation", .blue)
+        noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
+        tabContainer = PreviewSidebarViewController("Tab Container", .cyan)
         sut = .init(
             sidebar: sidebar,
             noConversationPlaceholder: noConversationPlaceholder,

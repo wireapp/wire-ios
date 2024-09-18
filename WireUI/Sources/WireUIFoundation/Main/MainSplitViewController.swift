@@ -110,7 +110,7 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol>: UISpli
 #Preview {
     {
         let splitViewController = MainSplitViewController(
-            sidebar: PreviewSidebarViewController(rootView: Text(verbatim: "sidebar")),
+            sidebar: PreviewSidebarViewController("sidebar"),
             noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
             tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
         )
@@ -119,11 +119,36 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol>: UISpli
     }()
 }
 
-private final class PreviewSidebarViewController: UIHostingController<Text>, MainSidebarProtocol {
+final class PreviewSidebarViewController: UIHostingController<PreviewSidebarView>, MainSidebarProtocol {
 
     var conversationFilter: ConversationFilter?
 
     enum ConversationFilter: MainSidebarConversationFilterProtocol {
         case favorites, groups, oneOnOne, archived
+    }
+
+    convenience init(_ content: String) {
+        self.init(content, .init(uiColor: .systemBackground))
+    }
+
+    convenience init(_ content: String, _ backgroundColor: Color) {
+        self.init(rootView: PreviewSidebarView(content: content, backgroundColor: backgroundColor))
+    }
+}
+
+struct PreviewSidebarView: View {
+    var content: String
+    var backgroundColor: Color
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Text(content)
+                    .ignoresSafeArea()
+                Spacer()
+            }
+            Spacer()
+        }.background(backgroundColor)
     }
 }
