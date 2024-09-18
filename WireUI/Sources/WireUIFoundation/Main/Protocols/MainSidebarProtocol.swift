@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum MainSplitViewInterface {
-    /// The main split view controller is collapsed, either due to running on a phone
-    /// or running on iPad in split screen mode or with stage manager and having
-    /// the window of the app shrunk to horizontal compact size class.
-    case collapsed
+import UIKit
 
-    /// Running on iPad with split view controller being fully visible.
-    case expanded
+@MainActor
+public protocol MainSidebarProtocol: UIViewController {
+    associatedtype ConversationFilter: MainConversationListFilterProtocol
+    var conversationFilter: ConversationFilter? { get set }
 }

@@ -98,7 +98,7 @@ final class ConversationListViewController: UIViewController {
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
     let selfProfileViewControllerBuilder: ViewControllerBuilder
-    var splitViewControllerMode: MainLayoutStatus = .expanded {
+    var splitViewControllerMode: MainSplitViewInterface = .expanded {
         didSet {
             setupTitleView()
             updateNavigationItem()

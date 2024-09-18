@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainSidebarConversationFilterProtocol {
+public protocol MainConversationListFilterProtocol {
     static var favorites: Self { get }
     static var groups: Self { get }
     static var oneOnOne: Self { get }

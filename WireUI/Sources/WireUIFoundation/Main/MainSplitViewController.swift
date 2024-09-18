@@ -18,9 +18,8 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<Sidebar: MainSidebarProtocol>: UISplitViewController, MainSplitViewControllerProtocol {
+public final class MainSplitViewController<Sidebar: MainSidebarProtocol, ConversationList: MainConversationListProtocol>: UISplitViewController, MainSplitViewControllerProtocol {
 
-    public typealias ConversationList = UIViewController
     public typealias Conversation = UIViewController
     public typealias TabContainer = UIViewController
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
@@ -109,23 +108,31 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol>: UISpli
 @available(iOS 17, *)
 #Preview {
     {
-        let splitViewController = MainSplitViewController(
+        let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewSidebarViewController>(
             sidebar: PreviewSidebarViewController("sidebar"),
             noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
             tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
         )
-        splitViewController.conversationList = UIHostingController(rootView: Text(verbatim: "conversation list"))
+        splitViewController.conversationList = PreviewSidebarViewController("conversation list")
         return splitViewController
     }()
 }
 
-final class PreviewSidebarViewController: UIHostingController<PreviewSidebarView>, MainSidebarProtocol {
+final class PreviewSidebarViewController: UIHostingController<PreviewSidebarView>, MainSidebarProtocol, MainConversationListProtocol {
+
+    // MARK: - MainSidebarProtocol
 
     var conversationFilter: ConversationFilter?
 
-    enum ConversationFilter: MainSidebarConversationFilterProtocol {
+    enum ConversationFilter: MainConversationListFilterProtocol {
         case favorites, groups, oneOnOne, archived
     }
+
+    // MARK: - MainConversationListProtocol
+
+    var splitViewInterface: MainSplitViewInterface = .expanded
+
+    // MARK: - Life Cycle
 
     convenience init(_ content: String) {
         self.init(content, .init(uiColor: .systemBackground))

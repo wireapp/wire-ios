@@ -19,7 +19,8 @@
 import UIKit
 
 @MainActor
-public protocol MainSidebarProtocol: UIViewController {
-    associatedtype ConversationFilter: MainSidebarConversationFilterProtocol
+public protocol MainConversationListProtocol: UIViewController {
+    associatedtype ConversationFilter: MainConversationListFilterProtocol
     var conversationFilter: ConversationFilter? { get set }
+    var splitViewInterface: MainSplitViewInterface { get set }
 }
