@@ -132,6 +132,23 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(user.supportedProtocols, Scaffolding.user1.supportedProtocols?.toDomainModel())
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
+
+        func testRemovesPushToken() async throws {
+            // Given
+
+            let defaults = UserDefaults.standard
+            let data = try JSONEncoder().encode(Scaffolding.pushToken)
+            defaults.set(data, forKey: "PushToken")
+
+            // When
+
+            sut.removePushToken()
+
+            // Then
+
+            let pushToken = defaults.object(forKey: "PushToken")
+            XCTAssertNil(pushToken)
+        }
     }
 
     private enum Scaffolding {
@@ -148,6 +165,15 @@ class UserRepositoryTests: XCTestCase {
             service: nil,
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
+        )
+
+        static let deviceToken = Data(repeating: 0x41, count: 10)
+
+        static let pushToken = PushToken(
+            deviceToken: deviceToken,
+            appIdentifier: "com.wire",
+            transportType: "APNS_VOIP",
+            tokenType: .voip
         )
     }
 

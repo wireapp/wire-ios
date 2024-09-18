@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireAPI
 
 /// Process user push remove events.
@@ -30,9 +31,10 @@ protocol UserPushRemoveEventProcessorProtocol {
 
 struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
 
+    let repository: any UserRepositoryProtocol
+
     func processEvent() async throws {
-        // TODO: [WPB-10199]
-        assertionFailure("not implemented yet")
+        repository.removePushToken()
     }
 
 }

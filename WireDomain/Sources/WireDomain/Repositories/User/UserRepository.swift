@@ -43,6 +43,10 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Removes user push token from defaults.
+
+    func removePushToken()
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -87,6 +91,11 @@ public final class UserRepository: UserRepositoryProtocol {
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
+    }
+
+    public func removePushToken() {
+        // TODO: [WPB-10199] use new propertyWrapper for UserDefaults when related PR is merged
+        UserDefaults.standard.set(nil, forKey: "PushToken")
     }
 
     private func persistUser(from user: WireAPI.User) {

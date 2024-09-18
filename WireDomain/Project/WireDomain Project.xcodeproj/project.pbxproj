@@ -52,6 +52,7 @@
 		C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */; };
 		C9F691192C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691162C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift */; };
 		C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */; };
+		C9F691292C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691282C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -164,6 +165,7 @@
 		C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryTests.swift; sourceTree = "<group>"; };
 		C9F691162C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMemberUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9F691282C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPushRemoveEventProcessorTests.swift; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -387,6 +389,7 @@
 		C90E8B322C89EBA90017494F /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
+				C9F691272C9B1630008CC41F /* UserEventProcessor */,
 				C9F691182C987DC8008CC41F /* TeamEventProcessor */,
 			);
 			path = "Event Processing";
@@ -471,6 +474,14 @@
 				C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */,
 			);
 			path = TeamEventProcessor;
+			sourceTree = "<group>";
+		};
+		C9F691272C9B1630008CC41F /* UserEventProcessor */ = {
+			isa = PBXGroup;
+			children = (
+				C9F691282C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift */,
+			);
+			path = UserEventProcessor;
 			sourceTree = "<group>";
 		};
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
@@ -868,6 +879,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9F691292C9B164A008CC41F /* UserPushRemoveEventProcessorTests.swift in Sources */,
 				C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
 				C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,

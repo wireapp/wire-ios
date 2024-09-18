@@ -445,6 +445,21 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - removePushToken
+
+    public var removePushToken_Invocations: [Void] = []
+    public var removePushToken_MockMethod: (() -> Void)?
+
+    public func removePushToken() {
+        removePushToken_Invocations.append(())
+
+        guard let mock = removePushToken_MockMethod else {
+            fatalError("no mock for `removePushToken`")
+        }
+
+        mock()
+    }
+
 }
 
 // swiftlint:enable variable_name
