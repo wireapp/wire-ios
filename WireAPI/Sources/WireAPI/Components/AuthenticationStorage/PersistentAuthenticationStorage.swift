@@ -116,7 +116,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
         case errSecSuccess:
             guard let base64CookieData = result as? Data else {
-                throw PersistentAuthenticationStorageError.unableToFetchCookieData(status: nil)
+                throw PersistentAuthenticationStorageError.failedToFetchCookieData(status: nil)
             }
 
             guard let cookieData = Data(base64Encoded: base64CookieData) else {
@@ -126,7 +126,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
             return cookieData
 
         default:
-            throw PersistentAuthenticationStorageError.unableToFetchCookieData(status: status)
+            throw PersistentAuthenticationStorageError.failedToFetchCookieData(status: status)
         }
     }
 
