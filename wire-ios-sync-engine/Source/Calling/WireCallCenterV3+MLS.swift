@@ -171,32 +171,6 @@ extension WireCallCenterV3 {
         }
     }
 
-    func deleteSubconversation(conversationID: AVSIdentifier) {
-        guard
-            let viewContext = uiMOC,
-            let syncContext = viewContext.zm_sync,
-            let parentIDs = mlsParentIDS(for: conversationID)
-        else {
-            return
-        }
-
-        syncContext.perform {
-            guard let mlsService = syncContext.mlsService else {
-                WireLogger.calling.error("failed to delete subconversation: mlsService is missing")
-                assertionFailure("mlsService is nil")
-                return
-            }
-
-            Task {
-                do {
-                    try await mlsService.deleteSubgroup(parentQualifiedID: parentIDs.qualifiedID)
-                } catch {
-                    WireLogger.calling.error("failed to delete subconversation: \(String(reflecting: error))")
-                }
-            }
-        }
-    }
-
 }
 
 extension CallParticipantState {
