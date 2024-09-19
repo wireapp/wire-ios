@@ -78,7 +78,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 // bottom menu items
                 Group {
                     menuItem(.settings)
-                    
+
                     SidebarMenuItemView(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
                         Text("sidebar.support.title", bundle: .module)
                     } action: {
@@ -113,7 +113,6 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @ViewBuilder
     private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
-
             menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
             let conversationFilters = [SidebarMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
             ForEach(conversationFilters, id: \.self) { conversationFilter in
@@ -141,11 +140,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     }
 
     private func menuItem(_ menuItem: SidebarMenuItem) -> some View {
-
         let text: Text
         let icon: String
         switch menuItem {
-
         case .all:
             text = Text("sidebar.conversation_filter.all.title", bundle: .module)
             icon = "text.bubble"

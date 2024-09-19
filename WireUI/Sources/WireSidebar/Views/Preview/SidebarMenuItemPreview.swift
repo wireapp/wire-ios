@@ -55,4 +55,3 @@ private struct SidebarMenuItemContainer<Content>: View where Content: View {
         }
     }
 }
-

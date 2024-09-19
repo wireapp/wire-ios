@@ -28,7 +28,7 @@ let package = Package(
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin]),
 
-        .target(name: "WireUIFoundation", dependencies: ["WireFoundation"]),
+        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
         .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
