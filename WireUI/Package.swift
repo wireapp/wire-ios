@@ -4,6 +4,7 @@
 import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
+let SnapshotTestReferenceDirectoryPlugin = Target.PluginUsage.plugin(name: "SnapshotTestReferenceDirectoryPlugin", package: "WireFoundation")
 
 let package = Package(
     name: "WireUI",
@@ -14,7 +15,7 @@ let package = Package(
         .library(name: "WireDesign", targets: ["WireDesign"]),
         .library(name: "WireReusableUIComponents", targets: ["WireReusableUIComponents"]),
         .library(name: "WireSidebar", targets: ["WireSidebar"]),
-        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"])
+        .library(name: "WireUIFoundation", targets: ["WireUIFoundation"]) // TODO: what about naming it WireMainLayout or similar?
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -22,19 +23,19 @@ let package = Package(
     ],
     targets: [
         .target(name: "WireDesign", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage]),
+        .testTarget(name: "WireDesignTests", dependencies: ["WireDesign", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin]),
 
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
-        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage]),
+        .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin]),
 
-        .target(name: "WireUIFoundation", dependencies: ["WireDesign"]),
-        .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage]),
+        .target(name: "WireUIFoundation", dependencies: ["WireFoundation"]),
+        .testTarget(name: "WireUIFoundationTests", dependencies: ["WireUIFoundation", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage]),
+        .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin]),
 
         .target(name: "WireSidebar", dependencies: ["WireFoundation"]),
-        .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage])
+        .testTarget(name: "WireSidebarTests", dependencies: ["WireSidebar", WireTestingPackage], plugins: [SnapshotTestReferenceDirectoryPlugin])
     ]
 )
 

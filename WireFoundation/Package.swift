@@ -9,7 +9,8 @@ let package = Package(
     products: [
         .library(name: "WireFoundation", targets: ["WireFoundation"]),
         .library(name: "WireFoundationSupport", targets: ["WireFoundationSupport"]),
-        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"])
+        .library(name: "WireTestingPackage", targets: ["WireTestingPackage"]),
+        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", targets: ["SnapshotTestReferenceDirectoryPlugin"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
@@ -18,7 +19,11 @@ let package = Package(
     ],
     targets: [
         .target(name: "WireFoundation"),
-        .testTarget(name: "WireFoundationTests", dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"]),
+        .testTarget(
+            name: "WireFoundationTests",
+            dependencies: ["WireFoundation", "WireFoundationSupport", "WireTestingPackage"],
+            plugins: ["SnapshotTestReferenceDirectoryPlugin"]
+        ),
         .target(
             name: "WireFoundationSupport",
             dependencies: ["WireFoundation"],
@@ -31,11 +36,13 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "./Sources/WireTesting"
-        )
+        ),
+        .plugin(name: "SnapshotTestReferenceDirectoryPlugin", capability: .buildTool()),
     ]
 )
 
 for target in package.targets {
+    guard target.type != .plugin else { continue }
     target.swiftSettings = [
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("GlobalConcurrency"),
