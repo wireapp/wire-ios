@@ -26,7 +26,7 @@ import XCTest
 
 public struct SnapshotHelper {
 
-    private var perceptualPrecision: Float = 0.98
+    private var perceptualPrecision: Float = 1
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
@@ -152,6 +152,7 @@ public struct SnapshotHelper {
 
     public func verify<View: SwiftUI.View>(
         matching value: View,
+        named name: String? = nil,
         testName: String = #function,
         file: StaticString = #file,
         line: UInt = #line
@@ -163,6 +164,7 @@ public struct SnapshotHelper {
                 layout: layout,
                 traits: traits
             ),
+            named: name,
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,
             testName: testName,
