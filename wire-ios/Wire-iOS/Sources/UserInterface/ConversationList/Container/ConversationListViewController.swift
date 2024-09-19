@@ -79,14 +79,16 @@ final class ConversationListViewController: UIViewController {
         mainCoordinator: MainCoordinating,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         isFolderStatePersistenceEnabled: Bool,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some ViewControllerBuilder,
+        marketingConsentRepository: any MarketingConsentRepositoryProtocol
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUserLegalHoldSubject: selfUserLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase,
-            mainCoordinator: mainCoordinator
+            mainCoordinator: mainCoordinator,
+            marketingConsentRepository: marketingConsentRepository
         )
         self.init(
             viewModel: viewModel,

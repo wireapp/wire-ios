@@ -62,7 +62,8 @@ final class AuthenticatedRouter {
         userSession: UserSession,
         featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
-        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
+        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
+        marketingConsentRepository: any MarketingConsentRepositoryProtocol
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(
@@ -73,7 +74,8 @@ final class AuthenticatedRouter {
 
         builder = AuthenticatedWireFrame(
             account: account,
-            userSession: userSession
+            userSession: userSession,
+            marketingConsentRepository: marketingConsentRepository
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
@@ -167,17 +169,24 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 struct AuthenticatedWireFrame {
     private var account: Account
     private var userSession: UserSession
+    private var marketingConsentRepository: any MarketingConsentRepositoryProtocol
 
     init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        marketingConsentRepository: any MarketingConsentRepositoryProtocol
     ) {
         self.account = account
         self.userSession = userSession
+        self.marketingConsentRepository = marketingConsentRepository
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+        let viewController = ZClientViewController(
+            account: account,
+            userSession: userSession,
+            marketingConsentRepository: marketingConsentRepository
+        )
         viewController.router = router
         return viewController
     }

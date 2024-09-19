@@ -26,6 +26,7 @@ final class ZClientViewController: UIViewController {
 
     private let account: Account
     let userSession: UserSession
+    private let marketingConsentRepository: any MarketingConsentRepositoryProtocol
 
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
@@ -56,7 +57,8 @@ final class ZClientViewController: UIViewController {
         mainCoordinator: MainCoordinator(zClientViewController: self),
         isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
         isFolderStatePersistenceEnabled: false,
-        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+        marketingConsentRepository: marketingConsentRepository
     )
     // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
     private lazy var conversationListWithFoldersViewController = {
@@ -68,7 +70,8 @@ final class ZClientViewController: UIViewController {
             mainCoordinator: MainCoordinator(zClientViewController: self),
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             isFolderStatePersistenceEnabled: true,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder, 
+            marketingConsentRepository: marketingConsentRepository
         )
         viewController.listContentController.listViewModel.folderEnabled = true
         return viewController
@@ -93,10 +96,12 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        marketingConsentRepository: any MarketingConsentRepositoryProtocol
     ) {
         self.account = account
         self.userSession = userSession
+        self.marketingConsentRepository = marketingConsentRepository
 
         colorSchemeController = .init(userSession: userSession)
 

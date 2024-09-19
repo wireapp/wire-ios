@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UserSessionDependencies {
-    var caches: Caches
-    var marketingConsentRepository: MarketingConsentRepositoryProtocol
-
-    init(caches: Caches, marketingConsentRepository: MarketingConsentRepositoryProtocol) {
-        self.caches = caches
-        self.marketingConsentRepository = marketingConsentRepository
+extension ZMUserSession: MarketingConsentRepositoryProvider {
+    
+    public var marketingConsentRepository: any MarketingConsentRepositoryProtocol {
+        dependencies.marketingConsentRepository
     }
+
 }

@@ -71,6 +71,7 @@ extension ConversationListViewController {
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         private let notificationCenter: NotificationCenter
+        private let marketingConsentRepository: MarketingConsentRepositoryProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -94,7 +95,8 @@ extension ConversationListViewController {
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default,
-            mainCoordinator: some MainCoordinating
+            mainCoordinator: some MainCoordinating,
+            marketingConsentRepository: MarketingConsentRepositoryProtocol
         ) {
             self.account = account
             self.selfUserLegalHoldSubject = selfUserLegalHoldSubject
@@ -105,6 +107,7 @@ extension ConversationListViewController {
             didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             self.mainCoordinator = mainCoordinator
+            self.marketingConsentRepository = marketingConsentRepository
             super.init()
 
             updateE2EICertifiedStatus()
@@ -184,30 +187,24 @@ extension ConversationListViewController.ViewModel {
     }
 
     func requestMarketingConsentIfNeeded() {
-        if let userSession = ZMUserSession.shared(), let selfUser = ZMUser.selfUser() {
-            guard
-                userSession.hasCompletedInitialSync == true,
-                userSession.isPendingHotFixChanges == false
-            else {
-                return
-            }
+        guard
+            let userSession = ZMUserSession.shared(),
+            let selfUser = ZMUser.selfUser(),
+            userSession.hasCompletedInitialSync == true,
+            userSession.isPendingHotFixChanges == false
+        else {
+            return
+        }
 
-            selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
-                switch result {
-                case .failure(let error):
-                    switch error {
-                    case ConsentRequestError.notAvailable:
-                        // don't show the alert there is no consent to show
-                        break
-                    default:
-                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                        })
+        Task { @MainActor [viewController, marketingConsentRepository] in
+            do {
+                if try await marketingConsentRepository.shouldPromptForConsent() {
+                    viewController?.showNewsletterSubscriptionDialogIfNeeded { marketingConsent in
+                        selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
                     }
-                case .success:
-                    // The user already gave a marketing consent, no need to ask for it again.
-                    return
                 }
+            } catch {
+                WireLogger.system.info("Error retrieving `shouldPromptForConsent`: \(error)")
             }
         }
     }

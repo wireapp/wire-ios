@@ -125,7 +125,8 @@ struct ZMUserSessionBuilder {
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
-        userId: UUID
+        userId: UUID,
+        marketingConsentRepository: MarketingConsentRepositoryProtocol
     ) {
         // reused dependencies
 
@@ -205,7 +206,10 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
+        self.dependencies = buildUserSessionDependencies(
+            coreDataStack: coreDataStack,
+            marketingConsentRepository: marketingConsentRepository
+        )
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
@@ -222,9 +226,13 @@ struct ZMUserSessionBuilder {
 
     // MARK: UserSesssionDependencies
 
-    private func buildUserSessionDependencies(coreDataStack: CoreDataStack) -> UserSessionDependencies {
+    private func buildUserSessionDependencies(
+        coreDataStack: CoreDataStack,
+        marketingConsentRepository: MarketingConsentRepositoryProtocol
+    ) -> UserSessionDependencies {
         UserSessionDependencies(
-            caches: buildCaches(coreDataStack: coreDataStack)
+            caches: buildCaches(coreDataStack: coreDataStack),
+            marketingConsentRepository: marketingConsentRepository
         )
     }
 

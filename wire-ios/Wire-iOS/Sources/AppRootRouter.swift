@@ -444,8 +444,10 @@ extension AppRootRouter {
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: rootViewController),
-            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
+                targetVC: rootViewController
+            ),
+            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+            marketingConsentRepository: userSession.marketingConsentRepository
         )
     }
 }

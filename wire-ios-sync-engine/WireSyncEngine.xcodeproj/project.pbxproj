@@ -537,6 +537,7 @@
 		CB4895562C4FB7AB00CA2C25 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895552C4FB7AB00CA2C25 /* WireTesting.framework */; };
 		CB4895572C4FB7AB00CA2C25 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CB4895552C4FB7AB00CA2C25 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CB7566B82C99D86500135A86 /* MarketingConsentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7566B72C99D86500135A86 /* MarketingConsentRepository.swift */; };
+		CB7566BA2C9B22ED00135A86 /* ZMUserSession+MarketingConsentRepositoryProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7566B92C9B22ED00135A86 /* ZMUserSession+MarketingConsentRepositoryProvider.swift */; };
 		CB79AC7C2C6DFAA2003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */; };
 		CB79AC7F2C6DFAC2003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC7E2C6DFAC2003CF5F4 /* WireTransportSupport.framework */; };
 		CBD3AED02C4A742B007643A0 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBD3AECF2C4A742B007643A0 /* TestSetup.swift */; };
@@ -1383,6 +1384,7 @@
 		CB4895522C4FB77C00CA2C25 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB4895552C4FB7AB00CA2C25 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7566B72C99D86500135A86 /* MarketingConsentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketingConsentRepository.swift; sourceTree = "<group>"; };
+		CB7566B92C9B22ED00135A86 /* ZMUserSession+MarketingConsentRepositoryProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+MarketingConsentRepositoryProvider.swift"; sourceTree = "<group>"; };
 		CB79AC7B2C6DFAA2003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB79AC7E2C6DFAC2003CF5F4 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBD3AECF2C4A742B007643A0 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
@@ -2886,6 +2888,7 @@
 				554FEE2022AFF20600B1A8A1 /* ZMUserSession+LegalHold.swift */,
 				16ED865923E2E91900CB1766 /* ZMUserSession+LifeCycle.swift */,
 				54034F371BB1A6D900F4ED62 /* ZMUserSession+Logs.swift */,
+				CB7566B92C9B22ED00135A86 /* ZMUserSession+MarketingConsentRepositoryProvider.swift */,
 				EE8584DC2B6BD33B0045EAD4 /* ZMUserSession+OneOnOne.swift */,
 				8751DA051F66BFA6000D308B /* ZMUserSession+Push.swift */,
 				06E0979B2A261E5D00B38C4A /* ZMUserSession+RecurringAction.swift */,
@@ -3923,6 +3926,7 @@
 				5E8BB89C2147CE1600EEA64B /* AVSCallMember.swift in Sources */,
 				166D18A4230EBFFA001288CD /* MediaManager.swift in Sources */,
 				874F142D1C16FD9700C15118 /* Device.swift in Sources */,
+				CB7566BA2C9B22ED00135A86 /* ZMUserSession+MarketingConsentRepositoryProvider.swift in Sources */,
 				F19E55A422B3A740005C792D /* PKPushPayload+SafeLogging.swift in Sources */,
 				EE1108F923D1F945005DC663 /* TypingUsersTimeout.swift in Sources */,
 				16C4BDA020A309CD00BCDB17 /* CallParticipantSnapshot.swift in Sources */,

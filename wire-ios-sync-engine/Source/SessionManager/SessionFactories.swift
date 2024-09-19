@@ -61,8 +61,9 @@ open class AuthenticatedSessionFactory {
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults,
-        isDeveloperModeEnabled: Bool
-    ) -> ZMUserSession? {
+        isDeveloperModeEnabled: Bool,
+        isDataCollectionDisabled: Bool
+    ) -> ZMUserSession? { // FIXME: Make this non optional
         let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: proxyUsername,
@@ -73,6 +74,17 @@ open class AuthenticatedSessionFactory {
             applicationGroupIdentifier: nil,
             applicationVersion: appVersion,
             minTLSVersion: minTLSVersion
+        )
+
+        class UserSessionProvider {
+            weak var session: ZMUserSession?
+        }
+
+        let userSessionProvider = UserSessionProvider() // TODO: Remove dependency on user
+        let marketingConsentRepository = MarketingConsentRepository(
+            transportSession: transportSession,
+            marketingConsentEnabled: !isDataCollectionDisabled,
+            user: { userSessionProvider.session?.selfUser as? ZMUser }
         )
 
         var userSessionBuilder = ZMUserSessionBuilder()
@@ -92,7 +104,8 @@ open class AuthenticatedSessionFactory {
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            userId: account.userIdentifier
+            userId: account.userIdentifier,
+            marketingConsentRepository: marketingConsentRepository
         )
 
         let userSession = userSessionBuilder.build()
@@ -105,6 +118,7 @@ open class AuthenticatedSessionFactory {
             isDeveloperModeEnabled: isDeveloperModeEnabled
         )
         userSession.startRequestLoopTracker()
+        userSessionProvider.session = userSession
 
         return userSession
     }
