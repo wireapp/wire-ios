@@ -30,7 +30,7 @@ final class SelfProfileViewController: UIViewController {
 
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
-    var rootGroup: (any SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
+    var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
 
     // MARK: - Views
 

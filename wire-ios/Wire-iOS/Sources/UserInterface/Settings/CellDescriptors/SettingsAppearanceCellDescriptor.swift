@@ -20,11 +20,8 @@ import MobileCoreServices
 import UIKit
 import WireSyncEngine
 
-class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
-
+class SettingsAppearanceCellDescriptor: any SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsAppearanceCell.self
-
-    typealias Cell = SettingsAppearanceCell
 
     private var text: String
     private let presentationStyle: PresentationStyle
@@ -33,7 +30,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
     let presentationAction: () -> (UIViewController?)
 
     var identifier: String?
-    weak var group: (any SettingsGroupCellDescriptorType)?
+    weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
     var visible: Bool {
@@ -76,7 +73,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
 
     // MARK: - SettingsCellDescriptorType
 
-    func select(_ value: SettingsPropertyValue, sender: Cell) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         guard let controllerToShow = generateViewController() else { return }
 
         switch presentationStyle {

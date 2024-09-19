@@ -75,7 +75,7 @@ extension SelfProfileViewController {
                 resultViewController = viewController
             }
 
-            if let topCellGroupDescriptor = topCellDescriptor as? any SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
+            if let topCellGroupDescriptor = topCellDescriptor as? SettingsInternalGroupCellDescriptorType & SettingsControllerGeneratorType {
                 topCellGroupDescriptor.allCellDescriptors().forEach({ (cellDescriptor: any SettingsCellDescriptorType) in
                     if let cellIdentifier = cellDescriptor.identifier,
                        let cellGroupDescriptor = cellDescriptor as? SettingsControllerGeneratorType,

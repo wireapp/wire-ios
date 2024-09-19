@@ -18,11 +18,8 @@
 
 import UIKit
 
-final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
-
+final class SettingsProfileLinkCellDescriptor: any SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsLinkTableCell.self
-
-    typealias Cell = SettingsLinkTableCell
 
     // MARK: - Configuration
 
@@ -48,10 +45,10 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
     }
 
     var identifier: String?
-    weak var group: (any SettingsGroupCellDescriptorType)?
+    weak var group: SettingsGroupCellDescriptorType?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue, sender: Cell) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         // no-op
     }
 }

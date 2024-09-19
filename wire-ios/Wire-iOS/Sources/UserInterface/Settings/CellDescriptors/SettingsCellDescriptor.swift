@@ -38,8 +38,6 @@ import WireDesign
  */
 protocol SettingsCellDescriptorType: AnyObject {
 
-    static var cellType: SettingsTableCellProtocol.Type { get }
-
     associatedtype Cell: SettingsTableCellProtocol
 
     var visible: Bool { get }
@@ -69,7 +67,7 @@ func == (left: any SettingsCellDescriptorType, right: any SettingsCellDescriptor
 
 typealias PreviewGeneratorType = (any SettingsCellDescriptorType) -> SettingsCellPreview
 
-protocol SettingsGroupCellDescriptorType: SettingsCellDescriptorType {
+protocol SettingsGroupCellDescriptorType: any SettingsCellDescriptorType {
     var viewController: UIViewController? {get set}
 }
 
@@ -82,7 +80,7 @@ protocol SettingsSectionDescriptorType: AnyObject {
 }
 
 extension SettingsSectionDescriptorType {
-    func allCellDescriptors() -> [any SettingsCellDescriptorType] {
+    func allCellDescriptors() -> [any any SettingsCellDescriptorType] {
         return cellDescriptors
     }
 }
@@ -111,7 +109,7 @@ protocol SettingsExternalScreenCellDescriptorType: SettingsGroupCellDescriptorTy
     var presentationAction: () -> (UIViewController?) {get}
 }
 
-protocol SettingsPropertyCellDescriptorType: SettingsCellDescriptorType {
+protocol SettingsPropertyCellDescriptorType: any SettingsCellDescriptorType {
     var settingsProperty: SettingsProperty {get}
 }
 
@@ -156,8 +154,6 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 }
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
-
-    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
 
     typealias Cell = SettingsTableCell
 

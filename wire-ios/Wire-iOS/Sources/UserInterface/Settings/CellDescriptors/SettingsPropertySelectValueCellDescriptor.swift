@@ -22,11 +22,7 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorType {
-
     static let cellType: SettingsTableCellProtocol.Type = SettingsValueCell.self
-
-    typealias Cell = SettingsValueCell
-
     let value: SettingsPropertyValue
     let title: String
     let identifier: String?
@@ -36,7 +32,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
     let backgroundColor: UIColor?
     var visible: Bool = true
 
-    weak var group: (any SettingsGroupCellDescriptorType)?
+    weak var group: SettingsGroupCellDescriptorType?
     var settingsProperty: SettingsProperty
 
     init(settingsProperty: SettingsProperty, value: SettingsPropertyValue, title: String, identifier: String? = .none, selectAction: SelectActionType? = .none, backgroundColor: UIColor? = .none) {
@@ -55,7 +51,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         }
     }
 
-    func select(_ value: SettingsPropertyValue, sender: Cell) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         do {
             try settingsProperty.set(newValue: self.value, resultHandler: { _ in } )
         } catch {
