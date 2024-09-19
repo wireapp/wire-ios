@@ -71,7 +71,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 profileSwitcher
                     .onTapGesture(perform: accountImageAction)
                     .padding(.horizontal, 24)
-                    .padding(.bottom)
+                    .padding(.vertical)
 
                 let menuItemsScrollView = ScrollView(.vertical) { menuItems }
                 if #available(iOS 16.4, *) {
@@ -80,8 +80,6 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 } else {
                     menuItemsScrollView
                 }
-
-                Spacer()
 
                 // bottom menu items
                 SidebarMenuItem(icon: "gearshape", iconSize: iconSize) {
@@ -98,8 +96,8 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 }
                 .padding(.horizontal, 16)
             }
+            .padding(.bottom)
             .frame(maxWidth: .infinity)
-            .padding(.vertical)
         }
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         .onPreferenceChange(SidebarMenuItemMinIconSizeKey.self) { newIconSize in
