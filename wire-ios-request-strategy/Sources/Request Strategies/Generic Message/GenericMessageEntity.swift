@@ -71,7 +71,7 @@ import Foundation
     }
 
     public func prepareMessageForSending() async throws {
-        // no-op - TODO: double check this
+        // no-op
     }
 
     public func expire() {
