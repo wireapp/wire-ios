@@ -28,7 +28,7 @@ final class UITabBarController_applyMainTabBarControllerAppearanceTests: XCTestC
 
     override func setUp() {
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {

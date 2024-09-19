@@ -108,6 +108,7 @@ public struct SnapshotHelper {
     /// - Parameter testCaseFile: Specify `#file` in your test case file.
     /// - Returns: A copy of the current helper with a new snapshot directory.
 
+    // TODO: remove
     public func withSnapshotDirectory(relativeTo testCaseFile: String) -> Self {
         var pathComponents = URL(fileURLWithPath: testCaseFile)
             .deletingLastPathComponent()

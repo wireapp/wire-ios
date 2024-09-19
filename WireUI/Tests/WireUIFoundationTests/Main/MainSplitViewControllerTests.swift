@@ -49,7 +49,7 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut.conversation = conversation
 
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() async throws {
