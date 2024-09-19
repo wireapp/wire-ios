@@ -66,20 +66,15 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Deletes_A_Member_When_Receiving_A_Team_Member_Leave_Update_Event_For_Another_User() async throws {
         // Given
 
-        await context.perform { [context] in
-            let user = ZMUser.insertNewObject(in: context)
-            user.remoteIdentifier = Scaffolding.userID
-
-            let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = Scaffolding.teamID
-
-            let member = Member.getOrUpdateMember(
-                for: user,
-                in: team,
+        try await context.perform { [self] in
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [Scaffolding.userID],
                 context: context
             )
-
-            XCTAssertNotNil(member)
+            
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
         }
 
@@ -102,20 +97,21 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Request_Account_Deletion_When_Receiving_A_Team_Member_Leave_Update_Event_For_Self_User() async throws {
         // Given
 
-        await context.perform { [context] in
-            let user = ZMUser.selfUser(in: context)
-            user.remoteIdentifier = Scaffolding.userID
-
-            let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = Scaffolding.teamID
-
-            let member = Member.getOrUpdateMember(
-                for: user,
-                in: team,
+        try await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+            
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [selfUser],
                 context: context
             )
-
-            XCTAssertNotNil(member)
+            
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
         }
 
@@ -145,39 +141,23 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Removes_A_Member_From_All_Group_Conversations_They_Were_Part_Of_When_Receiving_A_Member_Leave_Event_For_That_Member() async throws {
         // Given
 
-        await context.perform { [context] in
-            let user = ZMUser.insertNewObject(in: context)
-            user.remoteIdentifier = Scaffolding.userID
-
-            let otherUser = ZMUser.insertNewObject(in: context)
-            otherUser.remoteIdentifier = UUID()
-
-            let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = Scaffolding.teamID
-
-            let teamConversation1 = ZMConversation.insertNewObject(in: context)
-            teamConversation1.remoteIdentifier = Scaffolding.teamConversationID
-            teamConversation1.conversationType = .group
-            teamConversation1.addParticipantAndUpdateConversationState(
-                user: user,
-                role: nil
-            )
-            teamConversation1.team = team
-
-            let conversation = ZMConversation.insertGroupConversation(
-                moc: context,
-                participants: [user, otherUser]
-            )
-
-            conversation?.remoteIdentifier = Scaffolding.conversationID
-
-            let member = Member.getOrUpdateMember(
-                for: user,
-                in: team,
+        try await context.perform { [self] in
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [Scaffolding.userID],
+                inGroupConversation: Scaffolding.teamConversationID,
                 context: context
             )
 
-            XCTAssertNotNil(member)
+            modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: users,
+                domain: nil,
+                in: context
+            )
+
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
         }
 
@@ -205,41 +185,37 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Appends_A_System_Message_To_All_Team_Conversations_They_Were_Part_Of_When_Receiving_A_Member_Leave_Event_For_That_Member() async throws {
         // Given
 
-        await context.perform { [context] in
-            let user = ZMUser.insertNewObject(in: context)
-            user.remoteIdentifier = Scaffolding.userID
-
-            let otherUser = ZMUser.insertNewObject(in: context)
-            otherUser.remoteIdentifier = UUID()
-
-            let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = Scaffolding.teamID
-
-            let teamConversation1 = ZMConversation.insertNewObject(in: context)
-            teamConversation1.remoteIdentifier = Scaffolding.teamConversationID
-            teamConversation1.conversationType = .group
-            teamConversation1.addParticipantAndUpdateConversationState(user: user, role: nil)
-            teamConversation1.team = team
-
-            let teamConversation2 = ZMConversation.insertNewObject(in: context)
-            teamConversation2.remoteIdentifier = Scaffolding.anotherTeamConversationID
-            teamConversation2.conversationType = .group
-            teamConversation2.addParticipantAndUpdateConversationState(user: user, role: nil)
-            teamConversation2.team = team
-
-            let conversation = ZMConversation.insertGroupConversation(
-                moc: context,
-                participants: [user, otherUser]
-            )
-            conversation?.remoteIdentifier = Scaffolding.conversationID
-
-            let member = Member.getOrUpdateMember(
-                for: user,
-                in: team,
+        try await context.perform { [self] in
+            let (team, users, _) = modelHelper.createTeam(
+                id: Scaffolding.teamID,
+                withMembers: [Scaffolding.userID],
+                inGroupConversation: Scaffolding.teamConversationID,
                 context: context
             )
 
-            XCTAssertNotNil(member)
+            let otherConversation = modelHelper.createGroupConversation(
+                id: Scaffolding.anotherTeamConversationID,
+                with: users,
+                team: team,
+                domain: nil,
+                in: context
+            )
+            
+            let newUser = modelHelper.createUser(
+                id: UUID(),
+                domain: nil,
+                in: context
+            )
+            
+            let anotherConversation = modelHelper.createGroupConversation(
+                id: Scaffolding.conversationID,
+                with: Set(users + [newUser]),
+                domain: nil,
+                in: context
+            )
+            
+            let user = try XCTUnwrap(users.first)
+            let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
         }
 
@@ -315,9 +291,9 @@ private enum Scaffolding {
     }
 
     static let event = TeamMemberLeaveEvent(
-        time: date(from: time),
         teamID: teamID,
-        userID: userID
+        userID: userID,
+        time: date(from: time)
     )
 
 }

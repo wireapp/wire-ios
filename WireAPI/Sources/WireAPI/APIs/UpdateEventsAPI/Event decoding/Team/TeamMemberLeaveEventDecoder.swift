@@ -39,9 +39,9 @@ struct TeamMemberLeaveEventDecoder {
         )
 
         return TeamMemberLeaveEvent(
-            time: time.date,
             teamID: teamID,
-            userID: payload.userID
+            userID: payload.userID,
+            time: time.date
         )
     }
 

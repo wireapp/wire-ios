@@ -45,14 +45,14 @@ protocol TeamRepositoryProtocol {
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 
     /// Deletes the member of a team.
-    /// - Parameter time: The time the member left the team.
     /// - Parameter userID: The ID of the team member.
     /// - Parameter teamID: The ID of the team.
+    /// - Parameter time: The time the member left the team.
 
-    func deleteTeamMember(
-        time: Date,
-        userID: UUID,
-        teamID: UUID
+    func deleteMembership(
+        forUser userID: UUID,
+        fromTeam teamID: UUID,
+        at time: Date
     ) async throws
 
 }
@@ -83,10 +83,10 @@ final class TeamRepository: TeamRepositoryProtocol {
         await storeTeamLocally(team)
     }
 
-    func deleteTeamMember(
-        time: Date,
-        userID: UUID,
-        teamID: UUID
+    func deleteMembership(
+        forUser userID: UUID,
+        fromTeam teamID: UUID,
+        at time: Date
     ) async throws {
         let user = try await userRepository.fetchUser(with: userID)
 
