@@ -23,7 +23,7 @@ import WireFoundation
 // private let titleColor: UIColor = .black // ColorTheme.Backgrounds.onSurface
 // private let subtitleColor: UIColor = .gray // ColorTheme.Base.secondaryText
 
-// TODO: consider renaming if it's not for switching profiles but opening the profile
+// TODO: consider renaming `SidebarAccountInfoView` if it's not for switching profiles but opening the profile
 
 struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
 
@@ -157,19 +157,5 @@ private struct SidebarProfileSwitcherUsernameColorKey: EnvironmentKey {
 // MARK: - Previews
 
 #Preview {
-    SidebarProfileSwitcherViewPreview()
-}
-
-@ViewBuilder @MainActor
-func SidebarProfileSwitcherViewPreview() -> some View {
-    SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
-        MockAccountView()
-    }
-}
-
-private struct MockAccountView: View {
-    var body: some View {
-        Circle()
-            .foregroundStyle(Color.primary)
-    }
+    SidebarAccountInfoPreview()
 }
