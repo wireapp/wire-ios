@@ -60,7 +60,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         coreDataStack.syncContext
     }
     
-    func test_infoForTransport_For2DifferentsUsersWithOneClient() async throws {
+    func test_infoForSending_For2DifferentsUsersWithOneClient() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
             Scaffolding.userAID.domain: [
@@ -91,7 +91,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         }
         
         // WHEN
-        let messageInfo = try await sut.infoForTransport(message: mockProteusMessage, conversationID: conversationID)
+        let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
         
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
@@ -101,7 +101,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         XCTAssertEqual(messageInfo.listClients, expectedListClients)
     }
 
-    func test_infoForTransport_ForSameUserWithTwoClients() async throws {
+    func test_infoForSending_ForSameUserWithTwoClients() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
             Scaffolding.selfUserID.domain: [
@@ -130,7 +130,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         }
         
         // WHEN
-        let messageInfo = try await sut.infoForTransport(message: mockProteusMessage, conversationID: conversationID)
+        let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
         
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
@@ -140,7 +140,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         XCTAssertEqual(messageInfo.listClients, expectedListClients)
     }
 
-    func test_infoForTransport_WithUserNoSession() async throws {
+    func test_infoForSending_WithUserNoSession() async throws {
         // GIVEN
         let expectedListClients = [
             Scaffolding.userAID.domain: [
@@ -174,7 +174,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         }
         
         // WHEN
-        let messageInfo = try await sut.infoForTransport(message: mockProteusMessage, conversationID: conversationID)
+        let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
         
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
@@ -184,7 +184,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         XCTAssertEqual(messageInfo.listClients, expectedListClients)
     }
 
-    func test_infoForTransport_WithUserDeletedAccount() async throws {
+    func test_infoForSending_WithUserDeletedAccount() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
             Scaffolding.userAID.domain: [
@@ -220,7 +220,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         }
         
         // WHEN
-        let messageInfo = try await sut.infoForTransport(message: mockProteusMessage, conversationID: conversationID)
+        let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
         
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)

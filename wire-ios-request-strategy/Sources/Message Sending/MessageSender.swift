@@ -194,7 +194,7 @@ public final class MessageSender: MessageSenderInterface {
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
-            let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
+            let messageInfo = try await extractor.infoForSending(message: message, conversationID: conversationID)
 
             // 2) get the encrypted payload
             let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)

@@ -18,6 +18,7 @@
 
 import Foundation
 
+
 public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
 
     /// Messages can expire, e.g. if network conditions are too slow to send.
@@ -29,10 +30,16 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
     func prepareMessageForSending() async throws
 
     var underlyingMessage: GenericMessage? { get }
+    
+    var targetRecipients: Recipients { get }
 }
 
 extension ZMClientMessage: ProteusMessage {
 
+    public var targetRecipients: Recipients {
+        .conversationParticipants
+    }
+    
     public func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {
@@ -57,6 +64,10 @@ extension ZMClientMessage: ProteusMessage {
 
 extension ZMAssetClientMessage: ProteusMessage {
 
+    public var targetRecipients: Recipients {
+        .conversationParticipants
+    }
+    
     public func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {

@@ -18,16 +18,16 @@
 
 import Foundation
 
+public enum Recipients {
+    case conversationParticipants
+    case users(Set<ZMUser>)
+    case clients([ZMUser: Set<UserClient>])
+}
+
 @objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
 
     public var underlyingMessage: WireProtos.GenericMessage? {
         message
-    }
-
-    public enum Recipients {
-        case conversationParticipants
-        case users(Set<ZMUser>)
-        case clients([ZMUser: Set<UserClient>])
     }
 
     public var context: NSManagedObjectContext

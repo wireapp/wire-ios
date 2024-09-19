@@ -40,44 +40,22 @@ struct MessageInfoExtractor {
         guard let genericMessage else {
             throw MessageInfoExtractorError.missingGenericMessage
         }
-
-        let (selfUser, selfDomain) = await context.perform {
-            let user = ZMUser.selfUser(in: context)
-            return (user, user.domain)
-        }
-        let selfClientID = try await selfClientID()
-        guard let selfDomain else {
-            throw MessageInfoExtractorError.missingSelfDomain
-        }
-        
-        var listClients: MessageInfo.ClientList
-        var userQualifiedIDs = Set<QualifiedID>()
         
         switch message.targetRecipients {
-        case .clients(let userClients):
-            fatal("unexpected usage")
-            listClients = await listOfClients(for: userClients, selfDomain: selfDomain, selfClientID: selfClientID)
-            userQualifiedIDs = await context.perform { Set(userClients.keys.compactMap { $0.qualifiedID }) }
         case .users(let users):
-            let messageRecipients = await context.perform { users.mapToDictionary { $0.clients } }
-            listClients = await listOfClients(for: messageRecipients, selfDomain: selfDomain, selfClientID: selfClientID)
-            userQualifiedIDs = await context.perform { Set(users.compactMap { $0.qualifiedID }) }
-            
-        case .conversationParticipants:
+            var info = try await infoForTransport(message: genericMessage, for: users)
+            let userQualifiedIDs = await context.perform { Set(users.compactMap { $0.qualifiedID }) }
+
+            info.missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(userIds: userQualifiedIDs)
+            return info
+
+        case .conversationParticipants, .clients:
             fatal("unexpected usage")
         }
 
-        let strategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(userIds: userQualifiedIDs)
-        
-        return MessageInfo(genericMessage: genericMessage,
-                           listClients: listClients,
-                           missingClientsStrategy: strategy,
-                           selfClientID: selfClientID,
-                           nativePush: !genericMessage.hasConfirmation,
-                           userClients: [])
     }
     
-    func infoForTransport(message: any ProteusMessage, conversationID: QualifiedID) async throws -> MessageInfo {
+    func infoForSending(message: any ProteusMessage, conversationID: QualifiedID) async throws -> MessageInfo {
         let (conversation, genericMessage) = await context.perform { [context] in
             (ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context),
              message.underlyingMessage)
@@ -91,9 +69,44 @@ struct MessageInfoExtractor {
             throw MessageInfoExtractorError.missingGenericMessage
         }
 
-        return try await infoForTransport(message: genericMessage, in: conversation)
+        switch message.targetRecipients {
+        case .conversationParticipants:
+            return try await infoForTransport(message: genericMessage, in: conversation)
+        case .users(let users):
+            return try await infoForTransport(message: genericMessage, for: users)
+        case .clients(let messageRecipients):
+            return try await infoForTransport(message: genericMessage, for: messageRecipients)
+        }
     }
+    
+    // MARK: - Private
+    
+    private func infoForTransport(message: GenericMessage, for users: Set<ZMUser>) async throws -> MessageInfo {
+        let messageRecipients = await context.perform { users.mapToDictionary { $0.clients } }
 
+        return try await infoForTransport(message: message, for: messageRecipients)
+    }
+    
+    private func infoForTransport(message: GenericMessage, for messageRecipients: [ZMUser : Set<UserClient>]) async throws -> MessageInfo {
+        let selfDomain = await context.perform {
+            let user = ZMUser.selfUser(in: context)
+            return user.domain
+        }
+        let selfClientID = try await selfClientID()
+        guard let selfDomain else {
+            throw MessageInfoExtractorError.missingSelfDomain
+        }
+        let listClients = await listOfClients(for: messageRecipients, selfDomain: selfDomain, selfClientID: selfClientID)
+        let userClients = await context.perform { messageRecipients.map { $1 }.flatMap { $0 } }
+
+        return MessageInfo(genericMessage: message,
+                           listClients: listClients,
+                           missingClientsStrategy: .ignoreAllMissingClients,
+                           selfClientID: selfClientID,
+                           nativePush: !message.hasConfirmation,
+                           userClients: userClients)
+    }
+    
     private func infoForTransport(message: GenericMessage, in conversation: ZMConversation) async throws -> MessageInfo {
         let (selfUser, selfDomain) = await context.perform {
             let user = ZMUser.selfUser(in: context)
