@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct UserClientData {
+struct UserClientData: Equatable {
     var sessionID: ProteusSessionID
     var data: Data?
 }
