@@ -607,23 +607,6 @@ extension AuthenticationCoordinator {
         registrationStatus.create(user: unregisteredUser)
     }
 
-    // MARK: - Post Registration
-
-    /// Computes the post registration fields, if any.
-    private func currentPostRegistrationFields() -> AuthenticationPostRegistrationFields? {
-        switch stateController.currentStep {
-        case .createUser(let unregisteredUser):
-            guard let marketingConsent = unregisteredUser.marketingConsent else {
-                return nil
-            }
-
-            return AuthenticationPostRegistrationFields(marketingConsent: marketingConsent)
-
-        default:
-            return nil
-        }
-    }
-
     // MARK: - Login
 
     /// Starts the login flow with the specified request.
