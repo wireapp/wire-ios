@@ -268,7 +268,7 @@ final class MessageSenderTests: MessagingTestBase {
         try await messageSender.sendMessage(message: message)
 
         // then
-        XCTAssertEqual(2, arrangement.messageApi.sendProteusMessageMessageConversationID_Invocations.count)
+        XCTAssertEqual(2, arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count)
     }
 
     func testThatWhenSendingProteusMessageFailsWithTemporaryErrorButHasExpired_thenThrowError() async throws {
@@ -618,8 +618,8 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
-            messageApi.sendProteusMessageMessageConversationID_MockMethod = { [weak messageApi] _, _ in
-                if let count = messageApi?.sendProteusMessageMessageConversationID_Invocations.count, count > 1 {
+            messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { [weak messageApi] _, _, _ in
+                if let count = messageApi?.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count, count > 1 {
                     return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
                 } else {
                     throw error
@@ -660,9 +660,9 @@ final class MessageSenderTests: MessagingTestBase {
 
             switch result {
             case .success(let value):
-                messageApi.sendProteusMessageMessageConversationID_MockValue = value
+                messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockValue = value
             case .failure(let error):
-                messageApi.sendProteusMessageMessageConversationID_MockError = error
+                messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockError = error
             }
             return self
         }

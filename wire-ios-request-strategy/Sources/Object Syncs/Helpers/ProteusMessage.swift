@@ -18,7 +18,6 @@
 
 import Foundation
 
-// sourcery: AutoMockable
 public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
 
     /// Messages can expire, e.g. if network conditions are too slow to send.
@@ -27,7 +26,6 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
     /// Sets the expiration date with the default time interval.
     func setExpirationDate()
 
-    /// Updates the underlying message - TODO: check naming
     func prepareMessageForSending() async throws
 
     var underlyingMessage: GenericMessage? { get }

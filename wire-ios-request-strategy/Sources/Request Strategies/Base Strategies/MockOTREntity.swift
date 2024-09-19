@@ -68,6 +68,10 @@ final class MockOTREntity: OTREntity {
 }
 
 extension MockOTREntity: ProteusMessage {
+    func prepareMessageForSending() async throws {
+    
+    }
+    
     var debugInfo: String {
         "Mock ProteusMessage"
     }
@@ -78,6 +82,10 @@ extension MockOTREntity: ProteusMessage {
 
     func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
         return (Data("qualified".utf8), .doNotIgnoreAnyMissingClient)
+    }
+
+    var underlyingMessage: GenericMessage? {
+        return nil
     }
 
     func setExpirationDate() {
