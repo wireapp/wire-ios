@@ -99,26 +99,6 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Creates a copy of the current helper with the snapshot directory set to a path relative to the specified test case file.
-    ///
-    /// Example: from a provided value of `./WireUI/Tests/WireReusableUIComponentsTests/AccountImageView/AccountImageViewSnapshotTests.swift`
-    /// the last two path components are deleted and `Resources/ReferenceImages` is appended, resulting in the
-    /// value `/Users/christoph/Developer/wireapp/wire-ios0/WireUI/Tests/WireReusableUIComponentsTests/Resources/ReferenceImages`.
-    ///
-    /// - Parameter testCaseFile: Specify `#file` in your test case file.
-    /// - Returns: A copy of the current helper with a new snapshot directory.
-
-    // TODO: remove
-    public func withSnapshotDirectory(relativeTo testCaseFile: String) -> Self {
-        var pathComponents = URL(fileURLWithPath: testCaseFile)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .pathComponents
-        pathComponents.append(contentsOf: ["Resources", "ReferenceImages"])
-        let snapshotDirectory = NSString.path(withComponents: pathComponents)
-        return withSnapshotDirectory(snapshotDirectory)
-    }
-
     // MARK: - Verify views
 
     /// Verify a SwiftUI view.
