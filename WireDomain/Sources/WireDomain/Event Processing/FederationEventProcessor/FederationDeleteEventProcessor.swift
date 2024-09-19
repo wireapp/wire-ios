@@ -31,7 +31,7 @@ protocol FederationDeleteEventProcessorProtocol {
 }
 
 struct FederationDeleteEventProcessor: FederationDeleteEventProcessorProtocol {
-    
+
     let repository: any ConnectionsRepositoryProtocol
 
     func processEvent(_ event: FederationDeleteEvent) async throws {

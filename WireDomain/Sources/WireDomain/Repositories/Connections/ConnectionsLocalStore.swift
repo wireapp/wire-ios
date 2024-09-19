@@ -16,45 +16,45 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import WireAPI
 import WireDataModel
 
 // sourcery: AutoMockable
 protocol ConnectionsLocalStoreProtocol {
-    
+
     func storeConnection(
         _ connectionPayload: Connection
     ) async throws
-    
+
     func deleteFederationConnection(
         with domain: String
     ) async throws
-    
+
     func removeFederationConnection(
         between domain: String,
         and otherDomain: String
     ) async
-    
+
 }
 
 final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
-    
+
     // MARK: - Properties
-    
+
     private let context: NSManagedObjectContext
-    
+
     // MARK: - Object lifecycle
-    
+
     init(
         context: NSManagedObjectContext
     ) {
         self.context = context
     }
-    
+
     // MARK: - Public
-    
+
     /// Save connection and related objects to local storage.
     /// - Parameter connectionPayload: connection object from WireAPI
 
@@ -70,43 +70,43 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             try context.save()
         }
     }
-    
+
     /// Deletes a federation connection on a specific domain locally.
     /// - Parameter domain: The domain to delete the connection for.
 
     public func deleteFederationConnection(with domain: String) async throws {
         await context.perform { [self] in
             let selfUserDomain = ZMUser.selfUser(in: context).domain ?? ""
-            
+
             /// For all conversations owned by self domain, remove all users that belong to `domain` from those conversations.
             removeFederationConnection(
                 with: domain,
                 forConversationsOwnedBy: selfUserDomain
             )
-            
+
             /// For all conversations owned by `domain`, remove all users from self domain from those conversations.
             removeFederationConnection(
                 with: selfUserDomain,
                 forConversationsOwnedBy: domain
             )
-            
+
             /// For all conversations that are NOT owned by self domain or `domain` and contain users from self domain and `domain`, remove users from `domain` and `otherDomain` from those conversations.
             removeFederationConnection(
                 with: [selfUserDomain, domain],
                 forConversationsNotOwnedBy: [selfUserDomain, domain]
             )
-            
+
             /// For any connection from a user on self domain to a user on `domain`, delete the connection.
             removeConnectionRequests(with: domain)
-            
+
             /// For any 1:1 conversation, where one of the two users is on `domain`, remove self user from those conversations.
             markOneToOneConversationsAsReadOnly(with: domain)
-            
+
             /// Remove connection for all connected users owned by `domain`.
             removeConnectedUsers(with: domain)
         }
     }
-    
+
     /// Removes a federation connection between two specific domains locally.
     /// - Parameter domain: The first domain.
     /// - Parameter otherDomain: The other domain.
@@ -139,7 +139,7 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             )
         }
     }
-    
+
     // MARK: - Private
 
     private func removeFederationConnection(
@@ -240,34 +240,34 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
             return userDomains.isSubset(of: localParticipantDomains)
         }
     }
-    
+
     private func removeConnectionRequests(with domain: String) {
         let sentAndPendingConnectionsPredicate = ZMUser.predicateForSentAndPendingConnections(hostedOnDomain: domain)
-        
+
         let pendingUsersFetchRequest = ZMUser.sortedFetchRequest(with: sentAndPendingConnectionsPredicate)
-        
+
         if let pendingUsers = context.fetchOrAssert(
             request: pendingUsersFetchRequest
         ) as? [ZMUser] {
-            pendingUsers.forEach { user in
+            for user in pendingUsers {
                 let isPendingConnection = user.connection?.status == .pending
                 user.connection?.status = isPendingConnection ? .ignored : .cancelled
             }
         }
     }
-    
+
     private func markOneToOneConversationsAsReadOnly(with domain: String) {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(
             hostedOnDomain: domain
         )
-        
+
         let fetchRequest = ZMUser.sortedFetchRequest(
             with: connectedUsersPredicate
         )
-        
+
         let selfUser = ZMUser.selfUser(in: context)
         let selfUserDomain = selfUser.domain ?? ""
-        
+
         if let users = context.fetchOrAssert(
             request: fetchRequest
         ) as? [ZMUser] {
@@ -280,29 +280,28 @@ final class ConnectionsLocalStore: ConnectionsLocalStoreProtocol {
                         sender: selfUser,
                         at: .now
                     )
-                    
+
                     conversation.isForcedReadOnly = true
                 }
         }
     }
-    
+
     private func removeConnectedUsers(with domain: String) {
         let connectedUsersPredicate = ZMUser.predicateForConnectedUsers(
             hostedOnDomain: domain
         )
-        
+
         let fetchRequest = ZMUser.sortedFetchRequest(
             with: connectedUsersPredicate
         )
-        
+
         guard let connectedUsers = context.fetchOrAssert(
             request: fetchRequest
         ) as? [ZMUser] else { return }
-        
-        connectedUsers.forEach { user in
+
+        for user in connectedUsers {
             user.connection = nil
         }
-        
     }
 
     private func getParticipants(

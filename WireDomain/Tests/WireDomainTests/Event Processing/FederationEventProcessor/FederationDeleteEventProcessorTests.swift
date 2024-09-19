@@ -68,7 +68,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             let oneOnOneConversation = try XCTUnwrap(otherUser.oneOnOneConversation)
 
             XCTAssertEqual(oneOnOneConversation.isForcedReadOnly, false)
@@ -85,7 +85,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             let oneOnOneConversation = try XCTUnwrap(otherUser.oneOnOneConversation)
             let lastMessage = try XCTUnwrap(oneOnOneConversation.lastMessage?.systemMessageData)
 
@@ -94,21 +94,20 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
             XCTAssertEqual(lastMessage.systemMessageType, .domainsStoppedFederating)
         }
     }
-    
+
     func testProcessEvent_It_Removes_Pending_Connection_Request() async throws {
-        
         // Given
 
         try await context.perform { [self] in
             let conversation = makeGroupConversation()
-            
+
             let otherUser = try XCTUnwrap(ZMUser.fetch(
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             otherUser.connection?.status = .pending
-            
+
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
             XCTAssertEqual(otherUser.connection?.status, .pending)
         }
@@ -124,27 +123,26 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             let otherUserConnection = try XCTUnwrap(otherUser.connection)
-            
+
             XCTAssertEqual(otherUserConnection.status, .ignored)
         }
     }
-    
+
     func testProcessEvent_It_Cancels_Sent_Connection_Request() async throws {
-        
         // Given
 
         try await context.perform { [self] in
             let conversation = makeGroupConversation()
-            
+
             let otherUser = try XCTUnwrap(ZMUser.fetch(
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             otherUser.connection?.status = .sent
-            
+
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
             XCTAssertEqual(otherUser.connection?.status, .sent)
         }
@@ -160,25 +158,24 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             let otherUserConnection = try XCTUnwrap(otherUser.connection)
-            
+
             XCTAssertEqual(otherUserConnection.status, .cancelled)
         }
     }
-    
+
     func testProcessEvent_It_Removes_Connection_For_Connected_Users() async throws {
-        
         // Given
 
         try await context.perform { [self] in
             let conversation = makeGroupConversation()
-            
+
             let otherUser = try XCTUnwrap(ZMUser.fetch(
                 with: Scaffolding.otherUserID,
                 in: context
             ))
-            
+
             XCTAssertEqual(conversation.remoteIdentifier, Scaffolding.groupConversationID)
             XCTAssertNotNil(otherUser.connection)
         }
@@ -195,29 +192,28 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                 domain: nil,
                 in: context
             )
-            
+
             XCTAssertEqual(otherUser.connection, nil)
         }
     }
-    
+
     func testProcessEvent_It_Removes_Self_User_From_Conversation_Hosted_By_Defederated_Domains() async throws {
-        
         // Given
 
         try await context.perform { [self] in
-            
+
             let conversation = makeGroupConversation(
                 selfUserDomain: Scaffolding.defederatedDomain
             )
-            
+
             let selfUser = try XCTUnwrap(
                 ZMUser.fetch(with: Scaffolding.selfUserID, in: context)
             )
-            
+
             let user = try XCTUnwrap(
                 ZMUser.fetch(with: Scaffolding.userID, in: context)
             )
-            
+
             XCTAssertTrue(conversation.localParticipants.contains(user))
             XCTAssertTrue(conversation.localParticipants.contains(selfUser))
         }
@@ -236,50 +232,51 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                     in: context
                 )
             )
-            
+
             let selfUser = ZMUser.selfUser(in: context)
-            
+
             let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.userID,
                     in: context
                 )
             )
-    
+
             XCTAssertEqual(conversation.localParticipants.contains(selfUser), false)
             XCTAssertEqual(conversation.localParticipants.contains(user), true)
-            
+
             let lastMessages = conversation.lastMessages(limit: 2)
-            
+
             XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, .participantsRemoved)
             XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, .domainsStoppedFederating)
         }
     }
-    
+
     func testProcessEvent_It_Removes_Other_User_From_Conversation_Hosted_By_Self_Domain() async throws {
-        
         // Given
 
         try await context.perform { [self] in
-            
+
             let conversation = makeGroupConversation(
                 hostedByDomain: Scaffolding.firstDomain,
                 selfUserDomain: Scaffolding.firstDomain,
                 userDomain: Scaffolding.defederatedDomain
             )
-            
+
             let selfUser = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.selfUserID,
-                    in: context)
+                    in: context
+                )
             )
-            
+
             let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.userID,
-                    in: context)
+                    in: context
+                )
             )
-            
+
             XCTAssertTrue(conversation.localParticipants.contains(user))
             XCTAssertTrue(conversation.localParticipants.contains(selfUser))
         }
@@ -298,55 +295,58 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                     in: context
                 )
             )
-            
+
             let selfUser = ZMUser.selfUser(in: context)
             let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.userID,
-                    in: context)
+                    in: context
+                )
             )
-    
+
             XCTAssertEqual(conversation.localParticipants.contains(selfUser), true)
             XCTAssertEqual(conversation.localParticipants.contains(user), false)
-            
+
             let lastMessages = conversation.lastMessages(limit: 2)
-            
+
             XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, .participantsRemoved)
             XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, .domainsStoppedFederating)
         }
     }
-    
+
     func testProcessEvent_It_Removes_Self_User_And_Another_User_From_Conversation_Hosted_By_Other_Domain() async throws {
-        
         // Given
 
         try await context.perform { [self] in
-            
+
             let conversation = makeGroupConversation(
                 hostedByDomain: Scaffolding.defederatedDomain,
                 selfUserDomain: Scaffolding.defederatedDomain,
                 userDomain: Scaffolding.defederatedDomain,
                 otherUserDomain: Scaffolding.firstDomain
             )
-            
+
             let selfUser = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.selfUserID,
-                    in: context)
+                    in: context
+                )
             )
-            
+
             let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.userID,
-                    in: context)
+                    in: context
+                )
             )
-            
+
             let otherUser = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.otherUserID,
-                    in: context)
+                    in: context
+                )
             )
-            
+
             XCTAssertTrue(conversation.localParticipants.contains(user))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
             XCTAssertTrue(conversation.localParticipants.contains(selfUser))
@@ -366,34 +366,34 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
                     in: context
                 )
             )
-            
+
             let selfUser = ZMUser.selfUser(in: context)
-            
+
             let user = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.userID,
                     in: context
                 )
             )
-            
+
             let otherUser = try XCTUnwrap(
                 ZMUser.fetch(
                     with: Scaffolding.otherUserID,
                     in: context
                 )
             )
-    
+
             XCTAssertFalse(conversation.localParticipants.contains(selfUser))
             XCTAssertFalse(conversation.localParticipants.contains(user))
             XCTAssertTrue(conversation.localParticipants.contains(otherUser))
-            
+
             let lastMessages = conversation.lastMessages(limit: 2)
-            
+
             XCTAssertEqual(lastMessages.first?.systemMessageData?.systemMessageType, .participantsRemoved)
             XCTAssertEqual(lastMessages.last?.systemMessageData?.systemMessageType, .domainsStoppedFederating)
         }
     }
-    
+
     private func makeGroupConversation(
         hostedByDomain domain: String = Scaffolding.defederatedDomain,
         selfUserDomain: String = Scaffolding.firstDomain,
@@ -401,17 +401,17 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
         otherUserDomain: String = Scaffolding.defederatedDomain
     ) -> ZMConversation {
         var created = false
-        
+
         let selfUser = ZMUser.selfUser(in: context)
         selfUser.remoteIdentifier = Scaffolding.selfUserID
         selfUser.domain = selfUserDomain
-        
+
         let user = ZMUser.fetchOrCreate(
             with: Scaffolding.userID,
             domain: nil,
             in: context
         )
-        
+
         user.domain = userDomain
 
         let otherUser = ZMUser.fetchOrCreate(
@@ -423,18 +423,18 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
         otherUser.domain = otherUserDomain
         otherUser.connection = ZMConnection.insertNewObject(in: context)
         otherUser.connection?.status = .accepted
-        
+
         let oneOnOneConversation = ZMConversation.fetchOrCreate(
             with: Scaffolding.oneOnOneConversationID,
             domain: nil,
             in: context
         )
-        
+
         oneOnOneConversation.domain = Scaffolding.defederatedDomain
         oneOnOneConversation.conversationType = .oneOnOne
         oneOnOneConversation.remoteIdentifier = Scaffolding.oneOnOneConversationID
         oneOnOneConversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
-        
+
         otherUser.oneOnOneConversation = oneOnOneConversation
 
         let groupConversation = ZMConversation.fetchOrCreate(
@@ -447,7 +447,7 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
         groupConversation.remoteIdentifier = Scaffolding.groupConversationID
         groupConversation.conversationType = .group
         groupConversation.domain = domain
-        
+
         let selfUserRole = ParticipantRole.create(
             managedObjectContext: context,
             user: selfUser,
@@ -481,7 +481,6 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
         return groupConversation
     }
 
-
 }
 
 // MARK: - Scaffolding
@@ -489,13 +488,13 @@ final class FederationDeleteEventProcessorTests: XCTestCase {
 private enum Scaffolding {
 
     /// UUIDs
-    
+
     static let selfUserID = UUID()
     static let userID = UUID()
     static let otherUserID = UUID()
     static let groupConversationID = UUID()
     static let oneOnOneConversationID = UUID()
-    
+
     /// Domains
 
     static let firstDomain = "domain.com"

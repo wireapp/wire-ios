@@ -26,34 +26,34 @@ import WireDataModel
 /// of domain models, concealing how and where the models are stored
 /// as well as the possible source(s) of the models.
 protocol ConnectionsRepositoryProtocol {
-    
+
     /// Pull self team metadata frmo the server and store locally.
-    
+
     func pullConnections() async throws
-    
+
     /// Deletes a federation connection with the specified domain.
     ///
     /// - Parameter domain: The domain to delete the connection for.
-    
+
     func deleteFederationConnection(with domain: String) async throws
-    
+
     /// Removes a federation connection between two domains.
     ///
     /// - Parameter domain : The domain for which the connection was removed.
     /// - Parameter otherDomain: The other domain for which the connection was removed.
-    
+
     func removeFederationConnection(between domain: String, and otherDomain: String) async
 }
 
 struct ConnectionsRepository: ConnectionsRepositoryProtocol {
-    
+
     // MARK: - Properties
-    
+
     private let connectionsAPI: any ConnectionsAPI
     private let connectionsLocalStore: any ConnectionsLocalStoreProtocol
-    
+
     // MARK: - Object lifecycle
-    
+
     init(
         connectionsAPI: any ConnectionsAPI,
         connectionsLocalStore: any ConnectionsLocalStoreProtocol
@@ -61,14 +61,14 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
         self.connectionsAPI = connectionsAPI
         self.connectionsLocalStore = connectionsLocalStore
     }
-    
+
     // MARK: - Public
-    
+
     /// Retrieve from backend and store connections locally
-    
+
     public func pullConnections() async throws {
         let connectionsPager = try await connectionsAPI.getConnections()
-        
+
         for try await connections in connectionsPager {
             await withThrowingTaskGroup(of: Void.self) { taskGroup in
                 for connection in connections {
@@ -79,7 +79,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             }
         }
     }
-    
+
     public func removeFederationConnection(
         between domain: String,
         and otherDomain: String
@@ -89,7 +89,7 @@ struct ConnectionsRepository: ConnectionsRepositoryProtocol {
             and: otherDomain
         )
     }
-    
+
     public func deleteFederationConnection(
         with domain: String
     ) async throws {
