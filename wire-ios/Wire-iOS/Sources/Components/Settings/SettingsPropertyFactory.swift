@@ -239,34 +239,6 @@ final class SettingsPropertyFactory {
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
 
-        case .receiveNewsAndOffers:
-
-            let getAction: GetAction = { [unowned self] _ in
-                return self.marketingConsent
-            }
-
-            let setAction: SetAction = { [unowned self] _, value in
-                switch value {
-                case .number(let number):
-                    guard let userSession = self.userSession else { return }
-
-                    userSession.perform {
-                        self.delegate?.asyncMethodDidStart(self)
-                        userSession.setMarketingConsent(granted: number.boolValue) { [weak self] _ in
-                            if let self {
-                                marketingConsent = SettingsPropertyValue.number(value: number)
-                                delegate?.asyncMethodDidComplete(self)
-                            }
-                        }
-                    }
-
-                default:
-                    throw SettingsPropertyError.WrongValue("Incorrect type: \(value) for key \(propertyName)")
-                }
-            }
-
-            return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
-
         case .notificationContentVisible:
             let getAction: GetAction = { [unowned self] _ in
                 if let value = self.userSession?.isNotificationContentHidden {
