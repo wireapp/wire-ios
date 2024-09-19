@@ -40,6 +40,7 @@ public struct ClientSession {
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
         apiService = APIService(
+            clientID: clientID,
             backendURL: backendURL,
             authenticationStorage: authenticationStorage,
             minTLSVersion: minTLSversion

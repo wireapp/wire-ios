@@ -21,6 +21,8 @@ import WireFoundation
 
 public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
+    private typealias Error = PersistentAuthenticationStorageError
+
     private let userID: UUID
     private var accessToken: AccessToken?
     private let sharedUserDefaults: UserDefaults
@@ -46,9 +48,51 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
 
     // MARK: - Cookie
 
-    public func storeCookieData(_ cookieData: Data) async throws {
+    public func storeCookies(_ cookies: [HTTPCookie]) async throws {
+        let properties = cookies.compactMap(\.properties)
+
+        // How many cookies do we expect to have?
+        guard
+            let name = properties.first?[.name] as? String,
+            name == "zuid"
+        else {
+            // What should we do?
+            fatalError()
+        }
+
+        let archiver = NSKeyedArchiver(requiringSecureCoding: true)
+        archiver.encode(properties, forKey: "properties")
+        archiver.finishEncoding()
+
+        let cookieData = archiver.encodedData
+        try await storeCookieData(cookieData)
+    }
+
+    public func fetchCookies() async throws -> [HTTPCookie] {
+        guard let cookieData = try await fetchCookieData() else {
+            return []
+        }
+
+        let unarchiver: NSKeyedUnarchiver
+        do {
+            unarchiver = try NSKeyedUnarchiver(forReadingFrom: cookieData)
+            unarchiver.requiresSecureCoding = true
+        } catch {
+            throw Error.failedToDecodeCookieData(error)
+        }
+
+        guard let properties = unarchiver.decodePropertyList(forKey: "properties") as? [[HTTPCookiePropertyKey: Any]] else {
+            throw Error.malformedCookieData
+        }
+
+        return properties.compactMap(HTTPCookie.init)
+    }
+
+    // MARK: - Cookie data
+
+    private func storeCookieData(_ cookieData: Data) async throws {
         guard let encryptionKey = fetchCookieEncryptionKey() else {
-            throw PersistentAuthenticationStorageError.missingCookieEncryptionKey
+            throw Error.missingCookieEncryptionKey
         }
 
         let encryptedCookieData: Data
@@ -68,11 +112,8 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         }
     }
 
-    public func fetchCookieData() async throws -> Data? {
-        let encryptedCookieData: Data
-        do {
-            encryptedCookieData = try fetchCookieDataFromKeychain()
-        } catch PersistentAuthenticationStorageError.cookieNotFound {
+    private func fetchCookieData() async throws -> Data? {
+        guard let encryptedCookieData = try fetchCookieDataFromKeychain() else {
             return nil
         }
 
@@ -97,7 +138,7 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         let status = SecItemAdd(query as CFDictionary, nil)
 
         guard status == errSecSuccess else {
-            throw PersistentAuthenticationStorageError.failedToAddCookieData(status: status)
+            throw PersistentAuthenticationStorageError.failedKeychainAdd(status: status)
         }
     }
 
@@ -106,31 +147,31 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
         let status = SecItemUpdate(fetchQuery as CFDictionary, updateQuery as CFDictionary)
 
         guard status == errSecSuccess else {
-            throw PersistentAuthenticationStorageError.failedToUpdateCookieData(status: status)
+            throw PersistentAuthenticationStorageError.failedKeychainUpdate(status: status)
         }
     }
 
-    private func fetchCookieDataFromKeychain() throws -> Data {
+    private func fetchCookieDataFromKeychain() throws -> Data? {
         var result: CFTypeRef?
         let status = SecItemCopyMatching(fetchQuery as CFDictionary, &result)
 
         switch status {
         case errSecItemNotFound:
-            throw PersistentAuthenticationStorageError.cookieNotFound
+            return nil
 
         case errSecSuccess:
             guard let base64CookieData = result as? Data else {
-                throw PersistentAuthenticationStorageError.failedToFetchCookieData(status: nil)
+                throw PersistentAuthenticationStorageError.failedKeychainFetch(status: nil)
             }
 
             guard let cookieData = Data(base64Encoded: base64CookieData) else {
-                throw PersistentAuthenticationStorageError.failedToBase64DecodeCookie
+                throw PersistentAuthenticationStorageError.malformedCookieData
             }
 
             return cookieData
 
         default:
-            throw PersistentAuthenticationStorageError.failedToFetchCookieData(status: status)
+            throw PersistentAuthenticationStorageError.failedKeychainFetch(status: status)
         }
     }
 

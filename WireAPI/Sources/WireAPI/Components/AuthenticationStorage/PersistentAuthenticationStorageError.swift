@@ -20,11 +20,11 @@ import Foundation
 
 enum PersistentAuthenticationStorageError: Error {
 
-    case cookieNotFound
-    case failedToFetchCookieData(status: Int32?)
-    case failedToAddCookieData(status: Int32)
-    case failedToUpdateCookieData(status: Int32)
-    case failedToBase64DecodeCookie
+    case malformedCookieData
+    case failedToDecodeCookieData(any Error)
+    case failedKeychainFetch(status: Int32?)
+    case failedKeychainAdd(status: Int32)
+    case failedKeychainUpdate(status: Int32)
     case missingCookieEncryptionKey
     case failedToEncryptCookie(any Error)
     case failedToDecryptCookie(any Error)

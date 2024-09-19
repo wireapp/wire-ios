@@ -18,25 +18,10 @@
 
 import Foundation
 
-final class InMemoryAuthenticationStorage: AuthenticationStorage {
 
-    private var accessToken: AccessToken?
-    private var cookies = [HTTPCookie]()
+enum NetworkServiceError: Error {
 
-    func storeAccessToken(_ accessToken: AccessToken) {
-        self.accessToken = accessToken
-    }
-
-    func fetchAccessToken() -> AccessToken? {
-        accessToken
-    }
-
-    func storeCookies(_ cookies: [HTTPCookie]) async throws {
-        self.cookies = cookies
-    }
-
-    func fetchCookies() async throws -> [HTTPCookie] {
-        cookies
-    }
+    case invalidRequest
+    case notAHTTPURLResponse
 
 }

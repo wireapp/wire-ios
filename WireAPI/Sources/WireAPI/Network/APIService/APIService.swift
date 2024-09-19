@@ -49,19 +49,20 @@ public protocol APIServiceProtocol {
 
 public final class APIService: APIServiceProtocol {
 
-    private let backendURL: URL
+    private let clientID: String
     private let authenticationStorage: any AuthenticationStorage
-    private let urlSession: URLSession
-    private let minTLSVersion: TLSVersion
+    private let networkService: NetworkService
 
     /// Create a new `APIService`.
     ///
     /// - Parameters:
+    ///   - clientID: The id of the self client.
     ///   - backendURL: The url of the target backend.
     ///   - authenticationStorage: The storage for authentication objects.
     ///   - minTLSVersion: The minimum supported TLS version.
 
     public convenience init(
+        clientID: String,
         backendURL: URL,
         authenticationStorage: any AuthenticationStorage,
         minTLSVersion: TLSVersion
@@ -69,25 +70,23 @@ public final class APIService: APIServiceProtocol {
         let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
         let configuration = configFactory.makeRESTAPISessionConfiguration()
         let urlSession = URLSession(configuration: configuration)
+        let networkService = NetworkService(baseURL: backendURL, urlSession: urlSession)
 
         self.init(
-            backendURL: backendURL,
+            clientID: clientID,
             authenticationStorage: authenticationStorage,
-            urlSession: urlSession,
-            minTLSVersion: minTLSVersion
+            networkService: networkService
         )
     }
 
     init(
-        backendURL: URL,
+        clientID: String,
         authenticationStorage: any AuthenticationStorage,
-        urlSession: URLSession,
-        minTLSVersion: TLSVersion
+        networkService: NetworkService
     ) {
-        self.backendURL = backendURL
+        self.clientID = clientID
         self.authenticationStorage = authenticationStorage
-        self.urlSession = urlSession
-        self.minTLSVersion = minTLSVersion
+        self.networkService = networkService
     }
 
     /// Execute a request to the backend.
@@ -102,31 +101,73 @@ public final class APIService: APIServiceProtocol {
         _ request: URLRequest,
         requiringAccessToken: Bool
     ) async throws -> (Data, HTTPURLResponse) {
-        guard let url = request.url else {
-            throw APIServiceError.invalidRequest
-        }
-
         var request = request
-        request.url = URL(
-            string: url.absoluteString,
-            relativeTo: backendURL
-        )
 
         if requiringAccessToken {
-            guard let accessToken = await authenticationStorage.fetchAccessToken() else {
-                throw APIServiceError.missingAccessToken
-            }
-
+            let accessToken = try await getAccessToken()
             request.setAccessToken(accessToken)
         }
 
-        let (data, response) = try await urlSession.data(for: request)
+        return try await networkService.executeRequest(request)
+    }
 
-        guard let httpURLResponse = response as? HTTPURLResponse else {
-            throw APIServiceError.notAHTTPURLResponse
+    private func getAccessToken() async throws -> AccessToken {
+        if let currentAccessToken = await authenticationStorage.fetchAccessToken() {
+            return currentAccessToken
+        } else {
+            let newAccessToken = try await getNewAccessToken()
+            await authenticationStorage.storeAccessToken(newAccessToken)
+            return newAccessToken
+        }
+    }
+
+    private func getNewAccessToken() async throws -> AccessToken {
+        let cookies = try await authenticationStorage.fetchCookies()
+
+        var request = try URLRequestBuilder(path: "/access")
+            .withQueryItem(name: "client_id", value: clientID)
+            .withMethod(.post)
+            .withAcceptType(.json)
+            .withCookies(cookies)
+            .build()
+
+        if let lastKnownAccessToken = await authenticationStorage.fetchAccessToken() {
+            request.setAccessToken(lastKnownAccessToken)
         }
 
-        return (data, httpURLResponse)
+        let (data, response) = try await networkService.executeRequest(request)
+
+        return try ResponseParser()
+            .success(code: .ok, type: AccessTokenPayload.self)
+            .failure(code: .forbidden, label: "invalid-credentials", error: APIServiceError.invalidCredentials)
+            .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
+
+    let user: UUID
+    let accessToken: String
+    let tokenType: String
+    let expiresIn: Int
+
+    enum CodingKeys: String, CodingKey {
+
+        case user
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case expiresIn = "expires_in"
+
+    }
+
+    func toAPIModel() -> AccessToken {
+        AccessToken(
+            userID: user,
+            token: accessToken,
+            type: tokenType,
+            validityInSeconds: TimeInterval(expiresIn)
+        )
     }
 
 }
