@@ -67,7 +67,6 @@ class SettingsBaseTableViewController: UIViewController {
         self.createTableView()
         self.view.addSubview(self.topSeparator)
         self.createConstraints()
-        self.view.backgroundColor = UIColor.clear
         super.viewDidLoad()
     }
 

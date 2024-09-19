@@ -209,6 +209,7 @@ final class ZClientViewController: UIViewController {
 
         // TODO: make sure the order of initialization is correct (coordinator, tab controller, split view controller)
         mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
+        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
         var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
         let mainCoordinator = MainCoordinator(
             // zClientViewController: self,
@@ -216,7 +217,6 @@ final class ZClientViewController: UIViewController {
             mainTabBarController: mainTabBarController,
             newConversationBuilder: newConversationBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
-            // settingsBuilder: SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
         )
         self.mainCoordinator = mainCoordinator
         newConversationBuilder.delegate = mainCoordinator

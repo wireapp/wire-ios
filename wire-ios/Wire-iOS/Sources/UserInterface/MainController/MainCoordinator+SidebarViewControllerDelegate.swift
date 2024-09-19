@@ -66,7 +66,7 @@ extension MainCoordinator: SidebarViewControllerDelegate {
     }
 
     public func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController) {
-        fatalError("TODO")
+        showSettings()
     }
 
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {

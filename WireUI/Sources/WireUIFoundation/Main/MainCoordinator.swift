@@ -28,7 +28,7 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
     SplitViewController.Sidebar: MainSidebarProtocol,
     SplitViewController.ConversationList == TabBarController.ConversationList,
     TabBarController.Archive == UIViewController,
-    NewConversationBuilder: MainContentViewControllerBuilder {
+NewConversationBuilder: MainContentViewControllerBuilder {
 
     private weak var mainSplitViewController: SplitViewController!
     private weak var mainTabBarController: TabBarController!
@@ -37,8 +37,11 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
     /// when the archived conversations list is taken out of the tab bar controller and presented on top of the conversation list.
     private weak var archivedConversations: TabBarController.Archive?
 
+    /// A reference to the settings view controller. This property is needed for the expanded layout mode
+    /// when the settings is taken out of the tab bar controller and presented on top of the conversation list.
+    private var settings: TabBarController.Settings?
+
     private let newConversationBuilder: NewConversationBuilder
-    // private weak var newConversationViewController: UIViewController?
 
     private var selfProfileBuilder: any ViewControllerBuilder
     private weak var selfProfileViewController: UIViewController?
@@ -57,6 +60,7 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
         self.selfProfileBuilder = selfProfileBuilder
 
         archivedConversations = mainTabBarController.archive
+        settings = mainTabBarController.settings
     }
 
     deinit {
@@ -110,20 +114,47 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
             return assertionFailure() // TODO: inject logger instead
         }
 
+        let selfProfileViewController = UINavigationController(rootViewController: selfProfileBuilder.build())
+        selfProfileViewController.modalPresentationStyle = .formSheet
+        self.selfProfileViewController = selfProfileViewController
+
         let conversationList = if isLayoutCollapsed {
             mainTabBarController.conversations!.conversationList
         } else {
             mainSplitViewController.conversationList!
         }
-
-        let selfProfileViewController = UINavigationController(rootViewController: selfProfileBuilder.build())
-        selfProfileViewController.modalPresentationStyle = .formSheet
-        self.selfProfileViewController = selfProfileViewController
-
         conversationList.present(selfProfileViewController, animated: true)
     }
 
     public func showSettings() {
+        mainTabBarController.selectedContent = .settings
+
+        if !isLayoutCollapsed {
+            // if it's already visible (and not contained in the tabBarController anymore), abort
+            //guard mainTabBarController.settings != nil else { return }
+            //addSettingsAsChildOfConversationList()
+
+            // TODO: remove this workaround
+            let settingsViewController = (mainTabBarController.settings ?? settings)!
+            mainTabBarController.settings = nil
+            let navigationController = UINavigationController(rootViewController: settingsViewController)
+            navigationController.modalPresentationStyle = .formSheet
+
+            // TODO: try to get rid of this line
+            navigationController.view.backgroundColor = .systemBackground
+
+            settings = settingsViewController
+
+            let conversationList = if isLayoutCollapsed {
+                mainTabBarController.conversations!.conversationList
+            } else {
+                mainSplitViewController.conversationList!
+            }
+            conversationList.present(navigationController, animated: true)
+        }
+
+        return;
+
         fatalError("not implemented yet")
 
         //        private func createSettingsViewController() -> UIViewController {
@@ -219,7 +250,8 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
         // move the archived conversations list back to the tab bar controller if needed
         moveArchivedConversationsIntoMainTabBarControllerIfNeeded()
 
-        // TODO: more to move?
+        // move the settings back to the tab bar controller if needed
+        moveSettingsIntoMainTabBarControllerIfNeeded()
     }
 
     // func splitViewController(
@@ -254,31 +286,58 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
             mainSplitViewController.sidebar.conversationFilter = .archived
         }
 
-        // TODO: more to move?
+        // if the settings view controller was visible, present it // TODO: on top of the conversation list
+        if mainTabBarController.selectedContent == .settings {
+            //addSettingsAsChildOfConversationList()
+            //mainSplitViewController.sidebar.selectedMenuItem = .settings
+
+            // TODO: remove this workaround
+            settings = mainTabBarController.settings!
+            mainTabBarController.settings = nil
+
+            let navigationController = UINavigationController(rootViewController: settings!)
+            navigationController.modalPresentationStyle = .formSheet
+
+            // TODO: try to get rid of this line
+            navigationController.view.backgroundColor = .systemBackground
+
+            mainSplitViewController.conversationList!.present(navigationController, animated: false)
+        }
     }
 
     // MARK: - Helpers
 
     private func addArchivedConversationsAsChildOfConversationList() {
-        let conversationList = mainSplitViewController.conversationList!
         let archivedConversations = archivedConversations!
         mainTabBarController.archive = nil
+        addViewControllerAsChildOfConversationList(archivedConversations)
+    }
 
-        conversationList.addChild(archivedConversations)
-        archivedConversations.view.translatesAutoresizingMaskIntoConstraints = false
-        conversationList.view.addSubview(archivedConversations.view)
+    /*
+    private func addSettingsAsChildOfConversationList() {
+        let settings = settings!
+        mainTabBarController.archive = nil
+        addViewControllerAsChildOfConversationList(settings)
+    }
+     */
+
+    private func addViewControllerAsChildOfConversationList(_ viewController: UIViewController) {
+        let conversationList = mainSplitViewController.conversationList!
+        conversationList.addChild(viewController)
+        viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        conversationList.view.addSubview(viewController.view)
         NSLayoutConstraint.activate([
-            archivedConversations.view.leadingAnchor.constraint(equalTo: conversationList.view.leadingAnchor),
-            archivedConversations.view.topAnchor.constraint(equalTo: conversationList.view.topAnchor),
-            conversationList.view.trailingAnchor.constraint(equalTo: archivedConversations.view.trailingAnchor),
-            conversationList.view.bottomAnchor.constraint(equalTo: archivedConversations.view.bottomAnchor)
+            viewController.view.leadingAnchor.constraint(equalTo: conversationList.view.leadingAnchor),
+            viewController.view.topAnchor.constraint(equalTo: conversationList.view.topAnchor),
+            conversationList.view.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor),
+            conversationList.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
         ])
-        archivedConversations.didMove(toParent: conversationList)
+        viewController.didMove(toParent: conversationList)
     }
 
     private func moveArchivedConversationsIntoMainTabBarControllerIfNeeded() {
         // If the archive tab is empty, we're showing the conversation archive in the expanded layout.
-        // That's how we know that we need to move it back.
+        // No need to move it back.
         if mainTabBarController.archive == nil {
             archivedConversations!.willMove(toParent: nil)
             archivedConversations!.view.removeFromSuperview()
@@ -286,6 +345,19 @@ public final class MainCoordinator<SplitViewController, TabBarController, NewCon
             archivedConversations!.view.translatesAutoresizingMaskIntoConstraints = true
             mainTabBarController.archive = archivedConversations
             mainTabBarController.selectedContent = .archive
+        }
+    }
+
+    private func moveSettingsIntoMainTabBarControllerIfNeeded() {
+        // If the settings tab is empty, we're showing the settings in the expanded layout.
+        // No need to move it back.
+        if mainTabBarController.settings == nil {
+            settings!.willMove(toParent: nil)
+            settings!.view.removeFromSuperview()
+            settings!.removeFromParent()
+            settings!.view.translatesAutoresizingMaskIntoConstraints = true
+            mainTabBarController.settings = settings
+            mainTabBarController.selectedContent = .settings
         }
     }
 }
