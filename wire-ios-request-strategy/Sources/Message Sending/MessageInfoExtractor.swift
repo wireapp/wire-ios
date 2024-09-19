@@ -30,6 +30,53 @@ enum MessageInfoExtractorError: Error {
 struct MessageInfoExtractor {
     var context: NSManagedObjectContext
 
+    func infoForBroadcast(message: any ProteusMessage) async throws -> MessageInfo {
+        guard let message = message as? GenericMessageEntity else {
+            fatal("unsupported message type")
+        }
+        
+        let genericMessage = message.underlyingMessage
+
+        guard let genericMessage else {
+            throw MessageInfoExtractorError.missingGenericMessage
+        }
+
+        let (selfUser, selfDomain) = await context.perform {
+            let user = ZMUser.selfUser(in: context)
+            return (user, user.domain)
+        }
+        let selfClientID = try await selfClientID()
+        guard let selfDomain else {
+            throw MessageInfoExtractorError.missingSelfDomain
+        }
+        
+        var listClients: MessageInfo.ClientList
+        var userQualifiedIDs = Set<QualifiedID>()
+        
+        switch message.targetRecipients {
+        case .clients(let userClients):
+            fatal("unexpected usage")
+            listClients = await listOfClients(for: userClients, selfDomain: selfDomain, selfClientID: selfClientID)
+            userQualifiedIDs = await context.perform { Set(userClients.keys.compactMap { $0.qualifiedID }) }
+        case .users(let users):
+            let messageRecipients = await context.perform { users.mapToDictionary { $0.clients } }
+            listClients = await listOfClients(for: messageRecipients, selfDomain: selfDomain, selfClientID: selfClientID)
+            userQualifiedIDs = await context.perform { Set(users.compactMap { $0.qualifiedID }) }
+            
+        case .conversationParticipants:
+            fatal("unexpected usage")
+        }
+
+        let strategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(userIds: userQualifiedIDs)
+        
+        return MessageInfo(genericMessage: genericMessage,
+                           listClients: listClients,
+                           missingClientsStrategy: strategy,
+                           selfClientID: selfClientID,
+                           nativePush: !genericMessage.hasConfirmation,
+                           userClients: [])
+    }
+    
     func infoForTransport(message: any ProteusMessage, conversationID: QualifiedID) async throws -> MessageInfo {
         let (conversation, genericMessage) = await context.perform { [context] in
             (ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context),

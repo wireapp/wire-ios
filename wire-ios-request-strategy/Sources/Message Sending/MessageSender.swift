@@ -141,14 +141,12 @@ public final class MessageSender: MessageSenderInterface {
 
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
 
-        let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
+        let proteusService = await context.perform { [context] in
+            context.proteusService
+        }
 
         guard let proteusService else {
             throw MessageSendError.missingProteusService
-        }
-
-        guard let conversationID else {
-            throw MessageSendError.missingQualifiedID
         }
 
         do {
@@ -156,7 +154,7 @@ public final class MessageSender: MessageSenderInterface {
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
-            let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
+            let messageInfo = try await extractor.infoForBroadcast(message: message)
 
             // 2) get the encrypted payload
             let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
