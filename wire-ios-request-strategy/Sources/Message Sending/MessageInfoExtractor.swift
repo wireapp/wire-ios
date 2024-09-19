@@ -74,6 +74,9 @@ struct MessageInfo {
 enum MessageInfoExtractorError: Error {
     case missingConversation
     case missingGenericMessage
+    case missingValidSelfClient
+    case missingSelfDomain
+
 }
 
 /// Pull out of coredata object info to send a message
@@ -104,7 +107,7 @@ struct MessageInfoExtractor {
         }
         let selfClientID = try await selfClientID()
         guard let selfDomain else {
-            throw MessageEncryptorError.missingSelfDomain
+            throw MessageInfoExtractorError.missingSelfDomain
         }
 
         // get the recipients and the missing clientsStrategy
@@ -128,7 +131,7 @@ struct MessageInfoExtractor {
         let selfClientID = await context.perform {
             ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
         }
-        guard let id = selfClientID else { throw MessageEncryptorError.missingValidSelfClient }
+        guard let id = selfClientID else { throw MessageInfoExtractorError.missingValidSelfClient }
         return id
     }
 

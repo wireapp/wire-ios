@@ -20,27 +20,14 @@ import Foundation
 import WireProtos
 
 enum MessageEncryptorError: Error {
-    case missingValidSelfClient
-    case missingSelfDomain
     case unableToEncryptForExternalData
     case emptyEncryptedData
 }
 
-private extension String {
-    var hexRemoteIdentifier: UInt64 {
-        let pointer = UnsafeMutablePointer<UInt64>.allocate(capacity: 1)
-        defer { pointer.deallocate() }
-        Scanner(string: self).scanHexInt64(pointer)
-        return UInt64(pointer.pointee)
-    }
-}
-
 /// Provide the payload for a given proteus message
 struct ProteusMessagePayloadBuilder {
-    var context: NSManagedObjectContext
     var proteusService: ProteusServiceInterface
-
-    var useQualifiedIds: Bool = false
+    var useQualifiedIds: Bool
 
     func encryptForTransport(with messageInfo: MessageInfo, externalData: Data? = nil) async throws -> Data {
 
@@ -164,5 +151,14 @@ struct ProteusMessagePayloadBuilder {
             }
         }
         return Proteus_UserEntry(withProteusUserId: proteusUserID, clientEntries: clientEntries)
+    }
+}
+
+private extension String {
+    var hexRemoteIdentifier: UInt64 {
+        let pointer = UnsafeMutablePointer<UInt64>.allocate(capacity: 1)
+        defer { pointer.deallocate() }
+        Scanner(string: self).scanHexInt64(pointer)
+        return UInt64(pointer.pointee)
     }
 }

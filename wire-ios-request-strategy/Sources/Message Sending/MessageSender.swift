@@ -159,7 +159,7 @@ public final class MessageSender: MessageSenderInterface {
             let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
 
             // 2) get the encrypted payload
-            let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
             await messageInfo.resetAllUserClientsFailedSessions(in: context)
             
@@ -199,7 +199,7 @@ public final class MessageSender: MessageSenderInterface {
             let messageInfo = try await extractor.infoForTransport(message: message, conversationID: conversationID)
 
             // 2) get the encrypted payload
-            let payloadBuilder = ProteusMessagePayloadBuilder(context: context, proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
             
