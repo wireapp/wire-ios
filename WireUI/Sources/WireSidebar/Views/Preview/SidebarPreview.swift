@@ -89,4 +89,3 @@ private func PreviewTextStyleMapping() -> WireTextStyleMapping {
         }
     }
 }
-
