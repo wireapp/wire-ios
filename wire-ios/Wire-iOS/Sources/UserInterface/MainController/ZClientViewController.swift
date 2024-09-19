@@ -209,15 +209,17 @@ final class ZClientViewController: UIViewController {
 
         // TODO: make sure the order of initialization is correct (coordinator, tab controller, split view controller)
         mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
+var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
         let mainCoordinator = MainCoordinator(
             // zClientViewController: self,
             mainSplitViewController: wireSplitViewController,
             mainTabBarController: mainTabBarController,
-            newConversationBuilder: StartUIViewControllerBuilder(userSession: userSession),
+            newConversationBuilder: newConversationBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
             // settingsBuilder: SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
         )
         self.mainCoordinator = mainCoordinator
+        newConversationBuilder.delegate = mainCoordinator
         wireSplitViewController.delegate = mainCoordinator
 
         addChild(wireSplitViewController)
@@ -277,8 +279,9 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        fatalError("TODO")
-        //conversationListViewController.presentNewConversationViewController()
+        Task {
+            await mainCoordinator.showNewConversation()
+        }
     }
 
     // MARK: Status bar

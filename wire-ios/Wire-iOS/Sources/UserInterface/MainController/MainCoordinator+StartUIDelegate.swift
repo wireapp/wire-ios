@@ -24,7 +24,7 @@ extension MainCoordinator: StartUIDelegate {
     func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
         fatalError()
     }
-    
+
     func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
         fatalError()
     }

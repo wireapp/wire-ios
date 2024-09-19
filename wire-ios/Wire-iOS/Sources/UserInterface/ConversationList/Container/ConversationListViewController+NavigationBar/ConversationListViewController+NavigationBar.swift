@@ -140,8 +140,9 @@ extension ConversationListViewController {
         // New Conversation Button
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
-            //self?.presentNewConversationViewController()
-            fatalError("TODO")
+            Task {
+                await self?.mainCoordinator.showNewConversation()
+            }
         }
         // TODO: accessibility
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction)), spacer]
@@ -212,8 +213,11 @@ extension ConversationListViewController {
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
         newConversationBarButton.accessibilityIdentifier = "???????????" // TODO: accessibilityIdentifier
         newConversationBarButton.accessibilityLabel = "" // TODO: accessibilityLabel
-        newConversationBarButton.addAction(.init { [weak self] _ in /*self?.presentNewConversationViewController()*/ fatalError("TODO") }, for: .primaryActionTriggered)
-
+        newConversationBarButton.addAction(.init { [weak self] _ in
+            Task {
+                await self?.mainCoordinator.showNewConversation()
+            }
+        }, for: .primaryActionTriggered)
         newConversationBarButton.backgroundColor = SemanticColors.Button.backgroundBarItem
         newConversationBarButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         newConversationBarButton.layer.borderWidth = 1

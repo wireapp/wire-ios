@@ -38,10 +38,10 @@ NewConversationBuilder: MainContentViewControllerBuilder {
     private weak var archivedConversations: TabBarController.Archive?
 
     private let newConversationBuilder: NewConversationBuilder
-
-    private weak var selfProfileViewController: UIViewController?
+    //private weak var newConversationViewController: UIViewController?
 
     private var selfProfileBuilder: any ViewControllerBuilder
+    private weak var selfProfileViewController: UIViewController?
 
     private var isLayoutCollapsed = false
 
@@ -164,9 +164,13 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         let navigationController = UINavigationController(rootViewController: viewController)
         // navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationController.modalPresentationStyle = .formSheet
+        //newConversationViewController = navigationController
 
-        fatalError("TODO: present")
-        // present(navigationController, animated: true)
+        if isLayoutCollapsed {
+            mainTabBarController.conversations!.conversationList.present(navigationController, animated: true)
+        } else {
+            mainSplitViewController.conversationList!.present(navigationController, animated: true)
+        }
     }
 
     //    public func openConversation(

@@ -38,6 +38,10 @@ final class MockMainCoordinator: MainCoordinatorProtocol {
     func showSettings() async {
         fatalError("Mock method not implemented")
     }
+
+    func showNewConversation() async {
+        fatalError("Mock method not implemented")
+    }
 }
 
 // MARK: - MainCoordinatorProtocol + mock

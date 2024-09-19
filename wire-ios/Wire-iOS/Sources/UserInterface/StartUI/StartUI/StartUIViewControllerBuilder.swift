@@ -23,7 +23,7 @@ import WireSyncEngine
 struct StartUIViewControllerBuilder: MainContentViewControllerBuilder {
 
     var userSession: UserSession
-    var delegate: StartUIDelegate! // TODO: ?
+    var delegate: StartUIDelegate?
 
     func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
         let viewController = StartUIViewController(
