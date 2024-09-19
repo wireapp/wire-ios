@@ -321,9 +321,8 @@ final class ConversationListViewController: UIViewController {
         )
     }
 
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
-    }
+    // MARK: Remove
+    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {}
 }
 
 // MARK: - ViewModel Delegate
