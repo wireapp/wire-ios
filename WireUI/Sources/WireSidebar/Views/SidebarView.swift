@@ -68,7 +68,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
             // content
             VStack(alignment: .leading, spacing: 0) {
-                profileSwitcher
+                accountInfoView
                     .onTapGesture(perform: accountImageAction)
                     .padding(.horizontal, 24)
                     .padding(.vertical)
@@ -109,9 +109,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     }
 
     @ViewBuilder
-    private var profileSwitcher: some View {
+    private var accountInfoView: some View {
         if let accountInfo {
-            SidebarProfileSwitcherView(
+            SidebarAccountInfoView(
                 displayName: accountInfo.displayName,
                 username: accountInfo.username,
                 accountImageView: { accountImageView(accountInfo.accountImage, accountInfo.availability) }

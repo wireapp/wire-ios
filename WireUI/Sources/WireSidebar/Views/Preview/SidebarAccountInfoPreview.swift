@@ -20,7 +20,7 @@ import SwiftUI
 
 @ViewBuilder @MainActor
 func SidebarAccountInfoPreview() -> some View {
-    SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
+    SidebarAccountInfoView(displayName: "Firstname Lastname", username: "@username") {
         MockAccountView()
     }
 }
