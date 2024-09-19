@@ -325,9 +325,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 stateController.transition(to: .incrementalUserCreation(unregisteredUser, .start))
                 eventResponderChain.handleEvent(ofType: .registrationStepSuccess)
 
-            case .setMarketingConsent(let consentValue):
-                setMarketingConsent(consentValue)
-
             case .completeUserRegistration:
                 finishRegisteringUser()
 
@@ -589,18 +586,6 @@ extension AuthenticationCoordinator {
     }
 
     // MARK: - Linear Registration
-
-    /// Sets the marketing consent value for the user to be registered.
-    private func setMarketingConsent(_ consentValue: Bool) {
-        switch stateController.currentStep {
-        case .incrementalUserCreation:
-            updateUnregisteredUser(\.marketingConsent, consentValue)
-
-        default:
-            log.error("Cannot set marketing consent in current state \(stateController.currentStep)")
-            return
-        }
-    }
 
     /// Updates a value of the unregistered user and notifies the responder chain of the success.
     private func updateUnregisteredUser<T>(_ keyPath: ReferenceWritableKeyPath<UnregisteredUser, T?>, _ newValue: T) {
