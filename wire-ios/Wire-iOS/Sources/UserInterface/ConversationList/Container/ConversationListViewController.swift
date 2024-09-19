@@ -320,9 +320,6 @@ final class ConversationListViewController: UIViewController {
             animated: animated
         )
     }
-
-    // MARK: Remove
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {}
 }
 
 // MARK: - ViewModel Delegate
