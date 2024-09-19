@@ -33,7 +33,7 @@ protocol ConnectionsRepositoryProtocol {
 
     /// Removes a federation connection between two domains.
     ///
-    /// - Parameter domain : The domain for which the connection was removed.
+    /// - Parameter domain: The domain for which the connection was removed.
     /// - Parameter otherDomain: The other domain for which the connection was removed.
 
     func removeFederationConnection(between domain: String, and otherDomain: String) async
