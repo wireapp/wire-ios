@@ -39,6 +39,7 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
     }
 
     override func setUp() async throws {
+        try await super.setUp()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FederationConnectionRemovedEventProcessor(
             repository: ConnectionsRepository(
@@ -46,14 +47,13 @@ final class FederationConnectionRemovedEventProcessorTests: XCTestCase {
                 connectionsLocalStore: ConnectionsLocalStore(context: context)
             )
         )
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
     }
 
     // MARK: - Tests
