@@ -104,6 +104,10 @@ public actor PersistentAuthenticationStorage: AuthenticationStorage {
     private func updateCookieInKeychain(_ cookieData: Data) throws {
         let updateQuery = updateQuery(cookieData: cookieData)
         let status = SecItemUpdate(fetchQuery as CFDictionary, updateQuery as CFDictionary)
+
+        guard status == errSecSuccess else {
+            throw PersistentAuthenticationStorageError.failedToUpdateCookieData(status: status)
+        }
     }
 
     private func fetchCookieDataFromKeychain() throws -> Data {
