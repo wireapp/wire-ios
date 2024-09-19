@@ -68,7 +68,7 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol, Convers
 
     public init(
         sidebar: @autoclosure () -> Sidebar,
-        noConversationPlaceholder: @autoclosure () -> UIViewController,
+        noConversationPlaceholder: @autoclosure NoConversationPlaceholderBuilder,
         tabContainer: @autoclosure () -> TabContainer
     ) {
         let noConversationPlaceholder = noConversationPlaceholder()

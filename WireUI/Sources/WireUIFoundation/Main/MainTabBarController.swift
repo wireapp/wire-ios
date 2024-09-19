@@ -160,7 +160,6 @@ func MainTabBarController_Preview() -> some MainTabBarControllerProtocol {
 }
 
 
-// TODO: not needed?
 private final class PlaceholderViewController: UIViewController {
 
     override func viewDidLoad() {
