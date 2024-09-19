@@ -64,7 +64,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
         }
     }
 
-    func select(_ value: SettingsPropertyValue, sender: Cell) {
+    func select(_ value: SettingsPropertyValue, sender: UIView) {
         var valueToSet = false
 
         if let value = value.value() {
@@ -87,7 +87,10 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
         do {
             try self.settingsProperty.set(newValue: SettingsPropertyValue(valueToSet), resultHandler: { result in
                 if case .failure = result {
-                    sender.switchView.isOn = !valueToSet
+                    // Not idea but a workaround
+                    if let toggleCell = sender as? SettingsToggleCell {
+                        toggleCell.switchView.isOn = !valueToSet
+                    }
                 }
             })
 

@@ -31,7 +31,7 @@ enum SettingsCellPreview {
 protocol SettingsCellType: AnyObject {
     var titleText: String {get set}
     var preview: SettingsCellPreview {get set}
-    var descriptor: any SettingsCellDescriptorType? {get set}
+    var descriptor: SettingsCellDescriptorType? {get set}
     var icon: StyleKitIcon? {get set}
 }
 
@@ -171,7 +171,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
         updateBackgroundColor()
     }
 
-    var descriptor: any SettingsCellDescriptorType?
+    var descriptor: SettingsCellDescriptorType?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -299,7 +299,7 @@ final class SettingsToggleCell: SettingsTableCell {
 }
 
 final class SettingsValueCell: SettingsTableCell {
-    override var descriptor: any SettingsCellDescriptorType? {
+    override var descriptor: SettingsCellDescriptorType? {
         willSet {
             if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
                 NotificationCenter.default.removeObserver(self,

@@ -18,7 +18,7 @@
 
 import UIKit
 
-final class SettingsProfileLinkCellDescriptor: any SettingsCellDescriptorType {
+final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsLinkTableCell.self
 
     // MARK: - Configuration
