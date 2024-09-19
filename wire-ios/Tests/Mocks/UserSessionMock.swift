@@ -249,13 +249,6 @@ final class UserSessionMock: UserSession {
 
     }
 
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-
-    }
-
     func classification(
         users: [UserType],
         conversationDomain: String?
