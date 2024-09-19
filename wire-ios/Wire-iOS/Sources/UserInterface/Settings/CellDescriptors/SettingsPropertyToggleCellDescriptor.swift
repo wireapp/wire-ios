@@ -27,6 +27,8 @@ private let zmLog = ZMSLog(tag: "UI")
 
 final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptorType {
 
+    static let cellType: SettingsTableCellProtocol.Type = SettingsToggleCell.self
+
     typealias Cell = SettingsToggleCell
 
     let inverse: Bool
@@ -90,9 +92,6 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
                     sender.switchView.isOn = !valueToSet
                 }
             })
-
-
-
         } catch {
             zmLog.error("Cannot set property: \(error)")
         }

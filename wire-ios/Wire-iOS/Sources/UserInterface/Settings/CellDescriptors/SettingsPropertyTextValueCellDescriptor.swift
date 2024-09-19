@@ -22,13 +22,17 @@ import WireUtilities
 private let zmLog = ZMSLog(tag: "UI")
 
 final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self
+
+    typealias Cell = SettingsTextCell
+
     var title: String {
         return settingsProperty.propertyName.settingsPropertyLabelText
     }
     var visible: Bool = true
     let identifier: String?
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
     var settingsProperty: SettingsProperty
 
     init(settingsProperty: SettingsProperty, identifier: String? = .none) {
@@ -56,7 +60,7 @@ final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescrip
         textCell.textInput.isAccessibilityElement = true
     }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: Cell) {
         if let stringValue = value.value() as? String {
 
             do {

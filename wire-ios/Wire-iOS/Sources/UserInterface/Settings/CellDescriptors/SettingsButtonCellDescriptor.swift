@@ -21,8 +21,12 @@ import UIKit
 /**
  * @abstract Generates the cell that displays one button
  */
-class SettingsButtonCellDescriptor: any SettingsCellDescriptorType {
+class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsButtonCell.self
+
+    typealias Cell = SettingsButtonCell
+
     let title: String
     let identifier: String?
     var visible: Bool {
@@ -33,7 +37,7 @@ class SettingsButtonCellDescriptor: any SettingsCellDescriptorType {
         }
     }
 
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
     let selectAction: (any SettingsCellDescriptorType) -> Void
     let visibilityAction: ((any SettingsCellDescriptorType) -> (Bool))?
     let isDestructive: Bool
@@ -66,7 +70,7 @@ class SettingsButtonCellDescriptor: any SettingsCellDescriptorType {
         cell.titleText = self.title
     }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: Cell) {
         selectAction(self)
     }
 }

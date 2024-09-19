@@ -156,7 +156,7 @@ extension SettingsBaseTableViewController: UITableViewDelegate, UITableViewDataS
 
 final class SettingsTableViewController: SettingsBaseTableViewController {
 
-    let group: SettingsInternalGroupCellDescriptorType
+    let group: any SettingsInternalGroupCellDescriptorType
     fileprivate var sections: [SettingsSectionDescriptorType]
     fileprivate var selfUserObserver: NSObjectProtocol!
 
@@ -166,13 +166,13 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
         setupNavigationBar()
     }
 
-    required init(group: SettingsInternalGroupCellDescriptorType) {
+    required init(group: any SettingsInternalGroupCellDescriptorType) {
         self.group = group
         self.sections = group.visibleItems
         super.init(style: group.style == .plain ? .plain : .grouped)
 
         self.group.items.flatMap { return $0.cellDescriptors }.forEach {
-            if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
+            if let groupDescriptor = $0 as? (any SettingsGroupCellDescriptorType) {
                 groupDescriptor.viewController = self
             }
         }

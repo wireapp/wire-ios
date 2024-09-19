@@ -18,9 +18,12 @@
 
 import UIKit
 
-final class SettingsStaticTextCellDescriptor: any SettingsCellDescriptorType {
+final class SettingsStaticTextCellDescriptor: SettingsCellDescriptorType {
 
     static let cellType: SettingsTableCellProtocol.Type = SettingsStaticTextTableCell.self
+
+    typealias Cell = SettingsToggleCell
+
 
     var text: String
 
@@ -47,10 +50,10 @@ final class SettingsStaticTextCellDescriptor: any SettingsCellDescriptorType {
     }
 
     var identifier: String?
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: Cell) {
         // no-op
     }
 

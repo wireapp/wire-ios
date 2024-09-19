@@ -22,8 +22,12 @@ protocol IconActionCellDelegate: AnyObject {
     func updateLayout()
 }
 
-final class SettingsCopyButtonCellDescriptor: any SettingsCellDescriptorType {
+final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
+
     static let cellType: SettingsTableCellProtocol.Type = IconActionCell.self
+
+    typealias Cell = IconActionCell
+
 
     weak var delegate: IconActionCellDelegate?
 
@@ -69,10 +73,10 @@ final class SettingsCopyButtonCellDescriptor: any SettingsCellDescriptorType {
     }
 
     var identifier: String?
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
     var previewGenerator: PreviewGeneratorType?
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: Cell) {
         UIPasteboard.general.string = title
         copyInProgress = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in

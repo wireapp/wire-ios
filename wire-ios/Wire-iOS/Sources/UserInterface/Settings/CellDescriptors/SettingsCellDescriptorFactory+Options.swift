@@ -326,7 +326,7 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType }, header: nil, footer: L10n.Localizable.OpenLink.Maps.footer, visibilityAction: nil)
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as (any SettingsCellDescriptorType) }, header: nil, footer: L10n.Localizable.OpenLink.Maps.footer, visibilityAction: nil)
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ MapsOpeningOption(rawValue: $0) }) else { return .text(MapsOpeningOption.apple.displayString) }
@@ -349,7 +349,7 @@ extension SettingsCellDescriptorFactory {
             )
         }
 
-        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as SettingsCellDescriptorType })
+        let section = SettingsSectionDescriptor(cellDescriptors: cells.map { $0 as (any SettingsCellDescriptorType) })
         let preview: PreviewGeneratorType = { _ in
             let value = property.value().value() as? Int
             guard let option = value.flatMap({ BrowserOpeningOption(rawValue: $0) }) else { return .text(BrowserOpeningOption.safari.displayString) }

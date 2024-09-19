@@ -33,7 +33,11 @@ enum AccessoryViewMode: Int {
 }
 
 class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptorType, SettingsControllerGeneratorType {
+
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
+    typealias Cell = SettingsTableCell
+
     var visible: Bool = true
     let title: String
     let destructive: Bool
@@ -44,7 +48,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
 
     private let accessoryViewMode: AccessoryViewMode
 
-    weak var group: SettingsGroupCellDescriptorType?
+    weak var group: (any SettingsGroupCellDescriptorType)?
     weak var viewController: UIViewController?
 
     let previewGenerator: PreviewGeneratorType?
@@ -106,7 +110,7 @@ class SettingsExternalScreenCellDescriptor: SettingsExternalScreenCellDescriptor
         self.copiableText = copiableText
     }
 
-    func select(_ value: SettingsPropertyValue, sender: UIView) {
+    func select(_ value: SettingsPropertyValue, sender: Cell) {
         guard let controllerToShow = self.generateViewController() else {
             return
         }

@@ -31,7 +31,7 @@ enum SettingsCellPreview {
 protocol SettingsCellType: AnyObject {
     var titleText: String {get set}
     var preview: SettingsCellPreview {get set}
-    var descriptor: any SettingsCellDescriptorType? {get set}
+    var descriptor: (any SettingsCellDescriptorType)? {get set}
     var icon: StyleKitIcon? {get set}
 }
 
@@ -171,7 +171,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
         updateBackgroundColor()
     }
 
-    var descriptor: any SettingsCellDescriptorType?
+    weak var descriptor: (any SettingsCellDescriptorType)?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -294,21 +294,21 @@ final class SettingsToggleCell: SettingsTableCell {
 
     @objc
     func onSwitchChanged(_ sender: UISwitch) {
-        descriptor?.select(SettingsPropertyValue(switchView.isOn), sender: sender)
+        descriptor?.select(SettingsPropertyValue(switchView.isOn), sender: self)
     }
 }
 
 final class SettingsValueCell: SettingsTableCell {
-    override var descriptor: any SettingsCellDescriptorType? {
+    override var descriptor: (any SettingsCellDescriptorType)? {
         willSet {
-            if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
+            if let propertyDescriptor = descriptor as? (any SettingsPropertyCellDescriptorType) {
                 NotificationCenter.default.removeObserver(self,
                                                           name: propertyDescriptor.settingsProperty.propertyName.notificationName,
                                                           object: nil)
             }
         }
         didSet {
-            if let propertyDescriptor = descriptor as? SettingsPropertyCellDescriptorType {
+            if let propertyDescriptor = descriptor as? (any SettingsPropertyCellDescriptorType) {
 
                 NotificationCenter.default.addObserver(self,
                                                        selector: #selector(SettingsValueCell.onPropertyChanged(_:)),
