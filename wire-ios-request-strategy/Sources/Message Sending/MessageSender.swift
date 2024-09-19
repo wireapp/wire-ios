@@ -152,7 +152,7 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            try await message.updateUnderlyingMessageIfNeeded()
+            try await message.prepareMessageForSending()
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
@@ -192,7 +192,7 @@ public final class MessageSender: MessageSenderInterface {
         )
 
         do {
-            try await message.updateUnderlyingMessageIfNeeded()
+            try await message.prepareMessageForSending()
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)

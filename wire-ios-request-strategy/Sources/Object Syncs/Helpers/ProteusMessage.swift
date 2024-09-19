@@ -27,14 +27,14 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
     func setExpirationDate()
 
     /// Updates the underlying message - TODO: check naming
-    func updateUnderlyingMessageIfNeeded() async throws
+    func prepareMessageForSending() async throws
 
     var underlyingMessage: GenericMessage? { get }
 }
 
 extension ZMClientMessage: ProteusMessage {
 
-    public func updateUnderlyingMessageIfNeeded() async throws {
+    public func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {
                 // Update expectsReadReceipt flag to reflect the current user setting
@@ -58,7 +58,7 @@ extension ZMClientMessage: ProteusMessage {
 
 extension ZMAssetClientMessage: ProteusMessage {
 
-    public func updateUnderlyingMessageIfNeeded() async throws {
+    public func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {
                 // Update expectsReadReceipt flag to reflect the current user setting

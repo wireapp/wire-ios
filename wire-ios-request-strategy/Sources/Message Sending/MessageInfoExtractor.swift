@@ -23,6 +23,7 @@ struct UserClientData {
     var data: Data?
 }
 
+/// Container of information needed to encrypt a message
 struct MessageInfo {
     typealias Domain = String
     typealias UserID = UUID
@@ -156,7 +157,9 @@ struct MessageInfoExtractor {
                 }) else { continue }
 
                 let userClientDatas = await userClientDatas(selfClientID: selfClientID, userClients: clients)
-                userEntries[userId] = userClientDatas
+                if !userClientDatas.isEmpty {
+                    userEntries[userId] = userClientDatas
+                }
             }
             qualifiedUserEntries[domain] = userEntries
         }

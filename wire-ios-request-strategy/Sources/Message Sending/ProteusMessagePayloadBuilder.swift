@@ -47,23 +47,9 @@ struct ProteusMessagePayloadBuilder {
         // 1) encrypt the data with proteusService
         let plainText = try messageInfo.genericMessage.serializedData()
         let allSessionIds = messageInfo.allSessionIds()
-        
-        var encryptedDatas: [String: Data]
-        if false {
-           encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
-        } else {
-            encryptedDatas = .init()
-            for session in allSessionIds {
-                var existSession: Bool = false
-                do {
-                    existSession = try await proteusService.sessionExists(id: session)
-                    let data = try await proteusService.encrypt(data: plainText, forSession: session)
-                    encryptedDatas[session.rawValue] = data
-                } catch {
-                    WireLogger.proteus.error("error encrypting data for session \(session.rawValue): \(error.localizedDescription); session exists: \(existSession)")
-                }
-            }
-        }
+    
+        // if a sessionId does not exist / not established, no data (key,value) is return for the sessionId!
+        let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
 
         guard !encryptedDatas.isEmpty else {
             throw MessageEncryptorError.emptyEncryptedData
@@ -173,7 +159,7 @@ struct ProteusMessagePayloadBuilder {
             if let encryptedData = encryptedDatas[userClientData.sessionID.rawValue] {
                 return Proteus_ClientEntry(withClientId: clientId, data: encryptedData)
             } else {
-                assertionFailure("should not happen: no entry for \(userClientData.sessionID)")
+                // all clients here don't have established sessions, this will be handled in MessageSender
                 return nil
             }
         }
