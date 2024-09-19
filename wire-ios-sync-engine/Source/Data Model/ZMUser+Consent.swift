@@ -30,71 +30,6 @@ public enum ConsentRequestError: Error {
 }
 
 extension ZMUser {
-    public typealias CompletionFetch = (Result<Bool, Error>) -> Void
-
-    public func fetchMarketingConsent(in userSession: ZMUserSession,
-                                      completion: @escaping CompletionFetch) {
-        fetchConsent(for: .marketing, on: userSession.transportSession, completion: completion)
-    }
-
-    static func parse(consentPayload: ZMTransportData) -> [ConsentType: Bool] {
-        guard let payloadDict = consentPayload.asDictionary(),
-            let resultArray = payloadDict["results"] as? [[String: Any]] else {
-                return [:]
-        }
-
-        var result: [ConsentType: Bool] = [:]
-
-        resultArray.forEach {
-            guard let type = $0["type"] as? Int,
-                let value = $0["value"] as? Int,
-                let consentType = ConsentType(rawValue: type) else {
-                    return
-            }
-
-            let valueBool = (value == 1)
-            result[consentType] = valueBool
-        }
-
-        return result
-    }
-
-    func fetchConsent(for consentType: ConsentType,
-                      on transportSession: TransportSessionType,
-                      completion: @escaping CompletionFetch) {
-
-        guard
-            let apiVersion = BackendInfo.apiVersion,
-            let context = managedObjectContext
-        else {
-            return completion(.failure(ConsentRequestError.unknown))
-        }
-
-        let request = ConsentRequestFactory.fetchConsentRequest(apiVersion: apiVersion)
-
-        request.add(ZMCompletionHandler(on: context) { response in
-
-            guard 200 ... 299 ~= response.httpStatus,
-                  let payload = response.payload
-            else {
-                if response.httpStatus == 404 {
-                    completion(.failure(ConsentRequestError.notAvailable))
-                    return
-                }
-                let error = response.transportSessionError ?? ConsentRequestError.unknown
-                zmLog.debug("Error fetching consent status: \(error)")
-                completion(.failure(error))
-                return
-            }
-
-            let parsedPayload = ZMUser.parse(consentPayload: payload)
-            let status: Bool = parsedPayload[consentType] ?? false
-            completion(.success(status))
-        })
-
-        transportSession.enqueueOneTime(request)
-    }
-
     public typealias CompletionSet = (Result<Void, Error>) -> Void
     public func setMarketingConsent(to value: Bool,
                                     in userSession: ZMUserSession,
@@ -132,10 +67,6 @@ extension ZMUser {
 
 struct ConsentRequestFactory {
     static let consentPath = "/self/consent"
-
-    static func fetchConsentRequest(apiVersion: APIVersion) -> ZMTransportRequest {
-        return .init(getFromPath: consentPath, apiVersion: apiVersion.rawValue)
-    }
 
     static var sourceString: String {
         return "iOS " + Bundle.main.version
