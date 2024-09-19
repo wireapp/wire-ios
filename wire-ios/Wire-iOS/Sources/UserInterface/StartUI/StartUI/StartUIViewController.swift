@@ -108,6 +108,7 @@ final class StartUIViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = SemanticColors.View.backgroundDefault
         activityIndicator = .init(view: view)
     }
 

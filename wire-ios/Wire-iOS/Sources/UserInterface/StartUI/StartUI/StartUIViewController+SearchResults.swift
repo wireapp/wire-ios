@@ -51,7 +51,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         if !user.isConnected && !user.isTeamMember {
             presentProfileViewController(for: user, at: indexPath)
         } else {
-            delegate?.startUI(self, didSelect: user)
+            delegate?.startUIViewController(self, didSelect: user)
         }
     }
 
@@ -63,14 +63,14 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             return
         }
 
-        delegate?.startUI(self, didSelect: user)
+        delegate?.startUIViewController(self, didSelect: user)
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
                                      didTapOnConversation conversation: ZMConversation) {
         guard conversation.conversationType == .group || conversation.conversationType == .oneOnOne else { return }
 
-        delegate?.startUI(self, didSelect: conversation)
+        delegate?.startUIViewController(self, didSelect: conversation)
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController,
@@ -86,7 +86,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             if let result {
                 switch result {
                 case .success(let conversation):
-                    delegate?.startUI(self, didSelect: conversation)
+                    delegate?.startUIViewController(self, didSelect: conversation)
                 case .failure(let error):
                     error.displayAddBotError(in: self)
                 }
@@ -115,7 +115,7 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         dismiss(controller: controller) { [weak self] in
             guard let self else { return }
 
-            delegate?.startUI(
+            delegate?.startUIViewController(
                 self,
                 didSelect: conversation
             )

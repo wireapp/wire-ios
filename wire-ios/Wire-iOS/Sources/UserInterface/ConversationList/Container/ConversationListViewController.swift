@@ -466,21 +466,6 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - Presentation
 
-    /// Present the new conversation view controller
-    func presentNewConversationViewController() {
-        // TODO: move into main coordinator
-        let viewController = StartUIViewController(
-            userSession: viewModel.userSession,
-            mainCoordinator: mainCoordinator
-        )
-        viewController.delegate = viewModel
-        viewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        let navigationController = UINavigationController(rootViewController: viewController)
-        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        present(navigationController, animated: true)
-    }
-
     /// Show the newsletter subscription dialog if needed
     /// - Parameter completionHandler: The completion handler to be called after the dialog is shown
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {

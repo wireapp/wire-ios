@@ -21,14 +21,14 @@ import WireFoundation
 
 // TODO: could typaliases take some of the generic conditions?
 
-// TODO: make `public final`
 @MainActor
-open /*public final*/ class MainCoordinator<SplitViewController, TabBarController>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
+public final class MainCoordinator<SplitViewController, TabBarController, NewConversationBuilder>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
 SplitViewController: MainSplitViewControllerProtocol,
 TabBarController: MainTabBarControllerProtocol,
 SplitViewController.Sidebar: MainSidebarProtocol,
 SplitViewController.ConversationList == TabBarController.ConversationList,
-TabBarController.Archive == UIViewController {
+TabBarController.Archive == UIViewController,
+NewConversationBuilder: MainContentViewControllerBuilder {
 
     private weak var mainSplitViewController: SplitViewController!
     private weak var mainTabBarController: TabBarController!
@@ -36,6 +36,8 @@ TabBarController.Archive == UIViewController {
     /// A reference to the archived conversations view controller. This property is needed for the expanded layout mode
     /// when the archived conversations list is taken out of the tab bar controller and presented on top of the conversation list.
     private weak var archivedConversations: TabBarController.Archive?
+
+    private let newConversationBuilder: NewConversationBuilder
 
     private weak var selfProfileViewController: UIViewController?
 
@@ -46,10 +48,12 @@ TabBarController.Archive == UIViewController {
     public init(
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
+        newConversationBuilder: NewConversationBuilder,
         selfProfileBuilder: /*some*/ any ViewControllerBuilder
     ) {
         self.mainSplitViewController = mainSplitViewController
         self.mainTabBarController = mainTabBarController
+        self.newConversationBuilder = newConversationBuilder
         self.selfProfileBuilder = selfProfileBuilder
 
         archivedConversations = mainTabBarController.archive
@@ -155,7 +159,14 @@ TabBarController.Archive == UIViewController {
     }
 
     public func showNewConversation() {
-fatalError("TODO")
+        let viewController = newConversationBuilder.build(mainCoordinator: self)
+
+        let navigationController = UINavigationController(rootViewController: viewController)
+        // navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.modalPresentationStyle = .formSheet
+
+        fatalError("TODO: present")
+        // present(navigationController, animated: true)
     }
 
     //    public func openConversation(
@@ -190,7 +201,7 @@ fatalError("TODO")
     //     print("349ur09e willHide \(column)")
     // }
 
-    /*public*/ open func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+    public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
         guard splitViewController === mainSplitViewController else {
             return assertionFailure() // TODO: inject logger instead
         }
@@ -222,7 +233,7 @@ fatalError("TODO")
     //     print("349ur09e willShow \(column)")
     // }
 
-    /*public*/ open func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+    public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
         guard splitViewController === mainSplitViewController else {
             return assertionFailure() // TODO: inject logger instead
         }

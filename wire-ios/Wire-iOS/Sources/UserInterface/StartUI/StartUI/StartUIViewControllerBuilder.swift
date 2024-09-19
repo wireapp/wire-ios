@@ -17,8 +17,20 @@
 //
 
 import UIKit
+import WireUIFoundation
+import WireSyncEngine
 
-// TODO: consider removing/replacing?
-public protocol ViewControllerBuilder {
-    func build() -> UIViewController
+struct StartUIViewControllerBuilder: MainContentViewControllerBuilder {
+
+    var userSession: UserSession
+    var delegate: StartUIDelegate! // TODO: ?
+
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController {
+        let viewController = StartUIViewController(
+            userSession: userSession,
+            mainCoordinator: mainCoordinator
+        )
+        viewController.delegate = delegate
+        return viewController
+    }
 }

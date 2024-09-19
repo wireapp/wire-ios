@@ -213,6 +213,7 @@ final class ZClientViewController: UIViewController {
             // zClientViewController: self,
             mainSplitViewController: wireSplitViewController,
             mainTabBarController: mainTabBarController,
+            newConversationBuilder: StartUIViewControllerBuilder(userSession: userSession),
             selfProfileBuilder: selfProfileViewControllerBuilder
             // settingsBuilder: SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
         )
@@ -276,7 +277,8 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.presentNewConversationViewController()
+        fatalError("TODO")
+        //conversationListViewController.presentNewConversationViewController()
     }
 
     // MARK: Status bar

@@ -63,6 +63,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
     }
 
+    // TODO: migrate this code into MainCoordinator
     @MainActor
     func openUserProfile(_ user: UserType) {
         let profileViewController = ProfileViewController(

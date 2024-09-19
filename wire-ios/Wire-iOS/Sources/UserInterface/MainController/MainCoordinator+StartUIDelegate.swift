@@ -16,9 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import WireUIFoundation
+import WireDataModel
 
-// TODO: consider removing/replacing?
-public protocol ViewControllerBuilder {
-    func build() -> UIViewController
+extension MainCoordinator: StartUIDelegate {
+
+    func startUIViewController(_ viewController: StartUIViewController, didSelect user: any UserType) {
+        fatalError()
+    }
+    
+    func startUIViewController(_ viewController: StartUIViewController, didSelect conversation: ZMConversation) {
+        fatalError()
+    }
 }

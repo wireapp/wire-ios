@@ -18,7 +18,7 @@
 
 import UIKit
 
-// TODO: consider removing/replacing?
-public protocol ViewControllerBuilder {
-    func build() -> UIViewController
+public protocol MainContentViewControllerBuilder {
+    associatedtype ViewController: UIViewController
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> ViewController
 }
