@@ -36,10 +36,7 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
 
         // Check for missing requirements before allowing the user to register.
 
-        if unregisteredUser.marketingConsent == nil {
-            return handleMissingMarketingConsent(with: unregisteredUser)
-
-        } else if unregisteredUser.name == nil {
+        if unregisteredUser.name == nil {
             return requestIntermediateStep(
                 .setName,
                 with: unregisteredUser,
@@ -64,11 +61,6 @@ final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHan
         mode: AuthenticationStateController.StateChangeMode) -> [AuthenticationCoordinatorAction] {
         let flowStep = AuthenticationFlowStep.incrementalUserCreation(user, step)
         return [.hideLoadingView, .transition(flowStep, mode: mode)]
-    }
-
-    // FIXME: Remove
-    private func handleMissingMarketingConsent(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
-        return [.hideLoadingView]
     }
 
     private func handleRegistrationCompletion(with user: UnregisteredUser) -> [AuthenticationCoordinatorAction] {
