@@ -20,4 +20,4 @@ import WireSidebar
 import WireUIFoundation
 
 extension SidebarViewController: MainSidebarProtocol {}
-extension SidebarConversationFilter: MainSidebarConversationFilterProtocol {}
+extension SidebarMenuItem: MainSidebarMenuItemProtocol {}

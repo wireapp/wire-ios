@@ -283,7 +283,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         // if the archived conversations view controller was visible, present it on top of the conversation list
         if mainTabBarController.selectedContent == .archive {
             addArchivedConversationsAsChildOfConversationList()
-            mainSplitViewController.sidebar.conversationFilter = .archived
+            mainSplitViewController.sidebar.selectedMenuItem = .archive
         }
 
         // if the settings view controller was visible, present it // TODO: on top of the conversation list

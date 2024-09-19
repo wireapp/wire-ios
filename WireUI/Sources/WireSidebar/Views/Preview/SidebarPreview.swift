@@ -41,8 +41,6 @@ func SidebarPreview() -> UIViewController {
     return splitViewController
 }
 
-@MainActor private var conversationFilter: SidebarConversationFilter?
-
 private struct MockAccountImageView: View {
     @State private(set) var uiImage: UIImage
     @State private(set) var availability: SidebarAccountInfo.Availability?

@@ -46,27 +46,23 @@ extension MainCoordinator: SidebarViewControllerDelegate {
         showSelfProfile()
     }
 
-    public func sidebarViewController(_ viewController: SidebarViewController, didSelect conversationFilter: SidebarConversationFilter?) {
-        switch conversationFilter {
+    public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem) {
+        switch menuItem {
+        case .all:
+            showConversationList(conversationFilter: .none)
         case .favorites:
             showConversationList(conversationFilter: .favorites)
         case .groups:
             showConversationList(conversationFilter: .groups)
         case .oneOnOne:
             showConversationList(conversationFilter: .oneOnOne)
-        case .archived:
+        case .archive:
             showArchivedConversations()
-        case nil:
-            showConversationList(conversationFilter: .none)
+        case .connect:
+            showNewConversation()
+        case .settings:
+            showSettings()
         }
-    }
-
-    public func sidebarViewControllerDidSelectConnect(_ viewController: SidebarViewController) {
-        showNewConversation()
-    }
-
-    public func sidebarViewControllerDidSelectSettings(_ viewController: SidebarViewController) {
-        showSettings()
     }
 
     public func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController) {

@@ -22,10 +22,13 @@ final class PreviewSidebarViewController: UIHostingController<LabelView>, MainSi
 
     // MARK: - MainSidebarProtocol
 
-    var conversationFilter: ConversationFilter?
+    var selectedMenuItem: MenuItem = .all
 
-    enum ConversationFilter: MainSidebarConversationFilterProtocol {
-        case favorites, groups, oneOnOne, archived
+    enum MenuItem: MainSidebarMenuItemProtocol {
+        case all, favorites, groups, oneOnOne
+        case archive
+        case connect
+        case settings
     }
 
     // MARK: - Life Cycle
