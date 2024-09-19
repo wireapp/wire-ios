@@ -23,7 +23,7 @@ import SwiftUI
 // private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
 // private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
 
-struct SidebarMenuItem: View {
+struct SidebarMenuItemView: View {
 
     // MARK: - Constants
 

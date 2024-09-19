@@ -82,14 +82,14 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 }
 
                 // bottom menu items
-                SidebarMenuItem(icon: "gearshape", iconSize: iconSize) {
+                SidebarMenuItemView(icon: "gearshape", iconSize: iconSize) {
                     Text("sidebar.settings.title", bundle: .module)
                 } action: {
                     settingsAction()
                 }
                 .padding(.horizontal, 16)
 
-                SidebarMenuItem(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
+                SidebarMenuItemView(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
                     Text("sidebar.support.title", bundle: .module)
                 } action: {
                     supportAction()
@@ -137,7 +137,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
                 .padding(.top, 12)
-            SidebarMenuItem(
+            SidebarMenuItemView(
                 icon: "person.badge.plus",
                 iconSize: iconSize
             ) {
@@ -155,7 +155,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 private extension SidebarConversationFilter? {
 
     @MainActor
-    func label(_ iconSize: CGSize?, isActive: Bool, action: @escaping () -> Void) -> SidebarMenuItem {
+    func label(_ iconSize: CGSize?, isActive: Bool, action: @escaping () -> Void) -> SidebarMenuItemView {
         let text: Text
         let icon: String
 
@@ -181,7 +181,7 @@ private extension SidebarConversationFilter? {
             icon = "archivebox"
         }
 
-        return SidebarMenuItem(
+        return SidebarMenuItemView(
             icon: icon,
             iconSize: iconSize,
             isLink: false,
