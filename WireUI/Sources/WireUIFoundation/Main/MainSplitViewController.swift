@@ -91,14 +91,21 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol, Convers
         fatalError("init(coder:) is not supported")
     }
 
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setPreferredDisplayMode(basedOn: view.frame.size.width)
+    }
+
     override public func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+        setPreferredDisplayMode(basedOn: size.width)
+    }
 
-        // default to showing sidebar in landscape
-        if size.width > size.height {
-            preferredDisplayMode = .twoBesideSecondary
+    private func setPreferredDisplayMode(basedOn width: CGFloat) {
+        preferredDisplayMode = if width > 800 {
+            .twoBesideSecondary
         } else {
-            preferredDisplayMode = .oneBesideSecondary
+            .oneBesideSecondary
         }
     }
 }

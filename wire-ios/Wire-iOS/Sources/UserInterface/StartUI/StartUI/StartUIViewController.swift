@@ -120,8 +120,6 @@ final class StartUIViewController: UIViewController {
         }
 
         setupNavigationBarButtonItems()
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
     }
 
     override func accessibilityPerformEscape() -> Bool {
@@ -139,7 +137,7 @@ final class StartUIViewController: UIViewController {
         emptyResultView.delegate = self
 
         searchResultsViewController.mode = .list
-        searchResultsViewController.searchResultsView.emptyResultView = self.emptyResultView
+        searchResultsViewController.searchResultsView.emptyResultView = emptyResultView
         searchResultsViewController.searchResultsView.collectionView.accessibilityIdentifier = "search.list"
 
         setupSearchController()
@@ -155,7 +153,7 @@ final class StartUIViewController: UIViewController {
 
         quickActionsBar.inviteButton.addTarget(self, action: #selector(inviteMoreButtonTapped(_:)), for: .touchUpInside)
 
-        view.backgroundColor = UIColor.clear
+        //view.backgroundColor = UIColor.clear
 
         createConstraints()
         updateActionBar()

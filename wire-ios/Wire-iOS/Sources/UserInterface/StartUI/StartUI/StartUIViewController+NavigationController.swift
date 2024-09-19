@@ -20,13 +20,6 @@ import UIKit
 
 extension StartUIViewController {
 
-    func setupNavigationBar() {
-        navigationController?.navigationBar.barTintColor = backgroundColor
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.tintColor = UIColor.accent()
-        navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
-    }
-
     func setupNavigationBarButtonItems() {
         let cancelButton = UIBarButtonItem(
             title: L10n.Localizable.General.cancel,
@@ -67,5 +60,4 @@ extension StartUIViewController {
     private func createGroup() {
         openCreateGroupController()
     }
-
 }
