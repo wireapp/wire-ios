@@ -68,6 +68,10 @@ final class MockOTREntity: OTREntity {
 }
 
 extension MockOTREntity: ProteusMessage {
+    var targetRecipients: WireRequestStrategy.Recipients {
+        .conversationParticipants
+    }
+    
     func prepareMessageForSending() async throws {
     
     }
