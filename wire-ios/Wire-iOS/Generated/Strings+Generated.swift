@@ -4152,20 +4152,6 @@ internal enum L10n {
         internal static let tooshort = L10n.tr("Localizable", "name.guidance.tooshort", fallback: "At least 2 characters")
       }
     }
-    internal enum NewsOffers {
-      internal enum Consent {
-        /// You can unsubscribe at any time.
-        internal static let message = L10n.tr("Localizable", "news_offers.consent.message", fallback: "You can unsubscribe at any time.")
-        /// Do you want to receive news and product updates from Wire via email?
-        internal static let title = L10n.tr("Localizable", "news_offers.consent.title", fallback: "Do you want to receive news and product updates from Wire via email?")
-        internal enum Button {
-          internal enum PrivacyPolicy {
-            /// Privacy Policy
-            internal static let title = L10n.tr("Localizable", "news_offers.consent.button.privacy_policy.title", fallback: "Privacy Policy")
-          }
-        }
-      }
-    }
     internal enum Notifications {
       /// %@ - %@
       internal static func inConversation(_ p1: Any, _ p2: Any) -> String {
