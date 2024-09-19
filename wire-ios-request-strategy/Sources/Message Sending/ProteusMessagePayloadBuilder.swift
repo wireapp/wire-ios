@@ -19,9 +19,8 @@
 import Foundation
 import WireProtos
 
-enum MessageEncryptorError: Error {
+enum ProteusMessagePayloadBuilderError: Error {
     case unableToEncryptForExternalData
-    case emptyEncryptedData
 }
 
 /// Provide the payload for a given proteus message
@@ -37,10 +36,6 @@ struct ProteusMessagePayloadBuilder {
     
         // if a sessionId does not exist / not established, no data (key,value) is return for the sessionId!
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
-
-        guard !encryptedDatas.isEmpty else {
-            throw MessageEncryptorError.emptyEncryptedData
-        }
         
         // 2) Wrap the encryptedData in protobuf object that will be serialized
         var messageData: Data
@@ -67,7 +62,7 @@ struct ProteusMessagePayloadBuilder {
             let data = encryptedDataWithKeys.data,
             let keys = encryptedDataWithKeys.keys
         else {
-            throw MessageEncryptorError.unableToEncryptForExternalData
+            throw ProteusMessagePayloadBuilderError.unableToEncryptForExternalData
         }
 
         let externalGenericMessage = GenericMessage(content: External(withKeyWithChecksum: keys))

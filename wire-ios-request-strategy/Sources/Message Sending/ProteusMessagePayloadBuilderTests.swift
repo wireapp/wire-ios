@@ -38,46 +38,6 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
         sut = nil
     }
 
-    func testEncryptForTransport_MissingData() async throws {
-        
-        // GIVEN
-        let userID = QualifiedID.random()
-        let clientID = String.randomClientIdentifier()
-        let sessionID: ProteusSessionID = .init(domain: .randomDomain(),
-                                                userID: userID.uuid.uuidString,
-                                                clientID: clientID)
-        let listClients: MessageInfo.ClientList = [
-            userID.domain: [
-                userID.uuid : [
-                    UserClientData(sessionID: sessionID)
-                ]
-            ]
-        ]
-        
-        proteusService.encryptBatchedDataForSessions_MockMethod = { _, _ in
-            [:]
-        }
-        
-        sut = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: true)
-        let messageInfo = MessageInfo(genericMessage: GenericMessage(content: Text(content: "test")),
-                                      listClients: listClients,
-                                      missingClientsStrategy: .doNotIgnoreAnyMissingClient,
-                                      selfClientID: .randomClientIdentifier(),
-                                      nativePush: true,
-                                      userClients: [])
-        
-        // WHEN
-        do {
-            _ = try await sut.encryptForTransport(with: messageInfo)
-            XCTFail("expected an error but none was thrown")
-        } catch MessageEncryptorError.emptyEncryptedData {
-        // THEN
-        } catch {
-            XCTFail("expected an error: MessageEncryptorError.emptyEncryptedData")
-        }
-
-    }
-    
     func testEncryptForTransportUsingNonQualifiedIds() async throws {
         try await internalTestEncryptForTransport(qualifiedIds: false)
     }
