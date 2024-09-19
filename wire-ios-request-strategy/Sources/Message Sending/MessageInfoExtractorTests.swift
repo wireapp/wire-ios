@@ -19,6 +19,7 @@
 import XCTest
 
 @testable import WireRequestStrategy
+import WireRequestStrategySupport
 import WireDataModelSupport
 
 final class MessageInfoExtractorTests: XCTestCase {
@@ -42,27 +43,34 @@ final class MessageInfoExtractorTests: XCTestCase {
         coreDataStack.syncContext
     }
     
-    func test_infoForTransport() async {
+    func test_infoForTransport() async throws {
         // GIVEN
+        let modelHelper = ModelHelper()
+        var conversation: ZMConversation!
+        
         await context.perform { [self] in
-            var selfUser = ZMUser.selfUser(in: context)
-            selfUser.domain = "domainA"
             
-            var selfClient = UserClient.insertNewObject(in: context)
-            selfClient.remoteIdentifier = String.randomClientIdentifier()
-            selfClient.user = selfUser
+            let selfClient = modelHelper.createSelfClient(id: Scaffolding.selfClientID, in: context)
+            let userA = modelHelper.createUser(qualifiedID: Scaffolding.selfUserAID, in: context)
+            modelHelper.createClient(for: userA)
             
-            var userA = ZMUser.insertNewObject(in: context)
-            userA.remoteIdentifier = UUID()
-            userA.domain = "domainA"
-            
-            let clientA1 = UserClient.insertNewObject(in: context)
-            clientA1.remoteIdentifier = String.randomClientIdentifier()
-            clientA1.user = userA
-            
-            let conversation = ZMConversation.insertGroupConversation(moc: context, participants: [])
+            conversation = ZMConversation.insertGroupConversation(moc: context, participants: [userA, selfClient.user!])
             
         }
-        sut.infoForTransport(message: any ProteusMessage, conversationID: <#T##QualifiedID#>)
+        
+        let mockProteusMessage = MockProteusMessage()
+        
+        let id = try XCTUnwrap(conversation.qualifiedID)
+        
+        // WHEN
+        let messageInfo = try await sut.infoForTransport(message: mockProteusMessage, conversationID: id)
+        
+        // THEN
+        XCTAssertEqual(messageInfo.genericMessage, )
+    }
+    
+    private enum Scaffolding {
+        static var selfClientID: String = .randomClientIdentifier()
+        static var selfUserAID: QualifiedID = .randomID()
     }
 }
