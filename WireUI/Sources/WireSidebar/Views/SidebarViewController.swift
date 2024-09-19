@@ -30,9 +30,9 @@ public final class SidebarViewController: UIViewController {
         set { model.accountInfo = newValue }
     }
 
-    public var conversationFilter: SidebarConversationFilter? {
-        get { model.conversationFilter }
-        set { model.conversationFilter = newValue }
+    public var selectedMenuItem: SidebarMenuItem {
+        get { model.selectedMenuItem }
+        set { model.selectedMenuItem = newValue }
     }
 
     public var wireTextStyleMapping: WireTextStyleMapping? {
@@ -56,9 +56,7 @@ public final class SidebarViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         model.accountImageAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!) }
-        model.conversationFilterUpdated = { [weak self] conversationFilter in self?.delegate?.sidebarViewController(self!, didSelect: conversationFilter) }
-        model.connectAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectConnect(self!) }
-        model.settingsAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectSettings(self!) }
+        model.menuItemAction = { [weak self] menuItem in self?.delegate?.sidebarViewController(self!, didSelect: menuItem) }
         model.supportAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectSupport(self!) }
 
         setupHostingController = { [weak self] in
@@ -104,10 +102,8 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
     var body: some View {
         SidebarView(
             accountInfo: model.accountInfo,
-            conversationFilter: $model.conversationFilter,
+            selectedMenuItem: $model.selectedMenuItem,
             accountImageAction: model.accountImageAction,
-            connectAction: model.connectAction,
-            settingsAction: model.settingsAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView
         ).environment(\.wireTextStyleMapping, model.wireTextStyleMapping)

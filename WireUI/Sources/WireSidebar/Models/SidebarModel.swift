@@ -25,13 +25,11 @@ final class SidebarModel: ObservableObject {
 
     @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var accountInfo = SidebarAccountInfo()
-    @Published var conversationFilter: SidebarConversationFilter? {
-        didSet { conversationFilterUpdated(conversationFilter) }
+    @Published var selectedMenuItem: SidebarMenuItem = .all {
+        didSet { menuItemAction(selectedMenuItem) }
     }
 
     var accountImageAction: () -> Void = {}
-    var conversationFilterUpdated: (_ conversationFilter: SidebarConversationFilter?) -> Void = { _ in }
-    var connectAction: () -> Void = {}
-    var settingsAction: () -> Void = {}
+    var menuItemAction: (_ selectedMenuItem: SidebarMenuItem) -> Void = { _ in }
     var supportAction: () -> Void = {}
 }

@@ -27,11 +27,9 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
     @Environment(\.sidebarBackgroundColor) private var sidebarBackgroundColor
 
     public var accountInfo: SidebarAccountInfo?
-    @Binding public var conversationFilter: SidebarConversationFilter?
+    @Binding public var selectedMenuItem: SidebarMenuItem
 
     private(set) var accountImageAction: () -> Void
-    private(set) var connectAction: () -> Void
-    private(set) var settingsAction: () -> Void
     private(set) var supportAction: () -> Void
 
     private(set) var accountImageView: (
@@ -43,18 +41,14 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
 
     public init(
         accountInfo: SidebarAccountInfo,
-        conversationFilter: Binding<SidebarConversationFilter?>,
+        selectedMenuItem: Binding<SidebarMenuItem>,
         accountImageAction: @escaping () -> Void,
-        connectAction: @escaping () -> Void,
-        settingsAction: @escaping () -> Void,
         supportAction: @escaping () -> Void,
         accountImageView: @escaping (_ accountImage: UIImage, _ availability: SidebarAccountInfo.Availability?) -> AccountImageView
     ) {
         self.accountInfo = accountInfo
-        _conversationFilter = conversationFilter
+        _selectedMenuItem = selectedMenuItem
         self.accountImageAction = accountImageAction
-        self.connectAction = connectAction
-        self.settingsAction = settingsAction
         self.supportAction = supportAction
         self.accountImageView = accountImageView
     }
@@ -73,7 +67,7 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                     .padding(.horizontal, 24)
                     .padding(.vertical)
 
-                let menuItemsScrollView = ScrollView(.vertical) { menuItems }
+                let menuItemsScrollView = ScrollView(.vertical) { scrollableMenuItems }
                 if #available(iOS 16.4, *) {
                     menuItemsScrollView
                         .scrollBounceBehavior(.basedOnSize)
@@ -82,17 +76,14 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
                 }
 
                 // bottom menu items
-                SidebarMenuItemView(icon: "gearshape", iconSize: iconSize) {
-                    Text("sidebar.settings.title", bundle: .module)
-                } action: {
-                    settingsAction()
-                }
-                .padding(.horizontal, 16)
-
-                SidebarMenuItemView(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
-                    Text("sidebar.support.title", bundle: .module)
-                } action: {
-                    supportAction()
+                Group {
+                    menuItem(.settings)
+                    
+                    SidebarMenuItemView(icon: "questionmark.circle", iconSize: iconSize, isLink: true) {
+                        Text("sidebar.support.title", bundle: .module)
+                    } action: {
+                        supportAction()
+                    }
                 }
                 .padding(.horizontal, 16)
             }
@@ -119,48 +110,43 @@ public struct SidebarView<AccountImageView>: View where AccountImageView: View {
         }
     }
 
-    @ViewBuilder @MainActor
-    private var menuItems: some View {
+    @ViewBuilder
+    private var scrollableMenuItems: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("sidebar.conversation_filter.title", bundle: .module)
-                .wireTextStyle(.h2)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 12)
-            ForEach([SidebarConversationFilter?.none] + SidebarConversationFilter.allCases, id: \.self) { conversationFilter in
-                conversationFilter.label(iconSize, isActive: self.conversationFilter == conversationFilter) {
-                    self.conversationFilter = conversationFilter
-                }
+
+            menuItemHeader("sidebar.conversation_filter.title", addTopPadding: false)
+            let conversationFilters = [SidebarMenuItem.all, .favorites, .groups, .oneOnOne, .archive]
+            ForEach(conversationFilters, id: \.self) { conversationFilter in
+                menuItem(conversationFilter)
             }
 
-            Text("sidebar.contacts.title", bundle: .module)
-                .wireTextStyle(.h2)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 12)
-                .padding(.top, 12)
-            SidebarMenuItemView(
-                icon: "person.badge.plus",
-                iconSize: iconSize
-            ) {
-                Text("sidebar.contacts.connect.title", bundle: .module)
-            } action: {
-                connectAction()
-            }
+            menuItemHeader("sidebar.contacts.title")
+            menuItem(.connect)
         }
         .padding(.horizontal, 16)
     }
-}
 
-// MARK: - SidebarData.ConversationFilter + label
+    @ViewBuilder
+    private func menuItemHeader(_ key: LocalizedStringKey, addTopPadding: Bool = true) -> some View {
+        let text = Text(key, bundle: .module)
+            .wireTextStyle(.h2)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 12)
+        if addTopPadding {
+            text
+                .padding(.top)
+        } else {
+            text
+        }
+    }
 
-private extension SidebarConversationFilter? {
+    private func menuItem(_ menuItem: SidebarMenuItem) -> some View {
 
-    @MainActor
-    func label(_ iconSize: CGSize?, isActive: Bool, action: @escaping () -> Void) -> SidebarMenuItemView {
         let text: Text
         let icon: String
+        switch menuItem {
 
-        switch self {
-        case .none:
+        case .all:
             text = Text("sidebar.conversation_filter.all.title", bundle: .module)
             icon = "text.bubble"
 
@@ -176,18 +162,26 @@ private extension SidebarConversationFilter? {
             text = Text("sidebar.conversation_filter.oneOnOneConversations.title", bundle: .module)
             icon = "person"
 
-        case .archived:
+        case .archive:
             text = Text("sidebar.conversation_filter.archived.title", bundle: .module)
             icon = "archivebox"
+
+        case .connect:
+            text = Text("sidebar.contacts.connect.title", bundle: .module)
+            icon = "person.badge.plus"
+
+        case .settings:
+            text = Text("sidebar.settings.title", bundle: .module)
+            icon = "gearshape"
         }
 
         return SidebarMenuItemView(
             icon: icon,
             iconSize: iconSize,
             isLink: false,
-            isHighlighted: isActive,
+            isHighlighted: selectedMenuItem == menuItem,
             title: { text },
-            action: action
+            action: { selectedMenuItem = menuItem }
         )
     }
 }
