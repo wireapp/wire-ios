@@ -31,10 +31,11 @@ protocol UserUpdateEventProcessorProtocol {
 }
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
+    
+    let repository: any UserRepositoryProtocol
 
-    func processEvent(_: UserUpdateEvent) async throws {
-        // TODO: [WPB-10200]
-        assertionFailure("not implemented yet")
+    func processEvent(_ event: UserUpdateEvent) async throws {
+        try await repository.updateUser(event)
     }
 
 }

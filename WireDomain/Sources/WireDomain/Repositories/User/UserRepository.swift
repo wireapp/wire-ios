@@ -19,6 +19,7 @@
 import Foundation
 import WireAPI
 import WireDataModel
+import WireFoundation
 
 // sourcery: AutoMockable
 /// Facilitate access to users related domain objects.
@@ -42,6 +43,10 @@ public protocol UserRepositoryProtocol {
     ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
+    
+    /// Updates a user.
+    
+    func updateUser(_ event: UserUpdateEvent) async throws
 
 }
 
@@ -86,6 +91,125 @@ public final class UserRepository: UserRepositoryProtocol {
             }
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+    
+    public func updateUser(_ event: UserUpdateEvent) async throws {
+        await context.perform { [self] in
+
+            let user = ZMUser.fetchOrCreate(
+                with: event.id,
+                domain: event.qualifiedID.domain,
+                in: context
+            )
+            
+            if let qualifiedID = event.qualifiedID, BackendInfo.isFederationEnabled {
+                precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
+                precondition(user.domain == nil || user.domain == qualifiedID.domain)
+
+                user.remoteIdentifier = qualifiedID.uuid
+                user.domain = qualifiedID.domain
+            } else if let id = event.id {
+                precondition(user.remoteIdentifier == nil || user.remoteIdentifier == id)
+                user.remoteIdentifier = id
+            }
+
+//            if let serviceID = event.serviceID {
+//                user.serviceIdentifier = serviceID.id.transportString()
+//                user.providerIdentifier = serviceID.provider.transportString()
+//            }
+
+//            if payload.updatedKeys.contains(.teamID) {
+//                user.teamIdentifier = payload.teamID
+//                user.createOrDeleteMembershipIfBelongingToTeam()
+//            }
+
+//            if payload.SSOID != nil {
+//                if let subject = payload.SSOID?.subject {
+//                    user.usesCompanyLogin = !subject.isEmpty
+//                } else {
+//                    user.usesCompanyLogin = false
+//                }
+//            }
+
+//            if payload.isDeleted == true {
+//                user.markAccountAsDeleted(at: Date())
+//            }
+
+            if let name = event.name, !user.isAccountDeleted {
+                user.name = name
+            }
+
+//            if (payload.updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
+//                user.phoneNumber = payload.phone?.removingExtremeCombiningCharacters
+//            }
+
+            if let email = event.email, !user.isAccountDeleted {
+                user.emailAddress = email.removingExtremeCombiningCharacters
+            }
+
+            if let handle = event.handle, !user.isAccountDeleted {
+                user.handle = handle
+            }
+
+//            if payload.managedBy != nil || authoritative {
+//                user.managedBy = payload.managedBy
+//            }
+
+            if let accentColor = event.accentColorID, 
+               let accentColorValue = AccentColor(rawValue: Int16(accentColor)) {
+                user.accentColor = accentColorValue
+            }
+
+//            if let expiresAt = payload.expiresAt {
+//                user.expiresAt = expiresAt
+//            }
+
+            updateAssets(
+                from: event,
+                for: user
+            )
+
+            if let supportedProtocols = event.supportedProtocols {
+                user.supportedProtocols = supportedProtocols.toDomainModel()
+            } else {
+                user.supportedProtocols = [.proteus]
+            }
+
+            user.isPendingMetadataRefresh = false
+            user.updatePotentialGapSystemMessagesIfNeeded()
+        }
+    }
+    
+    private func updateAssets(
+        from event: UserUpdateEvent,
+        for user: ZMUser
+    ) {
+        let assetKeys: Set<String> = [
+            ZMUser.previewProfileAssetIdentifierKey,
+            ZMUser.completeProfileAssetIdentifierKey
+        ]
+        
+        guard !user.hasLocalModifications(forKeys: assetKeys) else {
+            return
+        }
+
+        let validAssets = event.assets?.filter(\.key.isValidAssetID)
+        
+        let previewAssetKey = validAssets?
+            .first(where: { $0.size == .preview })
+            .map(\.key)
+        
+        let completeAssetKey = validAssets?
+            .first(where: { $0.size == .complete })
+            .map(\.key)
+
+        if let previewAssetKey {
+            user.previewProfileAssetIdentifier = previewAssetKey
+        }
+
+        if let completeAssetKey {
+            user.completeProfileAssetIdentifier = completeAssetKey
         }
     }
 

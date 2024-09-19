@@ -29,7 +29,8 @@ struct UserUpdateEventDecoder {
         )
 
         return UserUpdateEvent(
-            userID: payload.userID,
+            id: payload.id,
+            qualifiedID: payload.qualifiedID,
             accentColorID: payload.accentColorID,
             name: payload.name,
             handle: payload.handle,
@@ -42,7 +43,8 @@ struct UserUpdateEventDecoder {
 
     private struct Payload: Decodable {
 
-        let userID: UUID
+        let id: UUID
+        let qualifiedID: UserID
         let accentColorID: Int?
         let name: String?
         let handle: String?
@@ -53,7 +55,8 @@ struct UserUpdateEventDecoder {
 
         enum CodingKeys: String, CodingKey {
 
-            case userID = "id"
+            case id
+            case qualifiedID = "qualified_id"
             case accentColorID = "accent_id"
             case name
             case handle

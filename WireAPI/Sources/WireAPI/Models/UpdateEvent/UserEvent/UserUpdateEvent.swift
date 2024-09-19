@@ -24,7 +24,11 @@ public struct UserUpdateEvent: Equatable, Codable {
 
     /// The updated user's id.
 
-    public let userID: UUID
+    public let id: UUID
+    
+    /// The updated user's qualified id.
+    
+    public let qualifiedID: UserID
 
     /// The new accent color id.
 
