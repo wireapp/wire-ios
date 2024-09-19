@@ -16,17 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-"sidebar.conversation_filter.title" = "Conversations";
-"sidebar.conversation_filter.all.title" = "All";
-"sidebar.conversation_filter.favorites.title" = "Favorites";
-"sidebar.conversation_filter.groups.title" = "Groups";
-"sidebar.conversation_filter.oneOnOneConversations.title" = "1:1 Conversations";
-"sidebar.conversation_filter.archived.title" = "Archive";
-
-"sidebar.contacts.title" = "Contacts";
-"sidebar.contacts.connect.title" = "Contacts";
-"sidebar.contacts.connect.title" = "Connect";
-
-"sidebar.settings.title" = "Settings";
-
-"sidebar.support.title" = "Support";
+public enum SidebarMenuItem: CaseIterable, Comparable {
+    // conversation filters
+    case all, favorites, groups, oneOnOne
+    // archived conversations
+    case archive
+    // new conversation
+    case connect
+    // bottom
+    case settings
+}
