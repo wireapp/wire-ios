@@ -12,6 +12,7 @@
 		0106AC902C9B00A30022E2CF /* MessageInfoExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */; };
 		0106AC932C9C304A0022E2CF /* MockProteusMessage_EncryptedPayloadGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC912C9C2FE10022E2CF /* MockProteusMessage_EncryptedPayloadGenerator.swift */; };
 		0106AC952C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */; };
+		0106AC972C9CB7F90022E2CF /* MessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC962C9CB7F90022E2CF /* MessageInfo.swift */; };
 		012B55F62C4A8FFC00DC12D0 /* EventHasher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012B55F52C4A8FFC00DC12D0 /* EventHasher.swift */; };
 		06025662248E467B00E060E1 /* NotificationStreamSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06025661248E467B00E060E1 /* NotificationStreamSync.swift */; };
 		06025666248E616C00E060E1 /* ZMSimpleListRequestPaginator.m in Sources */ = {isa = PBXBuildFile; fileRef = 06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */; };
@@ -486,6 +487,7 @@
 		0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractorTests.swift; sourceTree = "<group>"; };
 		0106AC912C9C2FE10022E2CF /* MockProteusMessage_EncryptedPayloadGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProteusMessage_EncryptedPayloadGenerator.swift; sourceTree = "<group>"; };
 		0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilderTests.swift; sourceTree = "<group>"; };
+		0106AC962C9CB7F90022E2CF /* MessageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfo.swift; sourceTree = "<group>"; };
 		012B55F52C4A8FFC00DC12D0 /* EventHasher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventHasher.swift; sourceTree = "<group>"; };
 		06025661248E467B00E060E1 /* NotificationStreamSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStreamSync.swift; sourceTree = "<group>"; };
 		06025665248E616C00E060E1 /* ZMSimpleListRequestPaginator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSimpleListRequestPaginator.m; sourceTree = "<group>"; };
@@ -1246,6 +1248,7 @@
 				0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */,
 				0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */,
 				0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */,
+				0106AC962C9CB7F90022E2CF /* MessageInfo.swift */,
 				0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */,
 				16BBA1F32AF3952300CDF38A /* MessageSenderTests.swift */,
 				1623F8D42AE6729D004F0319 /* SessionEstablisher.swift */,
@@ -2680,6 +2683,7 @@
 				EECBE8F028E71F57005DE5DD /* SyncConversationActionHandlerTests.swift in Sources */,
 				1621D26B1D75C7FF007108C2 /* ZMUpstreamInsertedObjectSyncTests.m in Sources */,
 				7A111DEA285C90B70085BF91 /* SendMLSMessageActionHandlerTests.swift in Sources */,
+				0106AC972C9CB7F90022E2CF /* MessageInfo.swift in Sources */,
 				630D41BC2B07DA3E00633867 /* ProteusConversationParticipantsServiceTests.swift in Sources */,
 				06474D5E24B30C79002C695D /* PushNotificationStatusTests.swift in Sources */,
 				1695B9D42B87FFF100E9342A /* StubPayloadConversationEvent.swift in Sources */,
