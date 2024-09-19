@@ -23,12 +23,12 @@ import WireFoundation
 
 @MainActor
 public final class MainCoordinator<SplitViewController, TabBarController, NewConversationBuilder>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
-SplitViewController: MainSplitViewControllerProtocol,
-TabBarController: MainTabBarControllerProtocol,
-SplitViewController.Sidebar: MainSidebarProtocol,
-SplitViewController.ConversationList == TabBarController.ConversationList,
-TabBarController.Archive == UIViewController,
-NewConversationBuilder: MainContentViewControllerBuilder {
+    SplitViewController: MainSplitViewControllerProtocol,
+    TabBarController: MainTabBarControllerProtocol,
+    SplitViewController.Sidebar: MainSidebarProtocol,
+    SplitViewController.ConversationList == TabBarController.ConversationList,
+    TabBarController.Archive == UIViewController,
+    NewConversationBuilder: MainContentViewControllerBuilder {
 
     private weak var mainSplitViewController: SplitViewController!
     private weak var mainTabBarController: TabBarController!
@@ -38,7 +38,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
     private weak var archivedConversations: TabBarController.Archive?
 
     private let newConversationBuilder: NewConversationBuilder
-    //private weak var newConversationViewController: UIViewController?
+    // private weak var newConversationViewController: UIViewController?
 
     private var selfProfileBuilder: any ViewControllerBuilder
     private weak var selfProfileViewController: UIViewController?
@@ -49,7 +49,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
         newConversationBuilder: NewConversationBuilder,
-        selfProfileBuilder: /*some*/ any ViewControllerBuilder
+        selfProfileBuilder: /* some */ any ViewControllerBuilder
     ) {
         self.mainSplitViewController = mainSplitViewController
         self.mainTabBarController = mainTabBarController
@@ -60,7 +60,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
     }
 
     deinit {
-        /*WireLogger.ui.debug*/print("MainCoordinator.deinit")
+        /* WireLogger.ui.debug */ print("MainCoordinator.deinit")
     }
 
     // MARK: - Methods
@@ -126,8 +126,6 @@ NewConversationBuilder: MainContentViewControllerBuilder {
     public func showSettings() {
         fatalError("not implemented yet")
 
-
-
         //        private func createSettingsViewController() -> UIViewController {
         //            let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
         //                userSession: userSession,
@@ -135,8 +133,6 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         //            )
         //            return settingsViewControllerBuilder.build()
         //        }
-
-
 
         // TODO: remove?
         // guard let selfUser = ZMUser.selfUser() else {
@@ -164,7 +160,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         let navigationController = UINavigationController(rootViewController: viewController)
         // navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationController.modalPresentationStyle = .formSheet
-        //newConversationViewController = navigationController
+        // newConversationViewController = navigationController
 
         if isLayoutCollapsed {
             mainTabBarController.conversations!.conversationList.present(navigationController, animated: true)

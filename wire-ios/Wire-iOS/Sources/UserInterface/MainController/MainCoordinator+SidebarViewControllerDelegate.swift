@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUIFoundation
 import WireSidebar
+import WireUIFoundation
 
 /*
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {

@@ -91,7 +91,7 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol, Convers
         fatalError("init(coder:) is not supported")
     }
 
-    public override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setPreferredDisplayMode(basedOn: view.frame.size.width)
     }

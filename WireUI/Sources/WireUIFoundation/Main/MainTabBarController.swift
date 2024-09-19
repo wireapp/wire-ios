@@ -151,14 +151,13 @@ func MainTabBarController_Preview() -> some MainTabBarControllerProtocol {
     let tabBarController = MainTabBarController<PreviewConversationListViewController>()
     tabBarController.conversations = (
         .init("conversationList"),
-        .init()
+        .none
     )
     tabBarController.archive = PlaceholderViewController()
     tabBarController.settings = PlaceholderViewController()
     tabBarController.selectedContent = .conversations
     return tabBarController
 }
-
 
 private final class PlaceholderViewController: UIViewController {
 

@@ -153,7 +153,7 @@ final class StartUIViewController: UIViewController {
 
         quickActionsBar.inviteButton.addTarget(self, action: #selector(inviteMoreButtonTapped(_:)), for: .touchUpInside)
 
-        //view.backgroundColor = UIColor.clear
+        // view.backgroundColor = UIColor.clear
 
         createConstraints()
         updateActionBar()

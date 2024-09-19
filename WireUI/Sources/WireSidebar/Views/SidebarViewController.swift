@@ -52,7 +52,7 @@ public final class SidebarViewController: UIViewController {
         _ availability: SidebarAccountInfo.Availability?
     ) -> AccountImageView
 
-    public init<AccountImageView: View>(accountImageView: @escaping AccountImageViewBuilder<AccountImageView>) {
+    public init(accountImageView: @escaping AccountImageViewBuilder<some View>) {
         super.init(nibName: nil, bundle: nil)
 
         model.accountImageAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!) }
@@ -84,7 +84,7 @@ public final class SidebarViewController: UIViewController {
         fatalError("init(coder:) is not supported")
     }
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         setupHostingController?()
     }

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireUIFoundation
 import WireSyncEngine
+import WireUIFoundation
 
 struct StartUIViewControllerBuilder: MainContentViewControllerBuilder {
 
