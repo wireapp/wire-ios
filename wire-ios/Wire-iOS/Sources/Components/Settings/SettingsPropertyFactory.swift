@@ -52,7 +52,6 @@ final class SettingsPropertyFactory {
     var mediaManager: AVSMediaManagerInterface?
     weak var userSession: UserSession?
     var selfUser: SettingsSelfUser?
-    var marketingConsent: SettingsPropertyValue = .none
     let userPropertyValidator: UserPropertyValidating
     weak var delegate: SettingsPropertyFactoryDelegate?
 
@@ -94,15 +93,6 @@ final class SettingsPropertyFactory {
         self.userSession = userSession
         self.selfUser = selfUser
         userPropertyValidator = UserPropertyValidator()
-
-        userSession?.fetchMarketingConsent { [weak self] result in
-            switch result {
-            case .failure:
-                self?.marketingConsent = .none
-            case .success(let result):
-                self?.marketingConsent = SettingsPropertyValue.bool(value: result)
-            }
-        }
     }
 
     private func getOnlyProperty(propertyName: SettingsPropertyName, value: String?) -> SettingsBlockProperty {
