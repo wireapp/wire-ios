@@ -201,18 +201,16 @@ public final class MessageSender: MessageSenderInterface {
             // 2) get the encrypted payload
             let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
-
+          
             
-            if !DeveloperFlag.skipExpireMessage.isOn {
-                // set expiration so request can be expired later
-                await context.perform {
-                    if message.shouldExpire {
-                        message.setExpirationDate()
-                        self.context.saveOrRollback()
-                    }
+            // set expiration so request can be expired later
+            await context.perform {
+                if message.shouldExpire {
+                    message.setExpirationDate()
+                    self.context.saveOrRollback()
                 }
             }
-            
+
             // 3) send it via API
             await messageInfo.resetAllUserClientsFailedSessions(in: context)
             let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(message: messageData, conversationID: conversationID, expirationDate: nil)
@@ -319,14 +317,12 @@ public final class MessageSender: MessageSenderInterface {
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
 
-        if !DeveloperFlag.skipExpireMessage.isOn {
-            // set expiration so request can be expired later
-                    await context.perform {
-                        if message.shouldExpire {
-                            message.setExpirationDate()
-                            self.context.saveOrRollback()
-                        }
-                    }
+        // set expiration so request can be expired later
+        await context.perform {
+            if message.shouldExpire {
+                message.setExpirationDate()
+                self.context.saveOrRollback()
+            }
         }
 
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)

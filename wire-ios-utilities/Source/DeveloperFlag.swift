@@ -31,8 +31,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case forceCRLExpiryAfterOneMinute
-    case skipExpireMessage
-    
+
     public var description: String {
         switch self {
         case .enableMLSSupport:
@@ -61,9 +60,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .forceCRLExpiryAfterOneMinute:
             return "Turn on to force CRLs to expire after 1 minute"
-
-        case .skipExpireMessage:
-            return "Removes a 30 sec timer in which all messages need to be sent"
         }
     }
 
@@ -100,7 +96,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep, .skipExpireMessage:
+        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"
