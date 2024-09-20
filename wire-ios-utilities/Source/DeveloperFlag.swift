@@ -25,7 +25,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case enableMLSSupport
     case showCreateMLSGroupToggle
     case proteusViaCoreCrypto
-    case nseV2
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case debugDuplicateObjects
@@ -42,9 +41,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .proteusViaCoreCrypto:
             return "Turn on to use CoreCrypto for proteus messaging."
-
-        case .nseV2:
-            return "Turn on to use the new implementation of the notification service extension."
 
         case .forceDatabaseLoadingFailure:
             return "Turn on to force database loading failure in the process of database migration"
@@ -96,7 +92,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
+        case .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute, .decryptAndStoreEventsSleep:
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"

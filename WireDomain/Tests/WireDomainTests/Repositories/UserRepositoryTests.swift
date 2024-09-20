@@ -29,6 +29,7 @@ class UserRepositoryTests: XCTestCase {
 
     var sut: UserRepository!
     var usersAPI: MockUsersAPI!
+    var selfUsersAPI: MockSelfUserAPI!
 
     var stack: CoreDataStack!
     let coreDataStackHelper = CoreDataStackHelper()
@@ -42,15 +43,18 @@ class UserRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
+        selfUsersAPI = MockSelfUserAPI()
         sut = UserRepository(
             context: context,
-            usersAPI: usersAPI
+            usersAPI: usersAPI,
+            selfUserAPI: selfUsersAPI
         )
     }
 
     override func tearDown() async throws {
         stack = nil
         usersAPI = nil
+        selfUsersAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
@@ -132,6 +136,20 @@ class UserRepositoryTests: XCTestCase {
             XCTAssertEqual(user.supportedProtocols, Scaffolding.user1.supportedProtocols?.toDomainModel())
             XCTAssertFalse(user.needsToBeUpdatedFromBackend)
         }
+    }
+
+    func testPushSelfSupportedProtocols() async throws {
+        // Given
+        selfUsersAPI.pushSupportedProtocols_MockMethod = { _ in () }
+        XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [])
+
+        // When
+        try await sut.pushSelfSupportedProtocols([.proteus])
+
+        // Then
+        let expectedProtocols = Set([WireAPI.MessageProtocol.proteus])
+
+        XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
     }
 
     private enum Scaffolding {

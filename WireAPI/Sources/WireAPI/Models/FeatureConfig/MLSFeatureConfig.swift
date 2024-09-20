@@ -46,4 +46,20 @@ public struct MLSFeatureConfig: Equatable, Codable {
 
     public let supportedProtocols: Set<MessageProtocol>
 
+    public init(
+        status: FeatureConfigStatus,
+        protocolToggleUsers: Set<UUID>,
+        defaultProtocol: MessageProtocol,
+        allowedCipherSuites: [MLSCipherSuite],
+        defaultCipherSuite: MLSCipherSuite,
+        supportedProtocols: Set<MessageProtocol>
+    ) {
+        self.status = status
+        self.protocolToggleUsers = protocolToggleUsers
+        self.defaultProtocol = defaultProtocol
+        self.allowedCipherSuites = allowedCipherSuites
+        self.defaultCipherSuite = defaultCipherSuite
+        self.supportedProtocols = supportedProtocols
+    }
+
 }
