@@ -19,20 +19,17 @@
 import UIKit
 import WireFoundation
 
-// TODO: could typaliases take some of the generic conditions?
-
 @MainActor
 public final class MainCoordinator<
-    SplitViewController,
-    TabBarController,
-    NewConversationBuilder
->: MainCoordinatorProtocol, UISplitViewControllerDelegate where
+
     SplitViewController: MainSplitViewControllerProtocol,
-    TabBarController: MainTabBarControllerProtocol,
+    TabBarController: MainTabBarControllerProtocol
+
+>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
+
     SplitViewController.Sidebar: MainSidebarProtocol,
-SplitViewController.ConversationList == TabBarController.ConversationList,
-SplitViewController.Archive == TabBarController.Archive,
-NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    SplitViewController.ConversationList == TabBarController.ConversationList,
+    SplitViewController.Archive == TabBarController.Archive {
 
     private weak var mainSplitViewController: SplitViewController!
     private weak var mainTabBarController: TabBarController!
@@ -45,7 +42,7 @@ NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
     /// when the settings is taken out of the tab bar controller and presented on top of the conversation list.
     private var settings: TabBarController.Settings?
 
-    private let newConversationBuilder: NewConversationBuilder
+    private let newConversationBuilder: any MainCoordinatorInjectingViewControllerBuilder
 
     private var selfProfileBuilder: any ViewControllerBuilder
     private weak var selfProfileViewController: UIViewController?
@@ -55,7 +52,7 @@ NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
     public init(
         mainSplitViewController: SplitViewController,
         mainTabBarController: TabBarController,
-        newConversationBuilder: NewConversationBuilder,
+        newConversationBuilder: any MainCoordinatorInjectingViewControllerBuilder,
         selfProfileBuilder: /* some */ any ViewControllerBuilder
     ) {
         self.mainSplitViewController = mainSplitViewController
@@ -141,7 +138,7 @@ NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
         mainSplitViewController.archive = archive
 
         // TODO: settings, connect
-        //presentArchivedConversationsOverConversationList()
+        // presentArchivedConversationsOverConversationList()
     }
 
     public func showSelfProfile() {
@@ -166,8 +163,8 @@ NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
         if !isLayoutCollapsed {
             // if it's already visible (and not contained in the tabBarController anymore), abort
-            //guard mainTabBarController.settings != nil else { return }
-            //addSettingsAsChildOfConversationList()
+            // guard mainTabBarController.settings != nil else { return }
+            // addSettingsAsChildOfConversationList()
 
             // TODO: remove this workaround
             let settingsViewController = (mainTabBarController.settings ?? settings)!
@@ -188,7 +185,7 @@ NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
             conversationList.present(navigationController, animated: true)
         }
 
-        return;
+        return ()
 
         fatalError("not implemented yet")
 

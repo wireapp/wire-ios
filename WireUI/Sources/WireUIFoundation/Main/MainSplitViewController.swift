@@ -18,7 +18,12 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<Sidebar: MainSidebarProtocol, ConversationList: MainConversationListProtocol>: UISplitViewController, MainSplitViewControllerProtocol {
+public final class MainSplitViewController<
+
+    Sidebar: MainSidebarProtocol,
+    ConversationList: MainConversationListProtocol
+
+>: UISplitViewController, MainSplitViewControllerProtocol {
 
     public typealias Conversation = UIViewController
     public typealias Archive = UIViewController

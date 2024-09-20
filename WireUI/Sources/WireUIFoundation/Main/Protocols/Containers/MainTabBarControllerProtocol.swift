@@ -26,7 +26,7 @@ public protocol MainTabBarControllerProtocol: UITabBarController {
     associatedtype Archive: UIViewController
     associatedtype Settings: UIViewController
 
-    /// The active tab.
+    /// The selected tab. Since a `selectedTab` property exists in `UITabBarController` this property is suffixed with "Content" instead.
     var selectedContent: MainTabBarControllerContent { get set }
 
     /// In the compact layout the conversation view controller will be pushed onto the navigation controller of the conversation list.
