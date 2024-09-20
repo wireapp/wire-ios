@@ -42,17 +42,19 @@ struct SidebarPreview: View {
                     accountInfo: accountInfo,
                     selectedMenuItem: $selectedMenuItem,
                     accountImageAction: {},
-                    supportAction: {}
-                ) { uiImage, availability in
-                    MockAccountImageView(uiImage: uiImage, availability: availability)
-                }
+                    supportAction: {},
+                    accountImageView: { uiImage, availability in
+                        MockAccountImageView(uiImage: uiImage, availability: availability)
+                    }
+                )
                 .navigationSplitViewColumnWidth(260)
             }, content: {
                 Text("\(selectedMenuItem)")
                     .navigationSplitViewColumnWidth(280)
             }, detail: {
                 Text("Conversation Content")
-            })
+            }
+        )
     }
 }
 
