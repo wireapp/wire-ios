@@ -18,28 +18,53 @@
 
 import SwiftUI
 
-@MainActor @ViewBuilder
-func SidebarMenuItemPreview() -> some View {
-    VStack {
-        // Displaying two separate menus here in order to verify, that
-        // the size of the icons is constant only within one menu.
-        SidebarMenuItemContainer { iconSize in
-            SidebarMenuItemView(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
-            SidebarMenuItemView(icon: "gamecontroller", iconSize: iconSize, isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
-            SidebarMenuItemView(icon: "person.3", iconSize: iconSize, isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+struct SidebarMenuItemPreview: View {
+
+    @State private var topMenuIconSize: CGSize?
+    @State private var bottomMenuIconSize: CGSize?
+
+    var body: some View {
+        VStack {
+            // Display two separate menus here in order to verify, that the size
+            // (especially the width) of the icons is equal for all items within their menu only.
+            SidebarMenuItemContainer(iconSize: $topMenuIconSize) { iconSize in
+                SidebarMenuItemView(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
+                SidebarMenuItemView(icon: "gamecontroller", iconSize: iconSize, isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+                SidebarMenuItemView(icon: "person.3", iconSize: iconSize, isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+            }
+            .overlay {
+                    HStack {
+                        Rectangle()
+                            .frame(width: (topMenuIconSize?.width ?? 0))
+                            .foregroundStyle(Color.red.opacity(0.4))
+                        Spacer()
+                    }
+                .padding(.leading, 8)
+            }
+
+            Divider()
+
+            SidebarMenuItemContainer(iconSize: $bottomMenuIconSize) { iconSize in
+                SidebarMenuItemView(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Small Icon") }, action: { print("show all conversations") })
+                SidebarMenuItemView(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
+            }
+            .overlay {
+                    HStack {
+                        Rectangle()
+                            .frame(width: (bottomMenuIconSize?.width ?? 0))
+                            .foregroundStyle(Color.green.opacity(0.6))
+                        Spacer()
+                    }
+                .padding(.leading, 8)
+            }
         }
-        Divider()
-        SidebarMenuItemContainer { iconSize in
-            SidebarMenuItemView(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Small Icon") }, action: { print("show all conversations") })
-            SidebarMenuItemView(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
-        }
+        .frame(width: 260)
     }
-    .frame(width: 260)
 }
 
 private struct SidebarMenuItemContainer<Content>: View where Content: View {
 
-    @State private var iconSize: CGSize?
+    @Binding private(set) var iconSize: CGSize?
 
     @ViewBuilder let content: (_ iconSize: CGSize?) -> Content
 
