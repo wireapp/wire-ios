@@ -67,7 +67,7 @@ final class ConversationListViewController: UIViewController {
             return FilterMenuLocale.Favorites.title
         case .groups:
             return FilterMenuLocale.Groups.title
-        case .oneToOneConversations:
+        case .oneOnOne:
             return FilterMenuLocale.OneOnOneConversations.title
         case .none:
             return ""
@@ -97,7 +97,7 @@ final class ConversationListViewController: UIViewController {
 
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
-    let selfProfileViewControllerBuilder: ViewControllerBuilder
+    let selfProfileViewControllerBuilder: any MainCoordinatorInjectingViewControllerBuilder
     var splitViewInterface: MainSplitViewInterface = .expanded {
         didSet {
             setupTitleView()
@@ -115,7 +115,7 @@ final class ConversationListViewController: UIViewController {
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinatorProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: ViewControllerBuilder
+        selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -137,7 +137,7 @@ final class ConversationListViewController: UIViewController {
         viewModel: ViewModel,
         zClientViewController: ZClientViewController,
         mainCoordinator: MainCoordinatorProtocol,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some MainCoordinatorInjectingViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.mainCoordinator = mainCoordinator
@@ -413,7 +413,7 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter(_ filter: ConversationFilterType?) {
+    func applyFilter(_ filter: MainConversationFilter?) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
 

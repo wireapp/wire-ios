@@ -22,12 +22,13 @@ import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
+import WireUIFoundation
 
 final class ConversationListViewModel: NSObject {
 
     typealias SectionIdentifier = String
 
-    var selectedFilter: ConversationFilterType? {
+    var selectedFilter: MainConversationFilter? {
         didSet {
             reloadConversationList()
         }
@@ -431,7 +432,7 @@ delegate?.listViewModelShouldBeReloaded()
             kinds = [.groups]
         case .favorites:
             kinds = [.favorites]
-        case .oneToOneConversations:
+        case .oneOnOne:
             kinds = [.contacts, .contactRequests]
         case .none:
             kinds = [.conversations, .contactRequests]

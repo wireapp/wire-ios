@@ -23,6 +23,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
+import WireUIFoundation
 
 extension ConversationListViewController {
 
@@ -153,7 +154,7 @@ extension ConversationListViewController {
         var selectedFilterImage: UIImage
 
         switch listContentController.listViewModel.selectedFilter {
-        case .favorites, .groups, .oneToOneConversations:
+        case .favorites, .groups, .oneOnOne:
             selectedFilterImage = filledFilterImage
         case .none:
             selectedFilterImage = defaultFilterImage
@@ -178,8 +179,8 @@ extension ConversationListViewController {
         )
         let oneToOneConversationsAction = createFilterAction(
             title: FilterMenuLocale.OneOnOneConversations.title,
-            filter: .oneToOneConversations,
-            isSelected: listContentController.listViewModel.selectedFilter == .oneToOneConversations
+            filter: .oneOnOne,
+            isSelected: listContentController.listViewModel.selectedFilter == .oneOnOne
         )
 
         // Create the menu
@@ -245,7 +246,7 @@ extension ConversationListViewController {
     /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
-        filter: ConversationFilterType?,
+        filter: MainConversationFilter?,
         isSelected: Bool
     ) -> UIAction {
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
@@ -263,7 +264,7 @@ extension ConversationListViewController {
     }
 
     func accessibilityLabelForFilterAction(
-        for filter: ConversationFilterType?,
+        for filter: MainConversationFilter?,
         isSelected: Bool
     ) -> String {
 
@@ -276,7 +277,7 @@ extension ConversationListViewController {
         case .groups:
             return isSelected ? accessibilityLocale.Groups.Selected.description : accessibilityLocale.Groups.description
 
-        case .oneToOneConversations:
+        case .oneOnOne:
             return isSelected ? accessibilityLocale.OneOnOne.Selected.description : accessibilityLocale.OneOnOne.description
 
         case .none:

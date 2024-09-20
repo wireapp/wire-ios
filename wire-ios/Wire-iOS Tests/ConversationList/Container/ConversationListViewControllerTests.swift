@@ -33,7 +33,7 @@ final class ConversationListViewControllerTests: XCTestCase {
     private var mockMainCoordinator: MockMainCoordinator!
     private var sut: ConversationListViewController!
     private var window: UIWindow!
-    private var tabBarController: MainTabBarController<MockMainConversationListProtocol>!
+    private var tabBarController: MainTabBarController<ConversationListViewController>!
     private var userSession: UserSessionMock!
     private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -85,7 +85,7 @@ final class ConversationListViewControllerTests: XCTestCase {
         )
 
         tabBarController = MainTabBarController()
-        tabBarController[tab: .conversations].viewControllers = [sut]
+        tabBarController.conversations = (sut, nil)
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = tabBarController
@@ -203,7 +203,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
-        sut.applyFilter(.oneToOneConversations)
+        sut.applyFilter(.oneOnOne)
 
         // THEN
         snapshotHelper.verify(matching: tabBarController)
@@ -232,4 +232,14 @@ final class ConversationListViewControllerTests: XCTestCase {
         }
         return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
+}
+
+// MARK: MainCoordinatorInjectingViewControllerBuilder + mock
+
+private extension MainCoordinatorInjectingViewControllerBuilder where Self == MockMainCoordinatorInjectingViewControllerBuilder {
+    static var mock: Self { .init() }
+}
+
+private struct MockMainCoordinatorInjectingViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    func build(mainCoordinator _: some MainCoordinatorProtocol) -> UIViewController { .init() }
 }

@@ -212,7 +212,6 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
         var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
         let mainCoordinator = MainCoordinator(
-            // zClientViewController: self,
             mainSplitViewController: wireSplitViewController,
             mainTabBarController: mainTabBarController,
             newConversationBuilder: newConversationBuilder,

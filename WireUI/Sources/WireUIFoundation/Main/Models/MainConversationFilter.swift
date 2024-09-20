@@ -17,6 +17,6 @@
 //
 
 /// Filter criteria for the conversations in the conversation list which will be available in the expanded and collapsed layout.
-public enum MainConversationFilter: CaseIterable {
+public enum MainConversationFilter: CaseIterable, Sendable {
     case favorites, groups, oneOnOne
 }

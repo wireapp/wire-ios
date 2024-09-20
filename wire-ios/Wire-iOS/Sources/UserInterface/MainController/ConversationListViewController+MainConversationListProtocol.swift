@@ -19,12 +19,8 @@
 import WireUIFoundation
 
 extension ConversationListViewController: MainConversationListProtocol {
-    var conversationFilter: ConversationFilterType? {
+    var conversationFilter: MainConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
         set { listContentController.listViewModel.selectedFilter = newValue }
     }
-}
-
-extension ConversationFilterType: MainConversationListFilterProtocol {
-    static var oneOnOne: ConversationFilterType { .oneToOneConversations }
 }

@@ -21,7 +21,8 @@ import WireUIFoundation
 
 @testable import Wire
 
-final class MockMainConversationListProtocol: UIViewController, MainConversationListProtocol {
-    var conversationFilter: ConversationFilterType?
-    var splitViewInterface: MainSplitViewInterface = .expanded
-}
+// TODO: remove file
+//final class MockMainConversationListProtocol: UIViewController, MainConversationListProtocol {
+//    var conversationFilter: MainConversationFilter?
+//    var splitViewInterface: MainSplitViewInterface = .expanded
+//}
