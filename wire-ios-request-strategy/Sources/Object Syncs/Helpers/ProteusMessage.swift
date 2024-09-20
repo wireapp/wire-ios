@@ -18,7 +18,6 @@
 
 import Foundation
 
-
 public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
 
     /// Messages can expire, e.g. if network conditions are too slow to send.

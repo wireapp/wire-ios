@@ -109,9 +109,13 @@ final class MessageSenderTests: MessagingTestBase {
             try await messageSender.sendMessage(message: message)
         }
     }
-
+    
+    // MARK: - Broadcasting
+    
     func testThatWhenBroadcastingProteusMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
+        
+        
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
         let messageSendingStatus = Payload.MessageSendingStatus(
             time: Date(),
@@ -122,13 +126,10 @@ final class MessageSenderTests: MessagingTestBase {
             failedToConfirm: [:]
         )
 
-        let message = GenericMessageEntity(
-            message: GenericMessage(content: Text(content: "Hello World")),
-            context: syncMOC,
-            conversation: groupConversation,
-            completionHandler: nil)
+        let message = await broadcastMessage()
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessage(returning: .success((messageSendingStatus, response)))
@@ -143,13 +144,10 @@ final class MessageSenderTests: MessagingTestBase {
     func testThatWhenBroadcastingProteusMessageFailsDueToMissingClients_thenEstablishSessionsAndTryAgain() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil, apiVersion: 0)
-        let message = GenericMessageEntity(
-            message: GenericMessage(content: Text(content: "Hello World")),
-            context: syncMOC,
-            conversation: groupConversation,
-            completionHandler: nil)
+        let message = await broadcastMessage()
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessageFailing(with: NetworkError.missingClients(
@@ -169,13 +167,10 @@ final class MessageSenderTests: MessagingTestBase {
     func testThatWhenBroadcastingMessageProteusFailsWithTemporaryError_thenTryAgain() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 408, transportSessionError: nil, apiVersion: 0)
-        let message = GenericMessageEntity(
-            message: GenericMessage(content: Text(content: "Hello World")),
-            context: syncMOC,
-            conversation: groupConversation,
-            completionHandler: nil)
+        let message = await broadcastMessage()
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withApiVersionResolving(to: .v0)
             .withBroadcastProteusMessageFailing(with: NetworkError.errorDecodingResponse(response))
@@ -189,6 +184,8 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(2, arrangement.messageApi.broadcastProteusMessageMessage_Invocations.count)
     }
 
+    // MARK: - Send Proteus Message
+    
     func testThatWhenSendingProteusMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
@@ -208,6 +205,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
@@ -230,6 +228,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
@@ -257,6 +256,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (arrangement, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
@@ -282,6 +282,7 @@ final class MessageSenderTests: MessagingTestBase {
         message.isExpired = true
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
@@ -305,6 +306,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
@@ -339,7 +341,9 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
+            .withProteusConfigured()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
             .withSendProteusMessageFailing(with: networkError)
@@ -376,6 +380,7 @@ final class MessageSenderTests: MessagingTestBase {
             completionHandler: nil)
 
         let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
             .withQuickSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(Void()))
             .withApiVersionResolving(to: .v0)
@@ -391,6 +396,8 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(NSNumber(value: MessageSendFailure.unknown.rawValue), message.expirationReasonCode)
     }
 
+    // MARK: - Send MLS Message
+    
     func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
         await syncMOC.performGrouped {
@@ -546,8 +553,29 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
-    struct Arrangement {
+    // MARK: - Helpers
+    
+    private func broadcastMessage() async -> GenericMessageEntity {
+        let users = await coreDataStack.syncContext.perform { [self] in
+            let user = ZMUser.insertNewObject(in: coreDataStack.syncContext)
+            user.remoteIdentifier = .create()
+            user.domain = "example.com"
+            let client = UserClient.insertNewObject(in: coreDataStack.syncContext)
+            client.remoteIdentifier = .randomClientIdentifier()
+            client.user = user
+            return [user]
+        }
 
+        return GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            targetRecipients: .users(Set(users)),
+            completionHandler: nil)
+    }
+    
+    struct Arrangement {
+        
         struct Scaffolding {
             static let groupID = MLSGroupID(.init([1, 2, 3]))
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
@@ -579,6 +607,7 @@ final class MessageSenderTests: MessagingTestBase {
         let messageDependencyResolver = MockMessageDependencyResolverInterface()
         let quickSyncObserver = MockQuickSyncObserverInterface()
         let mlsService = MockMLSServiceInterface()
+        let proteusService = MockProteusServiceInterface()
         let coreDataStack: CoreDataStack
 
         init(coreDataStack: CoreDataStack) {
@@ -635,6 +664,17 @@ final class MessageSenderTests: MessagingTestBase {
             return self
         }
 
+        func withProteusConfigured() -> Arrangement {
+            coreDataStack.syncContext.performAndWait {
+                coreDataStack.syncContext.proteusService = proteusService
+                proteusService.encryptBatchedDataForSessions_MockMethod = { _, _ in
+                    // success dumb data
+                    return ["test": Data()]
+                }
+            }
+            return self
+        }
+        
         func withEstablishSessions(returning result: Result<Void, SessionEstablisherError>) -> Arrangement {
             switch result {
             case .success:

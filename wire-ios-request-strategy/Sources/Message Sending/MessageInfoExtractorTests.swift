@@ -46,6 +46,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         mockProteusMessage = MockProteusMessage()
         mockProteusMessage.context = coreDataStack.syncContext
         mockProteusMessage.underlyingMessage = Scaffolding.genericMessage
+        mockProteusMessage.underlyingTargetRecipients = .conversationParticipants
     }
     
     override func tearDownWithError() throws {

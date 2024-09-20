@@ -23,6 +23,8 @@ enum MessageInfoExtractorError: Error {
     case missingGenericMessage
     case missingValidSelfClient
     case missingSelfDomain
+    case unsupportedBroadcastMessage
+    case unsupportedTargetRecipient
 
 }
 
@@ -32,7 +34,7 @@ struct MessageInfoExtractor {
 
     func infoForBroadcast(message: any ProteusMessage) async throws -> MessageInfo {
         guard let message = message as? GenericMessageEntity else {
-            fatal("unsupported message type")
+            throw MessageInfoExtractorError.unsupportedBroadcastMessage
         }
         
         let genericMessage = message.underlyingMessage
@@ -50,7 +52,7 @@ struct MessageInfoExtractor {
             return info
 
         case .conversationParticipants, .clients:
-            fatal("unexpected usage")
+            throw MessageInfoExtractorError.unsupportedTargetRecipient
         }
 
     }

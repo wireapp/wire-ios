@@ -1245,12 +1245,12 @@
 			isa = PBXGroup;
 			children = (
 				1623F8D22AE66F28004F0319 /* MessageSender.swift */,
+				16BBA1F32AF3952300CDF38A /* MessageSenderTests.swift */,
 				0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */,
 				0106AC942C9CA4F30022E2CF /* ProteusMessagePayloadBuilderTests.swift */,
 				0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */,
 				0106AC962C9CB7F90022E2CF /* MessageInfo.swift */,
 				0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */,
-				16BBA1F32AF3952300CDF38A /* MessageSenderTests.swift */,
 				1623F8D42AE6729D004F0319 /* SessionEstablisher.swift */,
 				16BBA1F12AF2678200CDF38A /* SessionEstablisherTests.swift */,
 				1623F8DF2AEAAF0E004F0319 /* MessageDependencyResolver.swift */,
