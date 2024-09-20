@@ -352,7 +352,6 @@ public extension Proteus_UserEntry {
     }
 }
 
-
 // MARK: - QualifiedNewOtrMessage
 
 public extension Proteus_QualifiedNewOtrMessage {

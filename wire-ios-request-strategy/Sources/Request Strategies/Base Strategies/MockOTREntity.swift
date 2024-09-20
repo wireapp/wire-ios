@@ -71,11 +71,11 @@ extension MockOTREntity: ProteusMessage {
     var targetRecipients: WireRequestStrategy.Recipients {
         .conversationParticipants
     }
-    
+
     func prepareMessageForSending() async throws {
-    
+
     }
-    
+
     var debugInfo: String {
         "Mock ProteusMessage"
     }

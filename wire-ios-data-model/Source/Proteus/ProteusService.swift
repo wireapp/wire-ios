@@ -136,7 +136,7 @@ public final class ProteusService: ProteusServiceInterface {
                 return false
             }
         }
-        
+
         var errorDescription: String? {
             switch self {
             case .failedToEncryptData(let error):

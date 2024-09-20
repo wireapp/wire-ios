@@ -93,7 +93,6 @@ public class MockProteusMessage: ProteusMessage {
 
     public var expirationReasonCode: NSNumber?
 
-
     // MARK: - setExpirationDate
 
     public var setExpirationDate_Invocations: [Void] = []
@@ -209,14 +208,13 @@ public class MockProteusMessage: ProteusMessage {
 // as ProteusMessage is combined of two protocols, it seems sourcery doesn't generate it
 // this will be remove after removing EncryptedPayloadGenerator completly
 extension MockProteusMessage: EncryptedPayloadGenerator {
-    
+
     public typealias Payload = (data: Data, strategy: WireDataModel.MissingClientsStrategy)
 
-    
     public func encryptForTransport() async -> Payload? {
         return nil
     }
-    
+
     public func encryptForTransportQualified() async -> Payload? {
         nil
     }

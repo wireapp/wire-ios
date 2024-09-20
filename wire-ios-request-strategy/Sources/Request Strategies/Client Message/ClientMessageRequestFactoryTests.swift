@@ -52,7 +52,7 @@ extension ClientMessageRequestFactoryTests {
             let expectedMessage = Proteus_NewOtrMessage(
                 withSenderId: self.selfClient.hexRemoteIdentifier,
                 nativePush: false,
-                recipients: [], 
+                recipients: [],
                 missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 

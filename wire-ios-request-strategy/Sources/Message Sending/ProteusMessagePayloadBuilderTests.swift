@@ -16,22 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireRequestStrategySupport
 import WireDataModelSupport
+import WireRequestStrategySupport
 
 @testable import WireRequestStrategy
 
 final class ProteusMessagePayloadBuilderTests: XCTestCase {
-    
+
     var sut: ProteusMessagePayloadBuilder!
     var proteusService: MockProteusServiceInterface!
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
         proteusService = MockProteusServiceInterface()
     }
-    
+
     override func tearDownWithError() throws {
         try super.tearDownWithError()
         proteusService = nil
@@ -41,13 +41,13 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
     func testEncryptForTransportUsingNonQualifiedIds() async throws {
         try await internalTestEncryptForTransport(qualifiedIds: false)
     }
-    
+
     func testEncryptForTransportUsingQualifiedIds() async throws {
         try await internalTestEncryptForTransport(qualifiedIds: true)
     }
-    
-    // MARK - helpers
-    
+
+    // MARK: - helpers
+
     private func internalTestEncryptForTransport(qualifiedIds: Bool) async throws {
         // GIVEN
         let userID = QualifiedID.random()
@@ -57,16 +57,16 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
                               clientID: clientID)
         let listClients: MessageInfo.ClientList = [
             userID.domain: [
-                userID.uuid : [
+                userID.uuid: [
                     UserClientData(sessionID: sessionID)
                 ]
             ]
         ]
-        
+
         proteusService.encryptBatchedDataForSessions_MockMethod = { _, _ in
             [sessionID.rawValue: Data()]
         }
-        
+
         sut = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: qualifiedIds)
         let messageInfo = MessageInfo(genericMessage: GenericMessage(content: Text(content: "test")),
                                       listClients: listClients,
@@ -77,7 +77,7 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
 
         // WHEN
         let data = try await sut.encryptForTransport(with: messageInfo)
-        
+
         // THEN
         XCTAssertNotNil(data)
     }

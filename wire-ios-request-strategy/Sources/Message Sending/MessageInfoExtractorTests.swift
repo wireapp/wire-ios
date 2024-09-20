@@ -18,37 +18,37 @@
 
 import XCTest
 
+import WireDataModelSupport
 @testable import WireRequestStrategy
 import WireRequestStrategySupport
-import WireDataModelSupport
 
 final class MessageInfoExtractorTests: XCTestCase {
-    
+
     var sut: MessageInfoExtractor!
     var coreDataStack: CoreDataStack!
     var modelHelper: ModelHelper!
     var mockProteusMessage: MockProteusMessage!
-    
+
     override func setUpWithError() throws {
         try super.setUpWithError()
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
-        
+
         coreDataStack = CoreDataStack(account: .init(userName: "F", userIdentifier: .create()),
                                       applicationContainer: URL(fileURLWithPath: "/dev/null"),
                                       inMemoryStore: true)
-        
+
         coreDataStack.loadStores { _ in
 
         }
         sut = MessageInfoExtractor(context: coreDataStack.syncContext)
-        modelHelper  = ModelHelper()
-        
+        modelHelper = ModelHelper()
+
         mockProteusMessage = MockProteusMessage()
         mockProteusMessage.context = coreDataStack.syncContext
         mockProteusMessage.underlyingMessage = Scaffolding.genericMessage
         mockProteusMessage.underlyingTargetRecipients = .conversationParticipants
     }
-    
+
     override func tearDownWithError() throws {
         try super.tearDownWithError()
         sut = nil
@@ -56,16 +56,16 @@ final class MessageInfoExtractorTests: XCTestCase {
         modelHelper = nil
         mockProteusMessage = nil
     }
-    
+
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
-    
+
     func test_infoForSending_For2DifferentsUsersWithOneClient() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
             Scaffolding.userAID.domain: [
-                Scaffolding.userAID.uuid : [
+                Scaffolding.userAID.uuid: [
                     UserClientData(sessionID: .init(domain: Scaffolding.userAID.domain,
                                                     userID: Scaffolding.userAID.uuid.uuidString,
                                                     clientID: Scaffolding.clientAID))
@@ -74,26 +74,26 @@ final class MessageInfoExtractorTests: XCTestCase {
         ]
 
         var conversation: ZMConversation!
-        
+
         let conversationID = try await context.perform { [self] in
-            let _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
+            _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
                                                domain: Scaffolding.selfUserID.domain,
                                                in: context)
             let selfClient = modelHelper.createSelfClient(id: Scaffolding.selfClientID, in: context)
-                        
+
             let userA = modelHelper.createUser(qualifiedID: Scaffolding.userAID, in: context)
-            let _ = modelHelper.createClient(id: Scaffolding.clientAID, for: userA)
-            
+            _ = modelHelper.createClient(id: Scaffolding.clientAID, for: userA)
+
             conversation = ZMConversation.insertGroupConversation(moc: context, participants: [userA, selfClient.user!])
             conversation.remoteIdentifier = Scaffolding.conversationID.uuid
             conversation.domain = Scaffolding.conversationID.domain
             mockProteusMessage.conversation = conversation
             return try XCTUnwrap(conversation.qualifiedID)
         }
-        
+
         // WHEN
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
-        
+
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
@@ -106,7 +106,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
             Scaffolding.selfUserID.domain: [
-                Scaffolding.selfUserID.uuid : [
+                Scaffolding.selfUserID.uuid: [
                     UserClientData(sessionID: .init(domain: Scaffolding.selfUserID.domain,
                                                     userID: Scaffolding.selfUserID.uuid.uuidString,
                                                     clientID: Scaffolding.selfOtherClientID))
@@ -114,13 +114,13 @@ final class MessageInfoExtractorTests: XCTestCase {
             ]
         ]
         var conversation: ZMConversation!
-        
+
         let conversationID = try await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
                                                domain: Scaffolding.selfUserID.domain,
                                                in: context)
             let selfClient = modelHelper.createSelfClient(id: Scaffolding.selfClientID, in: context)
-            let _ = modelHelper.createClient(id: Scaffolding.selfOtherClientID,
+            _ = modelHelper.createClient(id: Scaffolding.selfOtherClientID,
                                                            for: selfUser)
 
             conversation = ZMConversation.insertGroupConversation(moc: context, participants: [ selfClient.user!])
@@ -129,10 +129,10 @@ final class MessageInfoExtractorTests: XCTestCase {
             mockProteusMessage.conversation = conversation
             return try XCTUnwrap(conversation.qualifiedID)
         }
-        
+
         // WHEN
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
-        
+
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
@@ -145,7 +145,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         // GIVEN
         let expectedListClients = [
             Scaffolding.userAID.domain: [
-                Scaffolding.userAID.uuid : [
+                Scaffolding.userAID.uuid: [
                     UserClientData(sessionID: .init(domain: Scaffolding.userAID.domain,
                                                     userID: Scaffolding.userAID.uuid.uuidString,
                                                     clientID: Scaffolding.clientAID),
@@ -153,30 +153,30 @@ final class MessageInfoExtractorTests: XCTestCase {
                 ]
             ]
         ]
-        
+
         var conversation: ZMConversation!
-        
+
         let conversationID = try await context.perform { [self] in
-            let _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
+            _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
                                                domain: Scaffolding.selfUserID.domain,
                                                in: context)
             let selfClient = modelHelper.createSelfClient(id: Scaffolding.selfClientID, in: context)
-                        
+
             let userA = modelHelper.createUser(qualifiedID: Scaffolding.userAID, in: context)
             let clientA = modelHelper.createClient(id: Scaffolding.clientAID, for: userA)
 
             clientA.failedToEstablishSession = true // changed here
-            
+
             conversation = ZMConversation.insertGroupConversation(moc: context, participants: [userA, selfClient.user!])
             conversation.remoteIdentifier = Scaffolding.conversationID.uuid
             conversation.domain = Scaffolding.conversationID.domain
             mockProteusMessage.conversation = conversation
             return try XCTUnwrap(conversation.qualifiedID)
         }
-        
+
         // WHEN
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
-        
+
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
@@ -189,7 +189,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
             Scaffolding.userAID.domain: [
-                Scaffolding.userAID.uuid : [
+                Scaffolding.userAID.uuid: [
                     UserClientData(sessionID: .init(domain: Scaffolding.userAID.domain,
                                                     userID: Scaffolding.userAID.uuid.uuidString,
                                                     clientID: Scaffolding.clientAID))
@@ -197,32 +197,32 @@ final class MessageInfoExtractorTests: XCTestCase {
                 // no selfuser nor deletedUser
             ]
         ]
-        
+
         var conversation: ZMConversation!
-        
+
         let conversationID = try await context.perform { [self] in
-            let _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
+            _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
                                                domain: Scaffolding.selfUserID.domain,
                                                in: context)
             let selfClient = modelHelper.createSelfClient(id: Scaffolding.selfClientID, in: context)
-                        
+
             let userA = modelHelper.createUser(qualifiedID: Scaffolding.userAID, in: context)
-            let _ = modelHelper.createClient(id: Scaffolding.clientAID, for: userA)
-            
+            _ = modelHelper.createClient(id: Scaffolding.clientAID, for: userA)
+
             let deletedUser = modelHelper.createUser(in: context)
-            let _ = modelHelper.createClient(for: deletedUser)
+            _ = modelHelper.createClient(for: deletedUser)
             deletedUser.markAccountAsDeleted(at: .now) // changed here
-            
+
             conversation = ZMConversation.insertGroupConversation(moc: context, participants: [userA, selfClient.user!, deletedUser])
             conversation.remoteIdentifier = Scaffolding.conversationID.uuid
             conversation.domain = Scaffolding.conversationID.domain
             mockProteusMessage.conversation = conversation
             return try XCTUnwrap(conversation.qualifiedID)
         }
-        
+
         // WHEN
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
-        
+
         // THEN
         XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
@@ -230,15 +230,15 @@ final class MessageInfoExtractorTests: XCTestCase {
         XCTAssertEqual(messageInfo.selfClientID, Scaffolding.selfClientID)
         XCTAssertEqual(messageInfo.listClients, expectedListClients)
     }
-    
+
     private enum Scaffolding {
         static var selfUserID: QualifiedID = .randomID()
         static var selfClientID: String = .randomClientIdentifier()
         static var selfOtherClientID: String = .randomClientIdentifier()
-        
+
         static var userAID: QualifiedID = .randomID()
         static var clientAID: String = .randomClientIdentifier()
-        
+
         static var genericMessage: GenericMessage = .init()
         static var conversationID: QualifiedID = .randomID()
     }

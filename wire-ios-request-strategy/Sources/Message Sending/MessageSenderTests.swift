@@ -109,13 +109,12 @@ final class MessageSenderTests: MessagingTestBase {
             try await messageSender.sendMessage(message: message)
         }
     }
-    
+
     // MARK: - Broadcasting
-    
+
     func testThatWhenBroadcastingProteusMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
-        
-        
+
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
         let messageSendingStatus = Payload.MessageSendingStatus(
             time: Date(),
@@ -185,7 +184,7 @@ final class MessageSenderTests: MessagingTestBase {
     }
 
     // MARK: - Send Proteus Message
-    
+
     func testThatWhenSendingProteusMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
@@ -397,7 +396,7 @@ final class MessageSenderTests: MessagingTestBase {
     }
 
     // MARK: - Send MLS Message
-    
+
     func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {
         // given
         await syncMOC.performGrouped {
@@ -554,7 +553,7 @@ final class MessageSenderTests: MessagingTestBase {
     }
 
     // MARK: - Helpers
-    
+
     private func broadcastMessage() async -> GenericMessageEntity {
         let users = await coreDataStack.syncContext.perform { [self] in
             let user = ZMUser.insertNewObject(in: coreDataStack.syncContext)
@@ -573,9 +572,9 @@ final class MessageSenderTests: MessagingTestBase {
             targetRecipients: .users(Set(users)),
             completionHandler: nil)
     }
-    
+
     struct Arrangement {
-        
+
         struct Scaffolding {
             static let groupID = MLSGroupID(.init([1, 2, 3]))
             static let clientID = QualifiedClientID(userID: UUID(), domain: "example.com", clientID: "client123")
@@ -674,7 +673,7 @@ final class MessageSenderTests: MessagingTestBase {
             }
             return self
         }
-        
+
         func withEstablishSessions(returning result: Result<Void, SessionEstablisherError>) -> Arrangement {
             switch result {
             case .success:

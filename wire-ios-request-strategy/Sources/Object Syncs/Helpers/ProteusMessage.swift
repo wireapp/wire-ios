@@ -29,7 +29,7 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
     func prepareMessageForSending() async throws
 
     var underlyingMessage: GenericMessage? { get }
-    
+
     var targetRecipients: Recipients { get }
 }
 
@@ -38,7 +38,7 @@ extension ZMClientMessage: ProteusMessage {
     public var targetRecipients: Recipients {
         .conversationParticipants
     }
-    
+
     public func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {
@@ -66,7 +66,7 @@ extension ZMAssetClientMessage: ProteusMessage {
     public var targetRecipients: Recipients {
         .conversationParticipants
     }
-    
+
     public func prepareMessageForSending() async throws {
         try await context.perform { [self] in
             if conversation?.conversationType == .oneOnOne {

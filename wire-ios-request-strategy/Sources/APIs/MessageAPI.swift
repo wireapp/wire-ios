@@ -260,7 +260,7 @@ class MessageAPIV4: MessageAPIV3 {
             contentDisposition: nil,
             apiVersion: apiVersion.rawValue
         )
-        
+
         let response = await httpClient.send(request)
 
         if response.httpStatus == 412 {

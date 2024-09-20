@@ -33,10 +33,10 @@ struct ProteusMessagePayloadBuilder {
         // 1) encrypt the data with proteusService
         let plainText = try messageInfo.genericMessage.serializedData()
         let allSessionIds = messageInfo.allSessionIds()
-    
+
         // if a sessionId does not exist / not established, no data (key,value) is return for the sessionId!
         let encryptedDatas = try await proteusService.encryptBatched(data: plainText, forSessions: allSessionIds)
-        
+
         // 2) Wrap the encryptedData in protobuf object that will be serialized
         var messageData: Data
         if useQualifiedIds {
