@@ -26,4 +26,8 @@ public struct UserLegalholdDisableEvent: Equatable, Codable {
 
     public let userID: UUID
 
+    public init(userID: UUID) {
+        self.userID = userID
+    }
+
 }

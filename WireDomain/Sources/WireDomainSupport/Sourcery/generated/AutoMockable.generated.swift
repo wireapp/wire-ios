@@ -460,6 +460,26 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         await mock(userID, clientID, lastPrekey)
     }
 
+    // MARK: - disableUserLegalHold
+
+    public var disableUserLegalHold_Invocations: [Void] = []
+    public var disableUserLegalHold_MockError: Error?
+    public var disableUserLegalHold_MockMethod: (() async throws -> Void)?
+
+    public func disableUserLegalHold() async throws {
+        disableUserLegalHold_Invocations.append(())
+
+        if let error = disableUserLegalHold_MockError {
+            throw error
+        }
+
+        guard let mock = disableUserLegalHold_MockMethod else {
+            fatalError("no mock for `disableUserLegalHold`")
+        }
+
+        try await mock()
+    }
+
 }
 
 // swiftlint:enable variable_name
