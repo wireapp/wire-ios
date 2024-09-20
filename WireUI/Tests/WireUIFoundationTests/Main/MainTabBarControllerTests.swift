@@ -38,7 +38,6 @@ final class MainTabBarControllerTests: XCTestCase {
     func testAppearance() {
         let sut = MainTabBarControllerPreview()
         snapshotHelper
-            .withUserInterfaceStyle(.light)
             .verify(matching: sut, named: "light", testName: "light")
         snapshotHelper
             .withUserInterfaceStyle(.dark)

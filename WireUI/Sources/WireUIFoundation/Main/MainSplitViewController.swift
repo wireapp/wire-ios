@@ -30,6 +30,10 @@ public final class MainSplitViewController<
     public typealias TabContainer = UIViewController
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
+    /// If the width of the view is lower than this value, the `preferredDisplayMode` property
+    /// will be set to `.oneBesideSecondary`, otherwise to `.twoBesideSecondary`.
+    private let sidebarVisibilityThreshold: CGFloat = 768
+
     // MARK: - Public Properties
 
     public var sidebar: Sidebar {
@@ -122,7 +126,7 @@ public final class MainSplitViewController<
     }
 
     private func setPreferredDisplayMode(basedOn width: CGFloat) {
-        preferredDisplayMode = if width > 800 {
+        preferredDisplayMode = if width >= sidebarVisibilityThreshold {
             .twoBesideSecondary
         } else {
             .oneBesideSecondary

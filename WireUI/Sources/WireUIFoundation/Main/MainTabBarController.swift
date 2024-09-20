@@ -81,6 +81,7 @@ public final class MainTabBarController<
     public required init() {
         super.init(nibName: nil, bundle: nil)
         setupTabs()
+        setupAppearance()
     }
 
     @available(*, unavailable)
@@ -133,6 +134,20 @@ public final class MainTabBarController<
             }
         }
         selectedContent = .conversations
+    }
+
+    private func setupAppearance() {
+        let tabBarItemAppearance = UITabBarItemAppearance()
+        tabBarItemAppearance.normal.iconColor = .systemGray
+        tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = UIColor.systemGray
+
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithDefaultBackground()
+        tabBarAppearance.backgroundColor = .yellow
+        tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
+
+        tabBar.unselectedItemTintColor = .magenta
+        tabBar.standardAppearance = tabBarAppearance
     }
 }
 
