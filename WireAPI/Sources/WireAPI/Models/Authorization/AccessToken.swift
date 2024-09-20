@@ -35,8 +35,8 @@ public struct AccessToken: Sendable {
 
     public let type: String
 
-    /// The number of seconds the token is valid.
+    /// The point in time the token expires.
 
-    public let validityInSeconds: TimeInterval
+    public let expirationDate: Date
 
 }

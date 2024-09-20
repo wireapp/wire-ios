@@ -112,13 +112,16 @@ public final class APIService: APIServiceProtocol {
     }
 
     private func getAccessToken() async throws -> AccessToken {
-        if let currentAccessToken = await authenticationStorage.fetchAccessToken() {
-            return currentAccessToken
-        } else {
+        guard
+            let currentAccessToken = await authenticationStorage.fetchAccessToken(),
+            !currentAccessToken.isExpiring
+        else {
             let newAccessToken = try await getNewAccessToken()
             await authenticationStorage.storeAccessToken(newAccessToken)
             return newAccessToken
         }
+
+        return currentAccessToken
     }
 
     private func getNewAccessToken() async throws -> AccessToken {
@@ -166,8 +169,17 @@ private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
             userID: user,
             token: accessToken,
             type: tokenType,
-            validityInSeconds: TimeInterval(expiresIn)
+            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
         )
+    }
+
+}
+
+private extension AccessToken {
+
+    var isExpiring: Bool {
+        let secondsRemaining = expirationDate.timeIntervalSinceNow
+        return secondsRemaining < 40
     }
 
 }
