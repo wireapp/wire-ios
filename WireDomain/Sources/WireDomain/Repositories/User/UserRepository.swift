@@ -65,7 +65,7 @@ public protocol UserRepositoryProtocol {
         from remoteClient: WireAPI.UserClient,
         isNewClient: Bool
     ) async throws
-    
+
     /// Adds a legal hold request.
     ///
     /// - parameters:
@@ -247,7 +247,7 @@ public final class UserRepository: UserRepositoryProtocol {
             try context.save()
         }
     }
-    
+
     // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {

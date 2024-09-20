@@ -261,7 +261,6 @@ class UserRepositoryTests: XCTestCase {
             capabilities: []
         )
 
-
         nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
             target: userID,
             requester: nil,
