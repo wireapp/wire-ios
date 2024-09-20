@@ -33,12 +33,12 @@ struct SidebarMenuItemPreview: View {
                 SidebarMenuItemView(icon: "person.3", iconSize: iconSize, isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
             }
             .overlay {
-                    HStack {
-                        Rectangle()
-                            .frame(width: (topMenuIconSize?.width ?? 0))
-                            .foregroundStyle(Color.red.opacity(0.4))
-                        Spacer()
-                    }
+                HStack {
+                    Rectangle()
+                        .frame(width: (topMenuIconSize?.width ?? 0))
+                        .foregroundStyle(Color.red.opacity(0.4))
+                    Spacer()
+                }
                 .padding(.leading, 8)
             }
 
@@ -49,12 +49,12 @@ struct SidebarMenuItemPreview: View {
                 SidebarMenuItemView(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
             }
             .overlay {
-                    HStack {
-                        Rectangle()
-                            .frame(width: (bottomMenuIconSize?.width ?? 0))
-                            .foregroundStyle(Color.green.opacity(0.6))
-                        Spacer()
-                    }
+                HStack {
+                    Rectangle()
+                        .frame(width: (bottomMenuIconSize?.width ?? 0))
+                        .foregroundStyle(Color.green.opacity(0.6))
+                    Spacer()
+                }
                 .padding(.leading, 8)
             }
         }
