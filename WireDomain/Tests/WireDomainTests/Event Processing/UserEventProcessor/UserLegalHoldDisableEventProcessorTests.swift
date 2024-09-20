@@ -30,14 +30,17 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
     var sut: UserLegalholdDisableEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = UserLegalholdDisableEventProcessor(
             repository: UserRepository(
@@ -45,14 +48,15 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
                 usersAPI: MockUsersAPI()
             )
         )
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -61,8 +65,11 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
         // Given
 
         await context.perform { [self] in
-            let selfUser = ZMUser.selfUser(in: context)
-            selfUser.remoteIdentifier = Scaffolding.userID
+            let selfUser = modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
 
             let legalHoldRequest = Scaffolding.legalHoldRequest
             selfUser.userDidReceiveLegalHoldRequest(Scaffolding.legalHoldRequest)
