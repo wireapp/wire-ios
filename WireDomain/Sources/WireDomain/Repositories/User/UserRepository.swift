@@ -200,10 +200,12 @@ public final class UserRepository: UserRepositoryProtocol {
                 )
             }
 
+            let localClientActivationDate = localClient.activationDate
+
             if let selfClient = selfUser.selfClient(),
                localClient.remoteIdentifier != selfClient.remoteIdentifier, isNewClient,
                let selfClientActivationDate = selfClient.activationDate,
-               localClient.activationDate?.compare(selfClientActivationDate) == .orderedDescending {
+               localClientActivationDate?.compare(selfClientActivationDate) == .orderedDescending {
                 localClient.needsToNotifyUser = true
             }
 
