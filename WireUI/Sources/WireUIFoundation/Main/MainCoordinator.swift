@@ -90,7 +90,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         mainTabBarController.selectedContent = .conversations
 
         if !isLayoutCollapsed {
-            moveArchivedConversationsIntoMainTabBarControllerIfNeeded()
+            dismissArchivedConversationsAndMoveIntoMainTabBarControllerIfNeeded()
 
             // TODO: complete
             // settings visible?
@@ -105,7 +105,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         if !isLayoutCollapsed {
             // if it's already visible (and not contained in the tabBarController anymore), do nothing
             guard mainTabBarController.archive != nil else { return }
-            addArchivedConversationsAsChildOfConversationList()
+            presentArchivedConversationsOverConversationList()
         }
     }
 
@@ -248,7 +248,7 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         // TODO: conversations
 
         // move the archived conversations list back to the tab bar controller if needed
-        moveArchivedConversationsIntoMainTabBarControllerIfNeeded()
+        dismissArchivedConversationsAndMoveIntoMainTabBarControllerIfNeeded()
 
         // move the settings back to the tab bar controller if needed
         moveSettingsIntoMainTabBarControllerIfNeeded()
@@ -282,44 +282,46 @@ NewConversationBuilder: MainContentViewControllerBuilder {
 
         // if the archived conversations view controller was visible, present it on top of the conversation list
         if mainTabBarController.selectedContent == .archive {
-            addArchivedConversationsAsChildOfConversationList()
+            presentArchivedConversationsOverConversationList()
             mainSplitViewController.sidebar.selectedMenuItem = .archive
         }
 
-        // if the settings view controller was visible, present it // TODO: on top of the conversation list
+        // if the settings view controller was visible, present it on top of the conversation list
         if mainTabBarController.selectedContent == .settings {
-            //addSettingsAsChildOfConversationList()
-            //mainSplitViewController.sidebar.selectedMenuItem = .settings
-
-            // TODO: remove this workaround
-            settings = mainTabBarController.settings!
-            mainTabBarController.settings = nil
-
-            let navigationController = UINavigationController(rootViewController: settings!)
-            navigationController.modalPresentationStyle = .formSheet
-
-            // TODO: try to get rid of this line
-            navigationController.view.backgroundColor = .systemBackground
-
-            mainSplitViewController.conversationList!.present(navigationController, animated: false)
+            addSettingsAsChildOfConversationList()
+            mainSplitViewController.sidebar.selectedMenuItem = .settings
         }
     }
 
     // MARK: - Helpers
 
-    private func addArchivedConversationsAsChildOfConversationList() {
+    private func presentArchivedConversationsOverConversationList() {
         let archivedConversations = archivedConversations!
         mainTabBarController.archive = nil
-        addViewControllerAsChildOfConversationList(archivedConversations)
+
+        let navigationController = UINavigationController(rootViewController: archivedConversations)
+        navigationController.modalPresentationStyle = .overCurrentContext
+        mainSplitViewController.conversationList!.navigationController?.present(navigationController, animated: false)
     }
 
-    /*
+    private func dismissArchivedConversationsAndMoveIntoMainTabBarControllerIfNeeded() {
+        // If the archive tab is empty, we're showing the conversation archive in the expanded layout.
+        // No need to move it back.
+        if mainTabBarController.archive == nil {
+            let navigationController = archivedConversations!.navigationController!
+            navigationController.dismiss(animated: false)
+            mainTabBarController.archive = archivedConversations
+            mainTabBarController.selectedContent = .archive
+        }
+    }
+
+    // MARK: -
+
     private func addSettingsAsChildOfConversationList() {
         let settings = settings!
         mainTabBarController.archive = nil
         addViewControllerAsChildOfConversationList(settings)
     }
-     */
 
     private func addViewControllerAsChildOfConversationList(_ viewController: UIViewController) {
         let conversationList = mainSplitViewController.conversationList!
@@ -333,19 +335,6 @@ NewConversationBuilder: MainContentViewControllerBuilder {
             conversationList.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
         ])
         viewController.didMove(toParent: conversationList)
-    }
-
-    private func moveArchivedConversationsIntoMainTabBarControllerIfNeeded() {
-        // If the archive tab is empty, we're showing the conversation archive in the expanded layout.
-        // No need to move it back.
-        if mainTabBarController.archive == nil {
-            archivedConversations!.willMove(toParent: nil)
-            archivedConversations!.view.removeFromSuperview()
-            archivedConversations!.removeFromParent()
-            archivedConversations!.view.translatesAutoresizingMaskIntoConstraints = true
-            mainTabBarController.archive = archivedConversations
-            mainTabBarController.selectedContent = .archive
-        }
     }
 
     private func moveSettingsIntoMainTabBarControllerIfNeeded() {
