@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// TODO: unit tests
+
 public final class MainSplitViewController<
 
     Sidebar: MainSidebarProtocol,
@@ -33,64 +35,60 @@ public final class MainSplitViewController<
 
     // MARK: - Public Properties
 
-    public var sidebar: Sidebar! {
-        viewController(for: .primary) as? Sidebar
-    }
+    public var sidebar: Sidebar! { _sidebar }
 
     public var conversationList: ConversationList? {
-        get { supplementaryNavigationController.viewControllers.first as? ConversationList }
+        get { _conversationList }
         set {
-            let navigationController = viewController(for: .supplementary) as! UINavigationController
-            navigationController.viewControllers = [newValue].compactMap { $0 }
-            navigationController.view.layoutIfNeeded()
+            _conversationList = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
     public var conversation: UIViewController? {
-        get {
-            let navigationController = viewController(for: .secondary) as! UINavigationController
-            if navigationController.viewControllers.first === noConversationPlaceholder {
-                return nil
-            } else {
-                return navigationController.viewControllers.first.map { $0 as! Conversation }
-            }
-        }
+        get { _conversation }
         set {
-            let navigationController = viewController(for: .secondary) as! UINavigationController
-            navigationController.viewControllers = [newValue ?? noConversationPlaceholder]
-            navigationController.view.layoutIfNeeded()
+            _conversation = newValue
+            secondaryNavigationController?.viewControllers = [newValue ?? noConversationPlaceholder]
+            secondaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
     public var archive: UIViewController? {
-        get {
-            let navigationController = viewController(for: .supplementary) as! UINavigationController
-            return navigationController.viewControllers.first
-        }
+        get { _archive }
         set {
-            let navigationController = viewController(for: .supplementary) as! UINavigationController
-            navigationController.viewControllers = [newValue].compactMap { $0 }
-            navigationController.view.layoutIfNeeded()
+            _archive = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
     public var settings: UIViewController? {
-        get { fatalError() }
-        set { fatalError() }
+        get { _settings }
+        set {
+            _settings = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
 
-    public private(set) weak var tabContainer: UIViewController!
+    public var tabContainer: UIViewController! { _tabContainer }
 
     // MARK: - Private Properties
 
     /// This view controller is displayed when no conversation in the list is selected.
     private let noConversationPlaceholder: UIViewController
 
-    // TODO: comment
-    private weak var supplementaryNavigationController: UINavigationController!
+    private weak var supplementaryNavigationController: UINavigationController?
+    private weak var secondaryNavigationController: UINavigationController?
 
-    // TODO: comment
-    private weak var secondaryNavigationController: UINavigationController!
+    private weak var _sidebar: Sidebar?
+    private weak var _conversationList: ConversationList?
+    private weak var _conversation: Conversation?
+    private weak var _archive: Archive?
+    private weak var _settings: Settings?
+    private weak var _tabContainer: TabContainer?
 
     // MARK: - Initialization
 
@@ -105,10 +103,12 @@ public final class MainSplitViewController<
         let supplementaryNavigationController = UINavigationController()
         let secondaryNavigationController = UINavigationController(rootViewController: noConversationPlaceholder)
 
-        self.tabContainer = tabContainer
         self.noConversationPlaceholder = noConversationPlaceholder
         self.supplementaryNavigationController = supplementaryNavigationController
         self.secondaryNavigationController = secondaryNavigationController
+
+        _sidebar = sidebar
+        _tabContainer = tabContainer
 
         super.init(style: .tripleColumn)
 

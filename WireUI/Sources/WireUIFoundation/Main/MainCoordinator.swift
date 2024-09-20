@@ -19,6 +19,8 @@
 import UIKit
 import WireFoundation
 
+// TODO: unit tests
+
 @MainActor
 public final class MainCoordinator<
 
@@ -373,5 +375,3 @@ public final class MainCoordinator<
         }
     }
 }
-
-// TODO: unit tests!
