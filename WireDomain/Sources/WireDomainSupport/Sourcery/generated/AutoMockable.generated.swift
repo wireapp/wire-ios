@@ -108,6 +108,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(qualifiedId)
     }
 
+    // MARK: - removeFromConversations
+
+    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
+    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
+
+    public func removeFromConversations(user: ZMUser, removalDate: Date) async {
+        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+
+        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
+            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        }
+
+        await mock(user, removalDate)
+    }
+
 }
 
 public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
@@ -135,6 +150,21 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol 
         }
 
         try await mock()
+    }
+
+    // MARK: - removeFromConversations
+
+    public var removeFromConversationsUserRemovalDate_Invocations: [(user: ZMUser, removalDate: Date)] = []
+    public var removeFromConversationsUserRemovalDate_MockMethod: ((ZMUser, Date) async -> Void)?
+
+    public func removeFromConversations(user: ZMUser, removalDate: Date) async {
+        removeFromConversationsUserRemovalDate_Invocations.append((user: user, removalDate: removalDate))
+
+        guard let mock = removeFromConversationsUserRemovalDate_MockMethod else {
+            fatalError("no mock for `removeFromConversationsUserRemovalDate`")
+        }
+
+        await mock(user, removalDate)
     }
 
 }
@@ -564,6 +594,21 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         }
 
         try await mock()
+    }
+
+    // MARK: - deleteUserAccount
+
+    public var deleteUserAccountForAt_Invocations: [(user: ZMUser, date: Date)] = []
+    public var deleteUserAccountForAt_MockMethod: ((ZMUser, Date) async -> Void)?
+
+    public func deleteUserAccount(for user: ZMUser, at date: Date) async {
+        deleteUserAccountForAt_Invocations.append((user: user, date: date))
+
+        guard let mock = deleteUserAccountForAt_MockMethod else {
+            fatalError("no mock for `deleteUserAccountForAt`")
+        }
+
+        await mock(user, date)
     }
 
 }

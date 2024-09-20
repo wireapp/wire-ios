@@ -147,9 +147,9 @@ private enum Scaffolding {
     static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
     static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
     static let lastUpdate = Date()
-    static let connectionStatus = ConnectionStatus.accepted
+    nonisolated(unsafe) static let connectionStatus = ConnectionStatus.accepted
 
-    static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
+    nonisolated(unsafe) static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
                                                receiverID: Scaffolding.member2ID.uuid,
                                                receiverQualifiedID: Scaffolding.member2ID,
                                                conversationID: Scaffolding.conversationID.uuid,
@@ -157,7 +157,7 @@ private enum Scaffolding {
                                                lastUpdate: Scaffolding.lastUpdate,
                                                status: Scaffolding.connectionStatus)
 
-    static let brokenConnection = WireAPI.Connection(senderID: nil,
+    nonisolated(unsafe) static let brokenConnection = WireAPI.Connection(senderID: nil,
                                                      receiverID: nil,
                                                      receiverQualifiedID: nil,
                                                      conversationID: nil,

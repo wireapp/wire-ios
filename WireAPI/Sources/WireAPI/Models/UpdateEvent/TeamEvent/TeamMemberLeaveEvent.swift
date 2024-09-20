@@ -29,7 +29,7 @@ public struct TeamMemberLeaveEvent: Equatable, Codable {
     /// The id of the member who left.
 
     public let userID: UUID
-    
+
     /// The time at which the member left.
 
     public let time: Date

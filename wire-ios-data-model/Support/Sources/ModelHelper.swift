@@ -133,7 +133,7 @@ public struct ModelHelper {
 
         return (team, Set(users))
     }
-    
+
     @discardableResult
     public func createTeam(
         id: UUID = .init(),
@@ -149,8 +149,7 @@ public struct ModelHelper {
                 let member = addUser(user, to: team, in: context)
                 return user
             }
-        
-        
+
         let conversation = createGroupConversation(
             id: conversationID,
             with: Set(users),
@@ -158,10 +157,10 @@ public struct ModelHelper {
             domain: nil,
             in: context
         )
-        
+
         return (team, Set(users), conversation)
     }
-    
+
     @discardableResult
     public func createTeam(
         id: UUID = .init(),
@@ -176,7 +175,7 @@ public struct ModelHelper {
                 addUser(member, to: team, in: context)
                 return member
             }
-        
+
         let conversation = createGroupConversation(
             id: conversationID,
             with: Set(members),
@@ -184,7 +183,7 @@ public struct ModelHelper {
             domain: nil,
             in: context
         )
-        
+
         return (team, Set(users), conversation)
     }
 
@@ -268,7 +267,7 @@ public struct ModelHelper {
             role: nil
         )
         conversation.team = team
-        
+
         return conversation
     }
 

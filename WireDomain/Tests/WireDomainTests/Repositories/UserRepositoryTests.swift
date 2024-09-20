@@ -20,6 +20,7 @@ import Foundation
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireAPI
@@ -30,6 +31,7 @@ class UserRepositoryTests: XCTestCase {
     var sut: UserRepository!
     var usersAPI: MockUsersAPI!
     var selfUsersAPI: MockSelfUserAPI!
+    var conversationsRepository: MockConversationRepositoryProtocol!
 
     var stack: CoreDataStack!
     var coreDataStackHelper: CoreDataStackHelper!
@@ -46,10 +48,12 @@ class UserRepositoryTests: XCTestCase {
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
         selfUsersAPI = MockSelfUserAPI()
+        conversationsRepository = MockConversationRepositoryProtocol()
         sut = UserRepository(
             context: context,
             usersAPI: usersAPI,
-            selfUserAPI: selfUsersAPI
+            selfUserAPI: selfUsersAPI,
+            conversationRepository: conversationsRepository
         )
     }
 
@@ -59,6 +63,7 @@ class UserRepositoryTests: XCTestCase {
         usersAPI = nil
         selfUsersAPI = nil
         sut = nil
+        conversationsRepository = nil
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
         modelHelper = nil
@@ -261,6 +266,62 @@ class UserRepositoryTests: XCTestCase {
         let expectedProtocols = Set([WireAPI.MessageProtocol.proteus])
 
         XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
+    }
+
+    func testDeleteUserAccountForSelfUser() async throws {
+        let selfUser = await context.perform { [self] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
+
+        let expectation = XCTestExpectation()
+        let notificationName = AccountDeletedNotification.notificationName
+
+        NotificationCenter.default.addObserver(
+            forName: notificationName,
+            object: nil,
+            queue: nil
+        ) { notification in
+
+            XCTAssertNotNil(notification.userInfo?[notificationName] as? AccountDeletedNotification)
+
+            expectation.fulfill()
+        }
+
+        // When
+
+        await sut.deleteUserAccount(for: selfUser, at: .now)
+
+        // Then
+
+        await fulfillment(of: [expectation], timeout: 1)
+    }
+
+    func testDeleteUserAccountForNotSelfUser() async throws {
+        // Given
+
+        let user = await context.perform { [self] in
+            modelHelper.createUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
+
+        // Mock
+        conversationsRepository.removeFromConversationsUserRemovalDate_MockMethod = { _, _ in }
+
+        // When
+
+        await sut.deleteUserAccount(for: user, at: .now)
+
+        // Then
+
+        XCTAssertEqual(user.isAccountDeleted, true)
+        XCTAssertEqual(conversationsRepository.removeFromConversationsUserRemovalDate_Invocations.count, 1)
     }
 
     private enum Scaffolding {

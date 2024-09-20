@@ -31,38 +31,54 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
     var sut: TeamMemberLeaveEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
     var repository: TeamRepositoryProtocol!
+    var conversationRepository: ConversationRepositoryProtocol!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
+
+        conversationRepository = ConversationRepository(
+            conversationsAPI: MockConversationsAPI(),
+            conversationsLocalStore: ConversationLocalStore(
+                context: context,
+                mlsService: nil
+            ),
+            backendInfo: .init(domain: "", isFederationEnabled: false)
+        )
 
         repository = TeamRepository(
             selfTeamID: UUID(),
             userRepository: UserRepository(
                 context: context,
-                usersAPI: MockUsersAPI(), 
-                selfUserAPI: MockSelfUserAPI()
+                usersAPI: MockUsersAPI(),
+                selfUserAPI: MockSelfUserAPI(),
+                conversationRepository: conversationRepository
             ),
             teamsAPI: MockTeamsAPI(),
             context: context
         )
 
         sut = TeamMemberLeaveEventProcessor(repository: repository)
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         coreDataStack = nil
         sut = nil
         repository = nil
+        conversationRepository = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -76,7 +92,7 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
                 withMembers: [Scaffolding.userID],
                 context: context
             )
-            
+
             let user = try XCTUnwrap(users.first)
             let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
@@ -89,9 +105,9 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
         // Then
 
         try await context.perform { [context] in
+            /// users won't be deleted as we might be in other (non-team) conversations with them
             XCTAssertNotNil(ZMUser.fetch(with: Scaffolding.userID, in: context))
 
-            /// users won't be deleted as we might be in other (non-team) conversations with them
             let team = try XCTUnwrap(Team.fetch(with: Scaffolding.teamID, in: context), "No team")
 
             XCTAssertEqual(team.members, [])
@@ -107,13 +123,13 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
                 domain: nil,
                 in: context
             )
-            
+
             let (team, users, _) = modelHelper.createTeam(
                 id: Scaffolding.teamID,
                 withMembers: [selfUser],
                 context: context
             )
-            
+
             let user = try XCTUnwrap(users.first)
             let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
@@ -204,20 +220,20 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
                 domain: nil,
                 in: context
             )
-            
+
             let newUser = modelHelper.createUser(
                 id: UUID(),
                 domain: nil,
                 in: context
             )
-            
+
             let anotherConversation = modelHelper.createGroupConversation(
                 id: Scaffolding.conversationID,
                 with: Set(users + [newUser]),
                 domain: nil,
                 in: context
             )
-            
+
             let user = try XCTUnwrap(users.first)
             let member = try XCTUnwrap(team.members.first)
             XCTAssertEqual(user.membership, member)
@@ -294,7 +310,7 @@ private enum Scaffolding {
         ISO8601DateFormatter.fractionalInternetDateTime.date(from: string)!
     }
 
-    static let event = TeamMemberLeaveEvent(
+    nonisolated(unsafe) static let event = TeamMemberLeaveEvent(
         teamID: teamID,
         userID: userID,
         time: date(from: time)

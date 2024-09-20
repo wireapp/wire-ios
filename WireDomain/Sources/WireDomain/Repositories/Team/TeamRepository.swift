@@ -94,23 +94,25 @@ final class TeamRepository: TeamRepositoryProtocol {
         at time: Date
     ) async throws {
         let user = try await userRepository.fetchUser(with: userID)
-        
-        try await context.perform { [context] in
+
+        let member = try await context.perform {
             guard let member = user.membership else {
                 throw TeamRepositoryError.userNotAMemberInTeam(user: userID, team: teamID)
             }
-            
-            if user.isSelfUser {
-                let notification = AccountDeletedNotification(context: context)
-                notification.post(in: context.notificationContext)
-            } else {
-                user.markAccountAsDeleted(at: time)
-            }
-            
+
+            return member
+        }
+
+        await userRepository.deleteUserAccount(
+            for: user,
+            at: time
+        )
+
+        await context.perform { [context] in
             context.delete(member)
         }
     }
-    
+
     func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws {
         try await context.perform { [context] in
 

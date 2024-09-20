@@ -49,7 +49,7 @@ public protocol UserRepositoryProtocol {
     ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
-    
+
     /// Fetches a user with a specific id.
     /// - Parameter id: The ID of the user.
     /// - Returns: A `ZMUser` object.
@@ -100,6 +100,14 @@ public protocol UserRepositoryProtocol {
 
     func disableUserLegalHold() async throws
 
+    /// Deletes the user account.
+    ///
+    /// - parameters:
+    ///     - user: The user to delete the account for.
+    ///     - date: The date the user was deleted.
+
+    func deleteUserAccount(for user: ZMUser, at date: Date) async
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -109,17 +117,20 @@ public final class UserRepository: UserRepositoryProtocol {
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
+    private let conversationRepository: any ConversationRepositoryProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
-        selfUserAPI: any SelfUserAPI
+        selfUserAPI: any SelfUserAPI,
+        conversationRepository: ConversationRepositoryProtocol
     ) {
         self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
+        self.conversationRepository = conversationRepository
     }
 
     // MARK: - Public
@@ -163,7 +174,7 @@ public final class UserRepository: UserRepositoryProtocol {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
     }
-    
+
     public func fetchUser(with id: UUID) async throws -> ZMUser {
         try await context.perform { [context] in
             guard let user = ZMUser.fetch(with: id, in: context) else {
@@ -279,6 +290,29 @@ public final class UserRepository: UserRepositoryProtocol {
             selfUser.legalHoldRequestWasCancelled()
 
             try context.save()
+        }
+    }
+
+    public func deleteUserAccount(
+        for user: ZMUser,
+        at date: Date
+    ) async {
+        let isSelfUser = await context.perform {
+            user.isSelfUser
+        }
+
+        if isSelfUser {
+            let notification = AccountDeletedNotification(context: context)
+            notification.post(in: context.notificationContext)
+        } else {
+            await context.perform {
+                user.isAccountDeleted = true
+            }
+
+            await conversationRepository.removeFromConversations(
+                user: user,
+                removalDate: date
+            )
         }
     }
 
