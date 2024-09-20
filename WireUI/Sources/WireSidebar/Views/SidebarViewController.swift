@@ -113,3 +113,19 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
         ).environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
     }
 }
+
+// MARK: - Previews
+
+@available(iOS 17, *)
+#Preview {
+    SidebarViewControllerPreviewHelper()
+}
+
+@MainActor
+private func SidebarViewControllerPreviewHelper() -> UIViewController {
+    if UIViewController().traitCollection.userInterfaceIdiom != .pad {
+        HintViewController("For previewing please switch to iPad (iOS 17+)!")
+    } else {
+        SidebarViewControllerPreview()
+    }
+}

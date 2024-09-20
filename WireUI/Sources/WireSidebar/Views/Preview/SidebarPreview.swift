@@ -19,29 +19,44 @@
 import SwiftUI
 import WireFoundation
 
-@MainActor
-func SidebarPreview() -> UIViewController {
-    let splitViewController = UISplitViewController(style: .tripleColumn)
-    let sidebarViewController = SidebarViewController { accountImage, availability in
-        AnyView(MockAccountImageView(uiImage: accountImage, availability: availability))
-    }
-    sidebarViewController.accountInfo.displayName = "Firstname Lastname"
-    sidebarViewController.accountInfo.username = "@username"
-    sidebarViewController.wireTextStyleMapping = PreviewTextStyleMapping()
-    splitViewController.setViewController(sidebarViewController, for: .primary)
-    splitViewController.setViewController(EmptyViewController(), for: .supplementary)
-    splitViewController.setViewController(EmptyViewController(), for: .secondary)
-    splitViewController.setViewController(HintViewController("No sidebar visible!"), for: .compact)
-    splitViewController.preferredSplitBehavior = .tile
-    splitViewController.preferredDisplayMode = .twoBesideSecondary
-    splitViewController.preferredPrimaryColumnWidth = 260
-    splitViewController.preferredSupplementaryColumnWidth = 320
-    splitViewController.view.backgroundColor = .init(white: 0.9, alpha: 1)
+@available(iOS 17.0, *)
+struct SidebarPreview: View {
 
-    return splitViewController
+    @State private var accountInfo = SidebarAccountInfo(
+        displayName: "Firstname Lastname",
+        username: "@username",
+        accountImage: .from(solidColor: .brown),
+        availability: .away
+    )
+    @State private var selectedMenuItem: SidebarMenuItem = .all
+
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @State private var preferredCompactColumn: NavigationSplitViewColumn = .sidebar
+
+    var body: some View {
+        NavigationSplitView(
+            columnVisibility: $columnVisibility,
+            preferredCompactColumn: $preferredCompactColumn,
+            sidebar: {
+                SidebarView(
+                    accountInfo: accountInfo,
+                    selectedMenuItem: $selectedMenuItem,
+                    accountImageAction: {},
+                    supportAction: {}
+                ) { uiImage, availability in
+                    MockAccountImageView(uiImage: uiImage, availability: availability)
+                }
+                .navigationSplitViewColumnWidth(260)
+            }, content: {
+                Text("\(selectedMenuItem)")
+                    .navigationSplitViewColumnWidth(280)
+            }, detail: {
+                Text("Conversation Content")
+            })
+    }
 }
 
-private struct MockAccountImageView: View {
+struct MockAccountImageView: View {
     @State private(set) var uiImage: UIImage
     @State private(set) var availability: SidebarAccountInfo.Availability?
     var body: some View {
@@ -52,40 +67,6 @@ private struct MockAccountImageView: View {
             Circle()
                 .frame(width: 14, height: 14)
                 .foregroundStyle(Color.green)
-        }
-    }
-}
-
-private final class EmptyViewController: UIHostingController<AnyView> {
-    convenience init() { self.init(rootView: AnyView(EmptyView())) }
-    private struct EmptyView: View {
-        var body: some View {
-            VStack(spacing: 0) {
-                Rectangle()
-                    .foregroundStyle(Color(uiColor: .systemGray5))
-                    .frame(height: 22)
-                Rectangle()
-                    .foregroundStyle(Color(uiColor: .systemBackground))
-            }.ignoresSafeArea()
-        }
-    }
-}
-
-final class HintViewController: UIHostingController<Text> {
-    convenience init(_ hint: String) {
-        self.init(rootView: Text(verbatim: hint).font(.title2))
-    }
-}
-
-private func PreviewTextStyleMapping() -> WireTextStyleMapping {
-    .init { _ in
-        fatalError("not implemented for preview yet")
-    } fontMapping: { textStyle in
-        switch textStyle {
-        case .h2:
-            .title3.bold()
-        default:
-            fatalError("not implemented for preview yet")
         }
     }
 }

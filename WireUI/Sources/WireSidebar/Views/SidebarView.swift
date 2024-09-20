@@ -214,14 +214,5 @@ private struct SidebarBackgroundColorKey: EnvironmentKey {
 
 @available(iOS 17, *)
 #Preview {
-    SidebarPreviewHelper()
-}
-
-@MainActor
-private func SidebarPreviewHelper() -> UIViewController {
-    if UIViewController().traitCollection.userInterfaceIdiom != .pad {
-        HintViewController("For previewing please switch to iPad (iOS 17+)!")
-    } else {
-        SidebarPreview()
-    }
+    SidebarPreview()
 }
