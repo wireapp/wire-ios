@@ -30,14 +30,17 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
     var sut: FeatureConfigUpdateEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = FeatureConfigUpdateEventProcessor(
             repository: FeatureConfigRepository(
@@ -45,14 +48,15 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
                 context: context
             )
         )
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
-        coreDataStack = nil
+        try await super.tearDown()
+        modelHelper = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        coreDataStack = nil
     }
 
     // MARK: - Tests
