@@ -405,6 +405,26 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         }
     }
 
+    // MARK: - pushSelfSupportedProtocols
+
+    public var pushSelfSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSelfSupportedProtocols_MockError: Error?
+    public var pushSelfSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+
+    public func pushSelfSupportedProtocols(_ supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+        pushSelfSupportedProtocols_Invocations.append(supportedProtocols)
+
+        if let error = pushSelfSupportedProtocols_MockError {
+            throw error
+        }
+
+        guard let mock = pushSelfSupportedProtocols_MockMethod else {
+            fatalError("no mock for `pushSelfSupportedProtocols`")
+        }
+
+        try await mock(supportedProtocols)
+    }
+
     // MARK: - pullKnownUsers
 
     public var pullKnownUsers_Invocations: [Void] = []

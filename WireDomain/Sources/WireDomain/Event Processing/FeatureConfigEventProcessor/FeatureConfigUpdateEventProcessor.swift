@@ -32,9 +32,10 @@ protocol FeatureConfigUpdateEventProcessorProtocol {
 
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
 
-    func processEvent(_: FeatureConfigUpdateEvent) async throws {
-        // TODO: [WPB-10183]
-        assertionFailure("not implemented yet")
+    let repository: any FeatureConfigRepositoryProtocol
+
+    func processEvent(_ event: FeatureConfigUpdateEvent) async throws {
+        try await repository.updateFeatureConfig(event.featureConfig)
     }
 
 }

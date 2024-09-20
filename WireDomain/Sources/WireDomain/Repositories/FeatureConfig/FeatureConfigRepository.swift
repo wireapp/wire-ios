@@ -23,7 +23,6 @@ import WireAPI
 import WireDataModel
 
 /// Facilitates access to feature configs related domain objects.
-
 protocol FeatureConfigRepositoryProtocol {
 
     /// Pulls feature configs from the server and stores them locally.
@@ -50,6 +49,12 @@ protocol FeatureConfigRepositoryProtocol {
     /// - Returns: A `LocalFeature` object with a status and a config (if any).
 
     func fetchFeatureConfig<T: Decodable>(with name: Feature.Name, type: T.Type) async throws -> LocalFeature<T>
+
+    /// Updates a feature config locally.
+    ///
+    /// - Parameter featureConfig: The feature config to update.
+
+    func updateFeatureConfig(_ featureConfig: FeatureConfig) async throws
 
     /// Fetches a flag indicating whether the user should be notified of a given feature.
     /// - Parameter name: The feature name.
@@ -91,12 +96,7 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
 
         for featureConfig in featureConfigs {
             await storeFeatureConfig(featureConfig)
-
-            if let featureState = try? await getFeatureState(
-                forFeatureConfig: featureConfig
-            ) {
-                featureStateSubject.send(featureState)
-            }
+            await sendFeatureState(for: featureConfig)
         }
     }
 
@@ -133,7 +133,20 @@ final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         }
     }
 
+    func updateFeatureConfig(_ featureConfig: FeatureConfig) async throws {
+        await storeFeatureConfig(featureConfig)
+        await sendFeatureState(for: featureConfig)
+    }
+
     // MARK: - Private
+
+    private func sendFeatureState(for featureConfig: FeatureConfig) async {
+        guard let featureState = try? await getFeatureState(
+            forFeatureConfig: featureConfig
+        ) else { return }
+
+        featureStateSubject.send(featureState)
+    }
 
     private func fetchFeature(withName name: Feature.Name) throws -> Feature {
         guard let feature = Feature.fetch(name: name, context: context) else {
