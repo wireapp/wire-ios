@@ -25,11 +25,24 @@ public protocol MainSplitViewControllerProtocol: UISplitViewController {
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype Conversation: UIViewController
     associatedtype Archive: UIViewController
+    associatedtype Settings: UIViewController
     associatedtype TabContainer: UIViewController
 
-    var sidebar: Sidebar { get }
+    /// Contains the reference to the view controller shown in the primary column.
+    var sidebar: Sidebar! { get }
+
+    /// Setting a view controller instance to this property will present the instance in the supplementary column.
     var conversationList: ConversationList? { get set }
+
+    /// Setting a view controller instance to this property will present the instance in the secondary column. Any other view controller set into `archive` or `settings` will be removed.
     var conversation: Conversation? { get set }
+
+    /// Setting a view controller instance to this property will present the instance in the supplementary column. Any other view controller set into `conversationList` or `settings` will be removed.
     var archive: Archive? { get set }
-    var tabContainer: TabContainer { get }
+
+    /// Setting a view controller instance to this property will present the instance in the supplementary column. Any other view controller set into `conversationList` or `archive` will be removed.
+    var settings: Settings? { get set }
+
+    /// Contains the reference to the view controller which will be visible in collapsed mode.
+    var tabContainer: TabContainer! { get }
 }
