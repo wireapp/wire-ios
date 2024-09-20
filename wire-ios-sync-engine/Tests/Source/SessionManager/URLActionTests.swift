@@ -99,6 +99,17 @@ class URLActionTests: ZMTBaseTest {
         XCTAssertEqual(action, URLAction.openUserProfile(id: uuid))
     }
 
+    func testThatItParsesImportEventsLink() throws {
+        // given
+        let url = URL(string: "wire://import-events")!
+
+        // when
+        let action = try URLAction(url: url)
+
+        // then
+        XCTAssertEqual(action, URLAction.importEvents)
+    }
+
     func testThatItDiscardsInvalidJoinConversationLink() throws {
         // given
         let key = "KpvjjQSDgp9aniYGUXqi"
