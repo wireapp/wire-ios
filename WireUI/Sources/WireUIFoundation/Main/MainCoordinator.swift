@@ -22,13 +22,17 @@ import WireFoundation
 // TODO: could typaliases take some of the generic conditions?
 
 @MainActor
-public final class MainCoordinator<SplitViewController, TabBarController, NewConversationBuilder>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
+public final class MainCoordinator<
+    SplitViewController,
+    TabBarController,
+    NewConversationBuilder
+>: MainCoordinatorProtocol, UISplitViewControllerDelegate where
     SplitViewController: MainSplitViewControllerProtocol,
     TabBarController: MainTabBarControllerProtocol,
     SplitViewController.Sidebar: MainSidebarProtocol,
-    SplitViewController.ConversationList == TabBarController.ConversationList,
-    TabBarController.Archive == UIViewController,
-NewConversationBuilder: MainContentViewControllerBuilder {
+SplitViewController.ConversationList == TabBarController.ConversationList,
+SplitViewController.Archive == TabBarController.Archive,
+NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
     private weak var mainSplitViewController: SplitViewController!
     private weak var mainTabBarController: TabBarController!
@@ -89,24 +93,55 @@ NewConversationBuilder: MainContentViewControllerBuilder {
     public func showConversationList() {
         mainTabBarController.selectedContent = .conversations
 
-        if !isLayoutCollapsed {
-            dismissArchivedConversationsAndMoveIntoMainTabBarControllerIfNeeded()
+        guard !isLayoutCollapsed else { return }
 
-            // TODO: complete
-            // settings visible?
-            // archive visible?
-            // selfProfile visible?
+        // if archive is currently visible, move it into the tab bar controller
+        if let archive = mainSplitViewController.archive {
+            mainSplitViewController.archive = nil
+            mainTabBarController.archive = archive
+        }
+
+        // TODO: complete
+        // settings visible?
+        // selfProfile visible?
+
+        let conversationList = mainTabBarController.conversations!.conversationList
+        mainTabBarController.conversations = nil
+        mainSplitViewController.conversationList = conversationList
+
+        switch mainSplitViewController.conversationList!.conversationFilter {
+        case .none:
+            mainTabBarController.conversations?.conversationList.conversationFilter = .none
+        case .favorites:
+            mainTabBarController.conversations?.conversationList.conversationFilter = .favorites
+        case .groups:
+            mainTabBarController.conversations?.conversationList.conversationFilter = .groups
+        case .oneOnOne:
+            mainTabBarController.conversations?.conversationList.conversationFilter = .oneOnOne
+        default:
+            fatalError()
         }
     }
 
     public func showArchivedConversations() {
         mainTabBarController.selectedContent = .archive
 
-        if !isLayoutCollapsed {
-            // if it's already visible (and not contained in the tabBarController anymore), do nothing
-            guard mainTabBarController.archive != nil else { return }
-            presentArchivedConversationsOverConversationList()
+        // if it's already visible (and not contained in the tabBarController anymore), do nothing
+        guard !isLayoutCollapsed, let archive = mainTabBarController.archive else { return }
+
+        // if the conversation list is currently visible, move it back to the tab bar controller
+        if let conversationList = mainSplitViewController.conversationList {
+            mainSplitViewController.conversationList = nil
+            let conversation = mainTabBarController.conversations?.conversation
+            mainTabBarController.conversations = (conversationList, conversation)
         }
+
+        // move the archive from the tab bar controller to the split view controller
+        mainTabBarController.archive = nil
+        mainSplitViewController.archive = archive
+
+        // TODO: settings, connect
+        //presentArchivedConversationsOverConversationList()
     }
 
     public func showSelfProfile() {
@@ -240,15 +275,17 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         isLayoutCollapsed = true
 
         // move view controllers from the split view controller's columns to the tab bar controller
-        let conversationListViewController = mainSplitViewController.conversationList!
-        mainSplitViewController.conversationList = nil
-        mainTabBarController.conversations = (conversationListViewController, nil)
-        conversationListViewController.splitViewInterface = .collapsed
-
-        // TODO: conversations
+        if let conversationListViewController = mainSplitViewController.conversationList {
+            mainSplitViewController.conversationList = nil
+            mainTabBarController.conversations = (conversationListViewController, nil) // TODO: conversations
+            conversationListViewController.splitViewInterface = .collapsed
+        }
 
         // move the archived conversations list back to the tab bar controller if needed
-        dismissArchivedConversationsAndMoveIntoMainTabBarControllerIfNeeded()
+        if let archive = mainSplitViewController.archive {
+            mainSplitViewController.archive = nil
+            mainTabBarController.archive = archive
+        }
 
         // move the settings back to the tab bar controller if needed
         moveSettingsIntoMainTabBarControllerIfNeeded()
@@ -304,17 +341,6 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         mainSplitViewController.conversationList!.navigationController?.present(navigationController, animated: false)
     }
 
-    private func dismissArchivedConversationsAndMoveIntoMainTabBarControllerIfNeeded() {
-        // If the archive tab is empty, we're showing the conversation archive in the expanded layout.
-        // No need to move it back.
-        if mainTabBarController.archive == nil {
-            let navigationController = archivedConversations!.navigationController!
-            navigationController.dismiss(animated: false)
-            mainTabBarController.archive = archivedConversations
-            mainTabBarController.selectedContent = .archive
-        }
-    }
-
     // MARK: -
 
     private func addSettingsAsChildOfConversationList() {
@@ -350,3 +376,5 @@ NewConversationBuilder: MainContentViewControllerBuilder {
         }
     }
 }
+
+// TODO: unit tests!

@@ -18,7 +18,7 @@
 
 import UIKit
 
-public protocol MainContentViewControllerBuilder {
+public protocol MainCoordinatorInjectingViewControllerBuilder {
     associatedtype ViewController: UIViewController
     func build(mainCoordinator: some MainCoordinatorProtocol) -> ViewController
 }

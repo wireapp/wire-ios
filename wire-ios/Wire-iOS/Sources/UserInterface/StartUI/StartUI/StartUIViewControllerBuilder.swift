@@ -20,7 +20,7 @@ import UIKit
 import WireSyncEngine
 import WireUIFoundation
 
-struct StartUIViewControllerBuilder: MainContentViewControllerBuilder {
+struct StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
     var userSession: UserSession
     var delegate: StartUIDelegate?

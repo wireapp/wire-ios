@@ -42,6 +42,7 @@ public final class MainTabBarController<ConversationList: MainConversationListPr
             let navigationController = viewControllers![MainTabBarControllerContent.conversations.rawValue] as! UINavigationController
             if let newValue {
                 navigationController.viewControllers = [newValue.conversationList, newValue.conversation].compactMap { $0 }
+                navigationController.view.layoutIfNeeded()
             } else {
                 navigationController.viewControllers.removeAll()
             }
@@ -56,6 +57,7 @@ public final class MainTabBarController<ConversationList: MainConversationListPr
         set {
             let navigationController = viewControllers![MainTabBarControllerContent.archive.rawValue] as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
+            navigationController.view.layoutIfNeeded()
         }
     }
 
@@ -67,6 +69,7 @@ public final class MainTabBarController<ConversationList: MainConversationListPr
         set {
             let navigationController = viewControllers![MainTabBarControllerContent.settings.rawValue] as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
+            navigationController.view.layoutIfNeeded()
         }
     }
 

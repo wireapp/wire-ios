@@ -25,6 +25,6 @@ struct ArchivedConversationsViewControllerBuilder: ViewControllerBuilder {
     var userSession: UserSession
 
     func build() -> UIViewController {
-            ArchivedListViewController(userSession: userSession)
+        ArchivedListViewController(userSession: userSession)
     }
 }

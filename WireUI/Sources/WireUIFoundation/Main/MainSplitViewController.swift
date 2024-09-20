@@ -21,6 +21,7 @@ import SwiftUI
 public final class MainSplitViewController<Sidebar: MainSidebarProtocol, ConversationList: MainConversationListProtocol>: UISplitViewController, MainSplitViewControllerProtocol {
 
     public typealias Conversation = UIViewController
+    public typealias Archive = UIViewController
     public typealias TabContainer = UIViewController
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
@@ -33,11 +34,12 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol, Convers
     public var conversationList: ConversationList? {
         get {
             let navigationController = viewController(for: .supplementary) as! UINavigationController
-            return navigationController.viewControllers.first.map { $0 as! ConversationList }
+            return navigationController.viewControllers.first as? ConversationList
         }
         set {
             let navigationController = viewController(for: .supplementary) as! UINavigationController
             navigationController.viewControllers = [newValue].compactMap { $0 }
+            navigationController.view.layoutIfNeeded()
         }
     }
 
@@ -53,6 +55,19 @@ public final class MainSplitViewController<Sidebar: MainSidebarProtocol, Convers
         set {
             let navigationController = viewController(for: .secondary) as! UINavigationController
             navigationController.viewControllers = [newValue ?? noConversationPlaceholder]
+            navigationController.view.layoutIfNeeded()
+        }
+    }
+
+    public var archive: Archive? {
+        get {
+            let navigationController = viewController(for: .supplementary) as! UINavigationController
+            return navigationController.viewControllers.first as? Archive
+        }
+        set {
+            let navigationController = viewController(for: .supplementary) as! UINavigationController
+            navigationController.viewControllers = [newValue].compactMap { $0 }
+            navigationController.view.layoutIfNeeded()
         }
     }
 

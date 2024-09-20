@@ -19,15 +19,18 @@
 import UIKit
 
 @MainActor
-public protocol MainSplitViewControllerProtocol: UISplitViewController {
+public protocol MainTabBarControllerProtocol: UITabBarController {
 
-    associatedtype Sidebar: MainSidebarProtocol
     associatedtype ConversationList: MainConversationListProtocol
     associatedtype Conversation: UIViewController
-    associatedtype TabContainer: UIViewController
+    associatedtype Archive: UIViewController
+    associatedtype Settings: UIViewController
 
-    var sidebar: Sidebar { get }
-    var conversationList: ConversationList? { get set }
-    var conversation: Conversation? { get set }
-    var tabContainer: TabContainer { get }
+    /// The active tab.
+    var selectedContent: MainTabBarControllerContent { get set }
+
+    /// In the compact layout the conversation view controller will be pushed onto the navigation controller of the conversation list.
+    var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
+    var archive: Archive? { get set }
+    var settings: Settings? { get set }
 }
