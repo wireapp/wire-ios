@@ -91,3 +91,15 @@ extension WireAPI.DeviceClass {
         }
     }
 }
+
+extension WireAPI.Prekey {
+
+    func toDomainModel() -> WireDataModel.LegalHoldRequest.Prekey? {
+        guard let data = Data(base64Encoded: base64EncodedKey) else {
+            return nil
+        }
+
+        return .init(id: id, key: data)
+    }
+
+}

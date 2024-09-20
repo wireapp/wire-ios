@@ -192,10 +192,64 @@ class UserRepositoryTests: XCTestCase {
         }
     }
 
+    func testFetchSelfUser() async {
+        // Given
+
+        await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
+
+        // When
+
+        let user = sut.fetchSelfUser()
+
+        // Then
+
+        await context.perform {
+            XCTAssertEqual(user.remoteIdentifier, Scaffolding.userID)
+        }
+    }
+
+    func testAddLegalholdRequest() async throws {
+        // Given
+
+        await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+        }
+
+        // When
+
+        await sut.addLegalHoldRequest(
+            for: Scaffolding.userID,
+            clientID: Scaffolding.userClientID,
+            lastPrekey: Prekey(
+                id: Scaffolding.lastPrekeyId,
+                base64EncodedKey: Scaffolding.base64encodedString
+            )
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let selfUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
+
+            XCTAssertEqual(selfUser.legalHoldStatus, .pending(Scaffolding.legalHoldRequest))
+        }
+    }
+
     private enum Scaffolding {
         static let userID = UUID()
-
         static let userClientID = UUID().uuidString
+        static let lastPrekeyId = 65_535
+        static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
         nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
             id: userClientID,
@@ -205,6 +259,17 @@ class UserRepositoryTests: XCTestCase {
             model: "test",
             deviceClass: .phone,
             capabilities: []
+        )
+
+
+        nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
+            target: userID,
+            requester: nil,
+            clientIdentifier: userClientID,
+            lastPrekey: .init(
+                id: lastPrekeyId,
+                key: Data(base64Encoded: base64encodedString)!
+            )
         )
 
         nonisolated(unsafe) static let user1 = User(

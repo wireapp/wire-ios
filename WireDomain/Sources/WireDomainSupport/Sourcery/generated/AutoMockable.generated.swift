@@ -488,6 +488,41 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(localClient, remoteClient, isNewClient)
     }
 
+    // MARK: - addLegalHoldRequest
+
+    public var addLegalHoldRequestForClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []
+    public var addLegalHoldRequestForClientIDLastPrekey_MockMethod: ((UUID, String, Prekey) async -> Void)?
+
+    public func addLegalHoldRequest(for userID: UUID, clientID: String, lastPrekey: Prekey) async {
+        addLegalHoldRequestForClientIDLastPrekey_Invocations.append((userID: userID, clientID: clientID, lastPrekey: lastPrekey))
+
+        guard let mock = addLegalHoldRequestForClientIDLastPrekey_MockMethod else {
+            fatalError("no mock for `addLegalHoldRequestForClientIDLastPrekey`")
+        }
+
+        await mock(userID, clientID, lastPrekey)
+    }
+
+    // MARK: - disableUserLegalHold
+
+    public var disableUserLegalHold_Invocations: [Void] = []
+    public var disableUserLegalHold_MockError: Error?
+    public var disableUserLegalHold_MockMethod: (() async throws -> Void)?
+
+    public func disableUserLegalHold() async throws {
+        disableUserLegalHold_Invocations.append(())
+
+        if let error = disableUserLegalHold_MockError {
+            throw error
+        }
+
+        guard let mock = disableUserLegalHold_MockMethod else {
+            fatalError("no mock for `disableUserLegalHold`")
+        }
+
+        try await mock()
+    }
+
 }
 
 // swiftlint:enable variable_name
