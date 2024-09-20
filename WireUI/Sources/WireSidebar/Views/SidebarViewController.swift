@@ -42,8 +42,8 @@ public final class SidebarViewController: UIViewController {
 
     // MARK: - Private Properties
 
-    private let model = SidebarModel()
-    private var setupHostingController: (() -> Void)?
+    private var model: SidebarModel!
+    private var setupHostingController: (() -> Void)!
 
     // MARK: - Life Cycle
 
@@ -55,9 +55,13 @@ public final class SidebarViewController: UIViewController {
     public init(accountImageView: @escaping AccountImageViewBuilder<some View>) {
         super.init(nibName: nil, bundle: nil)
 
-        model.accountImageAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!) }
-        model.menuItemAction = { [weak self] menuItem in self?.delegate?.sidebarViewController(self!, didSelect: menuItem) }
-        model.supportAction = { [weak self] in self?.delegate?.sidebarViewControllerDidSelectSupport(self!) }
+        model = .init(accountImageAction: { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
+        }, menuItemAction: { [weak self] menuItem in
+            self?.delegate?.sidebarViewController(self!, didSelect: menuItem)
+        }, supportAction: { [weak self] in
+            self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
+        })
 
         setupHostingController = { [weak self] in
             guard let self else { return }
@@ -84,7 +88,7 @@ public final class SidebarViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        setupHostingController?()
+        setupHostingController()
     }
 }
 

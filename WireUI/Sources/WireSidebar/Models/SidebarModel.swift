@@ -29,7 +29,17 @@ final class SidebarModel: ObservableObject {
         didSet { menuItemAction(selectedMenuItem) }
     }
 
-    var accountImageAction: () -> Void = {}
-    var menuItemAction: (_ selectedMenuItem: SidebarMenuItem) -> Void = { _ in }
-    var supportAction: () -> Void = {}
+    let accountImageAction: () -> Void
+    let menuItemAction: (_ selectedMenuItem: SidebarMenuItem) -> Void
+    let supportAction: () -> Void
+
+    init(
+        accountImageAction: @escaping () -> Void,
+        menuItemAction: @escaping (_: SidebarMenuItem) -> Void,
+        supportAction: @escaping () -> Void
+    ) {
+        self.accountImageAction = accountImageAction
+        self.menuItemAction = menuItemAction
+        self.supportAction = supportAction
+    }
 }
