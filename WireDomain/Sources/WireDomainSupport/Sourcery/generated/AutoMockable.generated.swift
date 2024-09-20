@@ -445,6 +445,49 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - fetchOrCreateUserClient
+
+    public var fetchOrCreateUserClientWith_Invocations: [String] = []
+    public var fetchOrCreateUserClientWith_MockError: Error?
+    public var fetchOrCreateUserClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateUserClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
+
+    public func fetchOrCreateUserClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        fetchOrCreateUserClientWith_Invocations.append(id)
+
+        if let error = fetchOrCreateUserClientWith_MockError {
+            throw error
+        }
+
+        if let mock = fetchOrCreateUserClientWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchOrCreateUserClientWith_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateUserClientWith`")
+        }
+    }
+
+    // MARK: - updateUserClient
+
+    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateUserClientFromIsNewClient_MockError: Error?
+    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
+
+    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
+        updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
+
+        if let error = updateUserClientFromIsNewClient_MockError {
+            throw error
+        }
+
+        guard let mock = updateUserClientFromIsNewClient_MockMethod else {
+            fatalError("no mock for `updateUserClientFromIsNewClient`")
+        }
+
+        try await mock(localClient, remoteClient, isNewClient)
+    }
+
     // MARK: - addLegalHoldRequest
 
     public var addLegalHoldRequestForClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []

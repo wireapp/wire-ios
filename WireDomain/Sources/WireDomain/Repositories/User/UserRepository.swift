@@ -43,6 +43,29 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
+    /// Fetches or creates a user client locally.
+    ///
+    /// - parameters:
+    ///     - id: The user client id to find or create locally.
+    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
+
+    func fetchOrCreateUserClient(
+        with id: String
+    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
+
+    /// Updates the user client informations locally.
+    ///
+    /// - parameters:
+    ///     - localClient: The user client to update locally.
+    ///     - remoteClient: The up-to-date remote user client.
+    ///     - isNewClient: A flag indicating whether the user client is new.
+
+    func updateUserClient(
+        _ localClient: WireDataModel.UserClient,
+        from remoteClient: WireAPI.UserClient,
+        isNewClient: Bool
+    ) async throws
+
     /// Adds a legal hold request.
     ///
     /// - parameters:
@@ -68,13 +91,22 @@ public protocol UserRepositoryProtocol {
 
 public final class UserRepository: UserRepositoryProtocol {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
 
-    public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
+    // MARK: - Object lifecycle
+
+    public init(
+        context: NSManagedObjectContext,
+        usersAPI: any UsersAPI
+    ) {
         self.context = context
         self.usersAPI = usersAPI
     }
+
+    // MARK: - Public
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
@@ -110,6 +142,80 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
+    public func fetchOrCreateUserClient(
+        with id: String
+    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        let localUserClient = await context.perform { [context] in
+            if let existingClient = UserClient.fetchExistingUserClient(
+                with: id,
+                in: context
+            ) {
+                return (existingClient, false)
+            } else {
+                let newClient = UserClient.insertNewObject(in: context)
+                newClient.remoteIdentifier = id
+                return (newClient, true)
+            }
+        }
+
+        try context.save()
+
+        return localUserClient
+    }
+
+    public func updateUserClient(
+        _ localClient: WireDataModel.UserClient,
+        from remoteClient: WireAPI.UserClient,
+        isNewClient: Bool
+    ) async throws {
+        await context.perform { [context] in
+
+            localClient.label = remoteClient.label
+            localClient.type = remoteClient.type.toDomainModel()
+            localClient.model = remoteClient.model
+            localClient.deviceClass = remoteClient.deviceClass?.toDomainModel()
+            localClient.activationDate = remoteClient.activationDate
+            localClient.lastActiveDate = remoteClient.lastActiveDate
+            localClient.remoteIdentifier = remoteClient.id
+
+            let selfUser = ZMUser.selfUser(in: context)
+            localClient.user = localClient.user ?? selfUser
+
+            if isNewClient {
+                localClient.needsSessionMigration = selfUser.domain == nil
+            }
+
+            if localClient.isLegalHoldDevice, isNewClient {
+                selfUser.legalHoldRequest = nil
+                selfUser.needsToAcknowledgeLegalHoldStatus = true
+            }
+
+            if !localClient.isSelfClient() {
+                localClient.mlsPublicKeys = .init(
+                    ed25519: remoteClient.mlsPublicKeys?.ed25519,
+                    ed448: remoteClient.mlsPublicKeys?.ed448,
+                    p256: remoteClient.mlsPublicKeys?.p256,
+                    p384: remoteClient.mlsPublicKeys?.p384,
+                    p521: remoteClient.mlsPublicKeys?.p512
+                )
+            }
+
+            let localClientActivationDate = localClient.activationDate
+
+            if let selfClient = selfUser.selfClient(),
+               localClient.remoteIdentifier != selfClient.remoteIdentifier, isNewClient,
+               let selfClientActivationDate = selfClient.activationDate,
+               localClientActivationDate?.compare(selfClientActivationDate) == .orderedDescending {
+                localClient.needsToNotifyUser = true
+            }
+
+            selfUser.selfClient()?.addNewClientToIgnored(localClient)
+            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
+        }
+
+        try context.save()
+    }
+
     public func addLegalHoldRequest(
         for userID: UUID,
         clientID: String,
@@ -143,6 +249,8 @@ public final class UserRepository: UserRepositoryProtocol {
             try context.save()
         }
     }
+
+    // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {
         let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)

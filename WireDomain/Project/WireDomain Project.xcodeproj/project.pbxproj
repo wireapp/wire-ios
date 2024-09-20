@@ -52,8 +52,9 @@
 		C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */; };
 		C9F691192C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691162C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift */; };
 		C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */; };
-		C9F911CD2C9D6AD50026B201 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F911CA2C9D6AD50026B201 /* UserLegalHoldDisableEventProcessorTests.swift */; };
-		C9F911CE2C9D6AD50026B201 /* UserLegalholdRequestEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F911CB2C9D6AD50026B201 /* UserLegalholdRequestEventProcessorTests.swift */; };
+		C9F911D42C9DA3E80026B201 /* UserClientAddEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F911D02C9DA3E80026B201 /* UserClientAddEventProcessorTests.swift */; };
+		C9F911D52C9DA3E80026B201 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F911D12C9DA3E80026B201 /* UserLegalHoldDisableEventProcessorTests.swift */; };
+		C9F911D62C9DA3E80026B201 /* UserLegalholdRequestEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F911D22C9DA3E80026B201 /* UserLegalholdRequestEventProcessorTests.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -166,8 +167,9 @@
 		C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryTests.swift; sourceTree = "<group>"; };
 		C9F691162C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMemberUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
-		C9F911CA2C9D6AD50026B201 /* UserLegalHoldDisableEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalHoldDisableEventProcessorTests.swift; sourceTree = "<group>"; };
-		C9F911CB2C9D6AD50026B201 /* UserLegalholdRequestEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalholdRequestEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9F911D02C9DA3E80026B201 /* UserClientAddEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserClientAddEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9F911D12C9DA3E80026B201 /* UserLegalHoldDisableEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalHoldDisableEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9F911D22C9DA3E80026B201 /* UserLegalholdRequestEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserLegalholdRequestEventProcessorTests.swift; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -391,7 +393,7 @@
 		C90E8B322C89EBA90017494F /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
-				C9F911CC2C9D6AD50026B201 /* UserEventProcessor */,
+				C9F911D32C9DA3E80026B201 /* UserEventProcessor */,
 				C9F691182C987DC8008CC41F /* TeamEventProcessor */,
 			);
 			path = "Event Processing";
@@ -478,11 +480,12 @@
 			path = TeamEventProcessor;
 			sourceTree = "<group>";
 		};
-		C9F911CC2C9D6AD50026B201 /* UserEventProcessor */ = {
+		C9F911D32C9DA3E80026B201 /* UserEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
-				C9F911CA2C9D6AD50026B201 /* UserLegalHoldDisableEventProcessorTests.swift */,
-				C9F911CB2C9D6AD50026B201 /* UserLegalholdRequestEventProcessorTests.swift */,
+				C9F911D02C9DA3E80026B201 /* UserClientAddEventProcessorTests.swift */,
+				C9F911D12C9DA3E80026B201 /* UserLegalHoldDisableEventProcessorTests.swift */,
+				C9F911D22C9DA3E80026B201 /* UserLegalholdRequestEventProcessorTests.swift */,
 			);
 			path = UserEventProcessor;
 			sourceTree = "<group>";
@@ -883,20 +886,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
-				C9F911CE2C9D6AD50026B201 /* UserLegalholdRequestEventProcessorTests.swift in Sources */,
 				C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
 				EE57A7032C2994420096F242 /* UpdateEventsRepositoryTests.swift in Sources */,
 				C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */,
-				C9F911CD2C9D6AD50026B201 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
 				CB7979162C738547006FBA58 /* TestSetup.swift in Sources */,
 				162356502C2B223100C6666C /* UserRepositoryTests.swift in Sources */,
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
+				C9F911D42C9DA3E80026B201 /* UserClientAddEventProcessorTests.swift in Sources */,
+				C9F911D52C9DA3E80026B201 /* UserLegalHoldDisableEventProcessorTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 				C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */,
+				C9F911D62C9DA3E80026B201 /* UserLegalholdRequestEventProcessorTests.swift in Sources */,
 				C9F691192C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
