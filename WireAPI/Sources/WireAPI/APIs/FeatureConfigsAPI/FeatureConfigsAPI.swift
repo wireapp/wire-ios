@@ -18,6 +18,8 @@
 
 import Foundation
 
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning feature configs.
 public protocol FeatureConfigsAPI {
 
     /// Get all feature configs.

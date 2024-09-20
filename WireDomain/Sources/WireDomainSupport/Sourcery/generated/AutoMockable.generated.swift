@@ -56,6 +56,89 @@ import WireDataModel
 
 
 
+public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - storeConversation
+
+    public var storeConversationIsFederationEnabled_Invocations: [(conversation: WireAPI.Conversation, isFederationEnabled: Bool)] = []
+    public var storeConversationIsFederationEnabled_MockMethod: ((WireAPI.Conversation, Bool) async -> Void)?
+
+    public func storeConversation(_ conversation: WireAPI.Conversation, isFederationEnabled: Bool) async {
+        storeConversationIsFederationEnabled_Invocations.append((conversation: conversation, isFederationEnabled: isFederationEnabled))
+
+        guard let mock = storeConversationIsFederationEnabled_MockMethod else {
+            fatalError("no mock for `storeConversationIsFederationEnabled`")
+        }
+
+        await mock(conversation, isFederationEnabled)
+    }
+
+    // MARK: - storeConversationNeedsBackendUpdate
+
+    public var storeConversationNeedsBackendUpdateQualifiedId_Invocations: [(needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID)] = []
+    public var storeConversationNeedsBackendUpdateQualifiedId_MockMethod: ((Bool, WireAPI.QualifiedID) async -> Void)?
+
+    public func storeConversationNeedsBackendUpdate(_ needsUpdate: Bool, qualifiedId: WireAPI.QualifiedID) async {
+        storeConversationNeedsBackendUpdateQualifiedId_Invocations.append((needsUpdate: needsUpdate, qualifiedId: qualifiedId))
+
+        guard let mock = storeConversationNeedsBackendUpdateQualifiedId_MockMethod else {
+            fatalError("no mock for `storeConversationNeedsBackendUpdateQualifiedId`")
+        }
+
+        await mock(needsUpdate, qualifiedId)
+    }
+
+    // MARK: - storeFailedConversation
+
+    public var storeFailedConversationWithQualifiedId_Invocations: [WireAPI.QualifiedID] = []
+    public var storeFailedConversationWithQualifiedId_MockMethod: ((WireAPI.QualifiedID) async -> Void)?
+
+    public func storeFailedConversation(withQualifiedId qualifiedId: WireAPI.QualifiedID) async {
+        storeFailedConversationWithQualifiedId_Invocations.append(qualifiedId)
+
+        guard let mock = storeFailedConversationWithQualifiedId_MockMethod else {
+            fatalError("no mock for `storeFailedConversationWithQualifiedId`")
+        }
+
+        await mock(qualifiedId)
+    }
+
+}
+
+public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullConversations
+
+    public var pullConversations_Invocations: [Void] = []
+    public var pullConversations_MockError: Error?
+    public var pullConversations_MockMethod: (() async throws -> Void)?
+
+    public func pullConversations() async throws {
+        pullConversations_Invocations.append(())
+
+        if let error = pullConversations_MockError {
+            throw error
+        }
+
+        guard let mock = pullConversations_MockMethod else {
+            fatalError("no mock for `pullConversations`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockProteusMessageDecryptorProtocol: ProteusMessageDecryptorProtocol {
 
     // MARK: - Life cycle
@@ -320,6 +403,26 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         } else {
             fatalError("no mock for `fetchSelfUser`")
         }
+    }
+
+    // MARK: - pushSelfSupportedProtocols
+
+    public var pushSelfSupportedProtocols_Invocations: [Set<WireAPI.MessageProtocol>] = []
+    public var pushSelfSupportedProtocols_MockError: Error?
+    public var pushSelfSupportedProtocols_MockMethod: ((Set<WireAPI.MessageProtocol>) async throws -> Void)?
+
+    public func pushSelfSupportedProtocols(_ supportedProtocols: Set<WireAPI.MessageProtocol>) async throws {
+        pushSelfSupportedProtocols_Invocations.append(supportedProtocols)
+
+        if let error = pushSelfSupportedProtocols_MockError {
+            throw error
+        }
+
+        guard let mock = pushSelfSupportedProtocols_MockMethod else {
+            fatalError("no mock for `pushSelfSupportedProtocols`")
+        }
+
+        try await mock(supportedProtocols)
     }
 
     // MARK: - pullKnownUsers

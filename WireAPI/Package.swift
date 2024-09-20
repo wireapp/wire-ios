@@ -6,19 +6,19 @@ let package = Package(
     name: "WireAPI",
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
-        .library(name: "WireAPI", type: .dynamic, targets: ["WireAPI"]),
-        .library(name: "WireAPISupport", type: .dynamic, targets: ["WireAPISupport"])
+        .library(name: "WireAPI", targets: ["WireAPI"]),
+        .library(name: "WireAPISupport", targets: ["WireAPISupport"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.4"),
         .package(path: "../SourceryPlugin"),
-        .package(name: "WireUtilitiesPackage", path: "../WireUtilities")
+        .package(name: "WireFoundation", path: "../WireFoundation")
     ],
     targets: [
         .target(
             name: "WireAPI",
-            dependencies: ["WireUtilitiesPackage"]
+            dependencies: ["WireFoundation"]
         ),
         .target(
             name: "WireAPISupport",
@@ -32,6 +32,7 @@ let package = Package(
             dependencies: [
                 "WireAPI",
                 "WireAPISupport",
+                .product(name: "WireTestingPackage", package: "WireFoundation"),
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             resources: [

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireUtilitiesPkg
+import WireFoundation
 
 final class PushChannel: PushChannelProtocol {
 

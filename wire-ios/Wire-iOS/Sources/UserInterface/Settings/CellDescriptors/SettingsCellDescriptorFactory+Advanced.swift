@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
 
 extension SettingsCellDescriptorFactory {
@@ -50,7 +51,8 @@ extension SettingsCellDescriptorFactory {
                 let viewModel = SettingsDebugReportViewModel(
                     router: router,
                     shareFile: shareFile,
-                    fetchShareableConversations: fetchShareableConversations
+                    fetchShareableConversations: fetchShareableConversations,
+                    fileMetaDataGenerator: FileMetaDataGenerator()
                 )
                 let viewController = SettingsDebugReportViewController(viewModel: viewModel)
                 router.viewController = viewController
@@ -90,11 +92,6 @@ extension SettingsCellDescriptorFactory {
                 title: SelfSettingsAdvancedLocale.DebuggingTools.FirstUnreadConversation.title,
                 isDestructive: false,
                 selectAction: DebugActions.findUnreadConversationContributingToBadgeCount
-            ),
-            SettingsButtonCellDescriptor(
-                title: SelfSettingsAdvancedLocale.DebuggingTools.ShowUserId.title,
-                isDestructive: false,
-                selectAction: DebugActions.showUserId
             ),
             SettingsButtonCellDescriptor(
                 title: SelfSettingsAdvancedLocale.DebuggingTools.EnterDebugCommand.title,

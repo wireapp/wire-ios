@@ -21,6 +21,7 @@ import WireAPISupport
 @testable import WireDataModel
 import WireDataModelSupport
 @testable import WireDomain
+import WireTestingPackage
 import XCTest
 
 final class ConversationLabelsRepositoryTests: XCTestCase {
