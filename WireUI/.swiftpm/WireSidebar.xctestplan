@@ -1,0 +1,26 @@
+{
+  "configurations" : [
+    {
+      "id" : "4E068552-4298-4EF1-B694-B99169082BA9",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "DE",
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "WireSidebarTests",
+        "name" : "WireSidebarTests"
+      }
+    }
+  ],
+  "version" : 1
+}
