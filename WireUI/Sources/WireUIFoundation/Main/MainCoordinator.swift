@@ -69,6 +69,7 @@ public final class MainCoordinator<
 
     public func showConversationList(conversationFilter: MainConversationFilter?) {
         mainTabBarController.selectedContent = .conversations
+        mainSplitViewController.sidebar.selectedMenuItem = conversationFilter.map()
 
         guard !isLayoutCollapsed else { return }
 

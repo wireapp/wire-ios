@@ -20,3 +20,18 @@
 public enum MainConversationFilter: CaseIterable, Sendable {
     case favorites, groups, oneOnOne
 }
+
+extension MainConversationFilter? {
+    public func map() -> MainSidebarMenuItem {
+        switch self {
+        case .none:
+                .all
+        case .favorites:
+                .favorites
+        case .groups:
+                .groups
+        case .oneOnOne:
+                .oneOnOne
+        }
+    }
+}

@@ -16,17 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainSidebarMenuItemProtocol {
+public enum MainSidebarMenuItem: CaseIterable, Sendable {
     // conversation filters
-    static var all: Self { get }
-    static var favorites: Self { get }
-    static var groups: Self { get }
-    static var oneOnOne: Self { get }
-    static var archive: Self { get }
-
+    case all, favorites, groups, oneOnOne, archive
     // contact
-    static var connect: Self { get }
-
+    case connect
     // bottom
-    static var settings: Self { get }
+    case settings
 }
