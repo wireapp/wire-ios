@@ -445,6 +445,21 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - addLegalHoldRequest
+
+    public var addLegalHoldRequestForClientIDLastPrekey_Invocations: [(userID: UUID, clientID: String, lastPrekey: Prekey)] = []
+    public var addLegalHoldRequestForClientIDLastPrekey_MockMethod: ((UUID, String, Prekey) async -> Void)?
+
+    public func addLegalHoldRequest(for userID: UUID, clientID: String, lastPrekey: Prekey) async {
+        addLegalHoldRequestForClientIDLastPrekey_Invocations.append((userID: userID, clientID: clientID, lastPrekey: lastPrekey))
+
+        guard let mock = addLegalHoldRequestForClientIDLastPrekey_MockMethod else {
+            fatalError("no mock for `addLegalHoldRequestForClientIDLastPrekey`")
+        }
+
+        await mock(userID, clientID, lastPrekey)
+    }
+
     // MARK: - disableUserLegalHold
 
     public var disableUserLegalHold_Invocations: [Void] = []
