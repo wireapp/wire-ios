@@ -356,7 +356,7 @@ public extension Proteus_UserEntry {
 
 public extension Proteus_QualifiedNewOtrMessage {
 
-    // TODO: remove this
+    // TODO: [WPB-11206] remove this 
     init(withSender sender: UserClient,
          nativePush: Bool,
          recipients: [Proteus_QualifiedUserEntry],

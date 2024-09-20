@@ -73,9 +73,10 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
             // Given
+            ZMUser.selfUser(in: self.syncMOC).domain = .randomDomain()
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
-
+            
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
