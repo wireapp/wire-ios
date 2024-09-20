@@ -26,4 +26,10 @@ public struct FeatureConfigUpdateEvent: Equatable, Codable {
 
     public let featureConfig: FeatureConfig
 
+    public init(
+        featureConfig: FeatureConfig
+    ) {
+        self.featureConfig = featureConfig
+    }
+
 }

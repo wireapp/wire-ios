@@ -54,6 +54,7 @@
 		C9EA76A12C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA76A02C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift */; };
 		C9F691192C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691162C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift */; };
 		C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */; };
+		C9F911C72C9D5D5F0026B201 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F911C52C9D5D5F0026B201 /* FeatureConfigUpdateEventProcessorTests.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
@@ -168,6 +169,7 @@
 		C9EA76A02C93104C00A7D35C /* PushSupportedProtocolsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsUseCaseTests.swift; sourceTree = "<group>"; };
 		C9F691162C987DC8008CC41F /* TeamDeleteEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamDeleteEventProcessorTests.swift; sourceTree = "<group>"; };
 		C9F691172C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TeamMemberUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
+		C9F911C52C9D5D5F0026B201 /* FeatureConfigUpdateEventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigUpdateEventProcessorTests.swift; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -392,6 +394,7 @@
 		C90E8B322C89EBA90017494F /* Event Processing */ = {
 			isa = PBXGroup;
 			children = (
+				C9F911C62C9D5D5F0026B201 /* FeatureConfigEventProcessor */,
 				C9F691182C987DC8008CC41F /* TeamEventProcessor */,
 			);
 			path = "Event Processing";
@@ -469,6 +472,14 @@
 			path = ConversationsLabels;
 			sourceTree = "<group>";
 		};
+		C9EA76AD2C98548900A7D35C /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
 		C9F691182C987DC8008CC41F /* TeamEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
@@ -478,12 +489,12 @@
 			path = TeamEventProcessor;
 			sourceTree = "<group>";
 		};
-		C9EA76AD2C98548900A7D35C /* UseCases */ = {
+		C9F911C62C9D5D5F0026B201 /* FeatureConfigEventProcessor */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA769E2C92DD0F00A7D35C /* PushSupportedProtocolsUseCase.swift */,
+				C9F911C52C9D5D5F0026B201 /* FeatureConfigUpdateEventProcessorTests.swift */,
 			);
-			path = UseCases;
+			path = FeatureConfigEventProcessor;
 			sourceTree = "<group>";
 		};
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
@@ -884,6 +895,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9F6911A2C987DC8008CC41F /* TeamMemberUpdateEventProcessorTests.swift in Sources */,
+				C9F911C72C9D5D5F0026B201 /* FeatureConfigUpdateEventProcessorTests.swift in Sources */,
 				C93961932C91B15B00EA971A /* ConversationRepositoryTests.swift in Sources */,
 				C93961922C91B12800EA971A /* TestError.swift in Sources */,
 				EEC410262C60D48900E89394 /* SyncManagerTests.swift in Sources */,
