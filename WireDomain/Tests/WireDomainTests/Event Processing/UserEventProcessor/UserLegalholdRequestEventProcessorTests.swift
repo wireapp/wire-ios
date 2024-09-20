@@ -90,7 +90,7 @@ extension UserLegalholdRequestEventProcessorTests {
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="
 
-        static let legalHoldRequest = LegalHoldRequest(
+        nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
             target: userID,
             requester: nil,
             clientIdentifier: clientID,
@@ -100,7 +100,7 @@ extension UserLegalholdRequestEventProcessorTests {
             )
         )
 
-        static let event = UserLegalholdRequestEvent(
+        nonisolated(unsafe) static let event = UserLegalholdRequestEvent(
             userID: userID,
             clientID: clientID,
             lastPrekey: Prekey(
