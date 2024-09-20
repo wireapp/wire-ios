@@ -45,7 +45,8 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
         sut = UserLegalholdDisableEventProcessor(
             repository: UserRepository(
                 context: context,
-                usersAPI: MockUsersAPI()
+                usersAPI: MockUsersAPI(),
+                selfUserAPI: MockSelfUserAPI()
             )
         )
     }

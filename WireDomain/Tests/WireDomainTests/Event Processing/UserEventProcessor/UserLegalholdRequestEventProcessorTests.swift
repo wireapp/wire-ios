@@ -43,7 +43,8 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
         sut = UserLegalholdRequestEventProcessor(
             repository: UserRepository(
                 context: context,
-                usersAPI: MockUsersAPI()
+                usersAPI: MockUsersAPI(),
+                selfUserAPI: MockSelfUserAPI()
             )
         )
     }
