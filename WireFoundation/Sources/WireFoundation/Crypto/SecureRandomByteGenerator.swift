@@ -32,8 +32,8 @@ public enum SecureRandomByteGenerator {
 
         let status = randomBytes.withUnsafeMutableBytes { mutableBytes in
             SecRandomCopyBytes(
-                kSecRandomDefault,        // RNG ref
-                Int(count),               // Number of bytes
+                kSecRandomDefault, // RNG ref
+                Int(count), // Number of bytes
                 mutableBytes.baseAddress! // Buffer pointer
             )
         }

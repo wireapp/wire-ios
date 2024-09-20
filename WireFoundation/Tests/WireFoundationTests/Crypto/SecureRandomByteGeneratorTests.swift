@@ -33,7 +33,7 @@ final class SecureRandomByteGeneratorTests: XCTestCase {
 
     func testCorrectNumberOfBytesAreGenerated() throws {
         // Given
-        let count = UInt.random(in: 0...1000)
+        let count = UInt.random(in: 0 ... 1_000)
 
         // When
         let bytes = try SecureRandomByteGenerator.generateBytes(count: count)

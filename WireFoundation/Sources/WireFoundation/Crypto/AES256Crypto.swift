@@ -122,17 +122,17 @@ public enum AES256Crypto {
             plaintext.withUnsafeBytes { plaintextBytes in
                 key.withUnsafeBytes { keyBytes in
                     CCCrypt(
-                        CCOperation(kCCEncrypt),          // Encrypt
-                        CCAlgorithm(kCCAlgorithmAES),     // AES
+                        CCOperation(kCCEncrypt), // Encrypt
+                        CCAlgorithm(kCCAlgorithmAES), // AES
                         CCOptions(kCCOptionPKCS7Padding), // PKCS7 Padding
-                        keyBytes.baseAddress,             // Key data
-                        key.count,                        // Key length
-                        nil,                              // No IV
-                        plaintextBytes.baseAddress,       // Input data
-                        plaintext.count,                  // Input length
-                        ciphertextBytes.baseAddress,      // Output buffer
-                        ciphertextLength,                 // Output buffer length
-                        &totalBytesEncrypted              // Number of bytes written to output
+                        keyBytes.baseAddress, // Key data
+                        key.count, // Key length
+                        nil, // No IV
+                        plaintextBytes.baseAddress, // Input data
+                        plaintext.count, // Input length
+                        ciphertextBytes.baseAddress, // Output buffer
+                        ciphertextLength, // Output buffer length
+                        &totalBytesEncrypted // Number of bytes written to output
                     )
                 }
             }
@@ -176,17 +176,17 @@ public enum AES256Crypto {
             ciphertext.withUnsafeBytes { ciphertextBytes in
                 key.withUnsafeBytes { keyBytes in
                     CCCrypt(
-                        CCOperation(kCCDecrypt),          // Decrypt
-                        CCAlgorithm(kCCAlgorithmAES),     // AES
+                        CCOperation(kCCDecrypt), // Decrypt
+                        CCAlgorithm(kCCAlgorithmAES), // AES
                         CCOptions(kCCOptionPKCS7Padding), // PKCS7 Padding
-                        keyBytes.baseAddress,             // Key
-                        key.count,                        // Key length
-                        nil,                              // No IV
-                        ciphertextBytes.baseAddress,      // Input data
-                        ciphertext.count,                 // Input length
-                        plaintextBytes.baseAddress,       // Output buffer
-                        plaintextLength,                  // Output buffer length
-                        &totalBytesDecrypted              // Number of bytes written to output
+                        keyBytes.baseAddress, // Key
+                        key.count, // Key length
+                        nil, // No IV
+                        ciphertextBytes.baseAddress, // Input data
+                        ciphertext.count, // Input length
+                        plaintextBytes.baseAddress, // Output buffer
+                        plaintextLength, // Output buffer length
+                        &totalBytesDecrypted // Number of bytes written to output
                     )
                 }
             }
