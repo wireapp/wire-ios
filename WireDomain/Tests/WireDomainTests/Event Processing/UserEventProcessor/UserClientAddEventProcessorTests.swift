@@ -21,6 +21,7 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -30,14 +31,17 @@ final class UserClientAddEventProcessorTests: XCTestCase {
     var sut: UserClientAddEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
     }
 
     override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = UserClientAddEventProcessor(
             repository: UserRepository(
@@ -45,14 +49,15 @@ final class UserClientAddEventProcessorTests: XCTestCase {
                 usersAPI: MockUsersAPI()
             )
         )
-        try await super.setUp()
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         coreDataStack = nil
         sut = nil
+        modelHelper = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
     }
 
     // MARK: - Tests
@@ -86,7 +91,7 @@ final class UserClientAddEventProcessorTests: XCTestCase {
 
         await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
-            modelHelper.createSelfClient(id: Scaffolding.clientID, in: context)
+            let client = modelHelper.createSelfClient(id: Scaffolding.clientID, in: context)
             let selfUser = ZMUser.selfUser(in: context)
             XCTAssertEqual(selfUser.clients.count, 1)
         }
@@ -111,19 +116,47 @@ final class UserClientAddEventProcessorTests: XCTestCase {
         }
     }
 
+    func testProcessEvent_It_Updates_User_Client() async throws {
+        // Given
+
+        modelHelper.createSelfClient(
+            id: Scaffolding.clientID,
+            in: context
+        )
+
+        // When
+
+        try await sut.processEvent(Scaffolding.event)
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
+                with: Scaffolding.clientID,
+                in: context
+            ))
+
+            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.clientID)
+            XCTAssertEqual(updatedClient.type, .permanent)
+            XCTAssertEqual(updatedClient.label, Scaffolding.event.client.label)
+            XCTAssertEqual(updatedClient.model, Scaffolding.event.client.model)
+            XCTAssertEqual(updatedClient.deviceClass, .phone)
+        }
+    }
+
 }
 
 private extension UserClientAddEventProcessorTests {
     enum Scaffolding {
         static let clientID = "94766bd92f56923d"
 
-        static let event = UserClientAddEvent(
+        nonisolated(unsafe) static let event = UserClientAddEvent(
             client: UserClient(
                 id: clientID,
                 type: .permanent,
                 activationDate: .now,
-                label: "",
-                model: "",
+                label: "test",
+                model: "test",
                 deviceClass: .phone,
                 lastActiveDate: nil,
                 mlsPublicKeys: nil,

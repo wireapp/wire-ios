@@ -445,24 +445,47 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
-    // MARK: - addUserClient
+    // MARK: - fetchOrCreateUserClient
 
-    public var addUserClient_Invocations: [WireAPI.UserClient] = []
-    public var addUserClient_MockError: Error?
-    public var addUserClient_MockMethod: ((WireAPI.UserClient) async throws -> Void)?
+    public var fetchOrCreateUserClientWith_Invocations: [String] = []
+    public var fetchOrCreateUserClientWith_MockError: Error?
+    public var fetchOrCreateUserClientWith_MockMethod: ((String) async throws -> (client: WireDataModel.UserClient, isNew: Bool))?
+    public var fetchOrCreateUserClientWith_MockValue: (client: WireDataModel.UserClient, isNew: Bool)?
 
-    public func addUserClient(_ userClient: WireAPI.UserClient) async throws {
-        addUserClient_Invocations.append(userClient)
+    public func fetchOrCreateUserClient(with id: String) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        fetchOrCreateUserClientWith_Invocations.append(id)
 
-        if let error = addUserClient_MockError {
+        if let error = fetchOrCreateUserClientWith_MockError {
             throw error
         }
 
-        guard let mock = addUserClient_MockMethod else {
-            fatalError("no mock for `addUserClient`")
+        if let mock = fetchOrCreateUserClientWith_MockMethod {
+            return try await mock(id)
+        } else if let mock = fetchOrCreateUserClientWith_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateUserClientWith`")
+        }
+    }
+
+    // MARK: - updateUserClient
+
+    public var updateUserClientFromIsNewClient_Invocations: [(localClient: WireDataModel.UserClient, remoteClient: WireAPI.UserClient, isNewClient: Bool)] = []
+    public var updateUserClientFromIsNewClient_MockError: Error?
+    public var updateUserClientFromIsNewClient_MockMethod: ((WireDataModel.UserClient, WireAPI.UserClient, Bool) async throws -> Void)?
+
+    public func updateUserClient(_ localClient: WireDataModel.UserClient, from remoteClient: WireAPI.UserClient, isNewClient: Bool) async throws {
+        updateUserClientFromIsNewClient_Invocations.append((localClient: localClient, remoteClient: remoteClient, isNewClient: isNewClient))
+
+        if let error = updateUserClientFromIsNewClient_MockError {
+            throw error
         }
 
-        try await mock(userClient)
+        guard let mock = updateUserClientFromIsNewClient_MockMethod else {
+            fatalError("no mock for `updateUserClientFromIsNewClient`")
+        }
+
+        try await mock(localClient, remoteClient, isNewClient)
     }
 
 }

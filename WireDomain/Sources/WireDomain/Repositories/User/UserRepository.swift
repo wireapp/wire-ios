@@ -43,10 +43,28 @@ public protocol UserRepositoryProtocol {
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
 
-    /// Adds a user client.
+    /// Fetches or creates a user client locally.
     ///
-    /// - Parameter userClient: The user client to add.
-    func addUserClient(_ userClient: WireAPI.UserClient) async throws
+    /// - parameters:
+    ///     - id: The user client id to find or create locally.
+    /// - returns: The user client found or created locally and a flag indicating whether or not the user client is new.
+
+    func fetchOrCreateUserClient(
+        with id: String
+    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool)
+
+    /// Updates the user client informations locally.
+    ///
+    /// - parameters:
+    ///     - localClient: The user client to update locally.
+    ///     - remoteClient: The up-to-date remote user client.
+    ///     - isNewClient: A flag indicating whether the user client is new.
+
+    func updateUserClient(
+        _ localClient: WireDataModel.UserClient,
+        from remoteClient: WireAPI.UserClient,
+        isNewClient: Bool
+    ) async throws
 
 }
 
@@ -103,30 +121,41 @@ public final class UserRepository: UserRepositoryProtocol {
         }
     }
 
-    public func addUserClient(_ userClient: WireAPI.UserClient) async throws {
+    public func fetchOrCreateUserClient(
+        with id: String
+    ) async throws -> (client: WireDataModel.UserClient, isNew: Bool) {
+        let localUserClient = await context.perform { [context] in
+            if let existingClient = UserClient.fetchExistingUserClient(
+                with: id,
+                in: context
+            ) {
+                return (existingClient, false)
+            } else {
+                let newClient = UserClient.insertNewObject(in: context)
+                newClient.remoteIdentifier = id
+                return (newClient, true)
+            }
+        }
+
+        try context.save()
+
+        return localUserClient
+    }
+
+    public func updateUserClient(
+        _ localClient: WireDataModel.UserClient,
+        from remoteClient: WireAPI.UserClient,
+        isNewClient: Bool
+    ) async throws {
         await context.perform { [context] in
-            let localUserClient: (client: WireDataModel.UserClient, isNew: Bool) = {
-                if let existingClient = UserClient.fetchExistingUserClient(
-                    with: userClient.id,
-                    in: context
-                ) {
-                    return (client: existingClient, isNew: false)
-                } else {
-                    let newClient = UserClient.insertNewObject(in: context)
-                    return (client: newClient, isNew: true)
-                }
-            }()
 
-            let localClient = localUserClient.client
-            let isNewClient = localUserClient.isNew
-
-            localClient.label = userClient.label
-            localClient.type = userClient.type.toDomainModel()
-            localClient.model = userClient.model
-            localClient.deviceClass = userClient.deviceClass?.toDomainModel()
-            localClient.activationDate = userClient.activationDate
-            localClient.lastActiveDate = userClient.lastActiveDate
-            localClient.remoteIdentifier = userClient.id
+            localClient.label = remoteClient.label
+            localClient.type = remoteClient.type.toDomainModel()
+            localClient.model = remoteClient.model
+            localClient.deviceClass = remoteClient.deviceClass?.toDomainModel()
+            localClient.activationDate = remoteClient.activationDate
+            localClient.lastActiveDate = remoteClient.lastActiveDate
+            localClient.remoteIdentifier = remoteClient.id
 
             let selfUser = ZMUser.selfUser(in: context)
             localClient.user = localClient.user ?? selfUser
@@ -142,11 +171,11 @@ public final class UserRepository: UserRepositoryProtocol {
 
             if !localClient.isSelfClient() {
                 localClient.mlsPublicKeys = .init(
-                    ed25519: userClient.mlsPublicKeys?.ed25519,
-                    ed448: userClient.mlsPublicKeys?.ed448,
-                    p256: userClient.mlsPublicKeys?.p256,
-                    p384: userClient.mlsPublicKeys?.p384,
-                    p521: userClient.mlsPublicKeys?.p512
+                    ed25519: remoteClient.mlsPublicKeys?.ed25519,
+                    ed448: remoteClient.mlsPublicKeys?.ed448,
+                    p256: remoteClient.mlsPublicKeys?.p256,
+                    p384: remoteClient.mlsPublicKeys?.p384,
+                    p521: remoteClient.mlsPublicKeys?.p512
                 )
             }
 
@@ -160,6 +189,8 @@ public final class UserRepository: UserRepositoryProtocol {
             selfUser.selfClient()?.addNewClientToIgnored(localClient)
             selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set([localClient]))
         }
+
+        try context.save()
     }
 
     // MARK: - Private

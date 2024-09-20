@@ -32,10 +32,26 @@ protocol UserClientAddEventProcessorProtocol {
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
 
+    enum Error: Swift.Error {
+        case failedToUpdateUserClient(Swift.Error)
+    }
+
     let repository: any UserRepositoryProtocol
 
     func processEvent(_ event: UserClientAddEvent) async throws {
-        try await repository.addUserClient(event.client)
+        do {
+            let localUserClient = try await repository.fetchOrCreateUserClient(
+                with: event.client.id
+            )
+
+            try await repository.updateUserClient(
+                localUserClient.client,
+                from: event.client,
+                isNewClient: localUserClient.isNew
+            )
+        } catch {
+            throw Error.failedToUpdateUserClient(error)
+        }
     }
 
 }

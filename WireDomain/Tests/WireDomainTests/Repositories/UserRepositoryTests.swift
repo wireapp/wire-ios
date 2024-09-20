@@ -31,8 +31,8 @@ class UserRepositoryTests: XCTestCase {
     var usersAPI: MockUsersAPI!
 
     var stack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         stack.syncContext
@@ -40,6 +40,8 @@ class UserRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
         sut = UserRepository(
@@ -49,11 +51,13 @@ class UserRepositoryTests: XCTestCase {
     }
 
     override func tearDown() async throws {
+        try await super.tearDown()
         stack = nil
         usersAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        try await super.tearDown()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -134,8 +138,76 @@ class UserRepositoryTests: XCTestCase {
         }
     }
 
+    func testFetchOrCreateUserClient() async throws {
+        // Given
+
+        await context.perform { [self] in
+            let userClient = modelHelper.createSelfClient(
+                id: Scaffolding.userClientID,
+                in: context
+            )
+
+            XCTAssertEqual(userClient.remoteIdentifier, Scaffolding.userClientID)
+        }
+
+        // When
+
+        let userClient = try await sut.fetchOrCreateUserClient(
+            with: Scaffolding.userClientID
+        )
+
+        // Then
+
+        XCTAssertNotNil(userClient)
+    }
+
+    func testUpdatesUserClient() async throws {
+        // Given
+
+        let createdClient = try await sut.fetchOrCreateUserClient(
+            with: Scaffolding.userClientID
+        )
+
+        // When
+
+        try await sut.updateUserClient(
+            createdClient.client,
+            from: Scaffolding.remoteUserClient,
+            isNewClient: createdClient.isNew
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedClient = try XCTUnwrap(UserClient.fetchExistingUserClient(
+                with: Scaffolding.userClientID,
+                in: context
+            ))
+
+            XCTAssertEqual(updatedClient.remoteIdentifier, Scaffolding.userClientID)
+            XCTAssertEqual(updatedClient.type, .permanent)
+            XCTAssertEqual(updatedClient.label, Scaffolding.remoteUserClient.label)
+            XCTAssertEqual(updatedClient.model, Scaffolding.remoteUserClient.model)
+            XCTAssertEqual(updatedClient.deviceClass, .phone)
+        }
+    }
+
     private enum Scaffolding {
-        static let user1 = User(
+        static let userID = UUID()
+
+        static let userClientID = UUID().uuidString
+
+        nonisolated(unsafe) static let remoteUserClient = WireAPI.UserClient(
+            id: userClientID,
+            type: .permanent,
+            activationDate: .now,
+            label: "test",
+            model: "test",
+            deviceClass: .phone,
+            capabilities: []
+        )
+
+        nonisolated(unsafe) static let user1 = User(
             id: QualifiedID(uuid: UUID(), domain: "example.com"),
             name: "user1",
             handle: "handle1",
