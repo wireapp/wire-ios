@@ -20,7 +20,6 @@ import UIKit
 
 @MainActor
 public protocol MainConversationListProtocol: UIViewController {
-    associatedtype ConversationFilter: MainConversationListFilterProtocol & Equatable
-    var conversationFilter: ConversationFilter? { get set }
+    var conversationFilter: MainConversationFilter? { get set }
     var splitViewInterface: MainSplitViewInterface { get set }
 }

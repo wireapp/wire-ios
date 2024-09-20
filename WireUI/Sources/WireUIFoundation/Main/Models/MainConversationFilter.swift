@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainConversationListFilterProtocol {
-    static var favorites: Self { get }
-    static var groups: Self { get }
-    static var oneOnOne: Self { get }
+/// Filter criteria for the conversations in the conversation list which will be available in the expanded and collapsed layout.
+public enum MainConversationFilter: CaseIterable {
+    case favorites, groups, oneOnOne
 }
