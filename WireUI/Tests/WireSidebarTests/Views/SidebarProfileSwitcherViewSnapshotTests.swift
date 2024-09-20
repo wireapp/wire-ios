@@ -28,7 +28,7 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
@@ -38,7 +38,7 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
     @MainActor
     func testColorSchemeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
+        let sut = SidebarAccountInfoPreview()
             .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
@@ -52,7 +52,7 @@ final class SidebarProfileSwitcherViewSnapshotTests: XCTestCase {
     @MainActor
     func testDynamicTypeVariants() {
         let screenBounds = UIScreen.main.bounds
-        let sut = SidebarProfileSwitcherViewPreview()
+        let sut = SidebarAccountInfoPreview()
             .frame(width: screenBounds.width * 2 / 3, height: screenBounds.height * 2 / 3)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
