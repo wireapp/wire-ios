@@ -21,5 +21,5 @@ import UIKit
 @MainActor
 public protocol MainConversationListProtocol: UIViewController {
     var conversationFilter: MainConversationFilter? { get set }
-    var splitViewInterface: MainSplitViewInterface { get set }
+    var splitViewInterface: MainSplitViewState { get set }
 }

@@ -23,7 +23,7 @@ final class PreviewConversationListViewController: UIHostingController<LabelView
     // MARK: - MainConversationListProtocol
 
     var conversationFilter: MainConversationFilter?
-    var splitViewInterface: MainSplitViewInterface = .expanded
+    var splitViewInterface: MainSplitViewState = .expanded
 
     // MARK: - Life Cycle
 

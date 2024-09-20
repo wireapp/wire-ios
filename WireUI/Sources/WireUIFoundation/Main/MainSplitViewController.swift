@@ -64,6 +64,15 @@ public final class MainSplitViewController<
         }
     }
 
+    public var newConversation: UIViewController? {
+        get { _newConversation }
+        set {
+            _newConversation = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
     public var settings: UIViewController? {
         get { _settings }
         set {
@@ -87,6 +96,7 @@ public final class MainSplitViewController<
     private weak var _conversationList: ConversationList?
     private weak var _conversation: Conversation?
     private weak var _archive: Archive?
+    private weak var _newConversation: NewConversation?
     private weak var _settings: Settings?
     private weak var _tabContainer: TabContainer?
 
