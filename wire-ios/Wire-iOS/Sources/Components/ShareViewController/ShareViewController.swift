@@ -210,7 +210,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
             guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
+            bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsets.bottom : CGFloat(0)
             view.layoutIfNeeded()
         })
     }

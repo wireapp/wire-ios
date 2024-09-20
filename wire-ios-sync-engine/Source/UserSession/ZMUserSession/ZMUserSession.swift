@@ -532,15 +532,18 @@ public final class ZMUserSession: NSObject {
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
         return [
+            ImportEventsURLActionProcessor(
+                eventProcessor: updateEventProcessor!
+            ),
             DeepLinkURLActionProcessor(
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: updateEventProcessor!
+                eventProcessor: conversationEventProcessor
             ),
             ConnectToBotURLActionProcessor(
                 contextprovider: coreDataStack,
                 transportSession: transportSession,
-                eventProcessor: updateEventProcessor!,
+                eventProcessor: conversationEventProcessor,
                 searchUsersCache: dependencies.caches.searchUsers
             )
         ]
@@ -633,9 +636,14 @@ public final class ZMUserSession: NSObject {
 
     // temporary function to simplify call to ConversationEventProcessor
     // might be replaced by something more elegant
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            await self.conversationEventProcessor.processConversationEvents(events)
+    public func processConversationEvents(_ events: [ZMUpdateEvent], completion: (() -> Void)?) {
+        WaitingGroupTask(context: self.syncContext) { [weak self] in
+            guard let self else {
+                completion?()
+                return
+            }
+            await self.conversationEventProcessor.processAndSaveConversationEvents(events)
+            completion?()
         }
     }
 

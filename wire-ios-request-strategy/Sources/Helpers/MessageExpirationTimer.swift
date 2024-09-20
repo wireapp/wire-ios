@@ -53,7 +53,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
             return
         }
-        message.expire()
+        message.expire(withReason: .timeout)
         message.managedObjectContext?.enqueueDelayedSave()
         self.localNotificationsDispatcher.didFailToSend(message)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -83,7 +83,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
             if expirationDate < .now {
                 logWithMessage("expiring message when trying to start timer", message: $0)
-                $0.expire()
+                $0.expire(withReason: .timeout)
                 $0.managedObjectContext?.enqueueDelayedSave()
             } else {
 

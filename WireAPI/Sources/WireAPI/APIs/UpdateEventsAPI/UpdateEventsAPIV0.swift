@@ -20,9 +20,9 @@ import Foundation
 
 class UpdateEventsAPIV0: UpdateEventsAPI, VersionedAPI {
 
-    let httpClient: HTTPClient
+    let httpClient: any HTTPClient
 
-    init(httpClient: HTTPClient) {
+    init(httpClient: any HTTPClient) {
         self.httpClient = httpClient
     }
 

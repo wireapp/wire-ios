@@ -214,7 +214,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
-        message.expire()
+        message.expire(withReason: .other)
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
         return false
     }
@@ -227,7 +227,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return
         }
 
-        message.expire()
+        message.expire(withReason: .other)
         managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
         return
     }

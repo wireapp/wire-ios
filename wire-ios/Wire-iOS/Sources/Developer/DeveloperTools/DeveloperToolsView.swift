@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Inject
 import SwiftUI
 
 struct DeveloperToolsView: View {
@@ -25,18 +26,20 @@ struct DeveloperToolsView: View {
     @StateObject
     var viewModel: DeveloperToolsViewModel
 
+    @ObserveInjection var inject
+
     // MARK: - Views
 
     var body: some View {
         List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("Developer tools")
+            .navigationTitle(Text(verbatim: "Developer tools"))
             .navigationBarItems(trailing: dismissButton)
             .alert(isPresented: $viewModel.isPresentingAlert) {
                 Alert(
                     title: Text(viewModel.alertTitle ?? ""),
                     message: Text(viewModel.alertBody ?? "")
                 )
-            }
+            }.enableInjection()
     }
 
     private func sectionView(for section: DeveloperToolsViewModel.Section) -> some View {
@@ -80,7 +83,7 @@ struct DeveloperToolsView: View {
     private var dismissButton: some View {
         Button(
             action: { viewModel.handleEvent(.dismissButtonTapped) },
-            label: { Text("Close") }
+            label: { Text(verbatim: "Close") }
         )
     }
 

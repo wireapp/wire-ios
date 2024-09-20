@@ -53,8 +53,6 @@ public final class LAContextStorage: LAContextStorable {
     // MARK: Init
 
     public init(notificationCenter: NotificationCenter = .default) {
-        WireLogger.ear.info("LAContextStore: init")
-
         self.notificationCenter = notificationCenter
 
         setupObservers()
@@ -64,7 +62,6 @@ public final class LAContextStorage: LAContextStorable {
         if let observerToken {
             notificationCenter.removeObserver(observerToken)
         }
-        WireLogger.ear.info("LAContextStore: deinit")
     }
 
     private func setupObservers() {
@@ -81,7 +78,6 @@ public final class LAContextStorage: LAContextStorable {
     // MARK: Funcs
 
     public func clear() {
-        WireLogger.ear.info("LAContextStore: clear")
         context = nil
     }
 }
