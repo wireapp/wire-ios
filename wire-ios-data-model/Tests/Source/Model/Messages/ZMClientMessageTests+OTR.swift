@@ -280,7 +280,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {
         await syncMOC.perform {
             switch payloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(userIds: let userIds):
-                let syncQualifiedIds = [self.syncSelfUser, self.syncUser1].map { $0.qualifiedID }
+                let syncQualifiedIds = [self.syncSelfUser, self.syncUser1].compactMap { $0.qualifiedID }
                 XCTAssertEqual(userIds, Set(syncQualifiedIds))
             default:
                 XCTFail()

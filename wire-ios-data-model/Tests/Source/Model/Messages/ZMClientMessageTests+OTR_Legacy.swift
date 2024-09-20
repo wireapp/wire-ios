@@ -32,11 +32,7 @@
         DeveloperFlag.storage = UserDefaults.standard
     }
 
- }
-
- // MARK: - Payload creation
-
-extension ClientMessageTests_OTR_Legacy {
+    // MARK: - Payload creation
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() async throws {
         let (textMessage, notSelfClients, firstClient, secondClient, conversation) = await self.syncMOC.perform {
@@ -67,8 +63,8 @@ extension ClientMessageTests_OTR_Legacy {
         let unwrappedDataAndStrategy = try XCTUnwrap(dataAndStrategy)
 
         // Then
-        let createdMessage = Proteus_NewOtrMessage.with {
-            try? $0.merge(serializedData: unwrappedDataAndStrategy.data)
+        let createdMessage = try Proteus_NewOtrMessage.with {
+            try $0.merge(serializedData: unwrappedDataAndStrategy.data)
         }
 
         XCTAssertEqual(createdMessage.hasBlob, true)
