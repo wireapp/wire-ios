@@ -44,7 +44,11 @@ final class TeamMemberLeaveEventProcessorTests: XCTestCase {
 
         repository = TeamRepository(
             selfTeamID: UUID(),
-            userRepository: UserRepository(context: context, usersAPI: MockUsersAPI()),
+            userRepository: UserRepository(
+                context: context,
+                usersAPI: MockUsersAPI(), 
+                selfUserAPI: MockSelfUserAPI()
+            ),
             teamsAPI: MockTeamsAPI(),
             context: context
         )

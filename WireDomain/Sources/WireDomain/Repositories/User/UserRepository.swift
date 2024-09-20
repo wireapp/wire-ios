@@ -49,6 +49,12 @@ public protocol UserRepositoryProtocol {
     ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
+    
+    /// Fetches a user with a specific id.
+    /// - Parameter id: The ID of the user.
+    /// - Returns: A `ZMUser` object.
+
+    func fetchUser(with id: UUID) async throws -> ZMUser
 
     /// Fetches or creates a user client locally.
     ///
@@ -155,6 +161,16 @@ public final class UserRepository: UserRepositoryProtocol {
             }
         } catch {
             throw UserRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+    
+    public func fetchUser(with id: UUID) async throws -> ZMUser {
+        try await context.perform { [context] in
+            guard let user = ZMUser.fetch(with: id, in: context) else {
+                throw UserRepositoryError.failedToFetchUser(id)
+            }
+
+            return user
         }
     }
 
