@@ -23,6 +23,7 @@ import WireDataModel
 
 public struct ClientSession {
 
+    private let clientID: String
     private let updateEventsAPI: any UpdateEventsAPI
     private let updateEventsRepository: UpdateEventsRepository
     private let syncManager: SyncManager
@@ -31,22 +32,22 @@ public struct ClientSession {
     public init(
         clientID: String,
         backendURL: URL,
-        apiVersion: WireAPI.APIVersion,
-        minTLSversion: WireAPI.TLSVersion,
         authenticationStorage: any AuthenticationStorage,
         proteusService: any ProteusServiceInterface,
         syncContext: NSManagedObjectContext,
         eventContext: NSManagedObjectContext,
         lastEventIDRepository: any LastEventIDRepositoryInterface
     ) {
+        self.clientID = clientID
+
         apiService = APIService(
             clientID: clientID,
             backendURL: backendURL,
             authenticationStorage: authenticationStorage,
-            minTLSVersion: minTLSversion
+            minTLSVersion: .v1_2
         )
 
-        updateEventsAPI = UpdateEventsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
+        updateEventsAPI = UpdateEventsAPIBuilder(apiService: apiService).makeAPI(for: .v5)
 
         let updateEventDecryptor = UpdateEventDecryptor(
             proteusService: proteusService,
@@ -66,6 +67,16 @@ public struct ClientSession {
             updateEventsRepository: updateEventsRepository,
             updateEventProcessor: DebugUpdateEventProcessor()
         )
+    }
+
+    public func doSomething() async {
+        do {
+            print("[DEBUG] fetching event")
+            let envelope = try await updateEventsAPI.getLastUpdateEvent(selfClientID: clientID)
+            print("[DEBUG] fetched event: \(envelope)")
+        } catch {
+            print("[DEBUG] failed to fetched event: \(error)")
+        }
     }
 
 }

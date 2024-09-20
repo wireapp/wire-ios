@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireDataModel
+import WireDomain
 import WireRequestStrategy
 import WireSystem
 
@@ -396,7 +397,9 @@ public final class ZMUserSession: NSObject {
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
         configuration: Configuration,
-        isDeveloperModeEnabled: Bool
+        isDeveloperModeEnabled: Bool,
+        backendURL: URL,
+        sharedUserDefaults: UserDefaults
     ) {
         coreDataStack.linkAnalytics(analytics)
         coreDataStack.linkCaches(dependencies.caches)
@@ -452,10 +455,25 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
 
-        if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
-            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        if let selfUserClient {
+            let clientID = selfUserClient.remoteIdentifier!
+            let clientIDForLogging = selfUserClient.safeRemoteIdentifier.safeForLoggingDescription
+            WireLogger.authentication.addTag(.selfClientId, value: clientIDForLogging)
+
+            clientSession = ClientSessionBuilder().buildClientSession(
+                userID: selfUser.remoteIdentifier,
+                clientID: clientID,
+                backendURL: backendURL,
+                proteusService: proteusService,
+                syncContext: syncContext,
+                eventContext: eventContext,
+                sharedUserDefaults: sharedUserDefaults,
+                lastEventIDRepository: lastEventIDRepository
+            )
         }
     }
+
+    public var clientSession: ClientSession?
 
     // MARK: - Deinitalize
 

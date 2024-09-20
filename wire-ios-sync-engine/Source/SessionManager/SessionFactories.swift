@@ -102,7 +102,9 @@ open class AuthenticatedSessionFactory {
             syncStrategy: nil,
             operationLoop: nil,
             configuration: configuration,
-            isDeveloperModeEnabled: isDeveloperModeEnabled
+            isDeveloperModeEnabled: isDeveloperModeEnabled,
+            backendURL: environment.backendURL,
+            sharedUserDefaults: sharedUserDefaults
         )
         userSession.startRequestLoopTracker()
 

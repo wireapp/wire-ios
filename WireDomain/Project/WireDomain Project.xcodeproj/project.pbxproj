@@ -51,6 +51,7 @@
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
+		EE303CBC2C9C71AD00ADF25B /* ClientSessionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE303CBB2C9C71AD00ADF25B /* ClientSessionBuilder.swift */; };
 		EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */; };
 		EE368CCF2C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */; };
 		EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */; };
@@ -169,6 +170,7 @@
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsRepositoryError.swift; sourceTree = "<group>"; };
+		EE303CBB2C9C71AD00ADF25B /* ClientSessionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSessionBuilder.swift; sourceTree = "<group>"; };
 		EE368CC72C2DAA87009DBAB0 /* ConversationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationEventProcessor.swift; sourceTree = "<group>"; };
 		EE368CC82C2DAA87009DBAB0 /* FeatureConfigEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigEventProcessor.swift; sourceTree = "<group>"; };
 		EE368CC92C2DAA87009DBAB0 /* FederationEventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FederationEventProcessor.swift; sourceTree = "<group>"; };
@@ -617,6 +619,7 @@
 			isa = PBXGroup;
 			children = (
 				EEEE33572C78BD7100DAC5FD /* ClientSession.swift */,
+				EE303CBB2C9C71AD00ADF25B /* ClientSessionBuilder.swift */,
 			);
 			path = Sessions;
 			sourceTree = "<group>";
@@ -843,6 +846,7 @@
 				EEAD09FC2C46773900CC8658 /* ConversationMemberLeaveEventProcessor.swift in Sources */,
 				EE57A7082C2A8B740096F242 /* ProteusMessageDecryptorError.swift in Sources */,
 				EEAD0A1A2C46A92000CC8658 /* UserClientRemoveEventProcessor.swift in Sources */,
+				EE303CBC2C9C71AD00ADF25B /* ClientSessionBuilder.swift in Sources */,
 				EEAD0A0A2C46776B00CC8658 /* ConversationReceiptModeUpdateEventProcessor.swift in Sources */,
 				EEAD0A002C46774900CC8658 /* ConversationMessageTimerUpdateEventProcessor.swift in Sources */,
 				EEAD0A182C46A88D00CC8658 /* UserClientAddEventProcessor.swift in Sources */,
