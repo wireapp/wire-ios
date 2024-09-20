@@ -59,7 +59,7 @@ public protocol UserRepositoryProtocol {
         clientID: String,
         lastPrekey: Prekey
     ) async
-    
+
     /// Disables user legal hold.
 
     func disableUserLegalHold() async throws
@@ -117,24 +117,24 @@ public final class UserRepository: UserRepositoryProtocol {
     ) async {
         await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
-            
+
             guard let prekey = lastPrekey.toDomainModel() else {
                 return WireLogger.eventProcessing.error(
                     "Invalid legal hold request payload: invalid base64 encoded key \(lastPrekey.base64EncodedKey)"
                 )
             }
-            
+
             let legalHoldRequest = LegalHoldRequest(
                 target: userID,
                 requester: nil,
                 clientIdentifier: clientID,
                 lastPrekey: prekey
             )
-            
+
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
         }
     }
-    
+
     public func disableUserLegalHold() async throws {
         try await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)
