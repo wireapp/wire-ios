@@ -64,7 +64,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         session.requireCustomAppLockPasscode = true
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(presenter.results, [.customPasscodeCreationNeeded(shouldInform: false)])
@@ -77,7 +77,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         authenticationType.current = .unavailable
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(presenter.results, [.customPasscodeCreationNeeded(shouldInform: false)])
@@ -90,7 +90,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         session.needsToNotifyUserOfAppLockConfiguration = true
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(presenter.results, [.customPasscodeCreationNeeded(shouldInform: true)])
@@ -101,7 +101,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         session.isCustomAppLockPasscodeSet = true
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(presenter.results, [.readyForAuthentication(shouldInform: false)])
@@ -113,7 +113,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         session.needsToNotifyUserOfAppLockConfiguration = true
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(presenter.results, [.readyForAuthentication(shouldInform: true)])
@@ -126,7 +126,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         authenticationType.current = .unavailable
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(presenter.results, [.readyForAuthentication(shouldInform: false)])
@@ -137,33 +137,33 @@ final class AppLockModuleInteractorTests: XCTestCase {
         session.lock = .none
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: false))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: false))
 
         // Then
         XCTAssertEqual(session.evaluateAuthentication.count, 0)
         XCTAssertEqual(session.openApp.count, 1)
     }
 
-    func test_InitiateAuthentication_RequireActiveApp_ReturnsNothingIfAppIsInBackground() {
+    func test_InitiateAuthentication_RequireForegroundApp_ReturnsNothingIfAppIsInBackground() {
         // Given
         applicationStateProvider.applicationState = .background
         session.isCustomAppLockPasscodeSet = true
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: true))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: true))
 
         // Then
         XCTAssertEqual(presenter.results, [])
     }
 
-    func test_InitiateAuthentication_NeedsToCreateCustomPasscodeAndRequireActiveApp_ReturnsNothingIfAppIsInBackground() {
+    func test_InitiateAuthentication_NeedsToCreateCustomPasscodeAndRequireForegroundApp_ReturnsNothingIfAppIsInBackground() {
         // Given
         applicationStateProvider.applicationState = .background
         session.isCustomAppLockPasscodeSet = false
         session.requireCustomAppLockPasscode = true
 
         // When
-        sut.executeRequest(.initiateAuthentication(requireActiveApp: true))
+        sut.executeRequest(.initiateAuthentication(requireForegroundApp: true))
 
         // Then
         XCTAssertEqual(presenter.results, [])
