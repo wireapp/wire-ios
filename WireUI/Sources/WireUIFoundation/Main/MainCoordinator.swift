@@ -336,13 +336,13 @@ SplitViewController.Settings == TabBarController.Settings
         // if the archived conversations view controller was visible, present it on top of the conversation list
         if tabBarController.selectedContent == .archive {
             presentArchivedConversationsOverConversationList()
-            splitViewController.sidebar.selectedMenuItem = .archive
+            splitViewController.sidebar.selectedMenuItem = .init(.archive)
         }
 
         // if the settings view controller was visible, present it on top of the conversation list
         if tabBarController.selectedContent == .settings {
             addSettingsAsChildOfConversationList()
-            splitViewController.sidebar.selectedMenuItem = .settings
+            splitViewController.sidebar.selectedMenuItem = .init(.settings)
         }
     }
 

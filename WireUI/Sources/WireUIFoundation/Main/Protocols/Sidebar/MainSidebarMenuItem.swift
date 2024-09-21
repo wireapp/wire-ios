@@ -16,19 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: MainSidebarMenuItemConvertible
-
-public protocol MainSidebarMenuItemProtocol: Equatable {
+public enum MainSidebarMenuItem: Sendable {
     // conversation filters
-    static var all: Self { get }
-    static var favorites: Self { get }
-    static var groups: Self { get }
-    static var oneOnOne: Self { get }
-    static var archive: Self { get }
-
+    case all, favorites, groups, oneOnOne, archive
     // contact
-    static var connect: Self { get }
-
+    case connect
     // bottom
-    static var settings: Self { get }
+    case settings
+}
+
+public protocol MainSidebarMenuItemConvertible: Sendable {
+    init(_ mainSidebarMenuItem: MainSidebarMenuItem)
+    func map() -> MainSidebarMenuItem
+}
+
+extension MainSidebarMenuItem: MainSidebarMenuItemConvertible {
+    public init(_ mainSidebarMenuItem: MainSidebarMenuItem) { self = mainSidebarMenuItem }
+    public func map() -> MainSidebarMenuItem { self }
 }
