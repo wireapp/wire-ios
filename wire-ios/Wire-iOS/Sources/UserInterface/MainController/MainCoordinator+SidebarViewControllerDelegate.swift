@@ -69,3 +69,24 @@ extension MainCoordinator: SidebarViewControllerDelegate {
         fatalError("TODO")
     }
 }
+
+// MARK: - ConversationFilter + MainConversationFilterConvertible
+
+extension ConversationFilter: MainConversationFilterConvertible {
+
+    init(_ mainConversationFilter: MainConversationFilter) {
+        switch mainConversationFilter {
+        case .favorites: self = .favorites
+        case .groups: self = .groups
+        case .oneOnOne: self = .oneOnOne
+        }
+    }
+    
+    func map() -> MainConversationFilter {
+        switch self {
+        case .favorites: .favorites
+        case .groups: .groups
+        case .oneOnOne: .oneOnOne
+        }
+    }
+}

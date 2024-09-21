@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: MainSidebarMenuItemConvertible
+
 public protocol MainSidebarMenuItemProtocol: Equatable {
     // conversation filters
     static var all: Self { get }

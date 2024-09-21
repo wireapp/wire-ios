@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUIFoundation
-
-enum ConversationFilter: CaseIterable, MainConversationFilterProtocol, Sendable {
+enum ConversationFilter: CaseIterable, Sendable {
     case favorites
     case groups
     case oneOnOne
