@@ -55,8 +55,8 @@ enum FilterImageName: String {
     ///     - `.oneToOneConversations`: Represents one-to-one conversations.
     ///   - isSelected: A boolean value indicating whether the filter is selected.
     /// - Returns: The corresponding `FilterImageName` based on the provided filter type and selection state.
-    static func filterImageName(
-        for filter: MainConversationFilter?,
+    static func filterImageName<ConversationFilter: MainConversationFilterProtocol>(
+        for filter: ConversationFilter?,
         isSelected: Bool
     ) -> FilterImageName {
         guard let filter else {
@@ -70,6 +70,9 @@ enum FilterImageName: String {
             return isSelected ? .person3Fill : .person3
         case .oneOnOne:
             return isSelected ? .personFill : .person
+
+        default:
+            fatalError("TODO") // TODO: make init? instead
         }
     }
 }

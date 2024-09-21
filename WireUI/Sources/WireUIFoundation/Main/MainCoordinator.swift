@@ -95,11 +95,12 @@ SplitViewController.Settings == TabBarController.Settings
 
     // MARK: - Public Methods
 
-    public func showConversationList(conversationFilter: MainConversationFilter?) {
+    public func showConversationList(conversationFilter: (some MainConversationFilterProtocol)?) {
         defer {
             tabBarController.selectedContent = .conversations
-            sidebar.selectedMenuItem = conversationFilter.map()
-            conversationList.conversationFilter = conversationFilter
+            fatalError("TODO")
+            // sidebar.selectedMenuItem = conversationFilter.map()
+            // conversationList.conversationFilter = conversationFilter.map()
         }
 
         // In collapsed state switching the tab was all we needed to do.

@@ -22,8 +22,12 @@ final class PreviewConversationListViewController: UIHostingController<LabelView
 
     // MARK: - MainConversationListProtocol
 
-    var conversationFilter: MainConversationFilter?
+    var conversationFilter: ConversationFilter?
     var splitViewInterface: MainSplitViewState = .expanded
+
+    enum ConversationFilter: MainConversationFilterProtocol {
+        case favorites, groups, oneOnOne
+    }
 
     // MARK: - Life Cycle
 

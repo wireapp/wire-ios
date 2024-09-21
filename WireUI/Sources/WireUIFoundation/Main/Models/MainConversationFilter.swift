@@ -17,12 +17,15 @@
 //
 
 /// Filter criteria for the conversations in the conversation list which will be available in the expanded and collapsed layout.
-public enum MainConversationFilter: CaseIterable, Sendable {
-    case favorites, groups, oneOnOne
+public protocol MainConversationFilterProtocol: CaseIterable, Equatable, Sendable {
+    static var favorites: Self { get }
+    static var groups: Self { get }
+    static var oneOnOne: Self { get }
 }
 
-extension MainConversationFilter? {
-    public func map() -> MainSidebarMenuItem {
+extension Optional where Wrapped: MainConversationFilterProtocol {
+
+    func map<MenuItem: MainSidebarMenuItemProtocol>() -> MenuItem? {
         switch self {
         case .none:
                 .all
@@ -32,6 +35,8 @@ extension MainConversationFilter? {
                 .groups
         case .oneOnOne:
                 .oneOnOne
+        default:
+            nil
         }
     }
 }

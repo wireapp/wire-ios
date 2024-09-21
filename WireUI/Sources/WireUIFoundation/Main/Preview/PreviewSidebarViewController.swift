@@ -22,7 +22,14 @@ final class PreviewSidebarViewController: UIHostingController<LabelView>, MainSi
 
     // MARK: - MainSidebarProtocol
 
-    var selectedMenuItem: MainSidebarMenuItem = .all
+    var selectedMenuItem: MenuItem = .all
+
+    enum MenuItem: MainSidebarMenuItemProtocol {
+        case all, favorites, groups, oneOnOne
+        case archive
+        case connect
+        case settings
+    }
 
     // MARK: - Life Cycle
 

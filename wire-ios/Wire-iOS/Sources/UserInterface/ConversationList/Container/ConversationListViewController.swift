@@ -413,16 +413,18 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter(_ filter: MainConversationFilter?) {
+    func applyFilter<ConversationFilter: MainConversationFilterProtocol>(_ filter: ConversationFilter) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
 
-        if filter != nil {
-            filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
+        filterLabel.text = L10n.Localizable.ConversationList.FilterLabel.text(selectedFilterLabel)
             filterContainerView.isHidden = false
-        } else {
-            filterContainerView.isHidden = true
-        }
+    }
+
+    func clearFilter() {
+        listContentController.listViewModel.selectedFilter = .none
+        setupRightNavigationBarButtons()
+        filterContainerView.isHidden = true
     }
 
     @objc
