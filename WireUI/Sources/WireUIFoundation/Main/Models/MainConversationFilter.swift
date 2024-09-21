@@ -16,6 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// TODO: create enum, maybe don't use it in (all) protocols
+// OR let the protocol declare the map() method
+
 /// Filter criteria for the conversations in the conversation list which will be available in the expanded and collapsed layout.
 public protocol MainConversationFilterProtocol: CaseIterable, Equatable, Sendable {
     static var favorites: Self { get }

@@ -19,7 +19,7 @@
 /// Handles the navigation when a user is authenticated.
 public protocol MainCoordinatorProtocol: AnyObject {
 
-    func showConversationList(conversationFilter: (some MainConversationFilterProtocol)?) async
+    func showConversationList<ConversationFilter: MainConversationFilterProtocol>(conversationFilter: ConversationFilter?) async
     func showArchivedConversations() async
     func showSelfProfile() async
     func showSettings() async
