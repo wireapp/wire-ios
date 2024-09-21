@@ -28,7 +28,7 @@ final class ConversationListViewModel: NSObject {
 
     typealias SectionIdentifier = String
 
-    var selectedFilter: (any MainConversationFilterProtocol)? {
+    var selectedFilter: ConversationFilter? {
         didSet {
             reloadConversationList()
         }

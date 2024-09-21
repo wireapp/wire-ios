@@ -23,7 +23,7 @@ import WireUIFoundation
 
 final class MockMainCoordinator: MainCoordinatorProtocol {
 
-    func showConversationList(conversationFilter: MainConversationFilter?) async {
+    func showConversationList(conversationFilter: (some MainConversationFilterProtocol)?) async {
         fatalError("Mock method not implemented")
     }
 

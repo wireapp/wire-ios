@@ -148,7 +148,7 @@ final class ConversationListViewControllerTests: XCTestCase {
 
         // WHEN
         sut.hideNoContactLabel(animated: false)
-        sut.applyFilter(nil)
+        sut.clearFilter()
 
         // THEN
         snapshotHelper.verify(matching: tabBarController)

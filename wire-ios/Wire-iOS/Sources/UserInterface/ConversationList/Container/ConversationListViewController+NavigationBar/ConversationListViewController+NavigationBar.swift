@@ -246,7 +246,7 @@ extension ConversationListViewController {
     /// - Note: It also customizes the action's image and title appearance based on the selection state.
     private func createFilterAction(
         title: String,
-        filter: MainConversationFilter?,
+        filter: ConversationFilter?,
         isSelected: Bool
     ) -> UIAction {
         let imageName = FilterImageName.filterImageName(for: filter, isSelected: isSelected).rawValue
@@ -254,7 +254,11 @@ extension ConversationListViewController {
         let attributedTitle = FilterButtonStyleHelper.makeAttributedTitle(for: title, isSelected: isSelected)
 
         let action = UIAction(title: title, image: actionImage) { [weak self] _ in
-            self?.applyFilter(filter)
+            if let filter {
+                self?.applyFilter(filter)
+            } else {
+                self?.clearFilter()
+            }
         }
 
         action.setValue(attributedTitle, forKey: "attributedTitle")
@@ -264,7 +268,7 @@ extension ConversationListViewController {
     }
 
     func accessibilityLabelForFilterAction(
-        for filter: MainConversationFilter?,
+        for filter: ConversationFilter?,
         isSelected: Bool
     ) -> String {
 

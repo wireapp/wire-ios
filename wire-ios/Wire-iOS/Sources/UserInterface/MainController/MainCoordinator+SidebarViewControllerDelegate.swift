@@ -49,13 +49,13 @@ extension MainCoordinator: SidebarViewControllerDelegate {
     public func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem) {
         switch menuItem {
         case .all:
-            showConversationList(conversationFilter: .none)
+            showConversationList(conversationFilter: ConversationFilter?.none)
         case .favorites:
-            showConversationList(conversationFilter: .favorites)
+            showConversationList(conversationFilter: ConversationFilter.favorites)
         case .groups:
-            showConversationList(conversationFilter: .groups)
+            showConversationList(conversationFilter: ConversationFilter.groups)
         case .oneOnOne:
-            showConversationList(conversationFilter: .oneOnOne)
+            showConversationList(conversationFilter: ConversationFilter.oneOnOne)
         case .archive:
             showArchivedConversations()
         case .connect:

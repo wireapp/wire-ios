@@ -47,14 +47,14 @@ final class ConversationListViewController: UIViewController {
         return label
     }()
 
-    private lazy var removeButton: UIButton = {
+    private lazy var removeButton = {
         let button = UIButton(type: .system)
         button.setTitle(L10n.Localizable.ConversationList.Filter.RemoveButton.title, for: .normal)
         button.titleLabel?.font = UIFont.font(for: .h5)
         button.setTitleColor(UIColor.accent(), for: .normal)
         button.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterView.RemoveButton.descritpion
         let action = UIAction { [weak self] _ in
-            self?.removeFilter()
+            self?.clearFilter()
         }
         button.addAction(action, for: .touchUpInside)
         return button
@@ -296,10 +296,6 @@ final class ConversationListViewController: UIViewController {
         filterContainerView.isHidden = true
     }
 
-    func removeFilter() {
-        applyFilter(nil)
-    }
-
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
         add(listContentController, to: contentContainer)
@@ -413,7 +409,7 @@ final class ConversationListViewController: UIViewController {
 
     /// Method to apply the selected filter and update the UI accordingly
     /// - Parameter filter: The selected filter type to be applied
-    func applyFilter<ConversationFilter: MainConversationFilterProtocol>(_ filter: ConversationFilter) {
+    func applyFilter(_ filter: ConversationFilter) {
         self.listContentController.listViewModel.selectedFilter = filter
         self.setupRightNavigationBarButtons()
 
