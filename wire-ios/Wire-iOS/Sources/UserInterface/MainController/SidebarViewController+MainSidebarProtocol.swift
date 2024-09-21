@@ -20,4 +20,30 @@ import WireSidebar
 import WireUIFoundation
 
 extension SidebarViewController: MainSidebarProtocol {}
-extension SidebarMenuItem: MainSidebarMenuItemProtocol {}
+
+extension SidebarMenuItem: MainSidebarMenuItemConvertible {
+
+    public init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
+        switch mainSidebarMenuItem {
+        case .all: self = .all
+        case .favorites: self = .favorites
+        case .groups: self = .groups
+        case .oneOnOne: self = .oneOnOne
+        case .archive: self = .archive
+        case .connect: self = .connect
+        case .settings: self = .settings
+        }
+    }
+
+    public func map() -> MainSidebarMenuItem {
+        switch self {
+        case .all: .all
+        case .favorites: .favorites
+        case .groups: .groups
+        case .oneOnOne: .oneOnOne
+        case .archive: .archive
+        case .connect: .connect
+        case .settings: .settings
+        }
+    }
+}
