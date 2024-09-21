@@ -18,9 +18,8 @@
 
 import WireUIFoundation
 
-extension ConversationListViewController: MainConversationListProtocol {
-    var conversationFilter: ConversationFilter? {
-        get { listContentController.listViewModel.selectedFilter }
-        set { listContentController.listViewModel.selectedFilter = newValue }
-    }
+enum ConversationFilter: CaseIterable, MainConversationFilterProtocol, Sendable {
+    case favorites
+    case groups
+    case oneOnOne
 }
