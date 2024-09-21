@@ -95,7 +95,7 @@ SplitViewController.Settings == TabBarController.Settings
 
     // MARK: - Public Methods
 
-    public func showConversationList<ConversationFilter: MainConversationFilterProtocol>(conversationFilter: ConversationFilter?) {
+    public func showConversationList<ConversationFilter: MainConversationFilterConvertible>(conversationFilter: ConversationFilter?) {
         defer {
             tabBarController.selectedContent = .conversations
             fatalError("TODO")

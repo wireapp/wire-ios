@@ -16,30 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// TODO: create enum, maybe don't use it in (all) protocols
-// OR let the protocol declare the map() method
-
-/// Filter criteria for the conversations in the conversation list which will be available in the expanded and collapsed layout.
-public protocol MainConversationFilterProtocol: CaseIterable, Equatable, Sendable {
-    static var favorites: Self { get }
-    static var groups: Self { get }
-    static var oneOnOne: Self { get }
+public enum MainConversationFilter: Sendable {
+    case favorites, groups, oneOnOne
 }
 
-extension Optional where Wrapped: MainConversationFilterProtocol {
-
-    func map<MenuItem: MainSidebarMenuItemProtocol>() -> MenuItem? {
-        switch self {
-        case .none:
-                .all
-        case .favorites:
-                .favorites
-        case .groups:
-                .groups
-        case .oneOnOne:
-                .oneOnOne
-        default:
-            nil
-        }
-    }
+public protocol MainConversationFilterConvertible: Sendable {
+    init(_ mainConversationFilter: MainConversationFilter)
+    func map() -> MainConversationFilter
 }

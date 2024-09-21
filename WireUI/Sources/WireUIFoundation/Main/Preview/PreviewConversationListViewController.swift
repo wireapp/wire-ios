@@ -25,8 +25,24 @@ final class PreviewConversationListViewController: UIHostingController<LabelView
     var conversationFilter: ConversationFilter?
     var splitViewInterface: MainSplitViewState = .expanded
 
-    enum ConversationFilter: MainConversationFilterProtocol {
+    enum ConversationFilter: MainConversationFilterConvertible {
         case favorites, groups, oneOnOne
+
+        init(_ mainConversationFilter: MainConversationFilter) {
+            switch mainConversationFilter {
+            case .favorites: self = .favorites
+            case .groups: self  = .groups
+            case .oneOnOne: self = .oneOnOne
+            }
+        }
+
+        func map() -> MainConversationFilter {
+            switch self {
+            case .favorites: .favorites
+            case .groups: .groups
+            case .oneOnOne: .oneOnOne
+            }
+        }
     }
 
     // MARK: - Life Cycle
