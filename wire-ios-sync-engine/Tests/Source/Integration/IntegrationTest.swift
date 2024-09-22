@@ -148,7 +148,7 @@ extension IntegrationTest {
         PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = false
+        flag.isOn = true
 
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         deleteSharedContainerContent()
@@ -406,15 +406,18 @@ extension IntegrationTest {
             let selfToUser1Conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: user1)
             selfToUser1Conversation.creator = self.selfUser
             selfToUser1Conversation.setValue("Connection conversation to user 1", forKey: "name")
+            selfToUser1Conversation.domain = "local@domain.com"
             self.selfToUser1Conversation = selfToUser1Conversation
 
             let selfToUser2Conversation = session.insertOneOnOneConversation(withSelfUser: self.selfUser, otherUser: user2)
+            selfToUser2Conversation.domain = "local@domain.com"
             selfToUser2Conversation.creator = user2
 
             selfToUser2Conversation.setValue("Connection conversation to user 2", forKey: "name")
             self.selfToUser2Conversation = selfToUser2Conversation
 
             let groupConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2, user3])
+            groupConversation.domain = "local@domain.com"
             groupConversation.creator = user3
             groupConversation.changeName(by: self.selfUser, name: "Group conversation")
             self.groupConversation = groupConversation
