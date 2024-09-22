@@ -20,6 +20,10 @@ import XCTest
 
 class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
 
+    override var proteusViaCoreCryptoEnabled: Bool {
+        true
+    }
+    
     func testThatItSendsADeliveryConfirmationWhenReceivingAMessageInAOneOnOneConversation() {
         // given
         XCTAssert(login())
