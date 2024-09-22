@@ -57,6 +57,7 @@
 @dynamic receiptMode;
 @dynamic nonTeamRoles;
 @dynamic participantRoles;
+@synthesize domain;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
@@ -176,7 +177,10 @@
     data[@"access_role"] = self.accessRole;
     data[@"access_role_v2"] = self.accessRoleV2;
     data[@"team"] = self.team.identifier ?: [NSNull null];
-    
+    data[@"qualified_id"] = @{
+        @"domain": self.domain != nil ? self.domain : [NSNull null],
+        @"id": data[@"id"]
+    };
     if (self.receiptMode != nil) {
         data[@"receipt_mode"] = self.receiptMode;
     }
