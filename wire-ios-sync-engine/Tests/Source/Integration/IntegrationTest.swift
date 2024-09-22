@@ -355,6 +355,7 @@ extension IntegrationTest {
 
             let selfConversation = session.insertSelfConversation(withSelfUser: selfUser)
             selfConversation.identifier = selfUser.identifier
+            selfConversation.domain = "local@domain.com"
 
             self.selfUser = selfUser
             self.selfConversation = selfConversation
@@ -459,6 +460,7 @@ extension IntegrationTest {
 
             let bot = session.insertUser(withName: "Botty the Bot")
             bot.accentID = 3
+            bot.domain = "local@domain"
             session.addProfilePicture(to: bot)
             session.addV3ProfilePicture(to: bot)
             self.serviceUser = bot
@@ -466,6 +468,7 @@ extension IntegrationTest {
             let groupConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2, bot])
             groupConversation.team = team
             groupConversation.creator = user2
+            groupConversation.domain = "local@domain"
             groupConversation.changeName(by: self.selfUser, name: "Group conversation with bot")
             self.groupConversationWithServiceUser = groupConversation
 
