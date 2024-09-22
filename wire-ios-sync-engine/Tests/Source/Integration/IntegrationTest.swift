@@ -141,6 +141,11 @@ extension IntegrationTest {
     var jailbreakDetector: JailbreakDetectorProtocol {
         return MockJailbreakDetector()
     }
+    
+    
+    var proteusViaCoreCryptoEnabled: Bool {
+        return false
+    }
 
     @objc
     func _setUp() {
@@ -148,7 +153,7 @@ extension IntegrationTest {
         PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
-        flag.isOn = true
+        flag.isOn = proteusViaCoreCryptoEnabled
 
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         deleteSharedContainerContent()
