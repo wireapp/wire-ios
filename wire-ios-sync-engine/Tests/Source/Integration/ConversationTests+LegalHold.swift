@@ -21,6 +21,10 @@ import XCTest
 
 class ConversationTests_LegalHold: ConversationTestsBase {
 
+    override var proteusViaCoreCryptoEnabled: Bool {
+        true
+    }
+    
     func testThatItInsertsLegalHoldSystemMessage_WhenDiscoveringLegalHoldClientOnSending() {
         // given
         XCTAssertTrue(login())

@@ -70,6 +70,7 @@
     [conversation addUsersByUser:creator addedUsers:addedUsers.array];
     conversation.identifier = [NSUUID createUUID].transportString;
     conversation.creator = creator;
+    conversation.domain = @"local@domain";
     conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
     conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     conversation.accessRoleV2 = [MockConversation defaultAccessRoleV2WithConversationType:type team:nil];
