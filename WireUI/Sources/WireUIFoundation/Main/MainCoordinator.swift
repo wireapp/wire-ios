@@ -45,7 +45,7 @@ SplitViewController.Settings == TabBarController.Settings
 
     private let newConversationBuilder: NewConversationBuilder
     private var selfProfileBuilder: SelfProfileBuilder
-    private weak var selfProfile: SelfProfileBuilder.ViewController?
+    private weak var selfProfile: UIViewController?
 
     private var isLayoutCollapsed = false // TODO: use `MainSplitViewState`
 
@@ -153,6 +153,7 @@ SplitViewController.Settings == TabBarController.Settings
     }
 
     public func showArchivedConversations() {
+        // switch to the archive tab
         tabBarController.selectedContent = .archive
 
         // if it's already visible (and not contained in the tabBarController anymore), do nothing
@@ -174,20 +175,16 @@ SplitViewController.Settings == TabBarController.Settings
     }
 
     public func showSelfProfile() {
-//        guard selfProfileViewController == nil else {
-//            return assertionFailure() // TODO: inject logger instead
-//        }
-//
-//        let selfProfileViewController = UINavigationController(rootViewController: selfProfileBuilder.build())
-//        selfProfileViewController.modalPresentationStyle = .formSheet
-//        self.selfProfileViewController = selfProfileViewController
-//
-//        let conversationList = if isLayoutCollapsed {
-//            tabBarController.conversations!.conversationList
-//        } else {
-//            splitViewController.conversationList!
-//        }
-//        conversationList.present(selfProfileViewController, animated: true)
+        guard selfProfile == nil else {
+            return assertionFailure() // TODO: inject logger instead
+        }
+
+        let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
+        let selfProfile = UINavigationController(rootViewController: rootViewController)
+        selfProfile.modalPresentationStyle = .formSheet
+        self.selfProfile = selfProfile
+
+        conversationList.present(selfProfile, animated: true)
     }
 
     public func showSettings() {
