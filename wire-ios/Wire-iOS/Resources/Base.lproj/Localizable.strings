@@ -1152,11 +1152,6 @@
 "self.settings.privacy_analytics.title" = "Send anonymous usage data";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
 
-"self.settings.receiveNews_and_offers.title" = "Receive Newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Receive news and product updates from Wire via email.";
-
-
-
 // Change Username
 
 "self.settings.account_section.handle.change.title" = "Username";
@@ -1918,13 +1913,6 @@ Enter your identity provider’s credentials in the next step to update the cert
 
 "url_action.invalid_link.title" = "Invalid link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "You can unsubscribe at any time.";
-"news_offers.consent.button.privacy_policy.title" = "Privacy Policy";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

@@ -278,8 +278,6 @@ extension SettingsPropertyName {
             // personal information - Analytics
         case .disableAnalyticsSharing:
             return Settings.PrivacyAnalytics.title
-        case .receiveNewsAndOffers:
-            return Settings.ReceiveNewsAndOffers.title
         case .readReceiptsEnabled:
             return Settings.EnableReadReceipts.title
         case .encryptMessagesAtRest:

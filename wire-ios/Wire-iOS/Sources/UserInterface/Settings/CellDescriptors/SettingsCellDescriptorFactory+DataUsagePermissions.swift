@@ -31,11 +31,6 @@ extension SettingsCellDescriptorFactory {
             items.append(sendAnalyticsDataSection)
         }
 
-        let receiveNewsAndOffersData = SettingsPropertyToggleCellDescriptor(settingsProperty: settingsPropertyFactory.property(.receiveNewsAndOffers))
-        let receiveNewsAndOffersSection = SettingsSectionDescriptor(cellDescriptors: [receiveNewsAndOffersData], footer: L10n.Localizable.Self.Settings.ReceiveNewsAndOffers.Description.title)
-
-        items.append(receiveNewsAndOffersSection)
-
         return SettingsGroupCellDescriptor(
             items: items,
             title: L10n.Localizable.Self.Settings.Account.DataUsagePermissions.title,

@@ -224,7 +224,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
-        currentPostRegistrationFields().map(sendPostRegistrationFields)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -324,9 +323,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .startIncrementalUserCreation(let unregisteredUser):
                 stateController.transition(to: .incrementalUserCreation(unregisteredUser, .start))
                 eventResponderChain.handleEvent(ofType: .registrationStepSuccess)
-
-            case .setMarketingConsent(let consentValue):
-                setMarketingConsent(consentValue)
 
             case .completeUserRegistration:
                 finishRegisteringUser()
@@ -590,18 +586,6 @@ extension AuthenticationCoordinator {
 
     // MARK: - Linear Registration
 
-    /// Sets the marketing consent value for the user to be registered.
-    private func setMarketingConsent(_ consentValue: Bool) {
-        switch stateController.currentStep {
-        case .incrementalUserCreation:
-            updateUnregisteredUser(\.marketingConsent, consentValue)
-
-        default:
-            log.error("Cannot set marketing consent in current state \(stateController.currentStep)")
-            return
-        }
-    }
-
     /// Updates a value of the unregistered user and notifies the responder chain of the success.
     private func updateUnregisteredUser<T>(_ keyPath: ReferenceWritableKeyPath<UnregisteredUser, T?>, _ newValue: T) {
         guard case let .incrementalUserCreation(unregisteredUser, _) = stateController.currentStep else {
@@ -621,35 +605,6 @@ extension AuthenticationCoordinator {
 
         stateController.transition(to: .createUser(unregisteredUser))
         registrationStatus.create(user: unregisteredUser)
-    }
-
-    // MARK: - Post Registration
-
-    /// Computes the post registration fields, if any.
-    private func currentPostRegistrationFields() -> AuthenticationPostRegistrationFields? {
-        switch stateController.currentStep {
-        case .createUser(let unregisteredUser):
-            guard let marketingConsent = unregisteredUser.marketingConsent else {
-                return nil
-            }
-
-            return AuthenticationPostRegistrationFields(marketingConsent: marketingConsent)
-
-        default:
-            return nil
-        }
-    }
-
-    /// Sends the fields provided during registration that requires a registered user session.
-    private func sendPostRegistrationFields(_ fields: AuthenticationPostRegistrationFields) {
-        guard let userSession = statusProvider.sharedUserSession else {
-            log.error("Could not save the marketing consent as there is no user session for the user.")
-            return
-        }
-
-        // Marketing consent
-        UIAlertController.newsletterSubscriptionDialogWasDisplayed = true
-        userSession.submitMarketingConsent(with: fields.marketingConsent)
     }
 
     // MARK: - Login

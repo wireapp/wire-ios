@@ -38,7 +38,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
     @MainActor
     func showPermissionDeniedViewController()
 
@@ -76,7 +75,6 @@ extension ConversationListViewController {
 
         private var didBecomeActiveNotificationToken: NSObjectProtocol?
         private var e2eiCertificateChangedToken: NSObjectProtocol?
-        private var initialSyncObserverToken: (any NSObjectProtocol)?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
@@ -127,15 +125,6 @@ extension ConversationListViewController.ViewModel {
     func setupObservers() {
 
         if let userSession = ZMUserSession.shared() {
-            initialSyncObserverToken = NotificationInContext.addObserver(
-                name: .initialSync,
-                context: userSession.notificationContext
-            ) { [weak self] _ in
-                userSession.managedObjectContext.performGroupedBlock {
-                    self?.requestMarketingConsentIfNeeded()
-                }
-            }
-
             userObservationToken = userSession.addUserObserver(self, for: selfUserLegalHoldSubject)
         }
 
@@ -180,35 +169,6 @@ extension ConversationListViewController.ViewModel {
 
         viewController?.setState(.conversationList, animated: animated) { [weak self] in
             self?.viewController?.selectOnListContentController(self?.selectedConversation, scrollTo: message, focusOnView: focus, animated: animated)
-        }
-    }
-
-    func requestMarketingConsentIfNeeded() {
-        if let userSession = ZMUserSession.shared(), let selfUser = ZMUser.selfUser() {
-            guard
-                userSession.hasCompletedInitialSync == true,
-                userSession.isPendingHotFixChanges == false
-            else {
-                return
-            }
-
-            selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
-                switch result {
-                case .failure(let error):
-                    switch error {
-                    case ConsentRequestError.notAvailable:
-                        // don't show the alert there is no consent to show
-                        break
-                    default:
-                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                        })
-                    }
-                case .success:
-                    // The user already gave a marketing consent, no need to ask for it again.
-                    return
-                }
-            }
         }
     }
 

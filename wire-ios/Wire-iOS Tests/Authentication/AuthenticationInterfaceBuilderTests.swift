@@ -82,10 +82,6 @@ final class AuthenticationInterfaceBuilderTests: XCTestCase, CoreDataFixtureTest
         runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .setPassword))
     }
 
-    func testThatItDoesNotGenerateInterfaceForMarketingConsentStep() {
-        runSnapshotTest(for: .incrementalUserCreation(UnregisteredUser(), .provideMarketingConsent))
-    }
-
     // MARK: - Login
 
     func testLoginScreen_Email() {
