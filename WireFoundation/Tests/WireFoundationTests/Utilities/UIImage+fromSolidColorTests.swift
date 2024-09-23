@@ -28,7 +28,7 @@ final class UIImageFromSolidColorTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
