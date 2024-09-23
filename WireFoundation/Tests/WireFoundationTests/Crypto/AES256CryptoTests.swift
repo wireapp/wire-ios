@@ -134,7 +134,7 @@ final class AES256CryptoTests: XCTestCase {
         XCTAssertEqual(plaintext, originalData)
     }
 
-    func testEncryptDecryptWithPrefixedIV_IVIsRandomlyGenerated() throws {
+    func testEncryptWithPrefixedIV_IVIsRandomlyGenerated() throws {
         // Given
         let originalData = Scaffolding.originalData(from: "Hello, world")
         let key = try Scaffolding.randomKey()
