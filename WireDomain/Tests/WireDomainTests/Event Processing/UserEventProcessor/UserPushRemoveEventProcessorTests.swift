@@ -30,8 +30,8 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
     var sut: UserPushRemoveEventProcessor!
 
     var coreDataStack: CoreDataStack!
-    let coreDataStackHelper = CoreDataStackHelper()
-    let modelHelper = ModelHelper()
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
 
     var context: NSManagedObjectContext {
         coreDataStack.syncContext
@@ -39,6 +39,8 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
         coreDataStack = try await coreDataStackHelper.createStack()
         sut = UserPushRemoveEventProcessor(
             repository: UserRepository(
@@ -53,6 +55,8 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
         coreDataStack = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+        modelHelper = nil
     }
 
     // MARK: - Tests
@@ -66,7 +70,7 @@ final class UserPushRemoveEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent()
+        sut.processEvent()
 
         // Then
 

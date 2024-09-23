@@ -25,7 +25,7 @@ protocol UserPushRemoveEventProcessorProtocol {
 
     /// Process a user push remove event.
 
-    func processEvent() async throws
+    func processEvent()
 
 }
 
@@ -33,7 +33,7 @@ struct UserPushRemoveEventProcessor: UserPushRemoveEventProcessorProtocol {
 
     let repository: any UserRepositoryProtocol
 
-    func processEvent() async throws {
+    func processEvent() {
         repository.removePushToken()
     }
 
