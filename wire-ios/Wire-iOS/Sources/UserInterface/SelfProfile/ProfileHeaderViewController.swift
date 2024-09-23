@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDesign
@@ -248,6 +249,8 @@ final class ProfileHeaderViewController: UIViewController {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
         }
         view.backgroundColor = .clear
+
+        qrCodeButton.addTarget(self, action: #selector(qrCodeButtonTapped), for: .touchUpInside)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -398,6 +401,34 @@ final class ProfileHeaderViewController: UIViewController {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
+    }
+
+    @objc func qrCodeButtonTapped(_ sender: IconButton) {
+        guard let viewModel = makeUserQRCodeViewModel(selfUser: user) else {
+            return
+        }
+        let qrCodeView = QRCodeView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: qrCodeView)
+        hostingController.setupNavigationBarTitle(L10n.Localizable.Qrcode.title)
+        hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(
+            action: UIAction { [weak self] _ in
+                self?.presentingViewController?.dismiss(animated: true)
+            },
+            accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
+
+        navigationController?.pushViewController(hostingController, animated: true)
+    }
+
+    private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
+        guard let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+              let handle = selfUser.handle else {
+            return nil
+        }
+
+        return UserQRCodeViewModel(
+            profileLink: profileLink,
+            handle: handle
+        )
     }
 
     // MARK: -

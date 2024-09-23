@@ -4644,6 +4644,24 @@ internal enum L10n {
         }
       }
     }
+    internal enum Qrcode {
+      /// Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.
+      internal static let shareMessage = L10n.tr("Localizable", "qrcode.share_message", fallback: "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.")
+      /// Share Profile
+      internal static let title = L10n.tr("Localizable", "qrcode.title", fallback: "Share Profile")
+      internal enum ShareProfileLink {
+        internal enum Button {
+          /// Share Profile Link
+          internal static let title = L10n.tr("Localizable", "qrcode.share_profile_link.button.title", fallback: "Share Profile Link")
+        }
+      }
+      internal enum ShareQrcode {
+        internal enum Button {
+          /// Share QR Code
+          internal static let title = L10n.tr("Localizable", "qrcode.share_qrcode.button.title", fallback: "Share QR Code")
+        }
+      }
+    }
     internal enum Registration {
       /// Sign Up
       internal static let confirm = L10n.tr("Localizable", "registration.confirm", fallback: "Sign Up")
