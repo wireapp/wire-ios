@@ -26,28 +26,15 @@ struct QRCodeCard: View {
     let handle: String
     let profileLink: String
 
-    @State private var isImageTapped = false // TODO
-
     // MARK: - View
 
     var body: some View {
         VStack {
             Image(uiImage: profileLinkQRCode)
-                .interpolation(.none)
                 .resizable()
                 .frame(width: 250, height: 250)
                 .padding(.top, 24)
                 .padding(.horizontal, 24)
-                .scaleEffect(isImageTapped ? 1.1 : 1.0)
-                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isImageTapped)
-                .onTapGesture {
-                    withAnimation {
-                        isImageTapped = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            isImageTapped = false
-                        }
-                    }
-                }
 
             VStack(alignment: .center) {
                 Text(handle)
