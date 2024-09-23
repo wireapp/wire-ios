@@ -28,7 +28,7 @@ final class SidebarMenuItemSnapshotTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
