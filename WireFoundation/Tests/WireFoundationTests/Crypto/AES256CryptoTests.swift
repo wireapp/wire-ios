@@ -27,7 +27,7 @@ final class AES256CryptoTests: XCTestCase {
 
     // AES operates on fixed-size blocks of data, which for AES is 128 bits (16 bytes).
     // Therefore we want to test encryption and decryption with data that is not a
-    // mutliple of the block size and with data that is. This ensures we test correct
+    // multiple of the block size and with data that is. This ensures we test correct
     // buffer allocation that accomodates potential padding and returning ciphertext
     // and plaintext that strips potential padding.
 
