@@ -189,7 +189,7 @@ struct MessageInfoExtractor {
 
                 guard !$0.failedToEstablishSession else {
                     let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
-                    WireLogger.proteus.error("Failed to encrypt payload: session is not established with client: \(String(describing: $0.remoteIdentifier))")
+                    WireLogger.proteus.error("Failed to encrypt payload: session couldn't be established with client: \(String(describing: $0.remoteIdentifier))")
                     return UserClientData(sessionID: sessionID, data: data)
                 }
 
