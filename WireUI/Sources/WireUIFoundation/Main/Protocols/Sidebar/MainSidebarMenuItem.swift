@@ -25,12 +25,12 @@ public enum MainSidebarMenuItem: Sendable {
     case settings
 }
 
-public protocol MainSidebarMenuItemConvertible: Sendable {
+public protocol MainSidebarMenuItemRepresentable: Sendable {
     init(_ mainSidebarMenuItem: MainSidebarMenuItem)
     func map() -> MainSidebarMenuItem
 }
 
-extension MainSidebarMenuItem: MainSidebarMenuItemConvertible {
+extension MainSidebarMenuItem: MainSidebarMenuItemRepresentable {
     public init(_ mainSidebarMenuItem: MainSidebarMenuItem) { self = mainSidebarMenuItem }
     public func map() -> MainSidebarMenuItem { self }
 }

@@ -20,6 +20,6 @@ import UIKit
 
 @MainActor
 public protocol MainSidebarProtocol: UIViewController {
-    associatedtype MenuItem: MainSidebarMenuItemConvertible
+    associatedtype MenuItem: MainSidebarMenuItemRepresentable
     var selectedMenuItem: MenuItem { get set }
 }

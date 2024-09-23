@@ -21,7 +21,7 @@ import WireUIFoundation
 
 extension SidebarViewController: MainSidebarProtocol {}
 
-extension SidebarMenuItem: MainSidebarMenuItemConvertible {
+extension SidebarMenuItem: MainSidebarMenuItemRepresentable {
 
     public init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
         switch mainSidebarMenuItem {

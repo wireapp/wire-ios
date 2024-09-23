@@ -32,7 +32,11 @@ public final class SidebarViewController: UIViewController {
 
     public var selectedMenuItem: SidebarMenuItem {
         get { model.selectedMenuItem }
-        set { model.selectedMenuItem = newValue }
+        set {
+            skipCallingDelegate.toggle()
+            model.selectedMenuItem = newValue
+            skipCallingDelegate.toggle()
+        }
     }
 
     public var wireTextStyleMapping: WireTextStyleMapping? {
@@ -44,6 +48,10 @@ public final class SidebarViewController: UIViewController {
 
     private var model: SidebarModel!
     private var setupHostingController: (() -> Void)!
+
+    /// A flag which allows skipping the delegate method call for
+    /// changes of `selectedMenuItem` coming from outside.
+    private var skipCallingDelegate = false
 
     // MARK: - Life Cycle
 
@@ -58,7 +66,8 @@ public final class SidebarViewController: UIViewController {
         model = .init(accountImageAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectAccountImage(self!)
         }, menuItemAction: { [weak self] menuItem in
-            self?.delegate?.sidebarViewController(self!, didSelect: menuItem)
+            guard let self, !skipCallingDelegate else { return }
+            delegate?.sidebarViewController(self, didSelect: menuItem)
         }, supportAction: { [weak self] in
             self?.delegate?.sidebarViewControllerDidSelectSupport(self!)
         })

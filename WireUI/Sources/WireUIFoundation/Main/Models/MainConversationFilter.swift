@@ -20,7 +20,7 @@ public enum MainConversationFilter: Sendable {
     case favorites, groups, oneOnOne
 }
 
-public protocol MainConversationFilterConvertible: Sendable {
+public protocol MainConversationFilterRepresentable: Sendable {
     init(_ mainConversationFilter: MainConversationFilter)
     func map() -> MainConversationFilter
 }

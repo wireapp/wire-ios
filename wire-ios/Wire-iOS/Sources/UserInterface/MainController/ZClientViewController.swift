@@ -96,7 +96,17 @@ final class ZClientViewController: UIViewController {
     private var incomingApnsObserver: NSObjectProtocol?
     private var networkAvailabilityObserverToken: NSObjectProtocol?
 
-    private(set) var mainCoordinator: MainCoordinatorProtocol!
+    private(set) lazy var mainCoordinator = {
+        var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
+        let mainCoordinator = MainCoordinator(
+            mainSplitViewController: wireSplitViewController,
+            mainTabBarController: mainTabBarController,
+            newConversationBuilder: newConversationBuilder,
+            selfProfileBuilder: selfProfileViewControllerBuilder
+        )
+        newConversationBuilder.delegate = mainCoordinator
+        return mainCoordinator
+    }()
 
     /// init method for testing allows injecting an Account object and self user
     required init(
@@ -207,18 +217,10 @@ final class ZClientViewController: UIViewController {
 
     private func setupSplitViewController() {
 
-        // TODO: make sure the order of initialization is correct (coordinator, tab controller, split view controller)
         mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
         mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
-        var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
-        let mainCoordinator = MainCoordinator(
-            mainSplitViewController: wireSplitViewController,
-            mainTabBarController: mainTabBarController,
-            newConversationBuilder: newConversationBuilder,
-            selfProfileBuilder: selfProfileViewControllerBuilder
-        )
-        self.mainCoordinator = mainCoordinator
-        newConversationBuilder.delegate = mainCoordinator
+
+        wireSplitViewController.conversationList = conversationListViewController
         wireSplitViewController.delegate = mainCoordinator
 
         addChild(wireSplitViewController)
@@ -230,13 +232,6 @@ final class ZClientViewController: UIViewController {
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
         sidebarViewController.delegate = mainCoordinator
-        wireSplitViewController.setViewController(sidebarViewController, for: .primary)
-        let supplementaryNavigationController = UINavigationController(rootViewController: conversationListViewController)
-        wireSplitViewController.setViewController(supplementaryNavigationController, for: .supplementary)
-        let noConversationPlaceholderNavigationController = UINavigationController(rootViewController: NoConversationPlaceholderViewController())
-        wireSplitViewController.setViewController(noConversationPlaceholderNavigationController, for: .secondary)
-
-        wireSplitViewController.setViewController(mainTabBarController, for: .compact)
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom != .pad {

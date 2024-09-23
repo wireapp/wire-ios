@@ -70,9 +70,11 @@ extension MainCoordinator: SidebarViewControllerDelegate {
     }
 }
 
-// MARK: - ConversationFilter + MainConversationFilterConvertible
+// MARK: - ConversationFilter + MainConversationFilterRepresentable
 
-extension ConversationFilter: MainConversationFilterConvertible {
+// TODO: move into different file?
+
+extension ConversationFilter: MainConversationFilterRepresentable {
 
     init(_ mainConversationFilter: MainConversationFilter) {
         switch mainConversationFilter {

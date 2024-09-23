@@ -25,7 +25,7 @@ final class PreviewConversationListViewController: UIHostingController<LabelView
     var conversationFilter: ConversationFilter?
     var splitViewInterface: MainSplitViewState = .expanded
 
-    enum ConversationFilter: MainConversationFilterConvertible {
+    enum ConversationFilter: MainConversationFilterRepresentable {
         case favorites, groups, oneOnOne
 
         init(_ mainConversationFilter: MainConversationFilter) {
