@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol ProteusMessage: OTREntity {
+public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
 
     /// Messages can expire, e.g. if network conditions are too slow to send.
     var shouldExpire: Bool { get }
@@ -31,27 +31,6 @@ public protocol ProteusMessage: OTREntity {
     var underlyingMessage: GenericMessage? { get }
 
     var targetRecipients: Recipients { get }
-}
-
-
-extension ProteusMessage {
-    
-    public var debugInfo: String {
-        guard let message = underlyingMessage else {
-            return "\(self)"
-        }
-
-        if case .confirmation = message.content {
-            return "Confirmation Message"
-        } else if case .calling? = message.content {
-            return "Calling Message"
-        } else if case .clientAction? = message.content {
-            switch message.clientAction {
-            case .resetSession: return "Reset Session Message"
-            }
-        }
-        return "\(String(describing: message))"
-    }
 }
 
 extension ZMClientMessage: ProteusMessage {
@@ -83,7 +62,7 @@ extension ZMClientMessage: ProteusMessage {
 }
 
 extension ZMAssetClientMessage: ProteusMessage {
-   
+
     public var targetRecipients: Recipients {
         .conversationParticipants
     }
