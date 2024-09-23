@@ -35,60 +35,39 @@ public final class MainSplitViewController<
 
     // MARK: - Primary Column
 
-    public var sidebar: Sidebar! { _sidebar }
+    public private(set) weak var sidebar: Sidebar!
 
     // MARK: - Supplementary Column
 
-    public var conversationList: ConversationList? {
-        get { _conversationList }
-        set {
-            _conversationList = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public weak var conversationList: ConversationList? {
+        didSet { updateSupplementaryNavigationController(\.conversationList) }
     }
 
-    public var archive: UIViewController? {
-        get { _archive }
-        set {
-            _archive = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public weak var archive: UIViewController? {
+        didSet { updateSupplementaryNavigationController(\.archive) }
     }
 
-    public var newConversation: UIViewController? {
-        get { _newConversation }
-        set {
-            _newConversation = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public weak var newConversation: UIViewController? {
+        didSet { updateSupplementaryNavigationController(\.newConversation) }
     }
 
-    public var settings: UIViewController? {
-        get { _settings }
-        set {
-            _settings = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+    public weak var settings: UIViewController? {
+        didSet { updateSupplementaryNavigationController(\.settings) }
     }
 
     // MARK: - Secondary Column
 
-    public var conversation: UIViewController? {
-        get { _conversation }
-        set {
-            _conversation = newValue
-            secondaryNavigationController?.viewControllers = [newValue ?? noConversationPlaceholder]
+    public weak var conversation: UIViewController? {
+        didSet {
+            updateColumnNavigationController(.secondary, \.conversation)
+            secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
             secondaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
     // MARK: - Compact/Collapsed
 
-    public var tabContainer: UIViewController! { _tabContainer }
+    public private(set) weak var tabContainer: UIViewController!
 
     // MARK: - Private Properties
 
@@ -97,14 +76,6 @@ public final class MainSplitViewController<
 
     private weak var supplementaryNavigationController: UINavigationController?
     private weak var secondaryNavigationController: UINavigationController?
-
-    private weak var _sidebar: Sidebar?
-    private weak var _conversationList: ConversationList?
-    private weak var _conversation: Conversation?
-    private weak var _archive: Archive?
-    private weak var _newConversation: NewConversation?
-    private weak var _settings: MainSplitViewControllerProtocol.Settings?
-    private weak var _tabContainer: TabContainer?
 
     // MARK: - Initialization
 
@@ -123,8 +94,8 @@ public final class MainSplitViewController<
         self.supplementaryNavigationController = supplementaryNavigationController
         self.secondaryNavigationController = secondaryNavigationController
 
-        _sidebar = sidebar
-        _tabContainer = tabContainer
+        self.sidebar = sidebar
+        self.tabContainer = tabContainer
 
         super.init(style: .tripleColumn)
 
@@ -160,6 +131,28 @@ public final class MainSplitViewController<
         } else {
             .oneBesideSecondary
         }
+    }
+
+    private func updateSupplementaryNavigationController<ViewController: UIViewController>(_ viewControllerKeyPath: KeyPath<MainSplitViewController, ViewController?>) {
+        let viewController = self[keyPath: viewControllerKeyPath]
+        supplementaryNavigationController?.viewControllers = [viewController].compactMap(\.self)
+        supplementaryNavigationController?.view.layoutIfNeeded()
+    }
+    
+    private func updateSecondaryNavigationController<ViewController: UIViewController>(_ viewControllerKeyPath: KeyPath<MainSplitViewController, ViewController?>) {
+        let viewController = self[keyPath: viewControllerKeyPath]
+        secondaryNavigationController?.viewControllers = [viewController].compactMap(\.self)
+        secondaryNavigationController?.view.layoutIfNeeded()
+    }
+
+    private func updateColumnNavigationController<ViewController: UIViewController>(
+        _ column: Column,
+        _ viewControllerKeyPath: KeyPath<MainSplitViewController, ViewController?>
+    ) {
+        let navigationController = viewController(for: column) as! UINavigationController
+        let viewController = self[keyPath: viewControllerKeyPath]
+        navigationController.viewControllers = [viewController].compactMap(\.self)
+        navigationController.view.layoutIfNeeded()
     }
 }
 
