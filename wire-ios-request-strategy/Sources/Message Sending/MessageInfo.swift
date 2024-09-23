@@ -30,22 +30,6 @@ struct MessageInfo {
     var missingClientsStrategy: MissingClientsStrategy
     var selfClientID: String
     var nativePush: Bool
-    private var userClients: [UserClient]
-
-    internal init(genericMessage: GenericMessage,
-                  listClients: MessageInfo.ClientList,
-                  missingClientsStrategy: MissingClientsStrategy,
-                  selfClientID: String,
-                  nativePush: Bool,
-                  userClients: [UserClient]
-    ) {
-        self.genericMessage = genericMessage
-        self.listClients = listClients
-        self.missingClientsStrategy = missingClientsStrategy
-        self.selfClientID = selfClientID
-        self.nativePush = nativePush
-        self.userClients = userClients
-    }
 
     func allSessionIds() -> [ProteusSessionID] {
         var result = [ProteusSessionID]()
@@ -56,13 +40,6 @@ struct MessageInfo {
             }
         }
         return result
-    }
-
-    func resetAllUserClientsFailedSessions(in context: NSManagedObjectContext) async {
-        await context.perform {
-            userClients.forEach { $0.failedToEstablishSession = false }
-            context.saveOrRollback()
-        }
     }
 }
 

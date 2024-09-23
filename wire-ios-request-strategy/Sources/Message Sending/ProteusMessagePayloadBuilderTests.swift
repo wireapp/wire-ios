@@ -72,8 +72,7 @@ final class ProteusMessagePayloadBuilderTests: XCTestCase {
                                       listClients: listClients,
                                       missingClientsStrategy: .doNotIgnoreAnyMissingClient,
                                       selfClientID: .randomClientIdentifier(),
-                                      nativePush: true,
-                                      userClients: [])
+                                      nativePush: true)
 
         // WHEN
         let data = try await sut.encryptForTransport(with: messageInfo)
