@@ -25,6 +25,6 @@ func MainSplitViewControllerPreview() -> UISplitViewController {
         noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
         tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
     )
-    splitViewController.conversationList = PreviewConversationListViewController("conversation list")
+    splitViewController.supplementaryContent = .conversationList(PreviewConversationListViewController("conversation list"))
     return splitViewController
 }

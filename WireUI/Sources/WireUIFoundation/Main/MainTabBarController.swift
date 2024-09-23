@@ -151,6 +151,14 @@ public final class MainTabBarController<
         tabBar.unselectedItemTintColor = .magenta
         tabBar.standardAppearance = tabBarAppearance
     }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+
+        if #available(iOS 18.0, *) {
+            traitOverrides.horizontalSizeClass = .compact
+        }
+    }
 }
 
 // MARK: - Previews
