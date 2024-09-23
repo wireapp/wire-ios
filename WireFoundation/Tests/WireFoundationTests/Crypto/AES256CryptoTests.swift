@@ -122,7 +122,7 @@ final class AES256CryptoTests: XCTestCase {
         )
 
         // Then
-        XCTAssertNotEqual(ciphertext, originalData)
+        XCTAssertNotEqual(ciphertext.data, originalData)
 
         // When
         let plaintext = try AES256Crypto.decryptAllAtOnceWithPrefixedIV(
@@ -151,7 +151,7 @@ final class AES256CryptoTests: XCTestCase {
         )
 
         // Then
-        XCTAssertNotEqual(ciphertext1, ciphertext2)
+        XCTAssertNotEqual(ciphertext1.data, ciphertext2.data)
     }
 
     func testEncryptWithPrefixIV_DecryptWithoutPrefixedIV() throws {
@@ -166,7 +166,7 @@ final class AES256CryptoTests: XCTestCase {
 
         // When
         let invalidPlaintext = try AES256Crypto.decryptAllAtOnce(
-            ciphertext: ciphertext,
+            ciphertext: ciphertext.data,
             key: key
         )
 

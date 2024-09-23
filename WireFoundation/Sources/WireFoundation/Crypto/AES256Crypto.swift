@@ -34,6 +34,35 @@ public enum AES256Crypto {
 
     // MARK: - Prefixed IV
 
+    /// A container of `Data` that has been prefixed with a random
+    /// Initialization Vector.
+
+    public struct PrefixedData: Sendable {
+
+        /// The size (number of bytes) of the prefix.
+
+        public let prefixSize: Int
+
+        /// The data, including the prefix.
+
+        public let data: Data
+
+        /// Create a new instance of `PrefixedData`.
+        ///
+        /// - Parameters:
+        ///   - prefixSize: The size (number of bytes) of the prefix.
+        ///   - data: The data, including the prefix.
+
+        public init(
+            prefixSize: Int,
+            data: Data
+        ) {
+            self.prefixSize = prefixSize
+            self.data = data
+        }
+
+    }
+
     /// Encrypt data with a prefixed IV all at once.
     ///
     /// This method will prefix a random IV before encrypting. To decrypt back
@@ -52,13 +81,18 @@ public enum AES256Crypto {
     public static func encryptAllAtOnceWithPrefixedIV(
         plaintext: Data,
         key: Data
-    ) throws -> Data {
+    ) throws -> PrefixedData {
         let ivSize = kCCBlockSizeAES128
         let iv = try SecureRandomByteGenerator.generateBytes(count: UInt(ivSize))
 
-        return try encryptAllAtOnce(
+        let ciphertext = try encryptAllAtOnce(
             plaintext: iv + plaintext,
             key: key
+        )
+
+        return PrefixedData(
+            prefixSize: ivSize,
+            data: ciphertext
         )
     }
 
@@ -71,22 +105,21 @@ public enum AES256Crypto {
     /// this method should only be used with relatively small data.
     ///
     /// - Parameters:
-    ///   - ciphertext: The data to decrypt.
+    ///   - ciphertext: The prefixed data to decrypt.
     ///   - key: The decryption key. It must be 32 bytes.
     ///
     /// - Returns: The decrypted plaintext.
 
     public static func decryptAllAtOnceWithPrefixedIV(
-        ciphertext: Data,
+        ciphertext: PrefixedData,
         key: Data
     ) throws -> Data {
         let plaintext = try decryptAllAtOnce(
-            ciphertext: ciphertext,
+            ciphertext: ciphertext.data,
             key: key
         )
 
-        let ivSize = kCCBlockSizeAES128
-        return plaintext.dropFirst(ivSize)
+        return plaintext.dropFirst(ciphertext.prefixSize)
     }
 
     // MARK: - Plain old encrypt / decrypt
