@@ -190,45 +190,34 @@ final class AES256CryptoTests: XCTestCase {
         XCTAssertEqual(key.count, 32)
     }
 
-    func testEncryption_InvalidKey() throws {
+    func testEncryption_InvalidKey() async throws {
         // Given
         let originalData = Scaffolding.originalData(from: "Hello, world")
         let key = try Scaffolding.randomInvalidKey()
 
-        do {
+        // Then
+        await XCTAssertThrowsError(AES256CryptoError.invalidKeyLength) {
             // When
-            _ = try AES256Crypto.encryptAllAtOnce(
+            try AES256Crypto.encryptAllAtOnce(
                 plaintext: originalData,
                 key: key
             )
-
-            XCTFail("expected an error")
-
-        } catch AES256CryptoError.invalidKeyLength {
-            // Then
-        } catch {
-            XCTFail("unexpected error: \(error)")
         }
+
     }
 
-    func testDecryption_InvalidKey() throws {
+    func testDecryption_InvalidKey() async throws {
         // Given
         let originalData = Scaffolding.originalData(from: "Hello, world")
         let key = try Scaffolding.randomInvalidKey()
 
-        do {
+        // Then
+        await XCTAssertThrowsError(AES256CryptoError.invalidKeyLength) {
             // When
-            _ = try AES256Crypto.decryptAllAtOnce(
+            try AES256Crypto.decryptAllAtOnce(
                 ciphertext: originalData,
                 key: key
             )
-
-            XCTFail("expected an error")
-
-        } catch AES256CryptoError.invalidKeyLength {
-            // Then
-        } catch {
-            XCTFail("unexpected error: \(error)")
         }
     }
 

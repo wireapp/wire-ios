@@ -21,7 +21,7 @@ import Foundation
 
 /// Errors originating from `AES256Crypto`.
 
-public enum AES256CryptoError: Error {
+public enum AES256CryptoError: Error, Equatable {
 
     /// A supplied key is not the correct length.
 
