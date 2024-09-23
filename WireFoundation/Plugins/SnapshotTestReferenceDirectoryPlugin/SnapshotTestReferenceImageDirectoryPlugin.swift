@@ -19,6 +19,9 @@
 import Foundation
 import PackagePlugin
 
+/// This plugin creates a file `SnapshotTestReferenceImageDirectory.swift` which defines a constant
+/// `SnapshotTestReferenceImageDirectory` containing the path to the snapshot test reference images
+/// directory, e.g. "/path/to/the/repository/WireFoundation/Tests/WireFoundationTests/Resources/ReferenceImages".
 @main
 struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
     func createBuildCommands(
