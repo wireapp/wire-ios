@@ -37,7 +37,7 @@ final class AvailabilityIndicatorViewSnapshotTests: XCTestCase {
         container.addSubview(sut)
 
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
