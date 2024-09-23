@@ -33,22 +33,49 @@ public final class MainSplitViewController<
     /// will be set to `.oneBesideSecondary`, otherwise to `.twoBesideSecondary`.
     private let sidebarVisibilityThreshold: CGFloat = 768
 
-    // MARK: - Public Properties
+    // MARK: - Primary Column
 
     public var sidebar: Sidebar! { _sidebar }
 
-    public var supplementaryContent: MainSplitViewSupplementaryContent<ConversationList, UIViewController, UIViewController, UIViewController>? {
-        didSet {
-            let viewController = supplementaryContent?.viewController
-            supplementaryNavigationController?.viewControllers = [viewController].compactMap { $0 }
+    // MARK: - Supplementary Column
+
+    public var conversationList: ConversationList? {
+        get { _conversationList }
+        set {
+            _conversationList = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
             supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
-    public var conversationList: ConversationList? {
-        guard case let .conversationList(weakViewController) = supplementaryContent else { return nil }
-        return weakViewController.reference
+    public var archive: UIViewController? {
+        get { _archive }
+        set {
+            _archive = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
+
+    public var newConversation: UIViewController? {
+        get { _newConversation }
+        set {
+            _newConversation = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
+    public var settings: UIViewController? {
+        get { _settings }
+        set {
+            _settings = newValue
+            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
+    // MARK: - Secondary Column
 
     public var conversation: UIViewController? {
         get { _conversation }
@@ -59,20 +86,7 @@ public final class MainSplitViewController<
         }
     }
 
-    public var archive: UIViewController? {
-        guard case let .archive(weakViewController) = supplementaryContent else { return nil }
-        return weakViewController.reference
-    }
-
-    public var newConversation: UIViewController? {
-        guard case let .newConversation(weakViewController) = supplementaryContent else { return nil }
-        return weakViewController.reference
-    }
-
-    public var settings: UIViewController? {
-        guard case let .settings(weakViewController) = supplementaryContent else { return nil }
-        return weakViewController.reference
-    }
+    // MARK: - Compact/Collapsed
 
     public var tabContainer: UIViewController! { _tabContainer }
 
@@ -85,7 +99,11 @@ public final class MainSplitViewController<
     private weak var secondaryNavigationController: UINavigationController?
 
     private weak var _sidebar: Sidebar?
+    private weak var _conversationList: ConversationList?
     private weak var _conversation: Conversation?
+    private weak var _archive: Archive?
+    private weak var _newConversation: NewConversation?
+    private weak var _settings: MainSplitViewControllerProtocol.Settings?
     private weak var _tabContainer: TabContainer?
 
     // MARK: - Initialization

@@ -45,7 +45,7 @@ final class MainSplitViewControllerTests: XCTestCase {
             noConversationPlaceholder: noConversationPlaceholder,
             tabContainer: tabContainer
         )
-        sut.supplementaryContent = .conversationList(conversationList)
+        sut.conversationList = conversationList
         sut.conversation = conversation
 
         snapshotHelper = .init()
@@ -78,7 +78,7 @@ final class MainSplitViewControllerTests: XCTestCase {
             noConversationPlaceholder: noConversationPlaceholder,
             tabContainer: tabContainer
         )
-        sut.supplementaryContent = .conversationList(conversationList)
+        sut.conversationList = conversationList
 
         // Then
         XCTAssertNil(sut.conversation)
@@ -91,7 +91,7 @@ final class MainSplitViewControllerTests: XCTestCase {
         // When
         weak var conversationList = conversationList
         self.conversationList = nil
-        sut.supplementaryContent = nil
+        sut.conversationList = nil
 
         // Then
         XCTAssertEqual(conversationList, nil)

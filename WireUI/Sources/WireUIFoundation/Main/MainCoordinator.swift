@@ -138,7 +138,7 @@ SplitViewController.Settings == TabBarController.Settings
         // Move the conversation list from the tab bar controller to the split view controller if needed.
         if let conversationList = tabBarController.conversations?.conversationList {
             tabBarController.conversations = nil
-            splitViewController.supplementaryContent = .conversationList(conversationList)
+            splitViewController.conversationList = conversationList
         }
     }
 
@@ -157,7 +157,7 @@ SplitViewController.Settings == TabBarController.Settings
         // move the archive from the tab bar controller to the split view controller
         if let archive = tabBarController.archive {
             tabBarController.archive = nil
-            splitViewController.supplementaryContent = .archive(archive)
+            splitViewController.archive = archive
         }
     }
 
@@ -175,7 +175,7 @@ SplitViewController.Settings == TabBarController.Settings
         // move the settings from the tab bar controller to the split view controller
         if let settings = tabBarController.settings {
             tabBarController.settings = nil
-            splitViewController.supplementaryContent = .settings(settings)
+            splitViewController.settings = settings
         }
     }
 
@@ -208,7 +208,7 @@ SplitViewController.Settings == TabBarController.Settings
     private func dismissConversationListIfNeeded() {
         // if the conversation list is currently visible, move it back to the tab bar controller
         if let conversationList = splitViewController.conversationList {
-            splitViewController.supplementaryContent = .none
+            splitViewController.conversationList = nil
             let conversation = tabBarController.conversations?.conversation
             tabBarController.conversations = (conversationList, conversation)
         }
@@ -217,7 +217,7 @@ SplitViewController.Settings == TabBarController.Settings
     private func dismissArchiveIfNeeded() {
         // Move the archive back to the tab bar controller if needed.
         if let archive = splitViewController.archive {
-            splitViewController.supplementaryContent = .none
+            splitViewController.archive = nil
             tabBarController.archive = archive
         }
     }
@@ -225,7 +225,7 @@ SplitViewController.Settings == TabBarController.Settings
     private func dismissNewConversationIfNeeded() {
         // Dismiss the new conversation view controller if it's visible in the split view controller.
         if let newConversation = splitViewController.newConversation {
-            splitViewController.supplementaryContent = .none
+            splitViewController.newConversation = nil
             newConversation.presentingViewController?.dismiss(animated: true)
         }
     }
@@ -233,7 +233,7 @@ SplitViewController.Settings == TabBarController.Settings
     private func dismissSettingsIfNeeded() {
         // Move the settings back to the tab bar controller if it's visible in the split view controller.
         if let settings = splitViewController.settings {
-            splitViewController.supplementaryContent = .none
+            splitViewController.settings = nil
             tabBarController.settings = settings
         }
     }
@@ -265,20 +265,20 @@ SplitViewController.Settings == TabBarController.Settings
 
         // move view controllers from the split view controller's columns to the tab bar controller
         if let conversationListViewController = splitViewController.conversationList {
-            splitViewController.supplementaryContent = .none
+            splitViewController.conversationList = nil
             tabBarController.conversations = (conversationListViewController, nil)
             // TODO: conversations
         }
 
         // move the archived conversations list back to the tab bar controller if needed
         if let archive = splitViewController.archive {
-            splitViewController.supplementaryContent = .none
+            splitViewController.archive = nil
             tabBarController.archive = archive
         }
 
         // move the settings back to the tab bar controller if needed
         if let settings = splitViewController.settings {
-            splitViewController.supplementaryContent = .none
+            splitViewController.settings = nil
             tabBarController.settings = settings
         }
 
@@ -308,22 +308,22 @@ SplitViewController.Settings == TabBarController.Settings
         if tabBarController.selectedContent == .conversations {
             let conversationViewController = tabBarController.conversations!.conversationList
             tabBarController.conversations = nil
-            splitViewController.supplementaryContent = .conversationList(conversationViewController)
+            splitViewController.conversationList = conversationViewController
             // TODO: conversations
         }
 
         // if the archived conversations view controller was visible, present it
         if tabBarController.selectedContent == .archive {
-            let archive = tabBarController.archive!
+            let archive = tabBarController.archive
             tabBarController.archive = nil
-            splitViewController.supplementaryContent = .archive(archive)
+            splitViewController.archive = archive
         }
 
         // if the settings were visible, present it
         if tabBarController.selectedContent == .settings {
-            let settings = tabBarController.settings!
+            let settings = tabBarController.settings
             tabBarController.settings = nil
-            splitViewController.supplementaryContent = .settings(settings)
+            splitViewController.settings = settings
         }
 
         // TODO: new conversation?
