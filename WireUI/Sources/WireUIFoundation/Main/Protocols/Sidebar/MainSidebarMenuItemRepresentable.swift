@@ -16,15 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum MainSidebarMenuItem: Sendable {
-    // conversation filters
-    case all, favorites, groups, oneOnOne, archive
-    // contact
-    case connect
-    // bottom
-    case settings
-}
-
 public protocol MainSidebarMenuItemRepresentable: Sendable {
     init(_ mainSidebarMenuItem: MainSidebarMenuItem)
     func map() -> MainSidebarMenuItem

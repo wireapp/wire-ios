@@ -37,13 +37,17 @@ public final class MainSplitViewController<
 
     public var sidebar: Sidebar! { _sidebar }
 
-    public var conversationList: ConversationList? {
-        get { _conversationList }
-        set {
-            _conversationList = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
+    public var supplementaryContent: MainSplitViewSupplementaryContent<ConversationList, UIViewController, UIViewController, UIViewController>? {
+        didSet {
+            let viewController = supplementaryContent?.viewController
+            supplementaryNavigationController?.viewControllers = [viewController].compactMap { $0 }
             supplementaryNavigationController?.view.layoutIfNeeded()
         }
+    }
+
+    public var conversationList: ConversationList? {
+        guard case let .conversationList(weakViewController) = supplementaryContent else { return nil }
+        return weakViewController.reference
     }
 
     public var conversation: UIViewController? {
@@ -56,30 +60,18 @@ public final class MainSplitViewController<
     }
 
     public var archive: UIViewController? {
-        get { _archive }
-        set {
-            _archive = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+        guard case let .archive(weakViewController) = supplementaryContent else { return nil }
+        return weakViewController.reference
     }
 
     public var newConversation: UIViewController? {
-        get { _newConversation }
-        set {
-            _newConversation = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+        guard case let .newConversation(weakViewController) = supplementaryContent else { return nil }
+        return weakViewController.reference
     }
 
     public var settings: UIViewController? {
-        get { _settings }
-        set {
-            _settings = newValue
-            supplementaryNavigationController?.viewControllers = [newValue].compactMap { $0 }
-            supplementaryNavigationController?.view.layoutIfNeeded()
-        }
+        guard case let .settings(weakViewController) = supplementaryContent else { return nil }
+        return weakViewController.reference
     }
 
     public var tabContainer: UIViewController! { _tabContainer }
@@ -93,11 +85,7 @@ public final class MainSplitViewController<
     private weak var secondaryNavigationController: UINavigationController?
 
     private weak var _sidebar: Sidebar?
-    private weak var _conversationList: ConversationList?
     private weak var _conversation: Conversation?
-    private weak var _archive: Archive?
-    private weak var _newConversation: NewConversation?
-    private weak var _settings: Settings?
     private weak var _tabContainer: TabContainer?
 
     // MARK: - Initialization
