@@ -23,7 +23,7 @@ import XCTest
 
 final class AES256CryptoTests: XCTestCase {
 
-    // Plain ould encryption / decryption
+    // Plain old encryption / decryption
 
     // AES operates on fixed-size blocks of data, which for AES is 128 bits (16 bytes).
     // Therefore we want to test encryption and decryption with data that is not a
