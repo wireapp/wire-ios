@@ -203,7 +203,6 @@ final class AES256CryptoTests: XCTestCase {
                 key: key
             )
         }
-
     }
 
     func testDecryption_InvalidKey() async throws {
