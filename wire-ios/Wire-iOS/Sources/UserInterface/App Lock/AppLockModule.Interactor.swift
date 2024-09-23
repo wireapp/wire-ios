@@ -97,9 +97,6 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     func executeRequest(_ request: AppLockModule.Request) {
         switch request {
-        case .initiateAuthentication(requireForegroundApp: true) where applicationState == .background:
-            return
-
         case .initiateAuthentication where !isAuthenticationNeeded:
             openAppLock()
 

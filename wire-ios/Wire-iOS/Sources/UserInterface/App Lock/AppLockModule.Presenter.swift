@@ -69,11 +69,8 @@ extension AppLockModule.Presenter: AppLockPresenterViewInterface {
         switch event {
         // In iOS 14, it was found that 'viewDidAppear' may be invoked even when the app is in the background.
         // To prevent re-authentication when the app is in the background, there is the 'requireForegroundApp' parameter.
-        case .viewDidAppear, .unlockButtonTapped:
-            interactor.executeRequest(.initiateAuthentication(requireForegroundApp: true))
-
-        case .applicationWillEnterForeground:
-            interactor.executeRequest(.initiateAuthentication(requireForegroundApp: false))
+        case .viewDidFirstAppear, .unlockButtonTapped, .applicationWillEnterForeground:
+            interactor.executeRequest(.initiateAuthentication)
 
         case .passcodeSetupCompleted, .customPasscodeVerified:
             interactor.executeRequest(.openAppLock)

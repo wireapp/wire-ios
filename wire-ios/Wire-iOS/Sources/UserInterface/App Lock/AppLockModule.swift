@@ -46,7 +46,7 @@ extension AppLockModule {
 
     enum Event: Equatable {
 
-        case viewDidAppear
+        case viewDidFirstAppear
         case applicationWillEnterForeground
         case unlockButtonTapped
         case openDeviceSettingsButtonTapped
@@ -58,7 +58,7 @@ extension AppLockModule {
 
     enum Request: Equatable {
 
-        case initiateAuthentication(requireForegroundApp: Bool)
+        case initiateAuthentication
         case evaluateAuthentication
         case openAppLock
 
