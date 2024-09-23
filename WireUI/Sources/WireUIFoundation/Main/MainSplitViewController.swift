@@ -40,26 +40,37 @@ public final class MainSplitViewController<
     // MARK: - Supplementary Column
 
     public weak var conversationList: ConversationList? {
-        didSet { updateSupplementaryNavigationController(\.conversationList) }
+        didSet {
+            supplementaryNavigationController?.viewControllers = [conversationList].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
 
     public weak var archive: UIViewController? {
-        didSet { updateSupplementaryNavigationController(\.archive) }
+        didSet {
+            supplementaryNavigationController?.viewControllers = [archive].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
 
     public weak var newConversation: UIViewController? {
-        didSet { updateSupplementaryNavigationController(\.newConversation) }
+        didSet {
+            supplementaryNavigationController?.viewControllers = [newConversation].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
 
     public weak var settings: UIViewController? {
-        didSet { updateSupplementaryNavigationController(\.settings) }
+        didSet {
+            supplementaryNavigationController?.viewControllers = [settings].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
 
     // MARK: - Secondary Column
 
     public weak var conversation: UIViewController? {
         didSet {
-            updateColumnNavigationController(.secondary, \.conversation)
             secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
             secondaryNavigationController?.view.layoutIfNeeded()
         }
@@ -131,28 +142,6 @@ public final class MainSplitViewController<
         } else {
             .oneBesideSecondary
         }
-    }
-
-    private func updateSupplementaryNavigationController<ViewController: UIViewController>(_ viewControllerKeyPath: KeyPath<MainSplitViewController, ViewController?>) {
-        let viewController = self[keyPath: viewControllerKeyPath]
-        supplementaryNavigationController?.viewControllers = [viewController].compactMap(\.self)
-        supplementaryNavigationController?.view.layoutIfNeeded()
-    }
-    
-    private func updateSecondaryNavigationController<ViewController: UIViewController>(_ viewControllerKeyPath: KeyPath<MainSplitViewController, ViewController?>) {
-        let viewController = self[keyPath: viewControllerKeyPath]
-        secondaryNavigationController?.viewControllers = [viewController].compactMap(\.self)
-        secondaryNavigationController?.view.layoutIfNeeded()
-    }
-
-    private func updateColumnNavigationController<ViewController: UIViewController>(
-        _ column: Column,
-        _ viewControllerKeyPath: KeyPath<MainSplitViewController, ViewController?>
-    ) {
-        let navigationController = viewController(for: column) as! UINavigationController
-        let viewController = self[keyPath: viewControllerKeyPath]
-        navigationController.viewControllers = [viewController].compactMap(\.self)
-        navigationController.view.layoutIfNeeded()
     }
 }
 
