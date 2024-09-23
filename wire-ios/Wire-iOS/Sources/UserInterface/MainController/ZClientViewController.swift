@@ -217,9 +217,6 @@ final class ZClientViewController: UIViewController {
 
     private func setupSplitViewController() {
 
-        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
-        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
-
         wireSplitViewController.conversationList = conversationListViewController
         wireSplitViewController.delegate = mainCoordinator
 
@@ -232,6 +229,10 @@ final class ZClientViewController: UIViewController {
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
         sidebarViewController.delegate = mainCoordinator
+
+        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
+        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
+        mainTabBarController.delegate = mainCoordinator
 
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom != .pad {

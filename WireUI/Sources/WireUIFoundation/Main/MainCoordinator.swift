@@ -192,11 +192,7 @@ SplitViewController.Settings == TabBarController.Settings
         navigationController.modalPresentationStyle = .formSheet
         // newConversationViewController = navigationController
 
-        if isLayoutCollapsed {
-            tabBarController.conversations!.conversationList.present(navigationController, animated: true)
-        } else {
-            splitViewController.conversationList!.present(navigationController, animated: true)
-        }
+        splitViewController.present(navigationController, animated: true)
     }
 
     //    public func openConversation(
@@ -316,21 +312,23 @@ SplitViewController.Settings == TabBarController.Settings
         else { return assertionFailure() } // TODO: inject logger instead
 
         // move view controllers from the tab bar controller to the supplementary column
-        if let (conversationViewController, _) = tabBarController.conversations {
+        if tabBarController.selectedContent == .conversations {
+            let conversationViewController = tabBarController.conversations!.conversationList
             tabBarController.conversations = nil
             splitViewController.conversationList = conversationViewController
+            // TODO: conversations
         }
 
-        // TODO: conversations
-
         // if the archived conversations view controller was visible, present it
-        if let archive = tabBarController.archive {
+        if tabBarController.selectedContent == .archive {
+            let archive = tabBarController.archive
             tabBarController.archive = nil
             splitViewController.archive = archive
         }
 
         // if the settings were visible, present it
-        if let settings = splitViewController.settings {
+        if tabBarController.selectedContent == .settings {
+            let settings = tabBarController.settings
             tabBarController.settings = nil
             splitViewController.settings = settings
         }
@@ -338,7 +336,8 @@ SplitViewController.Settings == TabBarController.Settings
         // TODO: new conversation?
 
         isLayoutCollapsed = false
-        conversationList.splitViewInterface = .expanded
+        let conversationList = (tabBarController.conversations?.conversationList ?? splitViewController.conversationList)
+        conversationList!.splitViewInterface = .expanded
     }
 
     // MARK: - UITabBarControllerDelegate
@@ -348,8 +347,8 @@ SplitViewController.Settings == TabBarController.Settings
               tabBarController === self.tabBarController
         else { return assertionFailure() } // TODO: inject logger instead
 
-        switch viewController {
-        case conversationList:
+        switch tabBarController.selectedContent {
+        case .conversations:
             switch conversationList.conversationFilter?.map() {
             case .none:
                 sidebar.selectedMenuItem = .init(.all)
@@ -360,12 +359,10 @@ SplitViewController.Settings == TabBarController.Settings
             case .oneOnOne:
                 sidebar.selectedMenuItem = .init(.oneOnOne)
             }
-        case tabBarController.archive:
+        case .archive:
             sidebar.selectedMenuItem = .init(.archive)
-        case tabBarController.settings:
+        case .settings:
             sidebar.selectedMenuItem = .init(.settings)
-        default:
-            assertionFailure()
         }
     }
 }
