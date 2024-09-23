@@ -24,7 +24,7 @@ class DeleteMessagesTests: ConversationTestsBase {
     override var proteusViaCoreCryptoEnabled: Bool {
         true
     }
-    
+
     func testThatItCreatesARequestToSendADeletedMessageAndDeletesItLocally() {
         // given
         XCTAssertTrue(login())

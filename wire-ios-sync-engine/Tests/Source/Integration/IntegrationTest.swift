@@ -141,8 +141,7 @@ extension IntegrationTest {
     var jailbreakDetector: JailbreakDetectorProtocol {
         return MockJailbreakDetector()
     }
-    
-    
+
     var proteusViaCoreCryptoEnabled: Bool {
         return false
     }
