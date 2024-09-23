@@ -82,7 +82,7 @@ jobs:
       
   build_and_release:
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma-xcode:15.4
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.4
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
