@@ -30,7 +30,7 @@ final class AccountImageGeneratorTests: XCTestCase {
     override func setUp() async throws {
         sut = .init()
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {
