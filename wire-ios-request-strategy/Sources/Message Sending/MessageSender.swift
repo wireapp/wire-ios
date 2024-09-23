@@ -201,16 +201,21 @@ public final class MessageSender: MessageSenderInterface {
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
             // set expiration so request can be expired later
-            await context.perform {
+            let expirationDate = await context.perform {
                 if message.shouldExpire {
                     message.setExpirationDate()
                     self.context.saveOrRollback()
+                    return message.expirationDate
                 }
+                return nil
             }
 
             // 3) send it via API
             await messageInfo.resetAllUserClientsFailedSessions(in: context)
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(message: messageData, conversationID: conversationID, expirationDate: message.expirationDate)
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
+                .sendProteusMessage(message: messageData,
+                                    conversationID: conversationID,
+                                    expirationDate: expirationDate)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
