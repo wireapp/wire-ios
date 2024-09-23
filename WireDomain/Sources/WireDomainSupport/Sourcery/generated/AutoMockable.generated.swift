@@ -445,6 +445,44 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock(userIDs)
     }
 
+    // MARK: - updateUser
+
+    public var updateUserFrom_Invocations: [UserUpdateEvent] = []
+    public var updateUserFrom_MockError: Error?
+    public var updateUserFrom_MockMethod: ((UserUpdateEvent) async throws -> Void)?
+
+    public func updateUser(from event: UserUpdateEvent) async throws {
+        updateUserFrom_Invocations.append(event)
+
+        if let error = updateUserFrom_MockError {
+            throw error
+        }
+
+        guard let mock = updateUserFrom_MockMethod else {
+            fatalError("no mock for `updateUserFrom`")
+        }
+
+        try await mock(event)
+    }
+
+    // MARK: - fetchOrCreateUser
+
+    public var fetchOrCreateUserWithDomain_Invocations: [(uuid: UUID, domain: String?)] = []
+    public var fetchOrCreateUserWithDomain_MockMethod: ((UUID, String?) -> ZMUser)?
+    public var fetchOrCreateUserWithDomain_MockValue: ZMUser?
+
+    public func fetchOrCreateUser(with uuid: UUID, domain: String?) -> ZMUser {
+        fetchOrCreateUserWithDomain_Invocations.append((uuid: uuid, domain: domain))
+
+        if let mock = fetchOrCreateUserWithDomain_MockMethod {
+            return mock(uuid, domain)
+        } else if let mock = fetchOrCreateUserWithDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchOrCreateUserWithDomain`")
+        }
+    }
+
 }
 
 // swiftlint:enable variable_name

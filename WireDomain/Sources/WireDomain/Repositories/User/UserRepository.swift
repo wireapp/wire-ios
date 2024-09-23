@@ -43,25 +43,63 @@ public protocol UserRepositoryProtocol {
     ///     - userIDs: IDs of users to fetch
 
     func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws
-    
-    /// Updates a user.
-    
-    func updateUser(_ event: UserUpdateEvent) async throws
 
+    /// Updates a user.
+    ///
+    /// - parameters:
+    ///     - event: The event to update the user locally from.
+
+    func updateUser(
+        from event: UserUpdateEvent
+    ) async throws
+
+    /// Fetches or creates a user locally.
+    ///
+    /// - parameters:
+    ///     - uuid: The user id to fetch or create locally.
+    ///     - domain: The user domain when federated.
+
+    func fetchOrCreateUser(
+        with uuid: UUID,
+        domain: String?
+    ) -> ZMUser
 }
 
 public final class UserRepository: UserRepositoryProtocol {
 
+    // MARK: - Properties
+
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
+    private let isFederationEnabled: Bool
 
-    public init(context: NSManagedObjectContext, usersAPI: any UsersAPI) {
+    // MARK: - Object lifecycle
+
+    public init(
+        context: NSManagedObjectContext,
+        usersAPI: any UsersAPI,
+        isFederationEnabled: Bool
+    ) {
         self.context = context
         self.usersAPI = usersAPI
+        self.isFederationEnabled = isFederationEnabled
     }
+
+    // MARK: - Public
 
     public func fetchSelfUser() -> ZMUser {
         ZMUser.selfUser(in: context)
+    }
+
+    public func fetchOrCreateUser(
+        with id: UUID,
+        domain: String? = nil
+    ) -> ZMUser {
+        ZMUser.fetchOrCreate(
+            with: id,
+            domain: domain,
+            in: context
+        )
     }
 
     public func pullKnownUsers() async throws {
@@ -93,128 +131,76 @@ public final class UserRepository: UserRepositoryProtocol {
             throw UserRepositoryError.failedToFetchRemotely(error)
         }
     }
-    
-    public func updateUser(_ event: UserUpdateEvent) async throws {
-        await context.perform { [self] in
 
-            let user = ZMUser.fetchOrCreate(
-                with: event.id,
-                domain: event.qualifiedID.domain,
-                in: context
+    public func updateUser(
+        from event: UserUpdateEvent
+    ) async throws {
+        try await context.perform { [self] in
+
+            let user = fetchOrCreateUser(
+                with: event.id
             )
-            
-            if let qualifiedID = event.qualifiedID, BackendInfo.isFederationEnabled {
-                precondition(user.remoteIdentifier == nil || user.remoteIdentifier == qualifiedID.uuid)
-                precondition(user.domain == nil || user.domain == qualifiedID.domain)
 
-                user.remoteIdentifier = qualifiedID.uuid
-                user.domain = qualifiedID.domain
-            } else if let id = event.id {
-                precondition(user.remoteIdentifier == nil || user.remoteIdentifier == id)
-                user.remoteIdentifier = id
+            if isFederationEnabled {
+                user.remoteIdentifier = event.qualifiedID.uuid
+                user.domain = event.qualifiedID.domain
             }
 
-//            if let serviceID = event.serviceID {
-//                user.serviceIdentifier = serviceID.id.transportString()
-//                user.providerIdentifier = serviceID.provider.transportString()
-//            }
-
-//            if payload.updatedKeys.contains(.teamID) {
-//                user.teamIdentifier = payload.teamID
-//                user.createOrDeleteMembershipIfBelongingToTeam()
-//            }
-
-//            if payload.SSOID != nil {
-//                if let subject = payload.SSOID?.subject {
-//                    user.usesCompanyLogin = !subject.isEmpty
-//                } else {
-//                    user.usesCompanyLogin = false
-//                }
-//            }
-
-//            if payload.isDeleted == true {
-//                user.markAccountAsDeleted(at: Date())
-//            }
-
-            if let name = event.name, !user.isAccountDeleted {
+            if let name = event.name {
                 user.name = name
             }
 
-//            if (payload.updatedKeys.contains(.phone) || authoritative) && !user.isAccountDeleted {
-//                user.phoneNumber = payload.phone?.removingExtremeCombiningCharacters
-//            }
-
-            if let email = event.email, !user.isAccountDeleted {
-                user.emailAddress = email.removingExtremeCombiningCharacters
+            if let email = event.email {
+                user.emailAddress = email
             }
 
-            if let handle = event.handle, !user.isAccountDeleted {
+            if let handle = event.handle {
                 user.handle = handle
             }
 
-//            if payload.managedBy != nil || authoritative {
-//                user.managedBy = payload.managedBy
-//            }
-
-            if let accentColor = event.accentColorID, 
-               let accentColorValue = AccentColor(rawValue: Int16(accentColor)) {
-                user.accentColor = accentColorValue
+            if let accentColor = event.accentColorID {
+                user.accentColorValue = Int16(accentColor)
             }
 
-//            if let expiresAt = payload.expiresAt {
-//                user.expiresAt = expiresAt
-//            }
+            let assetKeys: Set<String> = [
+                ZMUser.previewProfileAssetIdentifierKey,
+                ZMUser.completeProfileAssetIdentifierKey
+            ]
 
-            updateAssets(
-                from: event,
-                for: user
-            )
+            /// Do not update assets if user has local modifications.
+            if !user.hasLocalModifications(forKeys: assetKeys) {
+                let previewAssetKey = event.assets?
+                    .first(where: { $0.size == .preview })
+                    .map(\.key)
 
-            if let supportedProtocols = event.supportedProtocols {
-                user.supportedProtocols = supportedProtocols.toDomainModel()
-            } else {
-                user.supportedProtocols = [.proteus]
+                let completeAssetKey = event.assets?
+                    .first(where: { $0.size == .complete })
+                    .map(\.key)
+
+                if let previewAssetKey {
+                    user.previewProfileAssetIdentifier = previewAssetKey
+                }
+
+                if let completeAssetKey {
+                    user.completeProfileAssetIdentifier = completeAssetKey
+                }
             }
 
-            user.isPendingMetadataRefresh = false
-            user.updatePotentialGapSystemMessagesIfNeeded()
+            user.supportedProtocols = event.supportedProtocols?.toDomainModel() ?? [.proteus]
+
+            user.needsToBeUpdatedFromBackend = false
+
+            try context.save()
         }
     }
-    
-    private func updateAssets(
-        from event: UserUpdateEvent,
-        for user: ZMUser
-    ) {
-        let assetKeys: Set<String> = [
-            ZMUser.previewProfileAssetIdentifierKey,
-            ZMUser.completeProfileAssetIdentifierKey
-        ]
-        
-        guard !user.hasLocalModifications(forKeys: assetKeys) else {
-            return
-        }
 
-        let validAssets = event.assets?.filter(\.key.isValidAssetID)
-        
-        let previewAssetKey = validAssets?
-            .first(where: { $0.size == .preview })
-            .map(\.key)
-        
-        let completeAssetKey = validAssets?
-            .first(where: { $0.size == .complete })
-            .map(\.key)
-
-        if let previewAssetKey {
-            user.previewProfileAssetIdentifier = previewAssetKey
-        }
-
-        if let completeAssetKey {
-            user.completeProfileAssetIdentifier = completeAssetKey
-        }
-    }
+    // MARK: - Private
 
     private func persistUser(from user: WireAPI.User) {
-        let persistedUser = ZMUser.fetchOrCreate(with: user.id.uuid, domain: user.id.domain, in: context)
+        let persistedUser = fetchOrCreateUser(
+            with: user.id.uuid,
+            domain: user.id.domain
+        )
 
         guard user.deleted == false else {
             return persistedUser.markAccountAsDeleted(at: Date())

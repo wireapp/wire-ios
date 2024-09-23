@@ -31,11 +31,11 @@ protocol UserUpdateEventProcessorProtocol {
 }
 
 struct UserUpdateEventProcessor: UserUpdateEventProcessorProtocol {
-    
+
     let repository: any UserRepositoryProtocol
 
     func processEvent(_ event: UserUpdateEvent) async throws {
-        try await repository.updateUser(event)
+        try await repository.updateUser(from: event)
     }
 
 }

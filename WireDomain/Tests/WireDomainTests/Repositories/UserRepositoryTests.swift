@@ -44,7 +44,8 @@ class UserRepositoryTests: XCTestCase {
         usersAPI = MockUsersAPI()
         sut = UserRepository(
             context: context,
-            usersAPI: usersAPI
+            usersAPI: usersAPI,
+            isFederationEnabled: true
         )
     }
 
@@ -134,9 +135,35 @@ class UserRepositoryTests: XCTestCase {
         }
     }
 
+    func testUpdateUser_It_Updates_User_Locally() async throws {
+        // Given
+
+        modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+        // When
+
+        try await sut.updateUser(from: Scaffolding.event)
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
+
+            XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
+            XCTAssertEqual(updatedUser.domain, Scaffolding.domain)
+            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
+            XCTAssertEqual(updatedUser.handle, Scaffolding.event.handle)
+            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.event.email)
+            XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
+        }
+    }
+
     private enum Scaffolding {
-        static let user1 = User(
-            id: QualifiedID(uuid: UUID(), domain: "example.com"),
+        static let userID = UUID()
+        static let domain = "domain.com"
+
+        nonisolated(unsafe) static let user1 = User(
+            id: QualifiedID(uuid: userID, domain: domain),
             name: "user1",
             handle: "handle1",
             teamID: nil,
@@ -148,6 +175,18 @@ class UserRepositoryTests: XCTestCase {
             service: nil,
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
+        )
+
+        nonisolated(unsafe) static let event = UserUpdateEvent(
+            id: userID,
+            qualifiedID: UserID(uuid: userID, domain: domain),
+            accentColorID: nil,
+            name: "username",
+            handle: "test",
+            email: "test@wire.com",
+            isSSOIDDeleted: nil,
+            assets: nil,
+            supportedProtocols: [.proteus, .mls]
         )
     }
 
