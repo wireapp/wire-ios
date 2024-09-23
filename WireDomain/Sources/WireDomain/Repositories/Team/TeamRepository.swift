@@ -44,6 +44,17 @@ protocol TeamRepositoryProtocol {
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 
+    /// Deletes the member of a team.
+    /// - Parameter userID: The ID of the team member.
+    /// - Parameter teamID: The ID of the team.
+    /// - Parameter time: The time the member left the team.
+
+    func deleteMembership(
+        forUser userID: UUID,
+        fromTeam teamID: UUID,
+        at time: Date
+    ) async throws
+
     /// Sets the team member `needsToBeUpdatedFromBackend` flag to true.
     /// - Parameter membershipID: The id of the team member.
 
@@ -75,6 +86,31 @@ final class TeamRepository: TeamRepositoryProtocol {
     func pullSelfTeam() async throws {
         let team = try await fetchSelfTeamRemotely()
         await storeTeamLocally(team)
+    }
+
+    func deleteMembership(
+        forUser userID: UUID,
+        fromTeam teamID: UUID,
+        at time: Date
+    ) async throws {
+        let user = try await userRepository.fetchUser(with: userID)
+
+        let member = try await context.perform {
+            guard let member = user.membership else {
+                throw TeamRepositoryError.userNotAMemberInTeam(user: userID, team: teamID)
+            }
+
+            return member
+        }
+
+        await userRepository.deleteUserAccount(
+            for: user,
+            at: time
+        )
+
+        await context.perform { [context] in
+            context.delete(member)
+        }
     }
 
     func storeTeamMemberNeedsBackendUpdate(membershipID: UUID) async throws {
