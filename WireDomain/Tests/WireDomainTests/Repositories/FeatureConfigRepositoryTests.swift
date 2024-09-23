@@ -146,7 +146,7 @@ final class FeatureConfigRepositoryTests: XCTestCase {
 
 private extension FeatureConfigRepositoryTests {
     enum Scaffolding {
-        static let featureConfigs: [FeatureConfig] = [
+        nonisolated(unsafe) static let featureConfigs: [FeatureConfig] = [
             .appLock(.init(
                 status: .enabled,
                 isMandatory: true,

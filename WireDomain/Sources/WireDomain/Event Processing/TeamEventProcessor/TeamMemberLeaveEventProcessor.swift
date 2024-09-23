@@ -17,9 +17,10 @@
 //
 
 import WireAPI
+import WireDataModel
 
 /// Process team member leave events.
-
+///
 protocol TeamMemberLeaveEventProcessorProtocol {
 
     /// Process a team member leave event.
@@ -32,9 +33,14 @@ protocol TeamMemberLeaveEventProcessorProtocol {
 
 struct TeamMemberLeaveEventProcessor: TeamMemberLeaveEventProcessorProtocol {
 
-    func processEvent(_: TeamMemberLeaveEvent) async throws {
-        // TODO: [WPB-10185]
-        assertionFailure("not implemented yet")
+    let repository: any TeamRepositoryProtocol
+
+    func processEvent(_ event: TeamMemberLeaveEvent) async throws {
+        try await repository.deleteMembership(
+            forUser: event.userID,
+            fromTeam: event.teamID,
+            at: event.time
+        )
     }
 
 }

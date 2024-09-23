@@ -35,4 +35,14 @@ public struct UserLegalholdRequestEvent: Equatable, Codable {
 
     public let lastPrekey: Prekey
 
+    public init(
+        userID: UUID,
+        clientID: String,
+        lastPrekey: Prekey
+    ) {
+        self.userID = userID
+        self.clientID = clientID
+        self.lastPrekey = lastPrekey
+    }
+
 }

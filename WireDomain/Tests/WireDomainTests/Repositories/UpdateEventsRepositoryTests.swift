@@ -391,43 +391,43 @@ private enum Scaffolding {
     // 6 envelopes, the first 2 will be already stored in the DB
     // and the rest will come from the backend.
 
-    static let envelope1 = UpdateEventEnvelope(
+    nonisolated(unsafe) static let envelope1 = UpdateEventEnvelope(
         id: id1,
         events: [.user(.pushRemove)],
         isTransient: false
     )
 
-    static let envelope2 = UpdateEventEnvelope(
+    nonisolated(unsafe) static let envelope2 = UpdateEventEnvelope(
         id: id2,
         events: [.user(.pushRemove)],
         isTransient: false
     )
 
-    static let envelope3 = UpdateEventEnvelope(
+    nonisolated(unsafe) static let envelope3 = UpdateEventEnvelope(
         id: id3,
         events: [.conversation(.proteusMessageAdd(proteusMessage1))],
         isTransient: false
     )
 
-    static let envelope4 = UpdateEventEnvelope(
+    nonisolated(unsafe) static let envelope4 = UpdateEventEnvelope(
         id: id4,
         events: [.user(.pushRemove)],
         isTransient: true
     )
 
-    static let envelope5 = UpdateEventEnvelope(
+    nonisolated(unsafe) static let envelope5 = UpdateEventEnvelope(
         id: id5,
         events: [.conversation(.proteusMessageAdd(proteusMessage2))],
         isTransient: false
     )
 
-    static let envelope6 = UpdateEventEnvelope(
+    nonisolated(unsafe) static let envelope6 = UpdateEventEnvelope(
         id: id6,
         events: [.conversation(.proteusMessageAdd(proteusMessage3))],
         isTransient: false
     )
 
-    static let proteusMessage1 = ConversationProteusMessageAddEvent(
+    nonisolated(unsafe) static let proteusMessage1 = ConversationProteusMessageAddEvent(
         conversationID: conversationID,
         senderID: aliceID,
         timestamp: time30SecondsAgo,
@@ -437,7 +437,7 @@ private enum Scaffolding {
         messageRecipientClientID: selfClientID
     )
 
-    static let proteusMessage2 = ConversationProteusMessageAddEvent(
+    nonisolated(unsafe) static let proteusMessage2 = ConversationProteusMessageAddEvent(
         conversationID: conversationID,
         senderID: aliceID,
         timestamp: time20SecondsAgo,
@@ -447,7 +447,7 @@ private enum Scaffolding {
         messageRecipientClientID: selfClientID
     )
 
-    static let proteusMessage3 = ConversationProteusMessageAddEvent(
+    nonisolated(unsafe) static let proteusMessage3 = ConversationProteusMessageAddEvent(
         conversationID: conversationID,
         senderID: aliceID,
         timestamp: time10SecondsAgo,
@@ -468,13 +468,13 @@ private enum Scaffolding {
     static let time20SecondsAgo = Date(timeIntervalSinceNow: -20)
     static let time10SecondsAgo = Date(timeIntervalSinceNow: -10)
 
-    static let page1 = PayloadPager<UpdateEventEnvelope>.Page(
+    nonisolated(unsafe) static let page1 = PayloadPager<UpdateEventEnvelope>.Page(
         element: [envelope3, envelope4],
         hasMore: true,
         nextStart: "page2"
     )
 
-    static let page2 = PayloadPager<UpdateEventEnvelope>.Page(
+    nonisolated(unsafe) static let page2 = PayloadPager<UpdateEventEnvelope>.Page(
         element: [envelope5, envelope6],
         hasMore: false,
         nextStart: ""

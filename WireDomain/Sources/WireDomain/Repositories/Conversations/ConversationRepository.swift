@@ -28,6 +28,17 @@ public protocol ConversationRepositoryProtocol {
 
     func pullConversations() async throws
 
+    /// Removes a given user from all conversations.
+    ///
+    /// - parameters:
+    ///     - user: The user to remove from the conversations.
+    ///     - removalDate: The date the user was removed from the conversations.
+
+    func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async
+
 }
 
 public final class ConversationRepository: ConversationRepositoryProtocol {
@@ -106,6 +117,16 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
                 }
             }
         }
+    }
+
+    public func removeFromConversations(
+        user: ZMUser,
+        removalDate: Date
+    ) async {
+        await conversationsLocalStore.removeFromConversations(
+            user: user,
+            removalDate: removalDate
+        )
     }
 
 }
