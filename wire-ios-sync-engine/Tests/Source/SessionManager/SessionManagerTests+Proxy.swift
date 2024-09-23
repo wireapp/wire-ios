@@ -73,9 +73,10 @@ final class SessionManagerProxyTests: IntegrationTest {
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
-        sessionManager?.start(launchOptions: [:])
+        sessionManager?.start(launchOptions: [:]) { _ in
+            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        }
 
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func test_markNetworkSessionsAsReady_createsUnauthenticatedSession() {
