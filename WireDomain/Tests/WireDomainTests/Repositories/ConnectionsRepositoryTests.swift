@@ -150,18 +150,18 @@ private enum Scaffolding {
     nonisolated(unsafe) static let connectionStatus = ConnectionStatus.accepted
 
     nonisolated(unsafe) static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
-                                               receiverID: Scaffolding.member2ID.uuid,
-                                               receiverQualifiedID: Scaffolding.member2ID,
-                                               conversationID: Scaffolding.conversationID.uuid,
-                                               qualifiedConversationID: Scaffolding.conversationID,
-                                               lastUpdate: Scaffolding.lastUpdate,
-                                               status: Scaffolding.connectionStatus)
+                                                                   receiverID: Scaffolding.member2ID.uuid,
+                                                                   receiverQualifiedID: Scaffolding.member2ID,
+                                                                   conversationID: Scaffolding.conversationID.uuid,
+                                                                   qualifiedConversationID: Scaffolding.conversationID,
+                                                                   lastUpdate: Scaffolding.lastUpdate,
+                                                                   status: Scaffolding.connectionStatus)
 
     nonisolated(unsafe) static let brokenConnection = WireAPI.Connection(senderID: nil,
-                                                     receiverID: nil,
-                                                     receiverQualifiedID: nil,
-                                                     conversationID: nil,
-                                                     qualifiedConversationID: nil,
-                                                     lastUpdate: Date(),
-                                                     status: .pending)
+                                                                         receiverID: nil,
+                                                                         receiverQualifiedID: nil,
+                                                                         conversationID: nil,
+                                                                         qualifiedConversationID: nil,
+                                                                         lastUpdate: Date(),
+                                                                         status: .pending)
 }
