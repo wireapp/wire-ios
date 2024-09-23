@@ -38,7 +38,7 @@ final class BlockingActivityIndicatorSnapshotTests: XCTestCase {
 
         sut = .init(view: viewController.view, accessibilityAnnouncement: .none)
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     // MARK: - tearDown
