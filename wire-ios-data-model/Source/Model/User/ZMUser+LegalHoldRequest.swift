@@ -119,7 +119,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     // MARK: Initialization
 
-    public init(target: UUID, requester: UUID, clientIdentifier: String, lastPrekey: Prekey) {
+    public init(target: UUID, requester: UUID?, clientIdentifier: String, lastPrekey: Prekey) {
         self.target = target
         self.requester = requester
         self.client = Client(id: clientIdentifier)
@@ -178,7 +178,7 @@ extension ZMUser: SelfLegalHoldSubject {
 
     @NSManaged private var primitiveLegalHoldRequest: Data?
 
-    var legalHoldRequest: LegalHoldRequest? {
+    public var legalHoldRequest: LegalHoldRequest? {
         get {
             willAccessValue(forKey: ZMUserKeys.legalHoldRequest)
             let value = primitiveLegalHoldRequest.flatMap(LegalHoldRequest.decode)
@@ -285,7 +285,7 @@ extension ZMUser: SelfLegalHoldSubject {
     // MARK: - Status Acknowledgement
 
     /// Whether the user needs to be notified about a legal hold status change.
-    @NSManaged internal(set) public var needsToAcknowledgeLegalHoldStatus: Bool
+    @NSManaged public var needsToAcknowledgeLegalHoldStatus: Bool
 
     /**
      * Call this method when the user acknowledged the last legal hold status.
