@@ -18,6 +18,8 @@
 
 import UIKit
 
+/// Defines the contract for any sidebar view controller.
+
 @MainActor
 public protocol MainSidebarProtocol: UIViewController {
     associatedtype MenuItem: MainSidebarMenuItemRepresentable
