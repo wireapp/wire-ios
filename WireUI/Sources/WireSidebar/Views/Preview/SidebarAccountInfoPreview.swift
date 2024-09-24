@@ -16,8 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol SidebarViewControllerDelegate: AnyObject {
-    func sidebarViewControllerDidSelectAccountImage(_ viewController: SidebarViewController)
-    func sidebarViewController(_ viewController: SidebarViewController, didSelect menuItem: SidebarMenuItem)
-    func sidebarViewControllerDidSelectSupport(_ viewController: SidebarViewController)
+import SwiftUI
+
+@ViewBuilder @MainActor
+func SidebarAccountInfoPreview() -> some View {
+    SidebarAccountInfoView(displayName: "Firstname Lastname", username: "@username") {
+        MockAccountView()
+    }
+}
+
+private struct MockAccountView: View {
+    var body: some View {
+        Circle()
+            .foregroundStyle(Color.primary)
+    }
 }
