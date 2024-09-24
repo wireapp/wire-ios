@@ -16,29 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
+import WireUIFoundation
 
-@testable import WireUIFoundation
+final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
 
-final class MainCoordinatorTests: XCTestCase {
-
-    private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockViewControllerBuilder, MockViewControllerBuilder>!
-
-    @MainActor
-    override func setUp() async throws {
-        sut = .init(
-            mainSplitViewController: .init(style: .tripleColumn),
-            mainTabBarController: .init(),
-            newConversationBuilder: .init(),
-            selfProfileBuilder: .init()
-        )
+    enum ConversationFilter {
+        case todo
     }
 
-    override func tearDown() {
-        sut = nil
+    var conversationFilter: ConversationFilter?
+    var splitViewInterface: MainSplitViewState  = .expanded
+}
+
+extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {
+
+    init(_ mainConversationFilter: MainConversationFilter) {
+        fatalError("TODO")
     }
 
-    func testExample() {
-        XCTFail("TODO: Implement tests")
+    func map() -> MainConversationFilter {
+        fatalError("TODO")
     }
 }

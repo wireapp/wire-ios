@@ -16,29 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import UIKit
+import WireUIFoundation
 
-@testable import WireUIFoundation
-
-final class MainCoordinatorTests: XCTestCase {
-
-    private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockViewControllerBuilder, MockViewControllerBuilder>!
-
+struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
     @MainActor
-    override func setUp() async throws {
-        sut = .init(
-            mainSplitViewController: .init(style: .tripleColumn),
-            mainTabBarController: .init(),
-            newConversationBuilder: .init(),
-            selfProfileBuilder: .init()
-        )
-    }
-
-    override func tearDown() {
-        sut = nil
-    }
-
-    func testExample() {
-        XCTFail("TODO: Implement tests")
-    }
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
 }
