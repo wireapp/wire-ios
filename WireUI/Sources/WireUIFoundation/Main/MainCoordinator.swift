@@ -37,7 +37,6 @@ SplitViewController.Archive == TabBarController.Archive,
 SplitViewController.Settings == TabBarController.Settings
 
 {
-
     // MARK: - Private Properties
 
     private weak var splitViewController: SplitViewController!
@@ -93,6 +92,7 @@ SplitViewController.Settings == TabBarController.Settings
     }
 
     deinit {
+        // TODO: WireLogger?
         /* WireLogger.ui.debug */ print("MainCoordinator.deinit")
     }
 
@@ -247,20 +247,7 @@ SplitViewController.Settings == TabBarController.Settings
         selfProfile?.dismiss(animated: true)
     }
 
-    // TODO: add a doc comment describing the approach having navigation controllers for presenting the navigation bar and for the possibility to move view controllers
-
     // MARK: - UISplitViewControllerDelegate
-
-    // func splitViewController(
-    //     _ svc: UISplitViewController,
-    //     topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column
-    // ) -> UISplitViewController.Column {
-    //     //
-    // }
-
-    // func splitViewController(_ svc: UISplitViewController, willHide column: UISplitViewController.Column) {
-    //     print("349ur09e willHide \(column)")
-    // }
 
     public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
@@ -298,17 +285,6 @@ SplitViewController.Settings == TabBarController.Settings
         mainSplitViewState = .collapsed
         conversationList.splitViewInterface = .collapsed
     }
-
-    // func splitViewController(
-    //     _ svc: UISplitViewController,
-    //     displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode
-    // ) -> UISplitViewController.DisplayMode {
-    //     //
-    // }
-
-    // func splitViewController(_ svc: UISplitViewController, willShow column: UISplitViewController.Column) {
-    //     print("349ur09e willShow \(column)")
-    // }
 
     public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
