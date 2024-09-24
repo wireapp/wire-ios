@@ -22,20 +22,34 @@ import WireUIFoundation
 final class MockConversationListViewController: UIViewController, MainConversationListProtocol {
 
     enum ConversationFilter {
-        case todo
+        case groups
     }
 
-    var conversationFilter: ConversationFilter?
+    var conversationFilter: ConversationFilter? {
+        didSet {
+            print("didset \(conversationFilter)")
+        }
+    }
     var splitViewInterface: MainSplitViewState  = .expanded
 }
 
 extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {
 
     init(_ mainConversationFilter: MainConversationFilter) {
-        fatalError("TODO")
+        switch mainConversationFilter {
+            case .groups:
+            self = .groups
+        case .favorites:
+            fatalError("not supported")
+        case .oneOnOne:
+            fatalError("not supported")
+        }
     }
 
     func map() -> MainConversationFilter {
-        fatalError("TODO")
+        switch self {
+            case .groups:
+            .groups
+        }
     }
 }

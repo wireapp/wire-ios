@@ -36,7 +36,7 @@ final class MainCoordinatorTests: XCTestCase {
 
         splitViewController = .init(style: .tripleColumn)
         splitViewController.sidebar = sidebar
-        splitViewController.conversationList = .init()
+        splitViewController.conversationList = conversationList
 
         tabBarController = .init()
         tabBarController.archive = .init()
@@ -66,6 +66,28 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
+    func testShowingGroupConversations() {
+        // When
+        let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
+        sut.showConversationList(conversationFilter: conversationFilter)
+
+        // Then
+        XCTAssertNotNil(splitViewController.conversationList)
+        XCTAssertNil(tabBarController.conversations?.conversationList)
+        XCTAssertEqual(conversationList.conversationFilter, .groups)
+        XCTAssertEqual(sidebar.selectedMenuItem, .groups)
+    }
+
+    @MainActor
+    func testShowingGroupConversationsFromArchive() {
+        // When
+        sut.showArchivedConversations()
+
+        // Then
+        testShowingGroupConversations()
+    }
+
+    @MainActor
     func testCollapsingConversationList() {
         // When
         sut.splitViewControllerDidCollapse(splitViewController)
@@ -86,4 +108,10 @@ final class MainCoordinatorTests: XCTestCase {
         XCTAssertNotNil(splitViewController.archive)
         XCTAssertNil(tabBarController.archive)
     }
+
+    // TODO: [WPB-10903] add many more tests, e.g.
+    // - collapsing archive, connect, settings, selfProfile
+    // - expanding archive, connect, settings, selfProfile
+    // - dismissing conversationList, archive, connect, newConversation, settings, selfProfile
+    // - tabBarController(_:didSelect:)
 }

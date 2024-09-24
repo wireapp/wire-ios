@@ -22,7 +22,7 @@ import WireUIFoundation
 final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
 
     enum MenuItem {
-        case all, todo
+        case all, groups
     }
 
     var selectedMenuItem: MenuItem = .all
@@ -31,10 +31,22 @@ final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
 extension MockSidebarViewController.MenuItem: MainSidebarMenuItemRepresentable {
 
     init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
-        fatalError("TODO")
+        switch mainSidebarMenuItem {
+        case .all:
+            self = .all
+        case .groups:
+            self = .groups
+        default:
+            fatalError("not implemented")
+        }
     }
 
     func map() -> MainSidebarMenuItem {
-        fatalError("TODO")
+        switch self {
+        case .all:
+            .all
+        case .groups:
+            .groups
+        }
     }
 }

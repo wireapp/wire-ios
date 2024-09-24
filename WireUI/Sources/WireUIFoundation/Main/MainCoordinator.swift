@@ -111,7 +111,7 @@ public final class MainCoordinator<
 
     // MARK: - Public Methods
 
-    public func showConversationList(conversationFilter: (some MainConversationFilterRepresentable)?) async {
+    public func showConversationList(conversationFilter: (some MainConversationFilterRepresentable)?) {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
