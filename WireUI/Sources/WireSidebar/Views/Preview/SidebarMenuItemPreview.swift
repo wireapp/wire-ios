@@ -28,9 +28,27 @@ struct SidebarMenuItemPreview: View {
             // Display two separate menus here in order to verify, that the size
             // (especially the width) of the icons is equal for all items within their menu only.
             SidebarMenuItemContainer(iconSize: $topMenuIconSize) { iconSize in
-                SidebarMenuItemView(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Regular") }, action: { print("show all conversations") })
-                SidebarMenuItemView(icon: "gamecontroller", iconSize: iconSize, isHighlighted: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
-                SidebarMenuItemView(icon: "person.3", iconSize: iconSize, isLink: true, title: { Text("Initially highlighted") }, action: { print("show all conversations") })
+                SidebarMenuItemView(
+                    icon: "text.bubble",
+                    iconSize: iconSize,
+                    isHighlighted: false,
+                    title: { Text("Regular") },
+                    action: { print("show all conversations") }
+                )
+                SidebarMenuItemView(
+                    icon: "gamecontroller",
+                    iconSize: iconSize,
+                    isHighlighted: true,
+                    title: { Text("Initially highlighted") },
+                    action: { print("show all conversations") }
+                )
+                SidebarMenuItemView(
+                    icon: "person.3",
+                    iconSize: iconSize,
+                    isLink: true,
+                    title: { Text("Initially highlighted") },
+                    action: { print("show all conversations") }
+                )
             }
             .overlay {
                 HStack {
@@ -45,8 +63,20 @@ struct SidebarMenuItemPreview: View {
             Divider()
 
             SidebarMenuItemContainer(iconSize: $bottomMenuIconSize) { iconSize in
-                SidebarMenuItemView(icon: "text.bubble", iconSize: iconSize, isHighlighted: false, title: { Text("Small Icon") }, action: { print("show all conversations") })
-                SidebarMenuItemView(icon: "brain", iconSize: iconSize, isHighlighted: false, title: { Text("Little larger Icon") }, action: { print("show all conversations") })
+                SidebarMenuItemView(
+                    icon: "text.bubble",
+                    iconSize: iconSize,
+                    isHighlighted: false,
+                    title: { Text("Small Icon") },
+                    action: { print("show all conversations") }
+                )
+                SidebarMenuItemView(
+                    icon: "brain",
+                    iconSize: iconSize,
+                    isHighlighted: false,
+                    title: { Text("Little larger Icon") },
+                    action: { print("show all conversations") }
+                )
             }
             .overlay {
                 HStack {
