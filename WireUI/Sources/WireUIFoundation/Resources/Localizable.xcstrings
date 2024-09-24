@@ -380,7 +380,14 @@
 
     },
     "tabBar.contacts.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contacts"
+          }
+        }
+      }
     },
     "tabBar.conversations.description" : {
       "localizations" : {
@@ -761,7 +768,14 @@
 
     },
     "tabBar.folders.title" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folders"
+          }
+        }
+      }
     },
     "tabBar.settings.description" : {
 

@@ -178,7 +178,6 @@ public final class MainTabBarController<
             }
         }
         viewControllers?.removeLast() // will be fixed with navigation overhaul
-        viewControllers?.removeLast() // will be fixed with navigation overhaul
         selectedContent = .conversations
     }
 
