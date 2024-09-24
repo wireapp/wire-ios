@@ -91,7 +91,7 @@ final class UserUpdateEventProcessorTests: XCTestCase {
 
         nonisolated(unsafe) static let event = UserUpdateEvent(
             id: userID,
-            qualifiedID: UserID(uuid: userID, domain: domain),
+            userID: UserID(uuid: userID, domain: domain),
             accentColorID: nil,
             name: "username",
             handle: "test",

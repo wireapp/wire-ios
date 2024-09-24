@@ -142,8 +142,8 @@ public final class UserRepository: UserRepositoryProtocol {
             )
 
             if isFederationEnabled {
-                user.remoteIdentifier = event.qualifiedID.uuid
-                user.domain = event.qualifiedID.domain
+                user.remoteIdentifier = event.userID.uuid
+                user.domain = event.userID.domain
             }
 
             if let name = event.name {

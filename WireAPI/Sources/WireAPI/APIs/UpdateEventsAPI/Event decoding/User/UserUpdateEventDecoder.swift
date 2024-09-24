@@ -30,7 +30,7 @@ struct UserUpdateEventDecoder {
 
         return UserUpdateEvent(
             id: payload.id,
-            qualifiedID: payload.qualifiedID,
+            userID: payload.qualifiedID,
             accentColorID: payload.accentColorID,
             name: payload.name,
             handle: payload.handle,

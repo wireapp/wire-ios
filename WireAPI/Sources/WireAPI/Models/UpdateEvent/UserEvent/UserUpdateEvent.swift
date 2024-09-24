@@ -28,7 +28,7 @@ public struct UserUpdateEvent: Equatable, Codable {
 
     /// The updated user's qualified id.
 
-    public let qualifiedID: UserID
+    public let userID: UserID
 
     /// The new accent color id.
 
@@ -60,7 +60,7 @@ public struct UserUpdateEvent: Equatable, Codable {
 
     public init(
         id: UUID,
-        qualifiedID: UserID,
+        userID: UserID,
         accentColorID: Int?,
         name: String?,
         handle: String?,
@@ -70,7 +70,7 @@ public struct UserUpdateEvent: Equatable, Codable {
         supportedProtocols: Set<MessageProtocol>?
     ) {
         self.id = id
-        self.qualifiedID = qualifiedID
+        self.userID = userID
         self.accentColorID = accentColorID
         self.name = name
         self.handle = handle
