@@ -246,7 +246,6 @@ public final class MainCoordinator<
         if let conversationListViewController = splitViewController.conversationList {
             splitViewController.conversationList = nil
             tabBarController.conversations = (conversationListViewController, nil)
-            // TODO: conversations
         }
 
         // move the archived conversations list back to the tab bar controller if needed
@@ -283,7 +282,6 @@ public final class MainCoordinator<
             let conversationViewController = tabBarController.conversations!.conversationList
             tabBarController.conversations = nil
             splitViewController.conversationList = conversationViewController
-            // TODO: conversations
         }
 
         // if the archived conversations view controller was visible, present it

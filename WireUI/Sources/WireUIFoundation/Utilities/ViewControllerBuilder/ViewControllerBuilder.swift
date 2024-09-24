@@ -18,7 +18,6 @@
 
 import UIKit
 
-// TODO: consider removing/replacing?
 public protocol ViewControllerBuilder {
     func build() -> UIViewController
 }
