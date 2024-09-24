@@ -22,7 +22,6 @@ import UIKit
  * @abstract Generates the cell that displays one button
  */
 class SettingsButtonCellDescriptor: SettingsCellDescriptorType {
-    static let cellType: SettingsTableCellProtocol.Type = SettingsButtonCell.self
     let title: String
     let identifier: String?
     var visible: Bool {
