@@ -56,6 +56,55 @@ import WireDataModel
 
 
 
+public class MockConversationLabelsRepositoryProtocol: ConversationLabelsRepositoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - pullConversationLabels
+
+    public var pullConversationLabels_Invocations: [Void] = []
+    public var pullConversationLabels_MockError: Error?
+    public var pullConversationLabels_MockMethod: (() async throws -> Void)?
+
+    public func pullConversationLabels() async throws {
+        pullConversationLabels_Invocations.append(())
+
+        if let error = pullConversationLabels_MockError {
+            throw error
+        }
+
+        guard let mock = pullConversationLabels_MockMethod else {
+            fatalError("no mock for `pullConversationLabels`")
+        }
+
+        try await mock()
+    }
+
+    // MARK: - updateConversationLabels
+
+    public var updateConversationLabels_Invocations: [[ConversationLabel]] = []
+    public var updateConversationLabels_MockError: Error?
+    public var updateConversationLabels_MockMethod: (([ConversationLabel]) async throws -> Void)?
+
+    public func updateConversationLabels(_ conversationLabels: [ConversationLabel]) async throws {
+        updateConversationLabels_Invocations.append(conversationLabels)
+
+        if let error = updateConversationLabels_MockError {
+            throw error
+        }
+
+        guard let mock = updateConversationLabels_MockMethod else {
+            fatalError("no mock for `updateConversationLabels`")
+        }
+
+        try await mock(conversationLabels)
+    }
+
+}
+
 public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol {
 
     // MARK: - Life cycle
@@ -541,6 +590,26 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         }
 
         try await mock()
+    }
+
+    // MARK: - updateUserProperty
+
+    public var updateUserProperty_Invocations: [WireAPI.UserProperty] = []
+    public var updateUserProperty_MockError: Error?
+    public var updateUserProperty_MockMethod: ((WireAPI.UserProperty) async throws -> Void)?
+
+    public func updateUserProperty(_ userProperty: WireAPI.UserProperty) async throws {
+        updateUserProperty_Invocations.append(userProperty)
+
+        if let error = updateUserProperty_MockError {
+            throw error
+        }
+
+        guard let mock = updateUserProperty_MockMethod else {
+            fatalError("no mock for `updateUserProperty`")
+        }
+
+        try await mock(userProperty)
     }
 
 }

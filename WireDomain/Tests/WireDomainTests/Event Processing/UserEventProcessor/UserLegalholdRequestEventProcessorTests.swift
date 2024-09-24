@@ -21,6 +21,7 @@ import WireAPI
 import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -44,7 +45,8 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
             repository: UserRepository(
                 context: context,
                 usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI()
+                selfUserAPI: MockSelfUserAPI(), 
+                conversationLabelsRepository: MockConversationLabelsRepositoryProtocol()
             )
         )
     }
@@ -61,13 +63,12 @@ final class UserLegalholdRequestEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Processes_Legalhold_Request_Event() async throws {
         // Given
 
-        await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(
-                id: Scaffolding.userID,
-                domain: nil,
-                in: context
-            )
-        }
+        modelHelper.createSelfUser(
+            id: Scaffolding.userID,
+            domain: nil,
+            in: context
+        )
+        
 
         // When
 

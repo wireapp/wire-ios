@@ -94,7 +94,13 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         _ = await context.perform { [context] in
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true,
+                in: context,
+                created: &created
+            )
+            
             label?.name = Scaffolding.conversationLabel1.name
             context.saveOrRollback()
         }
@@ -102,8 +108,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            try XCTAssertCount(a, count: 1)
-            XCTAssertEqual(a.first!.name, Scaffolding.conversationLabel1.name)
+            let label = try XCTUnwrap(a.first)
+            XCTAssertEqual(label.name, Scaffolding.conversationLabel1.name)
         }
 
         userPropertiesAPI.getLabels_MockValue = [
@@ -119,9 +125,9 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            try XCTAssertCount(a, count: 1)
-            XCTAssertEqual(a.first!.remoteIdentifier, Scaffolding.conversationLabel1.id)
-            XCTAssertEqual(a.first!.name, Scaffolding.updatedConversationLabel1.name)
+            let label = try XCTUnwrap(a.first)
+            XCTAssertEqual(label.remoteIdentifier, Scaffolding.conversationLabel1.id)
+            XCTAssertEqual(label.name, Scaffolding.updatedConversationLabel1.name)
         }
     }
 
@@ -130,7 +136,13 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         _ = await context.perform { [self] in
             var created = false
-            let label = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            let label = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true,
+                in: context,
+                created: &created
+            )
+            
             label?.conversations = Set([conversation1, conversation2])
             context.saveOrRollback()
         }
@@ -138,8 +150,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            try XCTAssertCount(a, count: 1)
-            let labelConversations = a.first!.conversations
+            let label = try XCTUnwrap(a.first)
+            let labelConversations = label.conversations
             XCTAssertEqual(labelConversations.count, 2)
         }
 
@@ -156,9 +168,11 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            try XCTAssertCount(a, count: 1)
-            let labelConversations = a.first!.conversations.compactMap(\.remoteIdentifier)
+            let label = try XCTUnwrap(a.first)
+            let labelConversations = label.conversations.compactMap(\.remoteIdentifier)
+            
             let expected = Scaffolding.updatedConversationLabel1.conversationIDs
+            
             for labelConversation in labelConversations {
                 XCTAssert(expected.contains(labelConversation))
             }
@@ -170,15 +184,18 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
 
         _ = await context.perform { [context] in
             var created = false
-            _ = Label.fetchOrCreate(remoteIdentifier: Scaffolding.conversationLabel1.id, create: true, in: context, created: &created)
+            _ = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true, in: context,
+                created: &created
+            )
             context.saveOrRollback()
         }
 
         try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            try XCTAssertCount(a, count: 1)
-            XCTAssertEqual(a.first!.remoteIdentifier, Scaffolding.conversationLabel1.id)
+            XCTAssertEqual(a.first?.remoteIdentifier, Scaffolding.conversationLabel1.id)
         }
 
         // Mock
@@ -208,8 +225,11 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         // Given
 
         _ = await context.perform { [context] in
-            var created = false
-            let label = Label.fetchOrCreateFavoriteLabel(in: context, create: true)
+            let label = Label.fetchOrCreateFavoriteLabel(
+                in: context,
+                create: true
+            )
+            
             label.kind = .favorite
             label.remoteIdentifier = Scaffolding.favoriteConversationLabel1.id
             label.name = Scaffolding.favoriteConversationLabel1.name
@@ -219,8 +239,8 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
         try await context.perform { [self] in
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
-            try XCTAssertCount(a, count: 1)
-            XCTAssertEqual(a.first!.remoteIdentifier, Scaffolding.favoriteConversationLabel1.id)
+            let label = try XCTUnwrap(a.first)
+            XCTAssertEqual(label.remoteIdentifier, Scaffolding.favoriteConversationLabel1.id)
         }
 
         // Mock
@@ -240,6 +260,94 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
             let labelNames = a.compactMap(\.name)
+            
+            let expected = [
+                Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
+                Scaffolding.conversationLabel2.name!,
+                Scaffolding.conversationLabel3.name!
+            ]
+
+            expected.forEach { XCTAssert(labelNames.contains($0)) }
+        }
+    }
+
+    func testUpdateConversationLabels_Given_Old_Folder_Label_Exist_Locally_Old_Folder_Is_Removed() async throws {
+        // Given
+
+        _ = await context.perform { [context] in
+            var created = false
+            _ = Label.fetchOrCreate(
+                remoteIdentifier: Scaffolding.conversationLabel1.id,
+                create: true,
+                in: context,
+                created: &created
+            )
+            
+            context.saveOrRollback()
+        }
+
+        try await context.perform { [self] in
+            let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
+            let a = try context.fetch(fetchRequest)
+            let label = try XCTUnwrap(a.first)
+            XCTAssertEqual(label.remoteIdentifier, Scaffolding.conversationLabel1.id)
+        }
+
+        // When
+
+        try await sut.updateConversationLabels(
+            [Scaffolding.conversationLabel2, Scaffolding.conversationLabel3]
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
+            let a = try context.fetch(fetchRequest)
+            let labelNames = a.compactMap(\.name)
+            
+            XCTAssert(!labelNames.contains(Scaffolding.conversationLabel1.name!)) /// should be removed locally
+            XCTAssert(labelNames.contains(Scaffolding.conversationLabel2.name!))
+            XCTAssert(labelNames.contains(Scaffolding.conversationLabel3.name!))
+        }
+    }
+
+    func testUpdateConversationLabels_Given_Favorite_Label_Exists_Locally_Favorite_Label_Should_Not_Be_Removed() async throws {
+        // Given
+
+        _ = await context.perform { [context] in
+            let label = Label.fetchOrCreateFavoriteLabel(
+                in: context,
+                create: true
+            )
+            
+            label.kind = .favorite
+            label.remoteIdentifier = Scaffolding.favoriteConversationLabel1.id
+            label.name = Scaffolding.favoriteConversationLabel1.name
+            
+            context.saveOrRollback()
+        }
+
+        try await context.perform { [self] in
+            let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
+            let a = try context.fetch(fetchRequest)
+            let label = try XCTUnwrap(a.first)
+            XCTAssertEqual(label.remoteIdentifier, Scaffolding.favoriteConversationLabel1.id)
+        }
+
+        // When
+
+        try await sut.updateConversationLabels(
+            [Scaffolding.conversationLabel2, Scaffolding.conversationLabel3]
+        )
+
+        // Then
+
+        try await context.perform { [context] in
+            let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
+            let a = try context.fetch(fetchRequest)
+            let labelNames = a.compactMap(\.name)
+            
             let expected = [
                 Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,

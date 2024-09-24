@@ -46,7 +46,11 @@ final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
             repository: UserRepository(
                 context: context,
                 usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI()
+                selfUserAPI: MockSelfUserAPI(), 
+                conversationLabelsRepository: ConversationLabelsRepository(
+                    userPropertiesAPI: MockUserPropertiesAPI(),
+                    context: context
+                )
             )
         )
     }

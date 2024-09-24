@@ -47,7 +47,8 @@ final class UserClientAddEventProcessorTests: XCTestCase {
             repository: UserRepository(
                 context: context,
                 usersAPI: MockUsersAPI(), 
-                selfUserAPI: MockSelfUserAPI()
+                selfUserAPI: MockSelfUserAPI(), 
+                conversationLabelsRepository: MockConversationLabelsRepositoryProtocol()
             )
         )
     }

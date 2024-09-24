@@ -93,6 +93,15 @@ public protocol UserRepositoryProtocol {
     /// Disables user legal hold.
 
     func disableUserLegalHold() async throws
+    
+    /// Updates a user property
+    ///
+    /// - parameters:
+    ///     - userProperty: The user property to update.
+
+    func updateUserProperty(
+        _ userProperty: WireAPI.UserProperty
+    ) async throws
 
 }
 
@@ -103,17 +112,20 @@ public final class UserRepository: UserRepositoryProtocol {
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
+    private let conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
 
     // MARK: - Object lifecycle
 
     public init(
         context: NSManagedObjectContext,
         usersAPI: any UsersAPI,
-        selfUserAPI: any SelfUserAPI
+        selfUserAPI: any SelfUserAPI,
+        conversationLabelsRepository: any ConversationLabelsRepositoryProtocol
     ) {
         self.context = context
         self.usersAPI = usersAPI
         self.selfUserAPI = selfUserAPI
+        self.conversationLabelsRepository = conversationLabelsRepository
     }
 
     // MARK: - Public
@@ -263,6 +275,24 @@ public final class UserRepository: UserRepositoryProtocol {
             selfUser.legalHoldRequestWasCancelled()
 
             try context.save()
+        }
+    }
+    
+    public func updateUserProperty(_ userProperty: UserProperty) async throws {
+        let selfUser = fetchSelfUser()
+        
+        switch userProperty {
+        case .areReadReceiptsEnabled(let isEnabled):
+            await context.perform {
+                selfUser.readReceiptsEnabled = isEnabled
+                selfUser.readReceiptsEnabledChangedRemotely = true
+            }
+        case .conversationLabels(let conversationLabels):
+            try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
+        default:
+            WireLogger.updateEvent.warn(
+                "\(String(describing: userProperty)) property not handled."
+            )
         }
     }
 
