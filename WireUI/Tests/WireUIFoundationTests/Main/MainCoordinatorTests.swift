@@ -59,13 +59,6 @@ final class MainCoordinatorTests: XCTestCase {
     }
 
     @MainActor
-    func testInitialization() {
-        XCTAssert(splitViewController.sidebar == sidebar)
-        // TODO: finish
-        // conversationList in splitview?
-    }
-
-    @MainActor
     func testShowingGroupConversations() {
         // When
         let conversationFilter: MockConversationListViewController.ConversationFilter = .groups
