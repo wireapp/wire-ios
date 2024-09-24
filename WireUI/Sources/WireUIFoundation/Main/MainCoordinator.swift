@@ -101,7 +101,6 @@ public final class MainCoordinator<
             mainTabBarController.archive != nil,
             mainTabBarController.settings != nil
         else { fatalError("invalid state of container view controllers") }
-// TODO: add more precondition checks
 
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController

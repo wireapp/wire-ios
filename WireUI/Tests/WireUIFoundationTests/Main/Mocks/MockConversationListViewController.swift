@@ -30,14 +30,15 @@ final class MockConversationListViewController: UIViewController, MainConversati
             print("didset \(conversationFilter)")
         }
     }
-    var splitViewInterface: MainSplitViewState  = .expanded
+
+    var splitViewInterface: MainSplitViewState = .expanded
 }
 
 extension MockConversationListViewController.ConversationFilter: MainConversationFilterRepresentable {
 
     init(_ mainConversationFilter: MainConversationFilter) {
         switch mainConversationFilter {
-            case .groups:
+        case .groups:
             self = .groups
         case .favorites:
             fatalError("not supported")
@@ -48,7 +49,7 @@ extension MockConversationListViewController.ConversationFilter: MainConversatio
 
     func map() -> MainConversationFilter {
         switch self {
-            case .groups:
+        case .groups:
             .groups
         }
     }
