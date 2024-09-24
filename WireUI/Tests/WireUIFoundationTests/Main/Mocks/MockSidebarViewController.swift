@@ -17,11 +17,36 @@
 //
 
 import UIKit
+import WireUIFoundation
 
-/// Defines the contract for any sidebar view controller.
+final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
 
-@MainActor
-public protocol MainSidebarProtocol: UIViewController {
-    associatedtype MenuItem: MainSidebarMenuItemRepresentable
-    var selectedMenuItem: MenuItem { get set }
+    enum MenuItem {
+        case all, groups
+    }
+
+    var selectedMenuItem: MenuItem = .all
+}
+
+extension MockSidebarViewController.MenuItem: MainSidebarMenuItemRepresentable {
+
+    init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
+        switch mainSidebarMenuItem {
+        case .all:
+            self = .all
+        case .groups:
+            self = .groups
+        default:
+            fatalError("not implemented")
+        }
+    }
+
+    func map() -> MainSidebarMenuItem {
+        switch self {
+        case .all:
+            .all
+        case .groups:
+            .groups
+        }
+    }
 }

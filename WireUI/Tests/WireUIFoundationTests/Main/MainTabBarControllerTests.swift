@@ -35,6 +35,108 @@ final class MainTabBarControllerTests: XCTestCase {
     }
 
     @MainActor
+    func testConversationListAndConversationIsInstalled() throws {
+        // Given
+        let conversationList = MockConversationListViewController()
+        let conversation = UIViewController()
+        let sut = MainTabBarController<MockConversationListViewController>()
+
+        // When
+        sut.conversations = (conversationList, conversation)
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [conversationList, conversation])
+    }
+
+    @MainActor
+    func testConversationIsReleased() throws {
+        // Given
+        let sut = MainTabBarController<MockConversationListViewController>()
+        sut.conversations = (.init(), .init())
+        let navigationController = try XCTUnwrap(sut.viewControllers?[1] as? UINavigationController)
+
+        // When
+        navigationController.popViewController(animated: false)
+
+        // Then
+        let (conversationList, conversation) = try XCTUnwrap(sut.conversations)
+        XCTAssertNotNil(conversationList)
+        XCTAssertNil(conversation)
+    }
+
+    @MainActor
+    func testArchiveIsInstalled() throws {
+        // Given
+        let archive = UIViewController()
+        let sut = MainTabBarController<MockConversationListViewController>()
+
+        // When
+        sut.archive = archive
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[3] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [archive])
+    }
+
+    @MainActor
+    func testArchiveIsReleased() async throws {
+        // Given
+        weak var weakArchive: UIViewController?
+        let sut = MainTabBarController<MockConversationListViewController>()
+        sut.archive = {
+            let archive = UIViewController()
+            weakArchive = archive
+            return archive
+        }()
+
+        // When
+        sut.archive = nil
+
+        // Then
+        await Task.yield()
+        XCTAssertNil(weakArchive)
+    }
+
+    @MainActor
+    func testSettingsIsInstalled() throws {
+        throw XCTSkip() // test will be activated with navigation overhaul
+
+        // Given
+        let settings = UIViewController()
+        let sut = MainTabBarController<MockConversationListViewController>()
+
+        // When
+        sut.settings = settings
+
+        // Then
+        let navigationController = try XCTUnwrap(sut.viewControllers?[2] as? UINavigationController)
+        XCTAssertEqual(navigationController.viewControllers, [settings])
+    }
+
+    @MainActor
+    func testSettingsIsReleased() throws {
+        throw XCTSkip() // test will be activated with navigation overhaul
+
+        // Given
+        weak var weakSettings: UIViewController?
+        let sut = MainTabBarController<MockConversationListViewController>()
+        sut.settings = {
+            let settings = UIViewController()
+            weakSettings = settings
+            return settings
+        }()
+
+        // When
+        sut.settings = nil
+
+        // Then
+        XCTAssertNil(weakSettings)
+    }
+
+    // MARK: - Snapshot Tests
+
+    @MainActor
     func testAppearance() {
         let sut = MainTabBarControllerPreview()
         snapshotHelper

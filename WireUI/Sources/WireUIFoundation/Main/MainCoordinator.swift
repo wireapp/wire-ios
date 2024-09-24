@@ -19,7 +19,17 @@
 import UIKit
 import WireFoundation
 
-// TODO: unit tests
+// swiftlint:disable opening_brace
+
+/// Manages the main flows of the application after a successful login.
+///
+/// The MainCoordinator class is the central controller for the app's navigation and layout management.
+/// It receives references to ``MainTabBarControllerProtocol`` and ``MainSplitViewControllerProtocol``
+/// conforming instances and is responsible for managing transitions between different split layout states (collapsed and expanded)
+/// as well as handling navigation logic.
+///
+/// TODO: mention that all tabs are navigation controllers
+/// and that the tab bar controller keeps the instances retained
 
 @MainActor
 public final class MainCoordinator<
@@ -34,7 +44,9 @@ public final class MainCoordinator<
     SplitViewController.Sidebar: MainSidebarProtocol,
     SplitViewController.ConversationList == TabBarController.ConversationList,
     SplitViewController.Archive == TabBarController.Archive,
-    SplitViewController.Settings == TabBarController.Settings {
+    SplitViewController.Settings == TabBarController.Settings
+{
+    // swiftlint:enable opening_brace
 
     // MARK: - Private Properties
 
@@ -84,6 +96,12 @@ public final class MainCoordinator<
         newConversationBuilder: NewConversationBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
+        guard
+            mainSplitViewController.conversationList != nil,
+            mainTabBarController.archive != nil,
+            mainTabBarController.settings != nil
+        else { fatalError("invalid state of container view controllers") }
+
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.newConversationBuilder = newConversationBuilder

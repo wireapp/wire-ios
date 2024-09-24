@@ -20,5 +20,7 @@ import UIKit
 
 public protocol MainCoordinatorInjectingViewControllerBuilder {
     associatedtype ViewController: UIViewController
+
+    @MainActor
     func build(mainCoordinator: some MainCoordinatorProtocol) -> ViewController
 }

@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol MainCoordinatorProtocol: AnyObject {
-    func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
-        where ConversationFilter: MainConversationFilterRepresentable
-    func showArchivedConversations() async
-    func showSelfProfile() async
-    func showSettings() async
-    func showNewConversation() async
+import UIKit
+import WireUIFoundation
+
+struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    @MainActor
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
 }

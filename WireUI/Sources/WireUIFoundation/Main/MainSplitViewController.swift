@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-// TODO: unit tests
-
 public final class MainSplitViewController<
 
     Sidebar: MainSidebarProtocol,
