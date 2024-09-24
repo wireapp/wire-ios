@@ -32,7 +32,7 @@ final class MessageInfoExtractorTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
-        
+
         coreDataStack = CoreDataStack(account: .init(userName: "F", userIdentifier: .create()),
                                       applicationContainer: URL(fileURLWithPath: "/dev/null"),
                                       inMemoryStore: true)
