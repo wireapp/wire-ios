@@ -38,6 +38,8 @@ import WireDesign
  */
 protocol SettingsCellDescriptorType: AnyObject {
 
+    static var cellType: SettingsTableCellProtocol.Type {get}
+
     var visible: Bool { get }
     var title: String { get }
     var identifier: String? { get }
