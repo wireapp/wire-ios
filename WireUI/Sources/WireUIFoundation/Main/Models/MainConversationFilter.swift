@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum ConversationFilterType: Sendable {
-    case favorites
-    case groups
-    case oneToOneConversations
+public enum MainConversationFilter: Sendable {
+    case favorites, groups, oneOnOne
+}
+
+public protocol MainConversationFilterRepresentable: Sendable {
+    init(_ mainConversationFilter: MainConversationFilter)
+    func map() -> MainConversationFilter
 }

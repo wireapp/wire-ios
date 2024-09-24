@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum ConversationFilterType: Sendable {
-    case favorites
-    case groups
-    case oneToOneConversations
+import SwiftUI
+
+@MainActor
+func MainSplitViewControllerPreview() -> UISplitViewController {
+    let splitViewController = MainSplitViewController<PreviewSidebarViewController, PreviewConversationListViewController>(
+        sidebar: PreviewSidebarViewController("sidebar"),
+        noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
+        tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
+    )
+    splitViewController.conversationList = PreviewConversationListViewController("conversation list")
+    return splitViewController
 }

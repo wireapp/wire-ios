@@ -16,31 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPackage
-import XCTest
+import SwiftUI
 
-@testable import WireUIFoundation
-
-final class MainTabBarControllerTests: XCTestCase {
-
-    private var snapshotHelper: SnapshotHelper!
-
-    override func setUp() {
-        snapshotHelper = .init()
-            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-    }
-
-    override func tearDown() {
-        snapshotHelper = nil
-    }
-
-    @MainActor
-    func testAppearance() {
-        let sut = MainTabBarControllerPreview()
-        snapshotHelper
-            .verify(matching: sut, named: "light", testName: "light")
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark", testName: "dark")
+/// A simple view which displays a text centered horizontally and vertically.
+/// Used for previews only.
+struct LabelView: View {
+    var content: String
+    var backgroundColor: Color
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                Text(content)
+                    .ignoresSafeArea()
+                Spacer()
+            }
+            Spacer()
+        }.background(backgroundColor)
     }
 }

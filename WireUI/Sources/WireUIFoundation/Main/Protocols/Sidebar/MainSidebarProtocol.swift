@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum ConversationFilterType: Sendable {
-    case favorites
-    case groups
-    case oneToOneConversations
+import UIKit
+
+@MainActor
+public protocol MainSidebarProtocol: UIViewController {
+    associatedtype MenuItem: MainSidebarMenuItemRepresentable
+    var selectedMenuItem: MenuItem { get set }
 }

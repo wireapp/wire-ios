@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum ConversationFilterType: Sendable {
-    case favorites
-    case groups
-    case oneToOneConversations
+public enum MainSidebarMenuItem: Sendable {
+    // conversation filters
+    case all, favorites, groups, oneOnOne, archive
+    // contact
+    case connect
+    // bottom
+    case settings
 }

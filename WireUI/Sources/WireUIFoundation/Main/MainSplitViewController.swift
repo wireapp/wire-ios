@@ -18,67 +18,96 @@
 
 import SwiftUI
 
-public final class MainSplitViewController<Sidebar, ConversationList, Conversation, TabContainer>: UISplitViewController, MainSplitViewControllerProtocol where
-    Sidebar: UIViewController,
-    ConversationList: UIViewController,
-    Conversation: UIViewController,
-    TabContainer: UIViewController {
+// TODO: unit tests
 
-    public typealias Sidebar = UIViewController
-    public typealias ConversationList = UIViewController
-    public typealias Conversation = UIViewController
-    public typealias TabContainer = UIViewController
+public final class MainSplitViewController<
+
+    Sidebar: MainSidebarProtocol,
+    ConversationList: MainConversationListProtocol
+
+>: UISplitViewController, MainSplitViewControllerProtocol {
+
     public typealias NoConversationPlaceholderBuilder = () -> UIViewController
 
-    // MARK: - Public Properties
+    /// If the width of the view is lower than this value, the `preferredDisplayMode` property
+    /// will be set to `.oneBesideSecondary`, otherwise to `.twoBesideSecondary`.
+    private let sidebarVisibilityThreshold: CGFloat = 768
 
-    public var sidebar: Sidebar {
-        viewController(for: .primary) as! Sidebar
-    }
+    // MARK: - Primary Column
 
-    public var conversationList: ConversationList? {
-        get {
-            let navigationController = viewController(for: .supplementary) as! UINavigationController
-            return navigationController.viewControllers.first.map { $0 as! ConversationList }
-        }
-        set {
-            let navigationController = viewController(for: .supplementary) as! UINavigationController
-            navigationController.viewControllers = [newValue].compactMap { $0 }
-        }
-    }
+    public private(set) weak var sidebar: Sidebar!
 
-    public var conversation: Conversation? {
-        get {
-            let navigationController = viewController(for: .secondary) as! UINavigationController
-            if navigationController.viewControllers.first === noConversationPlaceholder {
-                return nil
-            } else {
-                return navigationController.viewControllers.first.map { $0 as! Conversation }
-            }
-        }
-        set {
-            let navigationController = viewController(for: .secondary) as! UINavigationController
-            navigationController.viewControllers = [newValue ?? noConversationPlaceholder]
+    // MARK: - Supplementary Column
+
+    public weak var conversationList: ConversationList? {
+        didSet {
+            supplementaryNavigationController?.viewControllers = [conversationList].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
         }
     }
 
-    public var tabContainer: TabContainer {
-        viewController(for: .compact) as! TabContainer
+    public weak var archive: UIViewController? {
+        didSet {
+            supplementaryNavigationController?.viewControllers = [archive].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
     }
+
+    public weak var newConversation: UIViewController? {
+        didSet {
+            supplementaryNavigationController?.viewControllers = [newConversation].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
+    public weak var settings: UIViewController? {
+        didSet {
+            supplementaryNavigationController?.viewControllers = [settings].compactMap { $0 }
+            supplementaryNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
+    // MARK: - Secondary Column
+
+    public weak var conversation: UIViewController? {
+        didSet {
+            secondaryNavigationController?.viewControllers = [conversation ?? noConversationPlaceholder].compactMap { $0 }
+            secondaryNavigationController?.view.layoutIfNeeded()
+        }
+    }
+
+    // MARK: - Compact/Collapsed
+
+    public private(set) weak var tabContainer: UIViewController!
 
     // MARK: - Private Properties
 
+    /// This view controller is displayed when no conversation in the list is selected.
     private let noConversationPlaceholder: UIViewController
+
+    private weak var supplementaryNavigationController: UINavigationController?
+    private weak var secondaryNavigationController: UINavigationController?
 
     // MARK: - Initialization
 
     public init(
         sidebar: @autoclosure () -> Sidebar,
-        noConversationPlaceholder: @autoclosure () -> UIViewController,
-        tabContainer: @autoclosure () -> TabContainer
+        noConversationPlaceholder: @autoclosure NoConversationPlaceholderBuilder,
+        tabContainer: @autoclosure () -> UIViewController
     ) {
+        let sidebar = sidebar()
         let noConversationPlaceholder = noConversationPlaceholder()
+        let tabContainer = tabContainer()
+        let supplementaryNavigationController = UINavigationController()
+        let secondaryNavigationController = UINavigationController(rootViewController: noConversationPlaceholder)
+
         self.noConversationPlaceholder = noConversationPlaceholder
+        self.supplementaryNavigationController = supplementaryNavigationController
+        self.secondaryNavigationController = secondaryNavigationController
+
+        self.sidebar = sidebar
+        self.tabContainer = tabContainer
+
         super.init(style: .tripleColumn)
 
         preferredSplitBehavior = .tile
@@ -86,15 +115,33 @@ public final class MainSplitViewController<Sidebar, ConversationList, Conversati
         preferredPrimaryColumnWidth = 260
         preferredSupplementaryColumnWidth = 320
 
-        setViewController(sidebar(), for: .primary)
-        setViewController(UINavigationController(), for: .supplementary)
-        setViewController(UINavigationController(rootViewController: noConversationPlaceholder), for: .secondary)
-        setViewController(tabContainer(), for: .compact)
+        setViewController(sidebar, for: .primary)
+        setViewController(supplementaryNavigationController, for: .supplementary)
+        setViewController(secondaryNavigationController, for: .secondary)
+        setViewController(tabContainer, for: .compact)
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
+    }
+
+    override public func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setPreferredDisplayMode(basedOn: view.frame.size.width)
+    }
+
+    override public func viewWillTransition(to size: CGSize, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        setPreferredDisplayMode(basedOn: size.width)
+    }
+
+    private func setPreferredDisplayMode(basedOn width: CGFloat) {
+        preferredDisplayMode = if width >= sidebarVisibilityThreshold {
+            .twoBesideSecondary
+        } else {
+            .oneBesideSecondary
+        }
     }
 }
 
@@ -102,13 +149,5 @@ public final class MainSplitViewController<Sidebar, ConversationList, Conversati
 
 @available(iOS 17, *)
 #Preview {
-    {
-        let splitViewController = MainSplitViewController(
-            sidebar: UIHostingController(rootView: Text(verbatim: "sidebar")),
-            noConversationPlaceholder: UIHostingController(rootView: Text(verbatim: "no conversation placeholder")),
-            tabContainer: UIHostingController(rootView: Text(verbatim: "tab bar controller"))
-        )
-        splitViewController.conversationList = UIHostingController(rootView: Text(verbatim: "conversation list"))
-        return splitViewController
-    }()
+    MainSplitViewControllerPreview()
 }

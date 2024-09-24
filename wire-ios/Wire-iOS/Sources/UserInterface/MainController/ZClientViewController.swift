@@ -40,7 +40,9 @@ final class ZClientViewController: UIViewController {
 
     // TODO [WPB-9867]: make private or remove this property
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
-    private(set) var mainTabBarController: MainTabBarController<UIViewController, UIViewController, UIViewController, UIViewController>!
+    private(set) var mainTabBarController: MainTabBarController<ConversationListViewController>!
+    // TODO [WPB-6647]: Remove in navigation overhaul
+    private var tabBarChangeHandler: TabBarChangeHandler!
 
     private var selfProfileViewControllerBuilder: SelfProfileViewControllerBuilder {
         .init(
@@ -179,15 +181,9 @@ final class ZClientViewController: UIViewController {
 
         wireSplitViewController.view.backgroundColor = .clear
 
-        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
-            userSession: userSession,
-            selfUser: userSession.selfUserLegalHoldSubject
-        )
-
-        mainTabBarController = MainTabBarController()
-        mainTabBarController[tab: .conversations].viewControllers = [conversationListViewController]
-        mainTabBarController[tab: .archive].viewControllers = [createArchivedListViewController()]
-        mainTabBarController[tab: .settings].viewControllers = [settingsViewControllerBuilder.build()]
+        mainTabBarController = .init()
+        mainTabBarController.conversations = (conversationListViewController, nil)
+        mainTabBarController.folders = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
 
         if pendingInitialStateRestore {

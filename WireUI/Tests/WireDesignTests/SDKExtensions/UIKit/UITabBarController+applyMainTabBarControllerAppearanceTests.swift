@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireUIFoundation
+@testable import WireDesign
 
-final class MainTabBarControllerTests: XCTestCase {
+final class UITabBarController_applyMainTabBarControllerAppearanceTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
 
@@ -35,12 +36,23 @@ final class MainTabBarControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testAppearance() {
-        let sut = MainTabBarControllerPreview()
-        snapshotHelper
-            .verify(matching: sut, named: "light", testName: "light")
+    func testUIFontDarkUserInterfaceStyle() {
+        let sut = MainTabBarControllerAppearancePreview()
         snapshotHelper
             .withUserInterfaceStyle(.dark)
-            .verify(matching: sut, named: "dark", testName: "dark")
+            .verify(matching: sut)
+    }
+
+    @available(iOS 17, *) @MainActor
+    func testUIFontContentSizeCategories() {
+        let sut = MainTabBarControllerAppearancePreview()
+        for contentSizeCategory in [UIContentSizeCategory.small, .accessibilityExtraExtraExtraLarge] {
+            sut.traitOverrides.preferredContentSizeCategory = contentSizeCategory
+            snapshotHelper
+                .verify(
+                    matching: sut,
+                    named: "\(contentSizeCategory)"
+                )
+        }
     }
 }

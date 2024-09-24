@@ -16,17 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+public protocol MainSidebarMenuItemRepresentable: Sendable {
+    init(_ mainSidebarMenuItem: MainSidebarMenuItem)
+    func map() -> MainSidebarMenuItem
+}
 
-@MainActor
-public protocol MainTabBarControllerProtocol: UITabBarController {
-    associatedtype ConversationList: UIViewController
-    associatedtype Conversation: UIViewController
-    associatedtype Archive: UIViewController
-    associatedtype Settings: UIViewController
-
-    /// In the compact layout the conversation view controller will be pushed onto the navigation controller of the conversation list.
-    var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
-    var archive: Archive? { get set }
-    var settings: Settings? { get set }
+extension MainSidebarMenuItem: MainSidebarMenuItemRepresentable {
+    public init(_ mainSidebarMenuItem: MainSidebarMenuItem) { self = mainSidebarMenuItem }
+    public func map() -> MainSidebarMenuItem { self }
 }

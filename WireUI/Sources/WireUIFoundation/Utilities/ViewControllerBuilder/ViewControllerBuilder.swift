@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum ConversationFilterType: Sendable {
-    case favorites
-    case groups
-    case oneToOneConversations
+import UIKit
+
+// TODO: consider removing/replacing?
+public protocol ViewControllerBuilder {
+    func build() -> UIViewController
 }

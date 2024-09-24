@@ -17,64 +17,339 @@
 //
 
 import UIKit
+import WireFoundation
 
-public final class MainCoordinator<MainSplitViewController, MainTabBarController, Conversation, ConversationMessage>: MainCoordinatorProtocol, UISplitViewControllerDelegate
-    where MainSplitViewController: MainSplitViewControllerProtocol, MainTabBarController: MainTabBarControllerProtocol {
+// TODO: unit tests
 
-    private weak var mainSplitViewContent: MainSplitViewController?
-    private weak var mainTabBarContent: MainTabBarController?
+@MainActor
+public final class MainCoordinator<
 
-    // TODO: setup inside or outside?
-    // only navigation here?
-    // protocols/accessors for each navigation controller? or viewControllers array
+    SplitViewController: MainSplitViewControllerProtocol,
+    TabBarController: MainTabBarControllerProtocol,
+    NewConversationBuilder: MainCoordinatorInjectingViewControllerBuilder,
+    SelfProfileBuilder: MainCoordinatorInjectingViewControllerBuilder
 
-    @discardableResult
+>: NSObject, MainCoordinatorProtocol, UISplitViewControllerDelegate, UITabBarControllerDelegate where
+
+    SplitViewController.Sidebar: MainSidebarProtocol,
+    SplitViewController.ConversationList == TabBarController.ConversationList,
+SplitViewController.Archive == TabBarController.Archive,
+SplitViewController.Settings == TabBarController.Settings
+
+{
+    // MARK: - Private Properties
+
+    private weak var splitViewController: SplitViewController!
+    private weak var tabBarController: TabBarController!
+
+    private let newConversationBuilder: NewConversationBuilder
+    private weak var newConversation: UIViewController?
+
+    private var selfProfileBuilder: SelfProfileBuilder
+    private weak var selfProfile: UIViewController?
+
+    private var mainSplitViewState: MainSplitViewState = .expanded
+
+    // MARK: - Private Helpers
+
+    private var sidebar: SplitViewController.Sidebar! {
+        splitViewController.sidebar
+    }
+
+    private var conversationList: TabBarController.ConversationList! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.conversations?.conversationList
+        case .expanded: splitViewController.conversationList
+        }
+    }
+
+    private var archive: TabBarController.Archive! {
+        switch mainSplitViewState {
+            case .collapsed: tabBarController.archive
+        case .expanded: splitViewController.archive
+        }
+    }
+
+    private var settings: TabBarController.Settings! {
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.settings
+        case .expanded:            splitViewController.settings
+        }
+    }
+
+    // MARK: - Life Cycle
+
     public init(
-        mainSplitViewContent: MainSplitViewController,
-        mainTabBarContent: MainTabBarController
+        mainSplitViewController: SplitViewController,
+        mainTabBarController: TabBarController,
+        newConversationBuilder: NewConversationBuilder,
+        selfProfileBuilder: SelfProfileBuilder
     ) {
-        // self.splitViewController = splitViewController
-        // objc_setAssociatedObject(splitViewController, &associatedObjectKey, self, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        self.splitViewController = mainSplitViewController
+        self.tabBarController = mainTabBarController
+        self.newConversationBuilder = newConversationBuilder
+        self.selfProfileBuilder = selfProfileBuilder
     }
 
-    public func showConversations() {
-        fatalError("not implemented yet")
+    // MARK: - Public Methods
+
+    public func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) {
+        defer {
+            // switch to the conversation list tab
+            tabBarController.selectedContent = .conversations
+            // TODO: maybe navigationcontroller pop is needed
+
+            // apply the filter to the conversation list
+            let mainConversationFilter = conversationFilter?.map()
+            conversationList.conversationFilter = mainConversationFilter.map { .init($0) }
+
+            // set the right menu item in the sidebar
+            switch mainConversationFilter {
+            case .none:
+                sidebar.selectedMenuItem = .init(.all)
+            case .favorites:
+                sidebar.selectedMenuItem = .init(.favorites)
+            case .groups:
+                sidebar.selectedMenuItem = .init(.groups)
+            case .oneOnOne:
+                sidebar.selectedMenuItem = .init(.oneOnOne)
+            }
+        }
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissArchiveIfNeeded()
+        dismissNewConversationIfNeeded()
+        dismissSettingsIfNeeded()
+        dismissSelfProfileIfNeeded()
+
+        // Move the conversation list from the tab bar controller to the split view controller if needed.
+        if let conversationList = tabBarController.conversations?.conversationList {
+            tabBarController.conversations = nil
+            splitViewController.conversationList = conversationList
+        }
     }
 
-    public func showArchivedConversation() {
-        fatalError("not implemented yet")
+    public func showArchivedConversations() {
+        // switch to the archive tab
+        tabBarController.selectedContent = .archive
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissNewConversationIfNeeded()
+        dismissSettingsIfNeeded()
+        dismissSelfProfileIfNeeded()
+
+        // move the archive from the tab bar controller to the split view controller
+        if let archive = tabBarController.archive {
+            tabBarController.archive = nil
+            splitViewController.archive = archive
+        }
     }
 
     public func showSettings() {
-        fatalError("not implemented yet")
+        tabBarController.selectedContent = .settings
+
+        // In collapsed state switching the tab was all we needed to do.
+        guard mainSplitViewState == .expanded else { return }
+
+        dismissConversationListIfNeeded()
+        dismissArchiveIfNeeded()
+        dismissNewConversationIfNeeded()
+        dismissSelfProfileIfNeeded()
+
+        // move the settings from the tab bar controller to the split view controller
+        if let settings = tabBarController.settings {
+            tabBarController.settings = nil
+            splitViewController.settings = settings
+        }
     }
 
-    public func openConversation(
-        _ conversation: Conversation,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        fatalError("not implemented yet")
+    public func showSelfProfile() {
+        guard selfProfile == nil else {
+            return assertionFailure() // TODO: inject logger instead
+        }
+
+        let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
+        let selfProfile = UINavigationController(rootViewController: rootViewController)
+        selfProfile.modalPresentationStyle = .formSheet
+        self.selfProfile = selfProfile
+
+        splitViewController.present(selfProfile, animated: true)
     }
 
-    public func openConversation(
-        _ conversation: Conversation,
-        andScrollTo message: ConversationMessage,
-        focusOnView focus: Bool,
-        animated: Bool
-    ) {
-        fatalError("not implemented yet")
+    public func showNewConversation() {
+        guard newConversation == nil else {
+            return assertionFailure() // TODO: inject logger instead
+        }
+
+        sidebar.selectedMenuItem = .init(.connect)
+
+        let newConversation = newConversationBuilder.build(mainCoordinator: self)
+        self.newConversation = newConversation
+
+        if mainSplitViewState == .expanded {
+            dismissConversationListIfNeeded()
+            dismissArchiveIfNeeded()
+            dismissSettingsIfNeeded()
+            dismissSelfProfileIfNeeded()
+            splitViewController.newConversation = newConversation
+        } else {
+            let navigationController = UINavigationController(rootViewController: newConversation)
+            //navigationController.modalPresentationStyle = .formSheet
+            splitViewController.present(navigationController, animated: true)
+        }
+    }
+
+    private func dismissConversationListIfNeeded() {
+        // if the conversation list is currently visible, move it back to the tab bar controller
+        if let conversationList = splitViewController.conversationList {
+            splitViewController.conversationList = nil
+            let conversation = tabBarController.conversations?.conversation
+            tabBarController.conversations = (conversationList, conversation)
+        }
+    }
+
+    private func dismissArchiveIfNeeded() {
+        // Move the archive back to the tab bar controller if needed.
+        if let archive = splitViewController.archive {
+            splitViewController.archive = nil
+            tabBarController.archive = archive
+        }
+    }
+
+    private func dismissNewConversationIfNeeded() {
+        // Dismiss the new conversation view controller if it's visible in the split view controller.
+        if let newConversation = splitViewController.newConversation {
+            splitViewController.newConversation = nil
+            newConversation.navigationController?.presentingViewController?.dismiss(animated: true)
+        }
+    }
+
+    private func dismissSettingsIfNeeded() {
+        // Move the settings back to the tab bar controller if it's visible in the split view controller.
+        if let settings = splitViewController.settings {
+            splitViewController.settings = nil
+            tabBarController.settings = settings
+        }
+    }
+
+    private func dismissSelfProfileIfNeeded() {
+        // Dismiss the settings view controller if it's being presentd.
+        selfProfile?.dismiss(animated: true)
     }
 
     // MARK: - UISplitViewControllerDelegate
 
-    public func splitViewControllerDidCollapse(_: UISplitViewController) {
-        fatalError("not implemented yet")
+    public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
+        guard let splitViewController = splitViewController as? SplitViewController,
+              splitViewController === self.splitViewController
+        else { return assertionFailure() } // TODO: inject logger instead
+
+        // move view controllers from the split view controller's columns to the tab bar controller
+        if let conversationListViewController = splitViewController.conversationList {
+            splitViewController.conversationList = nil
+            tabBarController.conversations = (conversationListViewController, nil)
+            // TODO: conversations
+        }
+
+        // move the archived conversations list back to the tab bar controller if needed
+        if let archive = splitViewController.archive {
+            splitViewController.archive = nil
+            tabBarController.archive = archive
+        }
+
+        // move the settings back to the tab bar controller if needed
+        if let settings = splitViewController.settings {
+            splitViewController.settings = nil
+            tabBarController.settings = settings
+        }
+
+        // take out the new conversation controller from the supplementary column's navigation
+        // controller and put it into a separate one for modal presentation
+        if let newConversation = splitViewController.newConversation {
+            splitViewController.newConversation = nil
+            let navigationController = UINavigationController(rootViewController: newConversation)
+            //navigationController.modalPresentationStyle = .fullScreen
+            splitViewController.present(navigationController, animated: false)
+        }
+
+        mainSplitViewState = .collapsed
+        conversationList.splitViewInterface = .collapsed
     }
 
-    public func splitViewControllerDidExpand(_: UISplitViewController) {
-        fatalError("not implemented yet")
+    public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
+        guard let splitViewController = splitViewController as? SplitViewController,
+              splitViewController === self.splitViewController
+        else { return assertionFailure() } // TODO: inject logger instead
+
+        // move view controllers from the tab bar controller to the supplementary column
+        if tabBarController.selectedContent == .conversations {
+            let conversationViewController = tabBarController.conversations!.conversationList
+            tabBarController.conversations = nil
+            splitViewController.conversationList = conversationViewController
+            // TODO: conversations
+        }
+
+        // if the archived conversations view controller was visible, present it
+        if tabBarController.selectedContent == .archive {
+            let archive = tabBarController.archive
+            tabBarController.archive = nil
+            splitViewController.archive = archive
+        }
+
+        // if the settings were visible, present it
+        if tabBarController.selectedContent == .settings {
+            let settings = tabBarController.settings
+            tabBarController.settings = nil
+            splitViewController.settings = settings
+        }
+
+        // the new conversation view controller in collapsed mode is
+        // presented in a separate navigation controller
+        if let newConversation {
+            let navigationController = newConversation.navigationController!
+            navigationController.presentingViewController!.dismiss(animated: false)
+            navigationController.viewControllers = []
+            navigationController.view.layoutIfNeeded()
+            splitViewController.newConversation = newConversation
+        }
+
+        mainSplitViewState = .expanded
+        let conversationList = (tabBarController.conversations?.conversationList ?? splitViewController.conversationList)
+        conversationList!.splitViewInterface = .expanded
+    }
+
+    // MARK: - UITabBarControllerDelegate
+
+    public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        guard let tabBarController = tabBarController as? TabBarController,
+              tabBarController === self.tabBarController
+        else { return assertionFailure() } // TODO: inject logger instead
+
+        switch tabBarController.selectedContent {
+
+        case .contacts, .folders:
+            break // `.contacts` and `.folders` are removed for navigation overhaul
+
+        case .conversations:
+            switch conversationList.conversationFilter?.map() {
+            case .none:
+                sidebar.selectedMenuItem = .init(.all)
+            case .favorites:
+                sidebar.selectedMenuItem = .init(.favorites)
+            case .groups:
+                sidebar.selectedMenuItem = .init(.groups)
+            case .oneOnOne:
+                sidebar.selectedMenuItem = .init(.oneOnOne)
+            }
+        case .archive:
+            sidebar.selectedMenuItem = .init(.archive)
+        case .settings:
+            sidebar.selectedMenuItem = .init(.settings)
+        }
     }
 }
-
-// private nonisolated(unsafe) var associatedObjectKey = 0

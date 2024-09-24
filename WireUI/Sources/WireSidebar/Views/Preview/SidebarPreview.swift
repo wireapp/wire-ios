@@ -22,8 +22,8 @@ import WireFoundation
 @available(iOS 17.0, *)
 struct SidebarPreview: View {
 
-    private let primarySplitColumnWidth: CGFloat = 160
-    private let supplementarySplitColumnWidth: CGFloat = 280
+    private let primarySplitColumnWidth: CGFloat = 280
+    private let supplementarySplitColumnWidth: CGFloat = 160
 
     @State private var accountInfo = SidebarAccountInfo(
         displayName: "Firstname Lastname",

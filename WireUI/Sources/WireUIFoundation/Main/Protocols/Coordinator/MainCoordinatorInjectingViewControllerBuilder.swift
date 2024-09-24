@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-enum ConversationFilterType: Sendable {
-    case favorites
-    case groups
-    case oneToOneConversations
+import UIKit
+
+public protocol MainCoordinatorInjectingViewControllerBuilder {
+    associatedtype ViewController: UIViewController
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> ViewController
 }
