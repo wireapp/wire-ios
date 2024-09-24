@@ -19,7 +19,7 @@
 import SwiftUI
 import WireFoundation
 
-struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView: View {
+struct SidebarAccountInfoView<AccountImageView>: View where AccountImageView: View {
 
     @Environment(\.sidebarProfileSwitcherDisplayNameColor) private var displayNameColor
     @Environment(\.sidebarProfileSwitcherUsernameColor) private var usernameColor
@@ -78,7 +78,7 @@ struct SidebarProfileSwitcherView<AccountImageView>: View where AccountImageView
     }
 }
 
-extension SidebarProfileSwitcherView {
+extension SidebarAccountInfoView {
 
     init(
         _ displayName: String,
@@ -151,19 +151,5 @@ private struct SidebarProfileSwitcherUsernameColorKey: EnvironmentKey {
 // MARK: - Previews
 
 #Preview {
-    SidebarProfileSwitcherViewPreview()
-}
-
-@ViewBuilder @MainActor
-func SidebarProfileSwitcherViewPreview() -> some View {
-    SidebarProfileSwitcherView(displayName: "Firstname Lastname", username: "@username") {
-        MockAccountView()
-    }
-}
-
-private struct MockAccountView: View {
-    var body: some View {
-        Circle()
-            .foregroundStyle(Color.primary)
-    }
+    SidebarAccountInfoPreview()
 }

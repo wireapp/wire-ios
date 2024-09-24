@@ -16,6 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum SidebarConversationFilter: CaseIterable {
-    case favorites, groups, oneOnOne, archived
+public enum SidebarMenuItem: CaseIterable, Comparable {
+    // conversation filters
+    case all, favorites, groups, oneOnOne
+    // archived conversations
+    case archive
+    // contact
+    case connect
+    // bottom
+    case settings
 }
