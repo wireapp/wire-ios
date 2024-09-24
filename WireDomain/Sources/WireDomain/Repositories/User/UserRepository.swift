@@ -188,7 +188,7 @@ public final class UserRepository: UserRepositoryProtocol {
 
             user.supportedProtocols = event.supportedProtocols?.toDomainModel() ?? [.proteus]
 
-            user.needsToBeUpdatedFromBackend = false
+            user.isPendingMetadataRefresh = false
 
             try context.save()
         }
