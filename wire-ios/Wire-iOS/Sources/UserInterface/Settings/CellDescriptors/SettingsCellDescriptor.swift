@@ -38,7 +38,7 @@ import WireDesign
  */
 protocol SettingsCellDescriptorType: AnyObject {
 
-    static var cellType: SettingsTableCellProtocol.Type {get}
+    static var cellType: SettingsTableCellProtocol.Type { get }
 
     var visible: Bool { get }
     var title: String { get }
@@ -154,6 +154,10 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 }
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
+
+
+    static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
+
 
     typealias Cell = SettingsTableCell
 
