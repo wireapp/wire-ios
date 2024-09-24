@@ -16,26 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CommonCrypto
 import Foundation
 
-/// Errors originating from `TeamRepository`.
+/// Errors originating from `AES256Crypto`.
 
-enum TeamRepositoryError: Error {
+public enum AES256CryptoError: Error, Equatable {
 
-    /// Failed to fetch data from the server.
+    /// A supplied key is not the correct length.
 
-    case failedToFetchRemotely(Error)
+    case invalidKeyLength
 
-    /// The local team instance was not found in the database.
+    /// A crypto error occured.
 
-    case teamNotFoundLocally
-
-    /// User is not a member of the team.
-
-    case userNotAMemberInTeam(user: UUID, team: UUID)
-
-    /// Failed to find team member locally.
-
-    case failedToFindTeamMember(_ membershipID: UUID)
+    case cryptorError(CCCryptorStatus)
 
 }
