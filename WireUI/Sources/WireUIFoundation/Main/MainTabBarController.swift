@@ -120,7 +120,6 @@ public final class MainTabBarController<
         ]
         for content in Content.allCases {
             switch content {
-
             case .contacts:
                 let tabBarItem = UITabBarItem(
                     title: String(localized: "tabBar.contacts.title", bundle: .module),
@@ -197,7 +196,7 @@ public final class MainTabBarController<
         tabBar.standardAppearance = tabBarAppearance
     }
 
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
 
         if #available(iOS 18.0, *) {
