@@ -48,9 +48,10 @@ public final class ClientMessageRequestFactory: NSObject {
             // So, not sure if we should use it with v0 on non-federated endpoints
             // But, if so, we can create the message once for all versions
             message = Proteus_NewOtrMessage(
-                withSender: selfClient,
+                withSenderId: selfClient.clientId.client,
                 nativePush: false,
-                recipients: []
+                recipients: [],
+                missingClientsStrategy: .doNotIgnoreAnyMissingClient
             )
 
         case .v1, .v2, .v3, .v4, .v5, .v6:
