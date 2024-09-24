@@ -18,8 +18,8 @@
 
 import SwiftUI
 
-/// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
-/// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
+/// A subclass of `UITabBarController` which configures its `viewControllers` property to match
+/// ``MainTabBarControllerContent``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<
 
     ConversationList: MainConversationListProtocol

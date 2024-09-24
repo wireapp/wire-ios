@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Handles the navigation when a user is authenticated.
 public protocol MainCoordinatorProtocol: AnyObject {
     func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
         where ConversationFilter: MainConversationFilterRepresentable
