@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-// TODO: unit tests
-
 /// A subclass of `UITabBarController` which preconfigures its `viewControllers` property to match
 /// ``MainTabBarController.Tab``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<
@@ -177,7 +175,7 @@ public final class MainTabBarController<
                 settingsNavigationController.tabBarItem = tabBarItem
             }
         }
-        viewControllers?.removeLast() // will be fixed with navigation overhaul
+        viewControllers?.removeLast() // this line will be removed with navigation overhaul
         selectedContent = .conversations
     }
 
