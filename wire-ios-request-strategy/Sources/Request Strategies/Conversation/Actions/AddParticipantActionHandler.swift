@@ -152,8 +152,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.succeed()
             }
             Task {
-                await eventProcessor.processConversationEvents([updateEvent])
-                await context.perform { _ = self.context.saveOrRollback() }
+                await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }
 

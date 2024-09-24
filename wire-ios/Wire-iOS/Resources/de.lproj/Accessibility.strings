@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@
 "contactsList.memberIcon.description" = "Mitglied";
 "contactsList.userCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
 "contactsList.pendingConnection.hint" = "Doppeltippen, um Profil zu öffnen";
-"contactsList.closeButton.description" = "Kontaktliste schließen";
+"contactsList.closeButton.description" = "Close contact list";
 
 "servicesList.serviceCell.hint" = "Doppeltippen, um Dienstdetails zu öffnen";
 
@@ -259,14 +259,6 @@
 "calling.headerBar.description" = "Anrufansicht verkleinern";
 "calling.status.connecting" = "Verbindung wird hergestellt";
 
-"tabBar.contacts.description" = "Kontakte";
-"tabBar.contacts.hint" = "Doppeltippen, um nach Personen zu suchen und Kontaktliste zu öffnen";
-"tabBar.conversations.description" = "Liste der letzten Unterhaltungen";
-"tabBar.conversations.hint" = "Doppeltippen, um Liste der letzten Unterhaltungen zu öffnen";
-"tabBar.folders.description" = "Liste der in Ordnern organisierten Unterhaltungen";
-"tabBar.folders.hint" = "Doppeltippen, um Liste der in Ordnern organisierten Unterhaltungen zu öffnen";
-"tabBar.archived.description" = "Archiv";
-"tabBar.archived.hint" = "Doppeltippen, um Liste archivierter Unterhaltungen zu öffnen";
 "tabBar.item.value" = "Ausgewählt";
 
 "landing.loginEnterpriseButton.description" = "Mit SSO anmelden";

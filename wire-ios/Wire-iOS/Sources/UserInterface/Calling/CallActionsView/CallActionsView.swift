@@ -140,7 +140,7 @@ final class CallActionsView: UIView {
             bottomStackView.topAnchor.constraint(equalTo: topStackView.topAnchor),
             bottomStackView.heightAnchor.constraint(equalTo: endCallButton.heightAnchor),
             bottomStackView.trailingAnchor.constraint(lessThanOrEqualTo: topStackView.leadingAnchor),
-            bottomStackView.leadingAnchor.constraint(equalTo: safeLeadingAnchor, constant: 40),
+            bottomStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor, constant: 40),
             verticalStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ]
     }

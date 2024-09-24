@@ -25,7 +25,7 @@ public enum UserProperty: Equatable, Codable {
 
     /// Whether the self user has enabled read receipts.
 
-    case areReadRecieptsEnabled(Bool)
+    case areReadReceiptsEnabled(Bool)
 
     /// Whether the self user has enabled typing indicators.
 

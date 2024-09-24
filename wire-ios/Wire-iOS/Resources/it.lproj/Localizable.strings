@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Stanza degli ospiti";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Tu)";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Invita altre persone ad unirsi al team";
 "peoplepicker.quick-action.open-conversation" = "Apri";
 "peoplepicker.quick-action.create-conversation" = "Crea gruppo";
-"peoplepicker.quick-action.create-guest-room" = "Crea stanza degli ospiti";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Gestisci servizi";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Tocca per attivare.";
 "conversation_list.header.self_team.accessibility_value.active" = "Attiva ora.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Ha nuovi messaggi.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Contatti";
-"conversation_list.bottom_bar.conversations.title" = "Conversazioni";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archivia";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contatti";

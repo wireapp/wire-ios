@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Napauta aktivoidaksesi.";
 "conversation_list.header.self_team.accessibility_value.active" = "Aktiivinen nyt.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "On uusia viestejä.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Yhteystiedot";
-"conversation_list.bottom_bar.conversations.title" = "Keskustelut";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Arkistoi";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "yhteystiedoissa";
@@ -1922,13 +1916,6 @@
 
 "url_action.invalid_link.title" = "Invalid link.";
 "url_action.invalid_link.message" = "The link you opened is not valid.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "Voit perua tilauksen milloin tahansa.";
-"news_offers.consent.button.privacy_policy.title" = "Yksityisyyskäytännöt";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

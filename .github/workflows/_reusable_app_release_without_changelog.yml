@@ -1,0 +1,164 @@
+on:
+  workflow_call:
+    inputs:
+      fastlane_action:
+        required: true
+        type: string
+      is_cloud_build:
+        type: boolean
+        default: true
+      datadog_enabled:
+        type: boolean
+        default: false
+      skip_security_tests:
+        type: boolean
+        default: true
+      distribute_externals:
+        type: boolean
+        default: false
+      pr_s3_path:
+        required: false
+        type: string
+
+    secrets:
+      KEYCHAIN_PASSWORD:
+        required: true
+      APPSTORE_API_KEY_BASE64:
+        required: true
+      MATCH_PASSWORD:
+        required: true
+      WIRE_INTERNAL_GITHUB_USER:
+        required: true
+      WIRE_INTERNAL_GITHUB_TOKEN:
+        required: true
+      APPCENTER_API_TOKEN:
+        required: true
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      DD_API_KEY:
+        required: true
+      DATADOG_APP_ID:
+        required: true
+      DATADOG_CLIENT_TOKEN:
+        required: true
+      C1_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C1_APP_CENTER_APP_NAME_RESTRICTED:
+        required: true
+      C1_S3_SUBFOLDER_PRODUCTION:
+        required: true
+      C1_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true
+      C3_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C3_APP_CENTER_APP_NAME_RESTRICTED:
+        required: true
+      C3_S3_SUBFOLDER_PRODUCTION:
+        required: true
+      C3_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true
+      PLAYGROUND_TESTFLIGHT_LINK:
+        required: true
+      BETA_TESTFLIGHT_LINK:
+        required: true
+      COUNTLY_PRODUCTION_KEY:
+        required: true
+      COUNTLY_INTERNAL_KEY:
+        required: true  
+      SUBMODULE_PAT:
+        required: true
+
+env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+
+permissions: 
+  checks: write
+
+jobs:
+      
+  build_and_release:
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
+    env:
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
+      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
+      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
+      APPCENTER_OWNER_NAME: ${{ secrets.APPCENTER_OWNER_NAME }}
+      S3_BUCKET: "z-lohika"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+      DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
+      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
+      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
+      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
+      C1_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C1_APP_CENTER_APP_NAME_RESTRICTED }}
+      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
+      C1_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C1_APP_CENTER_APP_NAME_PRODUCTION }}
+      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
+      C2_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C2_APP_CENTER_APP_NAME_RESTRICTED }}
+      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
+      C2_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C2_APP_CENTER_APP_NAME_PRODUCTION }}
+      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
+      C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
+      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
+      C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
+      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
+      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+      PR_S3_SUBFOLDER: ${{ inputs.pr_s3_path }}
+      
+    steps:
+      - name: Add Masks
+        run: |
+            echo "::add-mask::${{ secrets.CLIENT_NAME_C1_C2_C3 }}"
+            echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.SUBMODULE_PAT }}
+          submodules: recursive
+      - name: Retrieve Xcode version
+        run: |
+          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+        id: xcode-version
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+      - name: Restore Carthage Cache
+        uses: actions/cache@v4
+        id: cache-carthage
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-xcode${{ steps.xcode-version.outputs.XCODE_VERSION }}-carthage-${{ hashFiles('Cartfile.resolved') }}
+      - name: Bootstrap Carthage if no cache
+        if: steps.cache-carthage.outputs.cache-hit != 'true'
+        run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Run setup
+        run: sh ./setup.sh
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+      - name: Trigger build
+        run: bundle exec fastlane ${{ inputs.fastlane_action }}
+      - name: Load .env file
+        if: always()
+        uses: xom9ikk/dotenv@v2.3.0
+        with:
+          path: fastlane/.post_build

@@ -212,6 +212,7 @@ final class ConversationInputBarViewController: UIViewController,
     private var userObserverToken: Any?
     private var typingObserverToken: Any?
     let userSession: UserSession
+    let fileMetaDataGenerator: FileMetaDataGeneratorProtocol
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -342,6 +343,7 @@ final class ConversationInputBarViewController: UIViewController,
         self.userSession = userSession
         self.classificationProvider = classificationProvider
         self.networkStatusObservable = networkStatusObservable
+        fileMetaDataGenerator = FileMetaDataGenerator.shared
 
         super.init(nibName: nil, bundle: nil)
 

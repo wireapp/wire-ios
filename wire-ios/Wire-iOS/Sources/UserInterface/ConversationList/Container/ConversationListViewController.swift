@@ -160,7 +160,10 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-        viewModel.requestMarketingConsentIfNeeded()
+
+        // there are currently always four tab items
+        let offset = (view.bounds.width / 4 * -1.5)
+        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -177,8 +180,6 @@ final class ConversationListViewController: UIViewController {
         zClientViewController?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
-
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
@@ -235,10 +236,10 @@ final class ConversationListViewController: UIViewController {
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+            contentContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            contentContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
@@ -247,7 +248,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
             onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
@@ -317,10 +318,6 @@ final class ConversationListViewController: UIViewController {
             focusOnView: focus,
             animated: animated
         )
-    }
-
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
     }
 }
 

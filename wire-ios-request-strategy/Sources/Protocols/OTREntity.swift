@@ -62,7 +62,7 @@ public protocol OTREntity: AnyObject {
     func addFailedToSendRecipients(_ recipients: [ZMUser])
 
     /// Mark the message as expired
-    func expire()
+    func expire(withReason reason: ExpirationReason)
 }
 
 /// HTTP status of a request that has
@@ -149,13 +149,26 @@ extension OTREntity {
                 in: context
             )
 
-        case .v1, .v2, .v3, .v4, .v5, .v6:
-            guard let payload = Payload.MessageSendingStatus(response) else {
+        case .v1, .v2, .v3:
+            guard let payload = Payload.MessageSendingStatusV1(
+                response,
+                decoder: .defaultDecoder
+            ) else {
                 return (missingClients: Set(), deletedClients: Set())
             }
 
             clientListByUser = processor.missingClientListByUser(
-                from: payload,
+                from: payload.toAPIModel(),
+                context: context
+            )
+
+        case .v4, .v5, .v6:
+            guard let payload = Payload.MessageSendingStatusV4(response) else {
+                return (missingClients: Set(), deletedClients: Set())
+            }
+
+            clientListByUser = processor.missingClientListByUser(
+                from: payload.toAPIModel(),
                 context: context
             )
         }

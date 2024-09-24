@@ -208,10 +208,9 @@ actor EventProcessor: UpdateEventProcessor {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }
-                // swiftlint:disable:next todo_requires_jira_link
-                // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
+
                 for eventConsumer in self.eventAsyncConsumers {
-                    await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
+                    await eventConsumer.processEvents([event])
                 }
 
                 await self.processedEventList.addEvent(event)

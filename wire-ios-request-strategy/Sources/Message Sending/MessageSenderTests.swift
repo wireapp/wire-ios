@@ -357,7 +357,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         // then
-        XCTAssertEqual(NSNumber(value: MessageSendFailure.federationRemoteError.rawValue), message.expirationReasonCode)
+        XCTAssertEqual(NSNumber(value: ExpirationReason.federationRemoteError.rawValue), message.expirationReasonCode)
     }
 
     func testThatWhenSendingProteusMessageFailsWithUnknownFederationError_thenUpdateExpirationReasonCode() async throws {
@@ -394,7 +394,7 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         // then
-        XCTAssertEqual(NSNumber(value: MessageSendFailure.unknown.rawValue), message.expirationReasonCode)
+        XCTAssertEqual(NSNumber(value: ExpirationReason.other.rawValue), message.expirationReasonCode)
     }
 
     func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {

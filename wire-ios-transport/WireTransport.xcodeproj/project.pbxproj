@@ -28,7 +28,6 @@
 		16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D7D9F6265251620049FFCA /* NativePushChannel.swift */; };
 		16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */; };
 		22D0F91C29027191004E2882 /* ProxySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D0F91B29027191004E2882 /* ProxySettings.swift */; };
-		3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
 		5431AC011DB4C8330040343C /* RequestLoopDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */; };
 		5451EF9E1B7A1359002F503B /* Collections+ZMTSafeTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5451EF9D1B7A1359002F503B /* Collections+ZMTSafeTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -100,6 +99,10 @@
 		54CA15DF1B32F791008D3787 /* WireTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15DE1B32F791008D3787 /* WireTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CAD7091BB5411F006FF8E9 /* ZMTLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CAD7081BB54097006FF8E9 /* ZMTLogging.h */; };
 		54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */ = {isa = PBXBuildFile; fileRef = 54EA3E6C1BEA65B80071592B /* Fakes.m */; };
+		591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
+		591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
+		591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
+		591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		596090D52B14C91D0007583F /* ZMUpdateEventTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596090D42B14C91D0007583F /* ZMUpdateEventTypeTests.swift */; };
 		59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB752B74E100008F0E1B /* Date+TransportCoding.swift */; };
 		59FFFB782B74E17C008F0E1B /* TransportCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FFFB772B74E17C008F0E1B /* TransportCoding.swift */; };
@@ -140,15 +143,11 @@
 		CB79AC2D2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC2C2C66613B003CF5F4 /* ZMPersistentCookieStorage.swift */; };
 		CB79AC582C6CFD44003CF5F4 /* WireTransportSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = CB79AC572C6CFD44003CF5F4 /* WireTransportSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CB79AC662C6CFE95003CF5F4 /* HTTPCookie+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB79AC652C6CFE95003CF5F4 /* HTTPCookie+Testing.swift */; };
-		CB79AC752C6D0568003CF5F4 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		CB79AC782C6D0582003CF5F4 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB79AC552C6CFD44003CF5F4 /* WireTransportSupport.framework */; };
 		CE3677691D48B4BA00A8015A /* BackgroundActivityFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3677681D48B4BA00A8015A /* BackgroundActivityFactory.swift */; };
 		E91D2222287429EE0030B481 /* MD5DigestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91D2221287429EE0030B481 /* MD5DigestHelper.swift */; };
 		EE0FBF1C290FCBB1005B93BC /* BackendInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */; };
 		EE50CA142AB19746007A07BF /* ZMAccessTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */; };
-		EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; };
-		EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6ED296F074C001D7C88 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6F0296F079E001D7C88 /* WireUtilities.framework */; };
 		EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */; };
 		EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */; };
 		EEAD28FD2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */; };
@@ -212,20 +211,6 @@
 			remoteInfo = WireTransportSupport;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		EE7F3DED29548F89000D247D /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				EE67F6EF296F074C001D7C88 /* WireTesting.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		01C83761292CC75F009BB0BF /* ProxyCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCredentials.swift; sourceTree = "<group>"; };
@@ -417,7 +402,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE67F6EE296F074C001D7C88 /* WireTesting.framework in Frameworks */,
+				591B6E692C8B09FB009F8A7B /* WireTesting.framework in Frameworks */,
 				BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -426,7 +411,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */,
+				591B6E632C8B09F3009F8A7B /* WireUtilities.framework in Frameworks */,
 				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,8 +420,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */,
 				CB79AC782C6D0582003CF5F4 /* WireTransportSupport.framework in Frameworks */,
+				591B6E662C8B09F7009F8A7B /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -444,8 +429,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB79AC752C6D0568003CF5F4 /* WireTransport.framework in Frameworks */,
 				CB7979092C736835006FBA58 /* XCTest.framework in Frameworks */,
+				591B6E6C2C8B09FE009F8A7B /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,9 +514,9 @@
 		3E88BDE01B1F44FB00232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */,
-				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
 				EE67F6ED296F074C001D7C88 /* WireTesting.framework */,
+				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
+				CB79AC612C6CFDDB003CF5F4 /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -964,7 +949,6 @@
 				09A218621B790D330076547A /* Sources */,
 				09A218631B790D330076547A /* Frameworks */,
 				09A218641B790D330076547A /* Resources */,
-				EE7F3DED29548F89000D247D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
