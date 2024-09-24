@@ -77,7 +77,10 @@ extension ContactsViewController {
             bottomContainerSeparatorView.heightAnchor.constraint(equalToConstant: 0.5)
         ]
 
-        if let superview = inviteOthersButton.superview {
+        guard let superview = inviteOthersButton.superview else {
+            assertionFailure("inviteOthersButton must have a superview before layout is set")
+            return
+        }
             let bottomInset = superview.safeAreaInsets.bottom
             let bottomEdgeConstraint = inviteOthersButton.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: -(standardOffset / 2.0 + bottomInset))
             self.bottomEdgeConstraint = bottomEdgeConstraint
@@ -88,7 +91,6 @@ extension ContactsViewController {
                 inviteOthersButton.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: standardOffset),
                 inviteOthersButton.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: -standardOffset)
             ]
-        }
 
         constraints += [inviteOthersButton.heightAnchor.constraint(equalToConstant: 56)]
 
