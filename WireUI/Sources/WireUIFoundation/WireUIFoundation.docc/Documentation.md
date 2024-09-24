@@ -12,43 +12,62 @@ and split-view navigation patterns.
 
 ## Concept
 
-On large screens the application is presented using a split view layout. The
-primary (left) column contains a sidebar with various menu items:
-- Account Image (allows navigation to the self profile view controller) 
-- All Conversations
-- Filtered conversations (favorites, groups, 1:1 conversations)
-- Archived conversations
-- Connect/New Conversation
-- Settings
+On large screens, the application utilizes a split view layout to optimize the
+user interface. This layout consists of three primary columns:
 
-The supplementary (middle) column will show the list of conversations, the
-connect/new conversation or the settings view.
+1. **Primary (Left) Column:** This column contains a sidebar with various menu
+items:
+   - Account Image (navigates to the user's profile view)
+   - All Conversations
+   - Filtered Conversations (favorites, groups, 1:1 conversations)
+   - Archived Conversations
+   - Connect/Start Conversation
+   - Settings
 
-The secondary (right) column will host the conversation content.
+2. **Supplementary (Middle) Column:** This column displays content related to
+the selected menu item from the sidebar, such as the list of conversations, the
+connect/start conversation interface, or the settings view.
 
-When presented on less horizontal space (horizontal compact size class) the
-split view controller collapses to presenting only a single view controller at
-the time. It could theoretically be any of the three columns or another separate
-column, the `compact` column.
-However, since the `UISplitViewController` will host a `UITabBarController` only
-in the `compact` column, handling the navigation and layout changes must be done
-manually.
-In order to pursue a clean approach the required logic has been extracted into
-the class ``MainCoordinator``.
+3. **Secondary (Right) Column:** This column hosts the conversation content,
+showing the details of the selected conversation.
 
-The application's default view after a successful authentication is the list of
-conversations. The `UISplitViewController`'s default state is expanded.
-For these two reasons the ``MainCoordinator`` expects the conversation list view
-controller to be installed in the provided ``MainSplitViewController`` instance
-and all other view controllers contained in the ``MainTabBarController`` object.
+### Adaptive Layout for Compact Screens
 
-When navigating between the conversation archive, the settings or the start
-conversation, the currently presented view controller will be moved into the tab
-bar controller and the requested view controller moved from the tab bar
-controller into the split view controller.
+When the application is presented on screens with less horizontal space
+(compact horizontal size class), the split view controller automatically
+collapses to display only a single view controller at a time. Depending on the
+user's interaction, this view controller could be any of the three columns or a
+separate "compact" column.
 
-When the layout collapses, the currently presented view controller will also be
-moved to the tab bar controller. The start conversation view controller will be
-presented modally.
+However, since the `UISplitViewController` in this scenario hosts a
+`UITabBarController` exclusively in the compact column, navigation and layout
+adjustments must be managed manually. To maintain a clean and organized
+approach, this logic has been encapsulated within the ``MainCoordinator`` class.
+
+### Navigation and Layout Behavior
+
+Upon successful authentication, the application defaults to displaying the
+conversation list. Accordingly, the `UISplitViewController` starts in an
+expanded state. The ``MainCoordinator`` is designed with this in mind, expecting
+the conversation list view controller to be initialized within the provided
+``MainSplitViewController``, while all other view controllers are managed by the
+``MainTabBarController``.
+
+When navigating between different sections such as the conversation archive,
+settings, or starting a new conversation, the ``MainCoordinator`` handles the
+transition by moving the currently displayed view controller into the tab bar
+controller. The requested view controller is then moved from the tab bar
+controller into the split view controller, ensuring a smooth transition between
+different sections.
+
+During a layout collapse (when the app transitions to a compact horizontal size
+class), the ``MainCoordinator`` will move the currently active view controller
+to the tab bar controller. Additionally, the start conversation view controller
+will be presented modally to maintain user accessibility and workflow
+continuity. 
+
+This design ensures a seamless user experience across various device sizes and
+orientations, with the `MainCoordinator` effectively managing the complex
+transitions and layout changes required by the application.
 
 ## Topics
