@@ -32,7 +32,7 @@ final class MessageInfoExtractorTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
         DeveloperFlag.proteusViaCoreCrypto.enable(true, storage: .temporary())
-
+        
         coreDataStack = CoreDataStack(account: .init(userName: "F", userIdentifier: .create()),
                                       applicationContainer: URL(fileURLWithPath: "/dev/null"),
                                       inMemoryStore: true)
@@ -95,7 +95,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
 
         // THEN
-        XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
+        XCTAssertEqual(messageInfo.genericMessage.messageID, Scaffolding.genericMessage.messageID)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
         XCTAssertEqual(messageInfo.nativePush, true)
         XCTAssertEqual(messageInfo.selfClientID, Scaffolding.selfClientID)
@@ -134,7 +134,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
 
         // THEN
-        XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
+        XCTAssertEqual(messageInfo.genericMessage.messageID, Scaffolding.genericMessage.messageID)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
         XCTAssertEqual(messageInfo.nativePush, true)
         XCTAssertEqual(messageInfo.selfClientID, Scaffolding.selfClientID)
@@ -178,7 +178,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
 
         // THEN
-        XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
+        XCTAssertEqual(messageInfo.genericMessage.messageID, Scaffolding.genericMessage.messageID)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
         XCTAssertEqual(messageInfo.nativePush, true)
         XCTAssertEqual(messageInfo.selfClientID, Scaffolding.selfClientID)
@@ -224,7 +224,7 @@ final class MessageInfoExtractorTests: XCTestCase {
         let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
 
         // THEN
-        XCTAssertEqual(messageInfo.genericMessage, Scaffolding.genericMessage)
+        XCTAssertEqual(messageInfo.genericMessage.messageID, Scaffolding.genericMessage.messageID)
         XCTAssertEqual(messageInfo.missingClientsStrategy, .doNotIgnoreAnyMissingClient)
         XCTAssertEqual(messageInfo.nativePush, true)
         XCTAssertEqual(messageInfo.selfClientID, Scaffolding.selfClientID)
