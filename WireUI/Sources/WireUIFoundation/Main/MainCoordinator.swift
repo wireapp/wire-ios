@@ -21,6 +21,8 @@ import WireFoundation
 
 // TODO: unit tests
 
+// swiftlint:disable opening_brace
+
 /// Manages the main flows of the application after a successful login.
 ///
 /// The MainCoordinator class is the central controller for the app's navigation and layout management.
@@ -45,7 +47,8 @@ public final class MainCoordinator<
     SplitViewController.ConversationList == TabBarController.ConversationList,
     SplitViewController.Archive == TabBarController.Archive,
     SplitViewController.Settings == TabBarController.Settings
-{ // swiftlint:disable:this all
+{
+    // swiftlint:enable opening_brace
 
     // MARK: - Private Properties
 
