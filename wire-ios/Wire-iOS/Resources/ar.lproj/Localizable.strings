@@ -1926,13 +1926,6 @@
 "url_action.invalid_link.message" = "إنّ الرابط الدي قمتَ بفتحه عير صالح.";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Do you want to receive news and product updates from Wire via email?";
-"news_offers.consent.message" = "You can unsubscribe at any time.";
-"news_offers.consent.button.privacy_policy.title" = "سياسة الخصوصية";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
 "message_details.empty_likes" = "No one has reacted to this message yet.";
 "message_details.empty_read_receipts" = "لم يقرأ أحد هذه الرسالة بعد.";

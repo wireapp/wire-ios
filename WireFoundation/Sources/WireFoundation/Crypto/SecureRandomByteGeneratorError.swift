@@ -18,14 +18,13 @@
 
 import Foundation
 
-/**
- * A structure that contains the fields to send after a user
- * session is available.
- */
+/// Errors originating from `SecureRandomByteGenerator`.
 
-struct AuthenticationPostRegistrationFields {
+public enum SecureRandomByteGeneratorError: Error {
 
-    /// The value the user provided for their marketing consent.
-    let marketingConsent: Bool
+    /// Failed to generate random bytes, see the `SecRandomCopyBytes` status
+    /// for more info.
+
+    case failedToGenerateBytes(status: Int32)
 
 }

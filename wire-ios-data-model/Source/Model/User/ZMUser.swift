@@ -258,7 +258,7 @@ extension ZMUser {
     @NSManaged public var expiresAt: Date?
 
     /// `accountIsDeleted` is true if this account has been deleted on the backend
-    @NSManaged public internal(set) var isAccountDeleted: Bool
+    @NSManaged public var isAccountDeleted: Bool
 
     @NSManaged public var usesCompanyLogin: Bool
 

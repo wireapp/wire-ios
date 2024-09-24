@@ -70,7 +70,11 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
         // no-op
     }
 
-    func showNewsletterSubscriptionDialogIfNeeded(
+    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
+// no-op
+}
+
+func showNewsletterSubscriptionDialogIfNeeded(
         completionHandler: @escaping ResultHandler
     ) {
         // no-op

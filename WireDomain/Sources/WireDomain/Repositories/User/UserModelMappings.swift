@@ -61,3 +61,45 @@ extension WireAPI.MessageProtocol {
         }
     }
 }
+
+extension WireAPI.UserClientType {
+
+    func toDomainModel() -> WireDataModel.DeviceType {
+        switch self {
+        case .permanent:
+            .permanent
+        case .temporary:
+            .temporary
+        case .legalhold:
+            .legalHold
+        }
+    }
+
+}
+
+extension WireAPI.DeviceClass {
+    func toDomainModel() -> WireDataModel.DeviceClass {
+        switch self {
+        case .phone:
+            .phone
+        case .tablet:
+            .tablet
+        case .desktop:
+            .desktop
+        case .legalhold:
+            .legalHold
+        }
+    }
+}
+
+extension WireAPI.Prekey {
+
+    func toDomainModel() -> WireDataModel.LegalHoldRequest.Prekey? {
+        guard let data = Data(base64Encoded: base64EncodedKey) else {
+            return nil
+        }
+
+        return .init(id: id, key: data)
+    }
+
+}
