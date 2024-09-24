@@ -197,12 +197,20 @@ SplitViewController.Settings == TabBarController.Settings
             return assertionFailure() // TODO: inject logger instead
         }
 
-        let rootViewController = newConversationBuilder.build(mainCoordinator: self)
-        let newConversation = UINavigationController(rootViewController: rootViewController)
-        newConversation.modalPresentationStyle = .formSheet
+        let newConversation = newConversationBuilder.build(mainCoordinator: self)
         self.newConversation = newConversation
 
-        splitViewController.present(newConversation, animated: true)
+        if mainSplitViewState == .expanded {
+            dismissConversationListIfNeeded()
+            dismissArchiveIfNeeded()
+            dismissSettingsIfNeeded()
+            dismissSelfProfileIfNeeded()
+            splitViewController.newConversation = newConversation
+        } else {
+            let navigationController = UINavigationController(rootViewController: newConversation)
+            navigationController.modalPresentationStyle = .formSheet
+            splitViewController.present(navigationController, animated: true)
+        }
     }
 
     private func dismissConversationListIfNeeded() {

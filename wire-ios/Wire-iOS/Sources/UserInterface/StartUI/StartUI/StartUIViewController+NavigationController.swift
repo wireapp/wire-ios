@@ -37,8 +37,8 @@ extension StartUIViewController {
         button.setTitle(L10n.Localizable.Peoplepicker.Button.createConversation, for: .normal)
         button.titleLabel?.font = UIFont.font(for: .h3)
 
-        let action = UIAction { _ in
-            self.createGroup()
+        let action = UIAction { [weak self] _ in
+            self?.createGroup()
         }
         button.addAction(action, for: .touchUpInside)
 

@@ -85,11 +85,13 @@ final class StartUIViewController: UIViewController {
     ) {
         self.isFederationEnabled = isFederationEnabled
         self.addressBookHelperType = addressBookHelperType
-        self.searchResultsViewController = SearchResultsViewController(userSelection: UserSelection(),
-                                                                       userSession: userSession,
-                                                                       isAddingParticipants: false,
-                                                                       shouldIncludeGuests: true,
-                                                                       isFederationEnabled: isFederationEnabled)
+        self.searchResultsViewController = SearchResultsViewController(
+            userSelection: UserSelection(),
+            userSession: userSession,
+            isAddingParticipants: false,
+            shouldIncludeGuests: true,
+            isFederationEnabled: isFederationEnabled
+        )
         self.userSession = userSession
         profilePresenter = .init(mainCoordinator: mainCoordinator)
         super.init(nibName: nil, bundle: nil)
@@ -131,8 +133,10 @@ final class StartUIViewController: UIViewController {
 
     func setupViews() {
         configGroupSelector()
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: userSession.selfUser.canManageTeam,
-                                                 isFederationEnabled: isFederationEnabled)
+        emptyResultView = EmptySearchResultsView(
+            isSelfUserAdmin: userSession.selfUser.canManageTeam,
+            isFederationEnabled: isFederationEnabled
+        )
 
         emptyResultView.delegate = self
 
