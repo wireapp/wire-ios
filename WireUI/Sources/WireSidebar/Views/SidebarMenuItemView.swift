@@ -18,6 +18,11 @@
 
 import SwiftUI
 
+// TODO: make stylable and remove commented code
+// private let titleForegroundColor: UIColor = .black // Color(ColorTheme.Backgrounds.onBackground)
+// private let linkIconForegroundColor: UIColor = .gray // Color(ColorTheme.Base.secondaryText)
+// private let isPressedForegroundColor: UIColor = .blue // Color(ColorTheme.Base.onPrimary)
+
 struct SidebarMenuItemView: View {
 
     // MARK: - Constants
