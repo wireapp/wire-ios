@@ -51,12 +51,6 @@ SplitViewController.Settings == TabBarController.Settings
 
     private var mainSplitViewState: MainSplitViewState = .expanded
 
-    // TODO: remove
-    private var isLayoutCollapsed: Bool {
-        get { mainSplitViewState == .collapsed }
-        set { mainSplitViewState = true ? .collapsed : .expanded }
-    }
-
     // MARK: - Private Helpers
 
     private var sidebar: SplitViewController.Sidebar! {
@@ -64,25 +58,25 @@ SplitViewController.Settings == TabBarController.Settings
     }
 
     private var conversationList: TabBarController.ConversationList! {
-        isLayoutCollapsed ? tabBarController.conversations?.conversationList : splitViewController.conversationList
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.conversations?.conversationList
+        case .expanded: splitViewController.conversationList
+        }
     }
 
     private var archive: TabBarController.Archive! {
-        isLayoutCollapsed ? tabBarController.archive : splitViewController.archive
+        switch mainSplitViewState {
+            case .collapsed: tabBarController.archive
+        case .expanded: splitViewController.archive
+        }
     }
 
     private var settings: TabBarController.Settings! {
-        isLayoutCollapsed ? tabBarController.settings : splitViewController.settings
+        switch mainSplitViewState {
+        case .collapsed: tabBarController.settings
+        case .expanded:            splitViewController.settings
+        }
     }
-
-    // TODO: remove
-//    private var newConversation: NewConversationBuilder.ViewController? {
-//        if isLayoutCollapsed {
-//            tabBarController.
-//        } else {
-//            splitViewController.
-//        }
-//    }
 
     // MARK: - Life Cycle
 
@@ -128,7 +122,7 @@ SplitViewController.Settings == TabBarController.Settings
         }
 
         // In collapsed state switching the tab was all we needed to do.
-        guard !isLayoutCollapsed else { return }
+        guard mainSplitViewState == .expanded else { return }
 
         dismissArchiveIfNeeded()
         dismissNewConversationIfNeeded()
@@ -147,7 +141,7 @@ SplitViewController.Settings == TabBarController.Settings
         tabBarController.selectedContent = .archive
 
         // In collapsed state switching the tab was all we needed to do.
-        guard !isLayoutCollapsed else { return }
+        guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
         dismissNewConversationIfNeeded()
@@ -165,7 +159,7 @@ SplitViewController.Settings == TabBarController.Settings
         tabBarController.selectedContent = .settings
 
         // In collapsed state switching the tab was all we needed to do.
-        guard !isLayoutCollapsed else { return }
+        guard mainSplitViewState == .expanded else { return }
 
         dismissConversationListIfNeeded()
         dismissArchiveIfNeeded()
@@ -197,6 +191,8 @@ SplitViewController.Settings == TabBarController.Settings
             return assertionFailure() // TODO: inject logger instead
         }
 
+        sidebar.selectedMenuItem = .init(.connect)
+
         let newConversation = newConversationBuilder.build(mainCoordinator: self)
         self.newConversation = newConversation
 
@@ -208,7 +204,7 @@ SplitViewController.Settings == TabBarController.Settings
             splitViewController.newConversation = newConversation
         } else {
             let navigationController = UINavigationController(rootViewController: newConversation)
-            navigationController.modalPresentationStyle = .formSheet
+            //navigationController.modalPresentationStyle = .formSheet
             splitViewController.present(navigationController, animated: true)
         }
     }
@@ -234,7 +230,7 @@ SplitViewController.Settings == TabBarController.Settings
         // Dismiss the new conversation view controller if it's visible in the split view controller.
         if let newConversation = splitViewController.newConversation {
             splitViewController.newConversation = nil
-            newConversation.presentingViewController?.dismiss(animated: true)
+            newConversation.navigationController?.presentingViewController?.dismiss(animated: true)
         }
     }
 
@@ -290,9 +286,16 @@ SplitViewController.Settings == TabBarController.Settings
             tabBarController.settings = settings
         }
 
-        // TODO: new conversation?
+        // take out the new conversation controller from the supplementary column's navigation
+        // controller and put it into a separate one for modal presentation
+        if let newConversation = splitViewController.newConversation {
+            splitViewController.newConversation = nil
+            let navigationController = UINavigationController(rootViewController: newConversation)
+            //navigationController.modalPresentationStyle = .fullScreen
+            splitViewController.present(navigationController, animated: false)
+        }
 
-        isLayoutCollapsed = true
+        mainSplitViewState = .collapsed
         conversationList.splitViewInterface = .collapsed
     }
 
@@ -334,9 +337,17 @@ SplitViewController.Settings == TabBarController.Settings
             splitViewController.settings = settings
         }
 
-        // TODO: new conversation?
+        // the new conversation view controller in collapsed mode is
+        // presented in a separate navigation controller
+        if let newConversation {
+            let navigationController = newConversation.navigationController!
+            navigationController.presentingViewController!.dismiss(animated: false)
+            navigationController.viewControllers = []
+            navigationController.view.layoutIfNeeded()
+            splitViewController.newConversation = newConversation
+        }
 
-        isLayoutCollapsed = false
+        mainSplitViewState = .expanded
         let conversationList = (tabBarController.conversations?.conversationList ?? splitViewController.conversationList)
         conversationList!.splitViewInterface = .expanded
     }
