@@ -69,11 +69,12 @@ final class NetworkStatusView: UIView {
     private var _state: NetworkStatusViewState = .online
 
     private lazy var topMargin: CGFloat = {
-        if UIScreen.hasNotch {
-            return 0
-        } else {
-            return CGFloat.NetworkStatusBar.topMargin
+        if let window = UIApplication.shared.windows.first {
+            // Check if the device has a non-zero top safe area inset (indicating a notch or similar feature)
+            return window.safeAreaInsets.top > 20 ? 0 : CGFloat.NetworkStatusBar.topMargin
         }
+
+        return CGFloat.NetworkStatusBar.topMargin
     }()
 
     weak var delegate: NetworkStatusViewDelegate?

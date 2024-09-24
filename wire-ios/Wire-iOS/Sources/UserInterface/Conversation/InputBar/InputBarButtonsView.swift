@@ -139,12 +139,12 @@ final class InputBarButtonsView: UIView {
             buttonRowHeight,
 
             buttonOuterContainer.heightAnchor.constraint(equalToConstant: InputBarRowConstants.buttonsBarHeight),
-            buttonOuterContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UIScreen.safeArea.bottom),
+            buttonOuterContainer.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
             buttonOuterContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
             buttonOuterContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
             buttonOuterContainer.topAnchor.constraint(equalTo: topAnchor),
 
-            heightAnchor.constraint(equalTo: buttonOuterContainer.heightAnchor, constant: UIScreen.safeArea.bottom),
+            heightAnchor.constraint(equalTo: buttonOuterContainer.heightAnchor, constant: safeAreaInsets.bottom),
             widthConstraint
         ])
     }
