@@ -21,10 +21,6 @@ import Foundation
 import WireCommonComponents
 import WireSyncEngine
 
-enum TrackingMAnagerError: Error {
-    case userConsentDenied
-}
-
 final class TrackingManager: NSObject, TrackingInterface {
 
     private let flowManagerObserver: NSObjectProtocol
@@ -62,7 +58,7 @@ final class TrackingManager: NSObject, TrackingInterface {
                 } else {
                     // User rejected, so we keep analytics disabled
                     self.updateAnalyticsSharing(disabled: true)
-                    resultHandler(.failure(TrackingMAnagerError.userConsentDenied))
+                    resultHandler(.failure(TrackingManagerError.userConsentDenied))
                 }
             }
         } else {
