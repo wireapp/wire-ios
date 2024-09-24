@@ -21,8 +21,8 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
-import XCTest
 import WireTestingPackage
+import XCTest
 
 @testable import WireAPI
 @testable import WireDomain
@@ -53,7 +53,7 @@ class UserRepositoryTests: XCTestCase {
         sut = UserRepository(
             context: context,
             usersAPI: usersAPI,
-            selfUserAPI: selfUsersAPI, 
+            selfUserAPI: selfUsersAPI,
             conversationLabelsRepository: conversationLabelsRepository
         )
     }
@@ -230,7 +230,7 @@ class UserRepositoryTests: XCTestCase {
             domain: nil,
             in: context
         )
-        
+
         // When
 
         await sut.addLegalHoldRequest(
@@ -264,67 +264,67 @@ class UserRepositoryTests: XCTestCase {
 
         XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
     }
-    
+
     func testUpdateUserProperty_It_Enables_Read_Receipts_Property() async throws {
         // Given
-        
+
         await context.perform { [self] in
             let selfUser = modelHelper.createSelfUser(
                 id: Scaffolding.userID,
                 domain: nil,
                 in: context
             )
-            
+
             selfUser.readReceiptsEnabled = false
             selfUser.readReceiptsEnabledChangedRemotely = false
         }
-        
+
         // When
-        
+
         try await sut.updateUserProperty(.areReadReceiptsEnabled(true))
-        
+
         // Then
-        
+
         try await context.perform { [self] in
-            let selfUser = try XCTUnwrap(self.sut.fetchSelfUser())
-            
+            let selfUser = try XCTUnwrap(sut.fetchSelfUser())
+
             XCTAssertEqual(selfUser.readReceiptsEnabled, true)
             XCTAssertEqual(selfUser.readReceiptsEnabledChangedRemotely, true)
         }
     }
-    
+
     func testUpdateUserProperty_Update_Conversation_Labels_Is_Invocated() async throws {
         // Mock
-        
+
         conversationLabelsRepository.updateConversationLabels_MockMethod = { _ in }
-        
+
         // When
-        
+
         let conversationLabels = [Scaffolding.conversationLabel1, Scaffolding.conversationLabel2]
-        
+
         try await sut.updateUserProperty(
             .conversationLabels(conversationLabels)
         )
-        
+
         // Then
-        
+
         XCTAssertEqual(
             conversationLabelsRepository.updateConversationLabels_Invocations.first,
             conversationLabels
         )
     }
-    
+
     func testUpdateUserProperty_It_Throws_Error() async throws {
         // Mock
-        
+
         conversationLabelsRepository.updateConversationLabels_MockError = ConversationLabelsRepositoryError.failedToDeleteStoredLabels
-        
+
         // Then
-        
+
         await XCTAssertThrowsError(ConversationLabelsRepositoryError.failedToDeleteStoredLabels) { [self] in
-            
+
             // When
-            
+
             try await sut.updateUserProperty(
                 .conversationLabels([Scaffolding.conversationLabel1, Scaffolding.conversationLabel2])
             )
@@ -371,7 +371,7 @@ class UserRepositoryTests: XCTestCase {
             supportedProtocols: [.mls],
             legalholdStatus: .disabled
         )
-        
+
         static let conversationLabel1 = ConversationLabel(
             id: UUID(uuidString: "f3d302fb-3fd5-43b2-927b-6336f9e787b0")!,
             name: "ConversationLabel1",
@@ -381,7 +381,7 @@ class UserRepositoryTests: XCTestCase {
                 UUID(uuidString: "03fe0d05-f0d5-4ee4-a8ff-8d4b4dcf89d8")!
             ]
         )
-        
+
         static let conversationLabel2 = ConversationLabel(
             id: UUID(uuidString: "2AA27182-AA54-4D79-973E-8974A3BBE375")!,
             name: "ConversationLabel2",

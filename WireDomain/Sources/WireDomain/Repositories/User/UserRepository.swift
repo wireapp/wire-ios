@@ -93,7 +93,7 @@ public protocol UserRepositoryProtocol {
     /// Disables user legal hold.
 
     func disableUserLegalHold() async throws
-    
+
     /// Updates a user property
     ///
     /// - parameters:
@@ -277,18 +277,20 @@ public final class UserRepository: UserRepositoryProtocol {
             try context.save()
         }
     }
-    
+
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
         let selfUser = fetchSelfUser()
-        
+
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
             await context.perform {
                 selfUser.readReceiptsEnabled = isEnabled
                 selfUser.readReceiptsEnabledChangedRemotely = true
             }
+
         case .conversationLabels(let conversationLabels):
             try await conversationLabelsRepository.updateConversationLabels(conversationLabels)
+
         default:
             WireLogger.updateEvent.warn(
                 "\(String(describing: userProperty)) property not handled."

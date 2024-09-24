@@ -55,7 +55,7 @@ final class PushSupportedProtocolsUseCaseTests: XCTestCase {
             userRepository: UserRepository(
                 context: context,
                 usersAPI: MockUsersAPI(),
-                selfUserAPI: mockSelfUserAPI, 
+                selfUserAPI: mockSelfUserAPI,
                 conversationLabelsRepository: MockConversationLabelsRepositoryProtocol()
             )
         )

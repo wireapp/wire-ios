@@ -271,7 +271,7 @@ extension ConversationRepositoryTests {
     }
 
     private enum Scaffolding {
-        static let conversationList = ConversationList(
+        nonisolated(unsafe) static let conversationList = ConversationList(
             found: [conversationSelfType,
                     conversationGroupType,
                     conversationConnectionType,
@@ -280,7 +280,7 @@ extension ConversationRepositoryTests {
             failed: [conversationFailed]
         )
 
-        static let conversationListError = ConversationList(
+        nonisolated(unsafe) static let conversationListError = ConversationList(
             found: [conversationSelfTypeMissingId,
                     conversationGroupType,
                     conversationConnectionType,

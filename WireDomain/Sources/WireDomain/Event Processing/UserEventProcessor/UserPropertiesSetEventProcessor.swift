@@ -31,7 +31,7 @@ protocol UserPropertiesSetEventProcessorProtocol {
 }
 
 struct UserPropertiesSetEventProcessor: UserPropertiesSetEventProcessorProtocol {
-    
+
     let repository: any UserRepositoryProtocol
 
     func processEvent(_ event: UserPropertiesSetEvent) async throws {

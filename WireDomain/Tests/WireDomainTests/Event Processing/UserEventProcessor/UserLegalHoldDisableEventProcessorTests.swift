@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
-import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
+import WireDomainSupport
 import XCTest
 
 @testable import WireDomain
@@ -28,90 +25,44 @@ import XCTest
 final class UserLegalHoldDisableEventProcessorTests: XCTestCase {
 
     var sut: UserLegalholdDisableEventProcessor!
-
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
+    var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
-        coreDataStackHelper = CoreDataStackHelper()
-        modelHelper = ModelHelper()
-        coreDataStack = try await coreDataStackHelper.createStack()
-        sut = UserLegalholdDisableEventProcessor(
-            repository: UserRepository(
-                context: context,
-                usersAPI: MockUsersAPI(),
-                selfUserAPI: MockSelfUserAPI(), 
-                conversationLabelsRepository: ConversationLabelsRepository(
-                    userPropertiesAPI: MockUserPropertiesAPI(),
-                    context: context
-                )
-            )
-        )
+        userRepository = MockUserRepositoryProtocol()
+        sut = UserLegalholdDisableEventProcessor(repository: userRepository)
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        coreDataStack = nil
         sut = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
-        modelHelper = nil
+        userRepository = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Disables_Legal_Hold_Status() async throws {
+    func testProcessEvent_It_Invokes_Disable_User_Legalhold_Repo_Method() async throws {
         // Given
 
-        await context.perform { [self] in
-            let selfUser = modelHelper.createSelfUser(
-                id: Scaffolding.userID,
-                domain: nil,
-                in: context
-            )
+        let event = UserLegalholdDisableEvent(
+            userID: Scaffolding.userID
+        )
 
-            let legalHoldRequest = Scaffolding.legalHoldRequest
-            selfUser.userDidReceiveLegalHoldRequest(Scaffolding.legalHoldRequest)
+        // Mock
 
-            XCTAssertEqual(selfUser.legalHoldStatus, .pending(legalHoldRequest))
-        }
+        userRepository.disableUserLegalHold_MockMethod = {}
 
         // When
 
-        try await sut.processEvent(Scaffolding.event)
+        try await sut.processEvent(event)
 
         // Then
 
-        await context.perform { [context] in
-            let selfUser = ZMUser.selfUser(in: context)
-            XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
-        }
+        XCTAssertEqual(userRepository.disableUserLegalHold_Invocations.count, 1)
     }
 
-}
-
-extension UserLegalHoldDisableEventProcessorTests {
-    enum Scaffolding {
-        nonisolated(unsafe) static let event = UserLegalholdDisableEvent(
-            userID: userID
-        )
-
+    private enum Scaffolding {
         static let userID = UUID()
-
-        nonisolated(unsafe) static let legalHoldRequest = LegalHoldRequest(
-            target: userID,
-            requester: UUID(),
-            clientIdentifier: "eca3c87cfe28be49",
-            lastPrekey: LegalHoldRequest.Prekey(
-                id: 65_535,
-                key: Data(base64Encoded: "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY=")!
-            )
-        )
     }
+
 }

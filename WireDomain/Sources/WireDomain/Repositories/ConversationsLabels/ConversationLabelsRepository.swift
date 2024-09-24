@@ -27,7 +27,7 @@ public protocol ConversationLabelsRepositoryProtocol {
     /// Pulls conversation labels from the server and stores locally
 
     func pullConversationLabels() async throws
-    
+
     /// Updates conversation labels locally
     /// - parameters:
     ///     - conversationLabels: The conversation labels to update locally.
@@ -40,13 +40,13 @@ public protocol ConversationLabelsRepositoryProtocol {
 public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol {
 
     // MARK: - Properties
-    
+
     private let userPropertiesAPI: any UserPropertiesAPI
     private let context: NSManagedObjectContext
     private let logger = WireLogger(tag: "conversation-labels")
 
     // MARK: - Object lifecycle
-    
+
     init(
         userPropertiesAPI: any UserPropertiesAPI,
         context: NSManagedObjectContext
@@ -54,7 +54,7 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
         self.userPropertiesAPI = userPropertiesAPI
         self.context = context
     }
-    
+
     // MARK: - Public
 
     /// Retrieve from backend and store conversation labels locally
@@ -64,16 +64,16 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
         await storeLabelsLocally(conversationLabels)
         try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
     }
-    
+
     public func updateConversationLabels(
         _ conversationLabels: [ConversationLabel]
     ) async throws {
         await storeLabelsLocally(conversationLabels)
         try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
     }
-    
+
     // MARK: - Private
-    
+
     private func storeLabelsLocally(
         _ conversationLabels: [ConversationLabel]
     ) async {
@@ -83,20 +83,20 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                     try await storeLabelLocally(conversationLabel)
                 }
             }
-            
+
             /// Iterates through the group child tasks results and logs the error if any.
             while let result = await taskGroup.nextResult() {
                 switch result {
-                case .success():
+                case .success:
                     continue
                 case .failure(let error):
                     let repoError = error as? ConversationLabelsRepositoryError
-                    if case let .failedToStoreLabelLocally(label) = repoError {
+                    if case .failedToStoreLabelLocally(let label) = repoError {
                         logger.error("Failed to store conversation label with id \(label.id): \(error)")
                     } else {
                         logger.error("Failed to store conversation with error: \(error)")
                     }
-                    
+
                     continue
                 }
             }
@@ -131,7 +131,7 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
 
             label.conversations = conversations
             label.modifiedKeys = nil
-            
+
             do {
                 try context.save()
             } catch {
@@ -174,7 +174,7 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
 
             do {
                 let batchDelete = try context.execute(deleteRequest) as? NSBatchDeleteResult
-                
+
                 guard let deleteResult = batchDelete?.result as? [NSManagedObjectID] else {
                     throw ConversationLabelsRepositoryError.failedToDeleteStoredLabels
                 }
@@ -194,8 +194,8 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                 /// Ensures the context and the persistent store are in sync
 
                 try context.save()
-                
-            } catch let error {
+
+            } catch {
                 logger.error("Failed to delete old labels: \(error)")
                 throw error
             }

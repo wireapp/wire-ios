@@ -100,7 +100,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
                 in: context,
                 created: &created
             )
-            
+
             label?.name = Scaffolding.conversationLabel1.name
             context.saveOrRollback()
         }
@@ -142,7 +142,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
                 in: context,
                 created: &created
             )
-            
+
             label?.conversations = Set([conversation1, conversation2])
             context.saveOrRollback()
         }
@@ -170,9 +170,9 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let a = try context.fetch(fetchRequest)
             let label = try XCTUnwrap(a.first)
             let labelConversations = label.conversations.compactMap(\.remoteIdentifier)
-            
+
             let expected = Scaffolding.updatedConversationLabel1.conversationIDs
-            
+
             for labelConversation in labelConversations {
                 XCTAssert(expected.contains(labelConversation))
             }
@@ -229,7 +229,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
                 in: context,
                 create: true
             )
-            
+
             label.kind = .favorite
             label.remoteIdentifier = Scaffolding.favoriteConversationLabel1.id
             label.name = Scaffolding.favoriteConversationLabel1.name
@@ -260,7 +260,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
             let labelNames = a.compactMap(\.name)
-            
+
             let expected = [
                 Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
@@ -282,7 +282,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
                 in: context,
                 created: &created
             )
-            
+
             context.saveOrRollback()
         }
 
@@ -305,7 +305,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
             let labelNames = a.compactMap(\.name)
-            
+
             XCTAssert(!labelNames.contains(Scaffolding.conversationLabel1.name!)) /// should be removed locally
             XCTAssert(labelNames.contains(Scaffolding.conversationLabel2.name!))
             XCTAssert(labelNames.contains(Scaffolding.conversationLabel3.name!))
@@ -320,11 +320,11 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
                 in: context,
                 create: true
             )
-            
+
             label.kind = .favorite
             label.remoteIdentifier = Scaffolding.favoriteConversationLabel1.id
             label.name = Scaffolding.favoriteConversationLabel1.name
-            
+
             context.saveOrRollback()
         }
 
@@ -347,7 +347,7 @@ final class ConversationLabelsRepositoryTests: XCTestCase {
             let fetchRequest = NSFetchRequest<Label>(entityName: Label.entityName())
             let a = try context.fetch(fetchRequest)
             let labelNames = a.compactMap(\.name)
-            
+
             let expected = [
                 Scaffolding.favoriteConversationLabel1.name!, /// Since this is a favorite label, it was not removed locally
                 Scaffolding.conversationLabel2.name!,
