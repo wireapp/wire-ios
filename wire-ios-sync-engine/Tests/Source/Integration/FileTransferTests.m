@@ -34,6 +34,10 @@
 
 @implementation FileTransferTests
 
+- (BOOL)proteusViaCoreCryptoEnabled {
+    return YES;
+}
+
 #pragma mark - Helper methods
 
 - (NSURL *)testVideoFileURL

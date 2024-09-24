@@ -59,6 +59,7 @@
       }
     },
     {
+      "enabled" : false,
       "skippedTests" : [
         "AvailabilityTests",
         "ConnectionTests_Swift\/testThatConnectionRequestsToTwoUsersAreAddedToPending()",

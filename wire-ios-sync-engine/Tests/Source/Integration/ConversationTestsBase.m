@@ -168,6 +168,7 @@
 
         self.groupConversationWithOnlyConnected = [session insertGroupConversationWithSelfUser:self.selfUser
                                                                                     otherUsers:@[self.user1, self.user2]];
+        self.groupConversationWithOnlyConnected.domain = @"local@domain";
         self.groupConversationWithOnlyConnected.creator = self.selfUser;
         [self.groupConversationWithOnlyConnected changeNameByUser:self.selfUser name:@"Group conversation with only connected participants"];
         
