@@ -99,6 +99,7 @@ public final class MainTabBarController<
         ]
         for content in Content.allCases {
             switch content {
+
             case .conversations:
                 let tabBarItem = UITabBarItem(
                     title: String(localized: "tabBar.conversations.title", bundle: .module),

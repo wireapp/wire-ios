@@ -35,6 +35,7 @@ public final class MainCoordinator<
     SplitViewController.ConversationList == TabBarController.ConversationList,
     SplitViewController.Archive == TabBarController.Archive,
     SplitViewController.Settings == TabBarController.Settings {
+
     // MARK: - Private Properties
 
     private weak var splitViewController: SplitViewController!
