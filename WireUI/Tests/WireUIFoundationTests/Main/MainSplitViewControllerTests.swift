@@ -80,17 +80,22 @@ final class MainSplitViewControllerTests: XCTestCase {
         )
         sut.conversationList = conversationList
 
+        // When
+        let conversation = sut.conversation
+
         // Then
-        XCTAssertNil(sut.conversation)
+        XCTAssertNil(conversation)
         let secondaryNavigationController = sut.viewController(for: .secondary) as! UINavigationController
         XCTAssert(secondaryNavigationController.viewControllers[0] === noConversationPlaceholder)
     }
 
     @MainActor
     func testConversationListIsReleased() {
-        // When
+        // Given
         weak var conversationList = conversationList
         self.conversationList = nil
+
+        // When
         sut.conversationList = nil
 
         // Then
@@ -98,16 +103,62 @@ final class MainSplitViewControllerTests: XCTestCase {
     }
 
     @MainActor
-    func testConversationIsReleased() async {
-        // When
+    func testConversationIsReleasedWhenSetToNil() async {
+        // Given
         weak var conversation = conversation
         self.conversation = nil
+
+        // When
         sut.conversation = nil
 
         // Then
         await Task.yield()
         XCTAssertEqual(conversation, nil)
     }
+
+    @MainActor
+    func testConversationListIsReleasedWhenArchiveIsSet() async {
+        // Given
+        weak var conversationList = conversationList
+        self.conversationList = nil
+
+        // When
+        sut.archive = .init()
+
+        // Then
+        await Task.yield()
+        XCTAssertEqual(conversationList, nil)
+    }
+
+    @MainActor
+    func testConversationIsReleasedWhenNewConversationIsSet() async {
+        // Given
+        weak var conversationList = conversationList
+        self.conversationList = nil
+
+        // When
+        sut.newConversation = .init()
+
+        // Then
+        await Task.yield()
+        XCTAssertEqual(conversationList, nil)
+    }
+
+    @MainActor
+    func testConversationIsReleasedWhenSettingsIsSet() async {
+        // Given
+        weak var conversationList = conversationList
+        self.conversationList = nil
+
+        // When
+        sut.settings = .init()
+
+        // Then
+        await Task.yield()
+        XCTAssertEqual(conversationList, nil)
+    }
+
+    // MARK: - Snapshot Tests
 
     @available(iOS 17.0, *) @MainActor
     func testSidebarAppearanceLandscape() {
