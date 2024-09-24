@@ -97,7 +97,7 @@ public final class MessageSender: MessageSenderInterface {
                 "send message - resolve dependencies finished",
                 attributes: logAttributes
             )
-            let timePoint = TimePoint(interval: 30, label: "attempt to send message")
+            let timePoint = ZMSTimePoint(interval: 30, label: "attempt to send message")
 
             try await attemptToSend(message: message)
 
