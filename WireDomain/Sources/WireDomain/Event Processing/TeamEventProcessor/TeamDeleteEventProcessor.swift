@@ -16,7 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import WireAPI
+import WireDataModel
 
 /// Process team delete events.
 
@@ -30,9 +32,13 @@ protocol TeamDeleteEventProcessorProtocol {
 
 struct TeamDeleteEventProcessor: TeamDeleteEventProcessorProtocol {
 
+    let context: NSManagedObjectContext
+
     func processEvent() async throws {
-        // TODO: [WPB-10184]
-        assertionFailure("not implemented yet")
+        // swiftlint:disable:next todo_requires_jira_link
+        // TODO: revisit this implementation
+        let notification = AccountDeletedNotification(context: context)
+        notification.post(in: context.notificationContext)
     }
 
 }

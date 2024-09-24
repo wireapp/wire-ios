@@ -27,8 +27,7 @@ final class MainTabBarControllerTests: XCTestCase {
 
     override func setUp() {
         snapshotHelper = .init()
-            .withPerceptualPrecision(1)
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() {

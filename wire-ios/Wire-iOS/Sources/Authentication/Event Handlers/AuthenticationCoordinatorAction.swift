@@ -34,7 +34,6 @@ enum AuthenticationCoordinatorAction {
     case requestEmailVerificationCode(email: String, password: String)
     case configureNotifications
     case startIncrementalUserCreation(UnregisteredUser)
-    case setMarketingConsent(Bool)
     case completeUserRegistration
     case openURL(URL)
     case repeatAction
