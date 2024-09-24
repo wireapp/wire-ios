@@ -160,7 +160,6 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-        viewModel.requestMarketingConsentIfNeeded()
 
         // there are currently always four tab items
         let offset = (view.bounds.width / 4 * -1.5)
@@ -319,10 +318,6 @@ final class ConversationListViewController: UIViewController {
             focusOnView: focus,
             animated: animated
         )
-    }
-
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
     }
 }
 

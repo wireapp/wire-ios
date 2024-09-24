@@ -41,7 +41,6 @@ final class RegistrationStrategyTests: MessagingTest {
         user.unverifiedEmail = "some@email.com"
         user.password = "Aqa123456!"
         user.acceptedTermsOfService = true
-        user.marketingConsent = true
     }
 
     override func tearDown() {

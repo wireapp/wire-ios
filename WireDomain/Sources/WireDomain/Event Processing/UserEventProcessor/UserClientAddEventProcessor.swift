@@ -32,9 +32,26 @@ protocol UserClientAddEventProcessorProtocol {
 
 struct UserClientAddEventProcessor: UserClientAddEventProcessorProtocol {
 
-    func processEvent(_: UserClientAddEvent) async throws {
-        // TODO: [WPB-10189]
-        assertionFailure("not implemented yet")
+    enum Error: Swift.Error {
+        case failedToUpdateUserClient(Swift.Error)
+    }
+
+    let repository: any UserRepositoryProtocol
+
+    func processEvent(_ event: UserClientAddEvent) async throws {
+        do {
+            let localUserClient = try await repository.fetchOrCreateUserClient(
+                with: event.client.id
+            )
+
+            try await repository.updateUserClient(
+                localUserClient.client,
+                from: event.client,
+                isNewClient: localUserClient.isNew
+            )
+        } catch {
+            throw Error.failedToUpdateUserClient(error)
+        }
     }
 
 }
