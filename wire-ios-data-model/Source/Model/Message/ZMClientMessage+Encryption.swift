@@ -57,7 +57,7 @@ public enum MissingClientsStrategy: Equatable {
     /// Fail the request if there is any missing client for the given user, but ignore missing clients of
     /// any other user.
 
-    case ignoreAllMissingClientsNotFromUsers(users: Set<ZMUser>)
+    case ignoreAllMissingClientsNotFromUsers(userIds: Set<QualifiedID>)
 
     /// Do not fail the request, no matter which clients are missing.
 
@@ -203,17 +203,6 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
 extension GenericMessage {
 
-    public func encryptForProteus(for recipients: [ZMUser: Set<UserClient>],
-                                  with missingClientsStrategy: MissingClientsStrategy,
-                                  externalData: Data? = nil,
-                                  in context: NSManagedObjectContext) {
-
-    }
-
-}
-
-extension GenericMessage {
-
     /// This method needs to be async because CoreCrypto methods need to be async and it uses Proteus
     private typealias EncryptionFunction = (ProteusSessionID, Data) async throws -> Data?
     /// This is legacy encryption for CryptoBox - non async
@@ -229,7 +218,7 @@ extension GenericMessage {
 
         let selfUser = await context.perform { ZMUser.selfUser(in: context) }
         let (users, missingClientsStrategy) = await context.perform { recipientUsersForMessage(in: conversation, selfUser: selfUser) }
-        let recipients = await context.perform { users.mapToDictionary { $0.clients } }
+        let recipients = await context.perform { users }
 
         var encryptedData: Data?
 
@@ -275,7 +264,10 @@ extension GenericMessage {
     ) async -> EncryptedPayloadGenerator.Payload? {
         // It's important to ignore all irrelevant missing clients, because otherwise the backend will enforce that
         // the message is sent to all team members and contacts.
-        let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: recipients)
+        let qualifiedIds = recipients.compactMap({ user in
+            user.qualifiedID
+        })
+        let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(userIds: Set(qualifiedIds))
 
         let messageRecipients = await context.perform { recipients.mapToDictionary { $0.clients } }
         var encryptedData: Data?
@@ -586,17 +578,13 @@ extension GenericMessage {
            let nativePush = !hasConfirmation
 
            let message = context.performAndWait {
-               var message = Proteus_NewOtrMessage(
-                   withSender: selfClient,
+               let message = Proteus_NewOtrMessage(
+                withSenderId: selfClient.clientId.client,
                    nativePush: nativePush,
                    recipients: userEntries,
+                   missingClientsStrategy: missingClientsStrategy,
                    blob: externalData
                )
-
-               if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
-                   message.reportMissing = Array(users.map { $0.userId })
-               }
-
                return message
            }
 
@@ -624,16 +612,13 @@ extension GenericMessage {
         let nativePush = !hasConfirmation
 
         let message = await context.perform {
-            var message = Proteus_NewOtrMessage(
-                withSender: selfClient,
+            let message = Proteus_NewOtrMessage(
+                withSenderId: selfClient.clientId.client,
                 nativePush: nativePush,
                 recipients: userEntries,
+                missingClientsStrategy: missingClientsStrategy,
                 blob: externalData
             )
-
-            if case .ignoreAllMissingClientsNotFromUsers(let users) = missingClientsStrategy {
-                message.reportMissing = Array(users.map { $0.userId })
-            }
 
             return message
         }
@@ -872,7 +857,7 @@ extension GenericMessage {
            }
        }
 
-    func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
+    public func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: [ZMUser: Set<UserClient>], strategy: MissingClientsStrategy) {
         let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
         func recipientForButtonActionMessage() -> Set<ZMUser> {
@@ -976,11 +961,17 @@ extension GenericMessage {
             return recipientUsers.count != conversation.localParticipants.count
         }()
 
-        let strategy: MissingClientsStrategy = hasRestrictions
-            ? .ignoreAllMissingClientsNotFromUsers(users: recipientUsers)
-            : .doNotIgnoreAnyMissingClient
+        let strategy: MissingClientsStrategy
+        if hasRestrictions {
+            let qualifiedIds = recipientUsers.compactMap({ user in
+                user.qualifiedID
+            })
+            strategy = .ignoreAllMissingClientsNotFromUsers(userIds: Set(qualifiedIds))
+        } else {
+            strategy = .doNotIgnoreAnyMissingClient
+        }
 
-        return (recipientUsers, strategy)
+        return (recipientUsers.mapToDictionary { $0.clients }, strategy)
     }
 }
 

@@ -30,7 +30,7 @@ extension GenericMessage {
     /// in the  blob field of the protocol buffer.
     /// - Parameter message: the message that should be encrypted to sent it as attached payload in an external message
     /// - Returns: the encrypted original message, the encryption key and checksum warpped in a  ZMExternalEncryptedDataWithKeys
-    static func encryptedDataWithKeys(from message: GenericMessage) -> ZMExternalEncryptedDataWithKeys? {
+    public static func encryptedDataWithKeys(from message: GenericMessage) -> ZMExternalEncryptedDataWithKeys? {
         guard
             let aesKey = NSData.randomEncryptionKey(),
             let messageData = try? message.serializedData()

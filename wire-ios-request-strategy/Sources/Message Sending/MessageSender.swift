@@ -25,6 +25,7 @@ public enum MessageSendError: Error, Equatable {
     case missingMlsService
     case unresolvedApiVersion
     case messageExpired
+    case missingProteusService
 }
 
 public typealias SendableMessage = ProteusMessage & MLSMessage
@@ -96,8 +97,15 @@ public final class MessageSender: MessageSenderInterface {
                 "send message - resolve dependencies finished",
                 attributes: logAttributes
             )
+            let timePoint = TimePoint(interval: 30, label: "attempt to send message")
 
             try await attemptToSend(message: message)
+
+            WireLogger.messaging.debug(
+                "send message - attemptToSend duration: \(timePoint.elapsedTime)",
+                attributes: logAttributes
+            )
+
         } catch {
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.warn("send message - failed: \(error)", attributes: logAttributes)
@@ -117,13 +125,6 @@ public final class MessageSender: MessageSenderInterface {
             throw MessageSendError.missingMessageProtocol
         }
 
-        await context.perform {
-            if message.shouldExpire {
-                message.setExpirationDate()
-                self.context.saveOrRollback()
-            }
-        }
-
         do {
             return switch messageProtocol {
             case .proteus, .mixed:
@@ -139,8 +140,29 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToBroadcastWithProteus(message: any ProteusMessage, apiVersion: APIVersion) async throws {
+
+        let proteusService = await context.perform { [context] in
+            context.proteusService
+        }
+
+        guard let proteusService else {
+            throw MessageSendError.missingProteusService
+        }
+
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: message)
+            try await message.prepareMessageForSending()
+
+            // 1) get the info for the message from CoreData objects
+            let extractor = MessageInfoExtractor(context: context)
+            let messageInfo = try await extractor.infoForBroadcast(message: message)
+
+            // 2) get the encrypted payload
+            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+
+            // 3) send it via API
+            // no need to expire the broadcast message as it's only availability status no report to the user
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).broadcastProteusMessage(message: messageData)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -150,7 +172,11 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
-        let conversationID = await context.perform { message.conversation?.qualifiedID }
+        let (proteusService, conversationID) = await context.perform { [context] in (context.proteusService, message.conversation?.qualifiedID) }
+
+        guard let proteusService else {
+            throw MessageSendError.missingProteusService
+        }
 
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
@@ -163,10 +189,31 @@ public final class MessageSender: MessageSenderInterface {
         )
 
         do {
-            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion).sendProteusMessage(
-                message: message,
-                conversationID: conversationID
-            )
+            try await message.prepareMessageForSending()
+
+            // 1) get the info for the message from CoreData objects
+            let extractor = MessageInfoExtractor(context: context)
+            let messageInfo = try await extractor.infoForSending(message: message, conversationID: conversationID)
+
+            // 2) get the encrypted payload
+            let payloadBuilder = ProteusMessagePayloadBuilder(proteusService: proteusService, useQualifiedIds: apiVersion.useQualifiedIds)
+            let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
+
+            // set expiration so request can be expired later
+            let expirationDate = await context.perform {
+                if message.shouldExpire {
+                    message.setExpirationDate()
+                    self.context.saveOrRollback()
+                    return message.expirationDate
+                }
+                return nil
+            }
+
+            // 3) send it via API
+            let (messageStatus, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
+                .sendProteusMessage(message: messageData,
+                                    conversationID: conversationID,
+                                    expirationDate: expirationDate)
             await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
             let missingClients = try await handleProteusFailure(message: message, networkError)
@@ -269,6 +316,15 @@ public final class MessageSender: MessageSenderInterface {
 
         try await mlsService.commitPendingProposals(in: groupID)
         let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
+
+        // set expiration so request can be expired later
+        await context.perform {
+            if message.shouldExpire {
+                message.setExpirationDate()
+                self.context.saveOrRollback()
+            }
+        }
+
         let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
             .sendMLSMessage(message: encryptedData,
                             conversationID: conversationID,

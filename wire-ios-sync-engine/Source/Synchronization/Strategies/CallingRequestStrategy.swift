@@ -512,7 +512,7 @@ extension CallingRequestStrategy: WireCallCenterTransport {
 
     }
 
-    private func recipients(for targets: [AVSClient], in managedObjectContext: NSManagedObjectContext) -> GenericMessageEntity.Recipients {
+    private func recipients(for targets: [AVSClient], in managedObjectContext: NSManagedObjectContext) -> Recipients {
         let clientsByUser = targets
             .compactMap { UserClient.fetchExistingUserClient(with: $0.clientId, in: managedObjectContext) }
             .partition(by: \.user)
