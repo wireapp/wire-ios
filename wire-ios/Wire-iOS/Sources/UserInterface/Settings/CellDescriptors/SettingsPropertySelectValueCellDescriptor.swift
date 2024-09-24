@@ -22,6 +22,7 @@ import WireSystem
 private let zmLog = ZMSLog(tag: "UI")
 
 final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorType {
+    static let cellType: SettingsTableCellProtocol.Type = SettingsValueCell.self
     let value: SettingsPropertyValue
     let title: String
     let identifier: String?
