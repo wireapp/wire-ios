@@ -4222,20 +4222,6 @@ internal enum L10n {
         internal static let tooshort = L10n.tr("Localizable", "name.guidance.tooshort", fallback: "At least 2 characters")
       }
     }
-    internal enum NewsOffers {
-      internal enum Consent {
-        /// You can unsubscribe at any time.
-        internal static let message = L10n.tr("Localizable", "news_offers.consent.message", fallback: "You can unsubscribe at any time.")
-        /// Do you want to receive news and product updates from Wire via email?
-        internal static let title = L10n.tr("Localizable", "news_offers.consent.title", fallback: "Do you want to receive news and product updates from Wire via email?")
-        internal enum Button {
-          internal enum PrivacyPolicy {
-            /// Privacy Policy
-            internal static let title = L10n.tr("Localizable", "news_offers.consent.button.privacy_policy.title", fallback: "Privacy Policy")
-          }
-        }
-      }
-    }
     internal enum Notifications {
       /// %@ - %@
       internal static func inConversation(_ p1: Any, _ p2: Any) -> String {
@@ -5679,14 +5665,6 @@ internal enum L10n {
               /// Wrong password. Please try again.
               internal static let wrongPassword = L10n.tr("Localizable", "self.settings.privacy_security.lock_password.description.wrong_password", fallback: "Wrong password. Please try again.")
             }
-          }
-        }
-        internal enum ReceiveNewsAndOffers {
-          /// Receive Newsletter
-          internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.title", fallback: "Receive Newsletter")
-          internal enum Description {
-            /// Receive news and product updates from Wire via email.
-            internal static let title = L10n.tr("Localizable", "self.settings.receiveNews_and_offers.description.title", fallback: "Receive news and product updates from Wire via email.")
           }
         }
         internal enum SoundMenu {
