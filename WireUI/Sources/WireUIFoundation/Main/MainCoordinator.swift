@@ -96,7 +96,6 @@ public final class MainCoordinator<
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
-            // TODO: maybe navigationcontroller pop is needed
 
             // apply the filter to the conversation list
             let mainConversationFilter = conversationFilter?.map()
@@ -168,9 +167,7 @@ public final class MainCoordinator<
     }
 
     public func showSelfProfile() {
-        guard selfProfile == nil else {
-            return assertionFailure() // TODO: inject logger instead
-        }
+        guard selfProfile == nil else { return }
 
         let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
         let selfProfile = UINavigationController(rootViewController: rootViewController)
@@ -181,9 +178,7 @@ public final class MainCoordinator<
     }
 
     public func showNewConversation() {
-        guard newConversation == nil else {
-            return assertionFailure() // TODO: inject logger instead
-        }
+        guard newConversation == nil else { return }
 
         sidebar.selectedMenuItem = .init(.connect)
 
@@ -245,7 +240,7 @@ public final class MainCoordinator<
     public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
               splitViewController === self.splitViewController
-        else { return assertionFailure() } // TODO: inject logger instead
+        else { return }
 
         // move view controllers from the split view controller's columns to the tab bar controller
         if let conversationListViewController = splitViewController.conversationList {
@@ -281,7 +276,7 @@ public final class MainCoordinator<
     public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
               splitViewController === self.splitViewController
-        else { return assertionFailure() } // TODO: inject logger instead
+        else { return }
 
         // move view controllers from the tab bar controller to the supplementary column
         if tabBarController.selectedContent == .conversations {
@@ -325,7 +320,7 @@ public final class MainCoordinator<
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         guard let tabBarController = tabBarController as? TabBarController,
               tabBarController === self.tabBarController
-        else { return assertionFailure() } // TODO: inject logger instead
+        else { return }
 
         switch tabBarController.selectedContent {
         case .contacts, .folders:
