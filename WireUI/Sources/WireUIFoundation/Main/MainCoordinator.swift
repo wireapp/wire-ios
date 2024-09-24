@@ -21,6 +21,16 @@ import WireFoundation
 
 // TODO: unit tests
 
+/// Manages the main flows of the application after a successful login.
+///
+/// The MainCoordinator class is the central controller for the app's navigation and layout management.
+/// It receives references to ``MainTabBarControllerProtocol`` and ``MainSplitViewControllerProtocol``
+/// conforming instances and is responsible for managing transitions between different split layout states (collapsed and expanded)
+/// as well as handling navigation logic.
+///
+/// TODO: all contain navigation controllers
+/// tab bar controller keeps the instances retained
+
 @MainActor
 public final class MainCoordinator<
 
