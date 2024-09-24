@@ -49,7 +49,7 @@ extension StartUIViewController: ShareContactsViewControllerDelegate {
             // point to the contacts tab item
             var tabItemFrame = tabBarController.tabBar.bounds
             tabItemFrame.size.width /= CGFloat(tabBarController.tabBar.items?.count ?? 1)
-            tabItemFrame.origin.x = CGFloat(MainTabBarController.Tab.contacts.rawValue) * tabItemFrame.size.width
+            tabItemFrame.origin.x = CGFloat(MainTabBarControllerContent.contacts.rawValue) * tabItemFrame.size.width
             tabBarController.presentInviteActivityViewController(
                 popoverPresentationConfiguration: .sourceView(
                     sourceView: tabBarController.tabBar,

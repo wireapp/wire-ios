@@ -56,7 +56,7 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
     }
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        guard let selectedIndex = MainTabBarController.Tab(rawValue: tabBarController.selectedIndex) else {
+        guard let selectedIndex = MainTabBarControllerContent(rawValue: tabBarController.selectedIndex) else {
             fatalError("unexpected selected tab index")
         }
 
@@ -73,6 +73,8 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
             principleViewController.setState(.archived, animated: true) { [self] in
                 tabBarController.selectedIndex = principleTabIndex
             }
+        case .settings: // will be removed in navigation overhaul
+            break
         }
     }
 
@@ -88,10 +90,9 @@ final class TabBarChangeHandler: NSObject, UITabBarControllerDelegate {
     private var principleTabIndex: Int {
         switch principleTab {
         case .conversations:
-            MainTabBarController.Tab.conversations.rawValue
+            MainTabBarControllerContent.conversations.rawValue
         case .folders:
-            MainTabBarController.Tab.folders.rawValue
+            MainTabBarControllerContent.folders.rawValue
         }
     }
-
 }

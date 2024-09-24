@@ -16,17 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
-@MainActor
-public protocol MainSplitViewControllerProtocol: UISplitViewController {
-    associatedtype Sidebar: UIViewController
-    associatedtype ConversationList: UIViewController
-    associatedtype Conversation: UIViewController
-    associatedtype TabContainer: UIViewController
+final class PreviewSidebarViewController: UIHostingController<LabelView>, MainSidebarProtocol {
 
-    var sidebar: Sidebar { get }
-    var conversationList: ConversationList? { get set }
-    var conversation: Conversation? { get set }
-    var tabContainer: TabContainer { get }
+    // MARK: - MainSidebarProtocol
+
+    var selectedMenuItem: MainSidebarMenuItem = .all
+
+    // MARK: - Life Cycle
+
+    convenience init(_ content: String) {
+        self.init(content, .init(uiColor: .systemBackground))
+    }
+
+    convenience init(_ content: String, _ backgroundColor: Color) {
+        self.init(rootView: .init(content: content, backgroundColor: backgroundColor))
+    }
 }

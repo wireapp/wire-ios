@@ -24,9 +24,9 @@ import XCTest
 
 final class MainSplitViewControllerTests: XCTestCase {
 
-    private var sut: MainSplitViewController!
-    private var sidebar: UIViewController!
-    private var conversationList: UIViewController!
+    private var sut: MainSplitViewController<PreviewSidebarViewController, PreviewConversationListViewController>!
+    private var sidebar: PreviewSidebarViewController!
+    private var conversationList: PreviewConversationListViewController!
     private var conversation: UIViewController!
     private var noConversationPlaceholder: UIViewController!
     private var tabContainer: UIViewController!
@@ -35,27 +35,11 @@ final class MainSplitViewControllerTests: XCTestCase {
 
     @MainActor
     override func setUp() async throws {
-        let hostingController: (String, Color) -> UIHostingController<AnyView> = { text, backgroundColor in
-            UIHostingController(
-                rootView: AnyView(
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Text(text)
-                                .ignoresSafeArea()
-                            Spacer()
-                        }
-                        Spacer()
-                    }.background(backgroundColor)
-                )
-            )
-        }
-        sidebar = hostingController("Sidebar", .gray)
-        conversationList = hostingController("Conversation List", .purple)
-        conversation = hostingController("Conversation", .blue)
-        noConversationPlaceholder = hostingController("No Conversation Selected", .brown)
-        tabContainer = hostingController("Tab Container", .cyan)
+        sidebar = .init("Sidebar", .gray)
+        conversationList = .init("Conversation List", .purple)
+        conversation = PreviewSidebarViewController("Conversation", .blue)
+        noConversationPlaceholder = PreviewSidebarViewController("No Conversation Selected", .brown)
+        tabContainer = PreviewSidebarViewController("Tab Container", .cyan)
         sut = .init(
             sidebar: sidebar,
             noConversationPlaceholder: noConversationPlaceholder,
@@ -65,7 +49,7 @@ final class MainSplitViewControllerTests: XCTestCase {
         sut.conversation = conversation
 
         snapshotHelper = .init()
-            .withSnapshotDirectory(relativeTo: #file)
+            .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
     }
 
     override func tearDown() async throws {
