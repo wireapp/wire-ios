@@ -31,7 +31,7 @@ final class PreviewConversationListViewController: UIHostingController<LabelView
         init(_ mainConversationFilter: MainConversationFilter) {
             switch mainConversationFilter {
             case .favorites: self = .favorites
-            case .groups: self  = .groups
+            case .groups: self = .groups
             case .oneOnOne: self = .oneOnOne
             }
         }

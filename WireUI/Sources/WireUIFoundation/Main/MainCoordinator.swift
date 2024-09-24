@@ -33,10 +33,8 @@ public final class MainCoordinator<
 
     SplitViewController.Sidebar: MainSidebarProtocol,
     SplitViewController.ConversationList == TabBarController.ConversationList,
-SplitViewController.Archive == TabBarController.Archive,
-SplitViewController.Settings == TabBarController.Settings
-
-{
+    SplitViewController.Archive == TabBarController.Archive,
+    SplitViewController.Settings == TabBarController.Settings {
     // MARK: - Private Properties
 
     private weak var splitViewController: SplitViewController!
@@ -65,7 +63,7 @@ SplitViewController.Settings == TabBarController.Settings
 
     private var archive: TabBarController.Archive! {
         switch mainSplitViewState {
-            case .collapsed: tabBarController.archive
+        case .collapsed: tabBarController.archive
         case .expanded: splitViewController.archive
         }
     }
@@ -73,7 +71,7 @@ SplitViewController.Settings == TabBarController.Settings
     private var settings: TabBarController.Settings! {
         switch mainSplitViewState {
         case .collapsed: tabBarController.settings
-        case .expanded:            splitViewController.settings
+        case .expanded: splitViewController.settings
         }
     }
 
@@ -85,15 +83,15 @@ SplitViewController.Settings == TabBarController.Settings
         newConversationBuilder: NewConversationBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
-        self.splitViewController = mainSplitViewController
-        self.tabBarController = mainTabBarController
+        splitViewController = mainSplitViewController
+        tabBarController = mainTabBarController
         self.newConversationBuilder = newConversationBuilder
         self.selfProfileBuilder = selfProfileBuilder
     }
 
     // MARK: - Public Methods
 
-    public func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) {
+    public func showConversationList(conversationFilter: (some MainConversationFilterRepresentable)?) {
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
@@ -199,7 +197,7 @@ SplitViewController.Settings == TabBarController.Settings
             splitViewController.newConversation = newConversation
         } else {
             let navigationController = UINavigationController(rootViewController: newConversation)
-            //navigationController.modalPresentationStyle = .formSheet
+            // navigationController.modalPresentationStyle = .formSheet
             splitViewController.present(navigationController, animated: true)
         }
     }
@@ -273,7 +271,7 @@ SplitViewController.Settings == TabBarController.Settings
         if let newConversation = splitViewController.newConversation {
             splitViewController.newConversation = nil
             let navigationController = UINavigationController(rootViewController: newConversation)
-            //navigationController.modalPresentationStyle = .fullScreen
+            // navigationController.modalPresentationStyle = .fullScreen
             splitViewController.present(navigationController, animated: false)
         }
 
@@ -342,8 +340,10 @@ SplitViewController.Settings == TabBarController.Settings
             case .oneOnOne:
                 sidebar.selectedMenuItem = .init(.oneOnOne)
             }
+
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)
+
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
         }

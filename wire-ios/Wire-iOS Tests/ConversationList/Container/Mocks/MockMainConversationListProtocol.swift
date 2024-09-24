@@ -22,7 +22,7 @@ import WireUIFoundation
 @testable import Wire
 
 // TODO: remove file
-//final class MockMainConversationListProtocol: UIViewController, MainConversationListProtocol {
+// final class MockMainConversationListProtocol: UIViewController, MainConversationListProtocol {
 //    var conversationFilter: MainConversationFilter?
 //    var splitViewInterface: MainSplitViewState = .expanded
-//}
+// }

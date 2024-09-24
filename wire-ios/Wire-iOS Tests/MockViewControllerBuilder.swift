@@ -22,10 +22,10 @@ import WireUIFoundation
 @testable import Wire
 
 // TODO: remove file
-//struct MockViewControllerBuilder: ViewControllerBuilder {
+// struct MockViewControllerBuilder: ViewControllerBuilder {
 //    func build() -> UIViewController { .init() }
-//}
+// }
 //
-//extension ViewControllerBuilder where Self == MockViewControllerBuilder {
+// extension ViewControllerBuilder where Self == MockViewControllerBuilder {
 //    static var mock: Self { .init() }
-//}
+// }

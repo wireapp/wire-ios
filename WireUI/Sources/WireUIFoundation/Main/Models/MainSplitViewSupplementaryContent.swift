@@ -25,12 +25,11 @@ public enum MainSplitViewSupplementaryContent<
     NewConversation,
     Settings
 > where
-ConversationList: UIViewController,
-Archive: UIViewController,
-NewConversation: UIViewController,
-Settings: UIViewController
-{
-case conversationList(_ conversationList: WeakReference<ConversationList>)
+    ConversationList: UIViewController,
+    Archive: UIViewController,
+    NewConversation: UIViewController,
+    Settings: UIViewController {
+    case conversationList(_ conversationList: WeakReference<ConversationList>)
     case archive(_ archive: WeakReference<Archive>)
     case newConversation(_ newConversation: WeakReference<NewConversation>)
     case settings(_ settings: WeakReference<Settings>)
