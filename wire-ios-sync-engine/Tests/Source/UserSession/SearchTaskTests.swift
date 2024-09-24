@@ -18,7 +18,6 @@
 
 import XCTest
 
-@_spi(MockBackendInfo)
 import WireTransport
 
 @testable import WireSyncEngine
@@ -32,8 +31,6 @@ final class SearchTaskTests: DatabaseTest {
 
     override func setUp() {
         super.setUp()
-
-        BackendInfo.enableMocking()
 
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
         mockCache = SearchUsersCache()
@@ -57,8 +54,6 @@ final class SearchTaskTests: DatabaseTest {
         teamIdentifier = nil
         mockTransportSession = nil
         mockCache = nil
-
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

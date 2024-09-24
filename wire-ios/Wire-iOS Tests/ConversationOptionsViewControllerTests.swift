@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireSyncEngine
 import WireSyncEngineSupport
-import WireUITesting
-import XCTest
-@_spi(MockBackendInfo)
+import WireTestingPackage
 import WireTransport
+import XCTest
 
 @testable import Wire
 
@@ -81,7 +79,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        BackendInfo.enableMocking()
         mockConversation = MockConversation()
         mockUserSession = UserSessionMock()
         mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
@@ -91,7 +88,6 @@ final class ConversationOptionsViewControllerTests: XCTestCase {
 
     override func tearDown() {
         snapshotHelper = nil
-        BackendInfo.resetMocking()
         mockConversation = nil
         mockUserSession = nil
         mockCreateSecuredGuestLinkUseCase = nil

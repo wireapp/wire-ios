@@ -111,7 +111,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         recorder.stopRecording()
-        if isAppLockActive { UIApplication.shared.firstKeyWindow?.endEditing(true) }
+
+        if isAppLockActive {
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mainWindow?.endEditing(true)
+            }
+        }
     }
 
     // MARK: - View Configuration
@@ -259,7 +264,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
             bottomToolbar.topAnchor.constraint(equalTo: topContainer.bottomAnchor),
             bottomToolbar.leftAnchor.constraint(equalTo: topContainer.leftAnchor),
-            bottomToolbar.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -UIScreen.safeArea.bottom),
+            bottomToolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             bottomToolbar.rightAnchor.constraint(equalTo: topContainer.rightAnchor),
             bottomToolbar.heightAnchor.constraint(equalToConstant: 72),
             bottomToolbar.centerXAnchor.constraint(equalTo: topContainer.centerXAnchor),
@@ -432,10 +437,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.recorder.startRecording { _ in
             self.state = .recording
             self.delegate?.audioRecordViewControllerDidStartRecording(self)
-            AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer.stop()
+
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                appDelegate.mediaPlaybackManager?.audioTrackPlayer.stop()
+            }
         }
     }
-
     @objc func stopRecordButtonPressed(_ button: UIButton?) {
         self.recorder.stopRecording()
     }

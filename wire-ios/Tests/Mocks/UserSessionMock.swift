@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -245,21 +246,6 @@ final class UserSessionMock: UserSession {
     }
 
     func acknowledgeFeatureChange(for feature: Feature.Name) {
-
-    }
-
-    func fetchMarketingConsent(
-        completion: @escaping (
-            Result<Bool, Error>
-        ) -> Void
-    ) {
-
-    }
-
-    func setMarketingConsent(
-        granted: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
 
     }
 

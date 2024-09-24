@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import WireAPI
@@ -55,7 +54,7 @@ final class BackendInfoAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             try request.mockResponse(
-                statusCode: 200,
+                statusCode: .ok,
                 jsonResourceName: "GetBackendInfoSuccessResponse1"
             )
         }
@@ -82,7 +81,7 @@ final class BackendInfoAPITests: XCTestCase {
         let apiService = MockAPIServiceProtocol()
         apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
             try request.mockResponse(
-                statusCode: 200,
+                statusCode: .ok,
                 jsonResourceName: "GetBackendInfoSuccessResponse2"
             )
         }

@@ -1,0 +1,31 @@
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+"sidebar.conversation_filter.title" = "Беседы";
+"sidebar.conversation_filter.all.title" = "Все";
+"sidebar.conversation_filter.favorites.title" = "Избранное";
+"sidebar.conversation_filter.groups.title" = "Группы";
+"sidebar.conversation_filter.oneOnOneConversations.title" = "Беседы 1:1";
+"sidebar.conversation_filter.archived.title" = "Архивировать";
+
+"sidebar.contacts.title" = "Контакты";
+"sidebar.contacts.connect.title" = "Связаться";
+
+"sidebar.settings.title" = "Настройки";
+
+"sidebar.support.title" = "Служба поддержки";

@@ -137,7 +137,10 @@ extension ZMConversation {
             style: .cancel
         ))
 
-        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
+            rootViewController.present(alert, animated: true)
+        }
 
         return true
     }

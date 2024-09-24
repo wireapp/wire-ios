@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 
 @testable import WireAPI
 
 final class SelfUserAPITests: XCTestCase {
 
-    private var apiSnapshotHelper: APISnapshotHelper<SelfUserAPI>!
+    private var apiSnapshotHelper: APISnapshotHelper<any SelfUserAPI>!
 
     // MARK: - Setup
 
@@ -60,7 +59,7 @@ final class SelfUserAPITests: XCTestCase {
     func testPushSupportedProtocols_UnsupportedVersionError_V0_to_V4() async throws {
         // Given
         let httpClient = HTTPClientMock(
-            code: 200,
+            code: .ok,
             payload: nil
         )
 
@@ -87,7 +86,7 @@ final class SelfUserAPITests: XCTestCase {
     func testPushSupportedProtocols_V5_And_NextVersions() async throws {
         // Given
         let httpClient = HTTPClientMock(
-            code: 200,
+            code: .ok,
             payload: nil
         )
 
@@ -114,7 +113,7 @@ final class SelfUserAPITests: XCTestCase {
     func testGetSelfUser_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetSelfUserSuccessResponseV0"
         )
 
@@ -132,7 +131,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testGetSelfUser_FailureResponse() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = SelfUserAPIV0(httpClient: httpClient)
 
         // Then
@@ -147,7 +146,7 @@ final class SelfUserAPITests: XCTestCase {
     func testGetSelfUser_SuccessResponse_200_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetSelfUserSuccessResponseV4"
         )
 
@@ -167,7 +166,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testPushSupportedProtocols_SuccessResponse_200_V5() async throws {
         // Given
-        let httpClient = HTTPClientMock(code: 200, payload: nil)
+        let httpClient = HTTPClientMock(code: .ok, payload: nil)
 
         // When
         let sut = SelfUserAPIV5(httpClient: httpClient)
@@ -178,7 +177,7 @@ final class SelfUserAPITests: XCTestCase {
 
     func testPushSupportedProtocols_FailureResponse_InvalidRequest_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = SelfUserAPIV5(httpClient: httpClient)
 
         // Then
@@ -249,7 +248,7 @@ extension SelfUserAPITests {
 }
 
 private extension APIVersion {
-    func buildAPI(client: any HTTPClient) -> SelfUserAPI {
+    func buildAPI(client: any HTTPClient) -> any SelfUserAPI {
         let builder = SelfUserAPIBuilder(httpClient: client)
         return builder.makeAPI(for: self)
     }

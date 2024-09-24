@@ -82,7 +82,7 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
 
                 await managedObjectContext.perform {
-                    object.expire()
+                    object.expire(withReason: .other)
                     self.managedObjectContext.enqueueDelayedSave()
 
                     if case NetworkError.invalidRequestError(let responseFailure, _) = error,

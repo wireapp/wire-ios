@@ -22,7 +22,6 @@ import WireCoreCrypto
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-@_spi(MockBackendInfo)
 import WireTransport
 
 class E2EIEnrollmentTests: ZMTBaseTest {
@@ -51,7 +50,6 @@ class E2EIEnrollmentTests: ZMTBaseTest {
             acmeDirectory: acmeDirectory,
             keyRotator: mockKeyRotator
         )
-        BackendInfo.enableMocking()
         BackendInfo.apiVersion = .v0
     }
 
@@ -61,7 +59,6 @@ class E2EIEnrollmentTests: ZMTBaseTest {
         mockApiProvider = nil
         mockE2eiService = nil
         mockKeyRotator = nil
-        BackendInfo.resetMocking()
 
         super.tearDown()
     }

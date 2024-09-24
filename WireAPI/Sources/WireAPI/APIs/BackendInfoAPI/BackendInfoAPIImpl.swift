@@ -38,7 +38,7 @@ class BackendInfoAPIImpl: BackendInfoAPI {
         )
 
         return try ResponseParser()
-            .success(code: 200, type: BackendInfoResponse.self)
+            .success(code: .ok, type: BackendInfoResponse.self)
             .parse(code: response.statusCode, data: data)
     }
 

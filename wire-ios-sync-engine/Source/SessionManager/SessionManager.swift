@@ -993,8 +993,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         do {
             try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
         } catch {
-            WireLogger.sessionManager.error("Impossible to delete the acccount \(account): \(error)")
-            WireLogger.session.error("Impossible to delete the acccount \(account): \(error)")
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
         }
     }
 

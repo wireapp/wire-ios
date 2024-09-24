@@ -38,8 +38,6 @@ final class ConversationListViewController: UIViewController {
     /// internal View Model
     var state: ConversationListState = .conversationList
 
-    private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
-
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -162,7 +160,10 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-        viewModel.requestMarketingConsentIfNeeded()
+
+        // there are currently always four tab items
+        let offset = (view.bounds.width / 4 * -1.5)
+        onboardingHint.arrowView.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: offset).isActive = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -180,12 +181,8 @@ final class ConversationListViewController: UIViewController {
 
         viewModel.updateE2EICertifiedStatus()
 
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
-
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
-
-            tabBarController?.delegate = self
 
             zClientViewController?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
@@ -199,10 +196,6 @@ final class ConversationListViewController: UIViewController {
         })
 
         super.viewWillTransition(to: size, with: coordinator)
-    }
-
-    override var shouldAutorotate: Bool {
-        return true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -243,10 +236,10 @@ final class ConversationListViewController: UIViewController {
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
-            contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
-            contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            contentContainer.bottomAnchor.constraint(equalTo: safeBottomAnchor),
+            contentContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            contentContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            contentContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
@@ -255,7 +248,7 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeAreaLayoutGuide.bottomAnchor),
 
             onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
@@ -326,10 +319,6 @@ final class ConversationListViewController: UIViewController {
             animated: animated
         )
     }
-
-    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
-    }
 }
 
 // MARK: - ViewModel Delegate
@@ -338,31 +327,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
     func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
         updateTitleView()
-    }
-}
-
-// MARK: - UITabBarControllerDelegate
-
-extension ConversationListViewController: UITabBarControllerDelegate {
-
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-
-        switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
-        case .contacts:
-            presentPeoplePicker { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-        case .conversations, .folders:
-            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
-        case .archive:
-            setState(.archived, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
-            }
-        case .none:
-            fallthrough
-        default:
-            fatalError("unexpected selected tab index")
-        }
     }
 }
 

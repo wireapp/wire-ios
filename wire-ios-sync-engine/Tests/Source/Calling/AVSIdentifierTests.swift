@@ -18,9 +18,8 @@
 
 import Foundation
 @testable import WireSyncEngine
-import XCTest
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 class AVSIdentifierTests: XCTestCase {
 
@@ -29,13 +28,7 @@ class AVSIdentifierTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = false
-    }
-
-    override func tearDown() {
-        BackendInfo.resetMocking()
-        super.tearDown()
     }
 
     func testProperties_WhenCreatedFromSerializedString_WithUUIDAndDomain() {

@@ -47,7 +47,7 @@ final class ConnectToBotURLActionProcessorTests: IntegrationTest {
         let sut = WireSyncEngine.ConnectToBotURLActionProcessor(
             contextprovider: userSession!,
             transportSession: mockTransportSession,
-            eventProcessor: userSession!.updateEventProcessor!,
+            eventProcessor: userSession!.conversationEventProcessor,
             searchUsersCache: nil
         )
 
@@ -70,7 +70,7 @@ final class ConnectToBotURLActionProcessorTests: IntegrationTest {
         let sut = WireSyncEngine.ConnectToBotURLActionProcessor(
             contextprovider: userSession!,
             transportSession: mockTransportSession,
-            eventProcessor: userSession!.updateEventProcessor!,
+            eventProcessor: userSession!.conversationEventProcessor,
             searchUsersCache: nil
         )
 

@@ -18,15 +18,21 @@
 
 import AVKit
 import PassKit
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class MessagePresenterTests: XCTestCase {
 
     var sut: MessagePresenter!
     var mediaPlaybackManager: MediaPlaybackManager!
-    var originalRootViewConttoller: UIViewController!
+    var originalRootViewController: UIViewController!
     var userSession: UserSessionMock!
+
+    private var rootViewController: UIViewController! {
+        get { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController }
+        set { (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController = newValue }
+    }
 
     override func setUp() {
         super.setUp()
@@ -35,8 +41,8 @@ final class MessagePresenterTests: XCTestCase {
         sut = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
         UIView.setAnimationsEnabled(false)
 
-        if originalRootViewConttoller == nil {
-            originalRootViewConttoller = UIApplication.shared.firstKeyWindow?.rootViewController
+        if originalRootViewController == nil {
+            originalRootViewController = rootViewController
         }
     }
 
@@ -46,7 +52,7 @@ final class MessagePresenterTests: XCTestCase {
         sut = nil
         super.tearDown()
         UIView.setAnimationsEnabled(true)
-        UIApplication.shared.firstKeyWindow?.rootViewController = originalRootViewConttoller
+        rootViewController = originalRootViewController
     }
 
     // MARK: - Video
@@ -57,7 +63,7 @@ final class MessagePresenterTests: XCTestCase {
         message.backingFileMessageData?.fileURL = fileURL
 
         let targetViewController = UIViewController()
-        UIApplication.shared.firstKeyWindow?.rootViewController = targetViewController
+        rootViewController = targetViewController
         sut.targetViewController = targetViewController
         _ = targetViewController.view
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = " ";
 
-"general.guest-room-name" = "Vendégszoba";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = " (Te)";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "Hívj meg másokat a csapatba";
 "peoplepicker.quick-action.open-conversation" = "Megnyitás";
 "peoplepicker.quick-action.create-conversation" = "Csoport létrehozása";
-"peoplepicker.quick-action.create-guest-room" = "Vendégszoba létrehozása";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "Szolgáltatások kezelése";
 
 "peoplepicker.federation.domain_unvailable" = "The federated domain is currently not available. [Learn more](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "Koppints az aktiváláshoz.";
 "conversation_list.header.self_team.accessibility_value.active" = "Most aktív.";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "Új üzenetek érkeztek.";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "Névjegyek";
-"conversation_list.bottom_bar.conversations.title" = "Beszélgetések";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "Archiválás";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "Szerepel a Névjegyzékedben is";
@@ -1803,7 +1797,7 @@
 "giphy.conversation.message" = "%@ · Forrás: giphy.com";
 "giphy.conversation.random_message" = "Forrás: Giphy.com";
 "giphy.error.no_more_results" = "nincs több GIF";
-"giphy.error.no_result" = "GIF nem található";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "küldés";
 "giphy.cancel" = "mégsem";

@@ -355,7 +355,7 @@ extension ZMAssetClientMessage {
 
         switch transferState {
         case .uploading:
-            expire()
+            expire(withReason: .cancelled)
             updateTransferState(.uploadingCancelled, synchronize: false)
             progress = 0
         case .uploaded:

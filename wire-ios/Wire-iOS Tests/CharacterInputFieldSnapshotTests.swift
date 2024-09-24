@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUITesting
+import WireTestingPackage
 import XCTest
 
 @testable import Wire
@@ -25,6 +25,10 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
     private var sut: CharacterInputField! = nil
+
+    private var rootViewController: UIViewController! {
+        (UIApplication.shared.delegate as? AppDelegate)?.mainWindow?.rootViewController
+    }
 
     override func setUp() {
         super.setUp()
@@ -49,7 +53,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testFocusedState() {
         // given
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()
@@ -60,7 +64,7 @@ final class CharacterInputFieldSnapshotTests: XCTestCase {
 
     func testFocusedDeFocusedState() {
         // given
-        UIApplication.shared.firstKeyWindow?.rootViewController?.view.addSubview(sut)
+        rootViewController?.view.addSubview(sut)
 
         // when
         sut.becomeFirstResponder()

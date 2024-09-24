@@ -139,7 +139,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
             logger.error(errorDescription)
             throw DeviceDetailsActionsError.failedAction(errorDescription)
         }
-        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: { topmostViewController })
         return try await e2eiCertificateEnrollment.invoke(
             authenticate: oauthUseCase.invoke
         )

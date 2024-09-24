@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 @testable import WireAPI
 import XCTest
 
 final class UpdateEventsAPITests: XCTestCase {
 
-    private func createSnapshotter() -> APISnapshotHelper<UpdateEventsAPI> {
+    private func createSnapshotter() -> APISnapshotHelper<any UpdateEventsAPI> {
         APISnapshotHelper { httpClient, apiVersion in
             UpdateEventsAPIBuilder(httpClient: httpClient)
                 .makeAPI(for: apiVersion)
@@ -42,8 +41,8 @@ final class UpdateEventsAPITests: XCTestCase {
         try await createSnapshotter().verifyRequestForAllAPIVersions {
             // Given
             try HTTPClientMock(responses: [
-                .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
-                .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+                .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page1"),
+                .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2")
             ])
         } when: { sut in
             for try await _ in sut.getUpdateEvents(
@@ -62,7 +61,7 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetLastUpdateEvent_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetLastEventSuccessResponseV0"
         )
 
@@ -77,7 +76,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_400_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // Then
@@ -89,7 +88,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_404_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // Then
@@ -102,8 +101,8 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetUpdateEvents_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(responses: [
-            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
-            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page1"),
+            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2")
         ])
 
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
@@ -129,7 +128,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_400_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .badRequest, errorLabel: "")
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // Then
@@ -146,7 +145,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_404_V0() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = UpdateEventsAPIV0(httpClient: httpClient)
 
         // Then
@@ -166,7 +165,7 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetLastUpdateEvent_200_V5() async throws {
         // Given
         let httpClient = try HTTPClientMock(
-            code: 200,
+            code: .ok,
             payloadResourceName: "GetLastEventSuccessResponseV5"
         )
 
@@ -181,7 +180,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetLastUpdateEvent_404_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "not-found")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "not-found")
         let sut = UpdateEventsAPIV5(httpClient: httpClient)
 
         // Then
@@ -194,8 +193,8 @@ final class UpdateEventsAPITests: XCTestCase {
     func testGetUpdateEvents_200_V5() async throws {
         // Given
         let httpClient = try HTTPClientMock(responses: [
-            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page1"),
-            .mockJSONResource(code: 200, name: "GetUpdateEventsSuccessResponse200_Page2")
+            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page1"),
+            .mockJSONResource(code: .ok, name: "GetUpdateEventsSuccessResponse200_Page2")
         ])
 
         let sut = UpdateEventsAPIV5(httpClient: httpClient)
@@ -221,7 +220,7 @@ final class UpdateEventsAPITests: XCTestCase {
 
     func testGetUpdateEvents_404_V5() async throws {
         // Given
-        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let httpClient = try HTTPClientMock(code: .notFound, errorLabel: "")
         let sut = UpdateEventsAPIV5(httpClient: httpClient)
 
         // Then

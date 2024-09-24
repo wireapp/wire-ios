@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
 // Language like Chinese does not use space to sperate words or sentences.
 "general.space_between_words" = "\U200B";
 
-"general.guest-room-name" = "訪客聊天室";
+"general.guest-room-name" = "Guest room";
 
 // User Cell
 "user_cell.title.you_suffix" = "（你）";
@@ -103,7 +103,7 @@
 "peoplepicker.invite_team_members" = "邀請其他人加入團隊";
 "peoplepicker.quick-action.open-conversation" = "開啟";
 "peoplepicker.quick-action.create-conversation" = "建立群組";
-"peoplepicker.quick-action.create-guest-room" = "建立訪客聊天室";
+"peoplepicker.quick-action.create-guest-room" = "Create guest room";
 "peoplepicker.quick-action.admin-services" = "管理服務";
 
 "peoplepicker.federation.domain_unvailable" = "聯合域當前不可用。 [了解更多](%@)";
@@ -134,12 +134,6 @@
 "conversation_list.header.self_team.accessibility_value.inactive" = "點擊以啟用。";
 "conversation_list.header.self_team.accessibility_value.active" = "立即啟用。";
 "conversation_list.header.self_team.accessibility_value.has_new_messages" = "有新訊息。";
-
-// Conversation List Bottom Bar
-"conversation_list.bottom_bar.contacts.title" = "連絡人";
-"conversation_list.bottom_bar.conversations.title" = "對話";
-"conversation_list.bottom_bar.folders.title" = "Folders";
-"conversation_list.bottom_bar.archived.title" = "封存";
 
 // Profile Header View
 "conversation.connection_view.in_address_book" = "在聯絡人中";
@@ -1803,7 +1797,7 @@
 "giphy.conversation.message" = "%@ · 來自giphy.com";
 "giphy.conversation.random_message" = "來自giphy.com";
 "giphy.error.no_more_results" = "沒有更多的gif圖像";
-"giphy.error.no_result" = "找不到gif圖像";
+"giphy.error.no_result" = "No gif found";
 
 "giphy.confirm" = "發送";
 "giphy.cancel" = "取消";

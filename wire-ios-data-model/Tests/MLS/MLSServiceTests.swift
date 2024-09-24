@@ -50,7 +50,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     let defaultCipherSuite: Feature.MLS.Config.MLSCipherSuite = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 
     override func setUp() {
-        BackendInfo.storage = .temporary()
         BackendInfo.domain = "example.com"
 
         super.setUp()
@@ -124,7 +123,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         privateUserDefaults = nil
         userDefaultsTestSuite = nil
         super.tearDown()
-        BackendInfo.storage = .standard
     }
 
     // MARK: - Helpers
@@ -436,6 +434,27 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
+    }
+
+    func test_CreateGroup_BackendPublicKeysAreNotFetched() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([1, 2, 3])))
+        let backendPublicKeys = BackendMLSPublicKeys(removal: .init(ed25519: .init([4, 5, 6])))
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockMethod = { _ in
+            return backendPublicKeys
+        }
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { _, _, _ in }
+
+        // When
+        try await sut.createGroup(for: groupID, removalKeys: removalKeys)
+
+        // Then
+        let invocation = mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_Invocations.first
+        XCTAssertEqual(invocation?.config.externalSenders,
+                       removalKeys.externalSenderKey(for: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519))
         XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
@@ -2667,8 +2686,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     // MARK: - Self group
 
     func test_itCreatesSelfGroup_WithNoKeyPackages_Successfully() async throws {
-        BackendInfo.domain = "example.com"
-
         // Given a group.
         let groupID = MLSGroupID.random()
         let expectation1 = self.customExpectation(description: "CreateConversation should be called")
@@ -2700,8 +2717,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     }
 
     func test_itCreatesSelfGroup_WithKeyPackages_Successfully() async throws {
-        BackendInfo.domain = "example.com"
-
         // Given a group.
         let expectation1 = self.customExpectation(description: "CreateConversation should be called")
         let expectation2 = self.customExpectation(description: "AddMembers should be called")
@@ -2846,8 +2861,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_succeeds() async throws {
         // Given
-        BackendInfo.storage = .temporary()
-        BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         let conversation = await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -2938,8 +2951,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_startProteusToMLSMigration_staleMessageErrorWipesGroup() async throws {
         // Given
-        BackendInfo.storage = .temporary()
-        BackendInfo.domain = "example.com"
         let mlsGroupID = MLSGroupID.random()
         await uiMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)

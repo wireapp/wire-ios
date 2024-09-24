@@ -20,7 +20,6 @@ import XCTest
 
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
-@_spi(MockBackendInfo)
 import WireTransport
 
 class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
@@ -48,15 +47,12 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
                 messageSender: self.mockMessageSender
             )
         }
-
-        BackendInfo.enableMocking()
         apiVersion = .v0
     }
 
     override func tearDown() {
         applicationStatus = nil
         sut = nil
-        BackendInfo.resetMocking()
         super.tearDown()
     }
 

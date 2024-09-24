@@ -169,14 +169,12 @@ extension EncryptionContext {
         if flock(self.fileDescriptor, LOCK_EX) != 0 {
             fatal("Failed to lock \(self.path)")
         }
-        zmLog.debug("Acquired lock for cryptobox at path: \(self.path)")
     }
 
     fileprivate func releaseDirectoryLock() {
         if flock(self.fileDescriptor, LOCK_UN) != 0 {
             fatal("Failed to unlock \(self.path)")
         }
-        zmLog.debug("Released lock for cryptobox at path: \(self.path)")
     }
 }
 

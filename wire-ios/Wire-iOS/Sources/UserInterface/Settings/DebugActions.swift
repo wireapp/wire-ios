@@ -59,19 +59,6 @@ enum DebugActions {
         }
     }
 
-    /// Shows the user ID of the self user
-    static func showUserId(_ type: SettingsCellDescriptorType) {
-        guard let userSession = ZMUserSession.shared(),
-            let selfUser = (userSession.providedSelfUser as? ZMUser)
-        else { return }
-
-        alert(
-            selfUser.remoteIdentifier.uuidString,
-            title: "User Id",
-            textToCopy: selfUser.remoteIdentifier.uuidString
-        )
-    }
-
     /// Check if there is any unread conversation, if there is, show an alert with the name and ID of the conversation
     static func findUnreadConversationContributingToBackArrowDot(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared() else { return }
@@ -154,54 +141,6 @@ enum DebugActions {
         }
     }
 
-    static func showAnalyticsIdentifier(_ type: SettingsCellDescriptorType) {
-        guard
-            let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false),
-            let userSession = ZMUserSession.shared()
-        else {
-            return
-        }
-
-        let selfUser = ZMUser.selfUser(inUserSession: userSession)
-
-        let alert = UIAlertController(
-            title: "Analytics identifier",
-            message: "\(selfUser.analyticsIdentifier ?? "nil")",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .cancel
-        ))
-
-        controller.present(alert, animated: true)
-    }
-
-    static func showAPIVersionInfo(_ type: SettingsCellDescriptorType) {
-        guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
-            return
-        }
-
-        let message = """
-        Max supported version: \(APIVersion.allCases.max().map { "\($0.rawValue)" } ?? "None")
-        Currently selected version: \(BackendInfo.apiVersion.map { "\($0.rawValue)" } ?? "None")
-        Local domain: \(BackendInfo.domain ?? "None")
-        Is federation enabled: \(BackendInfo.isFederationEnabled)
-        """
-
-        let alert = UIAlertController(
-            title: "API Version info",
-            message: message,
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(
-            title: L10n.Localizable.General.ok,
-            style: .cancel
-        ))
-
-        controller.present(alert, animated: true)
-    }
-
     static func reloadUserInterface(_ type: SettingsCellDescriptorType) {
         guard let appRootRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
             return
@@ -278,7 +217,7 @@ enum DebugActions {
                 try! clientMessage.setUnderlyingMessage(genericMessage)
                 clientMessage.sender = ZMUser.selfUser(in: syncContext)
 
-                clientMessage.expire()
+                clientMessage.expire(withReason: .other)
                 clientMessage.linkPreviewState = .done
 
                 return clientMessage

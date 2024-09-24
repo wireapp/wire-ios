@@ -165,7 +165,6 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
-    [self enableBackendInfoMocking];
     [self setBackendInfoAPIVersionNil];
     XCTAssertNil(self.sut.currentAPIVersion);
 
@@ -181,8 +180,6 @@
     // then
     XCTAssertFalse(self.mockRequestStrategy.nextRequestCalled);
     XCTAssertNil(self.mockTransportSesssion.lastEnqueuedRequest);
-
-    [self resetBackendInfoMocking];
 }
 
 - (void)testThatItSendsAsManyCallsAsTheTransportSessionCanHandle

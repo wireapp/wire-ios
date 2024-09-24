@@ -20,9 +20,8 @@ import WireAPISupport
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
-import XCTest
-@_spi(MockBackendInfo)
 import WireTransport
+import XCTest
 
 @testable import WireAPI
 @testable import WireDomain
@@ -42,7 +41,6 @@ final class ConnectionsRepositoryTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        BackendInfo.enableMocking()
         BackendInfo.isFederationEnabled = false
 
         stack = try await coreDataStackHelper.createStack()
@@ -56,7 +54,6 @@ final class ConnectionsRepositoryTests: XCTestCase {
         connectionsAPI = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
-        BackendInfo.resetMocking()
         try await super.tearDown()
     }
 
@@ -150,21 +147,21 @@ private enum Scaffolding {
     static let conversationID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
     static let member2ID = WireAPI.QualifiedID(uuid: UUID(), domain: String.randomDomain())
     static let lastUpdate = Date()
-    static let connectionStatus = ConnectionStatus.accepted
+    nonisolated(unsafe) static let connectionStatus = ConnectionStatus.accepted
 
-    static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
-                                               receiverID: Scaffolding.member2ID.uuid,
-                                               receiverQualifiedID: Scaffolding.member2ID,
-                                               conversationID: Scaffolding.conversationID.uuid,
-                                               qualifiedConversationID: Scaffolding.conversationID,
-                                               lastUpdate: Scaffolding.lastUpdate,
-                                               status: Scaffolding.connectionStatus)
+    nonisolated(unsafe) static let connection = WireAPI.Connection(senderID: Scaffolding.member1ID.uuid,
+                                                                   receiverID: Scaffolding.member2ID.uuid,
+                                                                   receiverQualifiedID: Scaffolding.member2ID,
+                                                                   conversationID: Scaffolding.conversationID.uuid,
+                                                                   qualifiedConversationID: Scaffolding.conversationID,
+                                                                   lastUpdate: Scaffolding.lastUpdate,
+                                                                   status: Scaffolding.connectionStatus)
 
-    static let brokenConnection = WireAPI.Connection(senderID: nil,
-                                                     receiverID: nil,
-                                                     receiverQualifiedID: nil,
-                                                     conversationID: nil,
-                                                     qualifiedConversationID: nil,
-                                                     lastUpdate: Date(),
-                                                     status: .pending)
+    nonisolated(unsafe) static let brokenConnection = WireAPI.Connection(senderID: nil,
+                                                                         receiverID: nil,
+                                                                         receiverQualifiedID: nil,
+                                                                         conversationID: nil,
+                                                                         qualifiedConversationID: nil,
+                                                                         lastUpdate: Date(),
+                                                                         status: .pending)
 }
