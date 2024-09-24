@@ -212,18 +212,19 @@ class CameraKeyboardViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             goBackButton.widthAnchor.constraint(equalToConstant: 36),
             goBackButton.widthAnchor.constraint(equalTo: goBackButton.heightAnchor),
 
             goBackButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: sideMargin),
-            goBackButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(18 + UIScreen.safeArea.bottom)),
+            goBackButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -38),
 
             cameraRollButton.widthAnchor.constraint(equalToConstant: 36),
-            cameraRollButton.widthAnchor.constraint(equalTo: cameraRollButton.heightAnchor),
+            cameraRollButton.heightAnchor.constraint(equalToConstant: 36),
             cameraRollButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -sideMargin),
-            cameraRollButton.centerYAnchor.constraint(equalTo: goBackButton.centerYAnchor)])
+            cameraRollButton.bottomAnchor.constraint(equalTo: goBackButton.bottomAnchor)
+        ])
     }
 
     private func createCollectionView() {

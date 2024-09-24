@@ -171,7 +171,7 @@ final class ConversationImagesViewController: UIViewController {
         NSLayoutConstraint.activate([
             buttonsBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             buttonsBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            buttonsBar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            buttonsBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             overlay.topAnchor.constraint(equalTo: buttonsBar.topAnchor),
             overlay.bottomAnchor.constraint(equalTo: buttonsBar.bottomAnchor),
             overlay.trailingAnchor.constraint(equalTo: buttonsBar.trailingAnchor),
