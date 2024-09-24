@@ -24,11 +24,27 @@ final class MainCoordinatorTests: XCTestCase {
 
     private var sut: MainCoordinator<MockSplitViewController, MockTabBarController, MockViewControllerBuilder, MockViewControllerBuilder>!
 
+    private var splitViewController: MockSplitViewController!
+    private var tabBarController: MockTabBarController!
+    private var sidebar: MockSidebarViewController!
+    private var conversationList: MockConversationListViewController!
+
     @MainActor
     override func setUp() async throws {
+        sidebar = .init()
+        conversationList = .init()
+
+        splitViewController = .init(style: .tripleColumn)
+        splitViewController.sidebar = sidebar
+        splitViewController.conversationList = .init()
+
+        tabBarController = .init()
+        tabBarController.archive = .init()
+        tabBarController.settings = .init()
+
         sut = .init(
-            mainSplitViewController: .init(style: .tripleColumn),
-            mainTabBarController: .init(),
+            mainSplitViewController: splitViewController,
+            mainTabBarController: tabBarController,
             newConversationBuilder: .init(),
             selfProfileBuilder: .init()
         )
@@ -36,9 +52,38 @@ final class MainCoordinatorTests: XCTestCase {
 
     override func tearDown() {
         sut = nil
+        tabBarController = nil
+        splitViewController = nil
+        conversationList = nil
+        sidebar = nil
     }
 
-    func testExample() {
-        XCTFail("TODO: Implement tests")
+    @MainActor
+    func testInitialization() {
+        XCTAssert(splitViewController.sidebar == sidebar)
+        // TODO: finish
+        // conversationList in splitview?
+    }
+
+    @MainActor
+    func testCollapsingConversationList() {
+        // When
+        sut.splitViewControllerDidCollapse(splitViewController)
+
+        // Then
+        XCTAssertNil(splitViewController.conversationList)
+        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+    }
+
+    @MainActor
+    func testShowingArchivedConversations() {
+        // When
+        sut.showArchivedConversations()
+
+        // Then
+        XCTAssertNil(splitViewController.conversationList)
+        XCTAssertNotNil(tabBarController.conversations?.conversationList)
+        XCTAssertNotNil(splitViewController.archive)
+        XCTAssertNil(tabBarController.archive)
     }
 }

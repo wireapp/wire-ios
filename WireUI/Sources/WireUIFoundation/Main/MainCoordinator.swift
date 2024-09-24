@@ -19,8 +19,6 @@
 import UIKit
 import WireFoundation
 
-// TODO: unit tests
-
 // swiftlint:disable opening_brace
 
 /// Manages the main flows of the application after a successful login.
@@ -98,6 +96,13 @@ public final class MainCoordinator<
         newConversationBuilder: NewConversationBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
+        guard
+            mainSplitViewController.conversationList != nil,
+            mainTabBarController.archive != nil,
+            mainTabBarController.settings != nil
+        else { fatalError("invalid state of container view controllers") }
+// TODO: add more precondition checks
+
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.newConversationBuilder = newConversationBuilder
