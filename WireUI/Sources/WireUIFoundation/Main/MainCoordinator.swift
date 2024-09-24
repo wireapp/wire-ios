@@ -28,8 +28,8 @@ import WireFoundation
 /// conforming instances and is responsible for managing transitions between different split layout states (collapsed and expanded)
 /// as well as handling navigation logic.
 ///
-/// TODO: all contain navigation controllers
-/// tab bar controller keeps the instances retained
+/// TODO: mention that all tabs are navigation controllers
+/// and that the tab bar controller keeps the instances retained
 
 @MainActor
 public final class MainCoordinator<
@@ -44,7 +44,8 @@ public final class MainCoordinator<
     SplitViewController.Sidebar: MainSidebarProtocol,
     SplitViewController.ConversationList == TabBarController.ConversationList,
     SplitViewController.Archive == TabBarController.Archive,
-    SplitViewController.Settings == TabBarController.Settings {
+    SplitViewController.Settings == TabBarController.Settings
+{ // swiftlint:disable:this all
 
     // MARK: - Private Properties
 
