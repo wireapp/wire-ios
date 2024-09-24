@@ -16,82 +16,37 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireAPI
 import WireAPISupport
-import WireDataModel
-import WireDataModelSupport
-import XCTest
-
 @testable import WireDomain
+import WireDomainSupport
+import XCTest
 
 final class UserUpdateEventProcessorTests: XCTestCase {
 
     var sut: UserUpdateEventProcessor!
-
-    var coreDataStack: CoreDataStack!
-    var coreDataStackHelper: CoreDataStackHelper!
-    var modelHelper: ModelHelper!
-
-    var context: NSManagedObjectContext {
-        coreDataStack.syncContext
-    }
+    var userRepository: MockUserRepositoryProtocol!
 
     override func setUp() async throws {
         try await super.setUp()
-        modelHelper = ModelHelper()
-        coreDataStackHelper = CoreDataStackHelper()
-        coreDataStack = try await coreDataStackHelper.createStack()
-        sut = UserUpdateEventProcessor(
-            repository: UserRepository(
-                context: context,
-                usersAPI: MockUsersAPI(),
-                isFederationEnabled: true
-            )
-        )
+        userRepository = MockUserRepositoryProtocol()
+        sut = UserUpdateEventProcessor(repository: userRepository)
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
-        coreDataStack = nil
+        userRepository = nil
         sut = nil
-        try coreDataStackHelper.cleanupDirectory()
-        coreDataStackHelper = nil
-        modelHelper = nil
     }
 
     // MARK: - Tests
 
-    func testProcessEvent_It_Updates_User_Locally() async throws {
+    func testProcessEvent_It_Invokes_Update_User_Repo_Method() async throws {
         // Given
 
-        modelHelper.createUser(id: Scaffolding.userID, in: context)
-
-        // When
-
-        try await sut.processEvent(Scaffolding.event)
-
-        // Then
-
-        try await context.perform { [context] in
-            let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
-
-            XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
-            XCTAssertEqual(updatedUser.domain, Scaffolding.domain)
-            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
-            XCTAssertEqual(updatedUser.handle, Scaffolding.event.handle)
-            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.event.email)
-            XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
-        }
-    }
-
-    private enum Scaffolding {
-        static let userID = UUID()
-        static let domain = "domain.com"
-
-        nonisolated(unsafe) static let event = UserUpdateEvent(
-            id: userID,
-            userID: UserID(uuid: userID, domain: domain),
+        let event = UserUpdateEvent(
+            id: Scaffolding.userID,
+            userID: UserID(uuid: Scaffolding.userID, domain: Scaffolding.domain),
             accentColorID: nil,
             name: "username",
             handle: "test",
@@ -100,6 +55,23 @@ final class UserUpdateEventProcessorTests: XCTestCase {
             assets: nil,
             supportedProtocols: [.proteus, .mls]
         )
+
+        // Mock
+
+        userRepository.updateUserFrom_MockMethod = { _ in }
+
+        // When
+
+        try await sut.processEvent(event)
+
+        // Then
+
+        XCTAssertEqual(userRepository.updateUserFrom_Invocations, [event])
+    }
+
+    private enum Scaffolding {
+        static let userID = UUID()
+        static let domain = "domain.com"
     }
 
 }
