@@ -18,23 +18,10 @@
 
 /// Handles the navigation when a user is authenticated.
 public protocol MainCoordinatorProtocol: AnyObject {
-
-    func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) async
+    func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
+    where ConversationFilter: MainConversationFilterRepresentable
     func showArchivedConversations() async
     func showSelfProfile() async
     func showSettings() async
     func showNewConversation() async
-
-//    func openConversation(
-//        _ conversation: ZMConversation,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    )
-//
-//    func openConversation<Message>(
-//        _ conversation: ZMConversation,
-//        scrollTo message: Message,
-//        focusOnView focus: Bool,
-//        animated: Bool
-//    ) where Message: ZMConversationMessage
 }

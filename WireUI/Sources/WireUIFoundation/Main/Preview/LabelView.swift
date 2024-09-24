@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+/// A simple view which displays a text centered horizontally and vertically.
+/// Used for previews only.
 struct LabelView: View {
     var content: String
     var backgroundColor: Color

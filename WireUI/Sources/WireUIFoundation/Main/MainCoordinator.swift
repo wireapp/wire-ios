@@ -91,11 +91,6 @@ SplitViewController.Settings == TabBarController.Settings
         self.selfProfileBuilder = selfProfileBuilder
     }
 
-    deinit {
-        // TODO: WireLogger?
-        /* WireLogger.ui.debug */ print("MainCoordinator.deinit")
-    }
-
     // MARK: - Public Methods
 
     public func showConversationList<ConversationFilter: MainConversationFilterRepresentable>(conversationFilter: ConversationFilter?) {

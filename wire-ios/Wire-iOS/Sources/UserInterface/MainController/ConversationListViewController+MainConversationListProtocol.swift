@@ -22,5 +22,26 @@ extension ConversationListViewController: MainConversationListProtocol {
     var conversationFilter: ConversationFilter? {
         get { listContentController.listViewModel.selectedFilter }
         set { listContentController.listViewModel.selectedFilter = newValue }
+}
+}
+
+// MARK: -
+
+extension ConversationFilterType: MainConversationFilterRepresentable {
+
+    init(_ mainConversationFilter: MainConversationFilter) {
+        switch mainConversationFilter {
+        case .favorites: self = .favorites
+        case .groups: self = .groups
+        case .oneOnOne: self = .oneToOneConversations
+        }
+    }
+
+    func map() -> MainConversationFilter {
+        switch self {
+        case .favorites: .favorites
+        case .groups: .groups
+        case .oneToOneConversations: .oneOnOne
+        }
     }
 }

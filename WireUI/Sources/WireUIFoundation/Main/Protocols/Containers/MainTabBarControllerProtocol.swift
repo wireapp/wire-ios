@@ -22,13 +22,14 @@ import UIKit
 public protocol MainTabBarControllerProtocol: UITabBarController {
 
     associatedtype ConversationList: MainConversationListProtocol
-    associatedtype Conversation: UIViewController
-    associatedtype Archive: UIViewController
-    associatedtype Settings: UIViewController
+    typealias Conversation = UIViewController
+    typealias Archive = UIViewController
+    typealias Settings = UIViewController
 
     /// The selected tab. Since a `selectedTab` property exists in `UITabBarController` this property is suffixed with "Content" instead.
     var selectedContent: MainTabBarControllerContent { get set }
 
+    var contacts: Contacts? { get set }
     /// In the compact layout the conversation view controller will be pushed onto the navigation controller of the conversation list.
     var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
     var archive: Archive? { get set }
