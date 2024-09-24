@@ -20,6 +20,7 @@ opt_in_rules:
   - operator_usage_whitespace
   - reduce_into
   - self_binding
+  - self_in_property_initialization
   - shorthand_optional_binding
   - sorted_imports
   - unhandled_throwing_task
