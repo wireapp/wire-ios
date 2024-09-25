@@ -17,10 +17,10 @@
 //
 
 import avs
+import Countly
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
-import Countly
 
 final class TrackingManager: NSObject, TrackingInterface {
 

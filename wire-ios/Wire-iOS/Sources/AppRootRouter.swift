@@ -17,12 +17,12 @@
 //
 
 import avs
+import Countly
 import UIKit
 import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
-import Countly
 
 // MARK: - AppRootRouter
 final class AppRootRouter: NSObject {

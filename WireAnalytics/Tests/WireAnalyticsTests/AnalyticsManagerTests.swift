@@ -31,7 +31,6 @@ class AnalyticsManagerTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-
         analyticsService = .init()
         analyticsService.startAppKeyHost_MockMethod = { _, _ in }
         analyticsService.beginSession_MockMethod = {}
