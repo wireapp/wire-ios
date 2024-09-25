@@ -24,8 +24,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "WireUIFoundationTests",
-        "name" : "WireUIFoundationTests"
+        "identifier" : "WireMainNavigationTests",
+        "name" : "WireMainNavigationTests"
       }
     },
     {
