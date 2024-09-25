@@ -120,16 +120,8 @@ public final class MainCoordinator<
             conversationList.conversationFilter = mainConversationFilter.map { .init($0) }
 
             // set the right menu item in the sidebar
-            switch mainConversationFilter {
-            case .none:
-                sidebar.selectedMenuItem = .init(.all)
-            case .favorites:
-                sidebar.selectedMenuItem = .init(.favorites)
-            case .groups:
-                sidebar.selectedMenuItem = .init(.groups)
-            case .oneOnOne:
-                sidebar.selectedMenuItem = .init(.oneOnOne)
-            }
+            let mainMenuItem = MainSidebarMenuItem(mainConversationFilter)
+            sidebar.selectedMenuItem = .init(mainMenuItem)
         }
 
         // In collapsed state switching the tab was all we needed to do.
@@ -343,22 +335,33 @@ public final class MainCoordinator<
             break // `.contacts` and `.folders` are removed for navigation overhaul
 
         case .conversations:
-            switch conversationList.conversationFilter?.map() {
-            case .none:
-                sidebar.selectedMenuItem = .init(.all)
-            case .favorites:
-                sidebar.selectedMenuItem = .init(.favorites)
-            case .groups:
-                sidebar.selectedMenuItem = .init(.groups)
-            case .oneOnOne:
-                sidebar.selectedMenuItem = .init(.oneOnOne)
-            }
+            let mainConversationFilter = conversationList.conversationFilter?.map()
+            let mainMenuItem = MainSidebarMenuItem(mainConversationFilter)
+            sidebar.selectedMenuItem = .init(mainMenuItem)
 
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)
 
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
+        }
+    }
+}
+
+// MARK: - MainSidebarMenuItem + MainConversationFilter
+
+private extension MainSidebarMenuItem {
+
+    init(_ filter: MainConversationFilter?) {
+        switch filter {
+        case .none:
+            self = .all
+        case .favorites:
+            self = .favorites
+        case .groups:
+            self = .groups
+        case .oneOnOne:
+            self = .oneOnOne
         }
     }
 }
