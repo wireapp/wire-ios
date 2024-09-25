@@ -263,7 +263,7 @@ class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
     }
 
-    func testDeleteUserProperty() async {
+    func testDeleteUserProperty_It_Updates_Read_Receipts_Flags() async {
         // Given
 
         await context.perform { [self] in
