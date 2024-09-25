@@ -96,16 +96,13 @@ public final class MainCoordinator<
         newConversationBuilder: NewConversationBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
-        guard
-            mainSplitViewController.conversationList != nil,
-            mainTabBarController.archive != nil,
-            mainTabBarController.settings != nil
-        else { fatalError("invalid state of container view controllers") }
-
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.newConversationBuilder = newConversationBuilder
         self.selfProfileBuilder = selfProfileBuilder
+        super.init()
+        mainSplitViewController.delegate = self
+        mainTabBarController.delegate = self
     }
 
     // MARK: - Public Methods
@@ -350,7 +347,7 @@ public final class MainCoordinator<
 
 private extension MainSidebarMenuItem {
 
-    init<ConversationFilter: MainConversationFilterRepresentable>(_ filter: ConversationFilter?) {
+    init(_ filter: (some MainConversationFilterRepresentable)?) {
         switch filter?.mapToMainConversationFilter() {
         case .none:
             self = .all

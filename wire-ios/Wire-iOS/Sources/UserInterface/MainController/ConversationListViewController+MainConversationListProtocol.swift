@@ -42,7 +42,6 @@ extension ConversationFilterType: MainConversationFilterRepresentable {
         }
     }
 
-
     func mapToMainConversationFilter() -> MainConversationFilter {
         switch self {
         case .favorites: .favorites

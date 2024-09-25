@@ -30,7 +30,7 @@ public protocol MainConversationFilterRepresentable: Sendable {
 
 public extension MainConversationFilterRepresentable {
 
-    init?<ConversationFilter: MainConversationFilterRepresentable>(mappingFrom conversationFilter: ConversationFilter?) {
+    init?(mappingFrom conversationFilter: (some MainConversationFilterRepresentable)?) {
         guard let conversationFilter else { return nil }
         self.init(conversationFilter.mapToMainConversationFilter())
     }
