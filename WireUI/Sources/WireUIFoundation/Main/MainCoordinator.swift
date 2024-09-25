@@ -116,11 +116,10 @@ public final class MainCoordinator<
             tabBarController.selectedContent = .conversations
 
             // apply the filter to the conversation list
-            let mainConversationFilter = conversationFilter?.map()
-            conversationList.conversationFilter = mainConversationFilter.map { .init($0) }
+            conversationList.conversationFilter = .init(mappingFrom: conversationFilter)
 
             // set the right menu item in the sidebar
-            let mainMenuItem = MainSidebarMenuItem(mainConversationFilter)
+            let mainMenuItem = MainSidebarMenuItem(conversationFilter)
             sidebar.selectedMenuItem = .init(mainMenuItem)
         }
 
@@ -335,8 +334,7 @@ public final class MainCoordinator<
             break // `.contacts` and `.folders` are removed for navigation overhaul
 
         case .conversations:
-            let mainConversationFilter = conversationList.conversationFilter?.map()
-            let mainMenuItem = MainSidebarMenuItem(mainConversationFilter)
+            let mainMenuItem = MainSidebarMenuItem(conversationList.conversationFilter)
             sidebar.selectedMenuItem = .init(mainMenuItem)
 
         case .archive:
@@ -352,8 +350,8 @@ public final class MainCoordinator<
 
 private extension MainSidebarMenuItem {
 
-    init(_ filter: MainConversationFilter?) {
-        switch filter {
+    init<ConversationFilter: MainConversationFilterRepresentable>(_ filter: ConversationFilter?) {
+        switch filter?.mapToMainConversationFilter() {
         case .none:
             self = .all
         case .favorites:
