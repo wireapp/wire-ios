@@ -94,7 +94,7 @@ final class ProfileHeaderViewController: UIViewController {
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
         button.tintColor = .black
-        //button.accessibilityLabel = L10n.Accessibility.Calling.HeaderBar.description
+        button.accessibilityLabel = "Share your profile via QR code or link"
 
         return button
     }()
@@ -285,7 +285,7 @@ final class ProfileHeaderViewController: UIViewController {
         let iconBounds = CGRect(x: 0,
                                 y: 10,
                                 width: 16,
-                                height:16)
+                                height: 16)
 
         certificate.bounds = iconBounds
         certificate.image = UIImage(resource: .certificateValid)
@@ -307,8 +307,8 @@ final class ProfileHeaderViewController: UIViewController {
        // }
         nameLabel.attributedText = mainName
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = true//!userStatus.isE2EICertified
-        proteusVerifiedImageView.isHidden = true//!userStatus.isProteusVerified
+        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
+        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
     }
 
     private func updateGuestIndicator() {
