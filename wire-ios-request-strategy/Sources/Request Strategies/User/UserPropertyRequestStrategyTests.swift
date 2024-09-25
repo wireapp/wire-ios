@@ -132,9 +132,32 @@ extension UserPropertyRequestStrategyTests {
 
             XCTAssertNotNil(request)
             XCTAssertEqual(request!.method, .get)
-            XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
+            XCTAssertEqual(request!.path, "/properties/WIRE_RECEIPT_MODE")
 
             let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+
+            self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
+
+            // then
+            XCTAssertFalse(selfUser.needsPropertiesUpdate)
+            XCTAssertTrue(selfUser.readReceiptsEnabled)
+            XCTAssertFalse(selfUser.readReceiptsEnabledChangedRemotely)
+        }
+    }
+
+    func testThatItIsFetchingPropertyValue_withV6() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+
+            // when
+            let request = self.sut.nextRequestIfAllowed(for: .v6)
+
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request!.method, .get)
+            XCTAssertEqual(request!.path, "/v6/properties/WIRE_RECEIPT_MODE")
+
+            let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v6.rawValue)
 
             self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
 
@@ -155,9 +178,32 @@ extension UserPropertyRequestStrategyTests {
 
             XCTAssertNotNil(request)
             XCTAssertEqual(request!.method, .get)
-            XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
+            XCTAssertEqual(request!.path, "/properties/WIRE_RECEIPT_MODE")
 
             let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+
+            self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
+
+            // then
+            XCTAssertFalse(selfUser.needsPropertiesUpdate)
+            XCTAssertFalse(selfUser.readReceiptsEnabled)
+            XCTAssertFalse(selfUser.readReceiptsEnabledChangedRemotely)
+        }
+    }
+
+    func testThatItIsFetchingPropertyValue_404_apiV6() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+
+            // when
+            let request = self.sut.nextRequestIfAllowed(for: .v6)
+
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request!.method, .get)
+            XCTAssertEqual(request!.path, "/v6/properties/WIRE_RECEIPT_MODE")
+
+            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v6.rawValue)
 
             self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
 
