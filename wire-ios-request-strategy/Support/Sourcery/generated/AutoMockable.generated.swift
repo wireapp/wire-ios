@@ -1217,17 +1217,17 @@ public class MockProteusMessage: ProteusMessage {
 
     // MARK: - expire
 
-    public var expire_Invocations: [Void] = []
-    public var expire_MockMethod: (() -> Void)?
+    public var expireWithReason_Invocations: [ExpirationReason] = []
+    public var expireWithReason_MockMethod: ((ExpirationReason) -> Void)?
 
-    public func expire() {
-        expire_Invocations.append(())
+    public func expire(withReason reason: ExpirationReason) {
+        expireWithReason_Invocations.append(reason)
 
-        guard let mock = expire_MockMethod else {
-            fatalError("no mock for `expire`")
+        guard let mock = expireWithReason_MockMethod else {
+            fatalError("no mock for `expireWithReason`")
         }
 
-        mock()
+        mock(reason)
     }
 
 }
