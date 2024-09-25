@@ -185,6 +185,24 @@ final class MessageInfoExtractorTests: XCTestCase {
         XCTAssertEqual(messageInfo.listClients, expectedListClients)
     }
 
+    func test_ThatItSetsNativePushToFalseForAConfirmationMessage() async throws {
+        // GIVEN
+        let confirmation = Confirmation.with {
+            $0.firstMessageID = UUID.create().transportString()
+        }
+        let message = GenericMessage(content: confirmation)
+
+        // WHEN / THEN
+        try await internalTest_NativePush(expectedNativePush: false, message: message)
+    }
+
+    func test_ThatItSetsNativePushToTrueForATextMessage() async throws {
+        let message = GenericMessage(content: Text(content: "Text"))
+
+        // WHEN / THEN
+        try await internalTest_NativePush(expectedNativePush: true, message: message)
+    }
+    
     func test_infoForSending_WithUserDeletedAccount() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [
@@ -229,6 +247,38 @@ final class MessageInfoExtractorTests: XCTestCase {
         XCTAssertEqual(messageInfo.nativePush, true)
         XCTAssertEqual(messageInfo.selfClientID, Scaffolding.selfClientID)
         XCTAssertEqual(messageInfo.listClients, expectedListClients)
+    }
+
+    // MARK: - Helpers
+    
+    private func internalTest_NativePush(expectedNativePush: Bool, message: GenericMessage, file: StaticString = #file, line: UInt = #line) async throws {
+        var conversation: ZMConversation!
+
+        let conversationID = try await context.perform { [self] in
+            _ = modelHelper.createSelfUser(id: Scaffolding.selfUserID.uuid,
+                                               domain: Scaffolding.selfUserID.domain,
+                                               in: context)
+            let selfClient = modelHelper.createSelfClient(id: Scaffolding.selfClientID, in: context)
+
+            let userA = modelHelper.createUser(qualifiedID: Scaffolding.userAID, in: context)
+            _ = modelHelper.createClient(id: Scaffolding.clientAID, for: userA)
+
+            let userB = modelHelper.createUser(in: context)
+            _ = modelHelper.createClient(for: userB)
+
+            conversation = ZMConversation.insertGroupConversation(moc: context, participants: [userA, selfClient.user!, userB])
+            conversation.remoteIdentifier = Scaffolding.conversationID.uuid
+            conversation.domain = Scaffolding.conversationID.domain
+            mockProteusMessage.conversation = conversation
+            return try XCTUnwrap(conversation.qualifiedID)
+        }
+        mockProteusMessage.underlyingMessage = message
+        
+        // WHEN
+        let messageInfo = try await sut.infoForSending(message: mockProteusMessage, conversationID: conversationID)
+
+        // THEN
+        XCTAssertEqual(messageInfo.nativePush, expectedNativePush, file: file, line: line)
     }
 
     private enum Scaffolding {

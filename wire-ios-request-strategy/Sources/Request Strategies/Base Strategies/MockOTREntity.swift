@@ -32,7 +32,7 @@ final class MockOTREntity: OTREntity {
 
     let messageData: Data
 
-    func missesRecipients(_ recipients: Set<UserClient>!) {
+    func missesRecipients(_ recipients: Set<UserClient>) {
         // no-op
     }
     var conversation: ZMConversation?
@@ -70,6 +70,9 @@ final class MockOTREntity: OTREntity {
 }
 
 extension MockOTREntity: ProteusMessage {
+    func setUnderlyingMessage(_ message: WireProtos.GenericMessage) throws {
+    }
+    
     var targetRecipients: WireRequestStrategy.Recipients {
         .conversationParticipants
     }
@@ -80,14 +83,6 @@ extension MockOTREntity: ProteusMessage {
 
     var debugInfo: String {
         "Mock ProteusMessage"
-    }
-
-    func encryptForTransport() -> EncryptedPayloadGenerator.Payload? {
-        return (Data("non-qualified".utf8), .doNotIgnoreAnyMissingClient)
-    }
-
-    func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
-        return (Data("qualified".utf8), .doNotIgnoreAnyMissingClient)
     }
 
     var underlyingMessage: GenericMessage? {
