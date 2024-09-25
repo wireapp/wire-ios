@@ -18,21 +18,31 @@
 
 import Foundation
 
-extension Countly: AnalyticsService {
+struct AnalyticsService<Countly: CountlyAbstraction>: AnalyticsServiceProtocol {
+
+    var countly: Countly
 
     func start(appKey: String, host: URL) {
-        let config = CountlyConfig()
+        let config = Countly.CountlyConfig()
         config.appKey = appKey
         config.manualSessionHandling = true
         config.host = host.absoluteString
-        start(with: config)
+        countly.start(with: config)
+    }
+
+    func beginSession() {
+        countly.beginSession()
+    }
+
+    func endSession() {
+        countly.endSession()
     }
 
     func changeDeviceID(_ id: String, mergeData: Bool) {
         if mergeData {
-            changeDeviceID(withMerge: id)
+            countly.changeDeviceID(withMerge: id)
         } else {
-            changeDeviceIDWithoutMerge(id)
+            countly.changeDeviceIDWithoutMerge(id)
         }
     }
 
@@ -48,10 +58,9 @@ extension Countly: AnalyticsService {
         name: String,
         segmentation: [String: String]
     ) {
-        recordEvent(
+        countly.recordEvent(
             name,
             segmentation: segmentation
         )
     }
-
 }

@@ -21,7 +21,7 @@ import Foundation
 /// Struct responsible for managing analytics operations.
 public struct AnalyticsManager<Countly: CountlyAbstraction>: AnalyticsManagerProtocol {
     /// The underlying analytics service.
-    private let analyticsService: any AnalyticsService
+    private let analyticsService: any AnalyticsServiceProtocol
 
     /// Initializes a new AnalyticsManager with the given app key and host.
     ///
@@ -32,7 +32,7 @@ public struct AnalyticsManager<Countly: CountlyAbstraction>: AnalyticsManagerPro
         self.init(
             appKey: appKey,
             host: host,
-            analyticsService: Countly.sharedInstance()
+            analyticsService: AnalyticsService(countly: Countly.sharedInstance())
         )
     }
 
@@ -45,7 +45,7 @@ public struct AnalyticsManager<Countly: CountlyAbstraction>: AnalyticsManagerPro
     init(
         appKey: String,
         host: URL,
-        analyticsService: any AnalyticsService
+        analyticsService: any AnalyticsServiceProtocol
     ) {
         self.analyticsService = analyticsService
         self.analyticsService.start(appKey: appKey, host: host)

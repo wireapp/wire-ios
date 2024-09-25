@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol CountlyAbstraction {
+import Foundation
+
+// sourcery: AutoMockable
+public protocol CountlyAbstraction: AnyObject {
     associatedtype CountlyConfig: CountlyConfigAbstraction
     associatedtype CountlyUserDetails: CountlyUserDetailsAbstraction
 

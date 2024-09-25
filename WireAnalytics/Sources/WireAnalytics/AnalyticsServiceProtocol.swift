@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 /// Protocol defining the requirements for an analytics service.
-protocol AnalyticsService {
+protocol AnalyticsServiceProtocol {
     /// Starts the analytics service with the given app key and host.
     ///
     /// - Parameters:

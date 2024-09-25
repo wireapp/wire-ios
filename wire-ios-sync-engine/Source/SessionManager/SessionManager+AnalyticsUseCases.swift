@@ -41,7 +41,9 @@ extension SessionManager {
         )
     }
 
-    public func makeEnableAnalyticsUseCase() throws -> EnableAnalyticsUseCaseProtocol {
+    public func makeEnableAnalyticsUseCase<Countly: CountlyAbstraction>(
+        countlyType _: Countly.Type
+    ) throws -> EnableAnalyticsUseCaseProtocol {
 
         guard let analyticsSessionConfiguration else {
             throw AnalyticsSessionError.analyticsConfigurationNotAvailable
@@ -56,7 +58,7 @@ extension SessionManager {
         }
 
         return EnableAnalyticsUseCase(
-            analyticsManagerBuilder: { AnalyticsManager(appKey: $0, host: $1) },
+            analyticsManagerBuilder: { AnalyticsManager<Countly>(appKey: $0, host: $1) },
             sessionManager: self,
             analyticsSessionConfiguration: analyticsSessionConfiguration,
             analyticsUserProfile: analyticsUserProfile,

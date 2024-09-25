@@ -16,4 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public protocol CountlyUserDetailsAbstraction {}
+import Foundation
+
+// sourcery: AutoMockable
+public protocol CountlyUserDetailsAbstraction: AnyObject {
+    func set(_ key: String, value: String)
+    func unSet(_ key: String)
+    func save()
+}

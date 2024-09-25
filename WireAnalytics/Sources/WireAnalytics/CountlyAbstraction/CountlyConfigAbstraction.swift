@@ -18,7 +18,8 @@
 
 import Foundation
 
-public protocol CountlyConfigAbstraction {
+// sourcery: AutoMockable
+public protocol CountlyConfigAbstraction: AnyObject {
 
     var appKey: String { get set }
     var manualSessionHandling: Bool { get set }

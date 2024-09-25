@@ -25,15 +25,14 @@ class AnalyticsManagerTests: XCTestCase {
 
     // MARK: - Properties
 
-    private var analyticsService: MockAnalyticsService!
+    private var analyticsService: MockAnalyticsServiceProtocol!
     private var sut: AnalyticsManager!
 
     // MARK: - setUp
 
     override func setUp() {
-        super.setUp()
-        analyticsService = MockAnalyticsService()
 
+        analyticsService = .init()
         analyticsService.startAppKeyHost_MockMethod = { _, _ in }
         analyticsService.beginSession_MockMethod = {}
         analyticsService.endSession_MockMethod = {}
@@ -52,8 +51,6 @@ class AnalyticsManagerTests: XCTestCase {
     override func tearDown() {
         analyticsService = nil
         sut = nil
-
-        super.tearDown()
     }
 
     func testInitialization() {
