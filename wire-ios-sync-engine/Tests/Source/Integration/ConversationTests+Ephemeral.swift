@@ -20,6 +20,9 @@ import Foundation
 
 class ConversationTests_Ephemeral: ConversationTestsBase {
 
+    override var proteusViaCoreCryptoEnabled: Bool {
+        true
+    }
     var obfuscationTimer: ZMMessageDestructionTimer? {
         return userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
     }
@@ -56,11 +59,11 @@ class ConversationTests_Ephemeral: ConversationTestsBase {
         XCTAssertEqual(deletionTimer?.runningTimersCount, 0)
     }
 
-    func testThatItCreatesAndSendsAnEphemeralImageMessage() {
+    func testThatItCreatesAndSendsAnEphemeralImageMessage() throws {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: selfToUser1Conversation!)!
+        let conversation = try XCTUnwrap(self.conversation(for: selfToUser1Conversation!))
         self.userSession?.perform {
             _ = try! conversation.appendText(content: "Hello") as! ZMClientMessage
         }

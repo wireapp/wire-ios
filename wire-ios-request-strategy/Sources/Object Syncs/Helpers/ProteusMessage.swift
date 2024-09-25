@@ -25,8 +25,66 @@ public protocol ProteusMessage: OTREntity, EncryptedPayloadGenerator {
 
     /// Sets the expiration date with the default time interval.
     func setExpirationDate()
+
+    func prepareMessageForSending() async throws
+
+    var underlyingMessage: GenericMessage? { get }
+
+    var targetRecipients: Recipients { get }
 }
 
-extension ZMClientMessage: ProteusMessage {}
+extension ZMClientMessage: ProteusMessage {
 
-extension ZMAssetClientMessage: ProteusMessage {}
+    public var targetRecipients: Recipients {
+        .conversationParticipants
+    }
+
+    public func prepareMessageForSending() async throws {
+        try await context.perform { [self] in
+            if conversation?.conversationType == .oneOnOne {
+                // Update expectsReadReceipt flag to reflect the current user setting
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: context).readReceiptsEnabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
+            }
+
+            if let legalHoldStatus = conversation?.legalHoldStatus {
+                // Update the legalHoldStatus flag to reflect the current known legal hold status
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
+            }
+
+        }
+    }
+}
+
+extension ZMAssetClientMessage: ProteusMessage {
+
+    public var targetRecipients: Recipients {
+        .conversationParticipants
+    }
+
+    public func prepareMessageForSending() async throws {
+        try await context.perform { [self] in
+            if conversation?.conversationType == .oneOnOne {
+                // Update expectsReadReceipt flag to reflect the current user setting
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: context).readReceiptsEnabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
+            }
+
+            if let legalHoldStatus = conversation?.legalHoldStatus {
+                // Update the legalHoldStatus flag to reflect the current known legal hold status
+                if var updatedGenericMessage = underlyingMessage {
+                    updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                    try setUnderlyingMessage(updatedGenericMessage)
+                }
+            }
+
+        }
+    }
+}

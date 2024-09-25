@@ -510,7 +510,7 @@ extension ZMClientMessageTests_Deletion {
                 $0.messageID = sut.nonce!.transportString()
             }
             let deletedMessage = GenericMessage(content: messageDelete)
-            let recipients = deletedMessage.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser).users
+            let recipients = deletedMessage.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser).users.keys
 
             // then all users receive delete message
             XCTAssertEqual(4, recipients.count)
@@ -539,7 +539,7 @@ extension ZMClientMessageTests_Deletion {
             $0.messageID = sut.nonce!.transportString()
         }
         let deletedMessage = GenericMessage(content: messageDelete)
-        let recipients = deletedMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser).users
+        let recipients = deletedMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser).users.keys
 
         // then only sender & self recieve the delete message
         XCTAssertEqual(2, recipients.count)
