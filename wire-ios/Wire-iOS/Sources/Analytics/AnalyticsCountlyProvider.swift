@@ -123,7 +123,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
             return
         }
 
-        let config: WireCountlyConfig = WireCountlyConfig()
+        let config = WireCountlyConfig()
         config.appKey = appKey
         config.host = serverURL.absoluteString
         config.manualSessionHandling = true

@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 public typealias WireCountly = Countly
 public typealias WireCountlyConfig = CountlyConfig
 
 public final class Countly {
+
+    public init() {
+        fatalError()
+    }
 
     public static func sharedInstance() -> Self {
         fatalError()
@@ -37,7 +43,7 @@ public final class Countly {
         fatalError()
     }
 
-    public func recordEvent(_ name: String, segmentation: [String: String]) {
+    public func recordEvent(_ name: String, segmentation: [String: String]?) {
         fatalError()
     }
 
@@ -48,29 +54,45 @@ public final class Countly {
     public func changeDeviceIDWithoutMerge(_ id: String) {
         fatalError()
     }
-    func beginSession() {
+
+    public func beginSession() {
         fatalError()
     }
 
-    func endSession() {
+    public func endSession() {
+        fatalError()
+    }
+
+    public func setNewDeviceID(_ analyticsIdentifier: String, onServer: Bool) {
+        fatalError()
+    }
+
+    public func updateSession() {
         fatalError()
     }
 }
 
 public final class CountlyConfig {
-    var appKey = ""
-    var manualSessionHandling = false
-    var host = ""
+    public var appKey = ""
+    public var manualSessionHandling = false
+    public var host = ""
+    public var deviceID = ""
+    public var urlSessionConfiguration: URLSessionConfiguration?
+
+    public init() {}
 }
 
 public final class CountlyUserDetails {
-    func set(
+    public func set(
         _ key: String,
         value: String
     ){
         fatalError()
     }
-    func unSet(_ key: String) {
+    public func unSet(_ key: String) {
+        fatalError()
+    }
+    public func save() {
         fatalError()
     }
 }
