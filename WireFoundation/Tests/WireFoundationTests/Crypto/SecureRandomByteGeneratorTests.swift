@@ -16,16 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
+import XCTest
 
-extension ZMUserSession {
-    func submitMarketingConsent(with marketingConsent: Bool) {
-        guard let selfUser = ZMUser.selfUser() else {
-            assertionFailure("ZMUser.selfUser() is nil")
-            return
-        }
+@testable import WireFoundation
 
-        selfUser.setMarketingConsent(to: marketingConsent, in: self, completion: { _ in })
+final class SecureRandomByteGeneratorTests: XCTestCase {
+
+    func testByteGenerationIsRandom() throws {
+        // When
+        let randomBytes1 = try SecureRandomByteGenerator.generateBytes(count: 10)
+        let randomBytes2 = try SecureRandomByteGenerator.generateBytes(count: 10)
+
+        // Then
+        XCTAssertNotEqual(randomBytes1, randomBytes2)
     }
+
+    func testCorrectNumberOfBytesAreGenerated() throws {
+        // Given
+        let count = UInt.random(in: 0 ... 1_000)
+
+        // When
+        let bytes = try SecureRandomByteGenerator.generateBytes(count: count)
+
+        // Then
+        XCTAssertEqual(bytes.count, Int(count))
+    }
+
 }
