@@ -21,6 +21,17 @@ public enum MainConversationFilter: Sendable {
 }
 
 public protocol MainConversationFilterRepresentable: Sendable {
+
     init(_ mainConversationFilter: MainConversationFilter)
-    func map() -> MainConversationFilter
+    init?<ConversationFilter: MainConversationFilterRepresentable>(mappingFrom conversationFilter: ConversationFilter?)
+
+    func mapToMainConversationFilter() -> MainConversationFilter
+}
+
+public extension MainConversationFilterRepresentable {
+
+    init?(mappingFrom conversationFilter: (some MainConversationFilterRepresentable)?) {
+        guard let conversationFilter else { return nil }
+        self.init(conversationFilter.mapToMainConversationFilter())
+    }
 }

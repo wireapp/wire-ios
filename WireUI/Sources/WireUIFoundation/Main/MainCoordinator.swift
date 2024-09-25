@@ -100,6 +100,9 @@ public final class MainCoordinator<
         tabBarController = mainTabBarController
         self.newConversationBuilder = newConversationBuilder
         self.selfProfileBuilder = selfProfileBuilder
+        super.init()
+        mainSplitViewController.delegate = self
+        mainTabBarController.delegate = self
     }
 
     // MARK: - Public Methods
@@ -111,20 +114,11 @@ public final class MainCoordinator<
             // TODO: maybe navigationcontroller pop is needed
 
             // apply the filter to the conversation list
-            let mainConversationFilter = conversationFilter?.map()
-            conversationList.conversationFilter = mainConversationFilter.map { .init($0) }
+            conversationList.conversationFilter = .init(mappingFrom: conversationFilter)
 
             // set the right menu item in the sidebar
-            switch mainConversationFilter {
-            case .none:
-                sidebar.selectedMenuItem = .init(.all)
-            case .favorites:
-                sidebar.selectedMenuItem = .init(.favorites)
-            case .groups:
-                sidebar.selectedMenuItem = .init(.groups)
-            case .oneOnOne:
-                sidebar.selectedMenuItem = .init(.oneOnOne)
-            }
+            let mainMenuItem = MainSidebarMenuItem(conversationFilter)
+            sidebar.selectedMenuItem = .init(mainMenuItem)
         }
 
         // In collapsed state switching the tab was all we needed to do.
@@ -343,22 +337,32 @@ public final class MainCoordinator<
 
         switch tabBarController.selectedContent {
         case .conversations:
-            switch conversationList.conversationFilter?.map() {
-            case .none:
-                sidebar.selectedMenuItem = .init(.all)
-            case .favorites:
-                sidebar.selectedMenuItem = .init(.favorites)
-            case .groups:
-                sidebar.selectedMenuItem = .init(.groups)
-            case .oneOnOne:
-                sidebar.selectedMenuItem = .init(.oneOnOne)
-            }
+            let mainMenuItem = MainSidebarMenuItem(conversationList.conversationFilter)
+            sidebar.selectedMenuItem = .init(mainMenuItem)
 
         case .archive:
             sidebar.selectedMenuItem = .init(.archive)
 
         case .settings:
             sidebar.selectedMenuItem = .init(.settings)
+        }
+    }
+}
+
+// MARK: - MainSidebarMenuItem + MainConversationFilter
+
+private extension MainSidebarMenuItem {
+
+    init(_ filter: (some MainConversationFilterRepresentable)?) {
+        switch filter?.mapToMainConversationFilter() {
+        case .none:
+            self = .all
+        case .favorites:
+            self = .favorites
+        case .groups:
+            self = .groups
+        case .oneOnOne:
+            self = .oneOnOne
         }
     }
 }

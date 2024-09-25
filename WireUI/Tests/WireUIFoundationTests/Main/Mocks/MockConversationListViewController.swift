@@ -47,7 +47,7 @@ extension MockConversationListViewController.ConversationFilter: MainConversatio
         }
     }
 
-    func map() -> MainConversationFilter {
+    func mapToMainConversationFilter() -> MainConversationFilter {
         switch self {
         case .groups:
             .groups

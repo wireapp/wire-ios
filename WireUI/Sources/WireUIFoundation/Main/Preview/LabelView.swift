@@ -24,15 +24,8 @@ struct LabelView: View {
     var content: String
     var backgroundColor: Color
     var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Text(content)
-                    .ignoresSafeArea()
-                Spacer()
-            }
-            Spacer()
-        }.background(backgroundColor)
+        Text(content)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(backgroundColor)
     }
 }
