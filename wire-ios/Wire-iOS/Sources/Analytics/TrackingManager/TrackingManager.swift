@@ -43,8 +43,7 @@ final class TrackingManager: NSObject, TrackingInterface {
         super.init()
     }
 
-    var disableAnalyticsSharing: Bool {
-        get { ExtensionSettings.shared.disableAnalyticsSharing }
+    var disableAnalyticsSharing: Bool { ExtensionSettings.shared.disableAnalyticsSharing
     }
 
     func disableAnalyticsSharing(isDisabled: Bool, resultHandler: @escaping (Result<Void, any Error>) -> Void) {
