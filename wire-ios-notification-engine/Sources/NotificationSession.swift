@@ -353,15 +353,16 @@ public final class NotificationSession: NSObject, ZMPushChannelConsumer {
     }
 
     public func pushChannelDidReceive(_ data: Data) {
+        WireLogger.notifications.info("did receive push channel data")
         delegate?.notificationSessionDidReceivePushData(data)
     }
 
     public func pushChannelDidClose() {
-
+        WireLogger.notifications.warn("push channel did close")
     }
 
     public func pushChannelDidOpen() {
-
+        WireLogger.notifications.info("push channel did open")
     }
 
 //    public func processPushNotification(with payload: [AnyHashable: Any]) {

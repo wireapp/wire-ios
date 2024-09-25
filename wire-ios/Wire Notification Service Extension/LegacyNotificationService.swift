@@ -118,6 +118,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
             return
         }
 
+        WireLogger.notifications.info("NSE received push channel data")
         let content = UNMutableNotificationContent()
 
         if let json = String(data: data, encoding: .utf8) {
@@ -134,7 +135,7 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         unreadConversationCount: Int
     ) {
         guard let notification else {
-            WireLogger.notifications.info("session did not generate a notification")
+            WireLogger.notifications.info("session di d not generate a notification")
             return finishWithoutShowingNotification()
         }
 
