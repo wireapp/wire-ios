@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@ import UIKit
 #elseif os(OSX)
 import AppKit
 #endif
+
+import WireAnalytics
 
 @testable import WireSyncEngine
 
@@ -128,7 +130,6 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
     // MARK: - draftMessage
 
     public var draftMessage: DraftMessage?
-
 
     // MARK: - appendText
 
@@ -249,4 +250,22 @@ public class MockMessageAppendableConversation: MessageAppendableConversation {
                fatalError("no mock for `appendFile`")
            }
        }
+}
+
+class MockDisableAnalyticsUseCaseAnalyticsSessionProviding: DisableAnalyticsUseCaseAnalyticsSessionProviding {
+
+    // MARK: - Life cycle
+
+    // MARK: - analyticsSession
+
+    var analyticsSession: (any AnalyticsSessionProtocol)?
+}
+
+class MockEnableAnalyticsUseCaseAnalyticsSessionProviding: EnableAnalyticsUseCaseAnalyticsSessionProviding {
+
+    // MARK: - Life cycle
+
+    // MARK: - analyticsSession
+
+    var analyticsSession: (any AnalyticsSessionProtocol)?
 }

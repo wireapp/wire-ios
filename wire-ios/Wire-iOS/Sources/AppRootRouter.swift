@@ -202,7 +202,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         switch appState {
         case .retryStart:
-            retryStart(completion: completion)
+            retryStart { _ in completion() }
         case .blacklisted(reason: let reason):
             showBlacklisted(reason: reason, completion: completion)
         case .jailbroken:
@@ -270,10 +270,23 @@ extension AppRootRouter {
     // MARK: - Navigation Helpers
     private func showInitial(launchOptions: LaunchOptions) {
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            self?.sessionManager.start(launchOptions: launchOptions) { [weak self] success in
+                guard let self, success else {
+                    WireLogger.analytics.error("Failed to start the session")
+                    return
+                }
+
+                if !trackingManager.disableAnalyticsSharing, let analyticsConfig = sessionManager.analyticsSessionConfiguration {
+                    do {
+                        let useCase = try sessionManager.makeEnableAnalyticsUseCase()
+                        useCase.invoke()
+                    } catch {
+                        WireLogger.analytics.error("Failed to create the use case")
+                    }
+                }
+            }
         }
     }
-
     private func showBlacklisted(reason: BlacklistReason, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: reason.blockerViewControllerContext)
         rootViewController.set(childViewController: blockerViewController,
@@ -392,11 +405,15 @@ extension AppRootRouter {
         )
     }
 
-    private func retryStart(completion: @escaping () -> Void) {
-        guard let launchOptions = lastLaunchOptions else { return }
-        completion()
+    private func retryStart(completion: @escaping (Bool) -> Void) {
+        guard let launchOptions = lastLaunchOptions else {
+            return completion(false)
+        }
+
         enqueueTransition(to: .headless) { [weak self] in
-            self?.sessionManager.start(launchOptions: launchOptions)
+            self?.sessionManager.start(launchOptions: launchOptions) { success in
+                completion(success)
+            }
         }
     }
 

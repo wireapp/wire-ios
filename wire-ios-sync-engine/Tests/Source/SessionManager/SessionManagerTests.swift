@@ -81,13 +81,13 @@ final class SessionManagerTests: IntegrationTest {
         sut.delegate = mockDelegate
 
         // when
-        sut.start(launchOptions: [:])
-
-        // then
-        XCTAssert(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.isEmpty)
-        XCTAssertEqual(mockDelegate.sessionManagerDidFailToLoginError_Invocations.count, 1)
-        XCTAssertNotNil(sut.unauthenticatedSession)
-        XCTAssertEqual([], observer.createdUserSession)
+        sut.start(launchOptions: [:]) { [self] _ in
+            // then
+            XCTAssert(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.isEmpty)
+            XCTAssertEqual(mockDelegate.sessionManagerDidFailToLoginError_Invocations.count, 1)
+            XCTAssertNotNil(sut.unauthenticatedSession)
+            XCTAssertEqual([], observer.createdUserSession)
+        }
     }
 
     func testThatItCreatesUserSessionAndNotifiesDelegateIfStoreIsAvailable() {
@@ -106,18 +106,19 @@ final class SessionManagerTests: IntegrationTest {
         sut.delegate = mockDelegate
 
         // when
-        sut.start(launchOptions: [:])
+        sut.start(launchOptions: [:]) { [self] _ in
+            let observer = MockSessionManagerObserver()
+            let token = sut.addSessionManagerCreatedSessionObserver(observer)
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
-        let observer = MockSessionManagerObserver()
-        let token = sut.addSessionManagerCreatedSessionObserver(observer)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-
-        // then
-        XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.count, 1)
-        XCTAssertNil(sut.unauthenticatedSession)
-        withExtendedLifetime(token) {
-            XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations, observer.createdUserSession)
+            // then
+            XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations.count, 1)
+            XCTAssertNil(sut.unauthenticatedSession)
+            withExtendedLifetime(token) {
+                XCTAssertEqual(mockDelegate.sessionManagerDidChangeActiveUserSessionUserSession_Invocations, observer.createdUserSession)
+            }
         }
+
     }
 
     func testThatItNotifiesObserverWhenCreatingAndTearingDownSession() {
@@ -164,31 +165,33 @@ final class SessionManagerTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
-        testSessionManager.start(launchOptions: [:])
+        testSessionManager.start(launchOptions: [:]) { [self] _ in
 
-        // WHEN
-        createToken = testSessionManager.addSessionManagerCreatedSessionObserver(observer)
-        destroyToken = testSessionManager.addSessionManagerDestroyedSessionObserver(observer)
+            // WHEN
+            createToken = testSessionManager.addSessionManagerCreatedSessionObserver(observer)
+            destroyToken = testSessionManager.addSessionManagerDestroyedSessionObserver(observer)
 
-        withExtendedLifetime(createToken) {
-            testSessionManager.loadSession(for: account) { userSession in
-                XCTAssertNotNil(userSession)
-                sessionManagerExpectation.fulfill()
+            withExtendedLifetime(createToken) {
+                testSessionManager.loadSession(for: account) { userSession in
+                    XCTAssertNotNil(userSession)
+                    sessionManagerExpectation.fulfill()
+                }
             }
+
+            // THEN
+            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+            XCTAssertEqual([testSessionManager.activeUserSession!], observer.createdUserSession)
+
+            // AND WHEN
+            withExtendedLifetime(destroyToken) {
+                testSessionManager.tearDownBackgroundSession(for: account.userIdentifier)
+            }
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // THEN
+            XCTAssertEqual([account.userIdentifier], observer.destroyedUserSessions)
         }
 
-        // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual([testSessionManager.activeUserSession!], observer.createdUserSession)
-
-        // AND WHEN
-        withExtendedLifetime(destroyToken) {
-            testSessionManager.tearDownBackgroundSession(for: account.userIdentifier)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual([account.userIdentifier], observer.destroyedUserSessions)
     }
 
     func testThatItNotifiesDestroyedSessionObserverWhenCurrentSessionIsLoggedOut() {
@@ -262,32 +265,33 @@ final class SessionManagerTests: IntegrationTest {
         )
 
         testSessionManager.authenticatedSessionFactory = authenticatedSessionFactory
-        testSessionManager.start(launchOptions: [:])
+        testSessionManager.start(launchOptions: [:]) { [self] _ in
+            // WHEN
+            destroyToken = testSessionManager.addSessionManagerDestroyedSessionObserver(observer)
 
-        // WHEN
-        destroyToken = testSessionManager.addSessionManagerDestroyedSessionObserver(observer)
-
-        testSessionManager.loadSession(for: account1) { userSession in
-            XCTAssertNotNil(userSession)
-
-            // load second account
-            testSessionManager.loadSession(for: account2) { userSession in
+            testSessionManager.loadSession(for: account1) { userSession in
                 XCTAssertNotNil(userSession)
-                sessionManagerExpectation.fulfill()
+
+                // load second account
+                testSessionManager.loadSession(for: account2) { userSession in
+                    XCTAssertNotNil(userSession)
+                    sessionManagerExpectation.fulfill()
+                }
             }
+
+            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+            XCTAssertEqual(testSessionManager.backgroundUserSessions.count, 2)
+            XCTAssertEqual(testSessionManager.backgroundUserSessions[account2.userIdentifier], testSessionManager.activeUserSession)
+
+            withExtendedLifetime(destroyToken) {
+                NotificationCenter.default.post(Notification(name: UIApplication.didReceiveMemoryWarningNotification))
+            }
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // THEN
+            XCTAssertEqual([account1.userIdentifier], observer.destroyedUserSessions)
         }
 
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(testSessionManager.backgroundUserSessions.count, 2)
-        XCTAssertEqual(testSessionManager.backgroundUserSessions[account2.userIdentifier], testSessionManager.activeUserSession)
-
-        withExtendedLifetime(destroyToken) {
-            NotificationCenter.default.post(Notification(name: UIApplication.didReceiveMemoryWarningNotification))
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual([account1.userIdentifier], observer.destroyedUserSessions)
     }
 
     func testThatJailbrokenDeviceCallsDelegateMethod() {
@@ -337,15 +341,17 @@ final class SessionManagerTests: IntegrationTest {
         sut.delegate = mockDelegate
 
         // WHEN
-        sut.start(launchOptions: [:])
-        sut.accountManager.addAndSelect(createAccount())
-        XCTAssertEqual(sut.accountManager.accounts.count, 1)
+        sut.start(launchOptions: [:]) { [self] _ in
+            sut.accountManager.addAndSelect(createAccount())
+            XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
-        // THEN
-        performIgnoringZMLogError {
-            sut.checkJailbreakIfNeeded()
+            // THEN
+            performIgnoringZMLogError {
+                sut.checkJailbreakIfNeeded()
+            }
+            XCTAssertEqual(sut.accountManager.accounts.count, 0)
         }
-        XCTAssertEqual(sut.accountManager.accounts.count, 0)
+
     }
 
     func testAuthenticationAfterReboot() {
@@ -366,14 +372,16 @@ final class SessionManagerTests: IntegrationTest {
 
         // WHEN && THEN
         sut.accountManager.addAndSelect(createAccount())
-        sut.start(launchOptions: [:])
-        XCTAssertEqual(sut.accountManager.accounts.count, 1)
+        sut.start(launchOptions: [:]) { [self] _ in
+            XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
-        performIgnoringZMLogError {
-            sut.performPostRebootLogout()
+            performIgnoringZMLogError {
+                sut.performPostRebootLogout()
+            }
+
+            waitForExpectations(timeout: 1)
         }
 
-        waitForExpectations(timeout: 1)
     }
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNotRebooted() {
@@ -381,16 +389,17 @@ final class SessionManagerTests: IntegrationTest {
         let sut = sessionManagerBuilder.build()
         sut.configuration.authenticateAfterReboot = true
         sut.accountManager.addAndSelect(createAccount())
-        sut.start(launchOptions: [:])
+        sut.start(launchOptions: [:]) { [self] _ in
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            XCTAssertEqual(sut.accountManager.accounts.count, 1)
+            SessionManager.previousSystemBootTime = ProcessInfo.processInfo.bootTime()
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(sut.accountManager.accounts.count, 1)
-        SessionManager.previousSystemBootTime = ProcessInfo.processInfo.bootTime()
-
-        // WHEN/THEN
-        performIgnoringZMLogError {
-            XCTAssertFalse(sut.shouldPerformPostRebootLogout())
+            // WHEN/THEN
+            performIgnoringZMLogError {
+                XCTAssertFalse(sut.shouldPerformPostRebootLogout())
+            }
         }
+
     }
 
     func testThatShouldPerformPostRebootLogoutReturnsFalseIfNoPreviousBootTimeExists() {
@@ -401,16 +410,17 @@ final class SessionManagerTests: IntegrationTest {
         sut.accountManager.addAndSelect(createAccount())
 
         // WHEN
-        sut.start(launchOptions: [:])
+        sut.start(launchOptions: [:]) { [self] _ in
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            XCTAssertEqual(sut.accountManager.accounts.count, 1)
+            ZMKeychain.deleteAllKeychainItems(withAccountName: SessionManager.previousSystemBootTimeContainer)
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(sut.accountManager.accounts.count, 1)
-        ZMKeychain.deleteAllKeychainItems(withAccountName: SessionManager.previousSystemBootTimeContainer)
-
-        // THEN
-        performIgnoringZMLogError {
-            XCTAssertFalse(sut.shouldPerformPostRebootLogout())
+            // THEN
+            performIgnoringZMLogError {
+                XCTAssertFalse(sut.shouldPerformPostRebootLogout())
+            }
         }
+
     }
 
     func testThatItDestroyedCacheDirectoryAfterLoggedOut() throws {

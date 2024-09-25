@@ -310,7 +310,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private let minTLSVersion: String?
 
-    private(set) var analyticsManager: (any AnalyticsManagerProtocol)?
+    public var analyticsManager: (any AnalyticsManagerProtocol)?
 
     public override init() {
         fatal("init() not implemented")
@@ -432,6 +432,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 name: UIApplication.didBecomeActiveNotification,
                 object: nil
             )
+
     }
 
     init(maxNumberAccounts: Int = defaultMaxNumberAccounts,
@@ -479,6 +480,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             preconditionFailure("Unable to get shared container URL")
         }
 
+        self.analyticsSessionConfiguration = analyticsSessionConfiguration
+
         self.sharedContainerURL = sharedContainerURL
         self.accountManager = AccountManager(sharedDirectory: sharedContainerURL)
 
@@ -516,13 +519,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             self.notificationsTracker = NotificationsTracker(analytics: analytics)
         } else {
             self.notificationsTracker = nil
-        }
-
-        if let analyticsSessionConfiguration {
-            self.analyticsManager = AnalyticsManager(
-                appKey: analyticsSessionConfiguration.countlyKey,
-                host: analyticsSessionConfiguration.host
-            )
         }
 
         super.init()
@@ -611,9 +607,14 @@ public final class SessionManager: NSObject, SessionManagerType {
         unauthenticatedSessionFactory.readyForRequests = ready
     }
 
-    public func start(launchOptions: LaunchOptions) {
+    public func start(
+        launchOptions: LaunchOptions,
+        completion: @escaping (Bool) -> Void
+    ) {
         if let account = accountManager.selectedAccount {
-            selectInitialAccount(account, launchOptions: launchOptions)
+            selectInitialAccount(account, launchOptions: launchOptions) { success in
+                completion(success)
+            }
             // swiftlint:disable todo_requires_jira_link
             // TODO: this might need to happen with a completion handler.
             // TODO: register as voip delegate?
@@ -622,6 +623,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         } else {
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(error: nil)
+            completion(false)
         }
     }
 
@@ -641,23 +643,31 @@ public final class SessionManager: NSObject, SessionManagerType {
         return account
     }
 
-    private func selectInitialAccount(_ account: Account, launchOptions: LaunchOptions) {
+    private func selectInitialAccount(
+        _ account: Account,
+        launchOptions: LaunchOptions,
+        completion: @escaping (Bool) -> Void
+    ) {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
             if (try? URLAction(url: url))?.causesLogout == true {
                 // Do not log in if the launch URL action causes a logout
-                return
+                return completion(false)
             }
         }
 
         guard !shouldPerformPostRebootLogout() else {
             performPostRebootLogout()
-            return
+            return completion(false)
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let self, let session else { return }
+            guard let self, let session else {
+                return completion(false)
+            }
+
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
+            completion(true)
         }
     }
 
@@ -1429,6 +1439,7 @@ extension SessionManager: AccountDeletedObserver {
 
 extension SessionManager {
     @objc fileprivate func applicationWillEnterForeground(_ note: Notification) {
+
         BackgroundActivityFactory.shared.resume()
 
         updateAllUnreadCounts()
