@@ -21,15 +21,15 @@ import WireFoundation
 
 // swiftlint:disable opening_brace
 
-/// Manages the main flows of the application after a successful login.
+/// Manages the main navigation and the layout changes of the application after a successful login.
 ///
 /// The MainCoordinator class is the central controller for the app's navigation and layout management.
 /// It receives references to ``MainTabBarControllerProtocol`` and ``MainSplitViewControllerProtocol``
 /// conforming instances and is responsible for managing transitions between different split layout states (collapsed and expanded)
 /// as well as handling navigation logic.
 ///
-/// TODO: mention that all tabs are navigation controllers
-/// and that the tab bar controller keeps the instances retained
+/// Both, the split view controller as well as the tab view controller actually install `UINavigationController`
+/// instances and then put or remove the content view controllers into/from `viewControllers` array.
 
 @MainActor
 public final class MainCoordinator<
