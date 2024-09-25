@@ -96,12 +96,6 @@ public final class MainCoordinator<
         newConversationBuilder: NewConversationBuilder,
         selfProfileBuilder: SelfProfileBuilder
     ) {
-        guard
-            mainSplitViewController.conversationList != nil,
-            mainTabBarController.archive != nil,
-            mainTabBarController.settings != nil
-        else { fatalError("invalid state of container view controllers") }
-
         splitViewController = mainSplitViewController
         tabBarController = mainTabBarController
         self.newConversationBuilder = newConversationBuilder
