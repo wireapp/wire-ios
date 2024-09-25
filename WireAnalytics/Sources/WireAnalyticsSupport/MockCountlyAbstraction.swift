@@ -22,10 +22,9 @@ public class MockCountlyAbstraction: CountlyAbstraction {
     public typealias CountlyUserDetails = MockCountlyUserDetailsAbstraction
     public typealias CountlyConfig = MockCountlyConfigAbstraction
 
-
     // MARK: - Life cycle
 
-    required public init() {}
+    public required init() {}
 
     // MARK: - sharedInstance
 
@@ -33,13 +32,13 @@ public class MockCountlyAbstraction: CountlyAbstraction {
     public var sharedInstance_MockMethod: (() -> MockCountlyAbstraction)?
     public var sharedInstance_MockValue: MockCountlyAbstraction?
 
-    static public func sharedInstance() -> Self {
+    public static func sharedInstance() -> Self {
         fatalError("no mock for `sharedInstance`")
     }
 
     // MARK: - user
 
-    class public func user() -> MockCountlyUserDetailsAbstraction {
+    public class func user() -> MockCountlyUserDetailsAbstraction {
         fatalError("no mock for `user`")
     }
 

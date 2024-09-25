@@ -28,7 +28,7 @@ public class MockCountlyConfigAbstraction: CountlyConfigAbstraction {
     // MARK: - appKey
 
     public var appKey: String {
-        get { return underlyingAppKey }
+        get { underlyingAppKey }
         set(value) { underlyingAppKey = value }
     }
 
@@ -37,7 +37,7 @@ public class MockCountlyConfigAbstraction: CountlyConfigAbstraction {
     // MARK: - manualSessionHandling
 
     public var manualSessionHandling: Bool {
-        get { return underlyingManualSessionHandling }
+        get { underlyingManualSessionHandling }
         set(value) { underlyingManualSessionHandling = value }
     }
 
@@ -46,7 +46,7 @@ public class MockCountlyConfigAbstraction: CountlyConfigAbstraction {
     // MARK: - host
 
     public var host: String {
-        get { return underlyingHost }
+        get { underlyingHost }
         set(value) { underlyingHost = value }
     }
 
@@ -55,7 +55,7 @@ public class MockCountlyConfigAbstraction: CountlyConfigAbstraction {
     // MARK: - deviceID
 
     public var deviceID: String {
-        get { return underlyingDeviceID }
+        get { underlyingDeviceID }
         set(value) { underlyingDeviceID = value }
     }
 
@@ -64,7 +64,7 @@ public class MockCountlyConfigAbstraction: CountlyConfigAbstraction {
     // MARK: - urlSessionConfiguration
 
     public var urlSessionConfiguration: URLSessionConfiguration {
-        get { return underlyingUrlSessionConfiguration }
+        get { underlyingUrlSessionConfiguration }
         set(value) { underlyingUrlSessionConfiguration = value }
     }
 
