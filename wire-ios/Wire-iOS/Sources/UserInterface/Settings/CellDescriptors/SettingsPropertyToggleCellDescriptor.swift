@@ -87,7 +87,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
         do {
             try self.settingsProperty.set(newValue: SettingsPropertyValue(valueToSet)) { result in
                 if case .failure = result {
-                    // Not ideal but a workaround
+                // Workaround: the toggle needs to be undone because of an async result in the logic code. 
                     if let toggleCell = sender as? UISwitch {
                         toggleCell.isOn.toggle()
                     }
