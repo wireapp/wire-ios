@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// TODO: rotating the call screen doesn't seem to work
+
 /// A subclass of `UITabBarController` which configures its `viewControllers` property to match
 /// ``MainTabBarControllerContent``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<

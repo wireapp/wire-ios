@@ -216,14 +216,16 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupSplitViewController() {
+        let archive = ArchivedListViewController(userSession: userSession)
 
         mainSplitViewController.conversationList = conversationListViewController
 
-        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
+        mainTabBarController.archive = archive
         mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator
+        archive.delegate = mainCoordinator
 
         addChild(mainSplitViewController)
         mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false

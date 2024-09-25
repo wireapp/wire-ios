@@ -16,15 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
 import WireUIFoundation
+import WireDataModel
 
-struct ArchivedConversationsViewControllerBuilder: ViewControllerBuilder {
+extension MainCoordinator: ArchivedListViewControllerDelegate {
 
-    var userSession: UserSession
-
-    func build() -> UIViewController {
-        ArchivedListViewController(userSession: userSession)
+    func archivedListViewController(
+        _ viewController: ArchivedListViewController,
+        didSelectConversation conversation: ZMConversation
+    ) {
+        showConversationList(conversationFilter: ConversationFilter?.none)
+        fatalError("TODO") // TODO: open conversation
     }
 }
