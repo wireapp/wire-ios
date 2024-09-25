@@ -953,6 +953,20 @@ internal enum L10n {
         }
       }
     }
+    internal enum ShareProfile {
+      internal enum BackButton {
+        /// Go back to your profile
+        internal static let description = L10n.tr("Accessibility", "shareProfile.backButton.description", fallback: "Go back to your profile")
+      }
+      internal enum CloseButton {
+        /// Close share profile view
+        internal static let description = L10n.tr("Accessibility", "shareProfile.closeButton.description", fallback: "Close share profile view")
+      }
+      internal enum QrCode {
+        /// QR code
+        internal static let description = L10n.tr("Accessibility", "shareProfile.qrCode.description", fallback: "QR code")
+      }
+    }
     internal enum Sketch {
       internal enum CloseButton {
         /// Close sketch

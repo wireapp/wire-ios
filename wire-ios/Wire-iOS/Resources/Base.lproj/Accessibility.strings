@@ -182,6 +182,10 @@
 "profile.backButton.description" = "Go back to conversation details";
 "profile.closeButton.description" = "Close profile";
 
+"shareProfile.closeButton.description" = "Close share profile view";
+"shareProfile.backButton.description" = "Go back to your profile";
+"shareProfile.qrCode.description" = "QR code";
+
 "accountPage.availabilityStatus.description" = "Status";
 "accountPage.availabilityStatus.hint" = "Double tap to change status";
 "accountPage.handle.description" = "Username";

@@ -35,6 +35,7 @@ struct QRCodeCard: View {
                 .frame(width: 250, height: 250)
                 .padding(.top, 24)
                 .padding(.horizontal, 24)
+                .accessibilityLabel(L10n.Accessibility.ShareProfile.QrCode.description)
 
             VStack(alignment: .center) {
                 Text(handle)

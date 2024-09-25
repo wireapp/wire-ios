@@ -403,7 +403,8 @@ final class ProfileHeaderViewController: UIViewController {
         }
     }
 
-    @objc func qrCodeButtonTapped(_ sender: IconButton) {
+    @objc
+    private func qrCodeButtonTapped(_ sender: IconButton) {
         guard let viewModel = makeUserQRCodeViewModel(selfUser: user) else {
             return
         }
@@ -414,14 +415,15 @@ final class ProfileHeaderViewController: UIViewController {
             action: UIAction { [weak self] _ in
                 self?.presentingViewController?.dismiss(animated: true)
             },
-            accessibilityLabel: L10n.Accessibility.ConversationDetails.CloseButton.description)
-
+            accessibilityLabel: L10n.Accessibility.ShareProfile.CloseButton.description)
         navigationController?.pushViewController(hostingController, animated: true)
     }
 
     private func makeUserQRCodeViewModel(selfUser: UserType) -> UserQRCodeViewModel? {
-        guard let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
-              let handle = selfUser.handle else {
+        guard
+            let profileLink = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding,
+            let handle = selfUser.handle
+        else {
             return nil
         }
 
