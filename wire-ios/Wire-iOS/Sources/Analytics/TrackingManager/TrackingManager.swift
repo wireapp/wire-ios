@@ -66,7 +66,6 @@ final class TrackingManager: NSObject, TrackingInterface {
             resultHandler(.success(()))
         }
 
-        
     }
 
     private func updateAnalyticsSharing(disabled: Bool) {

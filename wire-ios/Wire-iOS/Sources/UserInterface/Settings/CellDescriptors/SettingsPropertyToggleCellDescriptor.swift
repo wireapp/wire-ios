@@ -85,18 +85,15 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
         }
 
         do {
-            try self.settingsProperty.set(newValue: SettingsPropertyValue(valueToSet), resultHandler: { result in
-                if case .success(let success) = result {
-                    print("YAyyyyy")
-                }
+            try self.settingsProperty.set(newValue: SettingsPropertyValue(valueToSet)) { result in
                 if case .failure = result {
                     // Not ideal but a workaround
-                    if let toggleCell = sender as? SettingsToggleCell {
-                        toggleCell.switchView.isOn = !valueToSet
+                    if let toggleCell = sender as? UISwitch {
+                        toggleCell.isOn.toggle()
                     }
                 }
             })
-
+            }
         } catch {
             zmLog.error("Cannot set property: \(error)")
         }
