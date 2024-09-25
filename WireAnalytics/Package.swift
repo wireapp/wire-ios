@@ -13,15 +13,12 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.16.0"),
-        .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "24.4.2"),
         .package(path: "../SourceryPlugin")
     ],
     targets: [
         .target(
             name: "WireAnalytics",
-            dependencies: resolveWireAnalyticsDependencies() + [
-                .product(name: "Countly", package: "countly-sdk-ios")
-            ],
+            dependencies: resolveWireAnalyticsDependencies(),
             swiftSettings: swiftSettings
         ),
         .target(
