@@ -26,15 +26,16 @@ protocol UserPropertiesDeleteEventProcessorProtocol {
     ///
     /// - Parameter event: A user properties delete event.
 
-    func processEvent(_ event: UserPropertiesDeleteEvent) async throws
+    func processEvent(_ event: UserPropertiesDeleteEvent) async
 
 }
 
 struct UserPropertiesDeleteEventProcessor: UserPropertiesDeleteEventProcessorProtocol {
 
-    func processEvent(_: UserPropertiesDeleteEvent) async throws {
-        // TODO: [WPB-10198]
-        assertionFailure("not implemented yet")
+    let repository: any UserRepositoryProtocol
+
+    func processEvent(_ event: UserPropertiesDeleteEvent) async {
+        await repository.deleteUserProperty(withKey: event.key)
     }
 
 }

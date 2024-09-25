@@ -543,6 +543,21 @@ public class MockUserRepositoryProtocol: UserRepositoryProtocol {
         try await mock()
     }
 
+    // MARK: - deleteUserProperty
+
+    public var deleteUserPropertyWithKey_Invocations: [String] = []
+    public var deleteUserPropertyWithKey_MockMethod: ((String) async -> Void)?
+
+    public func deleteUserProperty(withKey key: String) async {
+        deleteUserPropertyWithKey_Invocations.append(key)
+
+        guard let mock = deleteUserPropertyWithKey_MockMethod else {
+            fatalError("no mock for `deleteUserPropertyWithKey`")
+        }
+
+        await mock(key)
+    }
+
 }
 
 // swiftlint:enable variable_name

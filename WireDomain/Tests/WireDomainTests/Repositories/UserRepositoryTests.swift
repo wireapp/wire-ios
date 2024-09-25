@@ -263,8 +263,39 @@ class UserRepositoryTests: XCTestCase {
         XCTAssertEqual(selfUsersAPI.pushSupportedProtocols_Invocations, [expectedProtocols])
     }
 
+    func testDeleteUserProperty() async {
+        // Given
+
+        await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(
+                id: Scaffolding.userID,
+                domain: nil,
+                in: context
+            )
+
+            selfUser.readReceiptsEnabled = true
+            selfUser.readReceiptsEnabledChangedRemotely = false
+        }
+
+        // When
+
+        await sut.deleteUserProperty(
+            withKey: Scaffolding.userPropertyKey.rawValue
+        )
+
+        // Then
+
+        await context.perform { [self] in
+            let selfUser = sut.fetchSelfUser()
+
+            XCTAssertEqual(selfUser.readReceiptsEnabled, false)
+            XCTAssertEqual(selfUser.readReceiptsEnabledChangedRemotely, true)
+        }
+    }
+
     private enum Scaffolding {
         static let userID = UUID()
+        static let userPropertyKey = UserProperty.Key.wireReceiptMode
         static let userClientID = UUID().uuidString
         static let lastPrekeyId = 65_535
         static let base64encodedString = "pQABAQoCoQBYIPEFMBhOtG0dl6gZrh3kgopEK4i62t9sqyqCBckq3IJgA6EAoQBYIC9gPmCdKyqwj9RiAaeSsUI7zPKDZS+CjoN+sfihk/5VBPY="

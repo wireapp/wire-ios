@@ -94,6 +94,15 @@ public protocol UserRepositoryProtocol {
 
     func disableUserLegalHold() async throws
 
+    /// Deletes a user property.
+    ///
+    /// - parameters:
+    ///     - key: The user property key to delete.
+
+    func deleteUserProperty(
+        withKey key: String
+    ) async
+
 }
 
 public final class UserRepository: UserRepositoryProtocol {
@@ -103,6 +112,7 @@ public final class UserRepository: UserRepositoryProtocol {
     private let context: NSManagedObjectContext
     private let usersAPI: any UsersAPI
     private let selfUserAPI: any SelfUserAPI
+    private let logger = WireLogger.eventProcessing
 
     // MARK: - Object lifecycle
 
@@ -263,6 +273,28 @@ public final class UserRepository: UserRepositoryProtocol {
             selfUser.legalHoldRequestWasCancelled()
 
             try context.save()
+        }
+    }
+
+    public func deleteUserProperty(
+        withKey key: String
+    ) async {
+        let userPropertyKey = UserProperty.Key(rawValue: key)
+
+        switch userPropertyKey {
+        case .wireReceiptMode:
+            let selfUser = fetchSelfUser()
+
+            await context.perform {
+                selfUser.readReceiptsEnabled = false
+                selfUser.readReceiptsEnabledChangedRemotely = true
+            }
+
+        case .wireTypingIndicatorMode, .labels:
+            break
+
+        case nil:
+            logger.warn("Unknown user property key: \(key)")
         }
     }
 
