@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.10
 
 import Foundation
 import PackageDescription
@@ -54,7 +54,6 @@ let package = Package(
 
 func resolveWireAnalyticsDependencies() -> [Target.Dependency] {
     // You can enable/disable Datadog for debugging by overriding the boolean.
-    // and run File > Packages > Resolve Packages Versions
     if hasEnvironmentVariable("ENABLE_DATADOG", "true") {
         ["WireDatadog"]
     } else {
@@ -71,5 +70,7 @@ func hasEnvironmentVariable(_ name: String, _ value: String? = nil) -> Bool {
 }
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ExistentialAny")
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableExperimentalFeature("StrictConcurrency")
 ]
