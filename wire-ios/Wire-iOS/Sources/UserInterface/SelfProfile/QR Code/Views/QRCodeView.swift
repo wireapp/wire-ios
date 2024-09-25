@@ -94,7 +94,7 @@ extension QRCodeView {
         let targetSize = CGSize(width: 400, height: 400)
         controller.view.bounds = CGRect(origin: .zero, size: targetSize)
         controller.view.backgroundColor = .clear
-        
+
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         return renderer.image { _ in
             controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
