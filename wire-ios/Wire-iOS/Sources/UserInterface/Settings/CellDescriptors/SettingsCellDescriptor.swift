@@ -155,9 +155,7 @@ class SettingsSectionDescriptor: SettingsSectionDescriptorType {
 
 final class SettingsGroupCellDescriptor: SettingsInternalGroupCellDescriptorType, SettingsControllerGeneratorType {
 
-
     static let cellType: SettingsTableCellProtocol.Type = SettingsTableCell.self
-
 
     typealias Cell = SettingsTableCell
 

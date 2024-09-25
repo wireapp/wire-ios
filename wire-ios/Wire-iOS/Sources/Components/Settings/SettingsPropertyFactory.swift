@@ -114,7 +114,7 @@ final class SettingsPropertyFactory {
         let getAction: GetAction = { _ in
             SettingsPropertyValue.string(value: value ?? "")
         }
-        let setAction: SetAction = { _, _,_  in }
+        let setAction: SetAction = { _, _, _  in }
         return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
     }
 
@@ -160,7 +160,7 @@ final class SettingsPropertyFactory {
                 SettingsPropertyValue(self.selfUser?.accentColorValue ?? 0)
             }
 
-            let setAction: SetAction = { [unowned self] _, value,_  in
+            let setAction: SetAction = { [unowned self] _, value, _  in
                 switch value {
                 case .number(let number):
                     self.userSession?.enqueue({
@@ -302,7 +302,7 @@ final class SettingsPropertyFactory {
                 getAction: { _ in
                     let disableSendButton: Bool? = Settings.shared[.sendButtonDisabled]
                     return SettingsPropertyValue(disableSendButton ?? false) },
-                setAction: { _, value,_  in
+                setAction: { _, value, _  in
                     switch value {
                     case .number(value: let number):
                         Settings.shared[.sendButtonDisabled] = number.boolValue
@@ -400,7 +400,7 @@ final class SettingsPropertyFactory {
                     let value = self?.userSession?.encryptMessagesAtRest ?? false
                     return SettingsPropertyValue(value)
             },
-                setAction: { [weak self] _, value,_  in
+                setAction: { [weak self] _, value, _  in
                     guard case .number(let enabled) = value else { return }
                     try? self?.userSession?.setEncryptionAtRest(enabled: enabled.boolValue, skipMigration: false)
             })

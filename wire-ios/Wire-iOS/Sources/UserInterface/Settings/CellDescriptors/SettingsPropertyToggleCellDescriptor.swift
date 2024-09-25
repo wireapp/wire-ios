@@ -92,7 +92,6 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
                         toggleCell.isOn.toggle()
                     }
                 }
-            })
             }
         } catch {
             zmLog.error("Cannot set property: \(error)")

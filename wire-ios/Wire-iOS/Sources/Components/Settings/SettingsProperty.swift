@@ -97,7 +97,7 @@ extension SettingsProperty {
 func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws {
     let value = expr()
 
-    try property.set(newValue: SettingsPropertyValue.propertyValue(value), resultHandler: {_ in })
+    try property.set(newValue: SettingsPropertyValue.propertyValue(value), resultHandler: { _ in })
 }
 
 /**
@@ -109,7 +109,7 @@ func << (property: inout SettingsProperty, expr: @autoclosure () -> Any) throws 
 func << (property: inout SettingsProperty, expr: @autoclosure () -> SettingsPropertyValue) throws {
     let value = expr()
 
-    try property.set(newValue: value, resultHandler: {_ in })
+    try property.set(newValue: value, resultHandler: { _ in })
 }
 
 /**
@@ -164,7 +164,7 @@ typealias SetAction = (SettingsBlockProperty, SettingsPropertyValue, @escaping (
 
 /// Genetic block property
 final class SettingsBlockProperty: SettingsProperty {
-    
+
     var enabled: Bool = true
 
     let propertyName: SettingsPropertyName
