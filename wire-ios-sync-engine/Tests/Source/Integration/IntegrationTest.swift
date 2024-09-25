@@ -311,11 +311,9 @@ extension IntegrationTest {
 
         sessionManager?.loginDelegate = mockLoginDelegete
 
-        sessionManager?.start(launchOptions: [:]) { _ in
+        sessionManager?.start(launchOptions: [:])
 
-            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
     }
 

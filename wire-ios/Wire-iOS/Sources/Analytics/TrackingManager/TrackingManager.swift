@@ -53,7 +53,7 @@ final class TrackingManager: NSObject, TrackingInterface {
             if isEnabled {
                 self.showAnalyticsConsentAlert { userConsented in
                     if userConsented {
-                        self.updateAnalyticsSharing(disabled: false)
+                        self.updateAnalyticsSharing(disabled: !newValue)
                     } else {
                         // User rejected, so we keep analytics disabled
                         self.updateAnalyticsSharing(disabled: true)

@@ -17,7 +17,6 @@
 //
 
 import Countly
-import Foundation
 import WireAnalytics
 
 // MARK: - EnableAnalyticsSharingUseCaseProtocol
@@ -34,47 +33,31 @@ public protocol EnableAnalyticsUseCaseProtocol {
 
 /// Concrete implementation of the EnableAnalyticsUseCaseProtocol.
 /// This struct is responsible for enabling analytics sharing for a specific user profile.
-struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
+public struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
 
     // MARK: - Properties
 
-    /// The configuration for the analytics session.
-    private(set) var analyticsSessionConfiguration: AnalyticsSessionConfiguration
+    private let analyticsManager: AnalyticsManagerProtocol
 
-    /// A closure that provides an `AnalyticsManagerProtocol` implementation.
-    private(set) var analyticsManagerBuilder: (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol
+    private let analyticsUserProfile: AnalyticsUserProfile
 
-    /// The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
-    private(set) var sessionManager: AnalyticsManagerProviding
-
-    /// The user profile for which to enable analytics sharing.
-    private(set) var analyticsUserProfile: AnalyticsUserProfile
-
-    /// An instance conforming to `EnableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
-    private(set) var analyticsSessionProvider: EnableAnalyticsUseCaseAnalyticsSessionProviding
+    private let userSession: ZMUserSession
 
     // MARK: - Initialization
 
     /// Initializes a new instance of EnableAnalyticsUseCase.
     ///
     /// - Parameters:
-    ///   - analyticsManagerBuilder: A closure that provides an `AnalyticsManagerProtocol` implementation.
-    ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
-    ///   - analyticsSessionConfiguration: The configuration for the analytics session.
+    ///   - analyticsManager: The analytics manager to use for enabling tracking.
     ///   - analyticsUserProfile: The user profile for which to enable analytics sharing.
-    ///   - analyticsSessionProvider: An instance conforming to `EnableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
-    init(
-        analyticsManagerBuilder: @escaping (_ appKey: String, _ host: URL) -> any AnalyticsManagerProtocol,
-        sessionManager: AnalyticsManagerProviding,
-        analyticsSessionConfiguration: AnalyticsSessionConfiguration,
+    public init(
+        analyticsManager: AnalyticsManagerProtocol,
         analyticsUserProfile: AnalyticsUserProfile,
-        analyticsSessionProvider: EnableAnalyticsUseCaseAnalyticsSessionProviding
+        userSession: ZMUserSession
     ) {
-        self.analyticsManagerBuilder = analyticsManagerBuilder
-        self.sessionManager = sessionManager
-        self.analyticsSessionConfiguration = analyticsSessionConfiguration
+        self.analyticsManager = analyticsManager
         self.analyticsUserProfile = analyticsUserProfile
-        self.analyticsSessionProvider = analyticsSessionProvider
+        self.userSession = userSession
     }
 
     // MARK: - Public methods
@@ -83,19 +66,8 @@ struct EnableAnalyticsUseCase: EnableAnalyticsUseCaseProtocol {
     ///
     /// This method calls the `enableTracking` method on the analytics manager
     /// with the provided user profile.
-    func invoke() {
-        let analyticsManager = analyticsManagerBuilder(
-            analyticsSessionConfiguration.countlyKey,
-            analyticsSessionConfiguration.host
-        )
-
-        sessionManager.analyticsManager = analyticsManager
-
+    public func invoke() {
         let analyticsSession = analyticsManager.enableTracking(analyticsUserProfile)
-        analyticsSessionProvider.analyticsSession = analyticsSession
+        userSession.analyticsSession = analyticsSession
     }
-}
-
-protocol EnableAnalyticsUseCaseAnalyticsSessionProviding: AnyObject {
-    var analyticsSession: (any AnalyticsSessionProtocol)? { get set }
 }

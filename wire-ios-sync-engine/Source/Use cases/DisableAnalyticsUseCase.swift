@@ -29,34 +29,21 @@ public protocol DisableAnalyticsUseCaseProtocol {
 
 /// Concrete implementation of the DisableAnalyticsUseCaseProtocol.
 /// This struct is responsible for disabling analytics sharing.
-struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
+public struct DisableAnalyticsUseCase: DisableAnalyticsUseCaseProtocol {
 
-    private let sessionManager: AnalyticsManagerProviding
-    private let analyticsSessionProvider: DisableAnalyticsUseCaseAnalyticsSessionProviding
+    private let analyticsManager: AnalyticsManagerProtocol
 
-    /// Initializes a new instance of `DisableAnalyticsUseCase`.
+    /// Initializes a new instance of DisableAnalyticsUseCase.
     ///
-    /// - Parameters:
-    ///   - sessionManager: The session manager that conforms to `AnalyticsManagerProviding` for managing analytics sessions.
-    ///   - analyticsSessionProvider: An instance conforming to `DisableAnalyticsUseCaseAnalyticsSessionProviding` that manages the user's analytics session state.
-    init(
-        sessionManager: AnalyticsManagerProviding,
-        analyticsSessionProvider: DisableAnalyticsUseCaseAnalyticsSessionProviding
-    ) {
-        self.sessionManager = sessionManager
-        self.analyticsSessionProvider = analyticsSessionProvider
+    /// - Parameter analyticsManager: The analytics manager to use for disabling tracking.
+    public init(analyticsManager: AnalyticsManagerProtocol) {
+        self.analyticsManager = analyticsManager
     }
 
     /// Invokes the use case to disable analytics sharing.
     ///
     /// This method calls the `disableTracking` method on the analytics manager if it exists.
-    func invoke() {
-        sessionManager.analyticsManager?.disableTracking()
-        sessionManager.analyticsManager = nil
-        analyticsSessionProvider.analyticsSession = nil
+    public func invoke() {
+        analyticsManager.disableTracking()
     }
-}
-
-protocol DisableAnalyticsUseCaseAnalyticsSessionProviding: AnyObject {
-    var analyticsSession: (any AnalyticsSessionProtocol)? { get set }
 }
