@@ -56,6 +56,15 @@
         }
       },
       {
+        "package": "libPhoneNumber",
+        "repositoryURL": "https://github.com/wireapp/libPhoneNumber-iOS.git",
+        "state": {
+          "branch": null,
+          "revision": "a6f5cb0a2a264e8396da65b0fb27ecf0df8a975e",
+          "version": "1.1.0"
+        }
+      },
+      {
         "package": "opentelemetry-swift",
         "repositoryURL": "https://github.com/DataDog/opentelemetry-swift-packages.git",
         "state": {
