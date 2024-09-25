@@ -206,6 +206,7 @@ final class ProfileHeaderViewController: UIViewController {
         updateGroupRoleIndicator()
         updateHandleLabel()
         updateTeamLabel()
+        updateQRCodeButton()
 
         addChild(userStatusViewController)
 
@@ -249,10 +250,6 @@ final class ProfileHeaderViewController: UIViewController {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
         }
         view.backgroundColor = .clear
-        let qrCodeAction = UIAction { _ in
-    self.qrCodeButtonTapped()
-}
-qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -405,8 +402,14 @@ qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
         }
     }
 
-    @objc
-    private func qrCodeButtonTapped(_ sender: IconButton) {
+    private func updateQRCodeButton() {
+        let qrCodeAction = UIAction { _ in
+            self.qrCodeButtonTapped()
+        }
+        qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
+    }
+
+    private func qrCodeButtonTapped() {
         guard let viewModel = makeUserQRCodeViewModel(selfUser: user) else {
             return
         }
