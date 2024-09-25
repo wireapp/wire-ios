@@ -249,8 +249,10 @@ final class ProfileHeaderViewController: UIViewController {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
         }
         view.backgroundColor = .clear
-
-        qrCodeButton.addTarget(self, action: #selector(qrCodeButtonTapped), for: .touchUpInside)
+        let qrCodeAction = UIAction { _ in
+    self.qrCodeButtonTapped()
+}
+qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
     }
 
     override func viewWillAppear(_ animated: Bool) {
