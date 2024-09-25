@@ -142,7 +142,6 @@ public final class UserRepository: UserRepositoryProtocol {
             )
 
             if isFederationEnabled {
-                user.remoteIdentifier = event.userID.uuid
                 user.domain = event.userID.domain
             }
 

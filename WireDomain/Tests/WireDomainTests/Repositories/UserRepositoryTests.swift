@@ -42,11 +42,7 @@ class UserRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         usersAPI = MockUsersAPI()
-        sut = UserRepository(
-            context: context,
-            usersAPI: usersAPI,
-            isFederationEnabled: true
-        )
+        makeSut()
     }
 
     override func tearDown() async throws {
@@ -55,6 +51,14 @@ class UserRepositoryTests: XCTestCase {
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
+    }
+
+    func makeSut(isFederationEnabled: Bool = true) {
+        sut = UserRepository(
+            context: context,
+            usersAPI: usersAPI,
+            isFederationEnabled: isFederationEnabled
+        )
     }
 
     // MARK: - Tests
@@ -135,7 +139,7 @@ class UserRepositoryTests: XCTestCase {
         }
     }
 
-    func testUpdateUser_It_Updates_User_Locally() async throws {
+    func testUpdateUser_It_Updates_User_Locally_With_Federation_Enabled() async throws {
         // Given
 
         modelHelper.createUser(id: Scaffolding.userID, in: context)
@@ -150,7 +154,31 @@ class UserRepositoryTests: XCTestCase {
             let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
 
             XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
-            XCTAssertEqual(updatedUser.domain, Scaffolding.domain)
+            XCTAssertEqual(updatedUser.domain, Scaffolding.domain) /// federation enabled, domain is set
+            XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
+            XCTAssertEqual(updatedUser.handle, Scaffolding.event.handle)
+            XCTAssertEqual(updatedUser.emailAddress, Scaffolding.event.email)
+            XCTAssertEqual(updatedUser.supportedProtocols, [.proteus, .mls])
+        }
+    }
+
+    func testUpdateUser_It_Updates_User_Locally_With_Federation_Disabled() async throws {
+        // Given
+
+        makeSut(isFederationEnabled: false)
+        modelHelper.createUser(id: Scaffolding.userID, in: context)
+
+        // When
+
+        try await sut.updateUser(from: Scaffolding.event)
+
+        // Then
+
+        try await context.perform { [context] in
+            let updatedUser = try XCTUnwrap(ZMUser.fetch(with: Scaffolding.userID, in: context))
+
+            XCTAssertEqual(updatedUser.remoteIdentifier, Scaffolding.userID)
+            XCTAssertNil(updatedUser.domain) /// federation disabled, domain is nil
             XCTAssertEqual(updatedUser.name, Scaffolding.event.name)
             XCTAssertEqual(updatedUser.handle, Scaffolding.event.handle)
             XCTAssertEqual(updatedUser.emailAddress, Scaffolding.event.email)
