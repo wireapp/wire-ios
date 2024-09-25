@@ -19,17 +19,18 @@
 import Foundation
 import WireAnalytics
 import WireSyncEngine
+import Countly
 
 private let zmLog = ZMSLog(tag: "Analytics")
 
 protocol CountlyInstance {
     func recordEvent(_ key: String, segmentation: [String: String]?)
-    func start(with config: WireCountlyConfig)
+    func start(with config: CountlyConfig)
 
     static func sharedInstance() -> Self
 }
 
-extension WireCountly: CountlyInstance {}
+extension Countly: CountlyInstance {}
 
 final class AnalyticsCountlyProvider: AnalyticsProvider {
 
@@ -93,7 +94,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     // MARK: - Life cycle
 
     init?(
-        countlyInstanceType: CountlyInstance.Type = WireCountly.self,
+        countlyInstanceType: CountlyInstance.Type = Countly.self,
         countlyAppKey: String,
         serverURL: URL
     ) {
@@ -123,7 +124,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
             return
         }
 
-        let config = WireCountlyConfig()
+        let config = CountlyConfig()
         config.appKey = appKey
         config.host = serverURL.absoluteString
         config.manualSessionHandling = true
@@ -136,7 +137,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
 
         // Changing Device ID after app started
         // ref: https://support.count.ly/hc/en-us/articles/360037753511-iOS-watchOS-tvOS-macOS#section-resetting-stored-device-id
-        WireCountly.sharedInstance().setNewDeviceID(analyticsIdentifier, onServer: true)
+        Countly.sharedInstance().setNewDeviceID(analyticsIdentifier, onServer: true)
 
         zmLog.info("AnalyticsCountlyProvider \(self) started")
 
@@ -166,17 +167,17 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
     }
 
     private func beginSession() {
-        WireCountly.sharedInstance().beginSession()
+        Countly.sharedInstance().beginSession()
         isRecording = true
     }
 
     private func updateSession() {
         guard isRecording else { return }
-        WireCountly.sharedInstance().updateSession()
+        Countly.sharedInstance().updateSession()
     }
 
     private func endSession() {
-        WireCountly.sharedInstance().endSession()
+        Countly.sharedInstance().endSession()
         isRecording = false
     }
 
@@ -202,10 +203,10 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         let convertedAttributes = properties.countlyStringValueDictionary
 
         for (key, value) in convertedAttributes {
-            WireCountly.user().set(key, value: value)
+            Countly.user().set(key, value: value)
         }
 
-        WireCountly.user().save()
+        Countly.user().save()
     }
 
     private func clearCountlyUser() {
@@ -216,8 +217,8 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
             "user_contacts"
         ]
 
-        keys.forEach(WireCountly.user().unSet)
-        WireCountly.user().save()
+        keys.forEach(Countly.user().unSet)
+        Countly.user().save()
     }
 
     private var shouldTracksEvent: Bool {

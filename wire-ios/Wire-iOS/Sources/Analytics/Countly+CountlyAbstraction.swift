@@ -16,28 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import Countly
+import WireAnalytics
 
-// sourcery: AutoMockable
-public protocol CountlyAbstraction: AnyObject {
-    associatedtype CountlyConfig: CountlyConfigAbstraction
-    associatedtype CountlyUserDetails: CountlyUserDetailsAbstraction
-
-    static func sharedInstance() -> Self
-
-    static func user() -> CountlyUserDetails
-
-    init()
-
-    func start(with config: CountlyConfig)
-
-    func setNewDeviceID(_ deviceID: String?, onServer: Bool)
-    func changeDeviceID(withMerge id: String?)
-    func changeDeviceIDWithoutMerge(_ id: String?)
-
-    func beginSession()
-    func updateSession()
-    func endSession()
-
-    func recordEvent(_ name: String, segmentation: [String: String]?)
-}
+extension Countly: CountlyAbstraction {}
+extension CountlyConfig: CountlyConfigAbstraction {}
+extension CountlyUserDetails: CountlyUserDetailsAbstraction {}

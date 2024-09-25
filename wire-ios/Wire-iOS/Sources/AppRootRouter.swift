@@ -22,6 +22,7 @@ import WireAnalytics
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
+import Countly
 
 // MARK: - AppRootRouter
 final class AppRootRouter: NSObject {
@@ -278,7 +279,7 @@ extension AppRootRouter {
 
                 if !trackingManager.disableAnalyticsSharing, let analyticsConfig = sessionManager.analyticsSessionConfiguration {
                     do {
-                        let useCase = try sessionManager.makeEnableAnalyticsUseCase()
+                        let useCase = try sessionManager.makeEnableAnalyticsUseCase(countlyType: Countly.self)
                         useCase.invoke()
                     } catch {
                         WireLogger.analytics.error("Failed to create the use case")

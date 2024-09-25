@@ -20,6 +20,7 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireSyncEngine
+import Countly
 
 final class TrackingManager: NSObject, TrackingInterface {
 
@@ -71,7 +72,7 @@ final class TrackingManager: NSObject, TrackingInterface {
                 let disableUseCase = try sessionManager.makeDisableAnalyticsUseCase()
                 disableUseCase.invoke()
             } else {
-                let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase()
+                let enableUseCase = try sessionManager.makeEnableAnalyticsUseCase(countlyType: Countly.self)
                 enableUseCase.invoke()
             }
         } catch {

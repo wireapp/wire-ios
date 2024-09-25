@@ -355,6 +355,8 @@
 		598E87102BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */; };
 		598EA8C72C5BFFFE006DA500 /* WireAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 598EA8C62C5BFFFE006DA500 /* WireAPI */; };
 		598EA8C82C5BFFFF006DA500 /* WireAPI in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 598EA8C62C5BFFFE006DA500 /* WireAPI */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		599409C12CA435C900E78231 /* Countly in Frameworks */ = {isa = PBXBuildFile; productRef = 599409C02CA435C900E78231 /* Countly */; };
+		599409C32CA4366A00E78231 /* Countly+CountlyAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599409C22CA4366A00E78231 /* Countly+CountlyAbstraction.swift */; };
 		59942F182C2BF72C00F65A54 /* WireUITesting in Frameworks */ = {isa = PBXBuildFile; productRef = 59942F172C2BF72C00F65A54 /* WireUITesting */; };
 		59948F6E2BF2151500832257 /* OtherUserClientsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16814843228D89EC0069F16F /* OtherUserClientsListViewController.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
@@ -2379,6 +2381,7 @@
 		598E86D02BF4D97800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E86F62BF4DD5C00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		598E870F2BF4E98100FC5438 /* DidPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
+		599409C22CA4366A00E78231 /* Countly+CountlyAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Countly+CountlyAbstraction.swift"; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
@@ -3996,6 +3999,7 @@
 				061F341B2B1E2ED50099CBAB /* AppAuthCore in Frameworks */,
 				EE67F6D5296F06A3001D7C88 /* Down.xcframework in Frameworks */,
 				016DB6DE2C261A4900DEB81B /* WireDomain.framework in Frameworks */,
+				599409C12CA435C900E78231 /* Countly in Frameworks */,
 				5996E8A62C19D090007A52F0 /* WireSyncEngine.framework in Frameworks */,
 				EEE25B5929719DA80008B894 /* WireImages.framework in Frameworks */,
 			);
@@ -5537,6 +5541,7 @@
 				16E2A0A31F6BF0C6005F4DB1 /* AnalyticsCallingTracker.swift */,
 				5E0FB21A2057F50C00FD9867 /* CallQualitySurveyReview.swift */,
 				871BBFC31D34F56300DF0793 /* Events */,
+				599409C22CA4366A00E78231 /* Countly+CountlyAbstraction.swift */,
 			);
 			path = Analytics;
 			sourceTree = "<group>";
@@ -8655,6 +8660,7 @@
 				5965B46B2C57AC70000DBF91 /* WireSystemPackage */,
 				598EA8C62C5BFFFE006DA500 /* WireAPI */,
 				59DD32362CA40EE90098E00B /* WireAnalytics */,
+				599409C02CA435C900E78231 /* Countly */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -9996,6 +10002,7 @@
 				874A02541D1D325C00D0D74A /* AudioEffect.swift in Sources */,
 				D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */,
 				8710673C1C0DC5570035603B /* SettingsButtonCellDescriptor.swift in Sources */,
+				599409C32CA4366A00E78231 /* Countly+CountlyAbstraction.swift in Sources */,
 				EF40005720568C4400E03347 /* NetworkStatusBarConstants.swift in Sources */,
 				87F18BC01E017B7F00C69D9B /* UIView+VisibleViews.swift in Sources */,
 				878A720C1E55D7D3008072B9 /* TextSearchResultFooter.swift in Sources */,
@@ -11744,6 +11751,11 @@
 		598EA8C62C5BFFFE006DA500 /* WireAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireAPI;
+		};
+		599409C02CA435C900E78231 /* Countly */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59DD32382CA40FB80098E00B /* XCRemoteSwiftPackageReference "countly-sdk-ios" */;
+			productName = Countly;
 		};
 		59942F172C2BF72C00F65A54 /* WireUITesting */ = {
 			isa = XCSwiftPackageProductDependency;

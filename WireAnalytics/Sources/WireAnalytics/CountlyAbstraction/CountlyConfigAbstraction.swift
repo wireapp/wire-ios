@@ -25,7 +25,7 @@ public protocol CountlyConfigAbstraction: AnyObject {
     var manualSessionHandling: Bool { get set }
     var host: String { get set }
     var deviceID: String { get set }
-    var urlSessionConfiguration: URLSessionConfiguration? { get set }
+    var urlSessionConfiguration: URLSessionConfiguration { get set }
 
     init()
 }
