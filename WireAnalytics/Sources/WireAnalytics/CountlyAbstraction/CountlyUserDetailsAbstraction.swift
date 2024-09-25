@@ -16,19 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-public final class CountlyUserDetails {
-    public func set(
-        _ key: String,
-        value: String
-    ){
-        fatalError()
-    }
-    public func unSet(_ key: String) {
-        fatalError()
-    }
-    public func save() {
-        fatalError()
-    }
-}
+public protocol CountlyUserDetailsAbstraction {}

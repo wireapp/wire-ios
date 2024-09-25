@@ -18,17 +18,13 @@
 
 import Foundation
 
-public final class CountlyUserDetails {
-    public func set(
-        _ key: String,
-        value: String
-    ){
-        fatalError()
-    }
-    public func unSet(_ key: String) {
-        fatalError()
-    }
-    public func save() {
-        fatalError()
-    }
+public protocol CountlyConfigAbstraction {
+
+    var appKey: String { get set }
+    var manualSessionHandling: Bool { get set }
+    var host: String { get set }
+    var deviceID: String { get set }
+    var urlSessionConfiguration: URLSessionConfiguration? { get set }
+
+    init()
 }

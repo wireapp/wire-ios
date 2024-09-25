@@ -19,7 +19,7 @@
 import Foundation
 
 /// Struct responsible for managing analytics operations.
-public struct AnalyticsManager: AnalyticsManagerProtocol {
+public struct AnalyticsManager<Countly: CountlyAbstraction>: AnalyticsManagerProtocol {
     /// The underlying analytics service.
     private let analyticsService: any AnalyticsService
 
