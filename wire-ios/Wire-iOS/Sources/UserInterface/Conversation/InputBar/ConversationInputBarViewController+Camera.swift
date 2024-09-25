@@ -32,7 +32,7 @@ final class StatusBarVideoEditorController: UIVideoEditorController {
 extension ConversationInputBarViewController: CameraKeyboardViewControllerDelegate {
 
     func createCameraKeyboardViewController() -> CameraKeyboardViewController {
-        guard let splitViewController = ZClientViewController.shared?.wireSplitViewController else {
+        guard let splitViewController = ZClientViewController.shared?.mainSplitViewController else {
             fatal("SplitViewController is not created")
         }
         let cameraKeyboardViewController = CameraKeyboardViewController(

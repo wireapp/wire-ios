@@ -29,6 +29,6 @@ extension ZClientViewController: AppLockChangeWarningViewControllerDelegate {
         guard userSession.shouldNotifyUserOfDisabledAppLock else { return }
         let viewController = AppLockChangeWarningViewController(isAppLockActive: false, userSession: userSession)
         viewController.modalPresentationStyle = .fullScreen
-        wireSplitViewController.present(viewController, animated: false)
+        mainSplitViewController.present(viewController, animated: false)
     }
 }

@@ -50,7 +50,7 @@ final class ZClientViewController: UIViewController {
         return sidebarViewController
     }()
 
-    private(set) lazy var wireSplitViewController = MainSplitViewController<SidebarViewController, ConversationListViewController>(
+    private(set) lazy var mainSplitViewController = MainSplitViewController<SidebarViewController, ConversationListViewController>(
         sidebar: sidebarViewController,
         noConversationPlaceholder: NoConversationPlaceholderViewController(),
         tabContainer: mainTabBarController
@@ -99,7 +99,7 @@ final class ZClientViewController: UIViewController {
     private(set) lazy var mainCoordinator = {
         var newConversationBuilder = StartUIViewControllerBuilder(userSession: userSession)
         let mainCoordinator = MainCoordinator(
-            mainSplitViewController: wireSplitViewController,
+            mainSplitViewController: mainSplitViewController,
             mainTabBarController: mainTabBarController,
             newConversationBuilder: newConversationBuilder,
             selfProfileBuilder: selfProfileViewControllerBuilder
@@ -217,29 +217,30 @@ final class ZClientViewController: UIViewController {
 
     private func setupSplitViewController() {
 
-        wireSplitViewController.conversationList = conversationListViewController
-        wireSplitViewController.delegate = mainCoordinator
+        mainSplitViewController.conversationList = conversationListViewController
 
-        addChild(wireSplitViewController)
-        wireSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(wireSplitViewController.view)
-        wireSplitViewController.didMove(toParent: self)
+        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
+        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
+
+        mainTabBarController.delegate = mainCoordinator
+        mainSplitViewController.delegate = mainCoordinator
+
+        addChild(mainSplitViewController)
+        mainSplitViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(mainSplitViewController.view)
+        mainSplitViewController.didMove(toParent: self)
 
         createTopViewConstraints()
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
         sidebarViewController.delegate = mainCoordinator
 
-        mainTabBarController.archive = ArchivedConversationsViewControllerBuilder(userSession: userSession).build()
-        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
-        mainTabBarController.delegate = mainCoordinator
-
         // prevent split view appearance on large phones
         if traitCollection.userInterfaceIdiom != .pad {
             if #available(iOS 17.0, *) {
-                wireSplitViewController.traitOverrides.horizontalSizeClass = .compact
+                mainSplitViewController.traitOverrides.horizontalSizeClass = .compact
             } else {
-                setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: wireSplitViewController)
+                setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: mainSplitViewController)
             }
         }
 
@@ -281,7 +282,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: Status bar
     private var child: UIViewController? {
-        return topOverlayViewController ?? wireSplitViewController
+        return topOverlayViewController ?? mainSplitViewController
     }
 
     private var childForStatusBar: UIViewController? {
@@ -338,7 +339,7 @@ final class ZClientViewController: UIViewController {
             select(conversation: conversation)
         }
 
-        wireSplitViewController.show(.primary)
+        mainSplitViewController.show(.primary)
     }
 
     private func pushContentViewController(
@@ -349,7 +350,7 @@ final class ZClientViewController: UIViewController {
     ) {
         // TODO: `focus` argument is not used
         conversationRootViewController = viewController
-        let secondaryNavigationController = wireSplitViewController.viewController(for: .secondary) as! UINavigationController
+        let secondaryNavigationController = mainSplitViewController.viewController(for: .secondary) as! UINavigationController
         secondaryNavigationController.setViewControllers([conversationRootViewController!], animated: false)
     }
 
@@ -428,7 +429,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Animated conversation switch
     func dismissAllModalControllers(callback: Completion?) {
         let dismissAction = {
-            if let rightViewController = self.wireSplitViewController.viewController(for: .secondary),
+            if let rightViewController = self.mainSplitViewController.viewController(for: .secondary),
                rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
             } else if let presentedViewController = self.conversationListViewController.presentedViewController {
@@ -565,11 +566,11 @@ final class ZClientViewController: UIViewController {
                           leftViewControllerRevealed: Bool = true,
                           completion: Completion?) {
         let action: Completion = { [weak self] in
-            self?.wireSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
+            self?.mainSplitViewController.show(leftViewControllerRevealed ? .primary : .secondary)
             completion?()
         }
 
-        if let presentedViewController = wireSplitViewController.viewController(for: .secondary)?.presentedViewController {
+        if let presentedViewController = mainSplitViewController.viewController(for: .secondary)?.presentedViewController {
             presentedViewController.dismiss(animated: animated, completion: action)
         } else {
             action()
@@ -668,10 +669,10 @@ final class ZClientViewController: UIViewController {
             topOverlayContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             topOverlayContainer.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             topOverlayContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            wireSplitViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-            wireSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            wireSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            wireSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            mainSplitViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            mainSplitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            mainSplitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mainSplitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
@@ -756,14 +757,14 @@ final class ZClientViewController: UIViewController {
     var isConversationViewVisible: Bool {
         // TODO: fix
         false
-        // wireSplitViewController.isConversationViewVisible
+        // mainSplitViewController.isConversationViewVisible
     }
 
     var isConversationListVisible: Bool {
         // TODO: fix
         return false
-        // return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        // (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        // return (mainSplitViewController.layoutSize == .regularLandscape) ||
+        // (mainSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(
