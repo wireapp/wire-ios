@@ -26,8 +26,6 @@ public extension UIImage {
         borderWidth: CGFloat,
         borderColor: UIColor
     ) -> UIImage {
-        let size = self.size
-
         let renderer = UIGraphicsImageRenderer(size: size)
         let combinedImage = renderer.image { context in
             self.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
