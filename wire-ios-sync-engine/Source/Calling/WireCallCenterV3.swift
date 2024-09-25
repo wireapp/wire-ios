@@ -819,17 +819,6 @@ extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
-            guard let viewContext = uiMOC,
-                  let conversation = ZMConversation.fetch(
-                    with: mlsParentIDs.qualifiedID.uuid,
-                    domain: mlsParentIDs.qualifiedID.domain,
-                    in: viewContext),
-                  conversation.conversationType == .group
-            else {
-                deleteSubconversation(conversationID: conversationId)
-                return
-            }
-
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1

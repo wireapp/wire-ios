@@ -4242,35 +4242,35 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     // MARK: - establishGroup
 
-    public var establishGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
-    public var establishGroupForWith_MockError: Error?
-    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> MLSCipherSuite)?
-    public var establishGroupForWith_MockValue: MLSCipherSuite?
+    public var establishGroupForWithRemovalKeys_Invocations: [(groupID: MLSGroupID, users: [MLSUser], removalKeys: BackendMLSPublicKeys?)] = []
+    public var establishGroupForWithRemovalKeys_MockError: Error?
+    public var establishGroupForWithRemovalKeys_MockMethod: ((MLSGroupID, [MLSUser], BackendMLSPublicKeys?) async throws -> MLSCipherSuite)?
+    public var establishGroupForWithRemovalKeys_MockValue: MLSCipherSuite?
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
-        establishGroupForWith_Invocations.append((groupID: groupID, users: users))
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser], removalKeys: BackendMLSPublicKeys?) async throws -> MLSCipherSuite {
+        establishGroupForWithRemovalKeys_Invocations.append((groupID: groupID, users: users, removalKeys: removalKeys))
 
-        if let error = establishGroupForWith_MockError {
+        if let error = establishGroupForWithRemovalKeys_MockError {
             throw error
         }
 
-        if let mock = establishGroupForWith_MockMethod {
-            return try await mock(groupID, users)
-        } else if let mock = establishGroupForWith_MockValue {
+        if let mock = establishGroupForWithRemovalKeys_MockMethod {
+            return try await mock(groupID, users, removalKeys)
+        } else if let mock = establishGroupForWithRemovalKeys_MockValue {
             return mock
         } else {
-            fatalError("no mock for `establishGroupForWith`")
+            fatalError("no mock for `establishGroupForWithRemovalKeys`")
         }
     }
 
     // MARK: - createGroup
 
-    public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID?)] = []
+    public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID)] = []
     public var createGroupForParentGroupID_MockError: Error?
-    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> MLSCipherSuite)?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID) async throws -> MLSCipherSuite)?
     public var createGroupForParentGroupID_MockValue: MLSCipherSuite?
 
-    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite {
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID) async throws -> MLSCipherSuite {
         createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
 
         if let error = createGroupForParentGroupID_MockError {
@@ -4283,6 +4283,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `createGroupForParentGroupID`")
+        }
+    }
+
+    // MARK: - createGroup
+
+    public var createGroupForRemovalKeys_Invocations: [(groupID: MLSGroupID, removalKeys: BackendMLSPublicKeys?)] = []
+    public var createGroupForRemovalKeys_MockError: Error?
+    public var createGroupForRemovalKeys_MockMethod: ((MLSGroupID, BackendMLSPublicKeys?) async throws -> MLSCipherSuite)?
+    public var createGroupForRemovalKeys_MockValue: MLSCipherSuite?
+
+    public func createGroup(for groupID: MLSGroupID, removalKeys: BackendMLSPublicKeys?) async throws -> MLSCipherSuite {
+        createGroupForRemovalKeys_Invocations.append((groupID: groupID, removalKeys: removalKeys))
+
+        if let error = createGroupForRemovalKeys_MockError {
+            throw error
+        }
+
+        if let mock = createGroupForRemovalKeys_MockMethod {
+            return try await mock(groupID, removalKeys)
+        } else if let mock = createGroupForRemovalKeys_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createGroupForRemovalKeys`")
         }
     }
 

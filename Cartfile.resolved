@@ -1,4 +1,4 @@
-binary "wire-avs.json" "9.7.21"
+binary "wire-avs.json" "9.7.23"
 github "microsoft/plcrashreporter" "1.11.2"
 github "wireapp/Down" "v2.3.4_xcframework"
 github "wireapp/FLAnimatedImage" "1.0.17"

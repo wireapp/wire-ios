@@ -97,6 +97,7 @@ public struct ModelHelper {
         let otherClient = UserClient.insertNewObject(in: context)
         otherClient.remoteIdentifier = id
         otherClient.user = user
+        otherClient.needsSessionMigration = user.domain == nil
         return otherClient
     }
 

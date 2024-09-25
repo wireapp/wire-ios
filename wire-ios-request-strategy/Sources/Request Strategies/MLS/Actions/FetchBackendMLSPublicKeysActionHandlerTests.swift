@@ -55,7 +55,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
 
     // MARK: - Response handling
 
-    private typealias ResponsePayload = FetchBackendMLSPublicKeysActionHandler.ResponsePayload
+    private typealias ResponsePayload = Payload.ExternalSenderKeys
 
     func test_itHandlesSuccess() {
         // Given

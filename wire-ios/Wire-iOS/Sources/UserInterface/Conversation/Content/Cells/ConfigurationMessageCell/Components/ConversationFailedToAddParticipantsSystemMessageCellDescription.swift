@@ -45,7 +45,7 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
             title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
             content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
             isCollapsed: isCollapsed,
-            icon: Asset.Images.attention.image,
+            icon: Asset.Images.attention.image.withRenderingMode(.alwaysOriginal),
             buttonAction: buttonAction
         )
     }
