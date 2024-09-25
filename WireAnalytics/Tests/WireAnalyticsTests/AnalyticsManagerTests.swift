@@ -26,7 +26,7 @@ class AnalyticsManagerTests: XCTestCase {
     // MARK: - Properties
 
     private var analyticsService: MockAnalyticsServiceProtocol!
-    private var sut: AnalyticsManager!
+    private var sut: AnalyticsManager<MockCountlyAbstraction>!
 
     // MARK: - setUp
 

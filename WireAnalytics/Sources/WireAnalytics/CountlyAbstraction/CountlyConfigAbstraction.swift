@@ -18,7 +18,6 @@
 
 import Foundation
 
-// sourcery: AutoMockable
 public protocol CountlyConfigAbstraction: AnyObject {
 
     var appKey: String { get set }

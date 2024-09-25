@@ -18,7 +18,6 @@
 
 import Foundation
 
-// sourcery: AutoMockable
 public protocol CountlyAbstraction: AnyObject {
     associatedtype CountlyConfig: CountlyConfigAbstraction
     associatedtype CountlyUserDetails: CountlyUserDetailsAbstraction
