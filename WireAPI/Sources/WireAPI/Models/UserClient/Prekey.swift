@@ -30,4 +30,12 @@ public struct Prekey: Equatable, Codable {
 
     public let base64EncodedKey: String
 
+    public init(
+        id: Int,
+        base64EncodedKey: String
+    ) {
+        self.id = id
+        self.base64EncodedKey = base64EncodedKey
+    }
+
 }

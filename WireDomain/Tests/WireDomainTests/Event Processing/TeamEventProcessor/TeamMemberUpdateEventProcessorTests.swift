@@ -124,7 +124,7 @@ private enum Scaffolding {
     static let teamID = UUID()
     static let membershipID = UUID()
 
-    static let event = TeamMemberUpdateEvent(
+    nonisolated(unsafe) static let event = TeamMemberUpdateEvent(
         teamID: teamID,
         membershipID: membershipID
     )

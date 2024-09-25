@@ -16,16 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/**
- * A structure that contains the fields to send after a user
- * session is available.
- */
-
-struct AuthenticationPostRegistrationFields {
-
-    /// The value the user provided for their marketing consent.
-    let marketingConsent: Bool
-
+public enum SidebarMenuItem: CaseIterable, Comparable {
+    // conversation filters
+    case all, favorites, groups, oneOnOne
+    // archived conversations
+    case archive
+    // contact
+    case connect
+    // bottom
+    case settings
 }

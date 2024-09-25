@@ -32,9 +32,14 @@ protocol UserLegalholdRequestEventProcessorProtocol {
 
 struct UserLegalholdRequestEventProcessor: UserLegalholdRequestEventProcessorProtocol {
 
-    func processEvent(_: UserLegalholdRequestEvent) async throws {
-        // TODO: [WPB-10196]
-        assertionFailure("not implemented yet")
+    let repository: any UserRepositoryProtocol
+
+    func processEvent(_ event: UserLegalholdRequestEvent) async throws {
+        await repository.addLegalHoldRequest(
+            for: event.userID,
+            clientID: event.clientID,
+            lastPrekey: event.lastPrekey
+        )
     }
 
 }

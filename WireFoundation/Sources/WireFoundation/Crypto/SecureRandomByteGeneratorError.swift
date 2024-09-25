@@ -16,6 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public enum SidebarConversationFilter: CaseIterable {
-    case favorites, groups, oneOnOne, archived
+import Foundation
+
+/// Errors originating from `SecureRandomByteGenerator`.
+
+public enum SecureRandomByteGeneratorError: Error {
+
+    /// Failed to generate random bytes, see the `SecRandomCopyBytes` status
+    /// for more info.
+
+    case failedToGenerateBytes(status: Int32)
+
 }
