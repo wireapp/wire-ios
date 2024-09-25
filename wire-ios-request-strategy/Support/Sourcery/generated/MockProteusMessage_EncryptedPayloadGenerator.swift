@@ -93,6 +93,7 @@ public class MockProteusMessage: ProteusMessage {
 
     public var expirationReasonCode: NSNumber?
 
+
     // MARK: - setExpirationDate
 
     public var setExpirationDate_Invocations: [Void] = []
