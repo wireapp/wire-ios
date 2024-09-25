@@ -93,7 +93,6 @@ public class MockProteusMessage: ProteusMessage {
 
     public var expirationReasonCode: NSNumber?
 
-
     // MARK: - setExpirationDate
 
     public var setExpirationDate_Invocations: [Void] = []
@@ -144,7 +143,7 @@ public class MockProteusMessage: ProteusMessage {
         mock(recipients)
     }
 
-    // MARK: - detectedRedundantUsers
+    // MARK: - detectedRedundantUsers   
 
     public var detectedRedundantUsers_Invocations: [[ZMUser]] = []
     public var detectedRedundantUsers_MockMethod: (([ZMUser]) -> Void)?
