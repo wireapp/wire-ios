@@ -20,7 +20,7 @@ import SwiftUI
 import WireTestingPackage
 import XCTest
 
-@testable import WireUIFoundation
+@testable import WireMainNavigation
 
 final class MainSplitViewControllerTests: XCTestCase {
 

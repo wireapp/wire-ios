@@ -17,8 +17,9 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-// TODO: consider removing/replacing?
-public protocol ViewControllerBuilder {
-    func build() -> UIViewController
+struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
+    @MainActor
+    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
 }

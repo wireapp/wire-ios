@@ -17,12 +17,14 @@
 //
 
 import UIKit
-import WireUIFoundation
+import WireMainNavigation
 
-final class MockTabBarController: UITabBarController, MainTabBarControllerProtocol {
-    var contacts: UIViewController?
-    var conversations: (conversationList: MockConversationListViewController, conversation: UIViewController?)?
+final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+    var sidebar: MockSidebarViewController!
+    var conversationList: MockConversationListViewController?
     var archive: UIViewController?
+    var newConversation: UIViewController?
     var settings: UIViewController?
-    var selectedContent: MainTabBarControllerContent = .conversations
+    var conversation: UIViewController?
+    var tabContainer: UIViewController!
 }

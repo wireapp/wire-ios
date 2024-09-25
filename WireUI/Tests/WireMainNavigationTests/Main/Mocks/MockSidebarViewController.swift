@@ -17,9 +17,36 @@
 //
 
 import UIKit
-import WireUIFoundation
+import WireMainNavigation
 
-struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
+final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
+
+    enum MenuItem {
+        case all, groups
+    }
+
+    var selectedMenuItem: MenuItem = .all
+}
+
+extension MockSidebarViewController.MenuItem: MainSidebarMenuItemRepresentable {
+
+    init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
+        switch mainSidebarMenuItem {
+        case .all:
+            self = .all
+        case .groups:
+            self = .groups
+        default:
+            fatalError("not implemented")
+        }
+    }
+
+    func map() -> MainSidebarMenuItem {
+        switch self {
+        case .all:
+            .all
+        case .groups:
+            .groups
+        }
+    }
 }
