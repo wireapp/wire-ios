@@ -190,7 +190,7 @@ extension UserPropertyRequestStrategyTests {
             XCTAssertFalse(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
-    
+
     func testThatItIsFetchingPropertyValue_404_apiV6() {
         self.syncMOC.performGroupedAndWait { moc in
             // given
