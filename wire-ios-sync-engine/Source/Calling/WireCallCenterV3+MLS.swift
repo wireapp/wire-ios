@@ -204,39 +204,6 @@ extension WireCallCenterV3 {
         }
     }
 
-<<<<<<< HEAD
-    /// Deletes a subconversation.
-    ///
-    /// - Parameter conversationID: The `AVSIdentifier` of the parent conversation.
-
-    func deleteSubconversation(conversationID: AVSIdentifier) {
-        guard
-            let viewContext = uiMOC,
-            let syncContext = viewContext.zm_sync,
-            let parentIDs = mlsParentIDS(for: conversationID)
-        else {
-            return
-        }
-
-        syncContext.perform {
-            guard let mlsService = syncContext.mlsService else {
-                WireLogger.calling.error("failed to delete subconversation: mlsService is missing")
-                assertionFailure("mlsService is nil")
-                return
-            }
-
-            Task {
-                do {
-                    try await mlsService.deleteSubgroup(parentQualifiedID: parentIDs.qualifiedID)
-                } catch {
-                    WireLogger.calling.error("failed to delete subconversation: \(String(reflecting: error))")
-                }
-            }
-        }
-    }
-
-=======
->>>>>>> a22151ac2a (feat: Remove call to deleteSubConversation after ending a 1:1 SFT call - WPB-11123 (#1944))
 }
 
 extension CallParticipantState {
