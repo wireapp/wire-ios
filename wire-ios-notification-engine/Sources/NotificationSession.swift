@@ -57,6 +57,8 @@ public protocol NotificationSessionDelegate: AnyObject {
         unreadConversationCount: Int
     )
 
+    func notificationSessionDidReceivePushData(_ data: Data)
+
     func reportCallEvent(
         _ payload: CallEventPayload,
         currentTimestamp: TimeInterval
@@ -70,7 +72,7 @@ public protocol NotificationSessionDelegate: AnyObject {
 /// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
 ///
-public final class NotificationSession {
+public final class NotificationSession: NSObject, ZMPushChannelConsumer {
 
     /// The failure reason of a `NotificationSession` initialization
     /// - noAccount: Account doesn't exist
@@ -302,6 +304,8 @@ public final class NotificationSession {
             lastEventIDRepository: lastEventIDRepository
         )
 
+        super.init()
+
         pushNotificationStrategy.delegate = self
 
         let accountDirectory = coreDataStack.accountContainer
@@ -335,21 +339,49 @@ public final class NotificationSession {
     public func processPushNotification(with payload: [AnyHashable: Any]) {
         WireLogger.notifications.info("processing notification with payload: \(payload)")
 
-        coreDataStack.syncContext.performGroupedBlock {
-            if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
-                WireLogger.notifications.error("Not displaying notification because app is not authenticated")
-                self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
-                return
-            }
-
-            let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
-            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
-                WireLogger.authentication.addTag(.selfClientId, value: clientId)
-            }
-
-            self.fetchEvents(fromPushChannelPayload: payload)
+        let clientID = context.performAndWait { [context] in
+            ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
         }
+
+        guard let clientID else {
+            return
+        }
+
+        transportSession.configurePushChannel(consumer: self, groupQueue: context)
+        transportSession.pushChannel.clientID = clientID
+        transportSession.pushChannel.keepOpen = true
     }
+
+    public func pushChannelDidReceive(_ data: Data) {
+        delegate?.notificationSessionDidReceivePushData(data)
+    }
+
+    public func pushChannelDidClose() {
+
+    }
+
+    public func pushChannelDidOpen() {
+
+    }
+
+//    public func processPushNotification(with payload: [AnyHashable: Any]) {
+//        WireLogger.notifications.info("processing notification with payload: \(payload)")
+//
+//        coreDataStack.syncContext.performGroupedBlock {
+//            if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
+//                WireLogger.notifications.error("Not displaying notification because app is not authenticated")
+//                self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
+//                return
+//            }
+//
+//            let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
+//            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+//                WireLogger.authentication.addTag(.selfClientId, value: clientId)
+//            }
+//
+//            self.fetchEvents(fromPushChannelPayload: payload)
+//        }
+//    }
 
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable: Any]) {
         guard let nonce = self.messageNonce(fromPushChannelData: payload) else {

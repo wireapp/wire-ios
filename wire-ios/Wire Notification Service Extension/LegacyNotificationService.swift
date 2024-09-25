@@ -109,6 +109,26 @@ final class LegacyNotificationService: UNNotificationServiceExtension, Notificat
         tearDown()
     }
 
+    func notificationSessionDidReceivePushData(_ data: Data) {
+        defer {
+            tearDown()
+        }
+
+        guard let contentHandler else {
+            return
+        }
+
+        let content = UNMutableNotificationContent()
+
+        if let json = String(data: data, encoding: .utf8) {
+            content.body = "Received data: \(json.truncated(100))"
+        } else {
+            content.body = "Received data: \(data.bytes) bytes"
+        }
+
+        contentHandler(content)
+    }
+
     func notificationSessionDidGenerateNotification(
         _ notification: ZMLocalNotification?,
         unreadConversationCount: Int
