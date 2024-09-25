@@ -30,7 +30,7 @@ final class SettingsProfileLinkCellDescriptor: SettingsCellDescriptorType {
         linkCell.titleText = title
     }
 
-    // MARK: - any SettingsCellDescriptorType
+    // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
         return true

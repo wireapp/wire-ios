@@ -36,7 +36,7 @@ final class SettingsStaticTextCellDescriptor: SettingsCellDescriptorType {
         cell.titleText = self.text
     }
 
-    // MARK: - any SettingsCellDescriptorType
+    // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
         return true

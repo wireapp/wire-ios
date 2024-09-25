@@ -58,7 +58,7 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
                                                   action: { _ in }
     )
 
-    // MARK: - any SettingsCellDescriptorType
+    // MARK: - SettingsCellDescriptorType
 
     var visible: Bool {
         return true
