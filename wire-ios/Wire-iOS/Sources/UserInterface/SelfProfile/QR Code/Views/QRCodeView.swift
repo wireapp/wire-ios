@@ -23,45 +23,78 @@ struct QRCodeView: View {
     // MARK: - Properties
 
     @ObservedObject var viewModel: UserQRCodeViewModel
-
-    @State private var scannedCode: String?
-    @State private var capturedImage: UIImage?
+    @State private var isShareTextSheetPresented = false
+    @State private var isShareImageSheetPresented = false
 
     // MARK: - View
 
     var body: some View {
         shareView
-        .background(Color.viewBackground.edgesIgnoringSafeArea(.all))
+            .background(Color.viewBackground.edgesIgnoringSafeArea(.all))
     }
 
     private var shareView: some View {
-           VStack {
-               QRCodeCard(profileLinkQRCode: viewModel.profileLinkQRCode,
-                          handle: viewModel.handle,
-                          profileLink: viewModel.profileLink)
-               InfoText()
-               Spacer()
-               ShareButtons(capturedImage: $capturedImage,
-                            profileLink: viewModel.profileLink,
-                            captureQRCode: captureQRCode)
-           }
-           .padding()
+        return VStack {
+            qrCodeCard
+            infoTextView
+            Spacer()
+            shareButtons
+        }
+        .padding()
     }
 
-    private func captureQRCode() {
-            capturedImage = captureImage(from: QRCodeCard(
-                profileLinkQRCode: viewModel.profileLinkQRCode,
-                handle: viewModel.handle,
-                profileLink: viewModel.profileLink
-            ))
+    private var qrCodeCard: some View {
+        QRCodeCard(
+            profileLinkQRCode: viewModel.profileLinkQRCode,
+            handle: viewModel.handle,
+            profileLink: viewModel.profileLink
+        )
+    }
+
+    private var infoTextView: some View {
+        Text(L10n.Localizable.Qrcode.shareMessage)
+            .font(.textStyle(.body1))
+            .multilineTextAlignment(.center)
+            .foregroundColor(Color.secondaryText)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var shareButtons: some View {
+        VStack {
+            Button(L10n.Localizable.Qrcode.ShareProfileLink.Button.title) {
+                isShareTextSheetPresented = true
+            }
+            .font(.textStyle(.buttonBig))
+            .buttonStyle(SecondaryButtonStyle())
+            .sheet(isPresented: $isShareTextSheetPresented) {
+                ShareSheet(activityItems: [viewModel.profileLink])
+            }
+
+            Button(L10n.Localizable.Qrcode.ShareQrcode.Button.title) {
+                isShareImageSheetPresented = true
+            }
+            .font(.textStyle(.buttonBig))
+            .buttonStyle(SecondaryButtonStyle())
+            .sheet(isPresented: $isShareImageSheetPresented) {
+                if let capturedImageNew = captureImage(from: qrCodeCard) {
+                    ShareSheet(activityItems: [capturedImageNew])
+                }
+            }
         }
+    }
+
+}
+
+// MARK: - Capture image
+
+extension QRCodeView {
 
     private func captureImage<Content: View>(from view: Content) -> UIImage? {
         let controller = UIHostingController(rootView: view)
         let targetSize = CGSize(width: 400, height: 400)
         controller.view.bounds = CGRect(origin: .zero, size: targetSize)
         controller.view.backgroundColor = .clear
-
+        
         let renderer = UIGraphicsImageRenderer(size: targetSize)
         return renderer.image { _ in
             controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)

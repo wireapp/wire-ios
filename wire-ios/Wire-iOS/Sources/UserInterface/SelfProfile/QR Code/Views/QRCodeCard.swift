@@ -54,3 +54,12 @@ struct QRCodeCard: View {
         .cornerRadius(12)
     }
 }
+
+// MARK: - Preview
+
+#Preview {
+    QRCodeCard(
+        profileLinkQRCode: UIImage(resource: .Wire.roundIcon),
+        handle: "handle",
+        profileLink: "http://link,knfieoqrngorengoejnbgjroqekgnbojqre3bgqjore3bgn3ejjeqrlw3bglrejkbgnjorqwbglejrqg")
+}

@@ -43,7 +43,7 @@ final class UserQRCodeViewModel: ObservableObject {
 
 }
 
-extension UIImage {
+private extension UIImage {
 
     func addImageCentered(
         _ overlayImage: UIImage,
