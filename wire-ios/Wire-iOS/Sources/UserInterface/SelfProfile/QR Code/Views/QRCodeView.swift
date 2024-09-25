@@ -32,13 +32,20 @@ struct QRCodeView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            ScrollView(showsIndicators: false) {
-                shareView
-                    .frame(minHeight: geometry.size.height)
+            if #available(iOS 16.0, *) {
+                ScrollView(showsIndicators: false) {
+                    shareView
+                        .frame(minHeight: geometry.size.height)
+                }
+                /// By using 'sizeCategory' value of the environment,
+                /// we can read the defined font size and decide whether to disable or enable scrolling.
+                .scrollDisabled(!sizeCategory.isAccessibilityCategory)
+            } else {
+                ScrollView(showsIndicators: false) {
+                    shareView
+                        .frame(minHeight: geometry.size.height)
+                }
             }
-            /// By using 'sizeCategory' value of the environment,
-            /// we can read the defined font size and decide whether to disable or enable scrolling.
-            .disabled(!sizeCategory.isAccessibilityCategory)
         }
         .background(Color.viewBackground.edgesIgnoringSafeArea(.all))
     }
