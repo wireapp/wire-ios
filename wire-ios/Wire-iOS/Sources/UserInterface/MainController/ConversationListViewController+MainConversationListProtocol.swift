@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUIFoundation
+import WireMainNavigation
 
 extension ConversationListViewController: MainConversationListProtocol {
     // TODO: [WPB-6647] this is implemented correctly in the navigation overhaul epic branch

@@ -17,9 +17,14 @@
 //
 
 import UIKit
-import WireUIFoundation
+import WireMainNavigation
 
-struct MockViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
-    @MainActor
-    func build(mainCoordinator: some MainCoordinatorProtocol) -> UIViewController { .init() }
+final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
+    var sidebar: MockSidebarViewController!
+    var conversationList: MockConversationListViewController?
+    var archive: UIViewController?
+    var newConversation: UIViewController?
+    var settings: UIViewController?
+    var conversation: UIViewController?
+    var tabContainer: UIViewController!
 }

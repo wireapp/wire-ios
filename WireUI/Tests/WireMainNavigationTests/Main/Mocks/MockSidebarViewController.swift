@@ -17,14 +17,36 @@
 //
 
 import UIKit
-import WireUIFoundation
+import WireMainNavigation
 
-final class MockSplitViewController: UISplitViewController, MainSplitViewControllerProtocol {
-    var sidebar: MockSidebarViewController!
-    var conversationList: MockConversationListViewController?
-    var archive: UIViewController?
-    var newConversation: UIViewController?
-    var settings: UIViewController?
-    var conversation: UIViewController?
-    var tabContainer: UIViewController!
+final class MockSidebarViewController: UIViewController, MainSidebarProtocol {
+
+    enum MenuItem {
+        case all, groups
+    }
+
+    var selectedMenuItem: MenuItem = .all
+}
+
+extension MockSidebarViewController.MenuItem: MainSidebarMenuItemRepresentable {
+
+    init(_ mainSidebarMenuItem: MainSidebarMenuItem) {
+        switch mainSidebarMenuItem {
+        case .all:
+            self = .all
+        case .groups:
+            self = .groups
+        default:
+            fatalError("not implemented")
+        }
+    }
+
+    func map() -> MainSidebarMenuItem {
+        switch self {
+        case .all:
+            .all
+        case .groups:
+            .groups
+        }
+    }
 }

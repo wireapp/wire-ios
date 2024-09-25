@@ -18,7 +18,7 @@
 
 import XCTest
 
-@testable import WireUIFoundation
+@testable import WireMainNavigation
 
 final class MainCoordinatorTests: XCTestCase {
 

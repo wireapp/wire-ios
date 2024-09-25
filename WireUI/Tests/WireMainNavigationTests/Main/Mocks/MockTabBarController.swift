@@ -17,7 +17,12 @@
 //
 
 import UIKit
+import WireMainNavigation
 
-public protocol ViewControllerBuilder {
-    func build() -> UIViewController
+final class MockTabBarController: UITabBarController, MainTabBarControllerProtocol {
+    var contacts: UIViewController?
+    var conversations: (conversationList: MockConversationListViewController, conversation: UIViewController?)?
+    var archive: UIViewController?
+    var settings: UIViewController?
+    var selectedContent: MainTabBarControllerContent = .conversations
 }

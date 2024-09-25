@@ -19,7 +19,7 @@
 import WireTestingPackage
 import XCTest
 
-@testable import WireUIFoundation
+@testable import WireMainNavigation
 
 final class MainTabBarControllerTests: XCTestCase {
 
