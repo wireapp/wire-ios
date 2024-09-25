@@ -22,6 +22,9 @@ import WireFoundation
 @available(iOS 17.0, *)
 struct SidebarPreview: View {
 
+    private let primarySplitColumnWidth: CGFloat = 260
+    private let supplementarySplitColumnWidth: CGFloat = 280
+
     @State private var accountInfo = SidebarAccountInfo(
         displayName: "Firstname Lastname",
         username: "@username",
@@ -47,10 +50,10 @@ struct SidebarPreview: View {
                         MockAccountImageView(uiImage: uiImage, availability: availability)
                     }
                 )
-                .navigationSplitViewColumnWidth(260)
+                .navigationSplitViewColumnWidth(primarySplitColumnWidth)
             }, content: {
                 Text("\(selectedMenuItem)")
-                    .navigationSplitViewColumnWidth(280)
+                    .navigationSplitViewColumnWidth(supplementarySplitColumnWidth)
             }, detail: {
                 Text("Conversation Content")
             }
