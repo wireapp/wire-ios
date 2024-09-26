@@ -25,7 +25,6 @@ extension MockAPIServiceProtocol {
 
     typealias Response = (statusCode: HTTPStatusCode, resourceName: String)
 
-    
     /// Create a mock api service that returns zero or more responses.
     ///
     /// Some ways you can use this:
@@ -35,7 +34,7 @@ extension MockAPIServiceProtocol {
     ///
     /// - Parameter responses: The responses to return, one per request received.
     /// - Returns: A mock api service.
-    
+
     static func withResponses(_ responses: [Response]) -> MockAPIServiceProtocol {
         let apiService = MockAPIServiceProtocol()
         var responses = responses

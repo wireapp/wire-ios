@@ -41,7 +41,7 @@ class UpdateEventsAPIV5: UpdateEventsAPIV4 {
             .withMethod(.get)
             .build()
 
-        let (data, response) = try await self.apiService.executeRequest(
+        let (data, response) = try await apiService.executeRequest(
             request,
             requiringAccessToken: true
         )

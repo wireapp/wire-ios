@@ -190,7 +190,6 @@ final class UpdateEventsAPITests: XCTestCase {
 
         let sut = UpdateEventsAPIV5(apiService: apiService)
 
-
         // Then
         await XCTAssertThrowsError(UpdateEventsAPIError.notFound) {
             // When
