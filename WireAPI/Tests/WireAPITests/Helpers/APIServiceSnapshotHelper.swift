@@ -17,7 +17,6 @@
 //
 
 import SnapshotTesting
-import enum WireAPI.APIVersion
 import XCTest
 
 @testable import WireAPI
