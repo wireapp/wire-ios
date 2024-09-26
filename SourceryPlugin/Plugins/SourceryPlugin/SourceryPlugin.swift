@@ -53,7 +53,7 @@ extension SourceryPlugin: BuildToolPlugin {
         let configuration = [
             context.package.directory,
             target.directory,
-            target.directory.appending(subpath: "/Sourcery")
+            target.directory.appending(subpath: "Sourcery")
         ]
         .map { $0.appending(Constant.configFileName) }
         .filter { FileManager.default.fileExists(atPath: $0.string) }

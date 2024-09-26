@@ -44,8 +44,8 @@ files: [
   "translation" : "/WireUI/Sources/WireSidebar/Resources/%osx_code%/%original_file_name%",
  },
  {
-  "source" : "/WireUI/Sources/WireUIFoundation/Resources/Localizable.xcstrings",
-  "dest" : "/App/WireUIFoundation/Resources/Localizable.xcstrings",
+  "source" : "/WireUI/Sources/WireMainNavigation/Resources/Localizable.xcstrings",
+  "dest" : "/App/WireMainNavigation/Resources/Localizable.xcstrings",
   "translation" : "%original_path%/%original_file_name%",
   "multilingual": true,
  },

@@ -97,6 +97,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
         Task {
+            defer {
+                context.leaveAllGroups(groups)
+            }
             do {
                 try await messageSender.sendMessage(message: object)
 
@@ -132,8 +135,6 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 // make sure completion is called on same calling thread so syncContext
                 completion()
             }
-
-            context.leaveAllGroups(groups)
         }
     }
 
