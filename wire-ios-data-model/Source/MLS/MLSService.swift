@@ -271,7 +271,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
         subconversationType: SubgroupType
     ) async throws
 
-    /// Leaves the subgroup if it exists locally or if the self client is a member
+    /// Leaves the subgroup if it exists locally or if the self client is a member.
     ///
     /// - Parameters:
     ///   - parentQualifiedID: The qualified ID of the parent conversation
