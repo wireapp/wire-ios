@@ -18,7 +18,7 @@
 
 import UIKit
 import WireDesign
-import WireUIFoundation
+import WireMainNavigation
 
 final class SettingsDismissProfileAndSwitchTabDescriptor: SettingsExternalScreenCellDescriptorType {
 
