@@ -191,10 +191,6 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                     into: [context]
                 )
 
-                /// Ensures the context and the persistent store are in sync
-
-                try context.save()
-
             } catch {
                 logger.error("Failed to delete old labels: \(error)")
                 throw error
