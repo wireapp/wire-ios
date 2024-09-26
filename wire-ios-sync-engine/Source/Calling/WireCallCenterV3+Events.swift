@@ -217,6 +217,7 @@ extension WireCallCenterV3 {
             let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
             guard let attributes = jsonObject as? [String: NSObject] else { return }
             analytics?.tagEvent("calling.avs_metrics_ended_call", attributes: attributes)
+            WireLogger.avs.info("Calling metrics: \(String(data: metricsData, encoding: .utf8) ?? ""))")
         } catch {
             zmLog.error("Unable to parse call metrics JSON: \(error)")
         }
