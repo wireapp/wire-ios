@@ -120,7 +120,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     // MARK: - proteusEncrypt
 
-    enum EncryptionError: Error, Equatable {
+    enum EncryptionError: Error, Equatable, LocalizedError {
         case failedToEncryptData(Error)
         case failedToEncryptDataBatch(Error)
 
@@ -133,6 +133,15 @@ public final class ProteusService: ProteusServiceInterface {
 
             default:
                 return false
+            }
+        }
+
+        var errorDescription: String? {
+            switch self {
+            case .failedToEncryptData(let error):
+                return "failedToEncryptData: underlying error : \(error.localizedDescription)"
+            case .failedToEncryptDataBatch(let error):
+                return "failedToEncryptDataBatch: underlying error : \(error.localizedDescription)"
             }
         }
     }
