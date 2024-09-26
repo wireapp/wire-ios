@@ -18,8 +18,6 @@
 
 import avs
 
-private let zmLog = ZMSLog(tag: "AVS")
-
 final class AVSLogObserver: AVSLogger {
     private var token: Any!
 
@@ -30,6 +28,6 @@ final class AVSLogObserver: AVSLogger {
     // MARK: - AVSLoggger
 
     func log(message: String) {
-        zmLog.safePublic(SanitizedString(stringLiteral: message), level: .public)
+        WireLogger.avs.info(SanitizedString(stringLiteral: message).safeForLoggingDescription, attributes: .safePublic)
     }
 }
