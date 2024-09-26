@@ -24,6 +24,7 @@ extension AppLockModule {
 
         // MARK: - Properties
 
+        private var hasViewAppeared = false
         var presenter: AppLockPresenterViewInterface!
 
         override var prefersStatusBarHidden: Bool {
@@ -37,12 +38,16 @@ extension AppLockModule {
         override func viewDidLoad() {
             super.viewDidLoad()
             setUpViews()
-            setUpObserver()
         }
 
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            presenter.processEvent(.viewDidAppear)
+
+            if !hasViewAppeared {
+                presenter.processEvent(.viewDidFirstAppear)
+                hasViewAppeared = true
+                observeViewWillEnterForeground()
+            }
         }
 
         // MARK: - Methods
@@ -53,8 +58,13 @@ extension AppLockModule {
             lockView.fitIn(view: view)
         }
 
-        private func setUpObserver() {
-            NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        private func observeViewWillEnterForeground() {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(applicationWillEnterForeground),
+                name: UIApplication.willEnterForegroundNotification,
+                object: nil
+            )
         }
 
         @objc
