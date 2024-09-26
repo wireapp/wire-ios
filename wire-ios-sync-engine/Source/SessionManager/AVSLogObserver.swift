@@ -25,7 +25,7 @@ final class AVSLogObserver: AVSLogger {
         token = SessionManager.addLogger(self)
     }
 
-    // MARK: - AVSLoggger
+    // MARK: - AVSLogger
 
     func log(message: String) {
         WireLogger.avs.info(SanitizedString(stringLiteral: message).safeForLoggingDescription, attributes: .safePublic)

@@ -245,7 +245,7 @@ extension WireCallCenterV3 {
                 selfUser.avsIdentifier == senderUserId,
                 selfUser.selfClient()?.remoteIdentifier == senderClientId
             else {
-                zmLog.warn("Received request to send calling message from non self user and/or client")
+                Self.logger.warn("Received request to send calling message from non self user and/or client")
                 return
             }
 
