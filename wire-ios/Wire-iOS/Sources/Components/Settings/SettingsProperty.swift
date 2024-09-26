@@ -175,7 +175,6 @@ final class SettingsBlockProperty: SettingsProperty {
     func set(newValue: SettingsPropertyValue, resultHandler: @escaping (Result<Void, any Error>) -> Void) throws {
         try setAction(self, newValue, resultHandler)
         NotificationCenter.default.post(name: Notification.Name(rawValue: propertyName.changeNotificationName), object: self)
-        // No need to call resultHandler again if setAction handles it
     }
 
     private let getAction: GetAction
