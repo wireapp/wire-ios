@@ -52,7 +52,7 @@ final class UserPropertiesDeleteEventProcessorTests: XCTestCase {
 
         // When
 
-        try await sut.processEvent(event)
+        await sut.processEvent(event)
 
         // Then
 

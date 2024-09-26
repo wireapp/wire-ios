@@ -294,7 +294,7 @@ public final class UserRepository: UserRepositoryProtocol {
             break
 
         case nil:
-            logger.warn("Unknown user property key: \(key)")
+            logger.error("Unknown user property key: \(key)")
         }
     }
 
