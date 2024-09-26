@@ -195,6 +195,7 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.view.backgroundColor = .clear
 
         mainTabBarController = .init()
+        mainTabBarController.applyMainTabBarControllerAppearance()
         mainTabBarController.conversations = (conversationListViewController, nil)
         mainTabBarController.folders = conversationListWithFoldersViewController
         wireSplitViewController.leftViewController = mainTabBarController
