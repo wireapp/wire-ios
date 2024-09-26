@@ -36,7 +36,7 @@ private final class PlaceholderViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .yellow // ColorTheme.Backgrounds.surfaceVariant
+        view.backgroundColor = .yellow // TODO: ColorTheme.Backgrounds.surfaceVariant
         navigationItem.title = navigationController!.tabBarItem.title
         let imageView = UIImageView(image: navigationController!.tabBarItem.image)
         imageView.translatesAutoresizingMaskIntoConstraints = false

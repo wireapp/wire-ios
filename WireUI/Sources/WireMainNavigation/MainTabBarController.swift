@@ -144,10 +144,8 @@ public final class MainTabBarController<
 
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithDefaultBackground()
-        tabBarAppearance.backgroundColor = .yellow
         tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
 
-        tabBar.unselectedItemTintColor = .magenta
         tabBar.standardAppearance = tabBarAppearance
     }
 
