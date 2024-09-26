@@ -52,7 +52,7 @@ final class ZMMockTracking: TrackingInterface {
     }
 
     var disableCrashSharing: Bool = false
-    var disableAnalyticsSharing: Bool = false
+    var disableAnalyticsSharing: Bool = true
     var disableCrashAndAnalyticsSharing: Bool = false
 }
 
