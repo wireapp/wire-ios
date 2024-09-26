@@ -75,7 +75,8 @@ final class ProfileHeaderViewController: UIViewController {
     private let e2eiCertifiedImageView = {
         let imageView = UIImageView(image: .init(resource: .certificateValid))
         imageView.contentMode = .center
-        imageView.isHidden = false
+        imageView.isHidden = true
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -83,6 +84,7 @@ final class ProfileHeaderViewController: UIViewController {
         let imageView = UIImageView(image: .init(resource: .verifiedShield))
         imageView.contentMode = .center
         imageView.isHidden = true
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -92,8 +94,8 @@ final class ProfileHeaderViewController: UIViewController {
         let boldConfig = UIImage.SymbolConfiguration(weight: .black)
         let boldImage = UIImage(systemName: "qrcode", withConfiguration: boldConfig)
         button.setImage(boldImage, for: .normal)
-        button.tintColor = .black
-        button.accessibilityLabel = "Share your profile via QR code or link"
+        button.tintColor = ColorTheme.Buttons.Secondary.onEnabled
+        button.accessibilityLabel = L10n.Accessibility.Profile.ShareProfileButton.description
 
         return button
     }()
@@ -175,7 +177,13 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, e2eiCertifiedImageView, proteusVerifiedImageView])
+        let proteusContainerView = UIView()
+        proteusContainerView.addSubview(proteusVerifiedImageView)
+
+        let e2eiContainerView = UIView()
+        e2eiContainerView.addSubview(e2eiCertifiedImageView)
+
+        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, proteusContainerView, e2eiContainerView])
         nameShieldStackView.axis = .horizontal
         nameShieldStackView.spacing = 4
 
@@ -205,6 +213,7 @@ final class ProfileHeaderViewController: UIViewController {
         updateGroupRoleIndicator()
         updateHandleLabel()
         updateTeamLabel()
+        updateQRCodeButton()
 
         addChild(userStatusViewController)
 
@@ -259,12 +268,19 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         qrCodeButton.translatesAutoresizingMaskIntoConstraints = false
-       // stackView.backgroundColor = .blue
 
         let leadingSpaceConstraint = stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56)
         let topSpaceConstraint = stackView.topAnchor.constraint(equalTo: view.topAnchor, constant: 20)
         let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -56)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
+
+        proteusVerifiedImageView.translatesAutoresizingMaskIntoConstraints = false
+        proteusVerifiedImageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        proteusVerifiedImageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
+
+        e2eiCertifiedImageView.translatesAutoresizingMaskIntoConstraints = false
+        e2eiCertifiedImageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        e2eiCertifiedImageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
 
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
@@ -273,40 +289,19 @@ final class ProfileHeaderViewController: UIViewController {
             qrCodeButton.topAnchor.constraint(equalTo: stackView.topAnchor),
             qrCodeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             qrCodeButton.heightAnchor.constraint(equalToConstant: 20),
-            qrCodeButton.widthAnchor.constraint(equalToConstant: 20)
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 20),
+            proteusVerifiedImageView.bottomAnchor.constraint(equalTo: nameLabel.lastBaselineAnchor),
+            e2eiCertifiedImageView.leadingAnchor.constraint(equalTo: proteusVerifiedImageView.trailingAnchor, constant: 4),
+            e2eiCertifiedImageView.bottomAnchor.constraint(equalTo: nameLabel.lastBaselineAnchor)
 
         ])
     }
 
     private func applyUserStatus() {
-        let certificate = NSTextAttachment()
-        let iconBounds = CGRect(x: 0,
-                                y: 10,
-                                width: 16,
-                                height: 16)
-
-        certificate.bounds = iconBounds
-        certificate.image = UIImage(resource: .certificateValid)
-        let e2eiIconString = NSAttributedString(attachment: certificate)
-
-        let verifiedShield = NSTextAttachment()
-        verifiedShield.image = UIImage(resource: .verifiedShield)
-        let iconSize = nameLabel.font.pointSize
-        verifiedShield.bounds = CGRect(x: 0, y: (nameLabel.font.capHeight - iconSize) / 2, width: iconSize, height: iconSize)
-        let proteusIconString = NSAttributedString(attachment: verifiedShield)
-
-        var mainName = NSMutableAttributedString(string: userStatus.name)
-      //  if userStatus.isE2EICertified {
-            mainName.append(e2eiIconString)
-       // }
-
-      //  if userStatus.isProteusVerified {
-            mainName.append(proteusIconString)
-       // }
-        nameLabel.attributedText = mainName
+        nameLabel.text = userStatus.name
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
-        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
+        e2eiCertifiedImageView.isHidden = false//!userStatus.isE2EICertified
+        proteusVerifiedImageView.isHidden = false//!userStatus.isProteusVerified
     }
 
     private func updateGuestIndicator() {
@@ -398,6 +393,12 @@ final class ProfileHeaderViewController: UIViewController {
                 WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
             }
         }
+    }
+
+    private func updateQRCodeButton() {
+        let qrCodeAction = UIAction { _ in }
+        qrCodeButton.addAction(qrCodeAction, for: .touchUpInside)
+        qrCodeButton.isHidden = !user.isSelfUser
     }
 
     // MARK: -
