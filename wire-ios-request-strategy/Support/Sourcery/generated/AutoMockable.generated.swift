@@ -777,20 +777,20 @@ public class MockMessageAPI: MessageAPI {
 
     // MARK: - broadcastProteusMessage
 
-    public var broadcastProteusMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastProteusMessageMessage_Invocations: [Data] = []
     public var broadcastProteusMessageMessage_MockError: Error?
-    public var broadcastProteusMessageMessage_MockMethod: ((any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var broadcastProteusMessageMessage_MockMethod: ((Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
     public var broadcastProteusMessageMessage_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
 
-    public func broadcastProteusMessage(message: any ProteusMessage) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        broadcastProteusMessageMessage_Invocations.append(message)
+    public func broadcastProteusMessage(message encryptedMessage: Data) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        broadcastProteusMessageMessage_Invocations.append(encryptedMessage)
 
         if let error = broadcastProteusMessageMessage_MockError {
             throw error
         }
 
         if let mock = broadcastProteusMessageMessage_MockMethod {
-            return try await mock(message)
+            return try await mock(encryptedMessage)
         } else if let mock = broadcastProteusMessageMessage_MockValue {
             return mock
         } else {
@@ -800,24 +800,24 @@ public class MockMessageAPI: MessageAPI {
 
     // MARK: - sendProteusMessage
 
-    public var sendProteusMessageMessageConversationID_Invocations: [(message: any ProteusMessage, conversationID: QualifiedID)] = []
-    public var sendProteusMessageMessageConversationID_MockError: Error?
-    public var sendProteusMessageMessageConversationID_MockMethod: ((any ProteusMessage, QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
-    public var sendProteusMessageMessageConversationID_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
+    public var sendProteusMessageMessageConversationIDExpirationDate_Invocations: [(encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?)] = []
+    public var sendProteusMessageMessageConversationIDExpirationDate_MockError: Error?
+    public var sendProteusMessageMessageConversationIDExpirationDate_MockMethod: ((Data, QualifiedID, Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse))?
+    public var sendProteusMessageMessageConversationIDExpirationDate_MockValue: (Payload.MessageSendingStatus, ZMTransportResponse)?
 
-    public func sendProteusMessage(message: any ProteusMessage, conversationID: QualifiedID) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
-        sendProteusMessageMessageConversationID_Invocations.append((message: message, conversationID: conversationID))
+    public func sendProteusMessage(message encryptedMessage: Data, conversationID: QualifiedID, expirationDate: Date?) async throws -> (Payload.MessageSendingStatus, ZMTransportResponse) {
+        sendProteusMessageMessageConversationIDExpirationDate_Invocations.append((encryptedMessage: encryptedMessage, conversationID: conversationID, expirationDate: expirationDate))
 
-        if let error = sendProteusMessageMessageConversationID_MockError {
+        if let error = sendProteusMessageMessageConversationIDExpirationDate_MockError {
             throw error
         }
 
-        if let mock = sendProteusMessageMessageConversationID_MockMethod {
-            return try await mock(message, conversationID)
-        } else if let mock = sendProteusMessageMessageConversationID_MockValue {
+        if let mock = sendProteusMessageMessageConversationIDExpirationDate_MockMethod {
+            return try await mock(encryptedMessage, conversationID, expirationDate)
+        } else if let mock = sendProteusMessageMessageConversationIDExpirationDate_MockValue {
             return mock
         } else {
-            fatalError("no mock for `sendProteusMessageMessageConversationID`")
+            fatalError("no mock for `sendProteusMessageMessageConversationIDExpirationDate`")
         }
     }
 
