@@ -146,9 +146,9 @@ extension UserPropertyRequestStrategyTests {
     }
 
     func testThatItIsFetchingPropertyValue_withV6() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
 
             // when
             let request = self.sut.nextRequestIfAllowed(for: .v6)
@@ -192,9 +192,9 @@ extension UserPropertyRequestStrategyTests {
     }
 
     func testThatItIsFetchingPropertyValue_404_apiV6() {
-        self.syncMOC.performGroupedAndWait { moc in
+        self.syncMOC.performGroupedAndWait {
             // given
-            let selfUser = ZMUser.selfUser(in: moc)
+            let selfUser = ZMUser.selfUser(in: syncMOC)
 
             // when
             let request = self.sut.nextRequestIfAllowed(for: .v6)
