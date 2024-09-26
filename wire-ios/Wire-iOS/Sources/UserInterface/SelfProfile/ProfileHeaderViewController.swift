@@ -76,7 +76,6 @@ final class ProfileHeaderViewController: UIViewController {
         let imageView = UIImageView(image: .init(resource: .certificateValid))
         imageView.contentMode = .center
         imageView.isHidden = true
-        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -84,7 +83,6 @@ final class ProfileHeaderViewController: UIViewController {
         let imageView = UIImageView(image: .init(resource: .verifiedShield))
         imageView.contentMode = .center
         imageView.isHidden = true
-        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -177,13 +175,7 @@ final class ProfileHeaderViewController: UIViewController {
         handleLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         handleLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
 
-        let proteusContainerView = UIView()
-        proteusContainerView.addSubview(proteusVerifiedImageView)
-
-        let e2eiContainerView = UIView()
-        e2eiContainerView.addSubview(e2eiCertifiedImageView)
-
-        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, proteusContainerView, e2eiContainerView])
+        let nameShieldStackView = UIStackView(arrangedSubviews: [nameLabel, e2eiCertifiedImageView, proteusVerifiedImageView])
         nameShieldStackView.axis = .horizontal
         nameShieldStackView.spacing = 4
 
@@ -274,14 +266,6 @@ final class ProfileHeaderViewController: UIViewController {
         let trailingSpaceConstraint = stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -56)
         let bottomSpaceConstraint = stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20)
 
-        proteusVerifiedImageView.translatesAutoresizingMaskIntoConstraints = false
-        proteusVerifiedImageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
-        proteusVerifiedImageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
-
-        e2eiCertifiedImageView.translatesAutoresizingMaskIntoConstraints = false
-        e2eiCertifiedImageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
-        e2eiCertifiedImageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
-
         let widthImageConstraint = imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 164)
         NSLayoutConstraint.activate([
             // stackView
@@ -289,11 +273,7 @@ final class ProfileHeaderViewController: UIViewController {
             qrCodeButton.topAnchor.constraint(equalTo: stackView.topAnchor),
             qrCodeButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             qrCodeButton.heightAnchor.constraint(equalToConstant: 20),
-            qrCodeButton.widthAnchor.constraint(equalToConstant: 20),
-            proteusVerifiedImageView.bottomAnchor.constraint(equalTo: nameLabel.lastBaselineAnchor),
-            e2eiCertifiedImageView.leadingAnchor.constraint(equalTo: proteusVerifiedImageView.trailingAnchor, constant: 4),
-            e2eiCertifiedImageView.bottomAnchor.constraint(equalTo: nameLabel.lastBaselineAnchor)
-
+            qrCodeButton.widthAnchor.constraint(equalToConstant: 20)
         ])
     }
 
