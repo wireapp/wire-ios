@@ -18,12 +18,16 @@
 
 import Foundation
 
+public enum Recipients {
+    case conversationParticipants
+    case users(Set<ZMUser>)
+    case clients([ZMUser: Set<UserClient>])
+}
+
 @objcMembers public class GenericMessageEntity: NSObject, ProteusMessage {
 
-    public enum Recipients {
-        case conversationParticipants
-        case users(Set<ZMUser>)
-        case clients([ZMUser: Set<UserClient>])
+    public var underlyingMessage: WireProtos.GenericMessage? {
+        message
     }
 
     public var context: NSManagedObjectContext
@@ -36,7 +40,11 @@ import Foundation
 
     public let targetRecipients: Recipients
 
-    public init(message: GenericMessage, context: NSManagedObjectContext, conversation: ZMConversation? = nil, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(message: GenericMessage,
+                context: NSManagedObjectContext,
+                conversation: ZMConversation? = nil,
+                targetRecipients: Recipients = .conversationParticipants,
+                completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         self.context = context
         self.conversation = conversation
         self.message = message
@@ -68,6 +76,10 @@ import Foundation
         // no-op
     }
 
+    public func prepareMessageForSending() async throws {
+        // no-op
+    }
+
     public func expire() {
         isExpired = true
     }
@@ -90,7 +102,7 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
             guard let conversation else { return nil }
             return await message.encryptForTransport(for: conversation, in: context)
         case .users(let users):
-            return await message.encryptForTransport(forBroadcastRecipients: users, in: context)
+            fatal("should use ProteusMessagePayloadBuilder")
         case .clients(let clientsByUser):
             return await message.encryptForTransport(for: clientsByUser, in: context)
         }
@@ -102,7 +114,7 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
             guard let conversation else { return nil }
             return await message.encryptForTransport(for: conversation, in: context, useQualifiedIdentifiers: true)
         case .users(let users):
-            return await message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: context)
+            fatal("should use ProteusMessagePayloadBuilder")
         case .clients(let clientsByUser):
             return await message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: context)
         }
