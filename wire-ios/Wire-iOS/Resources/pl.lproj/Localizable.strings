@@ -506,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "Dostarczono";
 "content.system.message_read_timestamp" = "Przeczytane";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1150,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Wysyłaj anonimowe dane użytkowania";
 "self.settings.privacy_analytics_menu.description.title" = "Dane użycia pozwalają Wire zrozumieć, jak aplikacja jest używana i jak można ją poprawić. Dane są anonimowe i nie zawierają treści Twojej komunikacji (takich jak wiadomości, pliki lub połączenia).";
-
-"self.settings.receiveNews_and_offers.title" = "Otrzymuj newsletter";
-"self.settings.receiveNews_and_offers.description.title" = "Otrzymuj wiadomości i aktualizacje produktów od Wire za pośrednictwem poczty elektronicznej.";
-
-
 
 // Change Username
 
@@ -1916,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Nieprawidłowy link.";
 "url_action.invalid_link.message" = "Link który otworzyłeś jest nieprawidłowy.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Czy chcesz otrzymywać informacje o nowościach i aktualizacjach Wire na e-mail?";
-"news_offers.consent.message" = "Możesz anulować subskrypcję w każdej chwili.";
-"news_offers.consent.button.privacy_policy.title" = "Polityka prywatności";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details

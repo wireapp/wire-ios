@@ -506,6 +506,7 @@
 "content.system.message_delivered_timestamp" = "испоручено";
 "content.system.message_read_timestamp" = "Seen";
 "content.system.failedtosend_message.general_reason" = "Message could not be sent due to connectivity issues.";
+"content.system.failedtosend_message.user_cancelled_upload_reason" = "Message not sent as you canceled the upload.";
 "content.system.failedtosend_message.federation_remote_error_reason" = "Message could not be sent as the backend of **%@** could not be reached. [Learn more](%@)";
 "content.system.failedtosend_message.retry" = "Retry";
 
@@ -1150,11 +1151,6 @@
 // Analytics
 "self.settings.privacy_analytics.title" = "Шаљи анонимне податке о употреби";
 "self.settings.privacy_analytics_menu.description.title" = "Usage data allows Wire to understand how the app is being used and how it can be improved. The data is anonymous and does not include the content of your communications (such as messages, files or calls).";
-
-"self.settings.receiveNews_and_offers.title" = "примајте новости";
-"self.settings.receiveNews_and_offers.description.title" = "Примајте вести и ажурирања производа од компаније Вајер путем е-поште.";
-
-
 
 // Change Username
 
@@ -1916,13 +1912,6 @@
 
 "url_action.invalid_link.title" = "Неважећи линк";
 "url_action.invalid_link.message" = "Линк коју сте отворили није важећи.";
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++
-// News and offers consent prompt
-
-"news_offers.consent.title" = "Да ли желите да путем е-поште добијате вести и ажурирања производа од компаније Wire?";
-"news_offers.consent.message" = "Можете се одјавити у било ком тренутку.";
-"news_offers.consent.button.privacy_policy.title" = "Политика приватности";
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Message Details
