@@ -31,7 +31,7 @@ private enum ExtensionSettingsKey: String, CaseIterable {
         case .disableCrashSharing:
             return true
         case .disableAnalyticsSharing:
-            return false
+            return true
         case .disableLinkPreviews:
             return false
         }
