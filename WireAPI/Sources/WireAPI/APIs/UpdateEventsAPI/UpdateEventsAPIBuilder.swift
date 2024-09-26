@@ -22,14 +22,14 @@ import Foundation
 
 public struct UpdateEventsAPIBuilder {
 
-    let httpClient: any HTTPClient
+    let apiService: any APIServiceProtocol
 
     /// Create a new builder.
     ///
-    /// - Parameter httpClient: A http client.
+    /// - Parameter APIService: An api service.
 
-    public init(httpClient: any HTTPClient) {
-        self.httpClient = httpClient
+    public init(apiService: any APIServiceProtocol) {
+        self.apiService = apiService
     }
 
     /// Make a versioned `UpdateEventsAPI`.
@@ -40,19 +40,19 @@ public struct UpdateEventsAPIBuilder {
     public func makeAPI(for version: APIVersion) -> any UpdateEventsAPI {
         switch version {
         case .v0:
-            UpdateEventsAPIV0(httpClient: httpClient)
+            UpdateEventsAPIV0(apiService: apiService)
         case .v1:
-            UpdateEventsAPIV1(httpClient: httpClient)
+            UpdateEventsAPIV1(apiService: apiService)
         case .v2:
-            UpdateEventsAPIV2(httpClient: httpClient)
+            UpdateEventsAPIV2(apiService: apiService)
         case .v3:
-            UpdateEventsAPIV3(httpClient: httpClient)
+            UpdateEventsAPIV3(apiService: apiService)
         case .v4:
-            UpdateEventsAPIV4(httpClient: httpClient)
+            UpdateEventsAPIV4(apiService: apiService)
         case .v5:
-            UpdateEventsAPIV5(httpClient: httpClient)
+            UpdateEventsAPIV5(apiService: apiService)
         case .v6:
-            UpdateEventsAPIV6(httpClient: httpClient)
+            UpdateEventsAPIV6(apiService: apiService)
         }
     }
 
