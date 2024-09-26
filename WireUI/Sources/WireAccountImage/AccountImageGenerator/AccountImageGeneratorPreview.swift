@@ -20,7 +20,6 @@ import UIKit
 
 @MainActor
 func AccountImageGeneratorPreview(_ initials: String) -> UINavigationController {
-
     let accountImageGenerator = AccountImageGenerator()
 
     let accountImageView = AccountImageView()

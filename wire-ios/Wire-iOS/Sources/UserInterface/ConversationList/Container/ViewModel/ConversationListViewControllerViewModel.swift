@@ -22,9 +22,9 @@ import WireAccountImage
 import WireCommonComponents
 import WireDataModel
 import WireFoundation
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireMainNavigation
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void

@@ -18,8 +18,8 @@
 
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 struct SelfProfileViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 

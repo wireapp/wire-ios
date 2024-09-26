@@ -20,8 +20,8 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription
 

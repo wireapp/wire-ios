@@ -69,8 +69,8 @@ struct SnapshotTestReferenceImageDirectoryPlugin: BuildToolPlugin {
 
 // TODO: artifacts
 /*
-let artifactsUrl = URL(
-  fileURLWithPath: ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"]
-    ?? NSTemporaryDirectory(), isDirectory: true
-)
- */
+ let artifactsUrl = URL(
+   fileURLWithPath: ProcessInfo.processInfo.environment["SNAPSHOT_ARTIFACTS"]
+     ?? NSTemporaryDirectory(), isDirectory: true
+ )
+  */

@@ -19,10 +19,10 @@
 import DifferenceKit
 import Foundation
 import WireDataModel
+import WireMainNavigation
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
-import WireMainNavigation
 
 final class ConversationListViewModel: NSObject {
 

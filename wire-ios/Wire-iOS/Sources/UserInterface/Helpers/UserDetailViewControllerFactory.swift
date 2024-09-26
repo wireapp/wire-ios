@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDataModel
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 enum UserDetailViewControllerFactory {
 

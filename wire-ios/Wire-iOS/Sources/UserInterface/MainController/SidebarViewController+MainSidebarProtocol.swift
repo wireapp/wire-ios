@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSidebar
 import WireMainNavigation
+import WireSidebar
 
 extension SidebarViewController: MainSidebarProtocol {}
 

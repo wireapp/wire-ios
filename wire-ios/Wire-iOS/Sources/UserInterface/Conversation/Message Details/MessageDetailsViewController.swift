@@ -19,8 +19,8 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 /**
  * A view controller wrapping the message details.

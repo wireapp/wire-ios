@@ -19,8 +19,8 @@
 import UIKit
 import WireDataModel
 import WireDesign
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0

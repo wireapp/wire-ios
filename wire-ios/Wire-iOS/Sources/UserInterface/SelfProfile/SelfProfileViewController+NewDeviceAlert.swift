@@ -18,8 +18,8 @@
 
 import UIKit
 import WireDataModel
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 extension SelfProfileViewController {
 

@@ -19,9 +19,9 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireMainNavigation
 
 final class SearchUserViewController: UIViewController {
 

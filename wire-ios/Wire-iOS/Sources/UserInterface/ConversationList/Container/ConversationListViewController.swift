@@ -21,9 +21,9 @@ import WireAccountImage
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireMainNavigation
 
 final class ConversationListViewController: UIViewController {
 

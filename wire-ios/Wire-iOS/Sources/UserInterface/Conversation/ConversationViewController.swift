@@ -19,8 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
 

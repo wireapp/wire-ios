@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 protocol CollectionsViewControllerDelegate: AnyObject {
     func collectionsViewController(_ viewController: CollectionsViewController, performAction: MessageAction, onMessage: ZMConversationMessage)

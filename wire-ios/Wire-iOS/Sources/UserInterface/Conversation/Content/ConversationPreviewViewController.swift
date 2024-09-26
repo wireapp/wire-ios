@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireMainNavigation
+import WireSyncEngine
 
 final class ConversationPreviewViewController: UIViewController {
 
