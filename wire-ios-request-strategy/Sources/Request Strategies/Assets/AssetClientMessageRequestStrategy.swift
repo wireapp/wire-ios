@@ -67,6 +67,9 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
+            defer {
+                managedObjectContext.leaveAllGroups(groups)
+            }
             do {
                 try await messageSender.sendMessage(message: object)
 
@@ -101,7 +104,6 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 // make sure completion is called on same calling thread so syncContext
                 completion()
             }
-            managedObjectContext.leaveAllGroups(groups)
         }
     }
 
