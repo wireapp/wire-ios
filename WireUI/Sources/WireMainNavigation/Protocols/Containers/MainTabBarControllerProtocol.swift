@@ -28,8 +28,6 @@ import UIKit
 @MainActor
 public protocol MainTabBarControllerProtocol: UITabBarController {
 
-    typealias Contacts = UIViewController
-
     /// Requires any conversation list view controller to offer a
     /// ``MainConversationListProtocol/conversationFilter-swift.property``
     /// as well as a ``MainConversationListProtocol/splitViewInterface`` property.
@@ -42,7 +40,6 @@ public protocol MainTabBarControllerProtocol: UITabBarController {
     /// The selected content (tab).
     var selectedContent: MainTabBarControllerContent { get set }
 
-    var contacts: Contacts? { get set }
     /// In the compact layout any conversation view controller will be pushed onto the navigation controller of the conversation list.
     var conversations: (conversationList: ConversationList, conversation: Conversation?)? { get set }
     var archive: Archive? { get set }

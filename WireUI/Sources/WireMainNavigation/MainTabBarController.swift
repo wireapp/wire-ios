@@ -18,6 +18,8 @@
 
 import SwiftUI
 
+// TODO: rotating the call screen doesn't seem to work
+
 /// A subclass of `UITabBarController` which configures its `viewControllers` property to match
 /// ``MainTabBarControllerContent``'s cases. After initialization each tab contains an empty navigation controller.
 public final class MainTabBarController<
@@ -29,22 +31,6 @@ public final class MainTabBarController<
     public typealias Content = MainTabBarControllerContent
 
     // MARK: - Public Properties
-
-    public var contacts: Contacts? {
-        get { contactsNavigationController.viewControllers.first }
-        set {
-            contactsNavigationController.viewControllers = [newValue].compactMap { $0 }
-            contactsNavigationController.view.layoutIfNeeded()
-        }
-    }
-
-    public var folders: Contacts? {
-        get { foldersNavigationController.viewControllers.first }
-        set {
-            foldersNavigationController.viewControllers = [newValue].compactMap { $0 }
-            foldersNavigationController.view.layoutIfNeeded()
-        }
-    }
 
     /// There's only a tab for the conversation list. Opening a conversation will push a view controller onto the stack of the conversation list's navigation controller.
     public var conversations: (conversationList: ConversationList, conversation: UIViewController?)? {
@@ -88,9 +74,6 @@ public final class MainTabBarController<
 
     // MARK: - Private Properties
 
-    private let contactsNavigationController = UINavigationController()
-    private let foldersNavigationController = UINavigationController()
-
     private let conversationsNavigationController = UINavigationController()
     private let archiveNavigationController = UINavigationController()
     private let settingsNavigationController = UINavigationController()
@@ -99,7 +82,6 @@ public final class MainTabBarController<
 
     public required init() {
         super.init(nibName: nil, bundle: nil)
-        setupAppearance()
         setupTabs()
         setupAppearance()
     }
@@ -109,39 +91,14 @@ public final class MainTabBarController<
         fatalError("init(coder:) is not supported")
     }
 
-    private func setupAppearance() {
-        let tabBarItemAppearance = UITabBarItemAppearance()
-        tabBarItemAppearance.normal.iconColor = ColorTheme.Base.secondaryText
-        tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
-
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
-        tabBarAppearance.backgroundColor = ColorTheme.Backgrounds.background
-        tabBarAppearance.inlineLayoutAppearance = tabBarItemAppearance
-        tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
-        tabBarAppearance.compactInlineLayoutAppearance = tabBarItemAppearance
-    }
-
     private func setupTabs() {
         viewControllers = [
-            contactsNavigationController,
             conversationsNavigationController,
-            foldersNavigationController,
             archiveNavigationController,
             settingsNavigationController
         ]
         for content in Content.allCases {
             switch content {
-            case .contacts:
-                let tabBarItem = UITabBarItem(
-                    title: String(localized: "tabBar.contacts.title", bundle: .module),
-                    image: .init(systemName: "person"),
-                    selectedImage: .init(systemName: "person.fill")
-                )
-                tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.contacts.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.contacts.hint", bundle: .module)
-                contactsNavigationController.tabBarItem = tabBarItem
 
             case .conversations:
                 let tabBarItem = UITabBarItem(
@@ -153,17 +110,6 @@ public final class MainTabBarController<
                 tabBarItem.accessibilityLabel = String(localized: "tabBar.conversations.description", bundle: .module)
                 tabBarItem.accessibilityHint = String(localized: "tabBar.conversations.hint", bundle: .module)
                 conversationsNavigationController.tabBarItem = tabBarItem
-
-            case .folders:
-                let tabBarItem = UITabBarItem(
-                    title: String(localized: "tabBar.folders.title", bundle: .module),
-                    image: .init(systemName: "folder"),
-                    selectedImage: .init(systemName: "folder.fill")
-                )
-                tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
-                tabBarItem.accessibilityLabel = String(localized: "tabBar.folders.description", bundle: .module)
-                tabBarItem.accessibilityHint = String(localized: "tabBar.folders.hint", bundle: .module)
-                foldersNavigationController.tabBarItem = tabBarItem
 
             case .archive:
                 let tabBarItem = UITabBarItem(
@@ -189,7 +135,6 @@ public final class MainTabBarController<
                 settingsNavigationController.tabBarItem = tabBarItem
             }
         }
-        viewControllers?.removeLast() // this line will be removed with navigation overhaul
         selectedContent = .conversations
     }
 

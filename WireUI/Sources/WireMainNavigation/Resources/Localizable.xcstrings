@@ -373,22 +373,6 @@
         }
       }
     },
-    "tabBar.contacts.description" : {
-
-    },
-    "tabBar.contacts.hint" : {
-
-    },
-    "tabBar.contacts.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Contacts"
-          }
-        }
-      }
-    },
     "tabBar.conversations.description" : {
       "localizations" : {
         "ar" : {
@@ -757,22 +741,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "對話"
-          }
-        }
-      }
-    },
-    "tabBar.folders.description" : {
-
-    },
-    "tabBar.folders.hint" : {
-
-    },
-    "tabBar.folders.title" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Folders"
           }
         }
       }

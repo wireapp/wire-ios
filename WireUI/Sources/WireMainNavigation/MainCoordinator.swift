@@ -111,6 +111,7 @@ public final class MainCoordinator<
         defer {
             // switch to the conversation list tab
             tabBarController.selectedContent = .conversations
+            // TODO: maybe navigationcontroller pop is needed
 
             // apply the filter to the conversation list
             conversationList.conversationFilter = .init(mappingFrom: conversationFilter)
@@ -173,7 +174,9 @@ public final class MainCoordinator<
     }
 
     public func showSelfProfile() {
-        guard selfProfile == nil else { return }
+        guard selfProfile == nil else {
+            return assertionFailure() // TODO: inject logger instead
+        }
 
         let rootViewController = selfProfileBuilder.build(mainCoordinator: self)
         let selfProfile = UINavigationController(rootViewController: rootViewController)
@@ -184,7 +187,9 @@ public final class MainCoordinator<
     }
 
     public func showNewConversation() {
-        guard newConversation == nil else { return }
+        guard newConversation == nil else {
+            return assertionFailure() // TODO: inject logger instead
+        }
 
         sidebar.selectedMenuItem = .init(.connect)
 
@@ -246,12 +251,13 @@ public final class MainCoordinator<
     public func splitViewControllerDidCollapse(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
               splitViewController === self.splitViewController
-        else { return }
+        else { return assertionFailure() } // TODO: inject logger instead
 
         // move view controllers from the split view controller's columns to the tab bar controller
         if let conversationListViewController = splitViewController.conversationList {
             splitViewController.conversationList = nil
             tabBarController.conversations = (conversationListViewController, nil)
+            // TODO: conversations
         }
 
         // move the archived conversations list back to the tab bar controller if needed
@@ -281,13 +287,14 @@ public final class MainCoordinator<
     public func splitViewControllerDidExpand(_ splitViewController: UISplitViewController) {
         guard let splitViewController = splitViewController as? SplitViewController,
               splitViewController === self.splitViewController
-        else { return }
+        else { return assertionFailure() } // TODO: inject logger instead
 
         // move view controllers from the tab bar controller to the supplementary column
         if tabBarController.selectedContent == .conversations {
             let conversationViewController = tabBarController.conversations!.conversationList
             tabBarController.conversations = nil
             splitViewController.conversationList = conversationViewController
+            // TODO: conversations
         }
 
         // if the archived conversations view controller was visible, present it
@@ -324,12 +331,9 @@ public final class MainCoordinator<
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         guard let tabBarController = tabBarController as? TabBarController,
               tabBarController === self.tabBarController
-        else { return }
+        else { return assertionFailure() } // TODO: inject logger instead
 
         switch tabBarController.selectedContent {
-        case .contacts, .folders:
-            break // `.contacts` and `.folders` are removed for navigation overhaul
-
         case .conversations:
             let mainMenuItem = MainSidebarMenuItem(conversationList.conversationFilter)
             sidebar.selectedMenuItem = .init(mainMenuItem)
