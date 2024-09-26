@@ -18,12 +18,10 @@
 
 import Foundation
 
-/// Errors originating from `PushChannelService`.
+enum NetworkServiceError: Error {
 
-public enum PushChannelServiceError: Error {
-
-    /// An access token is required but none is available.
-
-    case missingAccessToken
+    case serviceNotConfigured
+    case invalidRequest
+    case notAHTTPURLResponse
 
 }

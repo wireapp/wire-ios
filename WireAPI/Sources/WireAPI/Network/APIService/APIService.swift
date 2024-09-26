@@ -49,10 +49,8 @@ public protocol APIServiceProtocol {
 
 public final class APIService: APIServiceProtocol {
 
-    private let backendURL: URL
+    private let networkService: NetworkService
     private let authenticationStorage: any AuthenticationStorage
-    private let urlSession: URLSession
-    private let minTLSVersion: TLSVersion
 
     /// Create a new `APIService`.
     ///
@@ -68,26 +66,22 @@ public final class APIService: APIServiceProtocol {
     ) {
         let configFactory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
         let configuration = configFactory.makeRESTAPISessionConfiguration()
+        let networkService = NetworkService(baseURL: backendURL)
         let urlSession = URLSession(configuration: configuration)
+        networkService.configure(with: urlSession)
 
         self.init(
-            backendURL: backendURL,
-            authenticationStorage: authenticationStorage,
-            urlSession: urlSession,
-            minTLSVersion: minTLSVersion
+            networkService: networkService,
+            authenticationStorage: authenticationStorage
         )
     }
 
     init(
-        backendURL: URL,
-        authenticationStorage: any AuthenticationStorage,
-        urlSession: URLSession,
-        minTLSVersion: TLSVersion
+        networkService: NetworkService,
+        authenticationStorage: any AuthenticationStorage
     ) {
-        self.backendURL = backendURL
+        self.networkService = networkService
         self.authenticationStorage = authenticationStorage
-        self.urlSession = urlSession
-        self.minTLSVersion = minTLSVersion
     }
 
     /// Execute a request to the backend.
@@ -102,15 +96,7 @@ public final class APIService: APIServiceProtocol {
         _ request: URLRequest,
         requiringAccessToken: Bool
     ) async throws -> (Data, HTTPURLResponse) {
-        guard let url = request.url else {
-            throw APIServiceError.invalidRequest
-        }
-
         var request = request
-        request.url = URL(
-            string: url.absoluteString,
-            relativeTo: backendURL
-        )
 
         if requiringAccessToken {
             guard let accessToken = authenticationStorage.fetchAccessToken() else {
@@ -120,13 +106,7 @@ public final class APIService: APIServiceProtocol {
             request.setAccessToken(accessToken)
         }
 
-        let (data, response) = try await urlSession.data(for: request)
-
-        guard let httpURLResponse = response as? HTTPURLResponse else {
-            throw APIServiceError.notAHTTPURLResponse
-        }
-
-        return (data, httpURLResponse)
+        return try await networkService.executeRequest(request)
     }
 
 }

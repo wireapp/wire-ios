@@ -32,56 +32,42 @@ public protocol PushChannelServiceProtocol {
 
 /// A service for creating push channel connections to a specific backend.
 
-public final class PushChannelService: NSObject, PushChannelServiceProtocol {
+public final class PushChannelService: PushChannelServiceProtocol {
 
-    private let backendWebSocketURL: URL
+    private let networkService: NetworkService
     private let authenticationStorage: any AuthenticationStorage
-    private var urlSession: URLSession!
 
-    private var pushChannelsByTask = [URLSessionWebSocketTask: PushChannel]()
-
-    public init(
+    public convenience init(
         backendWebSocketURL: URL,
         authenticationStorage: any AuthenticationStorage,
         minTLSVersion: TLSVersion
     ) {
-        self.backendWebSocketURL = backendWebSocketURL
-        self.authenticationStorage = authenticationStorage
-        super.init()
         let factory = URLSessionConfigurationFactory(minTLSVersion: minTLSVersion)
         let configuration = factory.makeWebSocketSessionConfiguration()
-        urlSession = URLSession(
+        let networkService = NetworkService(baseURL: backendWebSocketURL)
+        let urlSession = URLSession(
             configuration: configuration,
-            delegate: self,
+            delegate: networkService,
             delegateQueue: nil
+        )
+        networkService.configure(with: urlSession)
+
+        self.init(
+            networkService: networkService,
+            authenticationStorage: authenticationStorage
         )
     }
 
     init(
-        backendWebSocketURL: URL,
-        authenticationStorage: any AuthenticationStorage,
-        urlSession: URLSession
+        networkService: NetworkService,
+        authenticationStorage: any AuthenticationStorage
     ) {
-        self.backendWebSocketURL = backendWebSocketURL
+        self.networkService = networkService
         self.authenticationStorage = authenticationStorage
-        self.urlSession = urlSession
-        super.init()
-    }
-
-    deinit {
-        urlSession.invalidateAndCancel()
     }
 
     public func createPushChannel(_ request: URLRequest) throws -> any PushChannelProtocol {
-        guard let url = request.url else {
-            throw PushChannelServiceError.invalidRequest
-        }
-
         var request = request
-        request.url = URL(
-            string: url.absoluteString,
-            relativeTo: backendWebSocketURL
-        )
 
         guard let accessToken = authenticationStorage.fetchAccessToken() else {
             throw PushChannelServiceError.missingAccessToken
@@ -89,76 +75,12 @@ public final class PushChannelService: NSObject, PushChannelServiceProtocol {
 
         request.setAccessToken(accessToken)
 
-        let task = urlSession.webSocketTask(with: request)
-        let webSocket = WebSocket(connection: task)
-        let pushChannel = PushChannel(request: request, webSocket: webSocket)
-        pushChannelsByTask[task] = pushChannel
-        return pushChannel
-    }
+        let webSocket = try networkService.executeWebSocketRequest(request)
 
-}
-
-extension PushChannelService: URLSessionWebSocketDelegate {
-
-    public func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didOpenWithProtocol protocol: String?
-    ) {
-        print("web socket task did open")
-    }
-
-    public func urlSession(
-        _ session: URLSession,
-        webSocketTask: URLSessionWebSocketTask,
-        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-        reason: Data?
-    ) {
-        pushChannelsByTask[webSocketTask]?.close()
-        pushChannelsByTask[webSocketTask] = nil
-    }
-
-}
-
-extension PushChannelService: URLSessionDataDelegate {
-
-    public func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didCompleteWithError error: (any Error)?
-    ) {
-        // When does this get called? My guess is that it's for the initial request.
-        if let error {
-            print("web socket task did complete with error: \(error)")
-        } else {
-            print("web socket task did complete")
-        }
-    }
-
-    public func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didReceive challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    ) {
-        print("web socket task did receive challenge")
-
-        let protectionSpace = challenge.protectionSpace
-
-        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
-            completionHandler(.performDefaultHandling, challenge.proposedCredential)
-            return
-        }
-
-        guard
-            protectionSpace.serverTrust != nil,
-            true // TODO: [WPB-10450] support certificate pinning
-        else {
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-
-        completionHandler(.performDefaultHandling, challenge.proposedCredential)
+        return PushChannel(
+            request: request,
+            webSocket: webSocket
+        )
     }
 
 }
