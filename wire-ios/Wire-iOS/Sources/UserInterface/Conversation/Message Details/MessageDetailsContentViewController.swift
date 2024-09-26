@@ -21,7 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 // MARK: - MessageDetailsSectionDescription
 

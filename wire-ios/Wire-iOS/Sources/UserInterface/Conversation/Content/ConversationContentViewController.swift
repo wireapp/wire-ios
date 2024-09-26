@@ -23,7 +23,7 @@ import WireDesign
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 

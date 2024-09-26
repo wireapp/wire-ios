@@ -17,7 +17,7 @@
 //
 
 import WireSidebar
-import WireUIFoundation
+import WireMainNavigation
 
 extension SidebarViewController: MainSidebarProtocol {}
 

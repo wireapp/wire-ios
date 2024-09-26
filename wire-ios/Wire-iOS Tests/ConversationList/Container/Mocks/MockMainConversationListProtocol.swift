@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireUIFoundation
+import WireMainNavigation
 
 @testable import Wire
 

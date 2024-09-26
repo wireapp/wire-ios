@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 final class LegalHoldDetailsViewController: UIViewController {
 

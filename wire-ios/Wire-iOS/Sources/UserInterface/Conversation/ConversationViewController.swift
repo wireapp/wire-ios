@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 final class ConversationViewController: UIViewController {
 

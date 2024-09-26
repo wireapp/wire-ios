@@ -17,7 +17,7 @@
 //
 
 import WireDataModel
-import WireUIFoundation
+import WireMainNavigation
 
 extension MainCoordinator: StartUIDelegate {
 

@@ -21,7 +21,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"

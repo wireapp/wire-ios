@@ -221,7 +221,8 @@ final class ZClientViewController: UIViewController {
         mainSplitViewController.conversationList = conversationListViewController
 
         mainTabBarController.archive = archive
-        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser).build()
+        mainTabBarController.settings = SettingsMainViewControllerBuilder(userSession: userSession, selfUser: userSession.editableSelfUser)
+            .build(mainCoordinator: mainCoordinator)
 
         mainTabBarController.delegate = mainCoordinator
         mainSplitViewController.delegate = mainCoordinator

@@ -20,7 +20,7 @@ import AVKit
 import Foundation
 import PassKit
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 private let zmLog = ZMSLog(tag: "MessagePresenter")
 

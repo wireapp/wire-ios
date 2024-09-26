@@ -22,7 +22,7 @@ import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireSystem
-import WireUIFoundation
+import WireMainNavigation
 
 final class ConversationListViewModel: NSObject {
 

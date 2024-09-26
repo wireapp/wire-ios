@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 enum UserDetailViewControllerFactory {
 

@@ -23,7 +23,7 @@ import WireDataModel
 import WireDesign
 import WireReusableUIComponents
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 final class ConversationListViewController: UIViewController {
 

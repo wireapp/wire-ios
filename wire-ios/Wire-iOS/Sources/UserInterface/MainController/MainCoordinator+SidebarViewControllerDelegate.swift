@@ -17,7 +17,7 @@
 //
 
 import WireSidebar
-import WireUIFoundation
+import WireMainNavigation
 
 /*
     func openConversation(_ conversation: ZMConversation, focusOnView focus: Bool, animated: Bool) {

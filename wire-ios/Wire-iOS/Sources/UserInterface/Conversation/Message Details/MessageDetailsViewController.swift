@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireDesign
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 /**
  * A view controller wrapping the message details.

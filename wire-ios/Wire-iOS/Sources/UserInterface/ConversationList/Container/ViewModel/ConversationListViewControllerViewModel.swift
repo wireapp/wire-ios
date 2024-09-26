@@ -24,7 +24,7 @@ import WireDataModel
 import WireFoundation
 import WireReusableUIComponents
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void

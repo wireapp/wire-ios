@@ -18,7 +18,7 @@
 
 import UIKit
 import WireSyncEngine
-import WireUIFoundation
+import WireMainNavigation
 
 struct StartUIViewControllerBuilder: MainCoordinatorInjectingViewControllerBuilder {
 
