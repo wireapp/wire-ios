@@ -1374,6 +1374,7 @@
 		E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E9929EF72BCEC6FB00C40274 /* AppLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9929EF62BCEC6FB00C40274 /* AppLocationManager.swift */; };
 		E9929EF92BCEDE5900C40274 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9929EF82BCEDE5900C40274 /* MapViewController.swift */; };
+		E996C35C2CA2FA05008924A4 /* TrackingManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E996C35B2CA2FA05008924A4 /* TrackingManagerError.swift */; };
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
 		E9B0DED42B5E7151006DC9E4 /* AccentColorPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B0DED32B5E7151006DC9E4 /* AccentColorPicker.swift */; };
 		E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
@@ -3420,6 +3421,7 @@
 		E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftMockConversation+ConversationCreation.swift"; sourceTree = "<group>"; };
 		E9929EF62BCEC6FB00C40274 /* AppLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLocationManager.swift; sourceTree = "<group>"; };
 		E9929EF82BCEDE5900C40274 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		E996C35B2CA2FA05008924A4 /* TrackingManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingManagerError.swift; sourceTree = "<group>"; };
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
 		E9B0DED32B5E7151006DC9E4 /* AccentColorPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorPicker.swift; sourceTree = "<group>"; };
 		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
@@ -7866,6 +7868,7 @@
 			children = (
 				E9DA6FF22C5CCBC600BF8298 /* TrackingManager+UIAlertController.swift */,
 				8712134A1FA37881008B6767 /* TrackingManager.swift */,
+				E996C35B2CA2FA05008924A4 /* TrackingManagerError.swift */,
 			);
 			path = TrackingManager;
 			sourceTree = "<group>";
@@ -9823,6 +9826,7 @@
 				6328284324A11847000748D2 /* UserTypeIconStyle.swift in Sources */,
 				5E35F78421833AF000D3F4FE /* ZMConversationMessage+Sender.swift in Sources */,
 				1648EEED20498E1300CC6B37 /* SearchSectionController.swift in Sources */,
+				E996C35C2CA2FA05008924A4 /* TrackingManagerError.swift in Sources */,
 				EFF74F4421A45E5700CCF3DD /* UIViewController+SplitViewController.swift in Sources */,
 				879E5E991F0104A6007A88A3 /* UITextView+Autocorrect.swift in Sources */,
 				877798AC205A8EF500898A5E /* ZClientViewController.swift in Sources */,

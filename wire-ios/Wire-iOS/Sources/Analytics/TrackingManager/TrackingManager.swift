@@ -43,26 +43,28 @@ final class TrackingManager: NSObject, TrackingInterface {
         super.init()
     }
 
-    var disableAnalyticsSharing: Bool {
-        get {
-            ExtensionSettings.shared.disableAnalyticsSharing
-        }
-        set {
-            let isEnabled = !newValue
+    var disableAnalyticsSharing: Bool { ExtensionSettings.shared.disableAnalyticsSharing
+    }
 
-            if isEnabled {
-                self.showAnalyticsConsentAlert { userConsented in
-                    if userConsented {
-                        self.updateAnalyticsSharing(disabled: false)
-                    } else {
-                        // User rejected, so we keep analytics disabled
-                        self.updateAnalyticsSharing(disabled: true)
-                    }
+    func disableAnalyticsSharing(isDisabled: Bool, resultHandler: @escaping (Result<Void, any Error>) -> Void) {
+        let isEnabled = !isDisabled
+
+        if isEnabled {
+            self.showAnalyticsConsentAlert { userConsented in
+                if userConsented {
+                    self.updateAnalyticsSharing(disabled: false)
+                    resultHandler(.success(()))
+                } else {
+                    // User rejected, so we keep analytics disabled
+                    self.updateAnalyticsSharing(disabled: true)
+                    resultHandler(.failure(TrackingManagerError.userConsentDenied))
                 }
-            } else {
-                self.updateAnalyticsSharing(disabled: true)
             }
+        } else {
+            self.updateAnalyticsSharing(disabled: true)
+            resultHandler(.success(()))
         }
+
     }
 
     private func updateAnalyticsSharing(disabled: Bool) {
