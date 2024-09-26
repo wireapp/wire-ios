@@ -280,8 +280,8 @@ final class ProfileHeaderViewController: UIViewController {
     private func applyUserStatus() {
         nameLabel.text = userStatus.name
         userStatusViewController.userStatus = userStatus
-        e2eiCertifiedImageView.isHidden = false//!userStatus.isE2EICertified
-        proteusVerifiedImageView.isHidden = false//!userStatus.isProteusVerified
+        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
+        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
     }
 
     private func updateGuestIndicator() {
