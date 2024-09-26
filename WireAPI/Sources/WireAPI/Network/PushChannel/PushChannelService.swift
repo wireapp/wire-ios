@@ -74,13 +74,8 @@ public final class PushChannelService: PushChannelServiceProtocol {
         }
 
         request.setAccessToken(accessToken)
-
         let webSocket = try networkService.executeWebSocketRequest(request)
-
-        return PushChannel(
-            request: request,
-            webSocket: webSocket
-        )
+        return PushChannel(webSocket: webSocket)
     }
 
 }
