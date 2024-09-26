@@ -48,10 +48,6 @@
 		C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3AD2C73878B0093DD5C /* ConnectionsRepositoryTests.swift */; };
 		C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3B62C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift */; };
 		C9E8A3C02C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E8A3BF2C761EDD0093DD5C /* FeatureConfigRepositoryTests.swift */; };
-		C9EA76A42C94325300A7D35C /* UserDefaultsWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA76A32C94325300A7D35C /* UserDefaultsWrapper.swift */; };
-		C9EA76A62C9434BA00A7D35C /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA76A52C9434BA00A7D35C /* UserDefaults.swift */; };
-		C9EA76A82C94689E00A7D35C /* UpdateEventsUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA76A72C94689E00A7D35C /* UpdateEventsUserDefaults.swift */; };
-		C9EA76AB2C94718900A7D35C /* UserDefaultsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EA76AA2C94718900A7D35C /* UserDefaultsTests.swift */; };
 		CB7979132C738508006FBA58 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB7979122C738508006FBA58 /* WireTransportSupport.framework */; };
 		CB7979162C738547006FBA58 /* TestSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB7979152C738547006FBA58 /* TestSetup.swift */; };
 		EE0E11802C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0E117F2C2C40D1004BBD29 /* UpdateEventsRepositoryError.swift */; };
@@ -168,10 +164,6 @@
 		C9E8A3E12C7F5C870093DD5C /* ConversationLocalStore+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+MLS.swift"; sourceTree = "<group>"; };
 		C9E8A3E52C7F60910093DD5C /* ConversationLocalStore+Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationLocalStore+Metadata.swift"; sourceTree = "<group>"; };
 		C9E8A3E72C7F6EA40093DD5C /* ConversationRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRepositoryTests.swift; sourceTree = "<group>"; };
-		C9EA76A32C94325300A7D35C /* UserDefaultsWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsWrapper.swift; sourceTree = "<group>"; };
-		C9EA76A52C9434BA00A7D35C /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
-		C9EA76A72C94689E00A7D35C /* UpdateEventsUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateEventsUserDefaults.swift; sourceTree = "<group>"; };
-		C9EA76AA2C94718900A7D35C /* UserDefaultsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsTests.swift; sourceTree = "<group>"; };
 		CB7979122C738508006FBA58 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB7979152C738547006FBA58 /* TestSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSetup.swift; sourceTree = "<group>"; };
 		EE0E117D2C2C4080004BBD29 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
@@ -281,7 +273,6 @@
 		017F679A2C20801800B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA76A92C94716400A7D35C /* Storage */,
 				EEC410252C60D48900E89394 /* Synchronization */,
 				EE0E117C2C2C4076004BBD29 /* Helpers */,
 				EE57A7092C2A8B950096F242 /* Event Decryption */,
@@ -309,7 +300,6 @@
 		017F67A32C20802300B6E02D /* WireDomain */ = {
 			isa = PBXGroup;
 			children = (
-				C9EA76A22C94313000A7D35C /* Storage */,
 				EECC35A42C2EB6C100679448 /* Synchronization */,
 				EE57A6FC2C298F280096F242 /* Event Decryption */,
 				EE368CCD2C2DAA87009DBAB0 /* Event Processing */,
@@ -487,32 +477,6 @@
 				017F67A02C20802300B6E02D /* TeamRepositoryError.swift */,
 			);
 			path = Team;
-			sourceTree = "<group>";
-		};
-		C9EA76A22C94313000A7D35C /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-				C9EA76A32C94325300A7D35C /* UserDefaultsWrapper.swift */,
-				C9EA76A52C9434BA00A7D35C /* UserDefaults.swift */,
-				C9EA76AC2C9488FF00A7D35C /* UpdateEventsUserDefaults */,
-			);
-			path = Storage;
-			sourceTree = "<group>";
-		};
-		C9EA76A92C94716400A7D35C /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-				C9EA76AA2C94718900A7D35C /* UserDefaultsTests.swift */,
-			);
-			path = Storage;
-			sourceTree = "<group>";
-		};
-		C9EA76AC2C9488FF00A7D35C /* UpdateEventsUserDefaults */ = {
-			isa = PBXGroup;
-			children = (
-				C9EA76A72C94689E00A7D35C /* UpdateEventsUserDefaults.swift */,
-			);
-			path = UpdateEventsUserDefaults;
 			sourceTree = "<group>";
 		};
 		EE0E117C2C2C4076004BBD29 /* Helpers */ = {
@@ -849,7 +813,6 @@
 				C93961912C91B05800EA971A /* FeatureConfigModelMappings.swift in Sources */,
 				EEAD0A362C46BBA600CC8658 /* FeatureConfigUpdateEventProcessor.swift in Sources */,
 				EE57A7002C298F630096F242 /* ProteusMessageDecryptor.swift in Sources */,
-				C9EA76A42C94325300A7D35C /* UserDefaultsWrapper.swift in Sources */,
 				EE368CD02C2DAA87009DBAB0 /* FederationEventProcessor.swift in Sources */,
 				EEAD09FA2C46773300CC8658 /* ConversationMemberJoinEventProcessor.swift in Sources */,
 				EEAD0A022C46774F00CC8658 /* ConversationMLSMessageAddEventProcessor.swift in Sources */,
@@ -857,12 +820,10 @@
 				EE368CCE2C2DAA87009DBAB0 /* ConversationEventProcessor.swift in Sources */,
 				EEAD0A2C2C46AF9200CC8658 /* UserPushRemoveEventProcessor.swift in Sources */,
 				017F67AA2C20802C00B6E02D /* TeamRepositoryError.swift in Sources */,
-				C9EA76A82C94689E00A7D35C /* UpdateEventsUserDefaults.swift in Sources */,
 				C939618C2C91B03300EA971A /* FeatureConfigRepositoryError.swift in Sources */,
 				0163EE812C20D71C00B37260 /* WireDomain.docc in Sources */,
 				EEAD0A2E2C46B01900CC8658 /* UserUpdateEventProcessor.swift in Sources */,
 				EEAD0A2A2C46AEB600CC8658 /* UserPropertiesDeleteEventProcessor.swift in Sources */,
-				C9EA76A62C9434BA00A7D35C /* UserDefaults.swift in Sources */,
 				EEAD0A332C46B99800CC8658 /* FederationDeleteEventProcessor.swift in Sources */,
 				017F67AB2C20802C00B6E02D /* ConnectionsRepositiory.swift in Sources */,
 				EEAD0A062C46775D00CC8658 /* ConversationProteusMessageAddEventProcessor.swift in Sources */,
@@ -923,7 +884,6 @@
 				EE3F97542C2ADC4C00668DF1 /* ProteusMessageDecryptorTests.swift in Sources */,
 				EE57A70B2C2A8BAA0096F242 /* UpdateEventDecryptorTests.swift in Sources */,
 				C9E8A3AE2C73878B0093DD5C /* ConnectionsRepositoryTests.swift in Sources */,
-				C9EA76AB2C94718900A7D35C /* UserDefaultsTests.swift in Sources */,
 				017F679C2C20801800B6E02D /* TeamRepositoryTests.swift in Sources */,
 				C9E8A3B72C749F2A0093DD5C /* ConversationLabelsRepositoryTests.swift in Sources */,
 			);
