@@ -279,10 +279,10 @@ public final class UserRepository: UserRepositoryProtocol {
     }
 
     public func updateUserProperty(_ userProperty: UserProperty) async throws {
-        let selfUser = fetchSelfUser()
-
         switch userProperty {
         case .areReadReceiptsEnabled(let isEnabled):
+            let selfUser = fetchSelfUser()
+            
             await context.perform {
                 selfUser.readReceiptsEnabled = isEnabled
                 selfUser.readReceiptsEnabledChangedRemotely = true

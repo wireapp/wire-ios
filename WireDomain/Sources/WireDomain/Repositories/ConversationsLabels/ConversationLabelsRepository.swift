@@ -61,8 +61,7 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
 
     public func pullConversationLabels() async throws {
         let conversationLabels = try await userPropertiesAPI.getLabels()
-        await storeLabelsLocally(conversationLabels)
-        try await deleteOldLabelsLocally(excludedLabels: conversationLabels)
+        try await updateConversationLabels(conversationLabels)
     }
 
     public func updateConversationLabels(
@@ -96,8 +95,6 @@ public class ConversationLabelsRepository: ConversationLabelsRepositoryProtocol 
                     } else {
                         logger.error("Failed to store conversation with error: \(error)")
                     }
-
-                    continue
                 }
             }
         }
