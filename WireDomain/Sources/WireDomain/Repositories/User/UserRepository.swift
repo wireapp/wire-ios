@@ -290,7 +290,13 @@ public final class UserRepository: UserRepositoryProtocol {
                 selfUser.readReceiptsEnabledChangedRemotely = true
             }
 
-        case .wireTypingIndicatorMode, .labels:
+        case .wireTypingIndicatorMode:
+            // TODO: [WPB-726] feature not implemented yet
+            break
+
+        case .labels:
+            /// Already handled with `user.properties-set` event (adding new labels and removing old ones)
+            /// see `ConversationLabelsRepository`
             break
 
         case nil:
