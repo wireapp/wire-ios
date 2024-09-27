@@ -23,6 +23,7 @@ import WireFoundation
 /// It's injected into the `SidebarAdapter` where changes are observed while the hosting controller also keeps a reference.
 final class SidebarModel: ObservableObject {
 
+    @Published var wireAccentColor: WireAccentColor = .default
     @Published var wireTextStyleMapping: WireTextStyleMapping?
     @Published var accountInfo = SidebarAccountInfo()
     @Published var selectedMenuItem: SidebarMenuItem = .all {

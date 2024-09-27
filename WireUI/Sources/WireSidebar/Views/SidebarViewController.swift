@@ -39,6 +39,11 @@ public final class SidebarViewController: UIViewController {
         }
     }
 
+    public var wireAccentColor: WireAccentColor {
+        get { model.wireAccentColor }
+        set { model.wireAccentColor = newValue }
+    }
+
     public var wireTextStyleMapping: WireTextStyleMapping? {
         get { model.wireTextStyleMapping }
         set { model.wireTextStyleMapping = newValue }
@@ -119,7 +124,9 @@ private struct SidebarAdapter<AccountImageView>: View where AccountImageView: Vi
             accountImageAction: model.accountImageAction,
             supportAction: model.supportAction,
             accountImageView: accountImageView
-        ).environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
+        )
+        .environment(\.wireTextStyleMapping, model.wireTextStyleMapping)
+        .environment(\.wireAccentColor, model.wireAccentColor)
     }
 }
 

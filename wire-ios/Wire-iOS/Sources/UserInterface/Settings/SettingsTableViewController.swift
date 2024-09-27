@@ -160,7 +160,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
             useTypeIntrinsicSizeTableView: true
         )
 
-        self.group.items.flatMap { return $0.cellDescriptors }.forEach {
+        self.group.items.flatMap { $0.cellDescriptors }.forEach {
             if let groupDescriptor = $0 as? SettingsGroupCellDescriptorType {
                 groupDescriptor.viewController = self
             }

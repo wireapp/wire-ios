@@ -23,6 +23,7 @@ import WireAccountImage
 import WireCommonComponents
 import WireDesign
 import WireMainNavigation
+import WireFoundation
 import WireSidebar
 import WireSyncEngine
 
@@ -236,6 +237,7 @@ final class ZClientViewController: UIViewController {
         createTopViewConstraints()
 
         sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
+        sidebarViewController.wireAccentColor = .init(rawValue: userSession.selfUser.accentColorValue) ?? .default
         sidebarViewController.delegate = mainCoordinator
 
         // prevent split view appearance on large phones
@@ -278,9 +280,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        Task {
-            await mainCoordinator.showNewConversation()
-        }
+        mainCoordinator.showNewConversation()
     }
 
     // MARK: Status bar
@@ -807,7 +807,9 @@ extension ZClientViewController: UserObserving {
             }
 
             if sidebarUpdateNeeded {
-                sidebarViewController.accountInfo = .init(userSession.selfUser, cachedAccountImage)
+                let selfUser = userSession.selfUser
+                sidebarViewController.accountInfo = .init(selfUser, cachedAccountImage)
+                sidebarViewController.wireAccentColor = .init(rawValue: selfUser.accentColorValue) ?? .default
             }
         }
     }
