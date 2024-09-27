@@ -16,18 +16,4 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@MainActor
-public final class ConversationListCoordinator<ParentCoordinator: ConversationListParentCoordinatorProtocol>: ConversationListCoordinatorProtocol {
-
-    let parentCoordinator: ParentCoordinator
-
-    public init(
-        parentCoordinator: ParentCoordinator
-    ) {
-        self.parentCoordinator = parentCoordinator
-    }
-
-    public func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async {
-        fatalError("TODO")
-    }
-}
+public protocol ConversationListParentCoordinatorProtocol {}

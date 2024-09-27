@@ -31,7 +31,7 @@ final class ConversationPreviewViewController: UIViewController {
         presentingViewController: UIViewController,
         sourceView: UIView,
         userSession: UserSession,
-        mainCoordinator: some MainCoordinatorProtocol
+        mainCoordinator: some MainCoordinatorProtocol // TODO: is it needed?
     ) {
         self.conversation = conversation
         actionController = ConversationActionController(

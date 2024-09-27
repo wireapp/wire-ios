@@ -17,5 +17,5 @@
 //
 
 public protocol ConversationListCoordinatorProtocol: AnyObject {
-    func showConversation<ConversationID>(conversationID: ConversationID) async
+    func showConversation<ConversationID: Sendable>(conversationID: ConversationID) async
 }

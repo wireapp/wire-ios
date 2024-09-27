@@ -24,6 +24,7 @@ import WireDesign
 import WireMainNavigation
 import WireReusableUIComponents
 import WireSyncEngine
+import WireConversationListNavigation
 
 final class ConversationListViewController: UIViewController {
 
@@ -31,6 +32,7 @@ final class ConversationListViewController: UIViewController {
 
     let viewModel: ViewModel
     let mainCoordinator: MainCoordinatorProtocol
+    let conversationListCoordinator: ConversationListCoordinatorProtocol
     weak var zClientViewController: ZClientViewController?
 
     private var viewDidAppearCalled = false
@@ -143,10 +145,14 @@ final class ConversationListViewController: UIViewController {
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.conversationListCoordinator = ConversationListCoordinator(
+            parentCoordinator: ConversationListParentCoordinator() // TODO: use mainCoordinator
+        )
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(
             userSession: viewModel.userSession,
+            conversationListCoordinator: conversationListCoordinator,
             mainCoordinator: mainCoordinator,
             zClientViewController: zClientViewController
         )

@@ -20,6 +20,7 @@ import DifferenceKit
 import UIKit
 import WireDataModel
 import WireDesign
+import WireConversationListNavigation
 import WireMainNavigation
 import WireSyncEngine
 
@@ -28,7 +29,8 @@ private let CellReuseIdConversation = "CellId"
 
 final class ConversationListContentController: UICollectionViewController {
 
-    private let mainCoordinator: MainCoordinatorProtocol
+    private let conversationListCoordinator: ConversationListCoordinatorProtocol
+    private let mainCoordinator: MainCoordinatorProtocol // TODO: is it needed?
 
     private(set) weak var zClientViewController: ZClientViewController?
 
@@ -46,10 +48,12 @@ final class ConversationListContentController: UICollectionViewController {
 
     init(
         userSession: UserSession,
-        mainCoordinator: MainCoordinatorProtocol,
+        conversationListCoordinator: ConversationListCoordinatorProtocol,
+        mainCoordinator: MainCoordinatorProtocol, // TODO: is it needed?
         zClientViewController: ZClientViewController?
     ) {
         self.userSession = userSession
+        self.conversationListCoordinator = conversationListCoordinator
         self.mainCoordinator = mainCoordinator
         self.zClientViewController = zClientViewController
 
@@ -386,6 +390,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             if let scrollToMessageOnNextSelection {
                 fatalError("TODO")
                 // TODO: fix
+                conversationListCoordinator
                 // mainCoordinator.openConversation(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection)
             } else {
                 fatalError("TODO")
