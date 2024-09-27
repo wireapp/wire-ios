@@ -21,7 +21,6 @@ import WireCryptobox
 import WireDataModel
 import WireProtos
 import XCTest
-
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 

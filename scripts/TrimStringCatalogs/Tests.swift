@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import TrimStringCatalogs
 
 final class Tests: XCTestCase {

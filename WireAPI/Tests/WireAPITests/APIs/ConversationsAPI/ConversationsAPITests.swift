@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireAPI
 
 final class ConversationsAPITests: XCTestCase {

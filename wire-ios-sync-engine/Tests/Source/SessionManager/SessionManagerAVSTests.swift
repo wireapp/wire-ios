@@ -18,7 +18,6 @@
 
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 class TestAVSLogger: AVSLogger {

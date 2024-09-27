@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireDataModel
 
 final class UnregisteredUserTests: XCTestCase {

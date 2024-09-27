@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 final class ZMHotFixTests_Integration: MessagingTest {

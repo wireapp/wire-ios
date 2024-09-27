@@ -19,7 +19,6 @@
 import Combine
 import WireDataModelSupport
 import XCTest
-
 @testable import WireDataModel
 
 final class MLSGroupVerificationTests: XCTestCase {

@@ -19,7 +19,6 @@
 import SnapshotTesting
 import UIKit
 import XCTest
-
 @testable import Wire
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon

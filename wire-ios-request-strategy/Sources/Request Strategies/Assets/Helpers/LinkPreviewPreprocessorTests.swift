@@ -20,7 +20,6 @@ import WireDataModel
 import WireImages
 import WireLinkPreview
 import XCTest
-
 @testable import WireRequestStrategy
 
 final class MockLinkDetector: LinkPreviewDetectorType {

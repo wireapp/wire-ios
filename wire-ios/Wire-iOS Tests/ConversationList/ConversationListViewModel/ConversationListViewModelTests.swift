@@ -18,7 +18,6 @@
 
 import DifferenceKit
 import XCTest
-
 @testable import Wire
 
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {

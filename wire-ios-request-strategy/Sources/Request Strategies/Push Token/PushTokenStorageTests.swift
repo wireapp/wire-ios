@@ -18,7 +18,6 @@
 
 import WireSystem
 import XCTest
-
 @testable import WireRequestStrategy
 
 final class PushTokenStorageTests: MessagingTestBase {

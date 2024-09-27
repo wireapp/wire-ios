@@ -17,7 +17,6 @@
 //
 
 import UIKit
-
 @testable import Wire
 
 final class MockApplication: ApplicationProtocol {

@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import WireTesting
-
 @testable import WireRequestStrategy
 
 public enum EventConversation {

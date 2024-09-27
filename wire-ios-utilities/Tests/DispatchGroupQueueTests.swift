@@ -17,7 +17,6 @@
 //
 
 import WireTesting
-
 @testable import WireUtilities
 
 final class DispatchGroupQueueTests: ZMTBaseTest {

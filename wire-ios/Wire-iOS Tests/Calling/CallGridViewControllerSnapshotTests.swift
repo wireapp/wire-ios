@@ -20,7 +20,6 @@ import SnapshotTesting
 import WireTestingPackage
 import WireUtilities
 import XCTest
-
 @testable import Wire
 
 struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {

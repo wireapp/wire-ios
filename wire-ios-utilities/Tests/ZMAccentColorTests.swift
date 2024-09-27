@@ -18,7 +18,6 @@
 
 import WireFoundation
 import XCTest
-
 @testable import WireUtilities
 
 final class ZMAccentColorTests: XCTestCase {

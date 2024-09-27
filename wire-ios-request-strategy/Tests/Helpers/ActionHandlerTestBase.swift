@@ -18,7 +18,6 @@
 
 import UIKit
 import XCTest
-
 @testable import WireRequestStrategy
 
 class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>>: MessagingTestBase {

@@ -18,7 +18,6 @@
 
 import WireSyncEngineSupport
 import XCTest
-
 @testable import Wire
 
 final class ChangeEmailViewModelTests: XCTestCase {

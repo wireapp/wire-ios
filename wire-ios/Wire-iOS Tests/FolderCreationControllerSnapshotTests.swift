@@ -19,7 +19,6 @@
 import SnapshotTesting
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {

@@ -19,7 +19,6 @@
 import WireTesting
 import WireTransport
 import XCTest
-
 @testable import WireSyncEngine
 
 public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {

@@ -18,7 +18,6 @@
 
 import WireRequestStrategySupport
 import XCTest
-
 @testable import WireRequestStrategy
 
 class ResetSessionRequestStrategyTests: MessagingTestBase {

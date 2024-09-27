@@ -18,7 +18,6 @@
 
 import WireTesting
 import XCTest
-
 @testable import WireUtilities
 
 final class NSManagedObjectContext_SwiftTests: XCTestCase {

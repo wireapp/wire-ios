@@ -19,7 +19,6 @@
 import Foundation
 import WireCryptobox
 import WireLinkPreview
-
 @testable import WireDataModel
 
 class ZMClientMessageTests_Ephemeral: BaseZMClientMessageTests {

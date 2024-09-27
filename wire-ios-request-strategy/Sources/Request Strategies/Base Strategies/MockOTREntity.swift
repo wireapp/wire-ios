@@ -18,7 +18,6 @@
 
 import WireDataModel
 import XCTest
-
 @testable import WireRequestStrategy
 
 final class MockOTREntity: OTREntity {

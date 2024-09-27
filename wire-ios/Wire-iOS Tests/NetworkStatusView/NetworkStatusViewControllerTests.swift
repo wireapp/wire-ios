@@ -18,7 +18,6 @@
 
 import WireFoundationSupport
 import XCTest
-
 @testable import Wire
 
 final class MockConversationRootViewController: UIViewController, NetworkStatusBarDelegate {

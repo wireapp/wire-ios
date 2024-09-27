@@ -18,7 +18,6 @@
 
 import WireDesign
 import XCTest
-
 @testable import Wire
 
 final class ReadReceiptViewModelTests: XCTestCase {

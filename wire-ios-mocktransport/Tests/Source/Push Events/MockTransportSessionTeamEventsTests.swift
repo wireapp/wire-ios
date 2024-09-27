@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireMockTransport
 
 final class MockTransportSessionTeamEventsTests: MockTransportSessionTests {

@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import XCTest
-
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {

@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import XCTest
-
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {

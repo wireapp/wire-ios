@@ -21,7 +21,6 @@ import Foundation
 import WireCoreCrypto
 import WireTesting
 import XCTest
-
 @testable import WireDataModel
 @testable import WireDataModelSupport
 

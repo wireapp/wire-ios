@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-
 @testable import WireSyncEngine
 
 /// A mock of Application that records the calls

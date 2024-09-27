@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 import WireTesting
 import XCTest
 @testable import WireTransport

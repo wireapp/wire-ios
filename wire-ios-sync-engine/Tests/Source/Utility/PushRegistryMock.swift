@@ -18,7 +18,6 @@
 
 import Foundation
 import PushKit
-
 @testable import WireSyncEngine
 
 final class PushPayloadMock: PKPushPayload {

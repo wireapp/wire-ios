@@ -20,7 +20,6 @@ import Foundation
 import WireSystemSupport
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 final class RecurringActionServiceTests: XCTestCase {

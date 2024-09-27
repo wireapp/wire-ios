@@ -18,7 +18,6 @@
 
 import avs
 import XCTest
-
 @testable import Wire
 @testable import WireCommonComponents
 

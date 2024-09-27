@@ -19,7 +19,6 @@
 import AVKit
 import PassKit
 import XCTest
-
 @testable import Wire
 
 final class MessagePresenterTests: XCTestCase {

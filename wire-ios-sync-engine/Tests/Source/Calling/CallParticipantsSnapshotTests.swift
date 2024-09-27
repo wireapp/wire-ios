@@ -18,7 +18,6 @@
 
 import Foundation
 import WireDataModel
-
 @testable import WireSyncEngine
 
 final class CallParticipantsSnapshotTests: MessagingTest {

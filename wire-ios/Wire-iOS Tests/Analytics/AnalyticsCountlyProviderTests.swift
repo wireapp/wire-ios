@@ -18,7 +18,6 @@
 
 import Countly
 import XCTest
-
 @testable import Wire
 
 final class AnalyticsCountlyProviderTests: XCTestCase, CoreDataFixtureTestHelper {

@@ -20,7 +20,6 @@ import WireDesign
 import WireLinkPreview
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 // MARK: - UIView extension

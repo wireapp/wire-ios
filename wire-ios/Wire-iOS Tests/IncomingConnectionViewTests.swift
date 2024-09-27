@@ -20,7 +20,6 @@ import WireDesign
 import WireSyncEngineSupport
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 // MARK: - IncomingConnectionViewTests

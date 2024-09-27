@@ -17,7 +17,6 @@
 //
 
 import WireTesting
-
 @testable import WireDataModel
 
 class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {

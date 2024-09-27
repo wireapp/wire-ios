@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import WireDataModel
 
 class ParticipantRoleTests: ZMBaseManagedObjectTest {

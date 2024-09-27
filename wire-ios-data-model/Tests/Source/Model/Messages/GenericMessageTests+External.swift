@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import WireDataModel
 
 class GenericMessageTests_External: XCTestCase {

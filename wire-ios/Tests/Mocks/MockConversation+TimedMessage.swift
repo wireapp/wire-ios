@@ -18,7 +18,6 @@
 
 import UIKit
 import WireDesign
-
 @testable import Wire
 
 extension MockConversation {

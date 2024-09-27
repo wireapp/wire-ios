@@ -18,7 +18,6 @@
 
 import WireDataModel
 import XCTest
-
 @testable import Wire
 
 final class UnknownMessageCellTests: ConversationMessageSnapshotTestCase {

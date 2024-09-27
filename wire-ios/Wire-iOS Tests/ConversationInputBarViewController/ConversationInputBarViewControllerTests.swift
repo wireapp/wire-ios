@@ -19,7 +19,6 @@
 import SnapshotTesting
 import WireSyncEngineSupport
 import XCTest
-
 @testable import Wire
 
 // In this class the snapshot tests they don't look the same as in the real app.

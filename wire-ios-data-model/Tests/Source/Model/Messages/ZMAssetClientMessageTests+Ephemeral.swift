@@ -18,7 +18,6 @@
 
 import Foundation
 import WireTesting
-
 @testable import WireDataModel
 
 class ZMAssetClientMessageTests_Ephemeral: BaseZMAssetClientMessageTests {

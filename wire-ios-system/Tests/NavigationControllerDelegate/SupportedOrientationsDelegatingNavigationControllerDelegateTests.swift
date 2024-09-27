@@ -18,7 +18,6 @@
 
 import UIKit
 import XCTest
-
 @testable import WireSystem
 
 final class SupportedOrientationsDelegatingNavigationControllerDelegateTests: XCTestCase {

@@ -20,9 +20,8 @@ import WireDataModelSupport
 import WireDomainSupport
 import WireRequestStrategySupport
 import WireSyncEngineSupport
-@testable import WireSyncEngine
-
 import XCTest
+@testable import WireSyncEngine
 
 final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
     // the api version is just required to build and not influence the tests

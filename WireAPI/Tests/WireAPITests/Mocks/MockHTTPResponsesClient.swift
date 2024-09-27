@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import WireAPI
 
 final class MockHTTPResponsesClient: HTTPClient {

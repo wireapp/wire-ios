@@ -20,7 +20,6 @@ import WireMockTransport
 import WireTesting
 import WireTransport
 import XCTest
-
 @testable import WireSyncEngine
 
 final class SlowSyncTests_NotificationsV3: IntegrationTest {

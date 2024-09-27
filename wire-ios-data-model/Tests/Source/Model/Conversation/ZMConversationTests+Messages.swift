@@ -18,7 +18,6 @@
 
 import WireImages
 import XCTest
-
 @testable import WireDataModel
 
 final class ZMConversationMessagesTests: ZMConversationTestsBase {

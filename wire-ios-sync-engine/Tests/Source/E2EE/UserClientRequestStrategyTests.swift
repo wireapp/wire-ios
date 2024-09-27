@@ -23,7 +23,6 @@ import WireTesting
 import WireTransportSupport
 import WireUtilities
 import XCTest
-
 @testable import WireSyncEngine
 
 @objcMembers

@@ -19,7 +19,6 @@
 import WireCommonComponents
 import WireDesign
 import XCTest
-
 @testable import Wire
 
 private class MockPulsingIconImageView: PulsingIconImageView {

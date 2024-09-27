@@ -19,7 +19,6 @@
 import WireCryptobox
 import WireUtilities
 import XCTest
-
 @testable import WireDataModel
 @testable import WireDataModelSupport
 

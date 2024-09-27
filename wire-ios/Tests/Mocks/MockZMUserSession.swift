@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import Wire
 
 final class MockZMUserSession: NSObject, UserSessionInterface {

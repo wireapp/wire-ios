@@ -23,7 +23,6 @@ import WireDataModelSupport
 import WireMockTransport
 import WireTesting
 import WireUtilities
-
 @testable import WireSyncEngine
 
 final class UserClientRequestFactoryTests: MessagingTest {

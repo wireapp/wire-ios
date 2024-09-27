@@ -19,7 +19,6 @@
 import WireTestingPackage
 import WireTransport
 import XCTest
-
 @testable import Wire
 
 final class LandingViewControllerSnapshotTests: XCTestCase {

@@ -19,7 +19,6 @@
 import SwiftUI
 import WireTestingPackage
 import XCTest
-
 @testable import WireReusableUIComponents
 
 final class AccountImageViewSnapshotTests: XCTestCase {

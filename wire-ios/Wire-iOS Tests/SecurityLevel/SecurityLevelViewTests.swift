@@ -21,7 +21,6 @@ import WireDesign
 import WireTestingPackage
 import WireUtilities
 import XCTest
-
 @testable import Wire
 
 final class SecurityLevelViewTests: XCTestCase {

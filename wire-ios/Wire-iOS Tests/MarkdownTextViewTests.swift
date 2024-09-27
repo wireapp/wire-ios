@@ -20,7 +20,6 @@ import Down
 import WireCommonComponents
 import WireDesign
 import XCTest
-
 @testable import Wire
 
 final class MarkdownTextViewTests: XCTestCase {

@@ -20,7 +20,6 @@ import avs
 import WireDesign
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 final class AudioEffectsPickerViewControllerTests: XCTestCase {

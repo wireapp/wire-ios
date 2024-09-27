@@ -17,7 +17,6 @@
 //
 
 import WireTransport
-
 @testable import WireSyncEngine
 
 extension MessagingTest {

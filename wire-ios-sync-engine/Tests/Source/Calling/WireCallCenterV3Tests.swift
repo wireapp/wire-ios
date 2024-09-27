@@ -21,7 +21,6 @@ import Combine
 import Foundation
 import WireDataModelSupport
 import XCTest
-
 @testable import WireSyncEngine
 
 final class WireCallCenterTransportMock: WireCallCenterTransport {

@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import WireDataModel
 
 final class AccountStoreTests: ZMConversationTestsBase {

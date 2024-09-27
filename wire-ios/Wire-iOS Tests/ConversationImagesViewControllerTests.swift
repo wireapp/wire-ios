@@ -18,7 +18,6 @@
 
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 extension SelfUser {

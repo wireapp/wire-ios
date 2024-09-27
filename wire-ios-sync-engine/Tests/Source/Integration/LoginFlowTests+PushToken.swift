@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 @testable import WireSyncEngine
 
 class LoginFlowTests_PushToken: IntegrationTest {

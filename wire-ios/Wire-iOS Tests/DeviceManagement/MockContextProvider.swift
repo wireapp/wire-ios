@@ -18,7 +18,6 @@
 
 import CoreData
 import Foundation
-
 @testable import Wire
 
 final class MockContextProvider: ContextProvider {

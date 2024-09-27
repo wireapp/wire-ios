@@ -17,7 +17,6 @@
 //
 
 import WireTesting
-
 @testable import WireDataModel
 
 class ZMMessageTests_Legalhold: BaseZMClientMessageTests {

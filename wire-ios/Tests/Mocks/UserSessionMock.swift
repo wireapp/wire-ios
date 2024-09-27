@@ -23,7 +23,6 @@ import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine
 import WireSyncEngineSupport
-
 @testable import Wire
 
 final class UserSessionMock: UserSession {

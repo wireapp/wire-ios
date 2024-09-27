@@ -18,7 +18,6 @@
 
 import SnapshotTesting
 import XCTest
-
 @testable import Wire
 
 // MARK: - MessageActionsViewControllerTests

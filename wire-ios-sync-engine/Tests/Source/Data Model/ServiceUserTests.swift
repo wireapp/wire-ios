@@ -19,7 +19,6 @@
 import WireFoundation
 import WireUtilities
 import XCTest
-
 @testable import WireSyncEngine
 
 final class DummyServiceUser: NSObject, ServiceUser {

@@ -21,7 +21,6 @@ import WireCryptobox
 import WireDataModel
 import WireTesting
 import WireTransport
-
 @testable import WireRequestStrategy
 
 final class FetchClientRequestStrategyTests: MessagingTestBase {

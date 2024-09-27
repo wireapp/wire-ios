@@ -18,7 +18,6 @@
 
 import WireLinkPreview
 import XCTest
-
 @testable import WireDataModel
 
 class ZMClientMessageTests_TextMessage: BaseZMMessageTests {

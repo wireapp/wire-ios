@@ -18,7 +18,6 @@
 
 import CoreData
 import XCTest
-
 @testable import WireDataModel
 
 final class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {

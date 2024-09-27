@@ -19,7 +19,6 @@
 import WireDataModel
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 // MARK: - CollectionsViewControllerTests

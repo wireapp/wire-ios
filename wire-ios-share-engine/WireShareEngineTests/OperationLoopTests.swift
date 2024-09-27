@@ -21,7 +21,6 @@ import WireDataModel
 import WireRequestStrategy
 import WireTesting
 import XCTest
-
 @testable import WireShareEngine
 
 final class OperationLoopTests: ZMTBaseTest {

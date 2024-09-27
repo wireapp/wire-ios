@@ -23,7 +23,6 @@ import WireDataModelSupport
 import WireTesting
 import WireTransport.Testing
 import WireUtilitiesSupport
-
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 

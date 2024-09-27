@@ -19,7 +19,6 @@
 import WireCommonComponents
 import WireSyncEngineSupport
 import XCTest
-
 @testable import Wire
 
 class CreateSecureGuestLinkViewModelTests: XCTestCase {

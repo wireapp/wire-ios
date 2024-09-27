@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 import WireTesting
-
 @testable import WireSyncEngine
 
 struct ClientUpdateStatusChange {

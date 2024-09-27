@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireSyncEngine
 
 final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {

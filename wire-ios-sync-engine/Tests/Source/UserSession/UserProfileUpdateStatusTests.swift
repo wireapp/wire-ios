@@ -18,7 +18,6 @@
 
 import WireUtilities
 import XCTest
-
 @testable import WireSyncEngine
 
 final class UserProfileUpdateStatusTests: MessagingTest {

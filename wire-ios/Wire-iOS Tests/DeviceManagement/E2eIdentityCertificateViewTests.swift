@@ -19,7 +19,6 @@
 import SwiftUI
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 final class E2eIdentityCertificateViewTests: XCTestCase {

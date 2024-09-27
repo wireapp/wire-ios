@@ -19,7 +19,6 @@
 import WireSyncEngine
 import WireTransport
 import XCTest
-
 @testable import Wire
 
 final class AppStateCalculatorTests: XCTestCase {

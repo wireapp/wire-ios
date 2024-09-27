@@ -19,7 +19,6 @@
 import avs
 import WireCommonComponents
 import XCTest
-
 @testable import Wire
 
 private class MockAVSVideoPreview: AVSVideoPreview {

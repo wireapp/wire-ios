@@ -18,7 +18,6 @@
 
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 final class AnalyticsTests: DatabaseTest {

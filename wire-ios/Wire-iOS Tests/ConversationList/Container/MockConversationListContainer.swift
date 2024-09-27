@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import Wire
 
 final class MockConversationListContainer: UIViewController, ConversationListContainerViewModelDelegate {

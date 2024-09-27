@@ -20,7 +20,6 @@ import WireDesign
 import WireTestingPackage
 import XCTest
 import Ziphy
-
 @testable import Wire
 
 final class GiphySearchViewControllerSnapshotTests: XCTestCase {

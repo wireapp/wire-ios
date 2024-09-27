@@ -20,7 +20,6 @@ import SwiftUI
 import WireRequestStrategySupport
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 final class OtherUserDeviceDetailsViewTests: XCTestCase {

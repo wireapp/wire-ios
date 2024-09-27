@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 import WireFoundation
-
 @testable import Wire
 
 class MockUserType: NSObject, UserType, Decodable, EditableUserType {

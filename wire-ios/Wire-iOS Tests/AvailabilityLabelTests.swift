@@ -20,7 +20,6 @@ import WireCommonComponents
 import WireDesign
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 final class AvailabilityLabelTests: XCTestCase {

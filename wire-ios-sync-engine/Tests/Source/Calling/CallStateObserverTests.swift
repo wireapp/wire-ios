@@ -18,7 +18,6 @@
 
 import Foundation
 import WireUtilitiesSupport
-
 @testable import WireSyncEngine
 
 class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {

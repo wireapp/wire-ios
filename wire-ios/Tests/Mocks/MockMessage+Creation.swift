@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 import WireLinkPreview
-
 @testable import Wire
 
 extension MockMessage {

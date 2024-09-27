@@ -22,9 +22,8 @@ import WireMockTransport
 import WireRequestStrategy
 import WireTesting
 import XCTest
-@testable import WireShareEngine
-
 @testable import WireDataModelSupport
+@testable import WireShareEngine
 
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated

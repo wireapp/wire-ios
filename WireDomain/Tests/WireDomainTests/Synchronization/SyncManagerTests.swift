@@ -20,7 +20,6 @@ import Combine
 import WireAPI
 import WireAPISupport
 import XCTest
-
 @testable import WireDomain
 @testable import WireDomainSupport
 

@@ -18,7 +18,6 @@
 
 import Foundation
 import XCTest
-
 @testable import WireUtilities
 
 class ArrayShiftTests: XCTestCase {

@@ -20,7 +20,6 @@ import WireDataModelSupport
 import WireDesign
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 final class SelfProfileViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {

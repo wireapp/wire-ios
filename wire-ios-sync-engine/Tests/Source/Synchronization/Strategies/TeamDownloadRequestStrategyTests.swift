@@ -17,7 +17,6 @@
 //
 
 import WireTesting
-
 @testable import WireSyncEngine
 
 final class TeamDownloadRequestStrategyTests: MessagingTest {

@@ -19,7 +19,6 @@
 import WireCommonComponents
 import WireDataModel
 import XCTest
-
 @testable import Wire
 
 final class AnalyticsTests: XCTestCase {

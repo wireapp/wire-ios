@@ -19,7 +19,6 @@
 import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
-
 @testable import Wire
 
 class SettingsDebugReportViewModelTests: XCTestCase {

@@ -19,7 +19,6 @@
 import WireTestingPackage
 import WireUtilities
 import XCTest
-
 @testable import Wire
 
 enum CallParticipantsListHelper {

@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import XCTest
-
 @testable import WireSyncEngine
 
 final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {

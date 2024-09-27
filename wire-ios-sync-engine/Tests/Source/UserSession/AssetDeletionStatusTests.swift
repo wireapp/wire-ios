@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-
 @testable import WireSyncEngine
 
 // MARK: - Mocks

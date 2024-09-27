@@ -18,7 +18,6 @@
 
 import Foundation
 import WireTesting
-
 @testable import WireSyncEngine
 
 final class SessionManagerMultiUserSessionTests: IntegrationTest {

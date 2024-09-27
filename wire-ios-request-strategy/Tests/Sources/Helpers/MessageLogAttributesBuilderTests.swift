@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import XCTest
-
 @testable import WireRequestStrategy
 
 final class MessageLogAttributesBuilderTests: XCTestCase {

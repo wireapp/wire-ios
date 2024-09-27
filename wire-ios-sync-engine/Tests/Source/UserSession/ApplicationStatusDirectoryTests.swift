@@ -17,7 +17,6 @@
 //
 
 import Foundation
-
 import WireDataModelSupport
 @testable import WireSyncEngine
 

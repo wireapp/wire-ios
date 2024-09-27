@@ -20,7 +20,6 @@ import Foundation
 import WireDataModelSupport
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {

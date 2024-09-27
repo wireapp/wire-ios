@@ -18,7 +18,6 @@
 
 import Foundation
 import WireCoreCrypto
-
 import WireTransport
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy

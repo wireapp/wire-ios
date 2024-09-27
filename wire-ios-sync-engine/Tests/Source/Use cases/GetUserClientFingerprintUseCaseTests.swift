@@ -21,7 +21,6 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 import WireTesting
 import XCTest
-
 @testable import WireSyncEngine
 
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {

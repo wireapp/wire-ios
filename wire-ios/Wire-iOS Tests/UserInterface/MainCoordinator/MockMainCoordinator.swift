@@ -17,7 +17,6 @@
 //
 
 import WireDataModel
-
 @testable import Wire
 
 final class MockMainCoordinator: MainCoordinating {

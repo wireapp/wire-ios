@@ -18,7 +18,6 @@
 
 import Foundation
 import WireLinkPreview
-
 @testable import WireDataModel
 
 enum ContentType {

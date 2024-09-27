@@ -17,9 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
-
 import struct WireAPI.HTTPRequest
+import XCTest
 
 /// Provides convenience to snapshot `HTTPRequest` objects.
 struct HTTPRequestSnapshotHelper {

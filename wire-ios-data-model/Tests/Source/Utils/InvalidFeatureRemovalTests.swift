@@ -17,7 +17,6 @@
 //
 
 import CoreData
-
 @testable import WireDataModel
 
 final class InvalidFeatureRemovalTests: DiskDatabaseTest {

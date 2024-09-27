@@ -18,7 +18,6 @@
 
 import MobileCoreServices
 import XCTest
-
 @testable import Wire
 @testable import WireCommonComponents
 

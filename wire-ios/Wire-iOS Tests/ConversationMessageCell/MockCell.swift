@@ -18,7 +18,6 @@
 
 import UIKit
 import WireFoundation
-
 @testable import Wire
 
 final class MockCell: UIView, ConversationMessageCell {

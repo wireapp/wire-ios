@@ -18,7 +18,6 @@
 
 import UIKit
 import XCTest
-
 @testable import WireReusableUIComponents
 
 final class BlockingActivityIndicatorTests: XCTestCase {

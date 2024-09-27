@@ -18,7 +18,6 @@
 
 import WireProtos
 import XCTest
-
 @testable import WireDataModel
 
 class ProtosTests: XCTestCase {

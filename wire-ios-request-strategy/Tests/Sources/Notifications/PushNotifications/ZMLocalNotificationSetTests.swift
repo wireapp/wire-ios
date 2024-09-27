@@ -19,7 +19,6 @@
 import WireDataModel
 import WireTesting
 import WireUtilitiesSupport
-
 @testable import WireRequestStrategy
 
 public final class MockKVStore: NSObject, ZMSynchonizableKeyValueStore {

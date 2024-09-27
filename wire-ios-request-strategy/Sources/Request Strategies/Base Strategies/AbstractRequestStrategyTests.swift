@@ -18,7 +18,6 @@
 
 import Foundation
 import XCTest
-
 @testable import WireRequestStrategy
 
 protocol TestableAbstractRequestStrategy: AnyObject {

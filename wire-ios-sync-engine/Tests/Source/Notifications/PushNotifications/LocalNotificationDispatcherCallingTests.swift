@@ -18,7 +18,6 @@
 
 import UserNotifications
 import WireUtilitiesSupport
-
 @testable import WireSyncEngine
 
 final class LocalNotificationDispatcherCallingTests: DatabaseTest {

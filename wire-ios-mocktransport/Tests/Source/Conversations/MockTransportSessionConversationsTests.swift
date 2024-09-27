@@ -18,7 +18,6 @@
 
 import Foundation
 import WireProtos
-
 @testable import WireMockTransport
 
 class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {

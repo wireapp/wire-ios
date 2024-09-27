@@ -17,7 +17,6 @@
 //
 
 import XCTest
-
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 @testable import WireSyncEngine

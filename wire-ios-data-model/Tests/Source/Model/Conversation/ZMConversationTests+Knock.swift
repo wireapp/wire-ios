@@ -17,7 +17,6 @@
 //
 
 import CoreData
-
 @testable import WireDataModel
 
 final class ZMConversationTests_Knock: ZMConversationTestsBase {

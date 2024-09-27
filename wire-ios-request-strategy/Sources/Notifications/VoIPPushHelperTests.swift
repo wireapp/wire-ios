@@ -19,7 +19,6 @@
 import Foundation
 import WireSystem
 import XCTest
-
 @testable import WireRequestStrategy
 
 final class VoIPPushHelperTests: XCTestCase {

@@ -18,7 +18,6 @@
 
 import WireTesting
 import XCTest
-
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 

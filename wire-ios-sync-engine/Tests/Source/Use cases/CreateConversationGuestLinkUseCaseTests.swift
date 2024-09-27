@@ -19,7 +19,6 @@
 import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
-
 @testable import WireSyncEngine
 
 final class CreateConversationGuestLinkUseCaseTests: XCTestCase {

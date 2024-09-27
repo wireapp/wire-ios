@@ -17,9 +17,8 @@
 //
 
 import Foundation
-import XCTest
-
 import WireTransport
+import XCTest
 @testable import WireRequestStrategy
 
 private struct CodableAPIVersionAwareObject: CodableAPIVersionAware {

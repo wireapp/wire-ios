@@ -19,7 +19,6 @@
 import WireDesign
 import WireTestingPackage
 import XCTest
-
 @testable import Wire
 
 struct MockStatusViewConfiguration: CallStatusViewInputType {

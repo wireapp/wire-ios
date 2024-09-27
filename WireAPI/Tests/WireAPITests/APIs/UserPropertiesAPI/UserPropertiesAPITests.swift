@@ -18,7 +18,6 @@
 
 import SnapshotTesting
 import XCTest
-
 @testable import WireAPI
 
 final class UserPropertiesAPITests: XCTestCase {
