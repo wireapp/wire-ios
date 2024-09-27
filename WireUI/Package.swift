@@ -29,11 +29,11 @@ let package = Package(
         .target(name: "WireReusableUIComponents", dependencies: ["WireDesign", "WireFoundation"]),
         .testTarget(name: "WireReusableUIComponentsTests", dependencies: ["WireReusableUIComponents"]),
 
-            .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
-            .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation"]),
+        .target(name: "WireMainNavigation", dependencies: ["WireDesign"]),
+        .testTarget(name: "WireMainNavigationTests", dependencies: ["WireMainNavigation"]),
 
-            .target(name: "WireConversationListNavigation"),
-            .testTarget(name: "WireConversationListNavigationTests", dependencies: ["WireConversationListNavigation"]),
+        .target(name: "WireConversationListNavigation"),
+        .testTarget(name: "WireConversationListNavigationTests", dependencies: ["WireConversationListNavigation"]),
 
         .target(name: "WireAccountImage", dependencies: ["WireFoundation"]),
         .testTarget(name: "WireAccountImageTests", dependencies: ["WireAccountImage"]),

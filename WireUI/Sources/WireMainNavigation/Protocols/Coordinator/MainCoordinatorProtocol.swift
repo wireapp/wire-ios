@@ -20,7 +20,7 @@ public protocol MainCoordinatorProtocol: AnyObject {
     // var conversationListCoordinator: MainConversationListCoordinatorRepresentable
     func showConversationList<ConversationFilter>(conversationFilter: ConversationFilter?) async
         where ConversationFilter: MainConversationFilterRepresentable
-    //func showConversation<Conversation>(conversation: Conversation) async
+    // func showConversation<Conversation>(conversation: Conversation) async
     func showArchivedConversations() async
     func showSelfProfile() async
     func showSettings() async
