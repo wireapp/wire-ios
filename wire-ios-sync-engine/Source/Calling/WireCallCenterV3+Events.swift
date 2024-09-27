@@ -214,7 +214,7 @@ extension WireCallCenterV3 {
             let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
             guard let attributes = jsonObject as? [String: NSObject] else { return }
             analytics?.tagEvent("calling.avs_metrics_ended_call", attributes: attributes)
-            WireLogger.avs.info("Calling metrics: \(String(data: metricsData, encoding: .utf8) ?? ""))")
+            WireLogger.avs.info("Calling metrics: \(String(decoding: metricsData, as: UTF8.self) )")
         } catch {
             WireLogger.calling.error("Unable to parse call metrics JSON: \(error)")
         }
@@ -294,8 +294,8 @@ extension WireCallCenterV3 {
                 let members = change.members.map(AVSCallMember.init)
                 self.callParticipantsChanged(conversationId: AVSIdentifier.from(string: change.convid), participants: members)
             } catch {
-                let change = String(data: data, encoding: .utf8)
-                Self.logger.info("Cannot decode participant change JSON: \(String(describing: change))", attributes: .safePublic)
+                let change = String(decoding: data, as: UTF8.self)
+                Self.logger.info("Cannot decode participant change JSON: \(change)", attributes: .safePublic)
             }
         }
     }
